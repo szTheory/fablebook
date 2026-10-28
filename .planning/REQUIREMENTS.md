@@ -269,142 +269,142 @@ Which phases cover which requirements. Filled by roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | — | Pending |
-| CORE-02 | — | Pending |
-| CORE-03 | — | Pending |
-| CORE-04 | — | Pending |
-| CORE-05 | — | Pending |
-| CORE-06 | — | Pending |
-| CORE-07 | — | Pending |
-| CORE-12 | — | Pending |
-| CORE-13 | — | Pending |
-| CORE-14 | — | Pending |
-| CORE-08 | — | Pending |
-| CORE-09 | — | Pending |
-| CORE-10 | — | Pending |
-| CORE-11 | — | Pending |
-| CTRL-01 | — | Pending |
-| CTRL-02 | — | Pending |
-| CTRL-03 | — | Pending |
-| CTRL-04 | — | Pending |
-| CTRL-06 | — | Pending |
-| CANVAS-01 | — | Pending |
-| CANVAS-02 | — | Pending |
-| CANVAS-03 | — | Pending |
-| CANVAS-04 | — | Pending |
-| CANVAS-05 | — | Pending |
-| CANVAS-06 | — | Pending |
-| CANVAS-07 | — | Pending |
-| WB-01 | — | Pending |
-| WB-02 | — | Pending |
-| WB-03 | — | Pending |
-| WB-04 | — | Pending |
-| WB-05 | — | Pending |
-| WB-06 | — | Pending |
-| WB-07 | — | Pending |
-| WB-08 | — | Pending |
-| WB-09 | — | Pending |
-| WB-10 | — | Pending |
-| WB-11 | — | Pending |
-| WB-13 | — | Pending |
-| WB-14 | — | Pending |
-| WB-15 | — | Pending |
-| WB-16 | — | Pending |
-| WB-12 | — | Pending |
-| WB-17 | — | Pending |
-| WB-18 | — | Pending |
-| CANON-01 | — | Pending |
-| CANON-02 | — | Pending |
-| CANON-03 | — | Pending |
-| CANON-04 | — | Pending |
-| CANON-05 | — | Pending |
-| CANON-06 | — | Pending |
-| CANON-07 | — | Pending |
-| CANON-09 | — | Pending |
-| CANON-10 | — | Pending |
-| CANON-11 | — | Pending |
-| CANON-12 | — | Pending |
-| CANON-08 | — | Pending |
-| CHECK-01 | — | Pending |
-| CHECK-02 | — | Pending |
-| CHECK-03 | — | Pending |
-| CHECK-04 | — | Pending |
-| CHECK-05 | — | Pending |
-| CHECK-06 | — | Pending |
-| VIS-01 | — | Pending |
-| VIS-02 | — | Pending |
-| VIS-03 | — | Pending |
-| LLM-01 | — | Pending |
-| LLM-02 | — | Pending |
-| LLM-03 | — | Pending |
-| LLM-04 | — | Pending |
-| LLM-05 | — | Pending |
-| LLM-06 | — | Pending |
-| LLM-07 | — | Pending |
-| LLM-08 | — | Pending |
-| JOURNEY-01 | — | Pending |
-| JOURNEY-02 | — | Pending |
-| JOURNEY-03 | — | Pending |
-| MOTION-01 | — | Pending |
-| MOTION-02 | — | Pending |
-| MOTION-03 | — | Pending |
-| MOTION-04 | — | Pending |
-| MOTION-05 | — | Pending |
-| MOTION-06 | — | Pending |
-| MOTION-07 | — | Pending |
-| UX-01 | — | Pending |
-| UX-02 | — | Pending |
-| UX-03 | — | Pending |
-| UX-04 | — | Pending |
-| UX-07 | — | Pending |
-| UX-05 | — | Pending |
-| UX-06 | — | Pending |
-| UX-08 | — | Pending |
-| SKILL-01 | — | Pending |
-| SKILL-02 | — | Pending |
-| SEC-01 | — | Pending |
-| SEC-02 | — | Pending |
-| SEC-03 | — | Pending |
-| SEC-04 | — | Pending |
-| SEC-05 | — | Pending |
-| PERF-01 | — | Pending |
-| PERF-02 | — | Pending |
-| PERF-03 | — | Pending |
-| PERF-04 | — | Pending |
-| PERF-05 | — | Pending |
-| PERF-06 | — | Pending |
-| TEL-01 | — | Pending |
-| TEL-02 | — | Pending |
-| TEL-03 | — | Pending |
-| INST-01 | — | Pending |
-| INST-02 | — | Pending |
-| INST-03 | — | Pending |
-| INST-04 | — | Pending |
-| INST-05 | — | Pending |
-| INST-06 | — | Pending |
-| INST-07 | — | Pending |
-| DOCS-01 | — | Pending |
-| DOCS-02 | — | Pending |
-| DOCS-03 | — | Pending |
-| DOCS-04 | — | Pending |
-| A11Y-01 | — | Pending |
-| A11Y-02 | — | Pending |
-| QA-01 | — | Pending |
-| QA-02 | — | Pending |
-| QA-03 | — | Pending |
-| QA-04 | — | Pending |
-| QA-06 | — | Pending |
-| QA-05 | — | Pending |
-| CI-01 | — | Pending |
-| CI-02 | — | Pending |
-| REL-01 | — | Pending |
-| COMPAT-01 | — | Pending |
-| INTENT-01 | — | Pending |
+| CORE-01 | Phase 3 | Pending |
+| CORE-02 | Phase 3 | Pending |
+| CORE-03 | Phase 15 | Pending |
+| CORE-04 | Phase 3 | Pending |
+| CORE-05 | Phase 3 | Pending |
+| CORE-06 | Phase 3 | Pending |
+| CORE-07 | Phase 3 | Pending |
+| CORE-12 | Phase 4 | Pending |
+| CORE-13 | Phase 28 | Pending |
+| CORE-14 | Phase 7 | Pending |
+| CORE-08 | Phase 15 | Pending |
+| CORE-09 | Phase 4 | Pending |
+| CORE-10 | Phase 7 | Pending |
+| CORE-11 | Phase 14 | Pending |
+| CTRL-01 | Phase 5 | Pending |
+| CTRL-02 | Phase 12 | Pending |
+| CTRL-03 | Phase 5 | Pending |
+| CTRL-04 | Phase 8 | Pending |
+| CTRL-06 | Phase 5 | Pending |
+| CANVAS-01 | Phase 7 | Pending |
+| CANVAS-02 | Phase 7 | Pending |
+| CANVAS-03 | Phase 7 | Pending |
+| CANVAS-04 | Phase 7 | Pending |
+| CANVAS-05 | Phase 8 | Pending |
+| CANVAS-06 | Phase 8 | Pending |
+| CANVAS-07 | Phase 7 | Pending |
+| WB-01 | Phase 11 | Pending |
+| WB-02 | Phase 11 | Pending |
+| WB-03 | Phase 12 | Pending |
+| WB-04 | Phase 12 | Pending |
+| WB-05 | Phase 20 | Pending |
+| WB-06 | Phase 12 | Pending |
+| WB-07 | Phase 13 | Pending |
+| WB-08 | Phase 11 | Pending |
+| WB-09 | Phase 11 | Pending |
+| WB-10 | Phase 13 | Pending |
+| WB-11 | Phase 12 | Pending |
+| WB-13 | Phase 29 | Pending |
+| WB-14 | Phase 22 | Pending |
+| WB-15 | Phase 12 | Pending |
+| WB-16 | Phase 31 | Pending |
+| WB-12 | Phase 22 | Pending |
+| WB-17 | Phase 20 | Pending |
+| WB-18 | Phase 12 | Pending |
+| CANON-01 | Phase 14 | Pending |
+| CANON-02 | Phase 14 | Pending |
+| CANON-03 | Phase 14 | Pending |
+| CANON-04 | Phase 15 | Pending |
+| CANON-05 | Phase 16 | Pending |
+| CANON-06 | Phase 24 | Pending |
+| CANON-07 | Phase 16 | Pending |
+| CANON-09 | Phase 14 | Pending |
+| CANON-10 | Phase 15 | Pending |
+| CANON-11 | Phase 15 | Pending |
+| CANON-12 | Phase 14 | Pending |
+| CANON-08 | Phase 15 | Pending |
+| CHECK-01 | Phase 20 | Pending |
+| CHECK-02 | Phase 20 | Pending |
+| CHECK-03 | Phase 20 | Pending |
+| CHECK-04 | Phase 22 | Pending |
+| CHECK-05 | Phase 4 | Pending |
+| CHECK-06 | Phase 22 | Pending |
+| VIS-01 | Phase 21 | Pending |
+| VIS-02 | Phase 21 | Pending |
+| VIS-03 | Phase 21 | Pending |
+| LLM-01 | Phase 19 | Pending |
+| LLM-02 | Phase 27 | Pending |
+| LLM-03 | Phase 27 | Pending |
+| LLM-04 | Phase 27 | Pending |
+| LLM-05 | Phase 20 | Pending |
+| LLM-06 | Phase 19 | Pending |
+| LLM-07 | Phase 19 | Pending |
+| LLM-08 | Phase 29 | Pending |
+| JOURNEY-01 | Phase 15 | Pending |
+| JOURNEY-02 | Phase 24 | Pending |
+| JOURNEY-03 | Phase 29 | Pending |
+| MOTION-01 | Phase 25 | Pending |
+| MOTION-02 | Phase 26 | Pending |
+| MOTION-03 | Phase 26 | Pending |
+| MOTION-04 | Phase 26 | Pending |
+| MOTION-05 | Phase 26 | Pending |
+| MOTION-06 | Phase 26 | Pending |
+| MOTION-07 | Phase 29 | Pending |
+| UX-01 | Phase 23 | Pending |
+| UX-02 | Phase 23 | Pending |
+| UX-03 | Phase 23 | Pending |
+| UX-04 | Phase 23 | Pending |
+| UX-07 | Phase 31 | Pending |
+| UX-05 | Phase 24 | Pending |
+| UX-06 | Phase 16 | Pending |
+| UX-08 | Phase 24 | Pending |
+| SKILL-01 | Phase 30 | Pending |
+| SKILL-02 | Phase 29 | Pending |
+| SEC-01 | Phase 5 | Pending |
+| SEC-02 | Phase 1 | Pending |
+| SEC-03 | Phase 7 | Pending |
+| SEC-04 | Phase 6 | Pending |
+| SEC-05 | Phase 12 | Pending |
+| PERF-01 | Phase 3 | Pending |
+| PERF-02 | Phase 11 | Pending |
+| PERF-03 | Phase 11 | Pending |
+| PERF-04 | Phase 11 | Pending |
+| PERF-05 | Phase 33 | Pending |
+| PERF-06 | Phase 33 | Pending |
+| TEL-01 | Phase 3 | Pending |
+| TEL-02 | Phase 3 | Pending |
+| TEL-03 | Phase 3 | Pending |
+| INST-01 | Phase 10 | Pending |
+| INST-02 | Phase 30 | Pending |
+| INST-03 | Phase 30 | Pending |
+| INST-04 | Phase 30 | Pending |
+| INST-05 | Phase 11 | Pending |
+| INST-06 | Phase 31 | Pending |
+| INST-07 | Phase 35 | Pending |
+| DOCS-01 | Phase 32 | Pending |
+| DOCS-02 | Phase 32 | Pending |
+| DOCS-03 | Phase 32 | Pending |
+| DOCS-04 | Phase 17 | Pending |
+| A11Y-01 | Phase 13 | Pending |
+| A11Y-02 | Phase 22 | Pending |
+| QA-01 | Phase 16 | Pending |
+| QA-02 | Phase 33 | Pending |
+| QA-03 | Phase 33 | Pending |
+| QA-04 | Phase 9 | Pending |
+| QA-06 | Phase 34 | Pending |
+| QA-05 | Phase 33 | Pending |
+| CI-01 | Phase 1 | Pending |
+| CI-02 | Phase 21 | Pending |
+| REL-01 | Phase 1 | Pending |
+| COMPAT-01 | Phase 3 | Pending |
+| INTENT-01 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 131 total
-- Mapped to phases: 0
-- Unmapped: 131 ⚠️
+- Mapped to phases: 131
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-10-28*
