@@ -108,7 +108,14 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
   2. A host that mounts Fablebook inside a false `dev_routes` block compiles cleanly in prod, while an unguarded mount fails with the canonical `CompileError` emitted from the macro's returned code; the CI prod build asserts no Fablebook routes and no story beams.
   3. A PR that adds a fourth workflow, grows `ci.yml` past 250 lines, removes the single `ci-gate`, edits an INT source, uses a malformed INT id, or adds a REQ line with no INT or ADR citation fails CI; PR p50 and p95 are published weekly from CI history.
   4. A PR that adds `Code.eval*`, runtime EEx/HEEx compilation, `String.to_atom` on input, a banned dependency in the prod closure, or a file outside the tarball allowlist fails CI.
-**Plans**: 4 (estimate)
+**Plans:** 5 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Walking skeleton: owner sign-offs, fablebook/2 with the prod guard on both lanes, package docs
+- [ ] 01-02-PLAN.md — All of `.github/`, release config and scripts; public repo, settings, ruleset; draft PR #1 green
+- [ ] 01-03-PLAN.md — Compiled-BEAM and Credo bans, `style=` scan, dependency budget, tarball allowlist
+- [ ] 01-04-PLAN.md — Intent, contract-rule and CI-shape guards; diff seam proven in a real repo; test-wiring pins; PR #1 green with every guard
+- [ ] 01-05-PLAN.md — Signed ADR amendments, owner diff review and secrets, merge PR #1, D-22 red run, ci-health, publish 0.1.0, rotate key, PR #3 drops release-as with the last SUMMARY
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.

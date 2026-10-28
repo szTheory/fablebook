@@ -19,7 +19,7 @@ created: "2026-10-28"
 
 | Property | Value |
 |----------|-------|
-| **Framework** | ExUnit (Elixir 1.20.4 / OTP 29 latest lane; Elixir 1.18.5 / OTP 27 floor lane) |
+| **Framework** | ExUnit (latest lane Elixir 1.20.4 / OTP 29, or Elixir 1.19.5 / OTP 28 if the 01-01-T1 sign-off is approve-except-d16; floor lane Elixir 1.18.5 / OTP 27) |
 | **Config file** | none yet. Wave 0 creates `mix.exs` (with `test_ignore_filters` and a `ci` alias) and `test/test_helper.exs` |
 | **Quick run command** | `mix test` (fast guards; excludes `:prod_guard` and `:release`) |
 | **Full suite command** | `mix ci` (adds `--include prod_guard --include release`) |
@@ -38,28 +38,40 @@ created: "2026-10-28"
   - the release PR green, including `nightly`;
   - the hex-publish run link;
   - the follow-up PR that removes `release-as`, merged green.
-- **Max feedback latency:** 120 seconds.
+- **Max feedback latency:** 120 seconds for the fast and per-task commands. The slow-lane checks below are excluded from that budget and run once per wave or per push, never after every commit.
+
+### Slow-lane checks (minutes, network or GitHub-bound)
+
+| Check | Where | Typical time |
+|-------|-------|--------------|
+| `mix test --include prod_guard test/contract/prod_guard_test.exs` (nested mix, both lanes) | 01-01-T2, 01-01-T3 | 1 to 3 min per lane cold |
+| `bin/smoke_consumer --path .` (phx.new, deps.get, two compiles) | 01-02-T2, `nightly` | 3 to 10 min |
+| `mix test --include release test/contract/tarball_test.exs` (hex.build) | 01-03-T3 | about 1 min |
+| `gh pr checks <n> --watch` then the all-checks merge rule | 01-02-T4, 01-04-T3, 01-05-T1/T3/T5/T7 | one full CI run, 5 to 15 min |
+| `bin/ci_health` against the live API | 01-05-T1, `ci-health` | under 1 min |
+| hex-publish build, publish, smoke and finalize | 01-05-T5 | 15 to 30 min |
 
 ---
 
 ## Per-Task Verification Map
 
-The planner fills Task IDs. Rows map requirements to the proving command (from 01-RESEARCH.md § Validation Architecture).
+Task IDs filled by the planner (`<plan>-T<task>`). Threat Refs map to each plan's STRIDE register (T-01-01 to T-01-41). Rows map requirements to the proving command (from 01-RESEARCH.md § Validation Architecture).
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | TBD | SEC-02 | prod exposure | False `dev_routes` mount compiles in prod; an unguarded mount raises the canonical error once; no routes, no story beams | integration | `mix test test/contract/prod_guard_test.exs --include prod_guard` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | SEC-02 | — | The CompileError's first line equals the Troubleshooting heading | unit | `mix test test/contract/prod_guard_message_test.exs` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | SEC-01 (partial) | eval/atom DoS | No banned call or banned dep in `lib/` beams; 8 bypass fixtures fail | unit | `mix test test/contract/banned_calls_test.exs` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | SEC-01 (partial) | — | Credo source bans | lint | `mix credo --strict` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | SEC-01 (partial) | CSP | No `style=` in `lib/` | unit | `mix test test/contract/style_attr_test.exs` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | SEC-01 / SC4 | supply chain | Prod closure has no banned dep; direct deps exact; `only:` correct | unit | `mix test test/contract/dependency_budget_test.exs` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | REL-01 / SC4 | PII, leaks | Tarball allowlist, metadata, PII scan | integration | `mix test test/contract/tarball_test.exs --include release` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | CI-01 | workflow tampering | Caps, ci-gate, pins, bypass bans, no Node, no phase names | unit | `mix test test/contract/ci_shape_test.exs` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | CI-01 | template injection | Workflows lint clean | lint | actionlint and zizmor in the `security` job | n/a | ⬜ pending |
-| TBD | TBD | TBD | INTENT-01 | — | Add-only sources, INT id form, REQ citations, ADR existence | unit | `mix test test/planning/intent_test.exs` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | D-21 (Q15) | guard weakening | A guard `M`/`D` plus its paired implementation in one PR fails | unit | `mix test test/planning/contract_rule_test.exs` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | COMPAT floor | — | The floor lane really resolves Phoenix 1.8.9 / LiveView 1.2.9 | unit | `FABLEBOOK_FLOOR=1 mix test test/contract/dependency_budget_test.exs` | ❌ W0 | ⬜ pending |
+| 01-01-T2 | 01-01 | 1 | SEC-02 | prod exposure | False `dev_routes` mount compiles in prod; an unguarded mount raises the canonical error once; no routes, no story beams | integration | `mix test test/contract/prod_guard_test.exs --include prod_guard` | ❌ W0 | ⬜ pending |
+| 01-01-T3 | 01-01 | 1 | SEC-02 | — | The CompileError's first line equals the Troubleshooting heading | unit | `mix test test/contract/prod_guard_message_test.exs` | ❌ W0 | ⬜ pending |
+| 01-03-T1 | 01-03 | 3 | SEC-01 (partial) | eval/atom DoS | No banned call or banned dep in `lib/` beams; 8 bypass fixtures fail | unit | `mix test test/contract/banned_calls_test.exs` | ❌ W0 | ⬜ pending |
+| 01-03-T2 | 01-03 | 3 | SEC-01 (partial) | — | Credo source bans | lint | `mix credo --strict` | ❌ W0 | ⬜ pending |
+| 01-03-T2 | 01-03 | 3 | SEC-01 (partial) | CSP | No `style=` in `lib/` | unit | `mix test test/contract/style_attr_test.exs` | ❌ W0 | ⬜ pending |
+| 01-03-T3 | 01-03 | 3 | SEC-01 / SC4 | supply chain | Prod closure has no banned dep; direct deps exact; `only:` correct | unit | `mix test test/contract/dependency_budget_test.exs` | ❌ W0 | ⬜ pending |
+| 01-03-T3 | 01-03 | 3 | REL-01 / SC4 | PII, leaks | Tarball allowlist, metadata, PII scan | integration | `mix test test/contract/tarball_test.exs --include release` | ❌ W0 | ⬜ pending |
+| 01-04-T3 | 01-04 | 4 | CI-01 | T-01-26, T-01-28 | Caps, ci-gate, pins, bypass bans, no Node, no phase names; test-wiring pins (ignore filters, alias test step, ExUnit excludes, checkout depth, ci-health shape step) | unit | `mix test test/contract/ci_shape_test.exs` | ❌ W0 | ⬜ pending |
+| 01-02-T1/T2 | 01-02 | 2 | CI-01 | template injection | Workflows lint clean | lint | actionlint and zizmor in the `security` job | n/a | ⬜ pending |
+| 01-04-T1 | 01-04 | 4 | INTENT-01 | — | Add-only sources, INT id form, REQ citations, ADR existence | unit | `mix test test/planning/intent_test.exs` | ❌ W0 | ⬜ pending |
+| 01-04-T2 | 01-04 | 4 | D-21 (Q15) | T-01-25, T-01-28 | A guard `M`/`D` plus its paired implementation in one PR fails; the diff seam is proven in a real tmp git repo | unit | `mix test test/planning/contract_rule_test.exs` | ❌ W0 | ⬜ pending |
+| 01-03-T3 | 01-03 | 3 | COMPAT floor | — | The floor lane really resolves the floor versions named in mix.exs (Phoenix 1.8.9 / LiveView 1.2.9 under approve-all) | unit | `FABLEBOOK_FLOOR=1 mix test test/contract/dependency_budget_test.exs` | ❌ W0 | ⬜ pending |
+| 01-05-T1 | 01-05 | 5 | INTENT-01 | T-01-41 | The signed amendments pass the citation rules | unit | `mix test test/planning/intent_test.exs test/planning/contract_rule_test.exs` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -81,7 +93,7 @@ The planner fills Task IDs. Rows map requirements to the proving command (from 0
 | Weekly p50/p95 published | CI-01 | Needs real CI history and a scheduled run | Dispatch `ci.yml` (`ci-health`); link the run and the `ci-timing` issue comment (`not-run (n=K)` is acceptable while n<10) |
 | Ruleset requires exactly `ci-gate` | CI-01 | A GitHub-side setting | `ci-health` drift-check link |
 | An edited INT source fails real CI | INTENT-01 | Proves the wiring, not the fixture | Red-run link from a throwaway draft PR, closed unmerged (D-22) |
-| Owner sign-offs (D-12, D-16, D-21, D-26/27, D-31) | — | Owner decisions | Signed ADR amendments and struck OPEN-QUESTIONS rows |
+| Owner sign-offs (D-12, D-16, D-21, D-26/27, D-31) | — | Owner decisions | 01-01-T1 checkpoint (`blocking-human`); INT source in 01-01-T3; amendments and strikes in 01-05-T1; amendment diff shown to the owner at 01-05-T2 |
 
 ---
 

@@ -1264,17 +1264,17 @@ The agent's `gh` token has the `repo` and `workflow` scopes for `szTheory` [VERI
 | A8 | The Hex CLI cannot publish a prebuilt tarball | Don't Hand-Roll | None; the checksum comparison covers it. |
 | A9 | setup-beam `version-file: .tool-versions` accepts `elixir 1.20.4-otp-29` | Pattern 6 | The core job fails at setup; switch to explicit `otp-version`/`elixir-version` inputs. Caught on day 1. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Why OTP 27.3.4.9 for the floor lane rather than the newest 27.3.4.19?**
+1. **RESOLVED: Why OTP 27.3.4.9 for the floor lane rather than the newest 27.3.4.19?**
    - What we know: both exist on builds.hex.pm. D-16 locks 27.3.4.9.
    - What's unclear: whether `.9` was deliberate (the oldest patch to claim) or arbitrary.
-   - Recommendation: keep it as locked; ask at the D-16 sign-off.
-2. **Pin all five runtime deps at their floors in `mix.floor.lock`?**
+   - Resolution: keep 27.3.4.9 as D-16 locks it. Plan 01-01 Task 1 shows this as a sign-off reading ("Floor lane stays Elixir 1.18.5 / OTP 27.3.4.9"); the setup action pins it.
+2. **RESOLVED: Pin all five runtime deps at their floors in `mix.floor.lock`?**
    - What we know: they resolve (phoenix_html 4.1.0, telemetry 1.0.0, nimble_options 1.1.0 with Phoenix 1.8.9 and LiveView 1.2.9).
-   - Recommendation: optional; it strengthens the declared-range evidence. Decide at the D-16 sign-off.
-3. **Push to `main` with a zero `before` SHA.** Raise in CI or fall back to merge-base? Recommendation: fall back to merge-base only when `before` is all zeros, and print the reason.
-4. **`exclude-paths` in the release-please config** (PITFALLS Pitfall 26: tooling commits trigger phantom releases). Recommendation: add `.planning`, `docs` and `bench` now; not locked, so it's the planner's call.
+   - Resolution: no. `mix.floor.lock` pins only phoenix and phoenix_live_view (Plan 01-01 Task 1 sign-off reading; `bin/floor_lock` in Task 3 rewrites only those two).
+3. **RESOLVED: Push to `main` with a zero `before` SHA.** Resolution: raise in CI (fail closed), never fall back to merge-base, because on main the merge-base is HEAD and the diff would be empty. This overrides the earlier merge-base recommendation; it is a Plan 01-01 Task 1 sign-off reading, implemented in Plan 01-04 Task 1 (`GitDiff.base/2`).
+4. **RESOLVED: `exclude-paths` in the release-please config** (PITFALLS Pitfall 26: tooling commits trigger phantom releases). Resolution: add `.planning`, `docs` and `bench` (Plan 01-01 Task 1 sign-off reading; Plan 01-02 Task 2 writes it).
 
 ## Environment Availability
 
