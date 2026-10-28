@@ -1,0 +1,34 @@
+# Build
+/_build/
+/deps/
+/doc/
+/cover/
+/tmp/
+*.ez
+*.beam
+/priv/plts/
+/.dialyzer/
+erl_crash.dump
+fablebook-*.tar
+*.tar
+
+# Node (dev/CI tooling only; adopters never need Node)
+node_modules/
+/test/**/__diff__/
+/test-results/
+/playwright-report/
+
+# Private / agent / local state — never commit
+/.claude/
+/prompts/
+.cursor/
+.gsd/
+.bg-shell/
+.planning/milestone.lock
+.planning/research/**/.cache/
+.env
+.env.*
+!.env.example
+.DS_Store
+.elixir_ls/
+.lexical/
