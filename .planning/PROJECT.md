@@ -43,6 +43,7 @@ Every item below is a v1.0 commitment.
 - [ ] **CTRL-02** An override shows an "Edited" chip and offers **Restore scenario**. Attrs that can't be edited say "Set in the story file" and offer Open in editor. (ADR 0013)
 - [ ] **CTRL-03** All view state lives in the URL (scenario, `o` overrides ≤2 KB, `vw`, `frame`, `scheme`, `theme`, `direction`, `dir`, `locale`, `motion`, `zoom`, `twin` (filter), `check`), so a reload reproduces it exactly. See the parameter table in UX-DESIGN. (ADR 0013, INT-20261028-04)
 - [ ] **CTRL-04** Globals are a closed set: theme, design direction (a candidate look), color scheme (light/dark/system), locale (Gettext), text direction, viewport, device frame and motion (full/reduce/off). (ADR 0002, INT-20261028-13)
+- [ ] **CTRL-06** Editing a Control offers "Copy as scenario": Elixir text for a new Draft scenario with the overridden attrs and a TODO situation. Values print from typed controls only, no atoms are created, and nothing is written to disk. (ADR 0004, ADR 0013, INT-20261028-16)
 
 **CANVAS: fidelity and isolation**
 - [ ] **CANVAS-01** Scenarios always render in an iframe that goes through the host's own pipeline and root layout, so they get the real `app.css`, `app.js`, colocated hooks, fonts and CSP. (ADR 0003, INT-20261028-01)
@@ -51,6 +52,7 @@ Every item below is a v1.0 commitment.
 - [ ] **CANVAS-04** The workbench and canvas talk over a `Phoenix.Token`-signed topic. The event log keeps string names only, truncates payloads, and is scoped to the canvas. (ADR 0004)
 - [ ] **CANVAS-05** When the canvas fails to connect, a diagnostic names the likely causes (`window.liveSocket`, `frame-ancestors`). (ADR 0003)
 - [ ] **CANVAS-06** Recompiling a story or component updates the open workbench without a restart. (ADR 0008, INT-20261028-01)
+- [ ] **CANVAS-07** The canvas absorbs events and navigation it has no handler for (catch-all `handle_event/3`, `handle_info/2`, `handle_params/3`, `layout: false`) and logs "Event recorded" or "Would navigate to /x" instead of crashing or leaving. (ADR 0003, ADR 0004, INT-20261028-16)
 
 **WB: workbench UX**
 - [ ] **WB-01** The workbench has three panes. The toolbar belongs to the canvas, every tool shows its value as text, and a tool appears only when it applies. (ADR 0013, INT-20261028-01)
@@ -73,6 +75,8 @@ Every item below is a v1.0 commitment.
 - [ ] **WB-15** **Device frames**: none, phone, tablet, laptop or desktop. Generic outlines (not branded device art). Phone and tablet show safe areas, a status bar and standalone (PWA) display. (ADR 0013, INT-20261028-12, INT-20261028-14)
 - [ ] **WB-16** **Export image**: a framed, high-resolution PNG of any scenario, optionally on a background, from the workbench or `mix fablebook.shot <scenario> --frame phone --scheme dark`. It uses browser capture (opt-in). (ADR 0011, INT-20261028-14)
 - [ ] **WB-12** A dev Diagnostics page: catalog build time, scenario count, recent crashes, evidence staleness. (ADR 0016)
+- [ ] **WB-17** Sidebar dots and tile status read the latest Evidence keyed by render hash and show "Not run" until Evidence exists, never a green dot. "Run checks" runs the probe for the open rendition (and at story level across the width presets) in the user's browser. (ADR 0011, ADR 0010, INT-20261028-04, INT-20261028-16)
+- [ ] **WB-18** Width presets carry a height and a rotate action (an `orient` URL parameter). Workbench settings (Appearance, density, single-key shortcut switch, pane sizes) persist and are listed. (ADR 0013, INT-20261028-16)
 
 **CANON: design-system knowledge as content**
 - [ ] **CANON-01** The `design/` canon is one Markdown file per entry with strict-subset frontmatter, parsed by our own parser (property-tested, no YAML dependency). (ADR 0012, INT-20261028-05)
@@ -327,6 +331,7 @@ Every item below is a v1.0 commitment.
 | Motion is a first-class lane (ADR 0025) | The owner's top UX priority; prior tools leave motion as a blind spot | — Pending |
 | Static export in v1.x; render seam now (ADR 0022) | Keeps the 1.0 design uncompromised | — Pending |
 | Four tiers Primitive…Screen; "Scenario" (ADR 0023) | One clear question per tier; "variant" collides with `attr :variant` | — Pending |
+| Split rule beats "8–12 phases": about 35 sequential phases under the 12 family headings, with research's ordering moves (INT-20261028-16, OPEN-QUESTIONS Q6) | Research found 8 of 12 families exceed the 5-plan cap; the split rule is non-negotiable | — Pending |
 
 ## Roadmap constraints (for the roadmapper)
 
@@ -406,4 +411,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-28 after initialization (synthesized from `FABLEBOOK-SEED.md`)*
+*Last updated: 2026-10-28 after research (INT-20261028-16: phase split, four research REQs added)*
