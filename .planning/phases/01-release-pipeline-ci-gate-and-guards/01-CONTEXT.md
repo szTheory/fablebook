@@ -140,7 +140,7 @@ Requirements: REL-01, CI-01, INTENT-01, SEC-02, and SEC-01 in part (properties a
     - anchors and aliases;
     - `<<:`;
     - `workflow_call` in `ci.yml`;
-    - `uses: ./.github/workflows/`;
+    - `uses: ./.github/workflows/` in `ci.yml` (only `release-please.yml`'s `publish` job may call `hex-publish.yml`, per D-08);
     - lines over 120 characters.
   - **Files:**
     - `.github/workflows/**` equals exactly {`ci.yml`, `release-please.yml`, `hex-publish.yml`};
@@ -300,7 +300,8 @@ Requirements: REL-01, CI-01, INTENT-01, SEC-02, and SEC-01 in part (properties a
   - `dialyzer` uses its own correct PLT key;
   - `security` runs `hex.audit`, `dependency-review`, actionlint and zizmor;
   - `ci-gate`;
-  - `nightly` and `ci-health` are schedule-only.
+  - `nightly` stays in `ci-gate`'s `needs`. On ordinary PRs it is skipped (allowed by D-17's exception); on `release-please--*` PRs it must succeed (ADR 0017);
+  - `ci-health` is the only schedule-only job.
   - The `e2e` job does not exist yet. Adding it later only changes `needs` in `ci.yml`, plus the day-1 Node allowlist already naming it.
   - **Composite action:** `.github/actions/setup` restores and saves the cache separately, keyed on os, arch, OTP, Elixir and `hash(mix.lock)` (or the floor lock). Saves happen only on `main`.
 - **D-31 (owner sign-off): Log the new conflicts.** These conflicts are new, so they are added to OPEN-QUESTIONS as Q31–Q34, not resolved here:
