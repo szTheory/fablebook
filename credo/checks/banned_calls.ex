@@ -20,15 +20,16 @@ defmodule Fablebook.Credo.BannedCalls do
       `Function.capture/3` at any arity, `{module, function}` and
       `{module, function, args}` tuples (also when a helper returns them or a
       module attribute holds them), `%{module => function}` entries and
-      `[module: function]` keyword pairs. It also flags any literal reference
-      to a module that is banned whole, and the banned names anywhere. Both
-      checks match by name and position, not by role. The whole-module check
-      flags a function named like a wholly banned module (`Regex.compile/1`,
-      `:re.compile/2` or a local `compile/1`) and a keyword such as
-      `[epp: 1]`. The pair check flags data whose two adjacent atoms spell a
-      banned call, such as `[io: :read]` or `[compile: true]`.
-      `Regex.compile!/1` and a `~r` sigil are not flagged. The fix is a change
-      in lib/, never an allowlist entry without an ADR.
+      `[module: function]` keyword pairs. It also flags a literal reference to
+      a module that is banned whole, and the banned names anywhere. The
+      whole-module check ignores the name of a called or captured function, so
+      `Regex.compile/1`, `:re.compile/2`, a local `compile/1` and
+      `&Regex.compile/1` are not flagged. It still flags a wholly banned module
+      named in any other position, such as `apply(:compile, fun, args)` or a
+      keyword such as `[epp: 1]`. The pair check still flags data whose two
+      adjacent atoms spell a banned call, such as `[io: :read]` or
+      `[compile: true]`. `Regex.compile!/1` and a `~r` sigil are not flagged.
+      The fix is a change in lib/, never an allowlist entry without an ADR.
 
       Neither static layer matches a module and function that are not
       adjacent literals in one list, tuple or map entry, unless the module is
