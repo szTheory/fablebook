@@ -111,10 +111,20 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"load_module.ex", {:mfa, {:erlang, :load_module, 2}}},
     {"internal_eval.ex", {:mfa, {:elixir_module, :compile, 6}}},
     {"parallel_compiler.ex", {:mfa, {Kernel.ParallelCompiler, :require, 1}}},
-    {"file_script.ex", {:mfa, {:file, :script, 1}}}
+    {"file_script.ex", {:mfa, {:file, :script, 1}}},
+    {"apply_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
+    {"computed_compile.ex", {:mfa, {:compile, :_, :_}}}
   ]
 
-  @beam_only_fixtures ~w(dynamic_module.ex load_module.ex internal_eval.ex parallel_compiler.ex file_script.ex)
+  @beam_only_fixtures ~w(
+    dynamic_module.ex
+    load_module.ex
+    internal_eval.ex
+    parallel_compiler.ex
+    file_script.ex
+    apply_load_module.ex
+    computed_compile.ex
+  )
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
 
