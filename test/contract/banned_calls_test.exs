@@ -72,7 +72,11 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"interpolated_atom.ex", {:atom, :binary_to_atom}},
     {"dynamic_module.ex", {:mfa, {Module, :concat, 1}}},
     {"banned_dep.ex", {:atom, Jason}},
-    {"apply_to_atom.ex", {:mfa, {String, :to_atom, 1}}}
+    {"apply_to_atom.ex", {:mfa, {String, :to_atom, 1}}},
+    {"apply_list_existing_atom.ex", {:mfa, {List, :to_existing_atom, 1}}},
+    {"function_capture_to_atom.ex", {:mfa, {String, :to_atom, 1}}},
+    {"erlang_apply_to_atom.ex", {:mfa, {String, :to_atom, 1}}},
+    {"default_arg_to_atom.ex", {:atom, :to_atom}}
   ]
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
@@ -138,15 +142,23 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   test "mix.exs names no banned call or module" do
-    text = File.read!("mix.exs")
+    assert mix_exs_hits(File.read!("mix.exs")) == []
+  end
 
-    hits =
-      for atom <- @atom_tier,
-          name = atom |> Atom.to_string() |> String.replace_prefix("Elixir.", ""),
-          Regex.match?(~r/(?<![\w.])#{Regex.escape(name)}(?![\w!?])/, text),
-          do: name
+  test "the mix.exs scan matches bare and qualified calls" do
+    assert mix_exs_hits("Code.eval_string(x)") == ["eval_string"]
+    assert mix_exs_hits(":erlang.binary_to_atom(x, :utf8)") == ["binary_to_atom"]
+    assert mix_exs_hits("Elixir.Telemetry.Metrics") == ["Telemetry.Metrics"]
+    assert mix_exs_hits("String.to_atom(x)") == ["to_atom"]
+    assert mix_exs_hits("eval_strings = 1") == []
+    assert mix_exs_hits("my_eval_string(x)") == []
+  end
 
-    assert hits == []
+  defp mix_exs_hits(text) do
+    for atom <- @atom_tier,
+        name = atom |> Atom.to_string() |> String.replace_prefix("Elixir.", ""),
+        Regex.match?(~r/(?<!\w)#{Regex.escape(name)}(?![\w!?])/, text),
+        do: name
   end
 
   defp credo_issues(path) do
