@@ -125,7 +125,28 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"info_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
     {"info_concat.ex", {:mfa, {Module, :concat, :_}}},
     {"info_capture_script.ex", {:mfa, {:file, :script, :_}}},
-    {"info_arity_zero.ex", {:mfa, {:file, :script, :_}}}
+    {"info_arity_zero.ex", {:mfa, {:file, :script, :_}}},
+    {"logger_formatter_compile.ex", {:mfa, {Logger.Formatter, :compile, 1}}},
+    {"eex_compiler_compile.ex", {:mfa, {EEx.Compiler, :compile, 3}}},
+    {"exs_engine_compile.ex", {:mfa, {Phoenix.Template.ExsEngine, :compile, 2}}},
+    {"eex_engine_compile.ex", {:mfa, {Phoenix.Template.EExEngine, :compile, 2}}},
+    {"liveview_engine_compile.ex", {:mfa, {Phoenix.LiveView.Engine, :compile, 2}}},
+    {"html_engine_compile.ex", {:mfa, {Phoenix.LiveView.HTMLEngine, :compile, 2}}},
+    {"tag_engine_compiler_compile.ex",
+     {:mfa, {Phoenix.LiveView.TagEngine.Compiler, :compile, 2}}},
+    {"xref_compiler_compile.ex", {:mfa, {:xref_compiler, :compile, 2}}},
+    {"mix_compilers_elixir_compile.ex", {:mfa, {Mix.Compilers.Elixir, :compile, 7}}},
+    {"mix_compilers_erlang_compile.ex", {:mfa, {Mix.Compilers.Erlang, :compile, 3}}},
+    {"deps_compile_compile.ex", {:mfa, {Mix.Tasks.Deps.Compile, :compile, 1}}},
+    {"erl_compile_compile.ex", {:mfa, {:erl_compile, :compile, 2}}},
+    {"erl_compile_server_compile.ex", {:mfa, {:erl_compile_server, :compile, 1}}},
+    {"leex_compile.ex", {:mfa, {:leex, :compile, 3}}},
+    {"yecc_compile.ex", {:mfa, {:yecc, :compile, 3}}},
+    {"mix_project_compile.ex", {:mfa, {Mix.Project, :compile, 1}}},
+    {"elixir_erl_compile.ex", {:mfa, {:elixir_erl, :compile, 2}}},
+    {"cover_compile.ex", {:mfa, {:cover, :compile, 1}}},
+    {"merl_compile.ex", {:mfa, {:merl, :compile, 1}}},
+    {"asn1ct_compile.ex", {:mfa, {:asn1ct, :compile, 1}}}
   ]
 
   @beam_only_fixtures ~w(
@@ -147,6 +168,26 @@ defmodule Fablebook.Contract.BannedCallsTest do
     info_concat.ex
     info_capture_script.ex
     info_arity_zero.ex
+    logger_formatter_compile.ex
+    eex_compiler_compile.ex
+    exs_engine_compile.ex
+    eex_engine_compile.ex
+    liveview_engine_compile.ex
+    html_engine_compile.ex
+    tag_engine_compiler_compile.ex
+    xref_compiler_compile.ex
+    mix_compilers_elixir_compile.ex
+    mix_compilers_erlang_compile.ex
+    deps_compile_compile.ex
+    erl_compile_compile.ex
+    erl_compile_server_compile.ex
+    leex_compile.ex
+    yecc_compile.ex
+    mix_project_compile.ex
+    elixir_erl_compile.ex
+    cover_compile.ex
+    merl_compile.ex
+    asn1ct_compile.ex
   )
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
