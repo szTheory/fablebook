@@ -1,7 +1,13 @@
 defmodule Fablebook.Contract.BannedCallsTest do
   use ExUnit.Case, async: false
 
+  alias Credo.SourceFile
+  alias Credo.Test.CheckRunner
+  alias Fablebook.Credo.BannedCalls
   alias Fablebook.Test.BeamWalker
+
+  Code.ensure_loaded?(BannedCalls) ||
+    Code.require_file(Path.expand("../../credo/checks/banned_calls.ex", __DIR__))
 
   @atom_tier [
     :eval_string,
@@ -46,6 +52,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
   ]
 
   @allowlist []
+
+  @ban_checks ~w(UnsafeToAtom MixEnv ForbiddenModule BannedCalls)
 
   @lib_modules [Fablebook, Fablebook.Router, Fablebook.Placeholder]
 
@@ -93,6 +101,51 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     assert BeamWalker.scan(beam) == {:error, :no_debug_info}
     assert [{_, :no_debug_info}] = findings(beam)
+  end
+
+  test "the Credo check bans the same names and flags the source-level fixtures" do
+    {:ok, _} = Application.ensure_all_started(:credo)
+
+    assert BannedCalls.banned_names() == Enum.sort(@atom_tier)
+
+    for path <- Path.wildcard(Path.join(@fixture_dir, "*.ex")),
+        Path.basename(path) != "dynamic_module.ex" do
+      assert credo_issues(path) != [], "no Credo issue for #{Path.relative_to_cwd(path)}"
+    end
+
+    for path <- Path.wildcard("lib/**/*.ex") do
+      assert credo_issues(path) == [], "Credo issue in #{path}"
+    end
+  end
+
+  test "no credo:disable in lib/ names a ban check" do
+    hits =
+      for path <- Path.wildcard("lib/**/*.ex"),
+          {line, n} <- path |> File.read!() |> String.split("\n") |> Enum.with_index(1),
+          line =~ "credo:disable",
+          Enum.any?(@ban_checks, &(line =~ &1)),
+          do: "#{path}:#{n}"
+
+    assert hits == []
+  end
+
+  test "mix.exs names no banned call or module" do
+    text = File.read!("mix.exs")
+
+    hits =
+      for atom <- @atom_tier,
+          name = atom |> Atom.to_string() |> String.replace_prefix("Elixir.", ""),
+          Regex.match?(~r/(?<![\w.])#{Regex.escape(name)}(?![\w!?])/, text),
+          do: name
+
+    assert hits == []
+  end
+
+  defp credo_issues(path) do
+    path
+    |> File.read!()
+    |> SourceFile.parse(path)
+    |> CheckRunner.run_check(BannedCalls)
   end
 
   defp lib_modules do
