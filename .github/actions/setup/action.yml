@@ -1,0 +1,57 @@
+name: setup
+description: Install a lane's Erlang and Elixir, restore deps and _build, fetch and compile deps
+inputs:
+  lane:
+    description: latest or floor
+    default: latest
+  mix-env:
+    description: MIX_ENV used to compile deps
+    default: test
+  cache:
+    description: false in release workflows
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - id: latest
+      if: inputs.lane == 'latest'
+      uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
+      with:
+        version-file: .tool-versions
+        version-type: strict
+    - id: floor
+      if: inputs.lane == 'floor'
+      uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
+      with:
+        otp-version: 27.3.4.9
+        elixir-version: 1.18.5-otp-27
+        version-type: strict
+    - id: key
+      shell: bash
+      env:
+        LOCK: ${{ inputs.lane == 'floor' && 'mix.floor.lock' || 'mix.lock' }}
+        OTP: ${{ steps.latest.outputs.otp-version || steps.floor.outputs.otp-version }}
+        EX: ${{ steps.latest.outputs.elixir-version || steps.floor.outputs.elixir-version }}
+        MIX_ENV: ${{ inputs.mix-env }}
+      run: |
+        lock="$(sha256sum "$LOCK" | cut -c1-16)"
+        echo "key=mix-$RUNNER_OS-$RUNNER_ARCH-$OTP-$EX-$MIX_ENV-$lock" >> "$GITHUB_OUTPUT"
+    - id: restore
+      if: inputs.cache == 'true'
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: |
+          deps
+          _build
+        key: ${{ steps.key.outputs.key }}
+    - shell: bash
+      env:
+        MIX_ENV: ${{ inputs.mix-env }}
+      run: mix deps.get --check-locked && mix deps.compile
+    - if: inputs.cache == 'true' && github.ref == 'refs/heads/main' && steps.restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: |
+          deps
+          _build
+        key: ${{ steps.key.outputs.key }}

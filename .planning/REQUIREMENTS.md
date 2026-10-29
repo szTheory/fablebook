@@ -220,7 +220,7 @@ Every item is a v1.0 commitment. 1.0 ships only after the clearance soak (`.plan
 - [ ] **CI-01**: Exactly three workflows; `ci.yml` stays ≤250 lines with one required `ci-gate` check. A test enforces these caps. PR p50 ≤ 7 min, measured from CI history. (ADR 0017, INT-20261028-02)
 - [ ] **CI-02**: Nightly runs the full suite, Firefox/WebKit and the canary. Release PRs run the heavy suite, and any open `quality-regression` issue blocks the release. (ADR 0017, INT-20261028-04)
 - [ ] **REL-01**: release-please publishes to Hex via the bootstrap skill. Phase 1 publishes 0.1.0 to reserve the name. Includes a post-publish smoke test, a recovery workflow and an SBOM. (ADR 0017, INT-20261028-01)
-- [ ] **COMPAT-01**: Floor: Elixir 1.18 / OTP 27, Phoenix 1.8.16, LiveView 1.2.9 (`mix.floor.lock`). Latest lane: Elixir 1.19 / OTP 28. Canary: LiveView main. The `ComponentInfo` contract test runs on all three. (ADR 0007, ADR 0008)
+- [ ] **COMPAT-01**: Floor: Elixir 1.18 / OTP 27, Phoenix 1.8.9, LiveView 1.2.9 (`mix.floor.lock`). Latest lane: Elixir 1.20 / OTP 29. Canary: LiveView main. The `ComponentInfo` contract test runs on all three. (ADR 0007, ADR 0008, INT-20261028-18)
 
 ### INTENT
 

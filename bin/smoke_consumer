@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# Generates a phx.new host that mounts Fablebook inside dev_routes, then proves the dev mount
+# compiles and routes while a prod build carries no Fablebook route.
+# Usage: bin/smoke_consumer --path DIR | --hex VERSION [--checksum SHA256]
+set -euo pipefail
+
+usage() {
+  echo "usage: bin/smoke_consumer --path DIR | --hex VERSION [--checksum SHA256]" >&2
+  exit 2
+}
+
+mode="" source="" checksum=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --path) mode=path; source="${2:?}"; shift 2 ;;
+    --hex) mode=hex; source="${2:?}"; shift 2 ;;
+    --checksum) checksum="${2:?}"; shift 2 ;;
+    *) usage ;;
+  esac
+done
+[ -n "$mode" ] || usage
+
+poll() {
+  local url="$1" out="$2" attempt
+  for attempt in $(seq 30); do
+    if curl -fsL -o "$out" "$url"; then
+      return 0
+    fi
+    echo "waiting for $url (attempt $attempt of 30)"
+    sleep 20
+  done
+  echo "timed out after 10 minutes waiting for $url" >&2
+  return 1
+}
+
+work="$(mktemp -d)"
+trap 'rm -rf "$work"' EXIT
+
+if [ "$mode" = path ]; then
+  dep="{:fablebook, path: \"$(cd "$source" && pwd)\"}"
+else
+  poll "https://hex.pm/api/packages/fablebook/releases/$source" "$work/release.json"
+  if [ -n "$checksum" ]; then
+    remote="$(jq -r .checksum "$work/release.json")"
+    if [ "$remote" != "$checksum" ]; then
+      echo "checksum mismatch: hex.pm has $remote, expected $checksum" >&2
+      exit 1
+    fi
+  fi
+  poll "https://hexdocs.pm/fablebook/$source/" "$work/docs.html"
+  dep="{:fablebook, \"== $source\"}"
+fi
+
+unset MIX_ENV MIX_EXS MIX_LOCKFILE MIX_DEPS_PATH MIX_BUILD_PATH FABLEBOOK_FLOOR
+export MIX_HOME="$work/mix" HEX_HOME="$work/hex"
+mix local.hex --force
+mix local.rebar --force
+mix archive.install hex phx_new 1.8.16 --force
+
+cd "$work"
+mix phx.new smoke_host --no-ecto --no-mailer --no-install
+cd smoke_host
+
+awk -v dep="$dep" '
+  /^      \{:phoenix, / && !done { print "      " dep ","; done = 1 }
+  { print }
+  END { exit !done }
+' mix.exs > mix.exs.new
+mv mix.exs.new mix.exs
+
+router=lib/smoke_host_web/router.ex
+awk '
+  /if Application.compile_env\(:smoke_host, :dev_routes\) do/ { in_dev = 1 }
+  { print }
+  in_dev && /pipe_through :browser/ && !done {
+    print "      import Fablebook.Router"
+    print "      fablebook \"/fablebook\", SmokeHostWeb.Storybook"
+    done = 1
+  }
+  END { exit !done }
+' "$router" > "$router.new"
+mv "$router.new" "$router"
+
+test "$(grep -c '{:fablebook, ' mix.exs)" -eq 1
+test "$(grep -c 'import Fablebook.Router' "$router")" -eq 1
+test "$(grep -c 'fablebook "/fablebook", SmokeHostWeb.Storybook' "$router")" -eq 1
+
+mix deps.get
+
+MIX_ENV=dev mix compile --warnings-as-errors
+dev_routes="$(MIX_ENV=dev mix phx.routes SmokeHostWeb.Router)"
+if ! grep -q '/dev/fablebook' <<<"$dev_routes"; then
+  echo "dev routes lack /dev/fablebook:" >&2
+  echo "$dev_routes" >&2
+  exit 1
+fi
+
+SECRET_KEY_BASE="$(openssl rand -base64 48)"
+export SECRET_KEY_BASE PHX_HOST=localhost
+MIX_ENV=prod mix compile
+prod_routes="$(MIX_ENV=prod mix phx.routes SmokeHostWeb.Router)"
+if grep -qi fablebook <<<"$prod_routes"; then
+  echo "prod routes include Fablebook:" >&2
+  echo "$prod_routes" >&2
+  exit 1
+fi
+
+echo "igniter install: not-run (installer phase)"
+echo "smoke_consumer: pass ($mode $source): dev mounts /dev/fablebook, prod has no Fablebook route"

@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# Weekly CI health: ci-gate p50/p95 over last week's PR runs, and ruleset drift on main.
+# `--file-regression <job> [note]` only opens or updates the quality-regression issue.
+set -euo pipefail
+
+repo="${GITHUB_REPOSITORY:?set GITHUB_REPOSITORY to owner/name}"
+
+run_url() {
+  if [ -n "${GITHUB_RUN_ID:-}" ]; then
+    printf '%s/%s/actions/runs/%s' "${GITHUB_SERVER_URL:-https://github.com}" "$repo" "$GITHUB_RUN_ID"
+  else
+    printf 'a local run'
+  fi
+}
+
+post_to_issue() {
+  local label="$1" title="$2" body="$3" number
+  number="$(gh issue list --repo "$repo" --label "$label" --state open --limit 1 --json number --jq '.[0].number // empty')"
+  if [ -n "$number" ]; then
+    gh issue comment "$number" --repo "$repo" --body "$body"
+  else
+    gh issue create --repo "$repo" --label "$label" --title "$title" --body "$body"
+  fi
+}
+
+file_regression() {
+  post_to_issue quality-regression "Quality regression" "$1"
+}
+
+if [ "${1:-}" = --file-regression ]; then
+  job="${2:?usage: bin/ci_health --file-regression <job> [note]}"
+  body="Job \`$job\` failed on \`${GITHUB_REF:-unknown ref}\`: $(run_url)"
+  if [ -n "${3:-}" ]; then
+    body="$body"$'\n\n'"$3"
+  fi
+  file_regression "$body"
+  exit 0
+fi
+
+since="$(jq -nr 'now - 7 * 86400 | strftime("%Y-%m-%dT%H:%M:%SZ")')"
+runs="$(gh api --paginate "repos/$repo/actions/workflows/ci.yml/runs?event=pull_request&created=%3E%3D$since&per_page=100" \
+  --jq '.workflow_runs[]
+    | select(.run_attempt == 1 and (.head_branch | startswith("release-please--") | not))
+    | [.id, .created_at] | @tsv')"
+
+durations='[]'
+while IFS=$'\t' read -r id created; do
+  if [ -z "$id" ]; then
+    continue
+  fi
+  seconds="$(gh api "repos/$repo/actions/runs/$id/jobs?per_page=100" | jq --arg created "$created" '
+    [.jobs[] | select(.name == "ci-gate" and (.conclusion == "success" or .conclusion == "failure"))] | first
+    | if . == null then empty else (.completed_at | fromdateiso8601) - ($created | fromdateiso8601) end')"
+  if [ -n "$seconds" ]; then
+    durations="$(jq -c --argjson s "$seconds" '. + [$s]' <<<"$durations")"
+  fi
+done <<<"$runs"
+
+percentile() {
+  jq -nr --argjson d "$durations" --argjson p "$1" '($d | sort) as $s | ($s | length) as $n
+    | if $n < 10 then "not-run (n=\($n))" else "\($s[(($p * $n / 100) | ceil) - 1]) s" end'
+}
+
+n="$(jq length <<<"$durations")"
+report="ci-gate on pull_request, attempt 1, last 7 days (n=$n): p50 $(percentile 50), p95 $(percentile 95). $(run_url)"
+echo "$report"
+if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+  echo "$report" >> "$GITHUB_STEP_SUMMARY"
+fi
+post_to_issue ci-timing "CI timing" "$report"
+
+if jq -e '(sort) as $s | length as $n
+  | $n >= 10 and ($s[((50 * $n / 100) | ceil) - 1] > 420 or $s[((95 * $n / 100) | ceil) - 1] > 600)' \
+  <<<"$durations" >/dev/null; then
+  file_regression "CI timing over budget (p50 > 420 s or p95 > 600 s): $report"
+fi
+
+contexts="$(gh api "repos/$repo/rules/branches/main" \
+  --jq '[.[] | select(.type == "required_status_checks") | .parameters.required_status_checks[].context]')"
+if ! jq -e '. == ["ci-gate"]' <<<"$contexts" >/dev/null; then
+  file_regression "Ruleset drift: main requires $contexts, expected [\"ci-gate\"]. $(run_url)"
+fi

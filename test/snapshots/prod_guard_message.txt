@@ -1,0 +1,13 @@
+Fablebook cannot be mounted in a prod build
+
+    fablebook "/fablebook", MyAppWeb.Storybook
+
+This mount is reachable when MIX_ENV=prod; move it inside the dev_routes block:
+
+    if Application.compile_env(:fablebook, :dev_routes) do
+      scope "/dev" do
+        pipe_through :browser
+
+        fablebook "/fablebook", MyAppWeb.Storybook
+      end
+    end

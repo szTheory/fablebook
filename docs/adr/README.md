@@ -10,7 +10,7 @@ ADRs rank above REQUIREMENTS and below verbatim intent (`.planning/intent/README
 | [0004](0004-no-eval-no-new-atoms.md) | No runtime eval and no atoms created from input |
 | [0005](0005-livedashboard-style-packaging.md) | LiveDashboard-style packaging, with zero processes |
 | [0006](0006-dependency-available-in-all-envs.md) | The dependency loads in all envs; stories never compile in prod |
-| [0007](0007-version-floors.md) | Floors: Elixir 1.18/OTP 27, Phoenix 1.8.16, LiveView 1.2.9 |
+| [0007](0007-version-floors.md) | Floors: Elixir 1.18/OTP 27, Phoenix 1.8.9, LiveView 1.2.9, open below 2.0 |
 | [0008](0008-catalog-discovery-and-ids.md) | The catalog is a pure function; ids come from module and function names |
 | [0009](0009-manifest-no-mcp-no-plugin-api.md) | A canonical manifest; no MCP or plugin API in 1.0 |
 | [0010](0010-llm-context-bundle.md) | The LLM context bundle is a core artifact |

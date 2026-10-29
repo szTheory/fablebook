@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Regenerates mix.floor.lock with phoenix and phoenix_live_view at their floors.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+
+sed -e 's/{:phoenix, ">= 1.8.9 and < 2.0.0"}/{:phoenix, "== 1.8.9"}/' \
+    -e 's/{:phoenix_live_view, ">= 1.2.9 and < 2.0.0"}/{:phoenix_live_view, "== 1.2.9"}/' \
+    mix.exs > "$tmp/mix.exs"
+
+grep -q '{:phoenix, "== 1.8.9"}' "$tmp/mix.exs"
+grep -q '{:phoenix_live_view, "== 1.2.9"}' "$tmp/mix.exs"
+
+rm -f mix.floor.lock
+MIX_EXS="$tmp/mix.exs" FABLEBOOK_FLOOR=1 MIX_DEPS_PATH="$tmp/deps" mix deps.get
+FABLEBOOK_FLOOR=1 MIX_DEPS_PATH="$tmp/deps" mix deps.get --check-locked

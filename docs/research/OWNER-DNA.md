@@ -116,7 +116,7 @@ Sources (owner-local files; not available to contributors or CI, summarized here
 Key points:
 - **Fractal stories** follow product IA and JTBD nouns, and stories must be **equivalence classes, not permutations**: every scenario names a persona and JTBD situation, and anything the app can't render is pruned. Any second inventory is retired.
 - **Presentational screens.** The LiveView keeps mount, params and events; screens render from plain assigns. "If a screen needs heavy mocks, split it."
-- **DB-free persona fixtures** ("digital twins of adopters") with tested realism invariants: no lorem ipsum, ordered timestamps, closed enums. They are **dev/test-only and reachable from every story host** (scrypath ADR-0002: a separate Mix project, because a path dep compiles in `:prod`).
+- **DB-free persona fixtures** ("digital twins of adopters") with tested realism invariants: no lorem ipsum, ordered timestamps, closed enums. They are **dev/test-only and reachable from every story host** (scrypath ADR 0002: a separate Mix project, because a path dep compiles in `:prod`).
 - **One design language:** visual tokens plus verbal tokens (voice, microcopy, a user-facing glossary), with a single source of truth (DTCG) and a drift test.
 - **Layered checks:**
   - L1: static lints, a token reset, a contrast matrix
