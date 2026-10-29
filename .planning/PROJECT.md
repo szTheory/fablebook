@@ -211,7 +211,7 @@ Every item below is a v1.0 commitment.
 - [ ] **CI-01** Exactly three workflows; `ci.yml` stays ≤250 lines with one required `ci-gate` check. A test enforces these caps. PR p50 ≤ 7 min, measured from CI history. (ADR 0017, INT-20261028-02)
 - [ ] **CI-02** Nightly runs the full suite, Firefox/WebKit and the canary. Release PRs run the heavy suite, and any open `quality-regression` issue blocks the release. (ADR 0017, INT-20261028-04)
 - [ ] **REL-01** release-please publishes to Hex via the bootstrap skill. Phase 1 publishes 0.1.0 to reserve the name. Includes a post-publish smoke test, a recovery workflow and an SBOM. (ADR 0017, INT-20261028-01)
-- [ ] **COMPAT-01** Floor: Elixir 1.18 / OTP 27, Phoenix 1.8.16, LiveView 1.2.9 (`mix.floor.lock`). Latest lane: Elixir 1.19 / OTP 28. Canary: LiveView main. The `ComponentInfo` contract test runs on all three. (ADR 0007, ADR 0008)
+- [ ] **COMPAT-01** Floor: Elixir 1.18 / OTP 27, Phoenix 1.8.9, LiveView 1.2.9 (`mix.floor.lock`). Latest lane: Elixir 1.20 / OTP 29. Canary: LiveView main. The `ComponentInfo` contract test runs on all three. (ADR 0007, ADR 0008, INT-20261028-18)
 
 **INTENT**
 - [ ] **INTENT-01** `.planning/intent/` stays authoritative. `test/planning/intent_test.exs` enforces that sources are add-only, that INT ids are valid in full form, and that every REQ line cites at least one INT or ADR. (ADR 0021, INT-20261028-04)
@@ -284,7 +284,7 @@ Every item below is a v1.0 commitment.
 ## Constraints
 
 - **Quality**: The north-star bar is never lowered. If a phase can't meet its gates, it splits. A gate can only be lowered by an owner-signed DECISION that cites an INT id. (ADR 0021, INT-20261028-04)
-- **Tech**: Phoenix ~> 1.8.16, LiveView ~> 1.2.9, Elixir ≥ 1.18 / OTP ≥ 27 only. Use public LiveView APIs only, except for one adapter around `__components__/0`. (ADR 0007, ADR 0008)
+- **Tech**: Phoenix >= 1.8.9 and < 2.0.0, LiveView >= 1.2.9 and < 2.0.0, Elixir ≥ 1.18 / OTP ≥ 27 only. Use public LiveView APIs only, except for one adapter around `__components__/0`. (ADR 0007, ADR 0008, INT-20261028-18)
 - **Tech**: No runtime eval and no atoms from input, ever. (ADR 0004)
 - **Tech**: Start zero processes in the host. No `name: __MODULE__` singletons. No `compile_env` outside config. No `:persistent_term`. (ADR 0005, ADR 0008)
 - **Tech**: The canvas is always an iframe through the host's pipeline and root layout. Stories use only the app's real CSS classes; Fablebook provides placement CSS. (ADR 0003)
@@ -318,7 +318,7 @@ Every item below is a v1.0 commitment.
 | No eval, no atoms from input (ADR 0004) | The design lesson of CVE-2026-8467 | — Pending |
 | LiveDashboard-style packaging, zero processes (ADR 0005) | A proven pattern in the owner's own libraries | — Pending |
 | Dependency in all envs, with a compile-time prod guard (ADR 0006) | Router macros expand even inside a false `if` | — Pending |
-| Floors: Elixir 1.18, Phoenix 1.8.16, LiveView 1.2.9 (ADR 0007) | No legacy; stdlib JSON; the LiveView security floor | — Pending |
+| Floors: Elixir 1.18, Phoenix 1.8.9, LiveView 1.2.9, open below 2.0 (ADR 0007, INT-20261028-18) | No legacy; stdlib JSON; the LiveView security floor | — Pending |
 | Pure catalog; ids from module and function (ADR 0008) | Same in dev and test; every scenario is addressable | — Pending |
 | Manifest yes; MCP and plugin API not in 1.0 (ADR 0009) | Avoids Storybook's addon breakage | — Pending |
 | The LLM context bundle is core (ADR 0010) | The owner's main motivation | — Pending |
