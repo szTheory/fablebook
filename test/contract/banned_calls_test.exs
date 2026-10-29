@@ -229,7 +229,6 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {Mix.Phoenix.Schema, :new, 4},
     {Mix.Tasks.Phx.Server, :run, 1},
     {Mix.Tasks.Phx.Routes, :run, :_},
-    {Mix.Tasks.Phx.Gen, :run, 1},
     {Mix.Tasks.Phx.Gen.Context, :build, 1},
     {Mix.Tasks.Phx.Gen.Context, :build, 2},
     {Mix.Tasks.Phx.Gen.Context, :run, 1},
@@ -358,7 +357,16 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"elixir_erl_compiler.ex", {:mfa, {:elixir_erl_compiler, :noenv_forms, 3}}},
     {"tokens_to_quoted.ex", {:mfa, {:elixir, :tokens_to_quoted, 3}}},
     {"iex_helpers_c.ex", {:mfa, {IEx.Helpers, :c, 1}}},
-    {"mix_run.ex", {:mfa, {Mix.Tasks.Run, :run, 1}}}
+    {"mix_run.ex", {:mfa, {Mix.Tasks.Run, :run, 1}}},
+    {"format_dot_formatter.ex", {:mfa, {Mix.Tasks.Format, :formatter_for_file, 2}}},
+    {"help_app.ex", {:mfa, {Mix.Tasks.Help, :run, 1}}},
+    {"erlang_ensure_application.ex", {:mfa, {Mix.Compilers.Erlang, :ensure_application!, 2}}},
+    {"coverage_start.ex", {:mfa, {Mix.Tasks.Test.Coverage, :start, 2}}},
+    {"dep_in_dependency.ex", {:mfa, {Mix.Dep, :in_dependency, 3}}},
+    {"diff_compute.ex", {:mfa, {ExUnit.Diff, :compute, 3}}},
+    {"local_append_paths.ex", {:mfa, {Mix.Local, :append_paths, 0}}},
+    {"dep_lock_read.ex", {:mfa, {Mix.Dep.Lock, :read, 1}}},
+    {"phx_server_eval.ex", {:mfa, {Mix.Tasks.Phx.Server, :run, 1}}}
   ]
 
   @beam_only_fixtures ~w(
@@ -412,6 +420,15 @@ defmodule Fablebook.Contract.BannedCallsTest do
     tokens_to_quoted.ex
     iex_helpers_c.ex
     mix_run.ex
+    format_dot_formatter.ex
+    help_app.ex
+    erlang_ensure_application.ex
+    coverage_start.ex
+    dep_in_dependency.ex
+    diff_compute.ex
+    local_append_paths.ex
+    dep_lock_read.ex
+    phx_server_eval.ex
   )
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)

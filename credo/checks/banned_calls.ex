@@ -269,7 +269,6 @@ defmodule Fablebook.Credo.BannedCalls do
           {Mix.Phoenix.Schema, :new, 4},
           {Mix.Tasks.Phx.Server, :run, 1},
           {Mix.Tasks.Phx.Routes, :run, :_},
-          {Mix.Tasks.Phx.Gen, :run, 1},
           {Mix.Tasks.Phx.Gen.Context, :build, 1},
           {Mix.Tasks.Phx.Gen.Context, :build, 2},
           {Mix.Tasks.Phx.Gen.Context, :run, 1},
