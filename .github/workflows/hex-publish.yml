@@ -50,6 +50,10 @@ jobs:
       - id: tag
         run: |
           [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          if ! git merge-base --is-ancestor "$TAG" origin/main; then
+            echo "::error::$TAG is not on main"
+            exit 1
+          fi
           v="$(mix run --no-start --no-compile -e 'IO.write(Mix.Project.config()[:version])')"
           test "$TAG" = "v$v"
           echo "version=$v" >> "$GITHUB_OUTPUT"
