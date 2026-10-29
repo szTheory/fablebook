@@ -28,7 +28,7 @@ actuals:
   tasks: 7
   commits: 5
 plan_head_before: 16abf95499efde11b7403c3b146d8202249bdb97
-plan_head_after: PLAN_HEAD_AFTER
+plan_head_after: f8e5a3b61e6f301f9d478733b21cd1359e99edb1
 
 tech-stack:
   added: []
@@ -230,3 +230,7 @@ The commits on main are squash merges, so topic-branch hashes are not ancestors 
 - **Open items:**
   - Q31 and Q32 stay open.
   - The PAT expires on 2027-10-28. Rotate it before then (D-10). Whether a reminder was set was not reported.
+
+## Self-Check: PASSED
+
+- The intent source, this SUMMARY and the amended ADRs exist. cee1113, e331fdb, 05e1a79, f4bb34f and f8e5a3b are ancestors of the closing branch head.

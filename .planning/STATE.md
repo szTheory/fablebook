@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 1
 current_phase_name: Release pipeline, CI gate and guards
 status: executing
-stopped_at: 01-05 Task 4 (Hex publish approval)
-last_updated: "2026-10-29T02:00:00.000Z"
+stopped_at: Completed 01-05-PLAN.md
+last_updated: "2026-10-29T02:18:02.390Z"
 last_activity: 2026-10-28
-last_activity_desc: PR #1 merged; D-22 red run and dispatched ci-health and nightly done; 0.1.0 release PR awaiting the owner
-state_head: aad6aa231024a41321f3e4a66a6f4ce1fbcd3315
+last_activity_desc: 0.1.0 published; closing PR drops release-as and carries the 01-05 SUMMARY
+state_head: f8e5a3b61e6f301f9d478733b21cd1359e99edb1
 progress:
   total_phases: 35
   completed_phases: 0
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-10-28)
 
 Phase: 1 (Release pipeline, CI gate and guards) — EXECUTING
 Plan: 5 of 5
-Status: Awaiting the owner at 01-05 Task 4 (publish 0.1.0)
-Last activity: 2026-10-28 — PR #1 merged; release PR #3 proposes 0.1.0
+Status: All 5 plans executed; phase verification next
+Last activity: 2026-10-28 — 0.1.0 published to Hex; closing PR drops release-as
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -60,6 +60,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P02 | 21min | 4 tasks | 10 files |
 | Phase 01 P03 | 11min | 3 tasks | 15 files |
 | Phase 01 P04 | 17min | 3 tasks | 8 files |
+| Phase 1 P05 | 85min | 7 tasks | 16 files |
 
 ## Accumulated Context
 
@@ -81,6 +82,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Ban tiers, allowlists and regexes live as data in the contract tests; Credo banned_names/0 is asserted equal to the BEAM atom tier
 - [Phase 01]: Contract-test rule flags any non-addition status on a guard path (M, D and T)
 - [Phase 01]: GitDiff fails closed on a malformed, zero or unknown push before SHA and scrubs GIT_* env
+- [Phase 1]: The CHANGELOG seed is empty before the first release; release-please demotes and appends a header-only seed
+- [Phase 1]: The package-scoped Hex key never expires and has Publish permission on fablebook only (INT-20261028-20)
 
 ### Pending Todos
 
@@ -104,6 +107,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-29T00:52:56.040Z
-Stopped at: Completed 01-04-PLAN.md
+Last session: 2026-10-29T02:18:02.372Z
+Stopped at: Completed 01-05-PLAN.md
 Resume file: None
