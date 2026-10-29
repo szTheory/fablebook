@@ -101,6 +101,7 @@ jobs:
     env:
       SHA256: ${{ needs.build.outputs.sha256 }}
       V: ${{ needs.build.outputs.version }}
+      COMMIT: ${{ needs.build.outputs.sha }}
     steps:
       - env:
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
@@ -120,23 +121,38 @@ jobs:
             *) echo "::error::hex.pm answered HTTP $status for fablebook $V"; exit 1 ;;
           esac
           echo "todo=$todo" >> "$GITHUB_OUTPUT"
-      - if: steps.hex.outputs.todo != 'none'
+      - if: steps.hex.outputs.todo == 'package' || steps.hex.outputs.todo == 'docs'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.tag }}
+          ref: ${{ needs.build.outputs.sha }}
           persist-credentials: false
-      - if: steps.hex.outputs.todo != 'none'
+      - if: steps.hex.outputs.todo == 'package' || steps.hex.outputs.todo == 'docs'
         uses: ./.github/actions/setup
         with:
           mix-env: dev
           cache: 'false'
-      - if: steps.hex.outputs.todo != 'none'
+      - if: steps.hex.outputs.todo == 'package' || steps.hex.outputs.todo == 'docs'
         env:
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
           TODO: ${{ steps.hex.outputs.todo }}
         run: |
+          if [ "$(git rev-parse HEAD)" != "$COMMIT" ]; then
+            echo "::error::the checkout is not the commit the build tested ($COMMIT)"
+            exit 1
+          fi
           mix local.hex 2.6.0 --force
-          if [ "$TODO" = docs ]; then mix hex.publish docs --yes; else mix hex.publish --yes; fi
+          case "$TODO" in
+            docs) mix hex.publish docs --yes ;;
+            package)
+              mix hex.build --output "fablebook-$V.tar"
+              sum="$(sha256sum "fablebook-$V.tar" | cut -d' ' -f1)"
+              if [ "$sum" != "$SHA256" ]; then
+                echo "::error::the rebuilt fablebook $V has checksum $sum, the build produced $SHA256"
+                exit 1
+              fi
+              mix hex.publish --yes ;;
+            *) echo "::error::unknown publish todo '$TODO'"; exit 1 ;;
+          esac
 
   smoke:
     needs: [build, publish]
@@ -154,7 +170,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.tag }}
+          ref: ${{ needs.build.outputs.sha }}
           persist-credentials: false
       - uses: ./.github/actions/setup
         with:
