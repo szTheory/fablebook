@@ -26,6 +26,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     :list_to_atom,
     :binary_to_existing_atom,
     :list_to_existing_atom,
+    :to_atom,
+    :to_existing_atom,
     :binary_to_term,
     :erl_eval,
     :erl_scan,
@@ -39,6 +41,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
   ]
 
   @mfa_tier [
+    {String, :to_atom, 1},
+    {String, :to_existing_atom, 1},
+    {List, :to_atom, 1},
+    {List, :to_existing_atom, 1},
     {Module, :concat, 1},
     {Module, :concat, 2},
     {Module, :safe_concat, 1},
@@ -65,7 +71,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"macro_quote.ex", {:atom, :eval_quoted}},
     {"interpolated_atom.ex", {:atom, :binary_to_atom}},
     {"dynamic_module.ex", {:mfa, {Module, :concat, 1}}},
-    {"banned_dep.ex", {:atom, Jason}}
+    {"banned_dep.ex", {:atom, Jason}},
+    {"apply_to_atom.ex", {:mfa, {String, :to_atom, 1}}}
   ]
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
