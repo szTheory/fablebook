@@ -168,7 +168,18 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"elixir_erl_compile.ex", {:mfa, {:elixir_erl, :compile, 2}}},
     {"cover_compile.ex", {:mfa, {:cover, :compile, 1}}},
     {"merl_compile.ex", {:mfa, {:merl, :compile, 1}}},
-    {"asn1ct_compile.ex", {:mfa, {:asn1ct, :compile, 1}}}
+    {"asn1ct_compile.ex", {:mfa, {:asn1ct, :compile, 1}}},
+    {"merl_compile_and_load.ex", {:mfa, {:merl, :compile_and_load, 1}}},
+    {"c_compile.ex", {:mfa, {:c, :c, 1}}},
+    {"make_files.ex", {:mfa, {:make, :files, 1}}},
+    {"cover_compile_module.ex", {:mfa, {:cover, :compile_module, 1}}},
+    {"load_nif.ex", {:mfa, {:erlang, :load_nif, 2}}},
+    {"erl_ddll_load.ex", {:mfa, {:erl_ddll, :load, 2}}},
+    {"epp_dodger_parse_file.ex", {:mfa, {:epp_dodger, :parse_file, 1}}},
+    {"elixir_erl_compiler.ex", {:mfa, {:elixir_erl_compiler, :noenv_forms, 3}}},
+    {"tokens_to_quoted.ex", {:mfa, {:elixir, :tokens_to_quoted, 3}}},
+    {"iex_helpers_c.ex", {:mfa, {IEx.Helpers, :c, 1}}},
+    {"mix_run.ex", {:mfa, {Mix.Tasks.Run, :run, 1}}}
   ]
 
   @beam_only_fixtures ~w(
@@ -211,6 +222,17 @@ defmodule Fablebook.Contract.BannedCallsTest do
     cover_compile.ex
     merl_compile.ex
     asn1ct_compile.ex
+    merl_compile_and_load.ex
+    c_compile.ex
+    make_files.ex
+    cover_compile_module.ex
+    load_nif.ex
+    erl_ddll_load.ex
+    epp_dodger_parse_file.ex
+    elixir_erl_compiler.ex
+    tokens_to_quoted.ex
+    iex_helpers_c.ex
+    mix_run.ex
   )
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
@@ -318,13 +340,26 @@ defmodule Fablebook.Contract.BannedCallsTest do
       Fablebook.GuardFixture.StrictList => [],
       Fablebook.GuardFixture.StrictMapFields => [],
       Fablebook.GuardFixture.StrictComputed => [],
-      Fablebook.GuardFixture.StrictMixTask => [],
+      Fablebook.GuardFixture.StrictMixTask => [
+        {:mfa, {Mix.Task, :run, 2}},
+        {:mfa, {Mix.Task, :run, :_}}
+      ],
       Fablebook.GuardFixture.StrictQlcString => [
         {:mfa, {:qlc, :string_to_handle, 1}},
         {:mfa, {:qlc, :string_to_handle, :_}}
       ],
-      Fablebook.GuardFixture.StrictNativeLoad => [],
-      Fablebook.GuardFixture.StrictParser => []
+      Fablebook.GuardFixture.StrictNativeLoad => [
+        {:mfa, {:erlang, :load_nif, 2}},
+        {:mfa, {:erlang, :load_nif, :_}}
+      ],
+      Fablebook.GuardFixture.StrictParser => [
+        {:mfa, {:epp_dodger, :parse_file, 1}},
+        {:mfa, {:epp_dodger, :parse_file, :_}},
+        {:mfa, {:epp_dodger, :_, :_}}
+      ],
+      Fablebook.GuardFixture.StrictInt => [{:mfa, {:int, :i, :_}}],
+      Fablebook.GuardFixture.StrictPathConsult => [],
+      Fablebook.GuardFixture.StrictCtMake => []
     }
 
     source = Path.join(dir, "strict.ex")
@@ -459,6 +494,18 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     defmodule Fablebook.GuardFixture.StrictParser do
       def run(path), do: :epp_dodger.parse_file(path)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictInt do
+      def run(args), do: apply(:int, :i, args)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictPathConsult do
+      def run(dirs, file), do: :file.path_consult(dirs, file)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictCtMake do
+      def run(files), do: :ct_make.files(files, [:load])
     end
     """)
 
