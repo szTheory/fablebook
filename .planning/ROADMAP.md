@@ -132,7 +132,10 @@ Plans:
 **Plans:** 0/2 plans executed
 
 Plans:
+**Wave 1**
 - [ ] 01.1-01-PLAN.md — Atom-constructor, runtime compile/load/eval and atom-creating parser bans in both layers, mix.exs scan made non-vacuous (CR-01, WR-03, WR-02); contract-test-only PR
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01.1-02-PLAN.md — hex-publish publishes only main commits, docs-only recovery converges, step-scoped HEX_API_KEY (WR-05, WR-06, IN-04); SEC-02 marked complete; owner questions Q35 to Q37
 
 ### Phase 2: Walking skeleton and runner spike
