@@ -104,7 +104,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   test "the Credo check bans the same names and flags the source-level fixtures" do
-    {:ok, _} = Application.ensure_all_started(:credo)
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
 
     assert BannedCalls.banned_names() == Enum.sort(@atom_tier)
 

@@ -68,17 +68,72 @@ defmodule Fablebook.Contract.DependencyBudgetTest do
     end
   end
 
-  defp classify(_deps), do: %{required: @required}
+  defp classify(deps), do: Enum.group_by(deps, &kind/1, &elem(&1, 0))
 
-  defp violations(_deps), do: []
+  defp kind(dep) do
+    opts = opts(dep)
+
+    cond do
+      opts[:optional] -> :optional
+      :prod in List.wrap(Keyword.get(opts, :only, :prod)) -> :required
+      true -> :tool
+    end
+  end
+
+  defp opts({_name, opts}) when is_list(opts), do: opts
+  defp opts({_name, _requirement, opts}), do: opts
+  defp opts(_dep), do: []
+
+  defp violations(deps) do
+    groups = classify(deps)
+    required = Map.get(groups, :required, [])
+    optional = Map.get(groups, :optional, [])
+
+    Enum.concat([
+      for(dep <- deps, banned?(elem(dep, 0)), do: {:banned_direct, elem(dep, 0)}),
+      for(name <- required -- @required, do: {:unexpected_required, name}),
+      for(name <- @required -- required, do: {:missing_required, name}),
+      for(name <- optional -- @optional_allowed, do: {:optional_not_allowed, name}),
+      for(
+        dep <- deps,
+        opts(dep)[:optional] && Keyword.has_key?(opts(dep), :only),
+        do: {:optional_with_only, elem(dep, 0)}
+      )
+    ])
+  end
 
   defp roots, do: Enum.map(@required, &Atom.to_string/1)
 
-  defp closure(roots, _requirements), do: roots
+  defp closure(roots, requirements), do: walk(roots, [], requirements)
 
-  defp hex_requirements(_app), do: []
+  defp walk([], seen, _requirements), do: Enum.reverse(seen)
 
-  defp requirements(_entries), do: []
+  defp walk([app | rest], seen, requirements) do
+    if app in seen,
+      do: walk(rest, seen, requirements),
+      else: walk(rest ++ requirements.(app), [app | seen], requirements)
+  end
 
-  defp banned_in(_apps), do: []
+  defp hex_requirements(app) do
+    {:ok, metadata} =
+      :file.consult(Path.join([Mix.Project.deps_path(), app, "hex_metadata.config"]))
+
+    "requirements" |> :proplists.get_value(metadata, []) |> requirements()
+  end
+
+  defp requirements(entries), do: Enum.flat_map(entries, &required_app/1)
+
+  defp required_app({name, entry}), do: required_app(Map.put_new(Map.new(entry), "app", name))
+  defp required_app(entry) when is_list(entry), do: required_app(Map.new(entry))
+  defp required_app(%{"optional" => false} = entry), do: [entry["app"] || entry["name"]]
+  defp required_app(%{}), do: []
+
+  defp banned_in(apps), do: Enum.filter(apps, &banned?/1)
+
+  defp banned?(app) do
+    name = to_string(app)
+
+    name in Enum.map(@banned, &Atom.to_string/1) or
+      Regex.match?(Regex.compile!(@banned_pattern), name)
+  end
 end

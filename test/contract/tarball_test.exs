@@ -97,11 +97,56 @@ defmodule Fablebook.Contract.TarballTest do
     Enum.sort(lib ++ @top_level ++ ["hex_metadata.config"])
   end
 
-  defp relative_files(_root), do: []
+  defp relative_files(root) do
+    for path <- Path.wildcard(Path.join(root, "**"), match_dot: true),
+        File.regular?(path),
+        do: Path.relative_to(path, root)
+  end
 
-  defp file_violations(_files, _expected), do: []
+  defp file_violations(files, expected) do
+    Enum.concat([
+      for(file <- expected -- files, do: {:missing, file}),
+      for(file <- files -- expected, do: {:unexpected, file}),
+      for(file <- files, denied?(file), do: {:denied, file})
+    ])
+  end
 
-  defp metadata_violations(_metadata), do: []
+  defp denied?(file) do
+    base = Path.basename(file)
 
-  defp pii_hits(_contents), do: []
+    String.starts_with?(file, @denied_prefixes) or Path.extname(file) in @denied_extensions or
+      base == ".DS_Store" or String.starts_with?(base, ".env")
+  end
+
+  defp metadata_violations(metadata) do
+    meta = Map.new(metadata)
+    requirements = Enum.map(meta["requirements"], &Map.new/1)
+    names = fn optional -> for r <- requirements, r["optional"] == optional, do: r["app"] end
+
+    [
+      identity: meta["name"] == "fablebook" and meta["app"] == "fablebook",
+      version: meta["version"] == Mix.Project.config()[:version],
+      licenses: meta["licenses"] == ["MIT"],
+      required: Enum.sort(names.(false)) == Enum.sort(@required),
+      optional: names.(true) -- @optional_allowed == [],
+      banned: not Enum.any?(requirements, &banned?(&1["app"] || &1["name"])),
+      files: Enum.all?(meta["files"], &packaged?/1)
+    ]
+    |> Enum.reject(&elem(&1, 1))
+    |> Enum.map(&elem(&1, 0))
+  end
+
+  defp packaged?(file),
+    do: file == "lib" or String.starts_with?(file, "lib/") or file in @top_level
+
+  defp banned?(app),
+    do: app in @banned or Regex.match?(Regex.compile!(@banned_pattern), app)
+
+  defp pii_hits(contents) do
+    regexes = Enum.map(@pii_patterns, &Regex.compile!/1)
+
+    for {path, text} <- contents,
+        Enum.any?(regexes, &Regex.match?(&1, text)),
+        do: path
+  end
 end
