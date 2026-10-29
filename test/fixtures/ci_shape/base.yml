@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 3 * * *'
+    - cron: '23 5 * * 1'
+
+permissions:
+  contents: read
+
+env:
+  EVENT_BEFORE: ${{ github.event.before }}
+
+jobs:
+  core:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: mix ci
+
+  nightly:
+    if: github.event.schedule == '17 3 * * *' || startsWith(github.head_ref, 'release-please--')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bin/smoke_consumer --path .
+      - if: failure()
+        run: bin/ci_health --file-regression nightly
+
+  ci-gate:
+    if: always()
+    needs: [core, nightly]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - env:
+          NEEDS: ${{ toJSON(needs) }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          echo "$NEEDS" | jq -e --arg ref "$HEAD_REF" 'to_entries | all(
+            .value.result == "success" or
+            (.key == "nightly" and .value.result == "skipped" and ($ref | startswith("release-please--") | not)))'
+
+  ci-health:
+    if: github.event.schedule == '23 5 * * 1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: mix test test/contract/ci_shape_test.exs
+      - if: failure()
+        run: bin/ci_health --file-regression ci-health
