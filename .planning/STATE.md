@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 current_phase: 1
 current_phase_name: Release pipeline, CI gate and guards
 status: executing
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-10-29T00:52:56.061Z"
+stopped_at: 01-05 Task 4 (Hex publish approval)
+last_updated: "2026-10-29T02:00:00.000Z"
 last_activity: 2026-10-28
-last_activity_desc: Phase 1 execution started
+last_activity_desc: PR #1 merged; D-22 red run and dispatched ci-health and nightly done; 0.1.0 release PR awaiting the owner
 state_head: aad6aa231024a41321f3e4a66a6f4ce1fbcd3315
 progress:
   total_phases: 35
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-10-28)
 
 Phase: 1 (Release pipeline, CI gate and guards) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
-Last activity: 2026-10-28 — Phase 1 execution started
+Status: Awaiting the owner at 01-05 Task 4 (publish 0.1.0)
+Last activity: 2026-10-28 — PR #1 merged; release PR #3 proposes 0.1.0
 
 Progress: [░░░░░░░░░░] 0%
 
