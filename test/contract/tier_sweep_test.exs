@@ -2,6 +2,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   use ExUnit.Case, async: false
 
   alias Fablebook.Credo.BannedCalls
+  @compile {:no_warn_undefined, :xref}
 
   Code.ensure_loaded?(BannedCalls) ||
     Code.require_file(Path.expand("../../credo/checks/banned_calls.ex", __DIR__))
@@ -38,7 +39,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     iex_console:
       "IEx console internal, reached only inside a running IEx through the banned IEx front doors",
     fixed_app:
-      "puts only a named OTP application or Mix's own archive directory on the code path; loads no caller code"
+      "puts only a named OTP application or Mix's own archive directory on the code path; loads no caller code",
+    fixed_args: "calls a code-loading front door only with arguments fixed in its own source"
   }
 
   @exclusions [
@@ -77,10 +79,6 @@ defmodule Fablebook.Contract.TierSweepTest do
     {{:elixir_erl, [:definition_to_anonymous]}, :expansion},
     {Exception, :own_clauses},
     {FunctionClauseError, :own_clauses},
-    {ExUnit.AssertionError, :own_clauses},
-    {ExUnit.CLIFormatter, :own_clauses},
-    {ExUnit.Diff, :own_clauses},
-    {ExUnit.Formatter, :own_clauses},
     {{Protocol, [:consolidate]}, :compiler_pass},
     {{:elixir_erl, [:compile, :consolidate, :debug_info]}, :compiler_pass},
     {:erl_abstract_code, :compiler_pass},
@@ -100,15 +98,12 @@ defmodule Fablebook.Contract.TierSweepTest do
     {Mix.AppLoader, :project_build},
     {Mix.Compilers.Elixir, :project_build},
     {Mix.Compilers.Protocol, :project_build},
-    {Mix.Dep, :project_build},
     {Mix.Dep.Converger, :project_build},
     {Mix.Dep.Fetcher, :project_build},
-    {Mix.Dep.Loader, :project_build},
     {Mix.Dep.Umbrella, :project_build},
     {Mix.Hex, :project_build},
     {{Mix.Project, [:compile, :deps_apps, :deps_paths, :deps_scms, :deps_tree]}, :project_build},
     {Mix.Release, :project_build},
-    {Mix.Task, :project_build},
     {Mix.Task.Compiler, :project_build},
     {{:prefix, "Mix.Tasks.App."}, :project_build},
     {{:prefix, "Mix.Tasks.Compile"}, :project_build},
@@ -120,14 +115,11 @@ defmodule Fablebook.Contract.TierSweepTest do
     {Mix.Tasks.Do, :project_build},
     {Mix.Tasks.Escript.Build, :project_build},
     {Mix.Tasks.Escript.Uninstall, :project_build},
-    {Mix.Tasks.Format, :project_build},
-    {Mix.Tasks.Help, :project_build},
     {Mix.Tasks.Loadpaths, :project_build},
     {Mix.Tasks.Local.Hex, :project_build},
     {Mix.Tasks.New, :project_build},
     {Mix.Tasks.Release, :project_build},
     {Mix.Tasks.Source, :project_build},
-    {Mix.Tasks.Test.Coverage, :project_build},
     {Mix.Tasks.Xref, :project_build},
     {{:code, [:ensure_loaded, :ensure_modules_loaded, :load_file]}, :by_name},
     {:cover, :cover_server},
@@ -154,15 +146,45 @@ defmodule Fablebook.Contract.TierSweepTest do
     {IEx.Introspection, :iex_console},
     {{Mix, [:start]}, :callback},
     {:sasl, :callback},
-    {Mix.Compilers.Erlang, :project_build},
     {{:prefix, "Mix.Tasks.Local."}, :project_build},
     {{Mix.Local,
       [:find_matching_versions!, :find_matching_versions_from_signed_csv!, :decode_pk!]},
      :project_build},
-    {{Mix.Local, [:append_archives, :append_paths]}, :fixed_app},
     {{Mix.Utils, [:read_path]}, :fixed_app},
     {:asn1_db, :compiler_pass},
-    {{:prefix, ":asn1ct_"}, :compiler_pass}
+    {{:prefix, ":asn1ct_"}, :compiler_pass},
+    {{Mix.Tasks.Phx, [:run]}, :fixed_args, "phoenix/lib/mix/tasks/phx.ex:25"},
+    {{Mix.Tasks.Phx.Digest, [:run]}, :project_build, "phoenix/lib/mix/tasks/phx.digest.ex:58"},
+    {{Mix.Tasks.Phx.Digest.Clean, [:run]}, :project_build,
+     "phoenix/lib/mix/tasks/phx.digest.clean.ex:43"},
+    {{Mix.Phoenix, [:context_app_path, :context_lib_path, :context_test_path]}, :project_build,
+     [
+       "phoenix/lib/mix/phoenix.ex:230",
+       "phoenix/lib/mix/phoenix.ex:249",
+       "phoenix/lib/mix/phoenix.ex:256"
+     ]},
+    {{Mix.Task, [:reenable]}, :project_build, "mix/lib/mix/task.ex:631"},
+    {{Mix.Task, [:preferred_cli_env]}, :project_build, "mix/lib/mix/task.ex:270"},
+    {{Mix.Tasks.Test.Coverage, [:run]}, :project_build, "mix/lib/mix/tasks/test.coverage.ex:146"},
+    {{Mix.Tasks.Test.Coverage, [:generate_cover_results]}, :cover_server,
+     "mix/lib/mix/tasks/test.coverage.ex:273"},
+    {{Mix.Dep, [:cached, :load_and_cache]}, :project_build,
+     ["mix/lib/mix/dep.ex:95", "mix/lib/mix/dep.ex:113"]},
+    {{Mix.Dep.Loader, [:children]}, :project_build, "mix/lib/mix/dep/loader.ex:21"},
+    {{Mix.Compilers.Erlang, [:compile_entries]}, :project_build,
+     "mix/lib/mix/compilers/erlang.ex:107"},
+    {{Mix, [:stop]}, :callback, "mix/lib/mix.ex:470"},
+    {{Phoenix.LiveView.TagEngine, [:handle_body]}, :callback,
+     "phoenix_live_view/lib/phoenix_live_view/tag_engine.ex:184"},
+    {{Phoenix.CodeReloader.Server, [:handle_call]}, :callback,
+     "phoenix/lib/phoenix/code_reloader/server.ex:90"},
+    {{Phoenix.ActionClauseError, [:blame, :message]}, :own_clauses,
+     "phoenix/lib/phoenix/exceptions.ex:50"},
+    {{Plug.Debugger, [:render, :__catch__]}, :own_clauses,
+     ["plug/lib/plug/debugger.ex:170", "plug/lib/plug/debugger.ex:205"]},
+    {{Plug.Builder, [:compile]}, :expansion, "plug/lib/plug/builder.ex:324"},
+    {{Phoenix.Controller.Pipeline, [:__action_fallback__]}, :expansion,
+     "phoenix/lib/phoenix/controller/pipeline.ex:39"}
   ]
 
   @eval_funs [:eval_str, :expr, :expr_list, :exprs, :match_clause]
@@ -219,15 +241,14 @@ defmodule Fablebook.Contract.TierSweepTest do
     dirs = Enum.uniq(otp_dirs ++ elixir_dirs ++ dep_dirs)
     missing_apps = missing_apps(otp_lib, elixir_dirs, dep_dirs)
 
-    {:ok, _} = apply(:xref, :start, [:tier_sweep, [xref_mode: :functions]])
+    {:ok, _} = :xref.start(:tier_sweep, xref_mode: :functions)
 
-    :ok =
-      apply(:xref, :set_default, [:tier_sweep, [warnings: false, verbose: false, builtins: true]])
+    :ok = :xref.set_default(:tier_sweep, warnings: false, verbose: false, builtins: true)
 
-    for dir <- dirs, do: apply(:xref, :add_directory, [:tier_sweep, String.to_charlist(dir)])
-    {:ok, xref_edges} = apply(:xref, :q, [:tier_sweep, ~c"E"])
-    {:ok, exported} = apply(:xref, :q, [:tier_sweep, ~c"X"])
-    apply(:xref, :stop, [:tier_sweep])
+    for dir <- dirs, do: :xref.add_directory(:tier_sweep, String.to_charlist(dir))
+    {:ok, xref_edges} = :xref.q(:tier_sweep, ~c"E")
+    {:ok, exported} = :xref.q(:tier_sweep, ~c"X")
+    :xref.stop(:tier_sweep)
     {form_edges, no_debug} = form_edges(dirs)
     edges = form_edges ++ for({caller, {m, f, _}} <- xref_edges, do: {caller, {m, f}})
     reverse = reverse(edges)
@@ -322,26 +343,37 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp form_edges(dirs) do
-    for dir <- dirs,
-        file <- File.ls!(dir),
-        String.ends_with?(file, ".beam"),
-        reduce: {[], []} do
-      {edges, missing} ->
-        path = String.to_charlist(Path.join(dir, file))
+    beams =
+      for dir <- dirs, file <- File.ls!(dir), String.ends_with?(file, ".beam"), do: {dir, file}
 
-        with {:ok, {mod, [debug_info: {:debug_info_v1, backend, data}]}} when data != :none <-
-               :beam_lib.chunks(path, [:debug_info]),
-             {:ok, forms} <- backend.debug_info(:erlang_v1, mod, data, []) do
-          functions =
-            for {:function, _, name, arity, _} = form <- forms,
-                {name, arity} != {:__info__, 1},
-                edge <- function_edges(mod, form),
-                do: edge
+    Enum.reduce(beams, {[], []}, fn {dir, file}, acc -> collect_beam_edges(dir, file, acc) end)
+  end
 
-          {functions ++ edges, missing}
-        else
-          _ -> {edges, [file | missing]}
-        end
+  defp collect_beam_edges(dir, file, {edges, missing}) do
+    path = String.to_charlist(Path.join(dir, file))
+
+    case debug_edges(path) do
+      {:ok, found} -> {found ++ edges, missing}
+      :error -> {edges, [file | missing]}
+    end
+  end
+
+  defp debug_edges(path) do
+    with {:ok, {mod, [debug_info: {:debug_info_v1, backend, data}]}} when data != :none <-
+           :beam_lib.chunks(path, [:debug_info]),
+         {:ok, forms} <- backend.debug_info(:erlang_v1, mod, data, []) do
+      found =
+        Enum.flat_map(forms, fn
+          {:function, _, name, arity, _} = form when {name, arity} != {:__info__, 1} ->
+            function_edges(mod, form)
+
+          _form ->
+            []
+        end)
+
+      {:ok, found}
+    else
+      _result -> :error
     end
   end
 
@@ -412,6 +444,9 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp exclusion_reason(m, f) do
     Enum.find_value(@exclusions, fn
+      {matcher, reason, _citation} ->
+        if exclusion_match?(matcher, m, f), do: known_reason(reason)
+
       {{^m, functions}, reason} when is_list(functions) ->
         if f in functions, do: known_reason(reason)
 
@@ -428,6 +463,18 @@ defmodule Fablebook.Contract.TierSweepTest do
         nil
     end)
   end
+
+  defp exclusion_match?({matcher_m, functions}, m, f) when is_list(functions),
+    do: matcher_m == m and f in functions
+
+  defp exclusion_match?({:prefix, prefix}, m, _f), do: String.starts_with?(inspect(m), prefix)
+
+  defp exclusion_match?({:fun_prefix, prefix}, _m, f),
+    do: String.starts_with?(Atom.to_string(f), prefix)
+
+  defp exclusion_match?({matcher_m, matcher_f}, m, f), do: matcher_m == m and matcher_f == f
+
+  defp exclusion_match?(_matcher, _m, _f), do: false
 
   defp known_reason(reason) do
     if Map.has_key?(@reasons, reason), do: reason
