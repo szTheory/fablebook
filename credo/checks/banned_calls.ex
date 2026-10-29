@@ -39,10 +39,7 @@ defmodule Fablebook.Credo.BannedCalls do
       passed in or computed at runtime. Nor does either layer match a dispatch
       by name inside OTP or Elixir.
       The Phase 5 atom-count property and never-eval proof (ADR 0004) cover
-      those. Front doors the reachability sweep has not yet disposed, such as
-      `Mix.Tasks.Format.formatter_for_file/2`, `Mix.Phoenix.eval_from/3` and
-      `Mix.Tasks.Phx.Server.run/1`, pass both layers until the reachability
-      sweep lands. Unlisted atom creators are open and owned by Phase 01.1.1.1:
+      those. Unlisted atom creators are open and owned by Phase 01.1.1.1:
       a direct call to a function that turns caller-chosen text or files into
       atoms that no tier lists yet, such as `:file.path_consult/2`, passes both
       layers until that phase bans it. Eval front doors in installed OTP apps
@@ -255,7 +252,72 @@ defmodule Fablebook.Credo.BannedCalls do
           {:dbg_iserver, :safe_call, :_},
           {:dbg_iserver, :handle_call, :_},
           {:dbg_iload, :load_mod, :_},
-          {:dbg_debugged, :eval, :_}
+          {:dbg_debugged, :eval, :_},
+          {Mix.Tasks.Format, :formatter_for_file, :_},
+          {Mix.Tasks.Help, :run, :_},
+          {Mix.Compilers.Erlang, :ensure_application!, 2},
+          {Mix.Tasks.Test.Coverage, :start, 2},
+          {Mix.Dep, :in_dependency, 3},
+          {ExUnit.Diff, :compute, 3},
+          {Mix.Local, :append_paths, 0},
+          {Mix.Local, :append_archives, 0},
+          {Mix.Local, :remove_paths, 0},
+          {Mix.Local, :remove_archives, 0},
+          {Mix.Phoenix, :eval_from, 3},
+          {Mix.Phoenix, :copy_from, 4},
+          {Mix.Phoenix.Context, :new, :_},
+          {Mix.Phoenix.Schema, :new, 4},
+          {Mix.Tasks.Phx.Server, :run, 1},
+          {Mix.Tasks.Phx.Routes, :run, :_},
+          {Mix.Tasks.Phx.Gen.Context, :build, 1},
+          {Mix.Tasks.Phx.Gen.Context, :build, 2},
+          {Mix.Tasks.Phx.Gen.Context, :run, 1},
+          {Mix.Tasks.Phx.Gen.Context, :copy_new_files, 3},
+          {Mix.Tasks.Phx.Gen.Context, :ensure_context_file_exists, 3},
+          {Mix.Tasks.Phx.Gen.Context, :ensure_test_file_exists, 3},
+          {Mix.Tasks.Phx.Gen.Context, :ensure_test_fixtures_file_exists, 3},
+          {Mix.Tasks.Phx.Gen.Embedded, :build, 1},
+          {Mix.Tasks.Phx.Gen.Embedded, :run, 1},
+          {Mix.Tasks.Phx.Gen.Embedded, :copy_new_files, 3},
+          {Mix.Tasks.Phx.Gen.Live, :run, 1},
+          {Mix.Tasks.Phx.Gen.Presence, :run, 1},
+          {Mix.Tasks.Phx.Gen.Notifier, :build, 1},
+          {Mix.Tasks.Phx.Gen.Notifier, :build, 2},
+          {Mix.Tasks.Phx.Gen.Notifier, :run, 1},
+          {Mix.Tasks.Phx.Gen.Schema, :build, 2},
+          {Mix.Tasks.Phx.Gen.Schema, :build, 3},
+          {Mix.Tasks.Phx.Gen.Schema, :copy_new_files, 3},
+          {Mix.Tasks.Phx.Gen.Schema, :run, 1},
+          {Mix.Tasks.Phx.Gen.Auth, :run, 1},
+          {Mix.Tasks.Phx.Gen.Auth, :run, 2},
+          {Mix.Tasks.Phx.Gen.Json, :run, 1},
+          {Mix.Tasks.Phx.Gen.Json, :copy_new_files, 3},
+          {Mix.Tasks.Phx.Gen.Html, :run, 1},
+          {Mix.Tasks.Phx.Gen.Html, :copy_new_files, 3},
+          {Mix.Tasks.Phx.Gen.Channel, :run, 1},
+          {Mix.Tasks.Phx.Gen.Socket, :run, 1},
+          {Mix.Tasks.Phx.Gen.Release, :run, 1},
+          {Phoenix.LiveView.TagEngine.Parser, :tokenize, 2},
+          {Phoenix.LiveView.TagEngine.Parser, :parse, :_},
+          {Phoenix.LiveView.TagEngine.Parser, :parse!, :_},
+          {Phoenix.LiveView.HTMLFormatter, :format, 2},
+          {Phoenix.Router.Helpers, :define, 2},
+          {ExUnit.AssertionError, :message, 1},
+          {ExUnit.Formatter, :format_assertion_error, 1},
+          {ExUnit.Formatter, :format_assertion_diff, 4},
+          {ExUnit.Formatter, :format_test_failure, 5},
+          {ExUnit.Formatter, :format_test_case_failure, 5},
+          {ExUnit.Formatter, :format_test_all_failure, 5},
+          {ExUnit.CLIFormatter, :handle_cast, 2},
+          {Mix.Task, :rerun, 1},
+          {Mix.Task, :rerun, 2},
+          {Mix.Task, :run_in_apps, 2},
+          {Mix.Task, :run_in_apps, 3},
+          {Mix.Tasks.Format, :run, 1},
+          {Mix.Tasks.Format, :formatter_opts_for_file, 1},
+          {Mix.Tasks.Format, :formatter_opts_for_file, 2},
+          {Mix.Dep, :in_dependency, 2},
+          {Mix.Dep.Loader, :load, 3}
         ])
 
   @aliases for name <- @names, match?("Elixir." <> _, Atom.to_string(name)), do: inspect(name)

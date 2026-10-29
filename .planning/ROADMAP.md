@@ -161,14 +161,14 @@ Plans:
   6. A pair-tier call fails CI when a `lib/` macro quotes it (`quote(do: Module.concat(unquote(x)))`, quoted `:file.script/1`, quoted `apply(:erlang, :load_module, ...)`, a `__using__` that injects `:erlang.load_module/2`) and when module-body code makes it (`@r apply(:file, :script, [...])`, `@m Module.concat([...])`), on both lanes, each with a negative fixture (VR-01, WR-11). The `mix.exs` scan also matches the `apply/3`, alias and newline-after-dot spellings (WR-12).
   7. Every caught, over-caught and missed claim in the Credo explanation matches a fixture or a known-strictness row, "anywhere in function code" is true or gone, and a human wording check is recorded (truth 6).
   8. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
-**Plans:** 1/5 plans executed
+**Plans:** 2/5 plans executed
 
 Plans:
 **Wave 1**
 - [x] 01.1.1-01-PLAN.md — Walker fixes: scan user-defined `__info__` of other arities (SC5) and stop flagging called function names, with the banned `compile`-named functions made tier entries first (SC3)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01.1.1-02-PLAN.md — Tier extension: the 80 swept candidates, `Mix.Task.run`, every code-path mutator, the barrier and sink-primitive front doors (`code_server`, `erts_internal:prepare_loading`, `init` make_permanent and restart) and every interpret, eval and load front door of the debugger app's eight interpreter modules, twelve truth-7 fixtures, the Credo MFA mirror and a generated probe proving every entry live (SC2, SC4); the rest of the debugger app and the other unswept OTP apps stay open with Phase 01.1.1.1 (StrictCtMake)
+- [x] 01.1.1-02-PLAN.md — Tier extension: the 80 swept candidates, `Mix.Task.run`, every code-path mutator, the barrier and sink-primitive front doors (`code_server`, `erts_internal:prepare_loading`, `init` make_permanent and restart) and every interpret, eval and load front door of the debugger app's eight interpreter modules, twelve truth-7 fixtures, the Credo MFA mirror and a generated probe proving every entry live (SC2, SC4); the rest of the debugger app and the other unswept OTP apps stay open with Phase 01.1.1.1 (StrictCtMake)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 01.1.1-03-PLAN.md — The reachability sweep as a both-lane contract test over OTP, Elixir and the runtime dependencies derived from mix.exs, with every exclusion known false replaced (SC1, SC2); sweeping the other installed OTP apps moves to Phase 01.1.1.1
