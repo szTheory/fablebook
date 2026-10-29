@@ -1,17 +1,17 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 1
-current_phase_name: Release pipeline, CI gate and guards
+current_phase: "01.1"
+current_phase_name: Close phase 1 guard gaps (INSERTED)
 status: executing
 stopped_at: Completed 01-05-PLAN.md
-last_updated: "2026-10-29T02:18:02.390Z"
-last_activity: 2026-10-28
-last_activity_desc: 0.1.0 published; closing PR drops release-as and carries the 01-05 SUMMARY
-state_head: f8e5a3b61e6f301f9d478733b21cd1359e99edb1
+last_updated: "2026-10-29T10:47:58.223Z"
+last_activity: 2026-10-29
+last_activity_desc: Phase 01.1 execution started
+state_head: 06aae5eafdebaf8bcb2dfef0ee4a68ecc8bc75e0
 progress:
-  total_phases: 35
+  total_phases: 36
   completed_phases: 0
-  total_plans: 5
+  total_plans: 7
   completed_plans: 5
   percent: 0
 ---
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-28)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 1 — Release pipeline, CI gate and guards
+**Current focus:** Phase 01.1 — Close phase 1 guard gaps (INSERTED)
 
 ## Current Position
 
-Phase: 1 (Release pipeline, CI gate and guards) — EXECUTING
-Plan: 5 of 5
-Status: All 5 plans executed; phase verification next
-Last activity: 2026-10-28 — 0.1.0 published to Hex; closing PR drops release-as
+Phase: 01.1 (Close phase 1 guard gaps (INSERTED)) — EXECUTING
+Plan: 1 of 2
+Status: Executing Phase 01.1
+Last activity: 2026-10-29 — Phase 01.1 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -96,6 +96,10 @@ None yet.
 - [Phase 3 onward]: LiveView 1.2 upgrade PRs in the dogfood repos should start early (Q2, Q22), so the 14-day soak is not reset at the end.
 - [Phase 17 and 18]: depend on abracabrand's two-session process; keep the minimal-token fallback so the phase can merge.
 - [Phases 2 and 18]: neither completes a requirement on its own (a vertical slice and a content track); they feed QA-04, VIS-01/02 and QA-06.
+
+### Roadmap Evolution
+
+- Phase 01.1 inserted after Phase 1: Close phase 1 guard gaps (atom-ban bypass, code loading, hex-publish hardening); split per INT-20261029-01 to keep the 5-plan cap (URGENT)
 
 ## Deferred Items
 

@@ -26,6 +26,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     :list_to_atom,
     :binary_to_existing_atom,
     :list_to_existing_atom,
+    :to_atom,
+    :to_existing_atom,
     :binary_to_term,
     :erl_eval,
     :erl_scan,
@@ -39,6 +41,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
   ]
 
   @mfa_tier [
+    {String, :to_atom, 1},
+    {String, :to_existing_atom, 1},
+    {List, :to_atom, 1},
+    {List, :to_existing_atom, 1},
     {Module, :concat, 1},
     {Module, :concat, 2},
     {Module, :safe_concat, 1},
@@ -46,9 +52,40 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {Module, :create, 3},
     {EEx, :_, :_},
     {Phoenix.LiveView.TagEngine, :compile, 2},
-    {:compile, :forms, :_},
-    {:compile, :file, :_},
-    {:code, :load_binary, 3}
+    {:compile, :_, :_},
+    {:code, :load_binary, 3},
+    {:erlang, :load_module, 2},
+    {:erlang, :prepare_loading, 2},
+    {:erlang, :finish_loading, 1},
+    {:code, :load_abs, :_},
+    {:code, :atomic_load, 1},
+    {:code, :prepare_loading, 1},
+    {:code, :finish_loading, 1},
+    {Kernel.ParallelCompiler, :_, :_},
+    {Code, :load_file, :_},
+    {:elixir, :quoted_to_erl, :_},
+    {:elixir_compiler, :_, :_},
+    {:elixir_module, :compile, :_},
+    {:elixir_tokenizer, :_, :_},
+    {:elixir_parser, :_, :_},
+    {:file, :script, :_},
+    {:file, :eval, :_},
+    {:file, :path_script, :_},
+    {:file, :path_eval, :_},
+    {:elixir, :eval_forms, :_},
+    {:io, :read, :_},
+    {:io, :parse_erl_exprs, :_},
+    {:io, :parse_erl_form, :_},
+    {:io, :scan_erl_exprs, :_},
+    {:io, :scan_erl_form, :_},
+    {:io, :fread, :_},
+    {:io_lib, :fread, :_},
+    {:epp, :_, :_},
+    {:xmerl_scan, :_, :_},
+    {:elixir, :string_to_tokens, :_},
+    {Code, :format_string!, :_},
+    {Code, :format_file!, :_},
+    {Code.Fragment, :container_cursor_to_quoted, :_}
   ]
 
   @allowlist []
@@ -65,8 +102,19 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"macro_quote.ex", {:atom, :eval_quoted}},
     {"interpolated_atom.ex", {:atom, :binary_to_atom}},
     {"dynamic_module.ex", {:mfa, {Module, :concat, 1}}},
-    {"banned_dep.ex", {:atom, Jason}}
+    {"banned_dep.ex", {:atom, Jason}},
+    {"apply_to_atom.ex", {:mfa, {String, :to_atom, 1}}},
+    {"apply_list_existing_atom.ex", {:mfa, {List, :to_existing_atom, 1}}},
+    {"function_capture_to_atom.ex", {:mfa, {String, :to_atom, 1}}},
+    {"erlang_apply_to_atom.ex", {:mfa, {String, :to_atom, 1}}},
+    {"default_arg_to_atom.ex", {:atom, :to_atom}},
+    {"load_module.ex", {:mfa, {:erlang, :load_module, 2}}},
+    {"internal_eval.ex", {:mfa, {:elixir_module, :compile, 6}}},
+    {"parallel_compiler.ex", {:mfa, {Kernel.ParallelCompiler, :require, 1}}},
+    {"file_script.ex", {:mfa, {:file, :script, 1}}}
   ]
+
+  @beam_only_fixtures ~w(dynamic_module.ex load_module.ex internal_eval.ex parallel_compiler.ex file_script.ex)
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
 
@@ -93,6 +141,46 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
+  test "the compiler-internal eval chain hits all three matchers", %{tmp_dir: dir} do
+    [beam] = compile!([Path.join(@fixture_dir, "internal_eval.ex")], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+
+    for mfa <- [
+          {:elixir_tokenizer, :tokenize, 4},
+          {:elixir_parser, :parse, 1},
+          {:elixir_module, :compile, 6}
+        ] do
+      assert {:mfa, mfa} in hits(scan)
+    end
+  end
+
+  test "every MFA matcher names an existing function" do
+    Mix.ensure_application!(:xmerl)
+
+    for {mod, name, arity} = entry <- @mfa_tier do
+      assert Code.ensure_loaded?(mod), "#{inspect(entry)} names a module that does not load"
+
+      assert Enum.any?(mod.module_info(:exports), &mfa_match?({name, arity}, &1)),
+             "#{inspect(entry)} matches no exported function"
+    end
+  end
+
+  test "every guard fixture is listed" do
+    on_disk =
+      @fixture_dir |> Path.join("*.ex") |> Path.wildcard() |> MapSet.new(&Path.basename/1)
+
+    assert on_disk == MapSet.new(@fixtures, &elem(&1, 0))
+  end
+
+  test "beam-only fixtures carry an MFA hit" do
+    hits = Map.new(@fixtures)
+
+    for file <- @beam_only_fixtures do
+      assert match?({:mfa, _}, hits[file]), "#{file} carries no MFA hit"
+    end
+  end
+
+  @tag :tmp_dir
   test "a module without debug info fails the guard", %{tmp_dir: dir} do
     source = Path.join(dir, "stripped.ex")
     File.write!(source, "defmodule Fablebook.GuardFixture.Stripped, do: def(ok, do: :ok)\n")
@@ -110,7 +198,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert BannedCalls.banned_names() == Enum.sort(@atom_tier)
 
     for path <- Path.wildcard(Path.join(@fixture_dir, "*.ex")),
-        Path.basename(path) != "dynamic_module.ex" do
+        Path.basename(path) not in @beam_only_fixtures do
       assert credo_issues(path) != [], "no Credo issue for #{Path.relative_to_cwd(path)}"
     end
 
@@ -131,15 +219,23 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   test "mix.exs names no banned call or module" do
-    text = File.read!("mix.exs")
+    assert mix_exs_hits(File.read!("mix.exs")) == []
+  end
 
-    hits =
-      for atom <- @atom_tier,
-          name = atom |> Atom.to_string() |> String.replace_prefix("Elixir.", ""),
-          Regex.match?(~r/(?<![\w.])#{Regex.escape(name)}(?![\w!?])/, text),
-          do: name
+  test "the mix.exs scan matches bare and qualified calls" do
+    assert mix_exs_hits("Code.eval_string(x)") == ["eval_string"]
+    assert mix_exs_hits(":erlang.binary_to_atom(x, :utf8)") == ["binary_to_atom"]
+    assert mix_exs_hits("Elixir.Telemetry.Metrics") == ["Telemetry.Metrics"]
+    assert mix_exs_hits("String.to_atom(x)") == ["to_atom"]
+    assert mix_exs_hits("eval_strings = 1") == []
+    assert mix_exs_hits("my_eval_string(x)") == []
+  end
 
-    assert hits == []
+  defp mix_exs_hits(text) do
+    for atom <- @atom_tier,
+        name = atom |> Atom.to_string() |> String.replace_prefix("Elixir.", ""),
+        Regex.match?(~r/(?<!\w)#{Regex.escape(name)}(?![\w!?])/, text),
+        do: name
   end
 
   defp credo_issues(path) do

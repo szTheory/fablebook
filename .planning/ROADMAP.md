@@ -34,6 +34,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 
 **Family 1: Walking skeleton**
 - [ ] **Phase 1: Release pipeline, CI gate and guards** - 0.1.0 published, three workflows with caps, intent test, prod guard, eval and atom bans
+- [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -108,6 +109,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
   2. A host that mounts Fablebook inside a false `dev_routes` block compiles cleanly in prod, while an unguarded mount fails with the canonical `CompileError` emitted from the macro's returned code; the CI prod build asserts no Fablebook routes and no story beams.
   3. A PR that adds a fourth workflow, grows `ci.yml` past 250 lines, removes the single `ci-gate`, edits an INT source, uses a malformed INT id, or adds a REQ line with no INT or ADR citation fails CI; PR p50 and p95 are published weekly from CI history.
   4. A PR that adds `Code.eval*`, runtime EEx/HEEx compilation, `String.to_atom` on input, a banned dependency in the prod closure, or a file outside the tarball allowlist fails CI.
+**Gap closure:** moved to Phase 01.1 per INT-20261029-01 (criterion 4's atom-ban share and the review's WR items).
 **Plans:** 5/5 plans executed
 
 Plans:
@@ -117,10 +119,29 @@ Plans:
 - [x] 01-04-PLAN.md — Intent, contract-rule and CI-shape guards; diff seam proven in a real repo; test-wiring pins; PR #1 green with every guard
 - [x] 01-05-PLAN.md — Signed ADR amendments, owner diff review and secrets, merge PR #1, D-22 red run, ci-health, publish 0.1.0, rotate key, PR #3 drops release-as with the last SUMMARY
 
+### Phase 01.1: Close phase 1 guard gaps (INSERTED)
+**Goal**: The atom and runtime-code bans that Phase 1's criterion 4 promises hold against every literal dispatch form, the release recovery path publishes only commits on main and converges, and Phase 1's open bookkeeping is closed, through two merged green PRs that keep the contract-test pairing (ADR 0021).
+**Depends on**: Phase 1
+**Requirements**: SEC-02, REL-01 (traceability stays on Phase 1; this phase closes their verification follow-ups)
+**Partial delivery**: SEC-01 (Phase 1's criterion-4 atom-ban share, re-homed here per INT-20261029-01; Phase 5 completes it with the atom-count property and mutation-proven tests).
+**Success Criteria** (what must be TRUE):
+  1. A PR that adds `String.to_atom`, `List.to_atom` or their existing-atom forms on input, through a direct call, `apply/3`, `:erlang.apply/3`, `Function.capture/3` or a default-argument function name, fails CI on both lanes, in the compiled-BEAM guard and in Credo (CR-01).
+  2. A PR that compiles, loads or evaluates code at runtime through one of the enumerated MFA-tier functions (`:erlang.load_module/2`, `:code.load_abs`, `:compile.*`, `Kernel.ParallelCompiler`, `:file.script`, the `:elixir_tokenizer` → `:elixir_parser` → `:elixir_module.compile/6` chain and the rest of the list), or creates atoms through one of the enumerated readers, scanners, parsers or formatters (`:io_lib.fread`, `:io.scan_erl_exprs`, `:epp`, `:xmerl_scan`, `Code.format_string!`, `:elixir.string_to_tokens` and the rest of the list), fails CI; every ban matcher is proven live on both lanes, and the `mix.exs` scan matches qualified calls (WR-03, WR-02).
+  3. `hex-publish.yml` refuses a tag whose commit is not on main, a recovery run after a docs-only failure uploads the docs, and `HEX_API_KEY` reaches only the steps that use it (WR-05 workflow half, WR-06, IN-04).
+  4. SEC-02 shows Complete with its CI run link, owner questions Q35 to Q37 are recorded, and the remaining info findings are tracked; the first PR touches no `lib/` or `.github/` file, the second no `test/contract/` or `test/planning/` file, and both are merged green.
+**Plans:** 0/2 plans executed
+
+Plans:
+**Wave 1**
+- [ ] 01.1-01-PLAN.md — Atom-constructor, runtime compile/load/eval and atom-creating parser bans in both layers, mix.exs scan made non-vacuous (CR-01, WR-03, WR-02); contract-test-only PR
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01.1-02-PLAN.md — hex-publish publishes only main commits, docs-only recovery converges, step-scoped HEX_API_KEY (WR-05, WR-06, IN-04); SEC-02 marked complete; owner questions Q35 to Q37
+
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
 **Mode:** mvp
-**Depends on**: Phase 1
+**Depends on**: Phase 01.1
 **Requirements**: None completed here (a vertical slice and a spike; see Partial delivery).
 **Partial delivery**: QA-04 (skeleton `hosts/operator`, completes in Phase 9), VIS-01 and VIS-02 (guards, complete in Phase 21), CANVAS-01 and SEC-03 (nonce CSP exercised, complete in Phase 7).
 **Provisional on:** Q9

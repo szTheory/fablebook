@@ -8,7 +8,16 @@ defmodule Fablebook.Credo.BannedCalls do
       atoms from input or references a banned dependency (ADR 0004, ADR 0018).
 
       Any call or atom literal with one of these names is flagged, whatever
-      the module, so aliases, imports, `apply/3` and captures are all caught.
+      the module. That covers aliases, imports, and `apply/3` or
+      `Function.capture/3` with a literal function name.
+
+      The compiled-BEAM guard in `test/contract/banned_calls_test.exs` is the
+      gate for every literal or compiled form, including alias forms that
+      never spell the banned module (D-23). Calls whose module and function
+      are computed at runtime, including reflection-dispatched eval through
+      `__info__/1` or `module_info/1` plus apply, are covered by neither static
+      layer. The Phase 5 atom-count property and never-eval proof (ADR 0004)
+      cover them.
       """
     ]
 
@@ -29,6 +38,8 @@ defmodule Fablebook.Credo.BannedCalls do
            :list_to_atom,
            :binary_to_existing_atom,
            :list_to_existing_atom,
+           :to_atom,
+           :to_existing_atom,
            :binary_to_term,
            :erl_eval,
            :erl_scan,
