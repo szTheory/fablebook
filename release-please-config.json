@@ -9,7 +9,6 @@
     ".": {
       "changelog-path": "CHANGELOG.md",
       "include-v-in-tag": true,
-      "release-as": "0.1.0",
       "exclude-paths": [".planning", "docs", "bench"]
     }
   }
