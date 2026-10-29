@@ -36,3 +36,4 @@ great DX also important and efficient so like not wasting our time or CI runner 
 [/pasted]
 
 ... very important high quality DX from the beginning docker compat easy for people to evaluate and try out the lib and install it to to upgrade it works great day 1 and ongoing intermediate and advanced used easy to keep up with install to upgrade to work with etc.... try to follow my intent every dimension of sotware quality ramped up to the max anything i missed fan out across all software quality dimensions etc but remember we are making the ultimate storybook like experience but for phoenix live view and this is for a new opengsd project
+
