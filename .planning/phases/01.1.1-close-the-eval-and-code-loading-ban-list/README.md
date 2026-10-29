@@ -4,8 +4,7 @@ These files came here from Phase 01.1 when CR-02 (01.1-VERIFICATION truth 7) mov
 
 | File | What it is |
 |------|------------|
-| `01.1.1-tier-sweep.exs` | Reachability sweep, formerly `01.1-tier-sweep.exs`. Run it from the repo root with `elixir` (not `mix`). It reads `@mfa_tier` and `@atom_tier` from `test/contract/banned_calls_test.exs`, walks back from the load primitives and the `:erl_eval` evaluators over xref plus literal-pair edges, prints every reached exported function that no tier covers and no exclusion explains, and exits 1 if any remain. `SWEEP_MODE=all` prints every row, and `SWEEP_MODE=witness` adds a call chain per row. |
-| `01.1.1-tier-sweep-exclusions.exs` | The sweep's exclusion list with one reason per entry, formerly `01.1-tier-sweep-exclusions.exs`. |
+| `test/contract/tier_sweep_test.exs` | The reachability sweep and its exclusions now live in this contract test; it supersedes both planning-directory sweep scripts. |
 
 The candidate 80-entry tier, along with the `:int` and code-path-mutator reasoning, is in Plan 01.1-03 as of commit `a3dab47` (`git show a3dab47:.planning/phases/01.1-close-phase-1-guard-gaps/01.1-03-PLAN.md`, Task 3 and the context's "Verified facts for the CR-02 tier"). Plan 01.1-03 no longer carries it. `@mfa_tier` stays at 45 entries on main after Phase 01.1, and against those 45 entries the sweep printed `undisposed=152` on both lanes at planning time. A re-run after the move (Elixir 1.20.4 / OTP 29.1.1, 2026-10-29) printed `reached=603 covered=96 excluded=355 undisposed=152` and exited 1.
 
