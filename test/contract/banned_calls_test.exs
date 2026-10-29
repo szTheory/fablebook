@@ -85,7 +85,27 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:elixir, :string_to_tokens, :_},
     {Code, :format_string!, :_},
     {Code, :format_file!, :_},
-    {Code.Fragment, :container_cursor_to_quoted, :_}
+    {Code.Fragment, :container_cursor_to_quoted, :_},
+    {Logger.Formatter, :compile, :_},
+    {EEx.Compiler, :compile, :_},
+    {Phoenix.Template.ExsEngine, :compile, :_},
+    {Phoenix.Template.EExEngine, :compile, :_},
+    {Phoenix.LiveView.Engine, :compile, :_},
+    {Phoenix.LiveView.HTMLEngine, :compile, :_},
+    {Phoenix.LiveView.TagEngine.Compiler, :compile, :_},
+    {:xref_compiler, :compile, :_},
+    {Mix.Compilers.Elixir, :compile, :_},
+    {Mix.Compilers.Erlang, :compile, :_},
+    {Mix.Tasks.Deps.Compile, :compile, :_},
+    {:erl_compile, :compile, :_},
+    {:erl_compile_server, :compile, :_},
+    {:leex, :compile, :_},
+    {:yecc, :compile, :_},
+    {Mix.Project, :compile, :_},
+    {:elixir_erl, :compile, :_},
+    {:cover, :compile, :_},
+    {:merl, :_, :_},
+    {:asn1ct, :_, :_}
   ]
 
   @allowlist []
@@ -121,7 +141,32 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"spawn_file_script.ex", {:mfa, {:file, :script, :_}}},
     {"erpc_file_script.ex", {:mfa, {:file, :script, :_}}},
     {"rpc_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
-    {"rpc_remote_load_module.ex", {:mfa, {:erlang, :load_module, :_}}}
+    {"rpc_remote_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
+    {"info_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
+    {"info_concat.ex", {:mfa, {Module, :concat, :_}}},
+    {"info_capture_script.ex", {:mfa, {:file, :script, :_}}},
+    {"info_arity_zero.ex", {:mfa, {:file, :script, :_}}},
+    {"logger_formatter_compile.ex", {:mfa, {Logger.Formatter, :compile, 1}}},
+    {"eex_compiler_compile.ex", {:mfa, {EEx.Compiler, :compile, 3}}},
+    {"exs_engine_compile.ex", {:mfa, {Phoenix.Template.ExsEngine, :compile, 2}}},
+    {"eex_engine_compile.ex", {:mfa, {Phoenix.Template.EExEngine, :compile, 2}}},
+    {"liveview_engine_compile.ex", {:mfa, {Phoenix.LiveView.Engine, :compile, 2}}},
+    {"html_engine_compile.ex", {:mfa, {Phoenix.LiveView.HTMLEngine, :compile, 2}}},
+    {"tag_engine_compiler_compile.ex",
+     {:mfa, {Phoenix.LiveView.TagEngine.Compiler, :compile, 2}}},
+    {"xref_compiler_compile.ex", {:mfa, {:xref_compiler, :compile, 2}}},
+    {"mix_compilers_elixir_compile.ex", {:mfa, {Mix.Compilers.Elixir, :compile, 7}}},
+    {"mix_compilers_erlang_compile.ex", {:mfa, {Mix.Compilers.Erlang, :compile, 3}}},
+    {"deps_compile_compile.ex", {:mfa, {Mix.Tasks.Deps.Compile, :compile, 1}}},
+    {"erl_compile_compile.ex", {:mfa, {:erl_compile, :compile, 2}}},
+    {"erl_compile_server_compile.ex", {:mfa, {:erl_compile_server, :compile, 1}}},
+    {"leex_compile.ex", {:mfa, {:leex, :compile, 3}}},
+    {"yecc_compile.ex", {:mfa, {:yecc, :compile, 3}}},
+    {"mix_project_compile.ex", {:mfa, {Mix.Project, :compile, 1}}},
+    {"elixir_erl_compile.ex", {:mfa, {:elixir_erl, :compile, 2}}},
+    {"cover_compile.ex", {:mfa, {:cover, :compile, 1}}},
+    {"merl_compile.ex", {:mfa, {:merl, :compile, 1}}},
+    {"asn1ct_compile.ex", {:mfa, {:asn1ct, :compile, 1}}}
   ]
 
   @beam_only_fixtures ~w(
@@ -139,6 +184,30 @@ defmodule Fablebook.Contract.BannedCallsTest do
     erpc_file_script.ex
     rpc_load_module.ex
     rpc_remote_load_module.ex
+    info_load_module.ex
+    info_concat.ex
+    info_capture_script.ex
+    info_arity_zero.ex
+    logger_formatter_compile.ex
+    eex_compiler_compile.ex
+    exs_engine_compile.ex
+    eex_engine_compile.ex
+    liveview_engine_compile.ex
+    html_engine_compile.ex
+    tag_engine_compiler_compile.ex
+    xref_compiler_compile.ex
+    mix_compilers_elixir_compile.ex
+    mix_compilers_erlang_compile.ex
+    deps_compile_compile.ex
+    erl_compile_compile.ex
+    erl_compile_server_compile.ex
+    leex_compile.ex
+    yecc_compile.ex
+    mix_project_compile.ex
+    elixir_erl_compile.ex
+    cover_compile.ex
+    merl_compile.ex
+    asn1ct_compile.ex
   )
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
@@ -180,7 +249,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   test "every MFA matcher names an existing function" do
-    Mix.ensure_application!(:xmerl)
+    load_tier_apps()
 
     for {mod, name, arity} = entry <- @mfa_tier do
       assert Code.ensure_loaded?(mod), "#{inspect(entry)} names a module that does not load"
@@ -217,12 +286,18 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
-  test "the pair and whole-module checks match by adjacency and by name, in any role (known strictness)",
+  test "the pair and whole-module checks match by adjacency and by name outside call-name positions (known strictness)",
        %{tmp_dir: dir} do
     expected = %{
-      Fablebook.GuardFixture.StrictRegex => [{:mfa, {:compile, :_, :_}}],
-      Fablebook.GuardFixture.StrictErlangRe => [{:mfa, {:compile, :_, :_}}],
-      Fablebook.GuardFixture.StrictLocal => [{:mfa, {:compile, :_, :_}}],
+      Fablebook.GuardFixture.StrictRegex => [],
+      Fablebook.GuardFixture.StrictErlangRe => [],
+      Fablebook.GuardFixture.StrictLocal => [],
+      Fablebook.GuardFixture.StrictRegexCapture => [],
+      Fablebook.GuardFixture.StrictCompileCapture => [
+        {:mfa, {:compile, :_, :_}},
+        {:mfa, {:compile, :file, :_}}
+      ],
+      Fablebook.GuardFixture.StrictVarModuleCompile => [],
       Fablebook.GuardFixture.StrictKeyword => [{:mfa, {:epp, :_, :_}}],
       Fablebook.GuardFixture.StrictKeywordPair => [{:mfa, {:io, :read, :_}}],
       Fablebook.GuardFixture.StrictCompileKey => [
@@ -260,6 +335,18 @@ defmodule Fablebook.Contract.BannedCallsTest do
     defmodule Fablebook.GuardFixture.StrictLocal do
       def run(source), do: compile(source)
       defp compile(source), do: source
+    end
+
+    defmodule Fablebook.GuardFixture.StrictRegexCapture do
+      def run, do: &Regex.compile/1
+    end
+
+    defmodule Fablebook.GuardFixture.StrictCompileCapture do
+      def run, do: &:compile.file/1
+    end
+
+    defmodule Fablebook.GuardFixture.StrictVarModuleCompile do
+      def run(m, s), do: m.compile(s)
     end
 
     defmodule Fablebook.GuardFixture.StrictKeyword do
@@ -435,6 +522,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
     for name <- atom_names ++ mfa_names,
         Regex.match?(~r/(?<!\w)#{Regex.escape(name)}(?![\w!?])/, text),
         do: name
+  end
+
+  defp load_tier_apps do
+    Enum.each([:xmerl, :tools, :parsetools, :syntax_tools, :asn1], &Mix.ensure_application!/1)
   end
 
   defp mfa_name({module, :_, _}), do: inspect(module)

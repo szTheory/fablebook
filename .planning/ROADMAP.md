@@ -35,7 +35,8 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 **Family 1: Walking skeleton**
 - [ ] **Phase 1: Release pipeline, CI gate and guards** - 0.1.0 published, three workflows with caps, intent test, prod guard, eval and atom bans
 - [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
-- [ ] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03)
+- [ ] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04))
+- [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -130,7 +131,8 @@ Plans:
   2. A PR that compiles, loads or evaluates code at runtime through one of the enumerated MFA-tier functions (`:erlang.load_module/2`, `:code.load_abs`, `:compile.*`, `Kernel.ParallelCompiler`, `:file.script`, the `:elixir_tokenizer` → `:elixir_parser` → `:elixir_module.compile/6` chain and the rest of the list), or creates atoms through one of the enumerated readers, scanners, parsers or formatters (`:io_lib.fread`, `:io.scan_erl_exprs`, `:epp`, `:xmerl_scan`, `Code.format_string!`, `:elixir.string_to_tokens` and the rest of the list), fails CI; every ban matcher is proven live on both lanes, and the `mix.exs` scan matches qualified calls (WR-03, WR-02).
   3. `hex-publish.yml` refuses a tag whose commit is not on main, a recovery run after a docs-only failure uploads the docs, and `HEX_API_KEY` reaches only the steps that use it (WR-05 workflow half, WR-06, IN-04).
   4. SEC-02 shows Complete with its CI run link, owner questions Q35 to Q37 are recorded, and the remaining info findings are tracked; the first PR touches no `lib/` or `.github/` file, the second no `test/contract/` or `test/planning/` file, and both are merged green.
-**Plans:** 4/5 plans executed (3 gap-closure plans from 01.1-VERIFICATION)
+**Gap closure (re-verification):** CR-04, VR-01 and truth 6 moved to Phase 01.1.1 per INT-20261029-04 (5-plan cap and ADR 0021 review cap reached).
+**Plans:** 5/5 plans executed (3 gap-closure plans from 01.1-VERIFICATION)
 
 Plans:
 **Wave 1**
@@ -142,11 +144,12 @@ Plans:
 **Gap closure** *(sequential: one working tree, each PR carries the previous SUMMARY)*
 - [x] 01.1-03-PLAN.md — BEAM guard matches literal module/function pairs and wholly banned module references, one fixture per dispatch form, truthful Credo explanation with the whole-module over-catch documented and tested (01.1-REVIEW CR-01), mix.exs scan over the MFA tier (WR-04); CR-02 (truth 7) deferred to Phase 01.1.1 per INT-20261029-03; contract-test-only PR
 - [x] 01.1-04-PLAN.md — hex-publish builds, publishes and smoke-tests the tag's own commit, checksum-gated publish, fail-closed gates, check before tag code (CR-03, WR-01 gate, WR-05 follow-up); `.github/`-only PR
-- [ ] 01.1-05-PLAN.md — hex_publish_test.exs lands as the guard over 01.1-04 (checkout model, same-named branch, WR-01/02/03, IN-01/02, step-move ordering mutations); contract-test-only PR, then a planning-only PR carrying the SUMMARY and re-verification
+- [x] 01.1-05-PLAN.md — hex_publish_test.exs lands as the guard over 01.1-04 (checkout model, same-named branch, WR-01/02/03, IN-01/02, step-move ordering mutations); contract-test-only PR, then a planning-only PR carrying the SUMMARY and re-verification
 
 ### Phase 01.1.1: Close the eval and code-loading ban list (INSERTED)
 
-**Goal**: No direct, public eval, compile-and-load, interpret, native-load or code-path-changing function, and no atom-creating parser, on the Mix dev code path passes the compiled-BEAM guard. That includes the project's runtime dependencies (Phoenix, LiveView, Plug), every exclusion has a reason that is true, and the whole-module literal check stops flagging ordinary functions named like a banned module, such as `Regex.compile/1`. This closes 01.1-VERIFICATION truth 7 (CR-02) and the over-catch fix, both re-homed here per INT-20261029-03, and the inbound threats T-01.1-28 (was T-01.1-03 in 01.1-SECURITY), T-01.1-22, T-01.1-23 and T-01.1-25.
+**Goal**: No direct, public eval, compile-and-load, interpret, native-load or code-path-changing function, and no atom-creating parser, on the Mix dev code path passes the compiled-BEAM guard. That includes the project's runtime dependencies (Phoenix, LiveView, Plug), every exclusion has a reason that is true, and the whole-module literal check stops flagging ordinary functions named like a banned module, such as `Regex.compile/1`. This closes 01.1-VERIFICATION truth 7 (CR-02) and the over-catch fix, both re-homed here per INT-20261029-03, and the inbound threats T-01.1-28 (was T-01.1-03 in 01.1-SECURITY), T-01.1-22, T-01.1-23 and T-01.1-25. No literal dispatch hides in a user-defined `__info__` of another arity, and no pair-tier call passes when a `lib/` macro quotes it or module-body code makes it, so the bans hold against every literal dispatch form and the Credo explanation is literally true. This closes the re-verification's CR-04, VR-01 and truth 6, with WR-11 fixed rather than accepted, all re-homed here per INT-20261029-04, and reopens threats T-01.1-15 and T-01.1-27 until they land.
+**Transfer** (INT-20261029-02, recorded at planning on 2026-10-29): Phase 01.1.1.1 owns and closes three things: the atom-creating-parser clause, the "every exclusion has a reason that is true" clause of SC1, and the eval front doors in installed OTP apps outside this phase's sweep scope. They stay open here, the plans record them as open, and none of them is a known limit.
 **Depends on**: Phase 01.1
 **Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
 **Success Criteria** (what must be TRUE):
@@ -154,16 +157,52 @@ Plans:
   2. Every public front door the sweep finds is a tier entry with a negative fixture, every entry is proven live on both lanes, and the `:int` and code-path mutator decisions are recorded.
   3. Call-name positions no longer trigger the whole-module literal check: `Regex.compile/1`, `:re.compile/2` and a local `compile/1` give no hit on both lanes, while a literal module reference such as `apply(:compile, fun, args)` still does. Any banned call the narrowed check would stop catching first gets an explicit tier entry with a negative fixture, and the phase records which calls those were, or why there were none. The 01.1-03 known strictness rows and the Credo explanation are updated to match.
   4. Every API 01.1-VERIFICATION truth 7 reproduced is a tier entry with a negative fixture whether or not the sweep reaches it: `:qlc.string_to_handle`, `:merl.compile_and_load`, `:c.c`, `:make.files`, `:cover.compile_module`, `:erlang.load_nif`, `:erl_ddll.load`, `:epp_dodger.parse_file`, `:elixir_erl_compiler.noenv_forms`, `:elixir.tokens_to_quoted`, `IEx.Helpers.c` and `Mix.Tasks.Run.run`. The native loaders (`:erlang.load_nif/2` and the `:erl_ddll` load functions) and the atom-creating parsers (`:epp_dodger` and `:elixir.tokens_to_quoted/3`) are covered in full, not just the reproduced arities. The 01.1-03 known strictness rows for `:qlc.string_to_handle/1`, `:erlang.load_nif/2` and `:epp_dodger.parse_file/1` then report hits, and the Credo explanation's tier-gap sentence is removed.
-  5. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
+  5. A function named `__info__` of any arity other than 1 is scanned: `apply(:erlang, :load_module, [m | args])`, `apply(Module, :concat, parts)` and `Function.capture(:file, :script, n).(p)` inside a user-defined `__info__/2` hit on both lanes, through a beam-only negative fixture (CR-04).
+  6. A pair-tier call fails CI when a `lib/` macro quotes it (`quote(do: Module.concat(unquote(x)))`, quoted `:file.script/1`, quoted `apply(:erlang, :load_module, ...)`, a `__using__` that injects `:erlang.load_module/2`) and when module-body code makes it (`@r apply(:file, :script, [...])`, `@m Module.concat([...])`), on both lanes, each with a negative fixture (VR-01, WR-11). The `mix.exs` scan also matches the `apply/3`, alias and newline-after-dot spellings (WR-12).
+  7. Every caught, over-caught and missed claim in the Credo explanation matches a fixture or a known-strictness row, "anywhere in function code" is true or gone, and a human wording check is recorded (truth 6).
+  8. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
+**Plans:** 5 plans
+
+Plans:
+**Wave 1**
+- [ ] 01.1.1-01-PLAN.md — Walker fixes: scan user-defined `__info__` of other arities (SC5) and stop flagging called function names, with the banned `compile`-named functions made tier entries first (SC3)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01.1.1-02-PLAN.md — Tier extension: the 80 swept candidates, `Mix.Task.run`, every code-path mutator, the barrier and sink-primitive front doors (`code_server`, `erts_internal:prepare_loading`, `init` make_permanent and restart) and every interpret, eval and load front door of the debugger app's eight interpreter modules, twelve truth-7 fixtures, the Credo MFA mirror and a generated probe proving every entry live (SC2, SC4); the rest of the debugger app and the other unswept OTP apps stay open with Phase 01.1.1.1 (StrictCtMake)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 01.1.1-03-PLAN.md — The reachability sweep as a both-lane contract test over OTP, Elixir and the runtime dependencies derived from mix.exs, with every exclusion known false replaced (SC1, SC2); sweeping the other installed OTP apps moves to Phase 01.1.1.1
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 01.1.1-04-PLAN.md — Functions named like a banned module, and every barrier-module, sink-delegate, code-related `:erlang` and in-front-of-barrier export judged once from source, pinned by contract test (SC2 code-path record, SC3 record); the audit of the ported sweep exclusions (SC1's "every exclusion has a reason that is true") and the parser disposition move to Phase 01.1.1.1 (INT-20261029-02)
+
+**Wave 5** *(blocked on Wave 4 completion)*
+- [ ] 01.1.1-05-PLAN.md — Source-level MFA rules in the Credo check for quoted, module-body and `mix.exs` calls, the explanation rewrite and the human wording check (SC6, SC7)
+
+**Cross-cutting constraints:**
+- SC8: the PR changes no lib/, .github/, mix.exs, lockfile or .credo.exs path and is merged green with a recorded ci-gate run link
+
+### Phase 01.1.1.1: Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons (INSERTED)
+
+**Goal**: Close what Phase 01.1.1 left open (INT-20261029-02). No function that turns caller-chosen text or files into atoms passes the compiled-BEAM guard. No eval, compile-and-load, interpret, native-load or code-path-changing front door passes it in any OTP app installed on either lane. Every sweep exclusion carries a cited reason that is true under the caller-argument rule. This closes 01.1.1's parser clause and its "every exclusion has a reason that is true" clause, along with the parser share of T-01.1-28, the out-of-scope share of T-01.1-22 and T-01.1-25 (T-01.1.1-28) and T-01.1.1-24.
+**Depends on**: Phase 01.1.1
+**Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
+**Success Criteria** (what must be TRUE):
+  1. Every function on the dev code path (the swept scope plus every installed OTP app) that turns caller-chosen text or files into atoms is either a tier entry with a negative fixture or excluded with a cited reason, whatever its name. A both-lane contract test enforces this. `:file.path_consult/2`, `:yecc.file/2`, `:yecc.yecc/2..4` and `Logger.Formatter.new/1` with `format:` each have a disposition, and StrictPathConsult reports hits.
+  2. The reachability sweep and the boundary contract cover every OTP app installed on each lane (18 at planning, including the debugger app's `dbg_idb`, `dbg_istk` and `dbg_wx_*` modules), with no reached function left undisposed. StrictCtMake reports hits.
+  3. Every ported sweep exclusion is a `{matcher, reason_key, citation}` entry whose app-relative citation supports its reason on both lanes. The citation test rejects a 2-tuple, and removing an audited exclusion leaves its rows undisposed. An audit table records a verdict for each ported entry. Each false entry is replaced by tier entries or function-level exclusions.
+  4. If a newly judged front door is one that `lib/` already calls (for example `Macro.expand/2` at `lib/fablebook/router.ex:35`), work stops and the case is reported. The front door is never weakened or excluded. Resolving it needs an owner-recorded decision: either an ADR-backed allowlist entry or a `lib/` change in its own PR.
+  5. The Credo explanation no longer lists the two open items. Every changed claim maps to a fixture or a strictness row, and a human wording check is recorded before merge.
+  6. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
 **Plans:** 0 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 01.1.1 to break down)
+- [ ] TBD (run /gsd-plan-phase 01.1.1.1 to break down)
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
 **Mode:** mvp
-**Depends on**: Phase 01.1.1
+**Depends on**: Phase 01.1.1.1
 **Requirements**: None completed here (a vertical slice and a spike; see Partial delivery).
 **Partial delivery**: QA-04 (skeleton `hosts/operator`, completes in Phase 9), VIS-01 and VIS-02 (guards, complete in Phase 21), CANVAS-01 and SEC-03 (nonce CSP exercised, complete in Phase 7).
 **Provisional on:** Q9
