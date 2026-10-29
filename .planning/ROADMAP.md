@@ -130,7 +130,7 @@ Plans:
   2. A PR that compiles, loads or evaluates code at runtime through one of the enumerated MFA-tier functions (`:erlang.load_module/2`, `:code.load_abs`, `:compile.*`, `Kernel.ParallelCompiler`, `:file.script`, the `:elixir_tokenizer` → `:elixir_parser` → `:elixir_module.compile/6` chain and the rest of the list), or creates atoms through one of the enumerated readers, scanners, parsers or formatters (`:io_lib.fread`, `:io.scan_erl_exprs`, `:epp`, `:xmerl_scan`, `Code.format_string!`, `:elixir.string_to_tokens` and the rest of the list), fails CI; every ban matcher is proven live on both lanes, and the `mix.exs` scan matches qualified calls (WR-03, WR-02).
   3. `hex-publish.yml` refuses a tag whose commit is not on main, a recovery run after a docs-only failure uploads the docs, and `HEX_API_KEY` reaches only the steps that use it (WR-05 workflow half, WR-06, IN-04).
   4. SEC-02 shows Complete with its CI run link, owner questions Q35 to Q37 are recorded, and the remaining info findings are tracked; the first PR touches no `lib/` or `.github/` file, the second no `test/contract/` or `test/planning/` file, and both are merged green.
-**Plans:** 2/5 plans executed (3 gap-closure plans from 01.1-VERIFICATION)
+**Plans:** 3/5 plans executed (3 gap-closure plans from 01.1-VERIFICATION)
 
 Plans:
 **Wave 1**
@@ -140,7 +140,7 @@ Plans:
 - [x] 01.1-02-PLAN.md — hex-publish publishes only main commits, docs-only recovery converges, step-scoped HEX_API_KEY (WR-05, WR-06, IN-04); SEC-02 marked complete; owner questions Q35 to Q37
 
 **Gap closure** *(sequential: one working tree, each PR carries the previous SUMMARY)*
-- [ ] 01.1-03-PLAN.md — BEAM guard matches literal module/function pairs and wholly banned module references, one fixture per dispatch form, truthful Credo explanation with the whole-module over-catch documented and tested (01.1-REVIEW CR-01), mix.exs scan over the MFA tier (WR-04); CR-02 (truth 7) deferred to Phase 01.1.1 per INT-20261029-03; contract-test-only PR
+- [x] 01.1-03-PLAN.md — BEAM guard matches literal module/function pairs and wholly banned module references, one fixture per dispatch form, truthful Credo explanation with the whole-module over-catch documented and tested (01.1-REVIEW CR-01), mix.exs scan over the MFA tier (WR-04); CR-02 (truth 7) deferred to Phase 01.1.1 per INT-20261029-03; contract-test-only PR
 - [ ] 01.1-04-PLAN.md — hex-publish builds, publishes and smoke-tests the tag's own commit, checksum-gated publish, fail-closed gates, check before tag code (CR-03, WR-01 gate, WR-05 follow-up); `.github/`-only PR
 - [ ] 01.1-05-PLAN.md — hex_publish_test.exs lands as the guard over 01.1-04 (checkout model, same-named branch, WR-01/02/03, IN-01/02, step-move ordering mutations); contract-test-only PR, then a planning-only PR carrying the SUMMARY and re-verification
 
