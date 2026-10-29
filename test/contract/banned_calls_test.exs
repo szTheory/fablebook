@@ -215,7 +215,12 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:dbg_debugged, :eval, :_}
   ]
 
-  @rewritten_calls %{}
+  @rewritten_calls %{
+    {String, :to_atom, 1} => {:erlang, :binary_to_atom, 1},
+    {String, :to_existing_atom, 1} => {:erlang, :binary_to_existing_atom, 1},
+    {List, :to_atom, 1} => {:erlang, :list_to_atom, 1},
+    {List, :to_existing_atom, 1} => {:erlang, :list_to_existing_atom, 1}
+  }
 
   @allowlist []
 
@@ -813,14 +818,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       calls
       |> Enum.with_index()
       |> Enum.map_join("\n", fn {{module, function, arity}, call_index} ->
-        args =
-          if arity == 0 do
-            []
-          else
-            for arg_index <- 1..arity, do: "arg#{arg_index}"
-          end
-
-        args_source = Enum.join(args, ", ")
+        args_source = Enum.join(generated_probe_arguments(arity), ", ")
         module_source = inspect(module)
         function_source = inspect(Atom.to_string(function))
 
@@ -829,6 +827,11 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     "defmodule Fablebook.GuardProbe.P#{index} do\n#{functions}\nend\n"
   end
+
+  defp generated_probe_arguments(0), do: []
+
+  defp generated_probe_arguments(arity),
+    do: for(arg_index <- 1..arity, do: "arg#{arg_index}")
 
   defp generated_probe_hits(entry, scan) do
     case Enum.find(@rewritten_calls, fn {rewritten_entry, _emitted_mfa} ->
