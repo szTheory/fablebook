@@ -146,6 +146,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"info_concat.ex", {:mfa, {Module, :concat, :_}}},
     {"info_capture_script.ex", {:mfa, {:file, :script, :_}}},
     {"info_arity_zero.ex", {:mfa, {:file, :script, :_}}},
+    {"qlc_string.ex", {:mfa, {:qlc, :string_to_handle, 1}}},
     {"logger_formatter_compile.ex", {:mfa, {Logger.Formatter, :compile, 1}}},
     {"eex_compiler_compile.ex", {:mfa, {EEx.Compiler, :compile, 3}}},
     {"exs_engine_compile.ex", {:mfa, {Phoenix.Template.ExsEngine, :compile, 2}}},
@@ -188,6 +189,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     info_concat.ex
     info_capture_script.ex
     info_arity_zero.ex
+    qlc_string.ex
     logger_formatter_compile.ex
     eex_compiler_compile.ex
     exs_engine_compile.ex
@@ -316,7 +318,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
       Fablebook.GuardFixture.StrictMapFields => [],
       Fablebook.GuardFixture.StrictComputed => [],
       Fablebook.GuardFixture.StrictMixTask => [],
-      Fablebook.GuardFixture.StrictUnlisted => [],
+      Fablebook.GuardFixture.StrictQlcString => [
+        {:mfa, {:qlc, :string_to_handle, 1}},
+        {:mfa, {:qlc, :string_to_handle, :_}}
+      ],
       Fablebook.GuardFixture.StrictNativeLoad => [],
       Fablebook.GuardFixture.StrictParser => []
     }
@@ -443,7 +448,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       def run(code), do: Mix.Task.run("run", ["-e", code])
     end
 
-    defmodule Fablebook.GuardFixture.StrictUnlisted do
+    defmodule Fablebook.GuardFixture.StrictQlcString do
       def run(query), do: :qlc.string_to_handle(query)
     end
 
@@ -474,6 +479,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       do: {:ok, _} = Application.ensure_all_started(:credo)
 
     assert BannedCalls.banned_names() == Enum.sort(@atom_tier)
+    assert BannedCalls.banned_mfas() == Enum.sort(@mfa_tier)
 
     for path <- Path.wildcard(Path.join(@fixture_dir, "*.ex")),
         Path.basename(path) not in @beam_only_fixtures do
