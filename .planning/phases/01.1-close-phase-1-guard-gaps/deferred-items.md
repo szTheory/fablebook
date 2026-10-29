@@ -45,3 +45,17 @@
   - run the ancestry check in a first step that checks out `main` (or uses the API) before anything from the tag is executed, or drop the build job's token to `contents: read`.
   - It is a `.github/` PR that does not edit `test/contract/hex_publish_test.exs` in the same change (ADR 0021). Owner phase: next release-pipeline touch, or with Q37.
 - **Resolved:** the build step `ref` runs before `./.github/actions/setup` (Plan 01.1-04, PR https://github.com/szTheory/fablebook/pull/12)
+
+## hex_publish_test.exs hardening (01.1 re-verification, review iteration 2)
+
+- **Where:** `test/contract/hex_publish_test.exs`.
+- **Seen:** 01.1-REVIEW iteration 2 and 01.1-VERIFICATION (2026-10-29T15:52:44Z).
+  - WR-06: the step harness runs `bash --noprofile --norc -eo pipefail` (:447), the runner runs plain steps as `bash -e {0}`. A `| cat` on the ancestry line passes the five behavioural tests while `bash -e` passes an off-main sha. Reproduced by the verifier.
+  - WR-07: a top-level `env:` holding `HEX_API_KEY` placed after `jobs:` is unscanned.
+  - WR-08: `if: always()` on `finalize` or `if: false` on a smoke step goes undetected.
+  - WR-09: the fixture puts `origin/main` and the tag on one commit, so the version-equals-tag check, the tag regex and a `sha` from `origin/main` cannot fail.
+  - WR-10: removing `environment: hex-production` or the smoke `--checksum` goes undetected.
+  - IN-04: the release test filter, pre-publish smoke and smoke lanes are unpinned.
+  - IN-05: `:19` sets an email-shaped fixture identity; use `user.email=fixture`.
+- **Fix direction:** run the harness as `bash -e` with the pipe mutation, and add one mutation per WR item. One contract-test-only PR touching only `hex_publish_test.exs` (ADR 0021).
+- **Receiving home:** release-blocking. It lands before the next release-please PR merges, as its own PR in whichever phase is open then (INT-20261029-02, INT-20261029-04). The ban gaps CR-04, VR-01, WR-11, WR-12 and truth 6 went to Phase 01.1.1 instead.
