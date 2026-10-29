@@ -129,11 +129,11 @@ Plans:
   2. A PR that compiles, loads or evaluates code at runtime through one of the enumerated MFA-tier functions (`:erlang.load_module/2`, `:code.load_abs`, `:compile.*`, `Kernel.ParallelCompiler`, `:file.script`, the `:elixir_tokenizer` → `:elixir_parser` → `:elixir_module.compile/6` chain and the rest of the list), or creates atoms through one of the enumerated readers, scanners, parsers or formatters (`:io_lib.fread`, `:io.scan_erl_exprs`, `:epp`, `:xmerl_scan`, `Code.format_string!`, `:elixir.string_to_tokens` and the rest of the list), fails CI; every ban matcher is proven live on both lanes, and the `mix.exs` scan matches qualified calls (WR-03, WR-02).
   3. `hex-publish.yml` refuses a tag whose commit is not on main, a recovery run after a docs-only failure uploads the docs, and `HEX_API_KEY` reaches only the steps that use it (WR-05 workflow half, WR-06, IN-04).
   4. SEC-02 shows Complete with its CI run link, owner questions Q35 to Q37 are recorded, and the remaining info findings are tracked; the first PR touches no `lib/` or `.github/` file, the second no `test/contract/` or `test/planning/` file, and both are merged green.
-**Plans:** 0/2 plans executed
+**Plans:** 1/2 plans executed
 
 Plans:
 **Wave 1**
-- [ ] 01.1-01-PLAN.md — Atom-constructor, runtime compile/load/eval and atom-creating parser bans in both layers, mix.exs scan made non-vacuous (CR-01, WR-03, WR-02); contract-test-only PR
+- [x] 01.1-01-PLAN.md — Atom-constructor, runtime compile/load/eval and atom-creating parser bans in both layers, mix.exs scan made non-vacuous (CR-01, WR-03, WR-02); contract-test-only PR
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01.1-02-PLAN.md — hex-publish publishes only main commits, docs-only recovery converges, step-scoped HEX_API_KEY (WR-05, WR-06, IN-04); SEC-02 marked complete; owner questions Q35 to Q37

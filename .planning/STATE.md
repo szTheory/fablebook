@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: "01.1"
 current_phase_name: Close phase 1 guard gaps (INSERTED)
 status: executing
-stopped_at: Completed 01-05-PLAN.md
-last_updated: "2026-10-29T10:47:58.223Z"
+stopped_at: Completed 01.1-01-PLAN.md
+last_updated: "2026-10-29T10:59:56.798Z"
 last_activity: 2026-10-29
 last_activity_desc: Phase 01.1 execution started
-state_head: 06aae5eafdebaf8bcb2dfef0ee4a68ecc8bc75e0
+state_head: 776efcc78c52591b118f79b9698cda049a3e4c2c
 progress:
   total_phases: 36
   completed_phases: 0
   total_plans: 7
-  completed_plans: 5
+  completed_plans: 6
   percent: 0
 ---
 
@@ -28,8 +28,8 @@ See: .planning/PROJECT.md (updated 2026-10-28)
 ## Current Position
 
 Phase: 01.1 (Close phase 1 guard gaps (INSERTED)) — EXECUTING
-Plan: 1 of 2
-Status: Executing Phase 01.1
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-10-29 — Phase 01.1 execution started
 
 Progress: [░░░░░░░░░░] 0%
@@ -61,6 +61,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P03 | 11min | 3 tasks | 15 files |
 | Phase 01 P04 | 17min | 3 tasks | 8 files |
 | Phase 1 P05 | 85min | 7 tasks | 16 files |
+| Phase 01.1 P01 | 10min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,9 @@ Recent decisions affecting current work:
 - [Phase 01]: GitDiff fails closed on a malformed, zero or unknown push before SHA and scrubs GIT_* env
 - [Phase 1]: The CHANGELOG seed is empty before the first release; release-please demotes and appends a header-only seed
 - [Phase 1]: The package-scoped Hex key never expires and has Publish permission on fablebook only (INT-20261028-20)
+- [Phase 01.1]: Code.format_string! and Code.format_file! are banned now; a future need adds an @allowlist entry through its own ADR
+- [Phase 01.1]: :file.consult and :file.path_consult stay allowed: trusted compiled term files (Q13(a) .app discovery)
+- [Phase 01.1]: The MFA existence test loads :xmerl via Mix.ensure_application!/1 because Mix prunes the code path; mix.exs unchanged
 
 ### Pending Todos
 
@@ -111,6 +115,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-29T02:18:02.372Z
-Stopped at: Completed 01-05-PLAN.md
+Last session: 2026-10-29T10:59:56.779Z
+Stopped at: Completed 01.1-01-PLAN.md
 Resume file: None
