@@ -108,7 +108,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
   2. A host that mounts Fablebook inside a false `dev_routes` block compiles cleanly in prod, while an unguarded mount fails with the canonical `CompileError` emitted from the macro's returned code; the CI prod build asserts no Fablebook routes and no story beams.
   3. A PR that adds a fourth workflow, grows `ci.yml` past 250 lines, removes the single `ci-gate`, edits an INT source, uses a malformed INT id, or adds a REQ line with no INT or ADR citation fails CI; PR p50 and p95 are published weekly from CI history.
   4. A PR that adds `Code.eval*`, runtime EEx/HEEx compilation, `String.to_atom` on input, a banned dependency in the prod closure, or a file outside the tarball allowlist fails CI.
-**Plans:** 5/5 plans executed
+**Plans:** 5/7 plans executed
 
 Plans:
 - [x] 01-01-PLAN.md — Walking skeleton: owner sign-offs, fablebook/2 with the prod guard on both lanes, package docs
@@ -116,6 +116,8 @@ Plans:
 - [x] 01-03-PLAN.md — Compiled-BEAM and Credo bans, `style=` scan, dependency budget, tarball allowlist
 - [x] 01-04-PLAN.md — Intent, contract-rule and CI-shape guards; diff seam proven in a real repo; test-wiring pins; PR #1 green with every guard
 - [x] 01-05-PLAN.md — Signed ADR amendments, owner diff review and secrets, merge PR #1, D-22 red run, ci-health, publish 0.1.0, rotate key, PR #3 drops release-as with the last SUMMARY
+- [ ] 01-06-PLAN.md — Gap closure: atom-constructor and code-loading ban bypasses closed in both layers, mix.exs scan made non-vacuous (CR-01, WR-03, WR-02); contract-test-only PR
+- [ ] 01-07-PLAN.md — Gap closure: hex-publish publishes only main commits, docs-only recovery converges, step-scoped HEX_API_KEY (WR-05, WR-06, IN-04); SEC-02 marked complete; owner questions Q35 to Q38
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
