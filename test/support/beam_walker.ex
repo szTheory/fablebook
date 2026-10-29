@@ -35,7 +35,7 @@ defmodule Fablebook.Test.BeamWalker do
   end
 
   defp function_code(forms),
-    do: for({:function, _, name, _, _} = form <- forms, name != :__info__, do: form)
+    do: for({:function, _, name, arity, _} = f <- forms, {name, arity} != {:__info__, 1}, do: f)
 
   defp atoms(term, acc) when is_atom(term), do: MapSet.put(acc, term)
   defp atoms(term, acc) when is_tuple(term), do: atoms(Tuple.to_list(term), acc)
