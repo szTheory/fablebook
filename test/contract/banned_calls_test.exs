@@ -105,8 +105,122 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:elixir_erl, :compile, :_},
     {:cover, :compile, :_},
     {:merl, :_, :_},
-    {:asn1ct, :_, :_}
+    {:asn1ct, :_, :_},
+    {:qlc, :string_to_handle, :_},
+    {:c, :erlangrc, :_},
+    {:shell, :start, :_},
+    {:shell, :server, :_},
+    {:shell, :local_func, :_},
+    {:shell, :read_and_add_records, :_},
+    {:shell_default, :_, :_},
+    {:escript, :start, :_},
+    {:ssl_dist_sup, :consult, :_},
+    {Config, :__eval__!, :_},
+    {Config, :__import__!, :_},
+    {Config.Reader, :_, :_},
+    {Mix.Config, :_, :_},
+    {Kernel.CLI, :_, :_},
+    {Record, :extract, :_},
+    {Record, :extract_all, :_},
+    {Record.Extractor, :_, :_},
+    {IEx, :_, :_},
+    {IEx.Evaluator, :_, :_},
+    {IEx.Helpers, :_, :_},
+    {IEx.Pry, :_, :_},
+    {IEx.Server, :_, :_},
+    {:iex, :_, :_},
+    {Mix.CLI, :_, :_},
+    {Mix.Tasks.Eval, :_, :_},
+    {Mix.Tasks.Run, :_, :_},
+    {Mix.Tasks.Loadconfig, :_, :_},
+    {Mix.Tasks.Profile.Cprof, :_, :_},
+    {Mix.Tasks.Profile.Eprof, :_, :_},
+    {Mix.Tasks.Profile.Fprof, :_, :_},
+    {Mix.Tasks.Profile.Tprof, :_, :_},
+    {Mix.Generator, :copy_template, :_},
+    {Mix.Rebar, :_, :_},
+    {Mix.Dep.Lock, :_, :_},
+    {:release_handler, :_, :_},
+    {:release_handler_1, :_, :_},
+    {:c, :c, :_},
+    {:c, :l, :_},
+    {:c, :lc, :_},
+    {:c, :lc_batch, :_},
+    {:c, :lm, :_},
+    {:c, :nc, :_},
+    {:c, :nl, :_},
+    {:c, :y, :_},
+    {:make, :all, :_},
+    {:make, :all_or_nothing, :_},
+    {:make, :files, :_},
+    {:cover, :compile_module, :_},
+    {:cover, :compile_beam, :_},
+    {:cover, :compile_directory, :_},
+    {:cover, :compile_beam_directory, :_},
+    {:elixir_erl_compiler, :_, :_},
+    {:elixir, :tokens_to_quoted, :_},
+    {Kernel.ParallelRequire, :_, :_},
+    {Mix, :install, :_},
+    {Mix.Project, :in_project, :_},
+    {Mix.Local.Installer, :_, :_},
+    {Mix.Tasks.Archive.Install, :_, :_},
+    {Mix.Tasks.Escript.Install, :_, :_},
+    {Mix.Tasks.Test, :_, :_},
+    {Mix.Compilers.Test, :_, :_},
+    {:erlang, :load_nif, 2},
+    {:erl_ddll, :_, :_},
+    {:code, :add_path, :_},
+    {:code, :add_patha, :_},
+    {:code, :add_pathz, :_},
+    {:code, :add_paths, :_},
+    {:code, :add_pathsa, :_},
+    {:code, :add_pathsz, :_},
+    {:code, :set_path, :_},
+    {:code, :replace_path, :_},
+    {Code, :prepend_path, :_},
+    {Code, :prepend_paths, :_},
+    {Code, :append_path, :_},
+    {Code, :append_paths, :_},
+    {Mix, :ensure_application!, :_},
+    {:epp_dodger, :_, :_},
+    {Mix.Task, :run, :_},
+    {:code, :del_path, :_},
+    {:code, :del_paths, :_},
+    {Code, :delete_path, :_},
+    {Code, :delete_paths, :_},
+    {:erl_prim_loader, :set_path, :_},
+    {:erl_prim_loader, :set_primary_archive, :_},
+    {:code_server, :_, :_},
+    {:erts_internal, :prepare_loading, :_},
+    {:init, :make_permanent, :_},
+    {:init, :restart, :_},
+    {:error_handler, :breakpoint, :_},
+    {:int, :i, :_},
+    {:int, :ni, :_},
+    {:int, :eval, :_},
+    {:int, :meta, :_},
+    {:i, :ii, :_},
+    {:i, :ini, :_},
+    {:debugger, :quick, :_},
+    {:debugger, :start, :_},
+    {:dbg_icmd, :eval, :_},
+    {:dbg_icmd, :cmd, :_},
+    {:dbg_icmd, :handle_msg, :_},
+    {:dbg_ieval, :eval, :_},
+    {:dbg_ieval, :eval_expr, :_},
+    {:dbg_iserver, :call, :_},
+    {:dbg_iserver, :safe_call, :_},
+    {:dbg_iserver, :handle_call, :_},
+    {:dbg_iload, :load_mod, :_},
+    {:dbg_debugged, :eval, :_}
   ]
+
+  @rewritten_calls %{
+    {String, :to_atom, 1} => {:erlang, :binary_to_atom, 1},
+    {String, :to_existing_atom, 1} => {:erlang, :binary_to_existing_atom, 1},
+    {List, :to_atom, 1} => {:erlang, :list_to_atom, 1},
+    {List, :to_existing_atom, 1} => {:erlang, :list_to_existing_atom, 1}
+  }
 
   @allowlist []
 
@@ -146,6 +260,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"info_concat.ex", {:mfa, {Module, :concat, :_}}},
     {"info_capture_script.ex", {:mfa, {:file, :script, :_}}},
     {"info_arity_zero.ex", {:mfa, {:file, :script, :_}}},
+    {"qlc_string.ex", {:mfa, {:qlc, :string_to_handle, 1}}},
     {"logger_formatter_compile.ex", {:mfa, {Logger.Formatter, :compile, 1}}},
     {"eex_compiler_compile.ex", {:mfa, {EEx.Compiler, :compile, 3}}},
     {"exs_engine_compile.ex", {:mfa, {Phoenix.Template.ExsEngine, :compile, 2}}},
@@ -166,7 +281,18 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"elixir_erl_compile.ex", {:mfa, {:elixir_erl, :compile, 2}}},
     {"cover_compile.ex", {:mfa, {:cover, :compile, 1}}},
     {"merl_compile.ex", {:mfa, {:merl, :compile, 1}}},
-    {"asn1ct_compile.ex", {:mfa, {:asn1ct, :compile, 1}}}
+    {"asn1ct_compile.ex", {:mfa, {:asn1ct, :compile, 1}}},
+    {"merl_compile_and_load.ex", {:mfa, {:merl, :compile_and_load, 1}}},
+    {"c_compile.ex", {:mfa, {:c, :c, 1}}},
+    {"make_files.ex", {:mfa, {:make, :files, 1}}},
+    {"cover_compile_module.ex", {:mfa, {:cover, :compile_module, 1}}},
+    {"load_nif.ex", {:mfa, {:erlang, :load_nif, 2}}},
+    {"erl_ddll_load.ex", {:mfa, {:erl_ddll, :load, 2}}},
+    {"epp_dodger_parse_file.ex", {:mfa, {:epp_dodger, :parse_file, 1}}},
+    {"elixir_erl_compiler.ex", {:mfa, {:elixir_erl_compiler, :noenv_forms, 3}}},
+    {"tokens_to_quoted.ex", {:mfa, {:elixir, :tokens_to_quoted, 3}}},
+    {"iex_helpers_c.ex", {:mfa, {IEx.Helpers, :c, 1}}},
+    {"mix_run.ex", {:mfa, {Mix.Tasks.Run, :run, 1}}}
   ]
 
   @beam_only_fixtures ~w(
@@ -188,6 +314,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     info_concat.ex
     info_capture_script.ex
     info_arity_zero.ex
+    qlc_string.ex
     logger_formatter_compile.ex
     eex_compiler_compile.ex
     exs_engine_compile.ex
@@ -208,6 +335,17 @@ defmodule Fablebook.Contract.BannedCallsTest do
     cover_compile.ex
     merl_compile.ex
     asn1ct_compile.ex
+    merl_compile_and_load.ex
+    c_compile.ex
+    make_files.ex
+    cover_compile_module.ex
+    load_nif.ex
+    erl_ddll_load.ex
+    epp_dodger_parse_file.ex
+    elixir_erl_compiler.ex
+    tokens_to_quoted.ex
+    iex_helpers_c.ex
+    mix_run.ex
   )
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
@@ -315,10 +453,26 @@ defmodule Fablebook.Contract.BannedCallsTest do
       Fablebook.GuardFixture.StrictList => [],
       Fablebook.GuardFixture.StrictMapFields => [],
       Fablebook.GuardFixture.StrictComputed => [],
-      Fablebook.GuardFixture.StrictMixTask => [],
-      Fablebook.GuardFixture.StrictUnlisted => [],
-      Fablebook.GuardFixture.StrictNativeLoad => [],
-      Fablebook.GuardFixture.StrictParser => []
+      Fablebook.GuardFixture.StrictMixTask => [
+        {:mfa, {Mix.Task, :run, 2}},
+        {:mfa, {Mix.Task, :run, :_}}
+      ],
+      Fablebook.GuardFixture.StrictQlcString => [
+        {:mfa, {:qlc, :string_to_handle, 1}},
+        {:mfa, {:qlc, :string_to_handle, :_}}
+      ],
+      Fablebook.GuardFixture.StrictNativeLoad => [
+        {:mfa, {:erlang, :load_nif, 2}},
+        {:mfa, {:erlang, :load_nif, :_}}
+      ],
+      Fablebook.GuardFixture.StrictParser => [
+        {:mfa, {:epp_dodger, :parse_file, 1}},
+        {:mfa, {:epp_dodger, :parse_file, :_}},
+        {:mfa, {:epp_dodger, :_, :_}}
+      ],
+      Fablebook.GuardFixture.StrictInt => [{:mfa, {:int, :i, :_}}],
+      Fablebook.GuardFixture.StrictPathConsult => [],
+      Fablebook.GuardFixture.StrictCtMake => []
     }
 
     source = Path.join(dir, "strict.ex")
@@ -443,7 +597,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       def run(code), do: Mix.Task.run("run", ["-e", code])
     end
 
-    defmodule Fablebook.GuardFixture.StrictUnlisted do
+    defmodule Fablebook.GuardFixture.StrictQlcString do
       def run(query), do: :qlc.string_to_handle(query)
     end
 
@@ -453,6 +607,18 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     defmodule Fablebook.GuardFixture.StrictParser do
       def run(path), do: :epp_dodger.parse_file(path)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictInt do
+      def run(args), do: apply(:int, :i, args)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictPathConsult do
+      def run(dirs, file), do: :file.path_consult(dirs, file)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictCtMake do
+      def run(files), do: :ct_make.files(files, [:load])
     end
     """)
 
@@ -469,11 +635,51 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
   end
 
+  @tag :tmp_dir
+  test "every MFA-tier entry is caught by a generated probe", %{tmp_dir: dir} do
+    load_tier_apps()
+    assert Map.keys(@rewritten_calls) -- @mfa_tier == []
+
+    entries = Enum.with_index(@mfa_tier)
+
+    source =
+      Enum.map_join(entries, "\n", fn {entry, index} ->
+        generated_probe_module(entry, index)
+      end)
+
+    source_path = Path.join(dir, "guard_probes.ex")
+    File.write!(source_path, source)
+
+    scans =
+      for beam <- compile!([source_path], dir, true), into: %{} do
+        assert {:ok, scan} = BeamWalker.scan(beam)
+        {Atom.to_string(scan.module), scan}
+      end
+
+    uncaught =
+      for {entry, index} <- entries, reduce: [] do
+        acc ->
+          probe = Map.fetch!(scans, "Elixir.Fablebook.GuardProbe.P#{index}")
+          expected_hits = generated_probe_hits(entry, probe)
+          missing = Enum.reject(expected_hits, &(&1 in hits(probe)))
+
+          if missing == [] do
+            acc
+          else
+            [{entry, missing, probe.mfas} | acc]
+          end
+      end
+      |> Enum.reverse()
+
+    assert uncaught == [], "MFA-tier entries without a generated-probe hit: #{inspect(uncaught)}"
+  end
+
   test "the Credo check bans the same names and flags the source-level fixtures" do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
 
     assert BannedCalls.banned_names() == Enum.sort(@atom_tier)
+    assert BannedCalls.banned_mfas() == Enum.sort(@mfa_tier)
 
     for path <- Path.wildcard(Path.join(@fixture_dir, "*.ex")),
         Path.basename(path) not in @beam_only_fixtures do
@@ -525,7 +731,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   defp load_tier_apps do
-    Enum.each([:xmerl, :tools, :parsetools, :syntax_tools, :asn1], &Mix.ensure_application!/1)
+    Enum.each(
+      [:xmerl, :syntax_tools, :tools, :parsetools, :iex, :mix, :asn1, :sasl, :ssl, :debugger],
+      &Mix.ensure_application!/1
+    )
   end
 
   defp mfa_name({module, :_, _}), do: inspect(module)
@@ -574,6 +783,92 @@ defmodule Fablebook.Contract.BannedCallsTest do
     |> Tuple.to_list()
     |> Enum.zip(Tuple.to_list(mfa))
     |> Enum.all?(fn {expected, actual} -> expected == :_ or expected == actual end)
+  end
+
+  defp generated_probe_module({module, :_, :_}, index) do
+    {function, arity} =
+      module.module_info(:exports)
+      |> Enum.reject(fn {name, _arity} ->
+        name in [:module_info, :__info__] or String.starts_with?(Atom.to_string(name), "MACRO-")
+      end)
+      |> List.first()
+
+    generated_probe_module(index, [{module, function, arity}])
+  end
+
+  defp generated_probe_module({module, function, :_}, index) do
+    arities =
+      module.module_info(:exports)
+      |> Enum.reject(fn {name, _arity} ->
+        name in [:module_info, :__info__] or String.starts_with?(Atom.to_string(name), "MACRO-")
+      end)
+      |> Enum.filter(fn {name, _arity} -> name == function end)
+      |> Enum.map(&elem(&1, 1))
+      |> Enum.sort()
+
+    generated_probe_module(index, Enum.map(arities, &{module, function, &1}))
+  end
+
+  defp generated_probe_module({module, function, arity}, index) do
+    generated_probe_module(index, [{module, function, arity}])
+  end
+
+  defp generated_probe_module(index, calls) do
+    functions =
+      calls
+      |> Enum.with_index()
+      |> Enum.map_join("\n", fn {{module, function, arity}, call_index} ->
+        args_source = Enum.join(generated_probe_arguments(arity), ", ")
+        module_source = inspect(module)
+        function_source = inspect(Atom.to_string(function))
+
+        "  def run_#{call_index}(#{args_source}), do: #{module_source}.#{function_source}(#{args_source})"
+      end)
+
+    "defmodule Fablebook.GuardProbe.P#{index} do\n#{functions}\nend\n"
+  end
+
+  defp generated_probe_arguments(0), do: []
+
+  defp generated_probe_arguments(arity),
+    do: for(arg_index <- 1..arity, do: "arg#{arg_index}")
+
+  defp generated_probe_hits(entry, scan) do
+    case Enum.find(@rewritten_calls, fn {rewritten_entry, _emitted_mfa} ->
+           rewritten_entry == entry
+         end) do
+      {_entry, emitted_mfa} ->
+        assert emitted_mfa in scan.mfas, "#{inspect(entry)} did not emit #{inspect(emitted_mfa)}"
+        rewritten_probe_hits(emitted_mfa)
+
+      nil ->
+        expected_probe_hits(entry)
+    end
+  end
+
+  defp expected_probe_hits({module, :_, :_}), do: [{:mfa, {module, :_, :_}}]
+
+  defp expected_probe_hits({module, function, :_}) do
+    arities =
+      module.module_info(:exports)
+      |> Enum.reject(fn {name, _arity} ->
+        name in [:module_info, :__info__] or String.starts_with?(Atom.to_string(name), "MACRO-")
+      end)
+      |> Enum.filter(fn {name, _arity} -> name == function end)
+      |> Enum.map(&elem(&1, 1))
+      |> Enum.sort()
+
+    Enum.map(arities, &{:mfa, {module, function, &1}})
+  end
+
+  defp expected_probe_hits({module, function, arity}),
+    do: [{:mfa, {module, function, arity}}]
+
+  defp rewritten_probe_hits({module, function, _arity}) do
+    hits = for atom <- [module, function], atom in @atom_tier, do: {:atom, atom}
+
+    assert hits != [], "rewritten MFA has no atom-tier hit: #{inspect({module, function})}"
+    hits
   end
 
   defp compile!(files, dir, debug_info) do
