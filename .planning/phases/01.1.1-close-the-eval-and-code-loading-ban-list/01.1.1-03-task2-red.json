@@ -1,0 +1,10 @@
+{
+  "command": "ASDF_ERLANG_VERSION=29.1.1 elixir -r /tmp/fablebook-plan02/tap_formatter.ex -S mix test --warnings-as-errors --formatter Fablebook.TapFormatter --seed 0 test/contract/tier_sweep_test.exs",
+  "exitCode": 2,
+  "output": "TAP version 13\nok 1 - test every in-scope OTP app, Elixir app and prod-closure dependency has an ebin\nok 2 - test every in-scope beam carries debug info\nok 3 - test removing a tier entry leaves its front door undisposed\nok 4 - test every function the sweep reaches is covered by the tier or excluded with a reason\nnot ok 5 - test every exclusion names a known reason and every citation is an app-relative source line\n  ---\n  failure: '[{:error, %ExUnit.AssertionError{left: :ex_unit_no_meaningful_value, right: :ex_unit_no_meaningful_value, message: \"invalid exclusion records: [{{Mix.Tasks.Phx, [:run]}, :fixed_args, \\\"./phoenix/lib/mix/tasks/phx.ex:25\\\"}]\", expr: :ex_unit_no_meaningful_value, args: :ex_unit_no_meaningful_value, doctest: :ex_unit_no_meaningful_value, context: :==}, [{Fablebook.Contract.TierSweepTest, :\"test every exclusion names a known reason and every citation is an app-relative source line\", 1, [file: ~c\"test/contract/tier_sweep_test.exs\", line: 237]}]}]'\n  ...\n1..5",
+  "targetTest": "test every exclusion names a known reason and every citation is an app-relative source line",
+  "targetFile": "test/contract/tier_sweep_test.exs",
+  "expected": "Every exclusion carries a known reason key, and any citation uses the app-relative source-line format.",
+  "actual": "The new contract rejected the intentionally malformed citation ./phoenix/lib/mix/tasks/phx.ex:25.",
+  "semanticAssessment": "The unchanged TAP report came from an actual latest-lane ExUnit run through the scratch formatter. The target contract test executed and failed only because the supplied citation starts with ./ rather than a source app directory; the four graph and non-vacuity controls passed."
+}

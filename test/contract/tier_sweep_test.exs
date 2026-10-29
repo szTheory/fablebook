@@ -153,7 +153,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     {{Mix.Utils, [:read_path]}, :fixed_app},
     {:asn1_db, :compiler_pass},
     {{:prefix, ":asn1ct_"}, :compiler_pass},
-    {{Mix.Tasks.Phx, [:run]}, :fixed_args, "phoenix/lib/mix/tasks/phx.ex:25"},
+    {{Mix.Tasks.Phx, [:run]}, :fixed_args, "./phoenix/lib/mix/tasks/phx.ex:25"},
     {{Mix.Tasks.Phx.Digest, [:run]}, :project_build, "phoenix/lib/mix/tasks/phx.digest.ex:58"},
     {{Mix.Tasks.Phx.Digest.Clean, [:run]}, :project_build,
      "phoenix/lib/mix/tasks/phx.digest.clean.ex:43"},
@@ -188,6 +188,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   ]
 
   @eval_funs [:eval_str, :expr, :expr_list, :exprs, :match_clause]
+  @citation_re ~r/^[a-z_]+\/[^\s:]+\.(ex|erl|hrl):\d+$/
   @static_sinks [
                   {:erlang, :load_module},
                   {:erlang, :prepare_loading},
@@ -228,6 +229,12 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert undisposed == [],
            "#{counts}\n" <> Enum.map_join(undisposed, "\n", &witness_line(ctx.graph, &1))
+  end
+
+  test "every exclusion names a known reason and every citation is an app-relative source line" do
+    invalid = Enum.reject(@exclusions, &valid_exclusion?/1)
+
+    assert invalid == [], "invalid exclusion records: #{inspect(invalid)}"
   end
 
   defp build_graph do
@@ -478,6 +485,13 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp known_reason(reason) do
     if Map.has_key?(@reasons, reason), do: reason
+  end
+
+  defp valid_exclusion?({_matcher, reason}), do: Map.has_key?(@reasons, reason)
+
+  defp valid_exclusion?({_matcher, reason, citations}) do
+    Map.has_key?(@reasons, reason) and
+      Enum.all?(List.wrap(citations), &Regex.match?(@citation_re, &1))
   end
 
   defp function_edges(mod, {:function, _, name, arity, clauses}) do
