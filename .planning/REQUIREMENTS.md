@@ -159,7 +159,7 @@ Every item is a v1.0 commitment. 1.0 ships only after the clearance soak (`.plan
 ### SEC: security
 
 - [ ] **SEC-01**: No `Code.eval*`, no runtime EEx/HEEx compilation, and no `String.to_atom` on input. Credo bans these, and properties plus mutation-proven tests confirm it. (ADR 0004, INT-20261028-01)
-- [ ] **SEC-02**: In prod the router macro raises a `CompileError`, with no override in 1.0. Stories and canon never compile in prod. The CI prod build asserts there are no Fablebook routes and no story beams. (ADR 0006)
+- [x] **SEC-02**: In prod the router macro raises a `CompileError`, with no override in 1.0. Stories and canon never compile in prod. The CI prod build asserts there are no Fablebook routes and no story beams. (ADR 0006)
 - [ ] **SEC-03**: CSP nonces everywhere (`csp_nonce_assign_key`). No `eval` or `new Function`. Iframe sandbox attributes and `frame-ancestors 'self'`. (ADR 0005)
 - [ ] **SEC-04**: Bundle redaction strips paths, env values, hosts, secret-shaped strings and session/CSRF tokens. A `redact:` hook is available. (ADR 0010)
 - [ ] **SEC-05**: Size caps per control type (`:state_too_large`), path containment for `--out` and the editor (`:path_rejected`), and descriptions/Markdown escaped by default. (ADR 0004)
@@ -363,7 +363,7 @@ Which phases cover which requirements. Filled by roadmap creation.
 | SKILL-01 | Phase 30 | Pending |
 | SKILL-02 | Phase 29 | Pending |
 | SEC-01 | Phase 5 | Pending |
-| SEC-02 | Phase 1 | Pending |
+| SEC-02 | Phase 1 | Complete |
 | SEC-03 | Phase 7 | Pending |
 | SEC-04 | Phase 6 | Pending |
 | SEC-05 | Phase 12 | Pending |
@@ -408,4 +408,4 @@ Which phases cover which requirements. Filled by roadmap creation.
 
 ---
 *Requirements defined: 2026-10-28*
-*Last updated: 2026-10-28 after initialization*
+*Last updated: 2026-10-29, SEC-02 complete (CI evidence: https://github.com/szTheory/fablebook/actions/runs/40806648656)*
