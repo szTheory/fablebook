@@ -85,7 +85,27 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:elixir, :string_to_tokens, :_},
     {Code, :format_string!, :_},
     {Code, :format_file!, :_},
-    {Code.Fragment, :container_cursor_to_quoted, :_}
+    {Code.Fragment, :container_cursor_to_quoted, :_},
+    {Logger.Formatter, :compile, :_},
+    {EEx.Compiler, :compile, :_},
+    {Phoenix.Template.ExsEngine, :compile, :_},
+    {Phoenix.Template.EExEngine, :compile, :_},
+    {Phoenix.LiveView.Engine, :compile, :_},
+    {Phoenix.LiveView.HTMLEngine, :compile, :_},
+    {Phoenix.LiveView.TagEngine.Compiler, :compile, :_},
+    {:xref_compiler, :compile, :_},
+    {Mix.Compilers.Elixir, :compile, :_},
+    {Mix.Compilers.Erlang, :compile, :_},
+    {Mix.Tasks.Deps.Compile, :compile, :_},
+    {:erl_compile, :compile, :_},
+    {:erl_compile_server, :compile, :_},
+    {:leex, :compile, :_},
+    {:yecc, :compile, :_},
+    {Mix.Project, :compile, :_},
+    {:elixir_erl, :compile, :_},
+    {:cover, :compile, :_},
+    {:merl, :_, :_},
+    {:asn1ct, :_, :_}
   ]
 
   @allowlist []
@@ -229,7 +249,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   test "every MFA matcher names an existing function" do
-    Mix.ensure_application!(:xmerl)
+    load_tier_apps()
 
     for {mod, name, arity} = entry <- @mfa_tier do
       assert Code.ensure_loaded?(mod), "#{inspect(entry)} names a module that does not load"
@@ -484,6 +504,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
     for name <- atom_names ++ mfa_names,
         Regex.match?(~r/(?<!\w)#{Regex.escape(name)}(?![\w!?])/, text),
         do: name
+  end
+
+  defp load_tier_apps do
+    Enum.each([:xmerl, :tools, :parsetools, :syntax_tools, :asn1], &Mix.ensure_application!/1)
   end
 
   defp mfa_name({module, :_, _}), do: inspect(module)
