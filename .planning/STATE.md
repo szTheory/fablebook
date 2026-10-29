@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1
 current_phase_name: Close the eval and code-loading ban list (INSERTED)
 status: executing
-stopped_at: Completed 01.1-05-PLAN.md
-last_updated: "2026-10-29T19:17:52.891Z"
+stopped_at: Completed 01.1.1-01-PLAN.md
+last_updated: "2026-10-29T19:39:25.506Z"
 last_activity: 2026-10-29
-last_activity_desc: Phase 01.1 execution started
-state_head: 41e397a6e1a1fc1aa5910eb61cc57b18516c964e
+last_activity_desc: Phase 01.1.1 execution started
+state_head: f32956b1bd2570d6064f94a9167de3108c9d315c
 progress:
   total_phases: 38
   completed_phases: 0
   total_plans: 15
-  completed_plans: 10
+  completed_plans: 11
   percent: 0
 ---
 
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-28)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1 — Close phase 1 guard gaps
+**Current focus:** Phase 01.1.1 — Close the eval and code-loading ban list (INSERTED)
 
 ## Current Position
 
-Phase: 01.1.1 (Close the eval and code-loading ban list (INSERTED)) — READY TO EXECUTE
-Plan: 5 of 5
+Phase: 01.1.1 (Close the eval and code-loading ban list (INSERTED)) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-10-29 — Phase 01.1 execution started
+Last activity: 2026-10-29 — Phase 01.1.1 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -66,6 +66,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01.1 P03 | 11min | 3 tasks | 13 files |
 | Phase 01.1 P04 | 6min | 2 tasks | 2 files |
 | Phase 01.1 P05 | 17min | 2 tasks | 1 files |
+| Phase 01.1.1 P01 | 16 min | 3 tasks | 27 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,8 @@ Recent decisions affecting current work:
 - [Phase 01.1]: Release window: no release-please PR merges until 01.1-05's hex_publish_test.exs guard is on main
 - [Phase 01.1]: hex_publish_test.exs models actions/checkout and runs the build's pre-test steps behind it; exit 0 must mean HEAD is the tag's commit on origin/main
 - [Phase 01.1]: Release window closed: hex_publish_test.exs is on main (92588ac); release-please PRs may merge again
+- [Phase 01.1.1]: Mix.Project.compile/1,2 and :elixir_erl.compile are tier entries: argv reaches --erl-config (:file.consult) and --tracer (Module.concat); the module map's definitions reach compile:noenv_forms
+- [Phase 01.1.1]: The whole-module literal check ignores called and captured function names; m.compile(s) is the one shape it stops catching, pinned by StrictVarModuleCompile (Phase 5 backstop)
 
 ### Pending Todos
 
@@ -130,6 +133,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-29T15:19:21.143Z
-Stopped at: Completed 01.1-05-PLAN.md
+Last session: 2026-10-29T19:39:25.486Z
+Stopped at: Completed 01.1.1-01-PLAN.md
 Resume file: None
