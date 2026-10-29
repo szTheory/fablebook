@@ -138,7 +138,7 @@ Plans:
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
 **Mode:** mvp
-**Depends on**: Phase 1
+**Depends on**: Phase 01.1
 **Requirements**: None completed here (a vertical slice and a spike; see Partial delivery).
 **Partial delivery**: QA-04 (skeleton `hosts/operator`, completes in Phase 9), VIS-01 and VIS-02 (guards, complete in Phase 21), CANVAS-01 and SEC-03 (nonce CSP exercised, complete in Phase 7).
 **Provisional on:** Q9
