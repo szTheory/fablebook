@@ -13,12 +13,16 @@ defmodule Fablebook.Test.BeamWalker do
           {:ok, {^module, [imports: imports, compile_info: info]}} =
             :beam_lib.chunks(path, [:imports, :compile_info])
 
+          code = function_code(forms)
+
           {:ok,
            %{
              module: module,
              source: to_string(info[:source]),
              atoms: atoms(forms, MapSet.new()),
-             mfas: imports
+             mfas: imports,
+             pairs: pairs(code, MapSet.new()),
+             literals: literals(code, MapSet.new())
            }}
         end
 
@@ -30,6 +34,9 @@ defmodule Fablebook.Test.BeamWalker do
     end
   end
 
+  defp function_code(forms),
+    do: for({:function, _, name, _, _} = form <- forms, name != :__info__, do: form)
+
   defp atoms(term, acc) when is_atom(term), do: MapSet.put(acc, term)
   defp atoms(term, acc) when is_tuple(term), do: atoms(Tuple.to_list(term), acc)
   defp atoms(term, acc) when is_list(term), do: Enum.reduce(term, acc, &atoms/2)
@@ -38,4 +45,16 @@ defmodule Fablebook.Test.BeamWalker do
     do: Enum.reduce(term, acc, fn {k, v}, acc -> atoms(v, atoms(k, acc)) end)
 
   defp atoms(_term, acc), do: acc
+
+  defp pairs([{:atom, _, m}, {:atom, _, f} = next | rest], acc),
+    do: pairs([next | rest], MapSet.put(acc, {m, f}))
+
+  defp pairs([head | tail], acc), do: pairs(tail, pairs(head, acc))
+  defp pairs(term, acc) when is_tuple(term), do: pairs(Tuple.to_list(term), acc)
+  defp pairs(_term, acc), do: acc
+
+  defp literals({:atom, _, atom}, acc), do: MapSet.put(acc, atom)
+  defp literals(term, acc) when is_tuple(term), do: literals(Tuple.to_list(term), acc)
+  defp literals(term, acc) when is_list(term), do: Enum.reduce(term, acc, &literals/2)
+  defp literals(_term, acc), do: acc
 end

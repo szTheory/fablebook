@@ -273,10 +273,17 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
   end
 
-  defp hits(%{atoms: atoms, mfas: mfas}) do
+  defp hits(%{atoms: atoms, mfas: mfas, pairs: pairs, literals: literals}) do
     atom_hits = for atom <- @atom_tier, atom in atoms, do: {:atom, atom}
     mfa_hits = for mfa <- mfas, Enum.any?(@mfa_tier, &mfa_match?(&1, mfa)), do: {:mfa, mfa}
-    atom_hits ++ mfa_hits
+
+    pair_hits =
+      for {m, f} <- pairs,
+          Enum.any?(@mfa_tier, fn {pm, pf, _} -> pm == m and pf in [:_, f] end),
+          do: {:mfa, {m, f, :_}}
+
+    literal_hits = for m <- literals, {m, :_, :_} in @mfa_tier, do: {:mfa, {m, :_, :_}}
+    atom_hits ++ mfa_hits ++ pair_hits ++ literal_hits
   end
 
   defp mfa_match?(pattern, mfa) do
