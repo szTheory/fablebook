@@ -382,7 +382,7 @@ Six findings change what the planner must write. None of them reopens a locked d
 3. **`mix ci` must run in `:test`** because `mix test` refuses to run under an alias in `:dev`. So credo and ex_doc must be `only: [:dev, :test]`, which still satisfies D-26's rule (Pitfall 3).
 4. **Dialyzer fails on `Mix.env/0`** unless `:mix` is in `plt_add_apps` (Pitfall 4).
 5. **D-17 bans `uses: ./.github/workflows/` in all three files.** That contradicts D-08, where `release-please.yml` must call `hex-publish.yml` (Pitfall 7).
-6. **The current corpus has 8 plural or hyphenated ADR citations** (`ADRs 0014–0017`, `ADR-0002`) that the literal D-19 "other ADR forms fail" rule would reject (Pitfall 9).
+6. **The current corpus has 8 plural or hyphenated ADR citations** (`ADRs 0014–0017` and the hyphenated form of ADR 0002) that the literal D-19 "other ADR forms fail" rule would reject (Pitfall 9).
 
 **Primary recommendation:**
 - Land plans 1–3 on one branch as one PR, opened as a draft on day 1, so every guard enters as status `A` and the D-21 contract rule never trips on Phase 1's own iteration.
@@ -1147,13 +1147,13 @@ With it, zizmor exits 0 [VERIFIED: local]. Add the file to the shape test's day-
 ### Pitfall 9: the literal ADR-form rule fails on today's corpus
 **What goes wrong:** a prototype of D-19 over tracked files finds 7 tracked occurrences of non-canonical ADR forms, and 1 more in the untracked `.claude/CLAUDE.md`:
 - `ADRs 0014–0017`, `ADRs 0001 to 0025`, `ADRs 0003/0004/…`, `ADRs 0005, 0006, …`;
-- `ADR-0002` in `docs/research/OWNER-DNA.md:119`.
+- the hyphenated form of ADR 0002 in `docs/research/OWNER-DNA.md:119`.
 
 INT ids are all valid and existing; trailing `:` and `'s` after a full id are punctuation, not malformed ids. [VERIFIED: local Elixir scan of `git ls-files` output]
 **How to avoid:**
 - Define "other ADR forms" as the singular non-canonical forms (`ADR-\d`, `ADR\d`, `ADR #\d`, `ADR \d{1,3}\b`, `ADR \d{5,}`).
 - Validate every 4-digit number inside an `ADRs …` list against `docs/adr/`.
-- Normalize `ADR-0002` to `ADR 0002` in the Phase 1 PR. It is not an intent source, so editing it is legal.
+- Normalize the hyphenated form to `ADR 0002` in the Phase 1 PR. It is not an intent source, so editing it is legal.
 - Write the malformed-INT regex as `\bINT-\d(?!\d{7}-\d{2}\b)`.
 
 ### Pitfall 10: `.claude/CLAUDE.md` is gitignored

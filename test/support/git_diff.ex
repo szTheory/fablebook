@@ -28,8 +28,11 @@ defmodule Fablebook.Test.GitDiff do
   defp pull_request_base(dir) do
     with {:ok, line} <- git(dir, ["rev-list", "--parents", "-n", "1", "HEAD"]) do
       case String.split(line) do
-        [_head, first, _second] -> {:ok, first}
-        [_head | parents] -> {:error, "pull_request HEAD has #{length(parents)} parents, expected 2"}
+        [_head, first, _second] ->
+          {:ok, first}
+
+        [_head | parents] ->
+          {:error, "pull_request HEAD has #{length(parents)} parents, expected 2"}
       end
     end
   end
