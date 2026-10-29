@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: "01.1"
 current_phase_name: Close phase 1 guard gaps
 status: executing
-stopped_at: Completed 01.1-02-PLAN.md
-last_updated: "2026-10-29T14:34:43.431Z"
+stopped_at: Completed 01.1-03-PLAN.md
+last_updated: "2026-10-29T14:49:24.765Z"
 last_activity: 2026-10-29
 last_activity_desc: Phase 01.1 execution started
-state_head: 4e1d6a822c1d8050512f5b90beb408eedf9c418f
+state_head: 8fc2e937833aa3873b02918632bb3b451d2d4628
 progress:
   total_phases: 37
   completed_phases: 0
   total_plans: 10
-  completed_plans: 7
+  completed_plans: 8
   percent: 0
 ---
 
@@ -28,8 +28,8 @@ See: .planning/PROJECT.md (updated 2026-10-28)
 ## Current Position
 
 Phase: 01.1 (Close phase 1 guard gaps) — EXECUTING
-Plan: 3 of 5
-Status: Executing Phase 01.1
+Plan: 4 of 5
+Status: Ready to execute
 Last activity: 2026-10-29 — Phase 01.1 execution started
 
 Progress: [░░░░░░░░░░] 0%
@@ -63,6 +63,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 1 P05 | 85min | 7 tasks | 16 files |
 | Phase 01.1 P01 | 10min | 3 tasks | 11 files |
 | Phase 01.1 P02 | 6min | 3 tasks | 4 files |
+| Phase 01.1 P03 | 11min | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ Recent decisions affecting current work:
 - [Phase 01.1]: hex-production v* deployment policy stays until the owner answers Q37 (D-14 names main plus v*)
 - [Phase 01.1]: Recovery publishes docs only when the release exists with a matching checksum and has_docs false; mismatch or other status fails closed
 - [Phase 01.1]: WR-01, WR-04 and the WR-05 settings half are owner questions Q36, Q35, Q37, not implemented
+- [Phase 01.1]: SEC-01 stays Pending (Phase 5); 01.1-03 advances only its static-ban share
+- [Phase 01.1]: CR-02 (truth 7), T-01.1-25 and T-01.1-28 transferred to Phase 01.1.1 per INT-20261029-03; @mfa_tier stays at 45
+- [Phase 01.1]: BEAM guard over-catches (Regex.compile/1, [epp: 1], [io: :read], [compile: true]) are pinned by the known-strictness test; a lib/ hit is fixed in lib/, never allowlisted without an ADR
 
 ### Pending Todos
 
@@ -119,6 +123,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-29T11:08:24.847Z
-Stopped at: Completed 01.1-02-PLAN.md
+Last session: 2026-10-29T14:49:24.747Z
+Stopped at: Completed 01.1-03-PLAN.md
 Resume file: None

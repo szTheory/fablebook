@@ -44,3 +44,4 @@
 - **Fix direction:**
   - run the ancestry check in a first step that checks out `main` (or uses the API) before anything from the tag is executed, or drop the build job's token to `contents: read`.
   - It is a `.github/` PR that does not edit `test/contract/hex_publish_test.exs` in the same change (ADR 0021). Owner phase: next release-pipeline touch, or with Q37.
+- **Resolved:** the build step `ref` runs before `./.github/actions/setup` (Plan 01.1-04, PR https://github.com/szTheory/fablebook/pull/12)
