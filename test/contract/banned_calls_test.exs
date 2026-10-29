@@ -417,9 +417,13 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert mix_exs_hits("Code.eval_string(x)") == ["eval_string"]
     assert mix_exs_hits(":erlang.binary_to_atom(x, :utf8)") == ["binary_to_atom"]
     assert mix_exs_hits("Elixir.Telemetry.Metrics") == ["Telemetry.Metrics"]
-    assert mix_exs_hits("String.to_atom(x)") == ["to_atom"]
+    assert mix_exs_hits("String.to_atom(x)") == ["to_atom", "String.to_atom"]
     assert mix_exs_hits("eval_strings = 1") == []
     assert mix_exs_hits("my_eval_string(x)") == []
+    assert mix_exs_hits(":file.eval(x)") == [":file.eval"]
+    assert mix_exs_hits("Module.concat(x)") == ["Module.concat"]
+    assert mix_exs_hits(":epp.parse_file(p)") == [":epp"]
+    assert mix_exs_hits("compile --force") == []
   end
 
   defp mix_exs_hits(text) do
