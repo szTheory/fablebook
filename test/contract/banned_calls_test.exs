@@ -121,7 +121,11 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"spawn_file_script.ex", {:mfa, {:file, :script, :_}}},
     {"erpc_file_script.ex", {:mfa, {:file, :script, :_}}},
     {"rpc_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
-    {"rpc_remote_load_module.ex", {:mfa, {:erlang, :load_module, :_}}}
+    {"rpc_remote_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
+    {"info_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
+    {"info_concat.ex", {:mfa, {Module, :concat, :_}}},
+    {"info_capture_script.ex", {:mfa, {:file, :script, :_}}},
+    {"info_arity_zero.ex", {:mfa, {:file, :script, :_}}}
   ]
 
   @beam_only_fixtures ~w(
@@ -139,6 +143,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
     erpc_file_script.ex
     rpc_load_module.ex
     rpc_remote_load_module.ex
+    info_load_module.ex
+    info_concat.ex
+    info_capture_script.ex
+    info_arity_zero.ex
   )
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
