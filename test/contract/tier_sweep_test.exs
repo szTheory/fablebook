@@ -43,6 +43,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     fixed_args: "calls a code-loading front door only with arguments fixed in its own source"
   }
 
+  @call_name_exclusions []
+
   @exclusions [
     {{:fun_prefix, "MACRO-"}, :macro},
     {:erl_tracer, :own_native},
@@ -217,6 +219,48 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert ctx.graph.no_debug == [], "beams without debug info: #{inspect(ctx.graph.no_debug)}"
   end
 
+  test "every function named like a wholly banned module is covered or excluded with a cited reason",
+       ctx do
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+
+    whole_modules =
+      for {module, :_, :_} <- tier, do: module
+
+    named =
+      ctx.graph.exported
+      |> Enum.filter(&banned_module_named?(&1, whole_modules))
+      |> Enum.reject(fn {_module, function, _arity} ->
+        function in [:__info__, :module_info] or
+          String.starts_with?(Atom.to_string(function), "MACRO-")
+      end)
+
+    uncovered = Enum.reject(named, &covered?(&1, tier, names))
+    matched = matched_uncovered(uncovered, @call_name_exclusions)
+    undisposed = Enum.reject(uncovered, &MapSet.member?(matched, &1))
+
+    assert {Regex, :compile, 1} in named
+    assert {Logger.Formatter, :compile, 1} in named
+
+    logger_without_entry = Enum.reject(tier, &(&1 == {Logger.Formatter, :compile, :_}))
+
+    assert {Logger.Formatter, :compile, 1} in Enum.reject(
+             named,
+             &covered?(&1, logger_without_entry, names)
+           )
+
+    unmatched_exclusions =
+      Enum.reject(@call_name_exclusions, fn entry ->
+        matched_uncovered(uncovered, [entry]) |> MapSet.size() > 0
+      end)
+
+    assert undisposed == [],
+           "undisposed banned-module-named functions: #{inspect(Enum.sort(undisposed))}"
+
+    assert unmatched_exclusions == [],
+           "call-name exclusions matching no uncovered function: #{inspect(unmatched_exclusions)}"
+  end
+
   test "removing a tier entry leaves its front door undisposed", ctx do
     tier = Enum.reject(BannedCalls.banned_mfas(), &(&1 == {Mix.Tasks.Run, :_, :_}))
     undisposed = undisposed(ctx.graph, tier, BannedCalls.banned_names())
@@ -236,7 +280,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   test "every exclusion names a known reason and every citation is an app-relative source line" do
-    invalid = Enum.reject(@exclusions, &valid_exclusion?/1)
+    invalid = Enum.reject(@exclusions ++ @call_name_exclusions, &valid_exclusion?/1)
 
     assert invalid == [], "invalid exclusion records: #{inspect(invalid)}"
   end
@@ -452,6 +496,23 @@ defmodule Fablebook.Contract.TierSweepTest do
     f in names or m in names or
       Enum.any?(tier, fn {pm, pf, pa} -> pm == m and pf in [:_, f] and pa in [:_, a] end)
   end
+
+  defp banned_module_named?({_module, function, _arity}, whole_modules),
+    do: function in whole_modules
+
+  defp matched_uncovered(uncovered, entries) do
+    Enum.reduce(entries, MapSet.new(), fn {matcher, _reason, _citation}, matched ->
+      Enum.reduce(uncovered, matched, fn mfa, acc ->
+        if call_name_exclusion_match?(matcher, mfa), do: MapSet.put(acc, mfa), else: acc
+      end)
+    end)
+  end
+
+  defp call_name_exclusion_match?({module, functions}, {module, function, _arity})
+       when is_list(functions),
+       do: function in functions
+
+  defp call_name_exclusion_match?(_matcher, _mfa), do: false
 
   defp exclusion_reason(m, f) do
     Enum.find_value(@exclusions, fn
