@@ -40,10 +40,39 @@ defmodule Fablebook.Contract.TierSweepTest do
       "IEx console internal, reached only inside a running IEx through the banned IEx front doors",
     fixed_app:
       "puts only a named OTP application or Mix's own archive directory on the code path; loads no caller code",
-    fixed_args: "calls a code-loading front door only with arguments fixed in its own source"
+    fixed_args: "calls a code-loading front door only with arguments fixed in its own source",
+    not_compile_module:
+      "named compile but compiles only regexes, assets or the host project's own build, as cited"
   }
 
-  @call_name_exclusions []
+  @call_name_exclusions [
+    {{Mix.Compilers.Protocol, [:compile]}, :not_compile_module,
+     ["mix/lib/mix/compilers/protocol.ex:107", "mix/lib/mix/compilers/protocol.ex:162"]},
+    {{Phoenix.Digester, [:compile]}, :not_compile_module,
+     ["phoenix/lib/phoenix/digester.ex:20", "phoenix/lib/phoenix/digester.ex:93"]},
+    {{Phoenix.LiveView.ColocatedAssets, [:compile]}, :not_compile_module,
+     [
+       "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:48",
+       "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:93"
+     ]},
+    {{Plug.Builder, [:compile]}, :not_compile_module,
+     [
+       "plug/lib/plug/builder.ex:324",
+       "plug/lib/plug/builder.ex:358",
+       "plug/lib/plug/builder.ex:382"
+     ]},
+    {{Regex, [:compile]}, :not_compile_module,
+     ["elixir/lib/regex.ex:219", "elixir/lib/regex.ex:223"]},
+    {{:re, [:compile]}, :not_compile_module,
+     [
+       "stdlib/src/re.erl:128",
+       "stdlib/src/re.erl:288",
+       "stdlib/src/re.erl:86",
+       "stdlib/src/re.erl:236"
+     ]}
+  ]
+
+  @call_name_lane_specific [{{Mix.Compilers.Protocol, [:compile]}, :latest}]
 
   @exclusions [
     {{:fun_prefix, "MACRO-"}, :macro},
@@ -251,7 +280,8 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     unmatched_exclusions =
       Enum.reject(@call_name_exclusions, fn entry ->
-        matched_uncovered(uncovered, [entry]) |> MapSet.size() > 0
+        matched_uncovered(uncovered, [entry]) |> MapSet.size() > 0 or
+          lane_specific_call_name?(entry, named)
       end)
 
     assert undisposed == [],
@@ -513,6 +543,17 @@ defmodule Fablebook.Contract.TierSweepTest do
        do: function in functions
 
   defp call_name_exclusion_match?(_matcher, _mfa), do: false
+
+  defp lane_specific_call_name?({matcher, _reason, _citation}, named) do
+    case List.keyfind(@call_name_lane_specific, 0, matcher) do
+      {^matcher, :latest} ->
+        System.get_env("FABLEBOOK_FLOOR") not in [nil, ""] and
+          not Enum.any?(named, &call_name_exclusion_match?(matcher, &1))
+
+      _entry ->
+        false
+    end
+  end
 
   defp exclusion_reason(m, f) do
     Enum.find_value(@exclusions, fn
