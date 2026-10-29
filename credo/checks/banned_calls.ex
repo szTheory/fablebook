@@ -245,6 +245,7 @@ defmodule Fablebook.Credo.BannedCalls do
           {:i, :ii, :_},
           {:i, :ini, :_},
           {:debugger, :quick, :_},
+          {:debugger, :start, :_},
           {:dbg_icmd, :eval, :_},
           {:dbg_icmd, :cmd, :_},
           {:dbg_icmd, :handle_msg, :_},

@@ -202,6 +202,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:i, :ii, :_},
     {:i, :ini, :_},
     {:debugger, :quick, :_},
+    {:debugger, :start, :_},
     {:dbg_icmd, :eval, :_},
     {:dbg_icmd, :cmd, :_},
     {:dbg_icmd, :handle_msg, :_},
@@ -213,6 +214,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:dbg_iload, :load_mod, :_},
     {:dbg_debugged, :eval, :_}
   ]
+
+  @rewritten_calls %{}
 
   @allowlist []
 
@@ -627,6 +630,45 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
   end
 
+  @tag :tmp_dir
+  test "every MFA-tier entry is caught by a generated probe", %{tmp_dir: dir} do
+    load_tier_apps()
+    assert Map.keys(@rewritten_calls) -- @mfa_tier == []
+
+    entries = Enum.with_index(@mfa_tier)
+
+    source =
+      Enum.map_join(entries, "\n", fn {entry, index} ->
+        generated_probe_module(entry, index)
+      end)
+
+    source_path = Path.join(dir, "guard_probes.ex")
+    File.write!(source_path, source)
+
+    scans =
+      for beam <- compile!([source_path], dir, true), into: %{} do
+        assert {:ok, scan} = BeamWalker.scan(beam)
+        {Atom.to_string(scan.module), scan}
+      end
+
+    uncaught =
+      for {entry, index} <- entries, reduce: [] do
+        acc ->
+          probe = Map.fetch!(scans, "Elixir.Fablebook.GuardProbe.P#{index}")
+          expected_hits = generated_probe_hits(entry, probe)
+          missing = Enum.reject(expected_hits, &(&1 in hits(probe)))
+
+          if missing == [] do
+            acc
+          else
+            [{entry, missing, probe.mfas} | acc]
+          end
+      end
+      |> Enum.reverse()
+
+    assert uncaught == [], "MFA-tier entries without a generated-probe hit: #{inspect(uncaught)}"
+  end
+
   test "the Credo check bans the same names and flags the source-level fixtures" do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
@@ -736,6 +778,94 @@ defmodule Fablebook.Contract.BannedCallsTest do
     |> Tuple.to_list()
     |> Enum.zip(Tuple.to_list(mfa))
     |> Enum.all?(fn {expected, actual} -> expected == :_ or expected == actual end)
+  end
+
+  defp generated_probe_module({module, :_, :_}, index) do
+    {function, arity} =
+      module.module_info(:exports)
+      |> Enum.reject(fn {name, _arity} ->
+        name in [:module_info, :__info__] or String.starts_with?(Atom.to_string(name), "MACRO-")
+      end)
+      |> List.first()
+
+    generated_probe_module(index, [{module, function, arity}])
+  end
+
+  defp generated_probe_module({module, function, :_}, index) do
+    arities =
+      module.module_info(:exports)
+      |> Enum.reject(fn {name, _arity} ->
+        name in [:module_info, :__info__] or String.starts_with?(Atom.to_string(name), "MACRO-")
+      end)
+      |> Enum.filter(fn {name, _arity} -> name == function end)
+      |> Enum.map(&elem(&1, 1))
+      |> Enum.sort()
+
+    generated_probe_module(index, Enum.map(arities, &{module, function, &1}))
+  end
+
+  defp generated_probe_module({module, function, arity}, index) do
+    generated_probe_module(index, [{module, function, arity}])
+  end
+
+  defp generated_probe_module(index, calls) do
+    functions =
+      calls
+      |> Enum.with_index()
+      |> Enum.map_join("\n", fn {{module, function, arity}, call_index} ->
+        args =
+          if arity == 0 do
+            []
+          else
+            for arg_index <- 1..arity, do: "arg#{arg_index}"
+          end
+
+        args_source = Enum.join(args, ", ")
+        module_source = inspect(module)
+        function_source = inspect(Atom.to_string(function))
+
+        "  def run_#{call_index}(#{args_source}), do: #{module_source}.#{function_source}(#{args_source})"
+      end)
+
+    "defmodule Fablebook.GuardProbe.P#{index} do\n#{functions}\nend\n"
+  end
+
+  defp generated_probe_hits(entry, scan) do
+    case Enum.find(@rewritten_calls, fn {rewritten_entry, _emitted_mfa} ->
+           rewritten_entry == entry
+         end) do
+      {_entry, emitted_mfa} ->
+        assert emitted_mfa in scan.mfas, "#{inspect(entry)} did not emit #{inspect(emitted_mfa)}"
+        rewritten_probe_hits(emitted_mfa)
+
+      nil ->
+        expected_probe_hits(entry)
+    end
+  end
+
+  defp expected_probe_hits({module, :_, :_}), do: [{:mfa, {module, :_, :_}}]
+
+  defp expected_probe_hits({module, function, :_}) do
+    arities =
+      module.module_info(:exports)
+      |> Enum.reject(fn {name, _arity} ->
+        name in [:module_info, :__info__] or String.starts_with?(Atom.to_string(name), "MACRO-")
+      end)
+      |> Enum.filter(fn {name, _arity} -> name == function end)
+      |> Enum.map(&elem(&1, 1))
+      |> Enum.sort()
+
+    Enum.map(arities, &{:mfa, {module, function, &1}})
+  end
+
+  defp expected_probe_hits({module, function, arity}),
+    do: [{:mfa, {module, function, arity}}]
+
+  defp rewritten_probe_hits({module, function, _arity}) do
+    hits = for atom <- [module, function], atom in @atom_tier, do: {:atom, atom}
+
+    assert hits != [], "rewritten MFA has no atom-tier hit: #{inspect({module, function})}"
+    hits
   end
 
   defp compile!(files, dir, debug_info) do
