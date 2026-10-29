@@ -55,6 +55,8 @@ key-files:
     - release-please-config.json
     - .planning/STATE.md
     - .planning/ROADMAP.md
+    - .planning/WINDOWS.md
+    - .planning/phases/01-release-pipeline-ci-gate-and-guards/deferred-items.md
 
 key-decisions:
   - "The CHANGELOG seed is empty before the first release: release-please appends a seed that has no version header below the new entry, with its H1 demoted"
@@ -222,6 +224,7 @@ The commits on main are squash merges, so topic-branch hashes are not ancestors 
 ## Issues Encountered
 
 - `git pull --ff-only` on local main first failed because main had no upstream. I set `origin/main` as its upstream.
+- **Flaky contract test (deferred, WINDOWS entry 2):** on the closing PR, floor attempt 1 failed in `prod_guard_test.exs:23`. The prod `phx.routes` output contained the dep-compile banner `==> fablebook / Generated fablebook app`, which matches `~r/fablebook/i` (https://github.com/szTheory/fablebook/actions/runs/40805617266). I re-ran it once to tell a flake from a real failure, and attempt 2 passed. The cause and fix direction are in `deferred-items.md`. The test is unchanged here, and the fix needs its own PR with no `lib/` or `.github/` changes.
 
 ## Next Phase Readiness
 
