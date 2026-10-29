@@ -1,0 +1,39 @@
+# Phase 01.1.1 starting material
+
+These files came here from Phase 01.1 when CR-02 (01.1-VERIFICATION truth 7) moved to this phase (INT-20261029-03). They are input for `/gsd-plan-phase 01.1.1`, not a plan.
+
+| File | What it is |
+|------|------------|
+| `01.1.1-tier-sweep.exs` | Reachability sweep, formerly `01.1-tier-sweep.exs`. Run it from the repo root with `elixir` (not `mix`). It reads `@mfa_tier` and `@atom_tier` from `test/contract/banned_calls_test.exs`, walks back from the load primitives and the `:erl_eval` evaluators over xref plus literal-pair edges, prints every reached exported function that no tier covers and no exclusion explains, and exits 1 if any remain. `SWEEP_MODE=all` prints every row, and `SWEEP_MODE=witness` adds a call chain per row. |
+| `01.1.1-tier-sweep-exclusions.exs` | The sweep's exclusion list with one reason per entry, formerly `01.1-tier-sweep-exclusions.exs`. |
+
+The candidate 80-entry tier, along with the `:int` and code-path-mutator reasoning, is in Plan 01.1-03 as of commit `a3dab47` (`git show a3dab47:.planning/phases/01.1-close-phase-1-guard-gaps/01.1-03-PLAN.md`, Task 3 and the context's "Verified facts for the CR-02 tier"). Plan 01.1-03 no longer carries it. `@mfa_tier` stays at 45 entries on main after Phase 01.1, and against those 45 entries the sweep printed `undisposed=152` on both lanes at planning time. A re-run after the move (Elixir 1.20.4 / OTP 29.1.1, 2026-10-29) printed `reached=603 covered=96 excluded=355 undisposed=152` and exited 1.
+
+## Known starting gaps (01.1 plan checker, iteration 2)
+
+These are the checker's findings. Nobody has re-checked them against source yet, so each one is open until this phase confirms or refutes it.
+
+1. **Exclusion reasons reported false.** Each function below carries a reason in the exclusions file that the checker says does not hold for caller-chosen input:
+   - `Mix.Tasks.Format`: the `:dot_formatter` option of `formatter_for_file/2` and `run/1` with `--dot-formatter` (reason: `project_build`).
+   - `Mix.Tasks.Help.run/1` with `"app:" <> name` (reason: `project_build`).
+   - `Mix.Compilers.Erlang.ensure_application!/2` (reason: `project_build`).
+   - `Mix.Tasks.Test.Coverage.start/2` (reason: `project_build`).
+   - `Mix.Dep.in_dependency/3` (reason: `project_build`).
+   - `ExUnit.Diff.compute/3` (reason: `own_clauses`).
+   - `Mix.Local.append_paths/0` (reason: `fixed_app`).
+2. **Runtime dependencies are not swept.** The sweep scans only OTP and Elixir applications. When the checker added the project's dependency `ebin` directories under `_build/dev/lib` (phoenix, phoenix_live_view, phoenix_html, phoenix_template, phoenix_pubsub, plug, plug_crypto, telemetry, nimble_options, mime, websock, websock_adapter) and ran against the 125-entry candidate tier, the sweep printed `undisposed=61`. Those rows include `Phoenix.LiveView.Engine.compile/2`, `Phoenix.Template.EExEngine.compile/2`, `Phoenix.LiveView.TagEngine.Compiler.compile/2`, `Phoenix.Router.Helpers.define/2`, `Mix.Phoenix.eval_from/3`, `Mix.Phoenix.copy_from/4` and `Mix.Tasks.Phx.Server.run/1` (with `-e` code).
+3. **Whole-module literal over-catch (this phase's SC3).** The literal family that Plan 01.1-03 adds flags an atom that names a wholly banned module in any role. So `Regex.compile/1`, `:re.compile/2`, a local `compile/1` and `[epp: 1]` all hit `{:compile, :_, :_}` or `{:epp, :_, :_}`. Plan 01.1-03 documents this in the Credo explanation and pins it in the "(known strictness)" test. The owner chose the fix (INT-20261029-03: "the fix for over-catching any function named compile"), so SC3 requires the narrowing, not more documentation: call-name positions stop triggering the whole-module check, and any banned call the narrowing would drop gets an explicit tier entry first. The keyword and data-pair over-catches (`[epp: 1]`, `[compile: true]`, `[io: :read]`) are not function names; they stay documented and pinned unless this phase decides otherwise.
+4. **APIs no sweep row names (this phase's SC4).** Against the 45-entry tier the sweep never lists `:erlang.load_nif/2`, `:erl_ddll.load/2`, `:epp_dodger.parse_file/1` or `:elixir.tokens_to_quoted/3`, yet 01.1-VERIFICATION truth 7 reproduced each of them passing the guard. SC4 makes every truth-7 API, the native loaders in full and the atom-creating parsers in full tier entries whether or not the sweep reaches them. The truth-7 list is `:qlc.string_to_handle`, `:merl.compile_and_load`, `:c.c`, `:make.files`, `:cover.compile_module`, `:erlang.load_nif`, `:erl_ddll.load`, `:epp_dodger.parse_file`, `:elixir_erl_compiler.noenv_forms`, `:elixir.tokens_to_quoted`, `IEx.Helpers.c` and `Mix.Tasks.Run.run`.
+
+## Inbound threats
+
+Phase 01.1 transferred or retired these threats to this phase per INT-20261029-03. None of them is closed until this phase closes it.
+
+| Threat ID | From | Disposition in Phase 01.1 | What closes it here |
+|-----------|------|---------------------------|---------------------|
+| T-01.1-25 | Plan 01.1-03 (CR-02 share split out of T-01.1-27, whose reopened source is T-01.1-02, critical) | transfer | Eval, compile-and-load and native-load tier entries with negative fixtures (SC1, SC2, SC4) |
+| T-01.1-28 | Plan 01.1-03 (high; was T-01.1-03 in 01.1-SECURITY) | transfer | `:qlc.string_to_handle`, `:epp_dodger` and `:elixir.tokens_to_quoted` tier entries with negative fixtures (SC1, SC2, SC4) |
+| T-01.1-22 | Plan 01.1-03 as of `a3dab47` (high) | transfer (ID retired in 01.1) | The `:int` decision and the code-path mutator ban (SC2) |
+| T-01.1-23 | Plan 01.1-03 as of `a3dab47` (medium) | transfer (ID retired in 01.1) | The committed sweep with true exclusion reasons, `undisposed=0` on both lanes (SC1) |
+
+Plan 01.1-03 also pins three rows of its "(known strictness)" test as unlisted no-hit cases: `:qlc.string_to_handle/1` and `:epp_dodger.parse_file/1` (T-01.1-28), and `:erlang.load_nif/2` (T-01.1-25). Its Credo explanation names the same tier gap in one sentence. When this phase extends the tier, those rows must report hits and that sentence must go (SC4). The call-name rows change with SC3. Each of those edits rides in this phase's own contract-test-only PR (SC5, ADR 0021).
