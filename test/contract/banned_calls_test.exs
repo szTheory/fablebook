@@ -427,11 +427,18 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   defp mix_exs_hits(text) do
-    for atom <- @atom_tier,
-        name = atom |> Atom.to_string() |> String.replace_prefix("Elixir.", ""),
+    atom_names =
+      for atom <- @atom_tier, do: atom |> Atom.to_string() |> String.replace_prefix("Elixir.", "")
+
+    mfa_names = @mfa_tier |> Enum.map(&mfa_name/1) |> Enum.uniq()
+
+    for name <- atom_names ++ mfa_names,
         Regex.match?(~r/(?<!\w)#{Regex.escape(name)}(?![\w!?])/, text),
         do: name
   end
+
+  defp mfa_name({module, :_, _}), do: inspect(module)
+  defp mfa_name({module, function, _}), do: "#{inspect(module)}.#{function}"
 
   defp credo_issues(path) do
     path
