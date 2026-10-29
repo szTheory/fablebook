@@ -116,7 +116,15 @@ defmodule Fablebook.Planning.ContractRuleTest do
     assert GitDiff.base(%{}, dir) == {:ok, first}
   end
 
-  defp violations(_changes), do: []
+  defp violations(changes) do
+    for {status, path} <- changes,
+        status != "A",
+        {guard, paired} <- @pairs,
+        String.starts_with?(path, guard),
+        {_, other} <- changes,
+        String.starts_with?(other, paired),
+        do: {path, other}
+  end
 
   defp push(before), do: %{"GITHUB_EVENT_NAME" => "push", "EVENT_BEFORE" => before}
 
