@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 1
 current_phase_name: Release pipeline, CI gate and guards
 status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-10-29T00:19:52.748Z"
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-10-29T00:32:51.272Z"
 last_activity: 2026-10-28
 last_activity_desc: Phase 1 execution started
-state_head: aa1ee71991d13f20770fb60d9df1af601a545505
+state_head: 09ad8bd23262597c4f3de7a21e11353733ee90d4
 progress:
   total_phases: 35
   completed_phases: 0
   total_plans: 5
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-10-28)
 ## Current Position
 
 Phase: 1 (Release pipeline, CI gate and guards) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-10-28 — Phase 1 execution started
 
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 |------|----------|-------|-------|
 | Phase 1 P01 | 13min | 3 tasks | 26 files |
 | Phase 01 P02 | 21min | 4 tasks | 10 files |
+| Phase 01 P03 | 11min | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Owner chose public (INT-20261028-19): szTheory/fablebook is public; ruleset 26086901 requires only ci-gate (integration 15368)
 - [Phase 01]: Dependency graph enabled through Dependabot alerts so dependency-review runs; no D-15 control turned off
 - [Phase 01]: bin/ci_health --file-regression <job> [note] is the single open-or-create quality-regression path for ci.yml and hex-publish.yml
+- [Phase 01]: Credo ban check is loaded at test compile time; Elixir 1.20 warns on calls to a runtime-only module
+- [Phase 01]: Ban tiers, allowlists and regexes live as data in the contract tests; Credo banned_names/0 is asserted equal to the BEAM atom tier
 
 ### Pending Todos
 
@@ -98,6 +101,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-29T00:19:52.734Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-10-29T00:32:51.254Z
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None
