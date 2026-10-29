@@ -36,3 +36,11 @@
 - **Fix direction:** either
   - the installer (Phase 10) writes `elixirc_paths` without `storybook/` in prod and the doctor checks it, in a `lib/` PR that does not edit the contract test guarding it; or
   - the operator host's prod build (Phase 2, Q31) asserts no story beams on a generated layout, in its own PR.
+
+## WR-05 follow-up: tag code runs before the main-only check fails
+
+- **Where:** `.github/workflows/hex-publish.yml`, build job, the steps before `tag`.
+- **Seen:** Phase 01.1 Nyquist audit (2026-10-29). Checkout uses `ref: inputs.tag`, so `./.github/actions/setup` and its `mix deps.get` come from the tag's own commit and run with the build job's `contents: write` token before the ancestry check fails the job. Dispatching already needs write access, and `HEX_API_KEY` exists only in the `publish` job, so this is not a privilege escalation. `test/contract/hex_publish_test.exs` does not claim to cover it.
+- **Fix direction:**
+  - run the ancestry check in a first step that checks out `main` (or uses the API) before anything from the tag is executed, or drop the build job's token to `contents: read`.
+  - It is a `.github/` PR that does not edit `test/contract/hex_publish_test.exs` in the same change (ADR 0021). Owner phase: next release-pipeline touch, or with Q37.

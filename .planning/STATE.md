@@ -1,18 +1,18 @@
 ---
 gsd_state_version: "1.0"
 current_phase: "01.1"
-current_phase_name: Close phase 1 guard gaps (INSERTED)
+current_phase_name: Close phase 1 guard gaps
 status: executing
-stopped_at: Completed 01.1-01-PLAN.md
-last_updated: "2026-10-29T10:59:56.798Z"
+stopped_at: Completed 01.1-02-PLAN.md
+last_updated: "2026-10-29T14:34:43.431Z"
 last_activity: 2026-10-29
 last_activity_desc: Phase 01.1 execution started
-state_head: 776efcc78c52591b118f79b9698cda049a3e4c2c
+state_head: 4e1d6a822c1d8050512f5b90beb408eedf9c418f
 progress:
-  total_phases: 36
+  total_phases: 37
   completed_phases: 0
-  total_plans: 7
-  completed_plans: 6
+  total_plans: 10
+  completed_plans: 7
   percent: 0
 ---
 
@@ -23,13 +23,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-28)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1 — Close phase 1 guard gaps (INSERTED)
+**Current focus:** Phase 01.1 — Close phase 1 guard gaps
 
 ## Current Position
 
-Phase: 01.1 (Close phase 1 guard gaps (INSERTED)) — EXECUTING
-Plan: 2 of 2
-Status: Ready to execute
+Phase: 01.1 (Close phase 1 guard gaps) — EXECUTING
+Plan: 3 of 5
+Status: Executing Phase 01.1
 Last activity: 2026-10-29 — Phase 01.1 execution started
 
 Progress: [░░░░░░░░░░] 0%
@@ -62,6 +62,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P04 | 17min | 3 tasks | 8 files |
 | Phase 1 P05 | 85min | 7 tasks | 16 files |
 | Phase 01.1 P01 | 10min | 3 tasks | 11 files |
+| Phase 01.1 P02 | 6min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,9 @@ Recent decisions affecting current work:
 - [Phase 01.1]: Code.format_string! and Code.format_file! are banned now; a future need adds an @allowlist entry through its own ADR
 - [Phase 01.1]: :file.consult and :file.path_consult stay allowed: trusted compiled term files (Q13(a) .app discovery)
 - [Phase 01.1]: The MFA existence test loads :xmerl via Mix.ensure_application!/1 because Mix prunes the code path; mix.exs unchanged
+- [Phase 01.1]: hex-production v* deployment policy stays until the owner answers Q37 (D-14 names main plus v*)
+- [Phase 01.1]: Recovery publishes docs only when the release exists with a matching checksum and has_docs false; mismatch or other status fails closed
+- [Phase 01.1]: WR-01, WR-04 and the WR-05 settings half are owner questions Q36, Q35, Q37, not implemented
 
 ### Pending Todos
 
@@ -115,6 +119,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-29T10:59:56.779Z
-Stopped at: Completed 01.1-01-PLAN.md
+Last session: 2026-10-29T11:08:24.847Z
+Stopped at: Completed 01.1-02-PLAN.md
 Resume file: None

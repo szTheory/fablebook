@@ -11,13 +11,38 @@ defmodule Fablebook.Credo.BannedCalls do
       the module. That covers aliases, imports, and `apply/3` or
       `Function.capture/3` with a literal function name.
 
-      The compiled-BEAM guard in `test/contract/banned_calls_test.exs` is the
-      gate for every literal or compiled form, including alias forms that
-      never spell the banned module (D-23). Calls whose module and function
-      are computed at runtime, including reflection-dispatched eval through
-      `__info__/1` or `module_info/1` plus apply, are covered by neither static
-      layer. The Phase 5 atom-count property and never-eval proof (ADR 0004)
-      cover them.
+      The compiled-BEAM guard in `test/contract/banned_calls_test.exs` checks
+      the compiled code of each lib/ module (D-23). It matches direct remote
+      calls. It also matches every place where a literal module atom is
+      directly followed by a literal function atom in one argument list, tuple
+      or map entry, anywhere in function code. That covers `apply/3`,
+      `:erlang.apply/3`, `spawn/3`, `:erpc` and `:rpc` calls, `Task.async/3`,
+      `Function.capture/3` at any arity, `{module, function}` and
+      `{module, function, args}` tuples (also when a helper returns them or a
+      module attribute holds them), `%{module => function}` entries and
+      `[module: function]` keyword pairs. It also flags any literal reference
+      to a module that is banned whole, and the banned names anywhere. Both
+      checks match by name and position, not by role. The whole-module check
+      flags a function named like a wholly banned module (`Regex.compile/1`,
+      `:re.compile/2` or a local `compile/1`) and a keyword such as
+      `[epp: 1]`. The pair check flags data whose two adjacent atoms spell a
+      banned call, such as `[io: :read]` or `[compile: true]`.
+      `Regex.compile!/1` and a `~r` sigil are not flagged. The fix is a change
+      in lib/, never an allowlist entry without an ADR.
+
+      Neither static layer matches a module and function that are not
+      adjacent literals in one list, tuple or map entry, unless the module is
+      banned whole. That includes a module held in a variable or returned
+      alone by a helper, a plain list such as `[:erlang, :load_module]`,
+      separate map fields such as `%{m: :erlang, f: :load_module}`, and names
+      passed in or computed at runtime. Nor does either layer match a dispatch
+      by name inside OTP or Elixir, such as a Mix task run by its string name.
+      The Phase 5 atom-count property and never-eval proof (ADR 0004) cover
+      those. The tiers are not complete yet: a direct call that no tier lists
+      to an eval, compile-and-load or native-load function, or to an
+      atom-creating parser, such as `:qlc.string_to_handle/1`,
+      `:erlang.load_nif/2` or `:epp_dodger.parse_file/1`, passes both layers
+      until Phase 01.1.1 extends the tier.
       """
     ]
 

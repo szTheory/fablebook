@@ -35,6 +35,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 **Family 1: Walking skeleton**
 - [ ] **Phase 1: Release pipeline, CI gate and guards** - 0.1.0 published, three workflows with caps, intent test, prod guard, eval and atom bans
 - [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
+- [ ] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03)
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -120,7 +121,7 @@ Plans:
 - [x] 01-05-PLAN.md — Signed ADR amendments, owner diff review and secrets, merge PR #1, D-22 red run, ci-health, publish 0.1.0, rotate key, PR #3 drops release-as with the last SUMMARY
 
 ### Phase 01.1: Close phase 1 guard gaps (INSERTED)
-**Goal**: The atom and runtime-code bans that Phase 1's criterion 4 promises hold against every literal dispatch form, the release recovery path publishes only commits on main and converges, and Phase 1's open bookkeeping is closed, through two merged green PRs that keep the contract-test pairing (ADR 0021).
+**Goal**: The atom and runtime-code bans that Phase 1's criterion 4 promises hold against every literal dispatch form, the release recovery path publishes only commits on main and converges, and Phase 1's open bookkeeping is closed, through merged green PRs that each keep the contract-test pairing (ADR 0021).
 **Depends on**: Phase 1
 **Requirements**: SEC-02, REL-01 (traceability stays on Phase 1; this phase closes their verification follow-ups)
 **Partial delivery**: SEC-01 (Phase 1's criterion-4 atom-ban share, re-homed here per INT-20261029-01; Phase 5 completes it with the atom-count property and mutation-proven tests).
@@ -129,19 +130,40 @@ Plans:
   2. A PR that compiles, loads or evaluates code at runtime through one of the enumerated MFA-tier functions (`:erlang.load_module/2`, `:code.load_abs`, `:compile.*`, `Kernel.ParallelCompiler`, `:file.script`, the `:elixir_tokenizer` → `:elixir_parser` → `:elixir_module.compile/6` chain and the rest of the list), or creates atoms through one of the enumerated readers, scanners, parsers or formatters (`:io_lib.fread`, `:io.scan_erl_exprs`, `:epp`, `:xmerl_scan`, `Code.format_string!`, `:elixir.string_to_tokens` and the rest of the list), fails CI; every ban matcher is proven live on both lanes, and the `mix.exs` scan matches qualified calls (WR-03, WR-02).
   3. `hex-publish.yml` refuses a tag whose commit is not on main, a recovery run after a docs-only failure uploads the docs, and `HEX_API_KEY` reaches only the steps that use it (WR-05 workflow half, WR-06, IN-04).
   4. SEC-02 shows Complete with its CI run link, owner questions Q35 to Q37 are recorded, and the remaining info findings are tracked; the first PR touches no `lib/` or `.github/` file, the second no `test/contract/` or `test/planning/` file, and both are merged green.
-**Plans:** 1/2 plans executed
+**Plans:** 2/5 plans executed (3 gap-closure plans from 01.1-VERIFICATION)
 
 Plans:
 **Wave 1**
 - [x] 01.1-01-PLAN.md — Atom-constructor, runtime compile/load/eval and atom-creating parser bans in both layers, mix.exs scan made non-vacuous (CR-01, WR-03, WR-02); contract-test-only PR
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01.1-02-PLAN.md — hex-publish publishes only main commits, docs-only recovery converges, step-scoped HEX_API_KEY (WR-05, WR-06, IN-04); SEC-02 marked complete; owner questions Q35 to Q37
+- [x] 01.1-02-PLAN.md — hex-publish publishes only main commits, docs-only recovery converges, step-scoped HEX_API_KEY (WR-05, WR-06, IN-04); SEC-02 marked complete; owner questions Q35 to Q37
+
+**Gap closure** *(sequential: one working tree, each PR carries the previous SUMMARY)*
+- [ ] 01.1-03-PLAN.md — BEAM guard matches literal module/function pairs and wholly banned module references, one fixture per dispatch form, truthful Credo explanation with the whole-module over-catch documented and tested (01.1-REVIEW CR-01), mix.exs scan over the MFA tier (WR-04); CR-02 (truth 7) deferred to Phase 01.1.1 per INT-20261029-03; contract-test-only PR
+- [ ] 01.1-04-PLAN.md — hex-publish builds, publishes and smoke-tests the tag's own commit, checksum-gated publish, fail-closed gates, check before tag code (CR-03, WR-01 gate, WR-05 follow-up); `.github/`-only PR
+- [ ] 01.1-05-PLAN.md — hex_publish_test.exs lands as the guard over 01.1-04 (checkout model, same-named branch, WR-01/02/03, IN-01/02, step-move ordering mutations); contract-test-only PR, then a planning-only PR carrying the SUMMARY and re-verification
+
+### Phase 01.1.1: Close the eval and code-loading ban list (INSERTED)
+
+**Goal**: No direct, public eval, compile-and-load, interpret, native-load or code-path-changing function, and no atom-creating parser, on the Mix dev code path passes the compiled-BEAM guard. That includes the project's runtime dependencies (Phoenix, LiveView, Plug), every exclusion has a reason that is true, and the whole-module literal check stops flagging ordinary functions named like a banned module, such as `Regex.compile/1`. This closes 01.1-VERIFICATION truth 7 (CR-02) and the over-catch fix, both re-homed here per INT-20261029-03, and the inbound threats T-01.1-28 (was T-01.1-03 in 01.1-SECURITY), T-01.1-22, T-01.1-23 and T-01.1-25.
+**Depends on**: Phase 01.1
+**Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
+**Success Criteria** (what must be TRUE):
+  1. A reachability sweep over every beam on the Mix dev code path on both lanes, deps included, leaves no reached function undisposed, and each exclusion's recorded reason survives a spot check against the source (01.1 checker iteration 2: `Mix.Tasks.Format` `:dot_formatter`, `Mix.Tasks.Help.run(["app:" <> name])`, `Phoenix.LiveView.Engine.compile/2`, `Mix.Tasks.Phx.Server.run(["-e", code])`).
+  2. Every public front door the sweep finds is a tier entry with a negative fixture, every entry is proven live on both lanes, and the `:int` and code-path mutator decisions are recorded.
+  3. Call-name positions no longer trigger the whole-module literal check: `Regex.compile/1`, `:re.compile/2` and a local `compile/1` give no hit on both lanes, while a literal module reference such as `apply(:compile, fun, args)` still does. Any banned call the narrowed check would stop catching first gets an explicit tier entry with a negative fixture, and the phase records which calls those were, or why there were none. The 01.1-03 known strictness rows and the Credo explanation are updated to match.
+  4. Every API 01.1-VERIFICATION truth 7 reproduced is a tier entry with a negative fixture whether or not the sweep reaches it: `:qlc.string_to_handle`, `:merl.compile_and_load`, `:c.c`, `:make.files`, `:cover.compile_module`, `:erlang.load_nif`, `:erl_ddll.load`, `:epp_dodger.parse_file`, `:elixir_erl_compiler.noenv_forms`, `:elixir.tokens_to_quoted`, `IEx.Helpers.c` and `Mix.Tasks.Run.run`. The native loaders (`:erlang.load_nif/2` and the `:erl_ddll` load functions) and the atom-creating parsers (`:epp_dodger` and `:elixir.tokens_to_quoted/3`) are covered in full, not just the reproduced arities. The 01.1-03 known strictness rows for `:qlc.string_to_handle/1`, `:erlang.load_nif/2` and `:epp_dodger.parse_file/1` then report hits, and the Credo explanation's tier-gap sentence is removed.
+  5. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 01.1.1 to break down)
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
 **Mode:** mvp
-**Depends on**: Phase 01.1
+**Depends on**: Phase 01.1.1
 **Requirements**: None completed here (a vertical slice and a spike; see Partial delivery).
 **Partial delivery**: QA-04 (skeleton `hosts/operator`, completes in Phase 9), VIS-01 and VIS-02 (guards, complete in Phase 21), CANVAS-01 and SEC-03 (nonce CSP exercised, complete in Phase 7).
 **Provisional on:** Q9

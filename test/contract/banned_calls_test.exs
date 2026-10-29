@@ -111,10 +111,35 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"load_module.ex", {:mfa, {:erlang, :load_module, 2}}},
     {"internal_eval.ex", {:mfa, {:elixir_module, :compile, 6}}},
     {"parallel_compiler.ex", {:mfa, {Kernel.ParallelCompiler, :require, 1}}},
-    {"file_script.ex", {:mfa, {:file, :script, 1}}}
+    {"file_script.ex", {:mfa, {:file, :script, 1}}},
+    {"apply_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
+    {"computed_compile.ex", {:mfa, {:compile, :_, :_}}},
+    {"apply_concat.ex", {:mfa, {Module, :concat, :_}}},
+    {"task_async_concat.ex", {:mfa, {Module, :concat, :_}}},
+    {"apply_args_to_atom.ex", {:mfa, {String, :to_atom, :_}}},
+    {"capture_file_script.ex", {:mfa, {:file, :script, :_}}},
+    {"spawn_file_script.ex", {:mfa, {:file, :script, :_}}},
+    {"erpc_file_script.ex", {:mfa, {:file, :script, :_}}},
+    {"rpc_load_module.ex", {:mfa, {:erlang, :load_module, :_}}},
+    {"rpc_remote_load_module.ex", {:mfa, {:erlang, :load_module, :_}}}
   ]
 
-  @beam_only_fixtures ~w(dynamic_module.ex load_module.ex internal_eval.ex parallel_compiler.ex file_script.ex)
+  @beam_only_fixtures ~w(
+    dynamic_module.ex
+    load_module.ex
+    internal_eval.ex
+    parallel_compiler.ex
+    file_script.ex
+    apply_load_module.ex
+    computed_compile.ex
+    apply_concat.ex
+    task_async_concat.ex
+    capture_file_script.ex
+    spawn_file_script.ex
+    erpc_file_script.ex
+    rpc_load_module.ex
+    rpc_remote_load_module.ex
+  )
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
 
@@ -191,6 +216,172 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert [{_, :no_debug_info}] = findings(beam)
   end
 
+  @tag :tmp_dir
+  test "the pair and whole-module checks match by adjacency and by name, in any role (known strictness)",
+       %{tmp_dir: dir} do
+    expected = %{
+      Fablebook.GuardFixture.StrictRegex => [{:mfa, {:compile, :_, :_}}],
+      Fablebook.GuardFixture.StrictErlangRe => [{:mfa, {:compile, :_, :_}}],
+      Fablebook.GuardFixture.StrictLocal => [{:mfa, {:compile, :_, :_}}],
+      Fablebook.GuardFixture.StrictKeyword => [{:mfa, {:epp, :_, :_}}],
+      Fablebook.GuardFixture.StrictKeywordPair => [{:mfa, {:io, :read, :_}}],
+      Fablebook.GuardFixture.StrictCompileKey => [
+        {:mfa, {:compile, true, :_}},
+        {:mfa, {:compile, :_, :_}}
+      ],
+      Fablebook.GuardFixture.StrictBang => [],
+      Fablebook.GuardFixture.StrictSigil => [],
+      Fablebook.GuardFixture.StrictTuple => [{:mfa, {:erlang, :load_module, :_}}],
+      Fablebook.GuardFixture.StrictAttribute => [{:mfa, {:erlang, :load_module, :_}}],
+      Fablebook.GuardFixture.StrictMapKey => [{:mfa, {:erlang, :load_module, :_}}],
+      Fablebook.GuardFixture.StrictMfaTuple => [{:mfa, {:erlang, :load_module, :_}}],
+      Fablebook.GuardFixture.StrictVariable => [],
+      Fablebook.GuardFixture.StrictHelper => [],
+      Fablebook.GuardFixture.StrictList => [],
+      Fablebook.GuardFixture.StrictMapFields => [],
+      Fablebook.GuardFixture.StrictComputed => [],
+      Fablebook.GuardFixture.StrictMixTask => [],
+      Fablebook.GuardFixture.StrictUnlisted => [],
+      Fablebook.GuardFixture.StrictNativeLoad => [],
+      Fablebook.GuardFixture.StrictParser => []
+    }
+
+    source = Path.join(dir, "strict.ex")
+
+    File.write!(source, ~S"""
+    defmodule Fablebook.GuardFixture.StrictRegex do
+      def run(source), do: Regex.compile(source)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictErlangRe do
+      def run(source), do: :re.compile(source, [])
+    end
+
+    defmodule Fablebook.GuardFixture.StrictLocal do
+      def run(source), do: compile(source)
+      defp compile(source), do: source
+    end
+
+    defmodule Fablebook.GuardFixture.StrictKeyword do
+      def run, do: [epp: 1]
+    end
+
+    defmodule Fablebook.GuardFixture.StrictKeywordPair do
+      def run, do: [io: :read]
+    end
+
+    defmodule Fablebook.GuardFixture.StrictCompileKey do
+      def run, do: [compile: true]
+    end
+
+    defmodule Fablebook.GuardFixture.StrictBang do
+      def run(source), do: Regex.compile!(source)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictSigil do
+      def run(source), do: source =~ ~r/fo+/
+    end
+
+    defmodule Fablebook.GuardFixture.StrictTuple do
+      def run(args) do
+        {m, f} = target()
+        apply(m, f, args)
+      end
+
+      defp target, do: {:erlang, :load_module}
+    end
+
+    defmodule Fablebook.GuardFixture.StrictAttribute do
+      @target {:erlang, :load_module}
+
+      def run(args) do
+        {m, f} = @target
+        apply(m, f, args)
+      end
+    end
+
+    defmodule Fablebook.GuardFixture.StrictMapKey do
+      def run(args) do
+        [{m, f}] = Map.to_list(target())
+        apply(m, f, args)
+      end
+
+      defp target, do: %{:erlang => :load_module}
+    end
+
+    defmodule Fablebook.GuardFixture.StrictMfaTuple do
+      def run(args) do
+        {m, f, a} = target(args)
+        apply(m, f, a)
+      end
+
+      defp target(args), do: {:erlang, :load_module, args}
+    end
+
+    defmodule Fablebook.GuardFixture.StrictVariable do
+      def run(args) do
+        m = :erlang
+        apply(m, :load_module, args)
+      end
+    end
+
+    defmodule Fablebook.GuardFixture.StrictHelper do
+      def run(args), do: apply(module(), :load_module, args)
+      defp module, do: :erlang
+    end
+
+    defmodule Fablebook.GuardFixture.StrictList do
+      def run(args) do
+        [m, f] = target()
+        apply(m, f, args)
+      end
+
+      defp target, do: [:erlang, :load_module]
+    end
+
+    defmodule Fablebook.GuardFixture.StrictMapFields do
+      def run(args) do
+        %{m: m, f: f} = target()
+        apply(m, f, args)
+      end
+
+      defp target, do: %{m: :erlang, f: :load_module}
+    end
+
+    defmodule Fablebook.GuardFixture.StrictComputed do
+      def run(m, f, args), do: apply(m, f, args)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictMixTask do
+      def run(code), do: Mix.Task.run("run", ["-e", code])
+    end
+
+    defmodule Fablebook.GuardFixture.StrictUnlisted do
+      def run(query), do: :qlc.string_to_handle(query)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictNativeLoad do
+      def run(path), do: :erlang.load_nif(path, 0)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictParser do
+      def run(path), do: :epp_dodger.parse_file(path)
+    end
+    """)
+
+    scans =
+      for beam <- compile!([source], dir, true), into: %{} do
+        assert {:ok, scan} = BeamWalker.scan(beam)
+        {scan.module, Enum.sort(Enum.uniq(hits(scan)))}
+      end
+
+    assert Enum.sort(Map.keys(scans)) == Enum.sort(Map.keys(expected))
+
+    for {module, hits} <- expected do
+      assert scans[module] == Enum.sort(hits), "#{inspect(module)}: #{inspect(scans[module])}"
+    end
+  end
+
   test "the Credo check bans the same names and flags the source-level fixtures" do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
@@ -226,17 +417,28 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert mix_exs_hits("Code.eval_string(x)") == ["eval_string"]
     assert mix_exs_hits(":erlang.binary_to_atom(x, :utf8)") == ["binary_to_atom"]
     assert mix_exs_hits("Elixir.Telemetry.Metrics") == ["Telemetry.Metrics"]
-    assert mix_exs_hits("String.to_atom(x)") == ["to_atom"]
+    assert mix_exs_hits("String.to_atom(x)") == ["to_atom", "String.to_atom"]
     assert mix_exs_hits("eval_strings = 1") == []
     assert mix_exs_hits("my_eval_string(x)") == []
+    assert mix_exs_hits(":file.eval(x)") == [":file.eval"]
+    assert mix_exs_hits("Module.concat(x)") == ["Module.concat"]
+    assert mix_exs_hits(":epp.parse_file(p)") == [":epp"]
+    assert mix_exs_hits("compile --force") == []
   end
 
   defp mix_exs_hits(text) do
-    for atom <- @atom_tier,
-        name = atom |> Atom.to_string() |> String.replace_prefix("Elixir.", ""),
+    atom_names =
+      for atom <- @atom_tier, do: atom |> Atom.to_string() |> String.replace_prefix("Elixir.", "")
+
+    mfa_names = @mfa_tier |> Enum.map(&mfa_name/1) |> Enum.uniq()
+
+    for name <- atom_names ++ mfa_names,
         Regex.match?(~r/(?<!\w)#{Regex.escape(name)}(?![\w!?])/, text),
         do: name
   end
+
+  defp mfa_name({module, :_, _}), do: inspect(module)
+  defp mfa_name({module, function, _}), do: "#{inspect(module)}.#{function}"
 
   defp credo_issues(path) do
     path
@@ -263,10 +465,17 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
   end
 
-  defp hits(%{atoms: atoms, mfas: mfas}) do
+  defp hits(%{atoms: atoms, mfas: mfas, pairs: pairs, literals: literals}) do
     atom_hits = for atom <- @atom_tier, atom in atoms, do: {:atom, atom}
     mfa_hits = for mfa <- mfas, Enum.any?(@mfa_tier, &mfa_match?(&1, mfa)), do: {:mfa, mfa}
-    atom_hits ++ mfa_hits
+
+    pair_hits =
+      for {m, f} <- pairs,
+          Enum.any?(@mfa_tier, fn {pm, pf, _} -> pm == m and pf in [:_, f] end),
+          do: {:mfa, {m, f, :_}}
+
+    literal_hits = for m <- literals, {m, :_, :_} in @mfa_tier, do: {:mfa, {m, :_, :_}}
+    atom_hits ++ mfa_hits ++ pair_hits ++ literal_hits
   end
 
   defp mfa_match?(pattern, mfa) do
