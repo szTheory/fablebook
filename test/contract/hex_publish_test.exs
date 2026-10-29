@@ -54,8 +54,17 @@ defmodule Fablebook.Contract.HexPublishTest do
   @publish_cases [
     {"package", "package", @tarball_sum, nil, 0,
      ["local.hex 2.6.0 --force", "hex.build --output fablebook-0.1.0.tar", "hex.publish --yes"]},
-    {"docs", "docs", @tarball_sum, nil, 0, ["local.hex 2.6.0 --force", "hex.publish docs --yes"]}
+    {"docs", "docs", @tarball_sum, nil, 0, ["local.hex 2.6.0 --force", "hex.publish docs --yes"]},
+    {"checksum mismatch", "package", String.duplicate("d", 64), nil, 1,
+     ["local.hex 2.6.0 --force", "hex.build --output fablebook-0.1.0.tar"]},
+    {"empty todo", "", @tarball_sum, nil, 1, ["local.hex 2.6.0 --force"]},
+    {"foreign commit", "package", @tarball_sum, String.duplicate("0", 40), 1, []}
   ]
+
+  @step_counts %{"build" => 10, "publish" => 5, "smoke" => 4, "finalize" => 1}
+  @built "${{ needs.build.outputs.sha }}"
+  @lanes "    # lanes\n"
+  @smoke_setup "      - uses: ./.github/actions/setup\n        with:\n          lane:"
 
   @mutations [
     {:ancestry, "ref: refs/tags/${{ inputs.tag }}", "ref: ${{ inputs.tag }}"},
@@ -79,6 +88,31 @@ defmodule Fablebook.Contract.HexPublishTest do
     {:todo_gate, " || steps.hex.outputs.todo == 'docs'\n        env:", "\n        env:"},
     {:publish_cmd, "mix hex.publish docs --yes", "mix hex.publish --yes"},
     {:publish_cmd, @todo_env, "TODO: ${{ steps.hex.outputs.published }}"},
+    {:publish_cmd, ~s($sum, the build produced $SHA256"\n                exit 1\n),
+     ~s($sum, the build produced $SHA256"\n)},
+    {:publish_cmd, ~s([ "$sum" != "$SHA256" ]), ~s([ "$sum" != "$sum" ])},
+    {:publish_cmd,
+     ~s|          if [ "$(git rev-parse HEAD)" != "$COMMIT" ]; then\n| <>
+       ~s|            echo "::error::the checkout is not the commit the build tested ($COMMIT)"\n| <>
+       "            exit 1\n          fi\n", ""},
+    {:publish_cmd, "*) echo \"::error::unknown publish todo '$TODO'\"; exit 1 ;;",
+     "*) mix hex.publish --yes ;;"},
+    {:step_if, "      - id: ref\n", "      - id: ref\n        if: false\n"},
+    {:step_if, "      - id: hex\n", "      - id: hex\n        if: false\n"},
+    {:step_if, "        #{@key_check}\n", "        if: false\n        #{@key_check}\n"},
+    {:todo_gate, "      - #{@gate}\n        uses: actions/checkout@",
+     "      - if: steps.hex.outputs.todo != 'none'\n        uses: actions/checkout@"},
+    {:job_graph, "    needs: smoke\n", "    needs: build\n"},
+    {:checkout, "ref: #{@built}\n          persist-credentials: false\n      - if:",
+     "ref: main\n          persist-credentials: false\n      - if:"},
+    {:checkout, "ref: #{@built}\n          persist-credentials: false\n      - uses:",
+     "ref: ${{ inputs.tag }}\n          persist-credentials: false\n      - uses:"},
+    {:secret_scope, "--draft=false\n", "--draft=false\n    env:\n      #{@key_env}\n"},
+    {:step_count, "--draft=false\n", "--draft=false\n      - run: echo done\n"},
+    {:cache,
+     @smoke_setup <> " ${{ matrix.lane }}\n          mix-env: dev\n          cache: 'false'",
+     @lanes <>
+       @smoke_setup <> " ${{ matrix.lane }}\n          mix-env: dev\n          cache: 'true'"},
     {:secret_scope, "  MIX_ENV: dev\n", "  MIX_ENV: dev\n  #{@key_env}\n"},
     {:secret_scope, "    env:\n      SHA256:", "    env:\n      #{@key_env}\n      SHA256:"},
     {:secret_scope, "          MIX_ENV: test\n",
@@ -113,6 +147,20 @@ defmodule Fablebook.Contract.HexPublishTest do
 
   test "HEX_API_KEY reaches two steps, setups skip the cache and run bodies hold no expression" do
     assert hygiene_violations(workflow()) == []
+  end
+
+  test "gate steps run unconditionally, the job graph and checkout refs are pinned" do
+    assert graph_violations(workflow()) == []
+  end
+
+  test "a four-space comment between steps changes no verdict", %{tmp_dir: dir} do
+    commented = String.replace(workflow(), @smoke_setup, @lanes <> @smoke_setup, global: false)
+
+    assert commented != workflow()
+    assert release_gate_violations(commented, dir) == []
+    assert recovery_violations(commented, dir) == []
+    assert hygiene_violations(commented) == []
+    assert graph_violations(commented) == []
   end
 
   for {mutation, i} <- Enum.with_index(@mutations, 1) do
@@ -152,9 +200,49 @@ defmodule Fablebook.Contract.HexPublishTest do
 
   defp fired(text, dir) do
     (release_gate_violations(text, dir) ++
-       recovery_violations(text, dir) ++ hygiene_violations(text))
+       recovery_violations(text, dir) ++ hygiene_violations(text) ++ graph_violations(text))
     |> Enum.map(&elem(&1, 0))
     |> Enum.uniq()
+  end
+
+  defp graph_violations(text),
+    do:
+      step_if_violations(text) ++
+        job_graph_violations(text) ++ checkout_violations(text) ++ step_count_violations(text)
+
+  defp step_if_violations(text) do
+    gated = text |> job_steps("publish") |> Enum.filter(&(id(&1) == "hex" or key_check?(&1)))
+
+    for step <- job_steps(text, "build") ++ gated,
+        Enum.any?(step, &String.starts_with?(&1, ["      - if:", "        if:"])),
+        do: {:step_if, id(step) || action(step)}
+  end
+
+  defp job_graph_violations(text) do
+    graph = for id <- ~w(publish smoke finalize), do: {id, needs(job(text, id))}
+
+    check(
+      graph == [{"publish", ~w(build)}, {"smoke", ~w(build publish)}, {"finalize", ~w(smoke)}],
+      {:job_graph, graph}
+    )
+  end
+
+  defp checkout_violations(text) do
+    refs =
+      for id <- ~w(publish smoke),
+          do: text |> job_steps(id) |> Enum.find([], &checkout?/1) |> ref()
+
+    check(refs == [@built, @built], {:checkout, refs}) ++
+      check(
+        "sha: ${{ steps.ref.outputs.sha }}" in normalized(job(text, "build")),
+        {:checkout, :build_output}
+      ) ++
+      check("COMMIT: #{@built}" in normalized(job(text, "publish")), {:checkout, :commit_env})
+  end
+
+  defp step_count_violations(text) do
+    counts = Map.new(jobs(text), fn {id, body} -> {id, length(steps(body))} end)
+    check(counts == @step_counts, {:step_count, counts})
   end
 
   defp ancestry_violations(text, dir) do
@@ -280,7 +368,7 @@ defmodule Fablebook.Contract.HexPublishTest do
     after_hex = Enum.drop(from_hex, 1)
 
     check(after_hex != [], {:todo_gate, :no_hex_step}) ++
-      for(step <- before, @key_check not in normalized(step), do: {:todo_gate, action(step)}) ++
+      for(step <- before, not key_check?(step), do: {:todo_gate, action(step)}) ++
       for(step <- after_hex, @gate not in normalized(step), do: {:todo_gate, action(step)})
   end
 
@@ -316,7 +404,7 @@ defmodule Fablebook.Contract.HexPublishTest do
     check(declared == @declared, {:secret_scope, declared}) ++
       for(
         {id, body} <- jobs,
-        line <- Enum.take_while(body, &(&1 != "    steps:")),
+        line <- body |> split_steps() |> elem(0),
         secret?(line),
         do: {:secret_scope, id, line}
       ) ++
@@ -460,13 +548,23 @@ defmodule Fablebook.Contract.HexPublishTest do
 
   defp steps(body) do
     body
-    |> Enum.drop_while(&(&1 != "    steps:"))
-    |> Enum.drop(1)
-    |> Enum.take_while(&(&1 == "" or String.starts_with?(&1, "      ")))
+    |> split_steps()
+    |> elem(1)
     |> Enum.reduce([], &add_step_line/2)
     |> Enum.map(&Enum.reverse/1)
     |> Enum.reverse()
   end
+
+  defp split_steps(body) do
+    {lead, rest} = Enum.split_while(body, &(&1 != "    steps:"))
+    {inside, tail} = rest |> Enum.drop(1) |> Enum.split_while(&step_line?/1)
+    {lead ++ tail, inside}
+  end
+
+  defp step_line?(line),
+    do: line == "" or line =~ ~r/\A\s*#/ or String.starts_with?(line, "      ")
+
+  defp key_check?(step), do: @key_check in normalized(step)
 
   defp add_step_line("      - " <> _ = line, acc), do: [[line] | acc]
   defp add_step_line(line, [step | rest]), do: [[line | step] | rest]
