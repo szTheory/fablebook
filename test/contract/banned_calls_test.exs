@@ -286,12 +286,18 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
-  test "the pair and whole-module checks match by adjacency and by name, in any role (known strictness)",
+  test "the pair and whole-module checks match by adjacency and by name outside call-name positions (known strictness)",
        %{tmp_dir: dir} do
     expected = %{
-      Fablebook.GuardFixture.StrictRegex => [{:mfa, {:compile, :_, :_}}],
-      Fablebook.GuardFixture.StrictErlangRe => [{:mfa, {:compile, :_, :_}}],
-      Fablebook.GuardFixture.StrictLocal => [{:mfa, {:compile, :_, :_}}],
+      Fablebook.GuardFixture.StrictRegex => [],
+      Fablebook.GuardFixture.StrictErlangRe => [],
+      Fablebook.GuardFixture.StrictLocal => [],
+      Fablebook.GuardFixture.StrictRegexCapture => [],
+      Fablebook.GuardFixture.StrictCompileCapture => [
+        {:mfa, {:compile, :_, :_}},
+        {:mfa, {:compile, :file, :_}}
+      ],
+      Fablebook.GuardFixture.StrictVarModuleCompile => [],
       Fablebook.GuardFixture.StrictKeyword => [{:mfa, {:epp, :_, :_}}],
       Fablebook.GuardFixture.StrictKeywordPair => [{:mfa, {:io, :read, :_}}],
       Fablebook.GuardFixture.StrictCompileKey => [
@@ -329,6 +335,18 @@ defmodule Fablebook.Contract.BannedCallsTest do
     defmodule Fablebook.GuardFixture.StrictLocal do
       def run(source), do: compile(source)
       defp compile(source), do: source
+    end
+
+    defmodule Fablebook.GuardFixture.StrictRegexCapture do
+      def run, do: &Regex.compile/1
+    end
+
+    defmodule Fablebook.GuardFixture.StrictCompileCapture do
+      def run, do: &:compile.file/1
+    end
+
+    defmodule Fablebook.GuardFixture.StrictVarModuleCompile do
+      def run(m, s), do: m.compile(s)
     end
 
     defmodule Fablebook.GuardFixture.StrictKeyword do
