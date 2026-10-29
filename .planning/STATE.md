@@ -4,14 +4,14 @@ current_phase: 1
 current_phase_name: Release pipeline, CI gate and guards
 status: executing
 stopped_at: Completed 01-05-PLAN.md
-last_updated: "2026-10-29T02:18:02.390Z"
+last_updated: "2026-10-29T10:15:44.765Z"
 last_activity: 2026-10-28
 last_activity_desc: 0.1.0 published; closing PR drops release-as and carries the 01-05 SUMMARY
-state_head: f8e5a3b61e6f301f9d478733b21cd1359e99edb1
+state_head: 00ec6a459732b697a782c343dfcc48028d276b49
 progress:
-  total_phases: 35
+  total_phases: 36
   completed_phases: 0
-  total_plans: 5
+  total_plans: 7
   completed_plans: 5
   percent: 0
 ---
@@ -96,6 +96,10 @@ None yet.
 - [Phase 3 onward]: LiveView 1.2 upgrade PRs in the dogfood repos should start early (Q2, Q22), so the 14-day soak is not reset at the end.
 - [Phase 17 and 18]: depend on abracabrand's two-session process; keep the minimal-token fallback so the phase can merge.
 - [Phases 2 and 18]: neither completes a requirement on its own (a vertical slice and a content track); they feed QA-04, VIS-01/02 and QA-06.
+
+### Roadmap Evolution
+
+- Phase 01.1 inserted after Phase 1: Close phase 1 guard gaps (atom-ban bypass, code loading, hex-publish hardening); split per INT-20261029-01 to keep the 5-plan cap (URGENT)
 
 ## Deferred Items
 
