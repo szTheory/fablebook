@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-10-29T19:40:27.583Z",
+  "phase": "01.1.1",
+  "phase_name": "Close the eval and code-loading ban list (INSERTED)",
+  "phase_dir": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list",
+  "plan": 2,
+  "task": 1,
+  "total_tasks": null,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": "01.1.1-01", "name": "Walker fixes: __info__ of other arities (SC5) and call-name narrowing with compile-named tier entries first (SC3)", "status": "done", "commit": "fdc9945", "pr": "https://github.com/szTheory/fablebook/pull/15", "ci_run": "https://github.com/szTheory/fablebook/actions/runs/40941207491"}
+  ],
+  "remaining_tasks": [
+    {"id": "01.1.1-02", "name": "Tier extension, truth-7 fixtures, Credo MFA mirror, generated live probes (SC2, SC4)", "status": "not_started"},
+    {"id": "01.1.1-03", "name": "Reachability sweep contract test over OTP, Elixir and mix.exs runtime deps (SC1, SC2)", "status": "not_started"},
+    {"id": "01.1.1-04", "name": "Banned-module-named record and barrier/sink-delegate boundary contract (SC2, SC3 record)", "status": "not_started"},
+    {"id": "01.1.1-05", "name": "Source-level Credo MFA rules, explanation rewrite, human wording check (SC6, SC7)", "status": "not_started"}
+  ],
+  "blockers": [],
+  "async_jobs": [],
+  "human_actions_pending": [
+    {"action": "Plan 05 SC7 human wording check of the Credo explanation (checkpoint:human-verify). The owner does it; it must never be auto-approved.", "context": "Orchestrator decision 8; INT-20261029-05 turned off auto-advance", "blocking": true}
+  ],
+  "decisions": [
+    {"decision": "Parser clause, ported-exclusion audit and out-of-scope OTP apps moved to inserted Phase 01.1.1.1; recorded as open, never as a known limit", "rationale": "Did not fit 5 plans; INT-20261029-02", "phase": "01.1.1"},
+    {"decision": "Stricter route everywhere: Mix.Task.run, code_server (whole), erts_internal:prepare_loading, init make_permanent/restart, :int/:i/:debugger and dbg_* front doors become tier entries", "rationale": "Never lower a quality gate; lib/ calls none of them (grep stop gate in plan 02)", "phase": "01.1.1"},
+    {"decision": "Plans 02-05 carry inbound T-01.1-31 as T-01.1.1-31..34", "rationale": "execute-phase threat-ID gate (#4683) rejects duplicate IDs across plans", "phase": "01.1.1"},
+    {"decision": "GSD auto-advance off", "rationale": "Owner wants to see each step (INT-20261029-05)", "phase": "01.1.1"},
+    {"decision": "Plan 01 added Mix.Project.compile/1,2 and :elixir_erl.compile as tier entries (65-entry tier)", "rationale": "Source showed caller-chosen --erl-config/--tracer and caller-supplied definitions", "phase": "01.1.1"}
+  ],
+  "uncommitted_files": [
+    "?? .planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/.gitkeep",
+    "?? .planning/state.json"
+  ],
+  "next_action": "On local branch extend-eval-and-load-tier (unpushed; carries plan 01's SUMMARY/STATE commits and the auto-advance commit), run /gsd-execute-phase 01.1.1 to execute plan 01.1.1-02. Expect a 65-entry tier and do not re-add {:cover, :compile, :_}, {:merl, :_, :_} or {:asn1ct, :_, :_}.",
+  "context_notes": "Owner is switching to Codex because of Claude credits. Execution is sequential (workflow.use_worktrees=false). Each plan creates its own PR branch off origin/main, merges green with a CI run link, and touches no lib/, .github/ or mix.exs. Floor lane runs in a git-archive scratch copy. Local latest lane uses OTP 29.1.1 because the pinned 29.1.2 is not installed. Draft PR #14 (phase-01.1-reverification) is still open; its local branch has unpushed planning commits that are already carried onto extend-eval-and-load-tier."
+}
