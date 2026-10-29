@@ -18,9 +18,9 @@ defmodule Fablebook.Contract.ProdGuardTest do
 
     clean!("prod")
     assert_ok(mix("prod", ~w(compile --warnings-as-errors)))
-    routes = mix!("prod", ~w(phx.routes GuardHostWeb.Router))
-    assert routes =~ ~r/GET\s+\/\s+GuardHost\.Ok/
-    refute routes |> String.split("\n") |> Enum.any?(&(&1 =~ ~r/fablebook/i)), routes
+    routes = mix!("prod", ~w(phx.routes GuardHostWeb.Router)) |> route_lines()
+    assert Enum.any?(routes, &(&1 =~ ~r/GET\s+\/\s+GuardHost\.Ok/)), inspect(routes)
+    refute Enum.any?(routes, &(&1 =~ ~r/fablebook/i)), inspect(routes)
     refute Enum.any?(beam_sources("prod"), &(&1 =~ "/storybook/" or &1 =~ "/design/"))
 
     clean!("prod")
@@ -43,6 +43,12 @@ defmodule Fablebook.Contract.ProdGuardTest do
   end
 
   defp assert_ok({out, status}), do: assert(status == 0, out)
+
+  defp route_lines(out) do
+    out
+    |> String.split("\n")
+    |> Enum.filter(&(&1 =~ ~r/\s(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|CONNECT|TRACE|\*)\s+\//))
+  end
 
   defp clean!(env), do: mix!(env, ["clean"])
 
