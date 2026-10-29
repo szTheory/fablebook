@@ -532,9 +532,12 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp matched_uncovered(uncovered, entries) do
     Enum.reduce(entries, MapSet.new(), fn {matcher, _reason, _citation}, matched ->
-      Enum.reduce(uncovered, matched, fn mfa, acc ->
-        if call_name_exclusion_match?(matcher, mfa), do: MapSet.put(acc, mfa), else: acc
-      end)
+      matched_for_entry =
+        uncovered
+        |> Enum.filter(&call_name_exclusion_match?(matcher, &1))
+        |> MapSet.new()
+
+      MapSet.union(matched, matched_for_entry)
     end)
   end
 
