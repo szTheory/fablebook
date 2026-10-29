@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: "01.1"
 current_phase_name: Close phase 1 guard gaps
 status: executing
-stopped_at: Completed 01.1-03-PLAN.md
-last_updated: "2026-10-29T14:49:24.765Z"
+stopped_at: Completed 01.1-04-PLAN.md
+last_updated: "2026-10-29T14:59:08.520Z"
 last_activity: 2026-10-29
 last_activity_desc: Phase 01.1 execution started
-state_head: 8fc2e937833aa3873b02918632bb3b451d2d4628
+state_head: ddd154597a92333d703eef5723a8f94953ef701a
 progress:
   total_phases: 37
   completed_phases: 0
   total_plans: 10
-  completed_plans: 8
+  completed_plans: 9
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-10-28)
 ## Current Position
 
 Phase: 01.1 (Close phase 1 guard gaps) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-10-29 — Phase 01.1 execution started
 
@@ -64,6 +64,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01.1 P01 | 10min | 3 tasks | 11 files |
 | Phase 01.1 P02 | 6min | 3 tasks | 4 files |
 | Phase 01.1 P03 | 11min | 3 tasks | 13 files |
+| Phase 01.1 P04 | 6min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -96,6 +97,8 @@ Recent decisions affecting current work:
 - [Phase 01.1]: SEC-01 stays Pending (Phase 5); 01.1-03 advances only its static-ban share
 - [Phase 01.1]: CR-02 (truth 7), T-01.1-25 and T-01.1-28 transferred to Phase 01.1.1 per INT-20261029-03; @mfa_tier stays at 45
 - [Phase 01.1]: BEAM guard over-catches (Regex.compile/1, [epp: 1], [io: :read], [compile: true]) are pinned by the known-strictness test; a lib/ hit is fixed in lib/, never allowlisted without an ADR
+- [Phase 01.1]: hex-publish resolves the tag to one commit in step ref before tag-supplied setup; publish and smoke check out needs.build.outputs.sha; package publish requires the rebuilt sha256 to equal the build's
+- [Phase 01.1]: Release window: no release-please PR merges until 01.1-05's hex_publish_test.exs guard is on main
 
 ### Pending Todos
 
@@ -123,6 +126,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-29T14:49:24.747Z
-Stopped at: Completed 01.1-03-PLAN.md
+Last session: 2026-10-29T14:59:08.500Z
+Stopped at: Completed 01.1-04-PLAN.md
 Resume file: None
