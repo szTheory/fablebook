@@ -54,6 +54,15 @@ defmodule Fablebook.Test.BeamWalker do
   defp pairs(_term, acc), do: acc
 
   defp literals({:atom, _, atom}, acc), do: MapSet.put(acc, atom)
+
+  defp literals({:call, _, {:remote, _, module, {:atom, _, _}}, args}, acc),
+    do: literals(args, literals(module, acc))
+
+  defp literals({:call, _, {:atom, _, _}, args}, acc), do: literals(args, acc)
+
+  defp literals({:fun, _, {:function, module, {:atom, _, _}, arity}}, acc),
+    do: literals(arity, literals(module, acc))
+
   defp literals(term, acc) when is_tuple(term), do: literals(Tuple.to_list(term), acc)
   defp literals(term, acc) when is_list(term), do: Enum.reduce(term, acc, &literals/2)
   defp literals(_term, acc), do: acc
