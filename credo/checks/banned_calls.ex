@@ -78,9 +78,80 @@ defmodule Fablebook.Credo.BannedCalls do
            Telemetry.Metrics
          ])
 
+  @mfas Enum.sort([
+          {String, :to_atom, 1},
+          {String, :to_existing_atom, 1},
+          {List, :to_atom, 1},
+          {List, :to_existing_atom, 1},
+          {Module, :concat, 1},
+          {Module, :concat, 2},
+          {Module, :safe_concat, 1},
+          {Module, :safe_concat, 2},
+          {Module, :create, 3},
+          {EEx, :_, :_},
+          {Phoenix.LiveView.TagEngine, :compile, 2},
+          {:compile, :_, :_},
+          {:code, :load_binary, 3},
+          {:erlang, :load_module, 2},
+          {:erlang, :prepare_loading, 2},
+          {:erlang, :finish_loading, 1},
+          {:code, :load_abs, :_},
+          {:code, :atomic_load, 1},
+          {:code, :prepare_loading, 1},
+          {:code, :finish_loading, 1},
+          {Kernel.ParallelCompiler, :_, :_},
+          {Code, :load_file, :_},
+          {:elixir, :quoted_to_erl, :_},
+          {:elixir_compiler, :_, :_},
+          {:elixir_module, :compile, :_},
+          {:elixir_tokenizer, :_, :_},
+          {:elixir_parser, :_, :_},
+          {:file, :script, :_},
+          {:file, :eval, :_},
+          {:file, :path_script, :_},
+          {:file, :path_eval, :_},
+          {:elixir, :eval_forms, :_},
+          {:io, :read, :_},
+          {:io, :parse_erl_exprs, :_},
+          {:io, :parse_erl_form, :_},
+          {:io, :scan_erl_exprs, :_},
+          {:io, :scan_erl_form, :_},
+          {:io, :fread, :_},
+          {:io_lib, :fread, :_},
+          {:epp, :_, :_},
+          {:xmerl_scan, :_, :_},
+          {:elixir, :string_to_tokens, :_},
+          {Code, :format_string!, :_},
+          {Code, :format_file!, :_},
+          {Code.Fragment, :container_cursor_to_quoted, :_},
+          {Logger.Formatter, :compile, :_},
+          {EEx.Compiler, :compile, :_},
+          {Phoenix.Template.ExsEngine, :compile, :_},
+          {Phoenix.Template.EExEngine, :compile, :_},
+          {Phoenix.LiveView.Engine, :compile, :_},
+          {Phoenix.LiveView.HTMLEngine, :compile, :_},
+          {Phoenix.LiveView.TagEngine.Compiler, :compile, :_},
+          {:xref_compiler, :compile, :_},
+          {Mix.Compilers.Elixir, :compile, :_},
+          {Mix.Compilers.Erlang, :compile, :_},
+          {Mix.Tasks.Deps.Compile, :compile, :_},
+          {:erl_compile, :compile, :_},
+          {:erl_compile_server, :compile, :_},
+          {:leex, :compile, :_},
+          {:yecc, :compile, :_},
+          {Mix.Project, :compile, :_},
+          {:elixir_erl, :compile, :_},
+          {:cover, :compile, :_},
+          {:merl, :_, :_},
+          {:asn1ct, :_, :_},
+          {:qlc, :string_to_handle, :_}
+        ])
+
   @aliases for name <- @names, match?("Elixir." <> _, Atom.to_string(name)), do: inspect(name)
 
   def banned_names, do: @names
+
+  def banned_mfas, do: @mfas
 
   @impl Credo.Check
   def run(%SourceFile{} = source_file, params) do

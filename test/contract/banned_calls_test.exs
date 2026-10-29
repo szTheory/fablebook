@@ -105,7 +105,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:elixir_erl, :compile, :_},
     {:cover, :compile, :_},
     {:merl, :_, :_},
-    {:asn1ct, :_, :_}
+    {:asn1ct, :_, :_},
+    {:qlc, :string_to_handle, :_}
   ]
 
   @allowlist []
