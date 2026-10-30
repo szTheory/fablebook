@@ -597,7 +597,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
         {:mfa, {:epp_dodger, :_, :_}}
       ],
       Fablebook.GuardFixture.StrictInt => [{:mfa, {:int, :i, :_}}],
-      Fablebook.GuardFixture.StrictPathConsult => [],
+      Fablebook.GuardFixture.StrictPathConsult => [
+        {:mfa, {:file, :path_consult, 2}},
+        {:mfa, {:file, :path_consult, :_}}
+      ],
       Fablebook.GuardFixture.StrictCtMake => [],
       Fablebook.GuardFixture.StrictWriteThenLoad => []
     }
@@ -890,7 +893,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       {"%{m: :erlang, f: :load_module}", false},
       {"defmodule StrictModuleAlias do\n  alias __MODULE__.Generated, as: M\n  def run(x), do: M.concat(x)\nend",
        false},
-      {":file.path_consult(dirs, file)", false},
+      {":file.path_consult(dirs, file)", true},
       {":ct_make.files(files, [:load])", false},
       {"File.write!(path, bin)\nCode.ensure_loaded?(mod)", false}
     ]

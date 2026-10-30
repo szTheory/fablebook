@@ -900,6 +900,25 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:ok, graph: graph}
   end
 
+  test "source evidence rejects a wrong runtime patch before resolving citations" do
+    error = assert_raise RuntimeError, fn ->
+      apply(Fablebook.Test.SweepEvidence, :lane!, [%{elixir: "1.20.4", otp: "29.1.1"}])
+    end
+
+    assert error.message =~ "runtime_identity"
+  end
+
+  test "source evidence resolves the caller-file atom trace on the exact running lane" do
+    evidence = apply(Fablebook.Test.SweepEvidence, :source_roots!, [])
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    resolved = apply(Fablebook.Test.SweepEvidence, :resolve!, [evidence, "kernel/src/file.erl:1"])
+
+    assert resolved.line == 1
+    assert resolved.sha256 =~ ~r/^[a-f0-9]{64}$/
+    assert resolved.origin in [:installed, :archive]
+    assert evidence.lane.otp in ["29.1.2", "27.3.4.9"]
+  end
+
   test "every in-scope OTP app, Elixir app and prod-closure dependency has an ebin", ctx do
     graph = ctx.graph
 
