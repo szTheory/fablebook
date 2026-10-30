@@ -338,25 +338,51 @@ defmodule Fablebook.Credo.BannedCalls do
 
   @aliases for name <- @names, match?("Elixir." <> _, Atom.to_string(name)), do: inspect(name)
 
+  @mfa_pairs (for {module, function, _arity} <- @mfas do
+                {inspect(module), if(function == :_, do: :_, else: Atom.to_string(function))}
+              end)
+
+  @whole_mfa_modules for {module, :_, :_} <- @mfas, do: inspect(module)
+  @whole_modules Enum.uniq(@aliases ++ @whole_mfa_modules)
+
   def banned_names, do: @names
 
   def banned_mfas, do: @mfas
 
   @impl Credo.Check
   def run(%SourceFile{} = source_file, params) do
-    ctx = Context.build(source_file, params, __MODULE__, %{line: nil})
+    ctx = Context.build(source_file, params, __MODULE__, %{line: nil, aliases: %{}})
     Credo.Code.prewalk(source_file, &walk/2, ctx).issues
   end
 
   defp walk({:__aliases__, meta, _parts} = ast, ctx) do
     ctx = track(ctx, meta)
-    name = Macro.to_string(ast)
-    if name in @aliases, do: {ast, flag(ctx, name)}, else: {ast, ctx}
+    name = module_name(ast, ctx.aliases)
+    if name in @whole_modules, do: {ast, flag(ctx, name)}, else: {ast, ctx}
+  end
+
+  defp walk({{:., _, [module, function]}, meta, args} = ast, ctx) when is_list(args) do
+    ctx = track(ctx, meta)
+    ctx = flag_remote_call(ctx, module, function)
+    {ast, flag_pairs(ctx, args)}
+  end
+
+  defp walk({:., meta, [module, function]}, ctx) do
+    ctx = track(ctx, meta)
+    ctx = if function in @names, do: flag(ctx, function), else: ctx
+    {{:., meta, [module, nil]}, ctx}
+  end
+
+  defp walk({name, meta, args} = ast, ctx)
+       when name in [:alias, :require] and is_list(args) do
+    ctx = track(ctx, meta)
+    {ast, record_alias(ctx, args)}
   end
 
   defp walk({name, meta, args} = ast, ctx) when is_atom(name) and is_list(args) do
     ctx = track(ctx, meta)
-    if name in @names, do: {ast, flag(ctx, name)}, else: {ast, ctx}
+    ctx = if name in @names, do: flag(ctx, name), else: ctx
+    {ast, flag_pairs(ctx, args)}
   end
 
   defp walk({_, meta, _} = ast, ctx) when is_list(meta), do: {ast, track(ctx, meta)}
@@ -366,6 +392,104 @@ defmodule Fablebook.Credo.BannedCalls do
   defp walk(ast, ctx), do: {ast, ctx}
 
   defp track(ctx, meta), do: %{ctx | line: meta[:line] || ctx.line}
+
+  defp flag_remote_call(ctx, module, function) when is_atom(function) do
+    name = module_name(module, ctx.aliases)
+
+    if name in @whole_modules or tier_pair?(name, function),
+      do: flag(ctx, "#{name}.#{function}"),
+      else: ctx
+  end
+
+  defp flag_remote_call(ctx, _module, _function), do: ctx
+
+  defp flag_pairs(ctx, nodes) do
+    nodes
+    |> Enum.chunk_every(2, 1, :discard)
+    |> Enum.reduce(ctx, &flag_pair/2)
+  end
+
+  defp flag_pair([module, function], ctx) do
+    case literal_module_name(module, ctx.aliases) do
+      nil -> ctx
+      name -> flag_tier_pair(ctx, name, function)
+    end
+  end
+
+  defp flag_tier_pair(ctx, module, function) do
+    if tier_pair?(module, function), do: flag(ctx, "#{module}.#{function}"), else: ctx
+  end
+
+  defp literal_module_name({:__aliases__, _, _} = ast, aliases), do: module_name(ast, aliases)
+  defp literal_module_name(module, _aliases) when is_atom(module), do: inspect(module)
+  defp literal_module_name(_module, _aliases), do: nil
+
+  defp module_name({:__aliases__, _, parts}, aliases) do
+    name = parts |> Enum.join(".") |> String.replace_prefix("Elixir.", "")
+    expand_alias(name, aliases)
+  end
+
+  defp module_name(module, _aliases) when is_atom(module), do: inspect(module)
+  defp module_name(_module, _aliases), do: nil
+
+  defp expand_alias(name, aliases) do
+    case Enum.find(aliases, fn {alias_name, _target} ->
+           name == alias_name or String.starts_with?(name, alias_name <> ".")
+         end) do
+      {alias_name, target} -> String.replace_prefix(name, alias_name, target)
+      nil -> name
+    end
+  end
+
+  defp tier_pair?(module, function) when is_atom(function) do
+    pair = {module, Atom.to_string(function)}
+
+    Enum.any?(@mfa_pairs, fn {tier_module, tier_function} ->
+      tier_module == module and (tier_function == :_ or {tier_module, tier_function} == pair)
+    end)
+  end
+
+  defp tier_pair?(_module, _function), do: false
+
+  defp record_alias(ctx, args) do
+    {target, opts} =
+      case args do
+        [target, opts] when is_list(opts) -> {target, opts}
+        [target] -> {target, []}
+      end
+
+    explicit_alias = Keyword.get(opts, :as)
+    mappings = alias_mappings(target, explicit_alias, ctx.aliases)
+    %{ctx | aliases: Map.merge(ctx.aliases, mappings)}
+  end
+
+  defp alias_mappings({{:., _, [base, :{}]}, _, targets}, _explicit_alias, aliases) do
+    base_name = module_name(base, aliases)
+
+    Map.new(targets, fn target ->
+      target_name = module_name(target, %{})
+      full_name = "#{base_name}.#{target_name}"
+      {last_module_segment(target_name), full_name}
+    end)
+  end
+
+  defp alias_mappings(target, explicit_alias, aliases) do
+    target_name = module_name(target, aliases)
+
+    short_name =
+      if explicit_alias, do: alias_name(explicit_alias), else: last_module_segment(target_name)
+
+    %{short_name => target_name}
+  end
+
+  defp alias_name({:__aliases__, _, parts}), do: Enum.join(parts, ".")
+  defp alias_name(name) when is_atom(name), do: inspect(name)
+
+  defp last_module_segment(name) do
+    name
+    |> String.split(".")
+    |> List.last()
+  end
 
   defp flag(ctx, name) do
     trigger = if is_atom(name), do: inspect(name), else: name
