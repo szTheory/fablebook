@@ -524,6 +524,61 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert credo_issues("quote do: :file.consult(path)", "quoted_consult.ex") != []
   end
 
+  @tag :tmp_dir
+  test "Yecc file and legacy fronts are caught through uncalled direct, capture and apply bodies",
+       %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    fronts = [
+      {:file, 1, "grammar"},
+      {:file, 2, "grammar, options"},
+      {:yecc, 2, "grammar, parserfile"},
+      {:yecc, 3, "grammar, parserfile, verbose"},
+      {:yecc, 4, "grammar, parserfile, verbose, includefile"}
+    ]
+
+    functions =
+      for {function, arity, args} <- fronts,
+          shape <- [:direct, :capture, :apply] do
+        name = "#{function}_#{arity}_#{shape}"
+
+        body =
+          case shape do
+            :direct -> "def #{name}(#{args}), do: :yecc.#{function}(#{args})"
+            :capture -> "def #{name}, do: &:yecc.#{function}/#{arity}"
+            :apply -> "def #{name}(args), do: apply(:yecc, :#{function}, args)"
+          end
+
+        {function, arity, body}
+      end
+
+    source =
+      "defmodule Fablebook.GuardFixture.YeccFrontShapes do\n" <>
+        Enum.map_join(functions, "\n", &elem(&1, 2)) <>
+        "\nend\n"
+
+    path = Path.join(dir, "caller_yecc.ex")
+    File.write!(path, source)
+    [beam] = compile!([path], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+
+    for {function, arity, _shape} <- functions do
+      assert Enum.any?(hits(scan), fn
+               {:mfa, {:yecc, ^function, found_arity}}
+               when found_arity == arity or found_arity == :_ -> true
+               _ -> false
+             end), "no BEAM hit for yecc.#{function}/#{arity}"
+    end
+
+    assert credo_issues(source, "caller_yecc.ex") != []
+
+    for {function, arity, _args} <- fronts do
+      call = "quote do: :yecc.#{function}(#{Enum.map_join(1..arity, ", ", fn n -> "a#{n}" end)})"
+      assert credo_issues(call, "quoted_yecc_#{function}_#{arity}.ex") != []
+    end
+  end
+
   for {file, hit} <- @fixtures do
     @tag :tmp_dir
     @tag fixture: file, hit: hit
