@@ -135,6 +135,7 @@ defmodule Fablebook.Credo.BannedCalls do
           {Code, :format_file!, :_},
           {Code.Fragment, :container_cursor_to_quoted, :_},
           {Logger.Formatter, :compile, :_},
+          {Logger.Formatter, :new, 1},
           {EEx.Compiler, :compile, :_},
           {Phoenix.Template.ExsEngine, :compile, :_},
           {Phoenix.Template.EExEngine, :compile, :_},
