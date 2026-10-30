@@ -1,17 +1,17 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 1
-current_phase_name: Release pipeline, CI gate and guards
-status: verifying
-stopped_at: Phase 01.1.1.2 context gathered from inherited decisions; ready for research and planning
-last_updated: "2026-10-30T17:14:50.751Z"
+current_phase: 01.1.1.2
+current_phase_name: Installed OTP inventory and Common Test guard slice
+status: ready_to_execute
+stopped_at: Phase 01.1.1.2 research and two sequential plans verified; ready to execute
+last_updated: "2026-10-30T18:03:24.053Z"
 last_activity: 2026-10-30
-last_activity_desc: Phase 01.1.1.1 verified complete; PR 26 merged green; parent debt and future transfers preserved
-state_head: 68ab315285e7ff1c46369ff7831ce6fcd508a0e1
+last_activity_desc: Phase 01.1.1.2 planning verified; two sequential plans ready; parent debt and later ownership preserved
+state_head: 293d92482d3994477de11a33f6a32730a345747c
 progress:
   total_phases: 42
   completed_phases: 1
-  total_plans: 17
+  total_plans: 19
   completed_plans: 17
   percent: 2
 ---
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.1 is verified complete. Parent Phase 1 verification debt remains open; independent next work is 01.1.1.2 (installed OTP inventory and Common Test), whose prerequisite is now verified.
+**Current focus:** Phase 01.1.1.2 research and two sequential plans are verified and ready to execute. Its narrowed prerequisite is complete; parent Phase 1 verification debt remains open. Exact-lane inventory and Common Test execution evidence is still pending.
 
 ## Current Position
 
-Phase: 1 — Release pipeline, CI gate and guards
-Plan: 5
-Status: Phase 01.1.1.1 complete; parent verification debt remains pending
-Last activity: 2026-10-30 — Phase 01.1.1.1 verified complete; no next-phase workflow started
+Phase: 01.1.1.2 (Installed OTP inventory and Common Test guard slice) — READY TO EXECUTE
+Plan: 0 of 2 complete
+Status: Ready to execute Phase 01.1.1.2; parent verification debt remains pending
+Last activity: 2026-10-30 — Research refreshed, two plans independently verified, decision coverage complete; no implementation started
 
 Progress: [░░░░░░░░░░] 2%
 
@@ -157,10 +157,10 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T17:14:29.751Z
-Stopped at: Phase 01.1.1.2 context gathered from inherited decisions; ready for research and planning
-Next independent command: $gsd-plan-phase 01.1.1.2 --research — research and plan the installed OTP inventory and Common Test guard slice
-Resume file: .planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-CONTEXT.md
+Last session: 2026-10-30T18:03:24.053Z
+Stopped at: Phase 01.1.1.2 research and two sequential plans verified; ready to execute
+Next independent command: $gsd-execute-phase 01.1.1.2 — implement the installed OTP inventory and Common Test guard slices
+Resume file: .planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-PLAN-CHECK.md
 
 ## Completed phase receipt
 
@@ -168,4 +168,4 @@ Phase 01.1.1.1 is complete under its narrowed goal: all four success criteria pa
 
 The phase-completion query routes the pointer to Phase 1 because parent verification debt remains; no parent report or UAT gap was closed. Independent next work on 01.1.1.2 can be discussed using the verified child prerequisite. Later .3/.4 work still requires calibrated children and all original whole-audit/owner-judgment gates remain. No next-phase workflow was started.
 
-Next independent command: `$gsd-discuss-phase 01.1.1.2` — scope the installed inventory and Common Test guard slice.
+Discussion and planning for 01.1.1.2 are now complete; its independent verification is recorded in the phase PLAN-CHECK. Next command: `$gsd-execute-phase 01.1.1.2`. No implementation or next-phase workflow started during planning.
