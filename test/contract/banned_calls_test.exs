@@ -119,6 +119,11 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:erl_compile_server, :compile, :_},
     {:leex, :compile, :_},
     {:yecc, :compile, :_},
+    {:yecc, :file, 1},
+    {:yecc, :file, 2},
+    {:yecc, :yecc, 2},
+    {:yecc, :yecc, 3},
+    {:yecc, :yecc, 4},
     {Mix.Project, :compile, :_},
     {:elixir_erl, :compile, :_},
     {:cover, :compile, :_},
@@ -566,9 +571,13 @@ defmodule Fablebook.Contract.BannedCallsTest do
     for {function, arity, _shape} <- functions do
       assert Enum.any?(hits(scan), fn
                {:mfa, {:yecc, ^function, found_arity}}
-               when found_arity == arity or found_arity == :_ -> true
-               _ -> false
-             end), "no BEAM hit for yecc.#{function}/#{arity}"
+               when found_arity == arity or found_arity == :_ ->
+                 true
+
+               _ ->
+                 false
+             end),
+             "no BEAM hit for yecc.#{function}/#{arity}"
     end
 
     assert credo_issues(source, "caller_yecc.ex") != []

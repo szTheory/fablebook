@@ -168,7 +168,6 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:user_drv, :console},
     {:beam_lib, :crypto_key},
     {{:escript, [:extract, :parse_file]}, :epp_guard},
-    {:yecc, :epp_guard},
     {:systools, :boot_script},
     {:systools_make, :boot_script},
     {{:ssl_dist_sup, [:start_link]}, :dist_config},
@@ -398,56 +397,298 @@ defmodule Fablebook.Contract.TierSweepTest do
   }
   @creator_expected_ids for lane <- @creator_expected_lanes, do: {"EX-159", lane}
 
-  @creator_audit Enum.map(@creator_expected_lanes, fn lane ->
-                   citations =
-                     if lane == "core" do
-                       [
-                         {"kernel/src/file.erl:2272", "consult(File) ->"},
-                         {"kernel/src/file.erl:2273", "open(File, [read])"},
-                         {"kernel/src/file.erl:2314", "path_consult(Path, File)"},
-                         {"kernel/src/file.erl:2315", "path_open(Path, File, [read])"},
-                         {"kernel/src/file.erl:2317", "consult_stream(Fd)"},
-                         {"kernel/src/file.erl:2900", "consult_stream(Fd) ->"},
-                         {"kernel/src/file.erl:2905", "io:read(Fd, '', Line)"},
-                         {"stdlib/src/io.erl:731", "read(Io, Prompt, Pos0) ->"},
-                         {"stdlib/src/io.erl:732", "read(Io, Prompt, Pos0, [])"},
-                         {"stdlib/src/io.erl:765", "erl_scan,tokens"},
-                         {"stdlib/src/erl_scan.erl:788", "list_to_atom(Wcs)"},
-                         {"stdlib/src/erl_scan.erl:1618", "list_to_atom(lists:reverse(Nwcs))"}
-                       ]
-                     else
-                       [
-                         {"kernel/src/file.erl:2262", "consult(File) ->"},
-                         {"kernel/src/file.erl:2263", "open(File, [read])"},
-                         {"kernel/src/file.erl:2304", "path_consult(Path, File)"},
-                         {"kernel/src/file.erl:2305", "path_open(Path, File, [read])"},
-                         {"kernel/src/file.erl:2307", "consult_stream(Fd)"},
-                         {"kernel/src/file.erl:2890", "consult_stream(Fd) ->"},
-                         {"kernel/src/file.erl:2895", "io:read(Fd, '', Line)"},
-                         {"stdlib/src/io.erl:700", "read(Io, Prompt, Pos0) ->"},
-                         {"stdlib/src/io.erl:701", "read(Io, Prompt, Pos0, [])"},
-                         {"stdlib/src/io.erl:734", "erl_scan,tokens"},
-                         {"stdlib/src/erl_scan.erl:761", "list_to_atom(Wcs)"},
-                         {"stdlib/src/erl_scan.erl:1591", "list_to_atom(lists:reverse(Nwcs))"}
-                       ]
-                     end
+  @consult_creator_audit Enum.map(@creator_expected_lanes, fn lane ->
+                           citations =
+                             if lane == "core" do
+                               [
+                                 {"kernel/src/file.erl:2272", "consult(File) ->"},
+                                 {"kernel/src/file.erl:2273", "open(File, [read])"},
+                                 {"kernel/src/file.erl:2314", "path_consult(Path, File)"},
+                                 {"kernel/src/file.erl:2315", "path_open(Path, File, [read])"},
+                                 {"kernel/src/file.erl:2317", "consult_stream(Fd)"},
+                                 {"kernel/src/file.erl:2900", "consult_stream(Fd) ->"},
+                                 {"kernel/src/file.erl:2905", "io:read(Fd, '', Line)"},
+                                 {"stdlib/src/io.erl:731", "read(Io, Prompt, Pos0) ->"},
+                                 {"stdlib/src/io.erl:732", "read(Io, Prompt, Pos0, [])"},
+                                 {"stdlib/src/io.erl:765", "erl_scan,tokens"},
+                                 {"stdlib/src/erl_scan.erl:788", "list_to_atom(Wcs)"},
+                                 {"stdlib/src/erl_scan.erl:1618",
+                                  "list_to_atom(lists:reverse(Nwcs))"}
+                               ]
+                             else
+                               [
+                                 {"kernel/src/file.erl:2262", "consult(File) ->"},
+                                 {"kernel/src/file.erl:2263", "open(File, [read])"},
+                                 {"kernel/src/file.erl:2304", "path_consult(Path, File)"},
+                                 {"kernel/src/file.erl:2305", "path_open(Path, File, [read])"},
+                                 {"kernel/src/file.erl:2307", "consult_stream(Fd)"},
+                                 {"kernel/src/file.erl:2890", "consult_stream(Fd) ->"},
+                                 {"kernel/src/file.erl:2895", "io:read(Fd, '', Line)"},
+                                 {"stdlib/src/io.erl:700", "read(Io, Prompt, Pos0) ->"},
+                                 {"stdlib/src/io.erl:701", "read(Io, Prompt, Pos0, [])"},
+                                 {"stdlib/src/io.erl:734", "erl_scan,tokens"},
+                                 {"stdlib/src/erl_scan.erl:761", "list_to_atom(Wcs)"},
+                                 {"stdlib/src/erl_scan.erl:1591",
+                                  "list_to_atom(lists:reverse(Nwcs))"}
+                               ]
+                             end
 
-                   %{
-                     original_id: "EX-159",
-                     original_matcher: {:file, [:path_consult, :consult]},
-                     original_reason: :pure_data,
-                     lane: lane,
-                     matched_mfas: @creator_expected_original_mfas,
-                     trace: @creator_expected_trace,
-                     verdict: :caller_term_text_reaches_atom_creation,
-                     replacements: @creator_expected_original_mfas,
-                     tier: @creator_expected_original_mfas,
-                     fixtures: @creator_expected_fixtures,
-                     citations: citations,
-                     applicability: :each_exact_installed_lane,
-                     removal_witness: :not_applicable_tiered
-                   }
-                 end)
+                           %{
+                             original_id: "EX-159",
+                             original_matcher: {:file, [:path_consult, :consult]},
+                             original_reason: :pure_data,
+                             lane: lane,
+                             matched_mfas: @creator_expected_original_mfas,
+                             trace: @creator_expected_trace,
+                             verdict: :caller_term_text_reaches_atom_creation,
+                             replacements: @creator_expected_original_mfas,
+                             tier: @creator_expected_original_mfas,
+                             fixtures: @creator_expected_fixtures,
+                             citations: citations,
+                             applicability: :each_exact_installed_lane,
+                             removal_witness: :not_applicable_tiered
+                           }
+                         end)
+
+  @yecc_expected_original_mfas [
+    {:yecc, :compile, 3},
+    {:yecc, :file, 1},
+    {:yecc, :file, 2},
+    {:yecc, :format_error, 1},
+    {:yecc, :yecc, 2},
+    {:yecc, :yecc, 3},
+    {:yecc, :yecc, 4}
+  ]
+  @yecc_expected_tier [
+    {:yecc, :compile, 3},
+    {:yecc, :file, 1},
+    {:yecc, :file, 2},
+    {:yecc, :yecc, 2},
+    {:yecc, :yecc, 3},
+    {:yecc, :yecc, 4}
+  ]
+  @yecc_expected_trace [
+    {:yecc, :compile, 3},
+    {:yecc, :file, 1},
+    {:yecc, :file, 2},
+    {:yecc, :yecc, 2},
+    {:yecc, :yecc, 3},
+    {:yecc, :yecc, 4},
+    {:yecc, :infile, 3},
+    {:yecc, :start, 2},
+    {:yecc, :generate, 1},
+    {:yecc, :read_grammar, 3},
+    {:yecc, :parse_grammar, 2},
+    {:yecc, :subst_pseudo_vars, 3},
+    {:yecc, :write_file, 1},
+    {:yecc, :output_state_actions, 5},
+    {:yecc, :inlined_function_name, 3},
+    {:erlang, :list_to_atom, 1}
+  ]
+  @yecc_expected_replacements %{
+    {:yecc, :compile, 3} => {:tier, {:yecc, :compile, :_}},
+    {:yecc, :file, 1} => {:tier, {:yecc, :file, 1}},
+    {:yecc, :file, 2} => {:tier, {:yecc, :file, 2}},
+    {:yecc, :yecc, 2} => {:tier, {:yecc, :yecc, 2}},
+    {:yecc, :yecc, 3} => {:tier, {:yecc, :yecc, 3}},
+    {:yecc, :yecc, 4} => {:tier, {:yecc, :yecc, 4}},
+    {:yecc, :format_error, 1} => {:semantic, :module_error_formatter_dispatch_not_atom_creation}
+  }
+  @yecc_expected_verdict %{
+    atom_creator_fronts: :caller_paths_reach_list_to_atom,
+    format_error: :formats_descriptors_with_module_supplied_error_callback
+  }
+  @yecc_expected_fixtures [
+    :yecc_direct,
+    :yecc_capture,
+    :yecc_apply,
+    :yecc_discarded_quote_source_only,
+    :generated_mfa_probe
+  ]
+  @yecc_expected_citation_lines %{
+    "core" => ~w(
+      parsetools/src/yecc.erl:493 parsetools/src/yecc.erl:498
+      parsetools/src/yecc.erl:617 parsetools/src/yecc.erl:633
+      parsetools/src/yecc.erl:649 parsetools/src/yecc.erl:665 parsetools/src/yecc.erl:666
+      parsetools/src/yecc.erl:711 parsetools/src/yecc.erl:748 parsetools/src/yecc.erl:749
+      parsetools/src/yecc.erl:823 parsetools/src/yecc.erl:837 parsetools/src/yecc.erl:845
+      parsetools/src/yecc.erl:850 parsetools/src/yecc.erl:854 parsetools/src/yecc.erl:858
+      parsetools/src/yecc.erl:860 parsetools/src/yecc.erl:938 parsetools/src/yecc.erl:990
+      parsetools/src/yecc.erl:1006 parsetools/src/yecc.erl:1008 parsetools/src/yecc.erl:1011
+      parsetools/src/yecc.erl:1020 parsetools/src/yecc.erl:1041 parsetools/src/yecc.erl:1111
+      parsetools/src/yecc.erl:1144 parsetools/src/yecc.erl:1167 parsetools/src/yecc.erl:1199
+      parsetools/src/yecc.erl:1200 parsetools/src/yecc.erl:1212 parsetools/src/yecc.erl:1421
+      parsetools/src/yecc.erl:1437 parsetools/src/yecc.erl:1624 parsetools/src/yecc.erl:2756
+      parsetools/src/yecc.erl:2774 parsetools/src/yecc.erl:2968 parsetools/src/yecc.erl:2973
+      parsetools/src/yecc.erl:2975 parsetools/src/yecc.erl:2977
+    ),
+    "floor" => ~w(
+      parsetools/src/yecc.erl:488 parsetools/src/yecc.erl:493
+      parsetools/src/yecc.erl:612 parsetools/src/yecc.erl:628
+      parsetools/src/yecc.erl:644 parsetools/src/yecc.erl:660 parsetools/src/yecc.erl:661
+      parsetools/src/yecc.erl:706 parsetools/src/yecc.erl:743 parsetools/src/yecc.erl:744
+      parsetools/src/yecc.erl:818 parsetools/src/yecc.erl:832 parsetools/src/yecc.erl:840
+      parsetools/src/yecc.erl:845 parsetools/src/yecc.erl:849 parsetools/src/yecc.erl:853
+      parsetools/src/yecc.erl:855 parsetools/src/yecc.erl:933 parsetools/src/yecc.erl:985
+      parsetools/src/yecc.erl:1001 parsetools/src/yecc.erl:1003 parsetools/src/yecc.erl:1006
+      parsetools/src/yecc.erl:1015 parsetools/src/yecc.erl:1036 parsetools/src/yecc.erl:1106
+      parsetools/src/yecc.erl:1139 parsetools/src/yecc.erl:1162 parsetools/src/yecc.erl:1194
+      parsetools/src/yecc.erl:1195 parsetools/src/yecc.erl:1207 parsetools/src/yecc.erl:1416
+      parsetools/src/yecc.erl:1432 parsetools/src/yecc.erl:1619 parsetools/src/yecc.erl:2751
+      parsetools/src/yecc.erl:2768 parsetools/src/yecc.erl:2962 parsetools/src/yecc.erl:2967
+      parsetools/src/yecc.erl:2969 parsetools/src/yecc.erl:2971
+    )
+  }
+  @yecc_expected_ids for lane <- @creator_expected_lanes, do: {"EX-089", lane}
+
+  @yecc_audit Enum.map(@creator_expected_lanes, fn lane ->
+                citations =
+                  if lane == "core" do
+                    [
+                      {"parsetools/src/yecc.erl:493",
+                       "-export([compile/3, file/1, file/2, format_error/1])."},
+                      {"parsetools/src/yecc.erl:498", "-export([yecc/2, yecc/3, yecc/4])."},
+                      {"parsetools/src/yecc.erl:617", "case file(Input, Opts) of"},
+                      {"parsetools/src/yecc.erl:633", "format_error(bad_declaration) ->"},
+                      {"parsetools/src/yecc.erl:649", "atom_to_list(Tag)"},
+                      {"parsetools/src/yecc.erl:665", "format_error({error, Module, Error}) ->"},
+                      {"parsetools/src/yecc.erl:666", "Module:format_error(Error);"},
+                      {"parsetools/src/yecc.erl:711", "format_error(cannot_parse) ->"},
+                      {"parsetools/src/yecc.erl:748", "file(GrammarFile) ->"},
+                      {"parsetools/src/yecc.erl:749",
+                       "file(GrammarFile, [report_errors, report_warnings])."},
+                      {"parsetools/src/yecc.erl:823",
+                       "file(File, Options0) when is_list(Options0) ->"},
+                      {"parsetools/src/yecc.erl:837",
+                       "Pid = spawn_link(fun() -> infile(Self, File, OptionValues) end),"},
+                      {"parsetools/src/yecc.erl:845", "file(File, Option) ->"},
+                      {"parsetools/src/yecc.erl:850", "yecc(Infile, Outfile) ->"},
+                      {"parsetools/src/yecc.erl:854", "yecc(Infile, Outfile, Verbose) ->"},
+                      {"parsetools/src/yecc.erl:858",
+                       "yecc(Infilex, Outfilex, Verbose, Includefilex) ->"},
+                      {"parsetools/src/yecc.erl:860",
+                       "case file(Infilex, [{parserfile, Outfilex},"},
+                      {"parsetools/src/yecc.erl:938",
+                       "when Option =:= includefile; Option =:= parserfile ->"},
+                      {"parsetools/src/yecc.erl:990", "is_filename(T) ->"},
+                      {"parsetools/src/yecc.erl:1006", "start(Infilex, Options) ->"},
+                      {"parsetools/src/yecc.erl:1008",
+                       "{_, Outfilex0} = lists:keyfind(parserfile, 1, Options),"},
+                      {"parsetools/src/yecc.erl:1011",
+                       "[] -> filename:rootname(Infilex, \".yrl\");"},
+                      {"parsetools/src/yecc.erl:1020",
+                       "Module = list_to_atom(filename:basename(Outfile, \".erl\")),"},
+                      {"parsetools/src/yecc.erl:1041", "St0 = start(Infilex, Options),"},
+                      {"parsetools/src/yecc.erl:1111", "generate(St0) ->"},
+                      {"parsetools/src/yecc.erl:1144",
+                       "{NextLocation, Grammar} = read_grammar(Inport, St, Location),"},
+                      {"parsetools/src/yecc.erl:1167",
+                       "{Tokens1, St} = subst_pseudo_vars(AllTokens,"},
+                      {"parsetools/src/yecc.erl:1199", "read_grammar(Inport, St, Location) ->"},
+                      {"parsetools/src/yecc.erl:1200",
+                       "case yeccscan:scan(Inport, '', Location) of"},
+                      {"parsetools/src/yecc.erl:1212", "case yeccparser:parse(Input) of"},
+                      {"parsetools/src/yecc.erl:1421", "write_file(St0) ->"},
+                      {"parsetools/src/yecc.erl:1437",
+                       "St50 = output_actions(St40, StateJumps, StateInfo),"},
+                      {"parsetools/src/yecc.erl:1624",
+                       "{{var, NewAnno, list_to_atom(PseudoVarName)}, St0};"},
+                      {"parsetools/src/yecc.erl:2756",
+                       "output_state_actions(St_0, State, IState,"},
+                      {"parsetools/src/yecc.erl:2774",
+                       "jump_some -> list_to_atom(lists:concat([cont_, To]));"},
+                      {"parsetools/src/yecc.erl:2968",
+                       "inlined_function_name(St, State, Terminal) ->"},
+                      {"parsetools/src/yecc.erl:2973",
+                       "list_to_atom(concat([yeccpars2_, State, '_'] ++ End))."},
+                      {"parsetools/src/yecc.erl:2975",
+                       "-compile({nowarn_unused_function,function_name/3})."},
+                      {"parsetools/src/yecc.erl:2977",
+                       "list_to_atom(concat([Name, '_', safe_atom_chars(St, Suf)]))."}
+                    ]
+                  else
+                    [
+                      {"parsetools/src/yecc.erl:488",
+                       "-export([compile/3, file/1, file/2, format_error/1])."},
+                      {"parsetools/src/yecc.erl:493", "-export([yecc/2, yecc/3, yecc/4])."},
+                      {"parsetools/src/yecc.erl:612", "case file(Input, Opts) of"},
+                      {"parsetools/src/yecc.erl:628", "format_error(bad_declaration) ->"},
+                      {"parsetools/src/yecc.erl:644", "atom_to_list(Tag)"},
+                      {"parsetools/src/yecc.erl:660", "format_error({error, Module, Error}) ->"},
+                      {"parsetools/src/yecc.erl:661", "Module:format_error(Error);"},
+                      {"parsetools/src/yecc.erl:706", "format_error(cannot_parse) ->"},
+                      {"parsetools/src/yecc.erl:743", "file(GrammarFile) ->"},
+                      {"parsetools/src/yecc.erl:744",
+                       "file(GrammarFile, [report_errors, report_warnings])."},
+                      {"parsetools/src/yecc.erl:818",
+                       "file(File, Options0) when is_list(Options0) ->"},
+                      {"parsetools/src/yecc.erl:832",
+                       "Pid = spawn_link(fun() -> infile(Self, File, OptionValues) end),"},
+                      {"parsetools/src/yecc.erl:840", "file(File, Option) ->"},
+                      {"parsetools/src/yecc.erl:845", "yecc(Infile, Outfile) ->"},
+                      {"parsetools/src/yecc.erl:849", "yecc(Infile, Outfile, Verbose) ->"},
+                      {"parsetools/src/yecc.erl:853",
+                       "yecc(Infilex, Outfilex, Verbose, Includefilex) ->"},
+                      {"parsetools/src/yecc.erl:855",
+                       "case file(Infilex, [{parserfile, Outfilex},"},
+                      {"parsetools/src/yecc.erl:933",
+                       "when Option =:= includefile; Option =:= parserfile ->"},
+                      {"parsetools/src/yecc.erl:985", "is_filename(T) ->"},
+                      {"parsetools/src/yecc.erl:1001", "start(Infilex, Options) ->"},
+                      {"parsetools/src/yecc.erl:1003",
+                       "{_, Outfilex0} = lists:keyfind(parserfile, 1, Options),"},
+                      {"parsetools/src/yecc.erl:1006",
+                       "[] -> filename:rootname(Infilex, \".yrl\");"},
+                      {"parsetools/src/yecc.erl:1015",
+                       "Module = list_to_atom(filename:basename(Outfile, \".erl\")),"},
+                      {"parsetools/src/yecc.erl:1036", "St0 = start(Infilex, Options),"},
+                      {"parsetools/src/yecc.erl:1106", "generate(St0) ->"},
+                      {"parsetools/src/yecc.erl:1139",
+                       "{NextLocation, Grammar} = read_grammar(Inport, St, Location),"},
+                      {"parsetools/src/yecc.erl:1162",
+                       "{Tokens1, St} = subst_pseudo_vars(AllTokens,"},
+                      {"parsetools/src/yecc.erl:1194", "read_grammar(Inport, St, Location) ->"},
+                      {"parsetools/src/yecc.erl:1195",
+                       "case yeccscan:scan(Inport, '', Location) of"},
+                      {"parsetools/src/yecc.erl:1207", "case yeccparser:parse(Input) of"},
+                      {"parsetools/src/yecc.erl:1416", "write_file(St0) ->"},
+                      {"parsetools/src/yecc.erl:1432",
+                       "St50 = output_actions(St40, StateJumps, StateInfo),"},
+                      {"parsetools/src/yecc.erl:1619",
+                       "{{var, NewAnno, list_to_atom(PseudoVarName)}, St0};"},
+                      {"parsetools/src/yecc.erl:2751",
+                       "output_state_actions(St_0, State, IState,"},
+                      {"parsetools/src/yecc.erl:2768",
+                       "jump_some -> list_to_atom(lists:concat([cont_, To]));"},
+                      {"parsetools/src/yecc.erl:2962",
+                       "inlined_function_name(St, State, Terminal) ->"},
+                      {"parsetools/src/yecc.erl:2967",
+                       "list_to_atom(concat([yeccpars2_, State, '_'] ++ End))."},
+                      {"parsetools/src/yecc.erl:2969",
+                       "-compile({nowarn_unused_function,function_name/3})."},
+                      {"parsetools/src/yecc.erl:2971",
+                       "list_to_atom(concat([Name, '_', safe_atom_chars(St, Suf)]))."}
+                    ]
+                  end
+
+                %{
+                  original_id: "EX-089",
+                  original_matcher: {:yecc, :epp_guard},
+                  original_reason: :epp_guard,
+                  lane: lane,
+                  matched_mfas: @yecc_expected_original_mfas,
+                  trace: @yecc_expected_trace,
+                  verdict: @yecc_expected_verdict,
+                  replacements: @yecc_expected_replacements,
+                  tier: @yecc_expected_tier,
+                  fixtures: @yecc_expected_fixtures,
+                  citations: citations,
+                  applicability: :each_exact_installed_lane,
+                  removal_witness: :not_applicable_blanket_retired
+                }
+              end)
+
+  @creator_audit @consult_creator_audit ++ @yecc_audit
 
   @eval_funs [:eval_str, :expr, :expr_list, :exprs, :match_clause]
   @barrier_modules [:code_server, :error_handler, :erl_prim_loader, :init, :erl_lint]
@@ -1042,9 +1283,10 @@ defmodule Fablebook.Contract.TierSweepTest do
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    records = Enum.filter(@creator_audit, &(&1.original_id == "EX-159"))
 
     assert_creator_audit!(
-      @creator_audit,
+      records,
       ctx.graph,
       BannedCalls.banned_mfas(),
       evidence
@@ -1052,21 +1294,21 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_raise ExUnit.AssertionError, fn ->
       assert_creator_audit!(
-        Enum.reject(@creator_audit, &(&1.original_id == "EX-159" and &1.lane == "core")),
+        Enum.reject(records, &(&1.original_id == "EX-159" and &1.lane == "core")),
         ctx.graph,
         BannedCalls.banned_mfas(),
         evidence
       )
     end
 
-    lane_record = Enum.find(@creator_audit, &(&1.lane == evidence.lane.name))
+    lane_record = Enum.find(records, &(&1.lane == evidence.lane.name))
     without_consult = %{lane_record | matched_mfas: [{:file, :path_consult, 2}]}
 
     assert_raise ExUnit.AssertionError, fn ->
       assert_creator_audit!(
         List.replace_at(
-          @creator_audit,
-          Enum.find_index(@creator_audit, &(&1.lane == lane_record.lane)),
+          records,
+          Enum.find_index(records, &(&1.lane == lane_record.lane)),
           without_consult
         ),
         ctx.graph,
@@ -1082,7 +1324,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_raise ExUnit.AssertionError, fn ->
       assert_creator_audit!(
-        @creator_audit,
+        records,
         graph_without_consult,
         BannedCalls.banned_mfas(),
         evidence
@@ -1094,7 +1336,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_raise ExUnit.AssertionError, fn ->
       assert_creator_audit!(
-        @creator_audit,
+        records,
         ctx.graph,
         BannedCalls.banned_mfas(),
         evidence,
@@ -1110,14 +1352,82 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
       assert_creator_audit!(
         List.replace_at(
-          @creator_audit,
-          Enum.find_index(@creator_audit, &(&1.lane == lane_record.lane)),
+          records,
+          Enum.find_index(records, &(&1.lane == lane_record.lane)),
           malformed_source
         ),
         ctx.graph,
         BannedCalls.banned_mfas(),
         evidence
       )
+    end
+  end
+
+  test "EX-089 maps Yecc caller fronts and formatter semantics to exact-lane evidence", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    records = Enum.filter(@creator_audit, &(&1.original_id == "EX-089"))
+    tier = BannedCalls.banned_mfas()
+
+    assert_yecc_audit!(records, ctx.graph, tier, evidence)
+
+    lane_record = Enum.find(records, &(&1.lane == evidence.lane.name))
+    lane_index = Enum.find_index(records, &(&1.lane == lane_record.lane))
+
+    wrong_lane = %{lane_record | lane: "latest"}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_yecc_audit!(
+        List.replace_at(records, lane_index, wrong_lane),
+        ctx.graph,
+        tier,
+        evidence
+      )
+    end
+
+    empty_citations = %{lane_record | citations: []}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_yecc_audit!(
+        List.replace_at(records, lane_index, empty_citations),
+        ctx.graph,
+        tier,
+        evidence
+      )
+    end
+
+    two_tuple = %{
+      lane_record
+      | matched_mfas: List.replace_at(lane_record.matched_mfas, 1, {:yecc, :file})
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_yecc_audit!(
+        List.replace_at(records, lane_index, two_tuple),
+        ctx.graph,
+        tier,
+        evidence
+      )
+    end
+
+    omitted_mfa = %{
+      lane_record
+      | matched_mfas: List.delete(lane_record.matched_mfas, {:yecc, :format_error, 1})
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_yecc_audit!(
+        List.replace_at(records, lane_index, omitted_mfa),
+        ctx.graph,
+        tier,
+        evidence
+      )
+    end
+
+    redundant_retention = {{:yecc, [:format_error]}, :by_name}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_yecc_audit!(records, ctx.graph, tier, evidence, @exclusions ++ [redundant_retention])
     end
   end
 
@@ -1671,6 +1981,70 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert arity > 0
     end
   end
+
+  defp assert_yecc_audit!(records, graph, tier, evidence, exclusions \\ @exclusions) do
+    assert length(records) == length(@yecc_expected_ids)
+
+    assert MapSet.new(Enum.map(records, &{&1.original_id, &1.lane})) ==
+             MapSet.new(@yecc_expected_ids)
+
+    record = Enum.find(records, &(&1.lane == evidence.lane.name))
+    assert record != nil, "no Yecc audit row for #{evidence.lane.name}"
+    assert record.original_id == "EX-089"
+    assert record.original_matcher == {:yecc, :epp_guard}
+    assert record.original_reason == :epp_guard
+    assert MapSet.new(record.matched_mfas) == MapSet.new(@yecc_expected_original_mfas)
+    assert record.trace == @yecc_expected_trace
+    assert record.verdict == @yecc_expected_verdict
+    assert record.replacements == @yecc_expected_replacements
+    assert MapSet.new(record.tier) == MapSet.new(@yecc_expected_tier)
+    assert record.fixtures == @yecc_expected_fixtures
+    assert record.applicability == :each_exact_installed_lane
+    assert record.removal_witness == :not_applicable_blanket_retired
+    refute {:yecc, :epp_guard} in exclusions
+
+    for {citation, expected} <- record.citations do
+      assert SweepEvidence.resolve!(evidence, citation).text =~ expected, citation
+    end
+
+    citation_lines = MapSet.new(Enum.map(record.citations, &elem(&1, 0)))
+
+    assert citation_lines ==
+             MapSet.new(Map.fetch!(@yecc_expected_citation_lines, evidence.lane.name))
+
+    live_matches =
+      graph.exported
+      |> Enum.filter(&yecc_original_match?(record.original_matcher, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> MapSet.new()
+
+    assert live_matches == MapSet.new(record.matched_mfas),
+           "#{record.original_id} original matcher differs from exact-lane exports"
+
+    for {module, function, arity} = mfa <- @yecc_expected_tier do
+      assert covered?(mfa, tier, BannedCalls.banned_names()),
+             "#{inspect(mfa)} has no replacement tier"
+
+      assert exclusion_reason(module, function, exclusions) == nil,
+             "#{inspect(mfa)} was given a false safe disposition"
+
+      assert arity > 0
+    end
+
+    {reached, _parents} = reach(graph, tier, BannedCalls.banned_names())
+    formatter_mfa = {:yecc, :format_error, 1}
+    refute covered?(formatter_mfa, tier, BannedCalls.banned_names())
+    assert exclusion_reason(:yecc, :format_error, exclusions) == nil
+
+    refute MapSet.member?(reached, formatter_mfa),
+           "format_error/1 was retained although the changed atom-creator fronts do not reach it"
+  end
+
+  defp yecc_original_match?({:yecc, :epp_guard}, {:yecc, function, _arity})
+       when function not in [:module_info, :__info__],
+       do: true
+
+  defp yecc_original_match?(_matcher, _mfa), do: false
 
   defp creator_original_match?({module, functions}, {module, function, _arity})
        when is_list(functions),
