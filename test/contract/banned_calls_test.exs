@@ -493,6 +493,22 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert credo_issues(source, "caller_file.ex") != []
     assert credo_issues("quote do: :file.path_consult(dirs, path)", "quoted.ex") != []
     assert credo_issues("Regex.compile(pattern)", "regex.ex") == []
+
+    consult_source = """
+    defmodule Fablebook.GuardFixture.ConsultShapes do
+      def direct(path), do: :file.consult(path)
+      def capture, do: &:file.consult/1
+      def dynamic(args), do: apply(:file, :consult, args)
+    end
+    """
+
+    consult_path = Path.join(dir, "caller_consult.ex")
+    File.write!(consult_path, consult_source)
+    [consult_beam] = compile!([consult_path], dir, true)
+    assert {:ok, consult_scan} = BeamWalker.scan(consult_beam)
+    assert {:mfa, {:file, :consult, 1}} in hits(consult_scan)
+    assert credo_issues(consult_source, "caller_consult.ex") != []
+    assert credo_issues("quote do: :file.consult(path)", "quoted_consult.ex") != []
   end
 
   for {file, hit} <- @fixtures do
