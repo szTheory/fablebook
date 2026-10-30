@@ -4430,6 +4430,54 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
            ]
   end
 
+  test "source inventory and receipts include contained generated sources outside src" do
+    root = temp_dir!() |> Path.join("lib")
+    %{ebin: ebin} = create_probe_app!(root, "probe", "1.0.0", :probe, true)
+    generated_source = "-module(probe).\n"
+    File.write!(Path.join(ebin, "generated_probe.erl"), generated_source)
+
+    discovered = InstalledOtp.discover!(root, lane: "core")
+    inspected = InstalledOtp.inspect!(discovered, lane: "core")
+    inspected = [%{hd(inspected) | source: "src/../ebin/generated_probe.erl"}]
+
+    [source_app] = InstalledOtp.source_inventory!(discovered, inspected, lane: "core")
+
+    assert source_app.source_dir_status == "missing"
+    assert source_app.source_file_count == 1
+    assert source_app.source_bytes == byte_size(generated_source)
+    assert source_app.mapped_beams == 1
+
+    assert source_app.beams == [
+             %{
+               module: "probe",
+               source: "ebin/generated_probe.erl",
+               status: "present",
+               bytes: byte_size(generated_source)
+             }
+           ]
+
+    receipt_lines =
+      InstalledOtp.receipt_lines(%{
+        lane: %{name: "core", elixir: "1.20.4", otp: "29.1.2"},
+        lock_sha256: SweepEvidence.lock_digests!()["core"],
+        discovered: discovered,
+        inspected: inspected,
+        ingested: [%{app: "probe", module: "probe", module_atom: :probe}],
+        sources: [source_app]
+      })
+
+    receipt = InstalledOtp.verify_receipt_lines!(receipt_lines)
+    beam = Enum.find(receipt.beams, &(&1["module"] == "probe"))
+
+    assert beam["source"] == "ebin/generated_probe.erl"
+    assert beam["source_status"] == "present"
+
+    assert Enum.any?(receipt_lines, fn line ->
+             {:ok, row} = JSON.decode(String.replace_prefix(line, @marker, ""))
+             row["kind"] == "source_file" and row["path"] == "ebin/generated_probe.erl"
+           end)
+  end
+
   test "source inventory fails on unreadable files and required active source gaps" do
     root = temp_dir!() |> Path.join("lib")
     app_root = Path.join(root, "probe-1.0.0")

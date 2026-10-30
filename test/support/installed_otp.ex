@@ -773,14 +773,10 @@ defmodule Fablebook.Test.InstalledOtp do
     source_root = Path.join(app.root, "src")
     {source_dir_status, files} = source_tree!(source_root, app, lane, reader)
 
-    beams =
-      Enum.map(inspected, fn beam ->
+    {beams, files} =
+      Enum.map_reduce(inspected, files, fn beam, files ->
         relative_source = source_mapping!(app, beam, lane)
-
-        status =
-          if is_nil(relative_source),
-            do: "unavailable",
-            else: source_status(files, relative_source)
+        {status, bytes, files} = source_mapping_status!(app, relative_source, files, lane, reader)
 
         if MapSet.member?(required_modules, beam.module) and status != "present" do
           fail!(:required_source_missing, %{
@@ -792,12 +788,7 @@ defmodule Fablebook.Test.InstalledOtp do
           })
         end
 
-        %{
-          module: beam.module,
-          source: relative_source,
-          status: status,
-          bytes: if(status == "present", do: Map.fetch!(files, relative_source), else: nil)
-        }
+        {%{module: beam.module, source: relative_source, status: status, bytes: bytes}, files}
       end)
 
     %{
@@ -938,7 +929,7 @@ defmodule Fablebook.Test.InstalledOtp do
 
   defp source_mapping!(app, beam, lane) do
     case safe_source(app.app, app.relative, beam.source) do
-      nil when is_nil(beam.source) ->
+      nil when beam.source in [nil, ""] ->
         nil
 
       nil ->
@@ -954,8 +945,61 @@ defmodule Fablebook.Test.InstalledOtp do
     end
   end
 
-  defp source_status(files, path),
-    do: if(Map.has_key?(files, path), do: "present", else: "missing")
+  defp source_mapping_status!(_app, nil, files, _lane, _reader),
+    do: {"unavailable", nil, files}
+
+  defp source_mapping_status!(app, relative_source, files, lane, reader) do
+    cond do
+      Map.has_key?(files, relative_source) ->
+        {"present", Map.fetch!(files, relative_source), files}
+
+      String.starts_with?(relative_source, "src/") ->
+        {"missing", nil, files}
+
+      true ->
+        source_file_status!(app, relative_source, files, lane, reader)
+    end
+  end
+
+  defp source_file_status!(app, relative_source, files, lane, reader) do
+    path = Path.expand(relative_source, app.root)
+
+    unless path_within?(app.root, path) do
+      fail!(:source_escape, %{
+        lane: lane,
+        app: app.app,
+        source: relative_source
+      })
+    end
+
+    case File.lstat(path) do
+      {:ok, %{type: :regular}} ->
+        bytes = source_file_size!(path, app, lane, reader)
+        {"present", bytes, Map.put(files, relative_source, bytes)}
+
+      {:ok, %{type: :symlink}} ->
+        validate_source_link!(app.root, path, app, lane)
+
+      {:ok, stat} ->
+        fail!(:source_file_type, %{
+          lane: lane,
+          app: app.app,
+          path: relative_source,
+          type: stat.type
+        })
+
+      {:error, :enoent} ->
+        {"missing", nil, files}
+
+      {:error, reason} ->
+        fail!(:source_file_unreadable, %{
+          lane: lane,
+          app: app.app,
+          path: relative_source,
+          reason: reason
+        })
+    end
+  end
 
   defp path_within?(root, path) do
     root = Path.expand(root)
@@ -1119,7 +1163,6 @@ defmodule Fablebook.Test.InstalledOtp do
     invalid =
       Enum.reject(rows, fn row ->
         is_binary(apps[row["app"]]) and safe_receipt_path?(row["path"]) and
-          String.starts_with?(row["path"], "src/") and
           valid_byte_count?(row["bytes"])
       end)
 
@@ -1585,23 +1628,33 @@ defmodule Fablebook.Test.InstalledOtp do
 
     case Enum.find_index(parts, &(&1 == app_root or &1 == app)) do
       nil ->
-        if Path.type(source) == :relative and not String.contains?(source, ["..", "\\"]),
-          do: source,
-          else: nil
+        if Path.type(source) == :relative, do: normalize_source_parts(parts), else: nil
 
       index ->
-        Enum.drop(parts, index + 1) |> Path.join() |> safe_relative()
+        Enum.drop(parts, index + 1) |> normalize_source_parts()
     end
   end
 
   defp safe_source(_app, _app_root, _source), do: nil
 
-  defp safe_relative(path),
-    do:
-      if(path != "" and Path.type(path) == :relative and not String.contains?(path, ["..", "\\"]),
-        do: path,
-        else: nil
-      )
+  defp normalize_source_parts(parts) do
+    case Enum.reduce_while(parts, [], fn
+           ".", stack -> {:cont, stack}
+           "..", [] -> {:halt, :escape}
+           "..", [_discarded | rest] -> {:cont, rest}
+           part, stack -> {:cont, [part | stack]}
+         end) do
+      :escape ->
+        nil
+
+      [] ->
+        nil
+
+      reversed ->
+        path = reversed |> Enum.reverse() |> Path.join()
+        if path != "" and Path.type(path) == :relative, do: path, else: nil
+    end
+  end
 
   defp version_string(value) when is_binary(value) and value != "", do: value
   defp version_string(value) when is_list(value) and value != [], do: List.to_string(value)
