@@ -329,7 +329,7 @@ defmodule Fablebook.Test.InstalledOtp do
         actual = MapSet.new(normalized)
 
         duplicate_rows =
-          normalized
+          rows
           |> Enum.frequencies()
           |> Enum.filter(fn {_row, count} -> count > 1 end)
           |> Enum.map(&elem(&1, 0))
@@ -1714,6 +1714,7 @@ defmodule Fablebook.Test.InstalledOtp do
           function_count: scan.function_count,
           function_bytes: scan.function_bytes,
           edges: scan.edges,
+          xref_edges: Map.get(scan, :xref_edges, []),
           imports: scan.mfas,
           pairs: scan.pairs,
           literals: scan.literals

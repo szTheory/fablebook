@@ -2,6 +2,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   use ExUnit.Case, async: false
 
   alias Fablebook.Credo.BannedCalls
+  alias Fablebook.Test.BeamWalker
   alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.SweepEvidence
   @compile {:no_warn_undefined, :xref}
@@ -2759,14 +2760,18 @@ defmodule Fablebook.Contract.TierSweepTest do
     historical_app_names = MapSet.new(historical_otp_apps, & &1.app)
     {historical_otp_edges, no_debug_otp} = form_edges(historical_otp_dirs)
     {other_form_edges, no_debug_other} = form_edges(elixir_dirs ++ dep_dirs)
+    {other_xref_edges, _no_debug_other_xref} = xref_form_edges(elixir_dirs ++ dep_dirs)
     otp_form_edges = Enum.flat_map(inspected, & &1.edges)
+    otp_xref_edges = Enum.flat_map(inspected, & &1.xref_edges)
 
     expected_historical_edges =
       Enum.flat_map(inspected, fn inspection ->
-        if MapSet.member?(historical_app_names, inspection.app), do: inspection.edges, else: []
-      end) ++ other_form_edges
+        if MapSet.member?(historical_app_names, inspection.app),
+          do: inspection.xref_edges,
+          else: []
+      end) ++ other_xref_edges
 
-    expected_full_edges = otp_form_edges ++ other_form_edges
+    expected_full_edges = otp_xref_edges ++ other_xref_edges
     historical_graph_dirs = historical_otp_dirs ++ elixir_dirs ++ dep_dirs
     full_graph_dirs = Enum.map(otp_apps, & &1.ebin) ++ elixir_dirs ++ dep_dirs
 
@@ -3386,6 +3391,18 @@ defmodule Fablebook.Contract.TierSweepTest do
       for dir <- dirs, file <- File.ls!(dir), String.ends_with?(file, ".beam"), do: {dir, file}
 
     Enum.reduce(beams, {[], []}, fn {dir, file}, acc -> collect_beam_edges(dir, file, acc) end)
+  end
+
+  defp xref_form_edges(dirs) do
+    beams =
+      for dir <- dirs, file <- File.ls!(dir), String.ends_with?(file, ".beam"), do: {dir, file}
+
+    Enum.reduce(beams, {[], []}, fn {dir, file}, {edges, missing} ->
+      case BeamWalker.xref_edges(Path.join(dir, file)) do
+        {:ok, found} -> {found ++ edges, missing}
+        {:error, _reason} -> {edges, [file | missing]}
+      end
+    end)
   end
 
   defp collect_beam_edges(dir, file, {edges, missing}) do
@@ -4173,7 +4190,7 @@ end
 
 defmodule Fablebook.Test.InstalledOtpReceiptTest do
   use ExUnit.Case, async: false
-  alias Fablebook.Test.{InstalledOtp, SweepEvidence}
+  alias Fablebook.Test.{BeamWalker, InstalledOtp, SweepEvidence}
 
   @moduletag :inventory_support
   @marker "FABLEBOOK_OTP_INVENTORY_V2 "
@@ -4218,7 +4235,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
   test "Xref edge query parity normalizes callee arity without losing caller MFA" do
     caller = {:probe, :caller, 2}
     expected = [{caller, {:sink, :run}}]
-    returned = [{caller, {:sink, :run, 0}}]
+    returned = [{caller, {:sink, :run, 0}}, {caller, {:sink, :run, 1}}]
 
     normalize = fn
       {from, {module, function, _arity}} -> {from, {module, function}}
@@ -4232,6 +4249,51 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
              expected,
              normalize
            ) == returned
+
+    assert_raise InstalledOtp.Error, ~r/xref_query_parity/, fn ->
+      InstalledOtp.assert_xref_query!(
+        fn -> {:ok, [hd(returned), hd(returned)]} end,
+        :edges,
+        "core",
+        expected,
+        normalize
+      )
+    end
+  end
+
+  test "independent beam AST inventory follows local, remote, operator, and dynamic calls" do
+    anno = 1
+
+    forms = [
+      {:attribute, anno, :module, :probe},
+      {:function, anno, :local, 0, [{:clause, anno, [], [], [{:atom, anno, :ok}]}]},
+      {:function, anno, :caller, 0,
+       [
+         {:clause, anno, [], [],
+          [
+            {:call, anno, {:atom, anno, :local}, []},
+            {:call, anno, {:remote, anno, {:atom, anno, :sink}, {:atom, anno, :run}},
+             [{:atom, anno, :x}]},
+            {:op, anno, :+, {:integer, anno, 1}, {:integer, anno, 2}},
+            {:call, anno, {:remote, anno, {:atom, anno, :erlang}, {:atom, anno, :is_list}},
+             [{nil, anno}]},
+            {:call, anno, {:remote, anno, {:var, anno, :module}, {:atom, anno, :run}},
+             [{:atom, anno, :x}]},
+            {:call, anno, {:var, anno, :function}, [{:atom, anno, :x}]}
+          ]}
+       ]}
+    ]
+
+    caller = {:probe, :caller, 0}
+
+    assert BeamWalker.xref_edges(:probe, forms) ==
+             Enum.sort([
+               {caller, {:probe, :local, 0}},
+               {caller, {:sink, :run, 1}},
+               {caller, {:erlang, :+, 2}},
+               {caller, {:"$M_EXPR", :run, 1}},
+               {caller, {:"$M_EXPR", :"$F_EXPR", 1}}
+             ])
   end
 
   test "receipts reject missing measurement records even when identity rows are intact" do
