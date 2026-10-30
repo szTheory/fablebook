@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1
 current_phase_name: Close the eval and code-loading ban list (INSERTED)
 status: executing
-stopped_at: Completed 01.1.1-03-PLAN.md
-last_updated: "2026-10-29T21:46:28.077Z"
+stopped_at: Completed 01.1.1-04-PLAN.md
+last_updated: "2026-10-30T00:35:47.368Z"
 last_activity: 2026-10-29
-last_activity_desc: Completed plan 01.1.1-02; PR 16 merged green
-state_head: 3e4d961d9a67b7252c745a5471d7a72904100deb
+last_activity_desc: Completed plan 01.1.1-04; PR 18 merged green
+state_head: 5ea778722b74fa8ca46d3e5834c2ff894fa58ee5
 progress:
   total_phases: 38
   completed_phases: 0
   total_plans: 15
-  completed_plans: 13
+  completed_plans: 14
   percent: 0
 ---
 
@@ -28,9 +28,9 @@ See: .planning/PROJECT.md (updated 2026-10-28)
 ## Current Position
 
 Phase: 01.1.1 (Close the eval and code-loading ban list (INSERTED)) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
-Last activity: 2026-10-29 — Plan 01.1.1-02 merged green as PR #16; plan 03 ready
+Last activity: 2026-10-29 — Plan 01.1.1-04 merged green as PR #18; plan 05 ready
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -69,6 +69,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01.1.1 P01 | 16 min | 3 tasks | 27 files |
 | Phase 01.1.1 P02 | 32min | 3 tasks | 14 files |
 | Phase 01.1.1 P03 | 73min | 3 tasks | 18 files |
+| Phase 01.1.1 P04 | 167min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,8 @@ Recent decisions affecting current work:
 - [Phase 01.1.1]: Mix.Tasks.Phx.Gen.run/1 is fixed_args on both lanes because its arguments are ignored and it invokes fixed help-search arguments.
 - [Phase 01.1.1]: SEC-01 remains Pending; Phase 5 owns requirement completion.
 - [Phase 01.1.1]: The cited INT-20261029-06 source was added verbatim so the existing phase-summary citation and intent-corpus CI checks resolve.
+- [Phase 01.1.1]: The live boundary contract shares sweep barriers and base sinks and derives delegates from the forward call graph on each supported lane.
+- [Phase 01.1.1]: New loader and evaluator fronts are mirrored in the contract tier and Credo; safe sweep rows use cited function-scoped dispositions, and SEC-01 stays Pending for Phase 5.
 
 ### Pending Todos
 
@@ -139,6 +142,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-29T21:46:28.056Z
-Stopped at: Completed 01.1.1-03-PLAN.md
+Last session: 2026-10-30T00:35:47.341Z
+Stopped at: Completed 01.1.1-04-PLAN.md
 Resume file: None

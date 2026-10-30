@@ -447,6 +447,15 @@ defmodule Fablebook.Contract.BannedCallsTest do
     phx_server_eval.ex
   )
 
+  @source_only_fixtures ~w(
+    macro_concat.ex
+    macro_apply_load.ex
+    macro_script.ex
+    using_load_module.ex
+    body_script.ex
+    body_concat.ex
+  )
+
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
 
   test "no lib/ module references a banned call, atom or dependency" do
@@ -500,7 +509,24 @@ defmodule Fablebook.Contract.BannedCallsTest do
     on_disk =
       @fixture_dir |> Path.join("*.ex") |> Path.wildcard() |> MapSet.new(&Path.basename/1)
 
-    assert on_disk == MapSet.new(@fixtures, &elem(&1, 0))
+    listed = Enum.map(@fixtures, &elem(&1, 0)) ++ @source_only_fixtures
+    assert on_disk == MapSet.new(listed)
+  end
+
+  @tag :tmp_dir
+  test "source-only fixtures raise a Credo issue and pass the BEAM walker (pinned)", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    for file <- @source_only_fixtures do
+      path = Path.join(@fixture_dir, file)
+      [beam] = compile!([path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+      assert hits(scan) == []
+      assert credo_issues(path) != [], "no Credo issue for #{Path.relative_to_cwd(path)}"
+    end
   end
 
   test "beam-only fixtures carry an MFA hit" do
@@ -571,7 +597,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
       ],
       Fablebook.GuardFixture.StrictInt => [{:mfa, {:int, :i, :_}}],
       Fablebook.GuardFixture.StrictPathConsult => [],
-      Fablebook.GuardFixture.StrictCtMake => []
+      Fablebook.GuardFixture.StrictCtMake => [],
+      Fablebook.GuardFixture.StrictWriteThenLoad => []
     }
 
     source = Path.join(dir, "strict.ex")
@@ -719,6 +746,13 @@ defmodule Fablebook.Contract.BannedCallsTest do
     defmodule Fablebook.GuardFixture.StrictCtMake do
       def run(files), do: :ct_make.files(files, [:load])
     end
+
+    defmodule Fablebook.GuardFixture.StrictWriteThenLoad do
+      def run(path, bin, mod) do
+        File.write!(path, bin)
+        Code.ensure_loaded?(mod)
+      end
+    end
     """)
 
     scans =
@@ -805,6 +839,63 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert mix_exs_hits(File.read!("mix.exs")) == []
   end
 
+  test "the Credo check scans mix.exs and source text samples" do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    assert credo_issues(File.read!("mix.exs"), "mix.exs") == []
+
+    for text <- [
+          "apply(:erlang, :load_module, [m, b])",
+          "alias Module, as: M\nM.concat([x])",
+          "Module.\nconcat([x])"
+        ] do
+      assert credo_issues(text, "mix.exs") != [], "no Credo issue for #{text}"
+    end
+
+    assert credo_issues("Regex.compile(s)", "mix.exs") == []
+  end
+
+  test "the source check matches by alias-expanded name and adjacency (known strictness)" do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    samples = [
+      {"alias Module, as: M\nM.concat([x])", true},
+      {"alias :file, as: F\nF.script(p)", true},
+      {"require :file, as: F\nF.script(p)", true},
+      {"Module.\nconcat([x])", true},
+      {"x |> Module.concat()", true},
+      {"Elixir.Module.concat(x)", true},
+      {"%{:erlang => :load_module}", true},
+      {"{:erlang, :load_module, a}", true},
+      {"import IEx.Helpers", true},
+      {"apply(:compile, f, a)", true},
+      {"[epp: 1]", true},
+      {"[io: :read]", true},
+      {"[compile: true]", true},
+      {"[:erlang, :load_module]", true},
+      {"Mix.Task.run(\"run\", [\"-e\", code])", true},
+      {"Regex.compile(s)", false},
+      {"&Regex.compile/1", false},
+      {"m = Module\nm.concat(x)", false},
+      {"m.compile(s)", false},
+      {"defmodule StrictHelper do\n  def run(x), do: module().concat(x)\n  defp module, do: Module\nend",
+       false},
+      {"apply(m, f, a)", false},
+      {"%{m: :erlang, f: :load_module}", false},
+      {"defmodule StrictModuleAlias do\n  alias __MODULE__.Generated, as: M\n  def run(x), do: M.concat(x)\nend",
+       false},
+      {":file.path_consult(dirs, file)", false},
+      {":ct_make.files(files, [:load])", false},
+      {"File.write!(path, bin)\nCode.ensure_loaded?(mod)", false}
+    ]
+
+    for {source, flagged?} <- samples do
+      assert credo_issues(source, "known_strictness.ex") != [] == flagged?, source
+    end
+  end
+
   test "the mix.exs scan matches bare and qualified calls" do
     assert mix_exs_hits("Code.eval_string(x)") == ["eval_string"]
     assert mix_exs_hits(":erlang.binary_to_atom(x, :utf8)") == ["binary_to_atom"]
@@ -839,10 +930,11 @@ defmodule Fablebook.Contract.BannedCallsTest do
   defp mfa_name({module, :_, _}), do: inspect(module)
   defp mfa_name({module, function, _}), do: "#{inspect(module)}.#{function}"
 
-  defp credo_issues(path) do
-    path
-    |> File.read!()
-    |> SourceFile.parse(path)
+  defp credo_issues(path), do: path |> File.read!() |> credo_issues(path)
+
+  defp credo_issues(text, filename) do
+    text
+    |> SourceFile.parse(filename)
     |> CheckRunner.run_check(BannedCalls)
   end
 
