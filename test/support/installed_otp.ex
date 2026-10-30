@@ -255,10 +255,13 @@ defmodule Fablebook.Test.InstalledOtp do
   def export_inventory!(directories, opts \\ []) when is_list(directories) do
     lane = Keyword.get(opts, :lane, lane_name())
     beam_chunks = Keyword.get(opts, :beam_chunks, &:beam_lib.chunks/2)
+    used_predefined_exports = predefined_export_targets!(Keyword.get(opts, :edges, []), lane)
 
     exports =
       directories
-      |> Enum.flat_map(&export_inventory_directory!(&1, lane, beam_chunks))
+      |> Enum.flat_map(
+        &export_inventory_directory!(&1, lane, beam_chunks, used_predefined_exports)
+      )
 
     duplicate = exports |> Enum.frequencies() |> Enum.filter(fn {_row, count} -> count > 1 end)
     if duplicate != [], do: fail!(:export_inventory_duplicate, %{lane: lane, exports: duplicate})
@@ -274,15 +277,17 @@ defmodule Fablebook.Test.InstalledOtp do
       })
   end
 
-  defp export_inventory_directory!(directory, lane, beam_chunks) do
+  defp export_inventory_directory!(directory, lane, beam_chunks, used_predefined_exports) do
     directory
     |> File.ls!()
     |> Enum.sort()
     |> Enum.filter(&String.ends_with?(&1, ".beam"))
-    |> Enum.flat_map(&export_inventory_beam!(directory, &1, lane, beam_chunks))
+    |> Enum.flat_map(
+      &export_inventory_beam!(directory, &1, lane, beam_chunks, used_predefined_exports)
+    )
   end
 
-  defp export_inventory_beam!(directory, filename, lane, beam_chunks) do
+  defp export_inventory_beam!(directory, filename, lane, beam_chunks, used_predefined_exports) do
     path = Path.join(directory, filename)
     expected_module = String.replace_suffix(filename, ".beam", "")
 
@@ -297,7 +302,10 @@ defmodule Fablebook.Test.InstalledOtp do
           })
         end
 
-        Enum.flat_map(rows, &xref_export_row!(&1, directory, filename, lane, module))
+        Enum.flat_map(
+          rows,
+          &xref_export_row!(&1, path, directory, filename, lane, module, used_predefined_exports)
+        )
 
       result ->
         fail!(:export_inventory_read, %{
@@ -308,14 +316,74 @@ defmodule Fablebook.Test.InstalledOtp do
     end
   end
 
-  defp xref_export_row!({:module_info, arity}, _directory, _filename, _lane, _module)
-       when arity in [0, 1],
-       do: []
+  defp xref_export_row!({:module_info, arity}, _path, directory, filename, lane, module, used)
+       when arity in [0, 1] do
+    mfa = {module, :module_info, arity}
 
-  defp xref_export_row!({:behaviour_info, 1}, _directory, _filename, _lane, _module), do: []
+    if MapSet.member?(used, mfa),
+      do: [export_inventory_row!({:module_info, arity}, directory, filename, lane, module)],
+      else: []
+  end
 
-  defp xref_export_row!(row, directory, filename, lane, module),
+  defp xref_export_row!({:behaviour_info, 1}, path, directory, filename, lane, module, used) do
+    if MapSet.member?(used, {module, :behaviour_info, 1}) or
+         explicit_behaviour_info?(path, module, lane),
+       do: [export_inventory_row!({:behaviour_info, 1}, directory, filename, lane, module)],
+       else: []
+  end
+
+  defp xref_export_row!(row, _path, directory, filename, lane, module, _used),
     do: [export_inventory_row!(row, directory, filename, lane, module)]
+
+  defp predefined_export_targets!(edges, lane) when is_list(edges) do
+    Enum.reduce(edges, MapSet.new(), fn
+      {_caller, {module, function, arity}}, used
+      when is_atom(module) and function in [:module_info, :behaviour_info] and is_integer(arity) ->
+        MapSet.put(used, {module, function, arity})
+
+      {_caller, _callee}, used ->
+        used
+
+      row, _used ->
+        fail!(:export_inventory_edge, %{lane: lane, row: inspect(row)})
+    end)
+  end
+
+  defp explicit_behaviour_info?(path, module, lane) do
+    case :beam_lib.chunks(String.to_charlist(path), [:debug_info]) do
+      {:ok, {^module, [debug_info: {:debug_info_v1, _backend, :none}]}} ->
+        false
+
+      {:ok, {^module, [debug_info: {:debug_info_v1, backend, data}]}} ->
+        backend.debug_info(:erlang_v1, module, data, [])
+        |> explicit_behaviour_info_forms!(path, lane)
+
+      {:error, :beam_lib, {:missing_chunk, _, _}} ->
+        false
+
+      result ->
+        fail!(:export_inventory_debug_info, %{
+          lane: lane,
+          path: Path.basename(path),
+          result: inspect(result)
+        })
+    end
+  end
+
+  defp explicit_behaviour_info_forms!({:ok, forms}, _path, _lane) do
+    Enum.any?(forms, fn
+      {:function, anno, :behaviour_info, 1, _clauses} -> :erl_anno.location(anno) != 0
+      _form -> false
+    end)
+  end
+
+  defp explicit_behaviour_info_forms!(result, path, lane) do
+    fail!(:export_inventory_debug_info, %{
+      lane: lane,
+      path: Path.basename(path),
+      result: inspect(result)
+    })
+  end
 
   defp export_inventory_row!({function, arity}, _directory, _filename, _lane, module)
        when is_atom(function) and is_integer(arity) and arity >= 0,

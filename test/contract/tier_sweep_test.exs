@@ -2776,10 +2776,16 @@ defmodule Fablebook.Contract.TierSweepTest do
     full_graph_dirs = Enum.map(otp_apps, & &1.ebin) ++ elixir_dirs ++ dep_dirs
 
     expected_historical_exports =
-      InstalledOtp.export_inventory!(historical_graph_dirs, lane: evidence.lane.name)
+      InstalledOtp.export_inventory!(historical_graph_dirs,
+        lane: evidence.lane.name,
+        edges: expected_historical_edges
+      )
 
     expected_full_exports =
-      InstalledOtp.export_inventory!(full_graph_dirs, lane: evidence.lane.name)
+      InstalledOtp.export_inventory!(full_graph_dirs,
+        lane: evidence.lane.name,
+        edges: expected_full_edges
+      )
 
     xref_started = System.monotonic_time()
 
@@ -4452,7 +4458,11 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     File.mkdir_p!(ebin)
     File.mkdir_p!(src)
     source = Path.join(src, "probe.erl")
-    source_text = "-module(probe).\n-export([run/0]).\nrun() -> ok.\n"
+
+    source_text =
+      "-module(probe).\n-export([run/0, behaviour_info/1]).\n" <>
+        "behaviour_info(callbacks) -> [].\nrun() -> ok.\n"
+
     File.write!(source, source_text)
     File.write!(Path.join(ebin, "probe.app"), app_resource(:probe, "1.0.0", [:probe]))
 
@@ -4472,7 +4482,16 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     assert {:probe, :run, 0} in exports
     refute {:probe, :module_info, 0} in exports
     refute {:probe, :module_info, 1} in exports
-    refute {:probe, :behaviour_info, 1} in exports
+    assert {:probe, :behaviour_info, 1} in exports
+
+    used_predefined_exports =
+      InstalledOtp.export_inventory!([ebin],
+        lane: "core",
+        edges: [{{:consumer, :run, 0}, {:probe, :module_info, 0}}]
+      )
+
+    assert {:probe, :module_info, 0} in used_predefined_exports
+    refute {:probe, :module_info, 1} in used_predefined_exports
 
     [source_app] =
       InstalledOtp.source_inventory!(discovered, inspected,
