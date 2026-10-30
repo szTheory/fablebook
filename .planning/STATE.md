@@ -3,7 +3,7 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.2
 current_phase_name: Installed OTP inventory and Common Test guard slice
 status: executing
-stopped_at: Plan 01 exact lanes and receipts passed; delivery remains blocked by phoenix_html security advisory and failed ci-gate
+stopped_at: Resuming authorized Phoenix.HTML security maintenance and source-lock provenance refresh under INT-20261030-05
 last_updated: "2026-10-30T21:52:18.872Z"
 last_activity: 2026-10-30
 last_activity_desc: Exact core/floor inventory receipts pass; Plan 01 delivery is blocked by phoenix_html security advisory and failed ci-gate
@@ -23,13 +23,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.2 — exact inventory lanes and receipts pass; Plan 01 remains halted at the security gate; Plan 02 is blocked
+**Current focus:** Phase 01.1.1.2 — executing the owner-authorized security prerequisite; inventory delivery and Plan 02 retain their green-merge gates
 
 ## Current Position
 
 Phase: 01.1.1.2 (Installed OTP inventory and Common Test guard slice) — IN PROGRESS
 Plan: 1 of 2 (Plan 01 halted; Plan 02 blocked)
-Status: Awaiting owner decision on separate `phoenix_html` lockfile remediation and its review budget, then green delivery
+Status: Owner authorized separate `phoenix_html` 4.4.0 maintenance, lock provenance refresh, and one maintenance review; continuing selected phase without another acknowledgment
 Last activity: 2026-10-30 — Exact core/floor tests and receipts passed on PR #27 head 9c326cf; security and ci-gate failed for EEF-CVE-2026-117645
 
 Progress: [░░░░░░░░░░] 2%
