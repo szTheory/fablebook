@@ -1,38 +1,38 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1
-current_phase_name: Close the eval and code-loading ban list (INSERTED)
-status: executing
-stopped_at: Completed 01.1.1-05-PLAN.md; awaiting phase-wide verification
-last_updated: "2026-10-30T01:06:48Z"
+current_phase: 1
+current_phase_name: Release pipeline, CI gate and guards
+status: verifying
+stopped_at: Phase 01.1.1 complete, ready to verify Phase 1
+last_updated: "2026-10-30T01:52:39.500Z"
 last_activity: 2026-10-30
-last_activity_desc: Plan 01.1.1-05 completed; PR 19 merged green; phase-wide verification pending
-state_head: 152992fae64d086f23e0adc4b9137d10e2dd5835
+last_activity_desc: Phase 01.1.1 complete, transitioned to Phase 1
+state_head: 8a2237f6161e36aa924895c62296e0a3a8beba62
 progress:
   total_phases: 38
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 15
   completed_plans: 15
-  percent: 0
+  percent: 3
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-28)
+See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1 — Close the eval and code-loading ban list (INSERTED)
+**Current focus:** Phase 1 parent verification debt; Phase 01.1.1 complete, follow-on ban-list work owned by Phase 01.1.1.1
 
 ## Current Position
 
-Phase: 01.1.1 (Close the eval and code-loading ban list (INSERTED)) — EXECUTING
-Plan: 5 of 5
-Status: Awaiting phase-wide verification
-Last activity: 2026-10-30 — Plan 01.1.1-05 completed; PR #19 merged green; phase-wide verification pending
+Phase: 1 — Release pipeline, CI gate and guards
+Plan: 5
+Status: Ready to reverify existing Phase 1 implementation; Phase 01.1.1 is complete
+Last activity: 2026-10-30 UTC — Phase 01.1.1 verified 8/8; PR #20 merged green; parent Phase 1 report still needs re-verification
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [████████████████████] 15/15 planned plans (100%); 1/38 phases complete (3%)
 
 ## Performance Metrics
 
@@ -122,6 +122,9 @@ None yet.
 
 ### Blockers/Concerns
 
+- [Parent verification debt]: Phase 1 and 01.1 reports remain gaps_found; phase.complete routed to Phase 1 for re-verification. Do not mark either parent complete from the child report.
+- [Phase 01.1.1.1]: Parser disposition, unswept installed OTP apps/debugger remainder, and full carried-exclusion audit remain open per INT-20261029-02.
+
 - [Before Phase 1 to 4 planning]: owner answers (or accepts the recommended answers) for Q7, Q9, Q12, Q13, Q15, Q19, Q20, Q24. Q14 and Q16 before Phase 4. Q8 before Phase 7. Q17 before Phase 25. Q21 before Phase 1 (SBOM) and Phase 13 (QR).
 - [Phase 2]: the runner spike decides Q1; media emulation through the wrapper is the blocker candidate.
 - [Phase 3 onward]: LiveView 1.2 upgrade PRs in the dogfood repos should start early (Q2, Q22), so the 14-day soak is not reset at the end.
@@ -143,6 +146,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T00:35:47.341Z
-Stopped at: Completed 01.1.1-04-PLAN.md
+Last session: 2026-10-30T01:52:39.500Z
+Stopped at: Phase 01.1.1 complete and verified; parent Phase 1 re-verification is next
 Resume file: None

@@ -35,7 +35,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 **Family 1: Walking skeleton**
 - [ ] **Phase 1: Release pipeline, CI gate and guards** - 0.1.0 published, three workflows with caps, intent test, prod guard, eval and atom bans
 - [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
-- [ ] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04))
+- [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
 - [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
@@ -161,7 +161,7 @@ Plans:
   6. A pair-tier call fails CI when a `lib/` macro quotes it (`quote(do: Module.concat(unquote(x)))`, quoted `:file.script/1`, quoted `apply(:erlang, :load_module, ...)`, a `__using__` that injects `:erlang.load_module/2`) and when module-body code makes it (`@r apply(:file, :script, [...])`, `@m Module.concat([...])`), on both lanes, each with a negative fixture (VR-01, WR-11). The `mix.exs` scan also matches the `apply/3`, alias and newline-after-dot spellings (WR-12).
   7. Every caught, over-caught and missed claim in the Credo explanation matches a fixture or a known-strictness row, "anywhere in function code" is true or gone, and a human wording check is recorded (truth 6).
   8. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
-**Plans:** 5/5 plans executed; awaiting phase-wide verification
+**Plans:** 5/5 plans complete; phase verification passed (8/8 scoped truths)
 
 Plans:
 **Wave 1**
