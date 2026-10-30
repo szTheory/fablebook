@@ -1,6 +1,8 @@
 defmodule Fablebook.Test.SweepEvidence do
   @moduledoc false
 
+  alias Fablebook.Test.InstalledOtp
+
   defmodule Error do
     defexception [:reason, :detail]
 
@@ -52,16 +54,18 @@ defmodule Fablebook.Test.SweepEvidence do
 
       otp_lib = :code.lib_dir() |> to_string()
 
-      otp =
-        for dir <- File.ls!(otp_lib),
-            path = Path.join(otp_lib, dir),
-            File.dir?(Path.join(path, "ebin")),
-            into: %{},
-            do: {String.replace(dir, ~r/-[0-9].*$/, ""), path}
+      otp_inventory = InstalledOtp.app_roots!(otp_lib, lane: lane.name)
+      otp = Map.new(otp_inventory, &{&1.app, &1.root})
 
       elixir = Map.new(@elixir_apps, &{Atom.to_string(&1), &1 |> :code.lib_dir() |> to_string()})
       deps = Map.new(Mix.Project.deps_paths(), fn {app, path} -> {Atom.to_string(app), path} end)
-      Map.merge(evidence, %{lane: lane, installed: otp |> Map.merge(elixir) |> Map.merge(deps)})
+
+      Map.merge(evidence, %{
+        lane: lane,
+        otp_inventory: otp_inventory,
+        lock_sha256: evidence.manifest["locks"][lane.name]["sha256"],
+        installed: otp |> Map.merge(elixir) |> Map.merge(deps)
+      })
     rescue
       error ->
         File.rm_rf!(evidence.archive_root)
@@ -76,6 +80,18 @@ defmodule Fablebook.Test.SweepEvidence do
     manifest = archive_manifest!(files)
     validate_manifest!(manifest, files)
     %{archive_root: extract_files!(files), manifest: manifest}
+  end
+
+  def lock_digests! do
+    evidence = load_archive!(@archive, @archive_sha)
+
+    try do
+      Map.new(["core", "floor"], fn lane ->
+        {lane, evidence.manifest["locks"][lane]["sha256"]}
+      end)
+    after
+      File.rm_rf!(evidence.archive_root)
+    end
   end
 
   def resolve!(evidence, citation) do
@@ -134,6 +150,7 @@ defmodule Fablebook.Test.SweepEvidence do
 
   defp validate_manifest!(manifest, files) do
     if manifest["refs"] != @refs, do: fail!(:source_identity, manifest["refs"])
+    validate_lock_manifest!(manifest["locks"])
     records = manifest["files"]
     declared = for row <- records, row["status"] in ["present", "license"], do: row["path"]
 
@@ -144,6 +161,22 @@ defmodule Fablebook.Test.SweepEvidence do
       do: fail!(:manifest_inventory, Map.keys(files))
 
     Enum.each(records, &validate_record!(&1, files))
+  end
+
+  defp validate_lock_manifest!(locks) do
+    lanes = ["core", "floor"]
+
+    if Map.keys(locks) |> Enum.sort() != lanes,
+      do: fail!(:lock_manifest_lanes, Map.keys(locks))
+
+    Enum.each(lanes, fn lane ->
+      lock = Map.fetch!(locks, lane)
+      expected_path = if lane == "core", do: "mix.lock", else: "mix.floor.lock"
+
+      unless lock["path"] == expected_path and
+               is_binary(lock["sha256"]) and Regex.match?(~r/^[a-f0-9]{64}$/, lock["sha256"]),
+             do: fail!(:lock_manifest_record, {lane, lock})
+    end)
   end
 
   defp validate_record!(%{"status" => "absent-at-immutable-ref"} = row, _files) do
