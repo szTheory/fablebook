@@ -447,6 +447,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     phx_server_eval.ex
   )
 
+  @source_only_fixtures ~w(macro_concat.ex macro_apply_load.ex)
+
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
 
   test "no lib/ module references a banned call, atom or dependency" do
@@ -500,7 +502,22 @@ defmodule Fablebook.Contract.BannedCallsTest do
     on_disk =
       @fixture_dir |> Path.join("*.ex") |> Path.wildcard() |> MapSet.new(&Path.basename/1)
 
-    assert on_disk == MapSet.new(@fixtures, &elem(&1, 0))
+    listed = Enum.map(@fixtures, &elem(&1, 0)) ++ @source_only_fixtures
+    assert on_disk == MapSet.new(listed)
+  end
+
+  @tag :tmp_dir
+  test "source-only fixtures raise a Credo issue and pass the BEAM walker (pinned)", %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    for file <- @source_only_fixtures do
+      path = Path.join(@fixture_dir, file)
+      [beam] = compile!([path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+      assert hits(scan) == []
+      assert credo_issues(path) != [], "no Credo issue for #{Path.relative_to_cwd(path)}"
+    end
   end
 
   test "beam-only fixtures carry an MFA hit" do
@@ -839,10 +856,11 @@ defmodule Fablebook.Contract.BannedCallsTest do
   defp mfa_name({module, :_, _}), do: inspect(module)
   defp mfa_name({module, function, _}), do: "#{inspect(module)}.#{function}"
 
-  defp credo_issues(path) do
-    path
-    |> File.read!()
-    |> SourceFile.parse(path)
+  defp credo_issues(path), do: path |> File.read!() |> credo_issues(path)
+
+  defp credo_issues(text, filename) do
+    text
+    |> SourceFile.parse(filename)
     |> CheckRunner.run_check(BannedCalls)
   end
 
