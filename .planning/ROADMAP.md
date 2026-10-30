@@ -36,7 +36,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [ ] **Phase 1: Release pipeline, CI gate and guards** - 0.1.0 published, three workflows with caps, intent test, prod guard, eval and atom bans
 - [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
-- [ ] **Phase 01.1.1.1: Exact-source evidence and named atom-creator guards** (INSERTED) - preserve merged source/PathConsult tracer; finish consult/Yecc and Logger/ExUnit fronts
+- [x] **Phase 01.1.1.1: Exact-source evidence and named atom-creator guards** (INSERTED) - preserve merged source/PathConsult tracer; finish consult/Yecc and Logger/ExUnit fronts (completed 2026-10-30)
 - [ ] **Phase 01.1.1.2: Installed OTP inventory and Common Test guard slice** (INSERTED) - independent exact-lane installation discovery and real Common Test guard
 - [ ] **Phase 01.1.1.3: Installed OTP front-door coverage in calibrated source families** (INSERTED) - unplanned scope reservation; split into bounded source-family phases before execution
 - [ ] **Phase 01.1.1.4: Carried exclusion truth in calibrated source families** (INSERTED) - unplanned scope reservation; preserve every original identity and matched function across bounded audit phases
@@ -199,7 +199,7 @@ Plans:
   3. Every changed exclusion is a substantive cited triple with full changed-slice match coverage and an individual nonvacuous removal witness where retained. EX-089/EX-159 original identities and every affected match stay mapped; other original identities remain with 01.1.1.4.
   4. Each new scoped PR changes no `lib/`, `.github/`, dependency, lockfile or `.credo.exs` path and merges with all required checks green and a current-head CI link. A newly banned `lib/` call stops affected work for an owner-recorded ADR-backed allowlist or separate-library-PR decision.
 **Transfer**: Original SC1's remaining unnamed fronts and SC2 belong to 01.1.1.2/.3; original SC3's full 221 exclusions plus five metadata identities belong to 01.1.1.4; original SC4's unresolved Macro AST judgment belongs to a substantive AST-family audit there, while the collision hard stop applies everywhere. Original SC5 and final unconditional SC1–SC3 enforcement belong to 01.1.1.5. Original SC6 applies to every inserted executable phase. The three transfers from 01.1.1 and their T-IDs remain open until 01.1.1.5; parent debt and Phase 5 runtime proofs do not move.
-**Plans:** 2 active plans; original Plans 01–05 are superseded history, with Plan 01 honestly partial
+**Plans:** 2/2 completed; original Plans 01–05 are superseded history, with Plan 01 honestly partial
 
 Sequential scoped PRs; each depends on the previous green merge.
 
@@ -207,7 +207,7 @@ Plans:
 **Wave 1**
 - [x] 01.1.1.1-06-PLAN.md — Consult/Yecc caller-file guards and bounded source-backed dispositions
 
-**Wave 2** *(blocked on Wave 1 completion)*
+**Wave 2** *(Wave 1 dependency satisfied)*
 - [x] 01.1.1.1-07-PLAN.md — Logger/ExUnit caller-format paths and all six discovered wrapper dispositions
 
 **Cross-cutting constraints:**

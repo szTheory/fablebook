@@ -335,8 +335,9 @@ Every item below is a v1.0 commitment.
 | Four tiers Primitive…Screen; "Scenario" (ADR 0023) | One clear question per tier; "variant" collides with `attr :variant` | — Pending |
 | Split rule beats "8–12 phases": about 35 sequential phases under the 12 family headings, with research's ordering moves (INT-20261028-16, OPEN-QUESTIONS Q6) | Research found 8 of 12 families exceed the 5-plan cap; the split rule is non-negotiable | — Pending |
 | Mirrored source and BEAM guard tiers with derived reachability and boundary contracts (ADR 0004, INT-20261029-04) | Quoted and module-body calls need source inspection; generated probes and both-lane sweeps keep tier entries live | Verified in Phase 01.1.1, PRs #15–#20; SEC-01 remains Pending for Phase 5 |
-| Parser disposition, unswept OTP apps, and carried-exclusion audit remain separate owned work (INT-20261029-02) | Keep the scoped phase complete without claiming the transferred guarantees | Open in Phase 01.1.1.1; accepted computed-dispatch and write-then-load residuals retain the Phase 5 backstop |
+| Parser disposition, unswept OTP apps, and carried-exclusion audit remain separate owned work (INT-20261029-02) | Keep the scoped phase complete without claiming the transferred guarantees | Named consult/Yecc and Logger/ExUnit slice verified in Phase 01.1.1.1, PRs #24–#26; installed inventory, remaining fronts, carried-exclusion truth, Macro judgment and final enforcement/wording remain owned by 01.1.1.2–01.1.1.5; runtime backstop and SEC-01 completion remain Phase 5 |
 | Absolute Elixir module names bypass local alias expansion (01.1.1-REVIEW CR-01) | A local alias must not hide a root-qualified quoted call | Fixed in PR #20; source-only fixture and direct/apply/benign controls pass on both lanes |
+| Family audit completeness uses an independent module boundary and pinned lane universe (ADR 0004, INT-20261030-03) | A spec-derived expected set or finite function-name filter can omit records while tiers remain green | Verified by missing-spec and novel-export/root mutations, exact-lane tests and clean independent review; PR #26 merged |
 
 ## Roadmap constraints (for the roadmapper)
 
@@ -416,4 +417,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-30 after Phase 01.1.1 verification and transition*
+*Last updated: 2026-10-30 after narrowed Phase 01.1.1.1 verification and completion*

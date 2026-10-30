@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.1
-current_phase_name: Exact-source evidence and named atom-creator guards
+current_phase: 1
+current_phase_name: Release pipeline, CI gate and guards
 status: verifying
-stopped_at: PR 26 merged green after clean renewed review; final phase verification underway
-last_updated: "2026-10-30T17:02:12Z"
+stopped_at: Phase 01.1.1.1 verified complete; stopped at phase boundary
+last_updated: "2026-10-30T17:09:38Z"
 last_activity: 2026-10-30
-last_activity_desc: PR 26 merged green; renewed independent review clean; final narrowed-phase verification underway
-state_head: fb55870301be650d3c8a5d409cff45f4fd0cde98
+last_activity_desc: Phase 01.1.1.1 verified complete; PR 26 merged green; parent debt and future transfers preserved
+state_head: e6835b2a334e30dc4fdb7917311fd5965977ba34
 progress:
   total_phases: 42
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 17
   completed_plans: 17
-  percent: 0
+  percent: 2
 ---
 
 # Project State
@@ -23,21 +23,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.1 — Exact-source evidence and named atom-creator guards
+**Current focus:** Phase 01.1.1.1 is verified complete. Parent Phase 1 verification debt remains open; independent next work is 01.1.1.2 (installed OTP inventory and Common Test), whose prerequisite is now verified.
 
 ## Current Position
 
-Phase: 01.1.1.1 (Exact-source evidence and named atom-creator guards) — EXECUTING
-Plan: 2 of 2
-Status: Final phase verification underway; all scoped PRs merged green
-Last activity: 2026-10-30 — PR 26 merged green after clean independent review; final verification underway
+Phase: 1 — Release pipeline, CI gate and guards
+Plan: 5
+Status: Phase 01.1.1.1 complete; parent verification debt remains pending
+Last activity: 2026-10-30 — Phase 01.1.1.1 verified complete; no next-phase workflow started
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [░░░░░░░░░░] 2%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 7
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -46,6 +46,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01.1.1 | 5 | 316 min | 63.2 min |
+| 01.1.1.1 | 2 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -156,21 +157,15 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T15:51:45.292Z
-Stopped at: Final phase goal verification underway
-Next command: Final verifier runs within the current execution workflow; no next-phase work authorized
-Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-REVIEW-DISPOSITION.md
+Last session: 2026-10-30T17:09:38Z
+Stopped at: Phase 01.1.1.1 verified complete; stopped at phase boundary
+Next independent command: $gsd-discuss-phase 01.1.1.2 — scope installed OTP inventory and the Common Test guard slice
+Resume file: None
 
-## Current execution hold
+## Completed phase receipt
 
-Plans 06/07 merged in PRs 24/25 with required CI green. Follow-up PR 26 fixes the known-MFA spec omission and is green, but review pass 2 found WR-02 (new function names outside the family-record filter). Plan 07 limits delivery to two review passes, then owner decides. Preserve PR 26 unmerged and phase/SEC-01/parents open. The owner has been asked whether to renew the review budget for one additional fix-and-review pass.
+Phase 01.1.1.1 is complete under its narrowed goal: all four success criteria passed, no human verification remains, both review findings are fixed, and the owner-renewed independent review is clean. PRs 24/25/26 are merged with required exact-head CI green. The canonical VERIFICATION report contains the CLI-generated covered-input digest and explicit future ownership. No new requirement was completed; SEC-01 remains Pending / Phase 5.
 
-Next useful command after renewal: `$gsd-code-review 01.1.1.1 --fix` — address the remaining record-completeness finding and verify the scoped follow-up. Independent future planning can proceed against the merged evidence, without claiming this phase closed.
+The phase-completion query routes the pointer to Phase 1 because parent verification debt remains; no parent report or UAT gap was closed. Independent next work on 01.1.1.2 can be discussed using the verified child prerequisite. Later .3/.4 work still requires calibrated children and all original whole-audit/owner-judgment gates remain. No next-phase workflow was started.
 
-## Owner-renewed review budget
-
-INT-20261030-03 authorizes one additional fix-and-review pass for WR-02 and green merge of PR 26 after independent review. The prior budget hold is lifted only for that pass; the phase and SEC-01 remain open until their own gates pass.
-
-## Review hold resolved
-
-INT-20261030-03 is fulfilled. The independent renewed review is clean; PR 26 is merged green. Both record-completeness findings are fixed, security threat count is zero, and the active validation map is automated. Final phase-goal verification remains before completion. Historical hold sections above are superseded by this receipt.
+Next independent command: `$gsd-discuss-phase 01.1.1.2` — scope the installed inventory and Common Test guard slice.
