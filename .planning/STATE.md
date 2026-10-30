@@ -4,10 +4,10 @@ current_phase: 01.1.1.1
 current_phase_name: Exact-source evidence and named atom-creator guards
 status: executing
 stopped_at: Planning complete; bounded Plans 06/07 pass independent checker; no execution or auto-advance
-last_updated: "2026-10-30T13:54:09.114Z"
+last_updated: "2026-10-30T13:55:30.370Z"
 last_activity: 2026-10-30
 last_activity_desc: Bounded replan checked independently; zero blockers/warnings; 14/14 decisions and 15/15 post-planning items accounted for
-state_head: ca9a85e8520e63039c8b52dae407c93cca17341d
+state_head: 9075f35cb7c0442a7950feb312c1992c480081a2
 progress:
   total_phases: 42
   completed_phases: 0
@@ -151,4 +151,4 @@ Items acknowledged and deferred at milestone close, most recent first:
 Last session: 2026-10-30T13:51:07.585Z
 Stopped at: Planning complete; bounded Plans 06/07 pass independent checker; no execution or auto-advance
 Next command: $gsd-execute-phase 01.1.1.1 — execute only bounded Plans 06/07
-Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-REPLAN.md
+Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SPLIT.md

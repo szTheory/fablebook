@@ -190,7 +190,7 @@ Plans:
 
 ### Phase 01.1.1.1: Exact-source evidence and named atom-creator guards (INSERTED)
 
-**Goal**: Preserve the merged exact-source/PathConsult tracer and finish source-backed static guards for the named consult/Yecc and Logger/ExUnit caller-input families. The measured audit exceeded its context budget; INT-20261029-02 and ADR 0021 require the structural split recorded in `phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-REPLAN.md`. Original acceptance is preserved across 01.1.1.1–01.1.1.5; no whole-ban-list completion is claimed here.
+**Goal**: Preserve the merged exact-source/PathConsult tracer and finish source-backed static guards for the named consult/Yecc and Logger/ExUnit caller-input families. The measured audit exceeded its context budget; INT-20261029-02 and ADR 0021 require the structural split recorded in `phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SPLIT.md`. Original acceptance is preserved across 01.1.1.1–01.1.1.5; no whole-ban-list completion is claimed here.
 **Depends on**: Phase 01.1.1
 **Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
 **Success Criteria** (what must be TRUE):
