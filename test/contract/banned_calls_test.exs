@@ -449,6 +449,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
   @source_only_fixtures ~w(
     macro_concat.ex
+    macro_absolute_concat.ex
     macro_apply_load.ex
     macro_script.ex
     using_load_module.ex
@@ -867,6 +868,9 @@ defmodule Fablebook.Contract.BannedCallsTest do
       {"Module.\nconcat([x])", true},
       {"x |> Module.concat()", true},
       {"Elixir.Module.concat(x)", true},
+      {"alias String, as: Module\nElixir.Module.concat(x)", true},
+      {"alias String, as: Module\napply(Elixir.Module, :concat, [x])", true},
+      {"alias Module, as: Regex\nElixir.Regex.compile(s)", false},
       {"%{:erlang => :load_module}", true},
       {"{:erlang, :load_module, a}", true},
       {"import IEx.Helpers", true},
