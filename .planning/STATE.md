@@ -3,11 +3,11 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.2
 current_phase_name: Installed OTP inventory and Common Test guard slice
 status: executing
-stopped_at: Resuming bounded escript/debugger correction under owner approval INT-20261030-04; technical guard remains unresolved
-last_updated: "2026-10-30T21:16:16.857Z"
+stopped_at: Plan 01 exact lanes and receipts passed; delivery remains blocked by phoenix_html security advisory and failed ci-gate
+last_updated: "2026-10-30T21:52:18.872Z"
 last_activity: 2026-10-30
-last_activity_desc: Plan 01 halted at the exact active-graph gate; Plan 02 is blocked pending owner resolution and green exact-lane delivery
-state_head: 6873fdab1fcf1f057aea1be9dbd0e86f90d3dd22
+last_activity_desc: Exact core/floor inventory receipts pass; Plan 01 delivery is blocked by phoenix_html security advisory and failed ci-gate
+state_head: 0f33179261c0a99325919d45967a124e2e9ce561
 progress:
   total_phases: 42
   completed_phases: 1
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.2 — Plan 01 halted at an exact-lane active-graph safety gate; Plan 02 is blocked
+**Current focus:** Phase 01.1.1.2 — exact inventory lanes and receipts pass; Plan 01 remains halted at the security gate; Plan 02 is blocked
 
 ## Current Position
 
 Phase: 01.1.1.2 (Installed OTP inventory and Common Test guard slice) — IN PROGRESS
 Plan: 1 of 2 (Plan 01 halted; Plan 02 blocked)
-Status: Awaiting owner resolution of the `escript.debug/3` active path, then exact receipts and green merge
-Last activity: 2026-10-30 — Core and floor both stopped at `assert_no_new_active_failures!/6`; no receipts emitted
+Status: Awaiting owner decision on separate `phoenix_html` lockfile remediation and its review budget, then green delivery
+Last activity: 2026-10-30 — Exact core/floor tests and receipts passed on PR #27 head 9c326cf; security and ci-gate failed for EEF-CVE-2026-117645
 
 Progress: [░░░░░░░░░░] 2%
 
@@ -140,7 +140,8 @@ None yet.
 - [Phase 3 onward]: LiveView 1.2 upgrade PRs in the dogfood repos should start early (Q2, Q22), so the 14-day soak is not reset at the end.
 - [Phase 17 and 18]: depend on abracabrand's two-session process; keep the minimal-token fallback so the phase can merge.
 - [Phases 2 and 18]: neither completes a requirement on its own (a vertical slice and a content track); they feed QA-04, VIS-01/02 and QA-06.
-- Exact CI run 41127014456 on PR head 76edcb6 fails core 1.20.4/OTP 29.1.2 and floor 1.18.5/OTP 27.3.4.9 at assert_no_new_active_failures!: the one newly coupled historical active MFA is escript.debug/3. The assertion runs before receipts are emitted; do not merge PR 27 or start Plan 02 until the active path is resolved by its owner.
+- Historical CI run 41127014456 on PR head 76edcb6 stopped both exact lanes at the newly coupled `escript.debug/3` active MFA. The source-backed private-front correction and removal witness are now present on PR head 9c326cf; exact core/floor tests and receipts pass on run 41132579711.
+- Plan 01 exact core/floor tests and receipts pass on PR #27 head 9c326cf, but security and ci-gate fail because both locks pin vulnerable phoenix_html 4.3.0 (EEF-CVE-2026-117645). Do not merge or start Plan 02. Recommend a separately authorized lockfile-only update of mix.lock and mix.floor.lock to phoenix_html 4.4.0, followed by exact core/floor and security checks; obtain an explicit review-budget decision because pass 4 is reserved for Common Test.
 
 ### Roadmap Evolution
 
@@ -158,9 +159,9 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T21:16:16.429Z
-Stopped at: Resuming bounded escript/debugger correction under owner approval INT-20261030-04; technical guard remains unresolved
-Next independent command: $gsd-execute-phase 01.1.1.2 — resume Plan 01 after owner resolution; Plan 02 remains blocked until the exact-lane green merge
+Last session: 2026-10-30T21:52:18.539Z
+Stopped at: Exact core/floor inventory evidence is preserved; delivery remains blocked by the phoenix_html security advisory and failed ci-gate
+Next independent command: Owner decides whether to authorize a separate lockfile-only phoenix_html 4.4.0 security PR and how to allocate its review; keep Plan 02 blocked until PR #27 is green and merged
 Resume file: .planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-01-SUMMARY.md
 
 ## Completed phase receipt
