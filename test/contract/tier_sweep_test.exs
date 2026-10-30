@@ -2,13 +2,15 @@ defmodule Fablebook.Contract.TierSweepTest do
   use ExUnit.Case, async: false
 
   alias Fablebook.Credo.BannedCalls
+  alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.SweepEvidence
   @compile {:no_warn_undefined, :xref}
 
   Code.ensure_loaded?(BannedCalls) ||
     Code.require_file(Path.expand("../../credo/checks/banned_calls.ex", __DIR__))
 
-  @otp_apps ~w(
+  # Historical active-disposition membership only. Discovery and inspection use the full install.
+  @historical_active_otp_apps ~w(
     kernel stdlib compiler erts crypto public_key asn1 ssl inets syntax_tools tools parsetools
     runtime_tools sasl dialyzer xmerl os_mon
   )a
@@ -1971,22 +1973,23 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:ok, graph: graph}
   end
 
-  @tag :tmp_dir
-  test "discovers a compile-only app outside the previous OTP filter", %{tmp_dir: dir} do
+  test "discovers and traces a compile-only app outside historical active membership", ctx do
+    dir =
+      Path.join(
+        System.tmp_dir!(),
+        "fablebook-inventory-probe-#{System.unique_integer([:positive])}"
+      )
+
+    File.mkdir_p!(dir)
+    on_exit(fn -> File.rm_rf!(dir) end)
+
     otp_lib = Path.join(dir, "lib")
     app = "mix_pruned_probe"
     app_atom = :mix_pruned_probe
     module = :fablebook_inventory_pruned_probe
     install_probe_app!(otp_lib, app, app_atom, "1.2.3", module)
 
-    installed_otp = Fablebook.Test.InstalledOtp
-
-    installed =
-      if Code.ensure_loaded?(installed_otp) do
-        apply(installed_otp, :discover!, [otp_lib])
-      else
-        []
-      end
+    installed = InstalledOtp.discover!(otp_lib)
 
     discovered = Enum.find(installed, &(&1.app == app))
 
@@ -1994,6 +1997,65 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert discovered.version == "1.2.3"
     assert Enum.any?(discovered.beams, &(&1.module == Atom.to_string(module)))
     assert :code.is_loaded(module) == false
+
+    known = Enum.find(ctx.graph.discovered, &(&1.app == "kernel"))
+    assert known != nil, "installed discovery omitted kernel"
+    assert Enum.any?(known.beams, &(&1.module == "application"))
+
+    inspected = InstalledOtp.inspect!([discovered], lane: ctx.graph.lane.name)
+    {:ok, _} = :xref.start(:inventory_probe, xref_mode: :functions)
+
+    try do
+      :ok = :xref.set_default(:inventory_probe, warnings: false, verbose: false, builtins: true)
+
+      ingested =
+        InstalledOtp.add_directory!(:inventory_probe, discovered, lane: ctx.graph.lane.name)
+
+      assert InstalledOtp.assert_parity!(
+               [discovered],
+               inspected,
+               ingested,
+               ctx.graph.lane.name
+             ) == :ok
+
+      receipt = %{
+        lane: ctx.graph.lane,
+        lock_sha256: ctx.graph.lock_sha256,
+        discovered: [discovered],
+        inspected: inspected,
+        ingested: ingested
+      }
+
+      lines = InstalledOtp.receipt_lines(receipt)
+      verified = InstalledOtp.verify_receipt_lines!(lines)
+      assert verified.lane == ctx.graph.lane.name
+      assert Enum.any?(verified.beams, &(&1["module"] == Atom.to_string(module)))
+
+      assert_raise InstalledOtp.Error, ~r/identity_parity/, fn ->
+        InstalledOtp.assert_parity!(
+          [discovered],
+          inspected,
+          [],
+          ctx.graph.lane.name
+        )
+      end
+    after
+      :stopped = :xref.stop(:inventory_probe)
+    end
+  end
+
+  test "full installed graph preserves the historical active view and exposes pending apps",
+       ctx do
+    graph = ctx.graph
+    discovered_apps = MapSet.new(graph.discovered, & &1.app)
+    historical_apps = MapSet.new(graph.historical_active_otp_apps)
+
+    assert MapSet.subset?(historical_apps, discovered_apps)
+    assert graph.pending_apps != []
+    assert Enum.all?(graph.pending_apps, &(not MapSet.member?(historical_apps, &1.app)))
+    assert MapSet.subset?(graph.exported, graph.full_exported)
+    assert MapSet.subset?(MapSet.new(graph.edges), MapSet.new(graph.full_edges))
+    assert MapSet.size(graph.historical_active_modules) > 0
   end
 
   test "source evidence rejects a wrong runtime patch before resolving citations" do
@@ -2641,55 +2703,172 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp build_graph do
+    evidence = SweepEvidence.source_roots!()
+
+    try do
+      build_graph(evidence)
+    after
+      File.rm_rf!(evidence.archive_root)
+    end
+  end
+
+  defp build_graph(evidence) do
     Mix.ensure_application!(:tools)
     otp_lib = :code.lib_dir() |> to_string()
-    otp_dirs = otp_app_dirs(otp_lib)
+    discovered = InstalledOtp.discover!(otp_lib, lane: evidence.lane.name)
+    inspected = InstalledOtp.inspect!(discovered, lane: evidence.lane.name)
+    otp_apps = discovered
     elixir_dirs = for app <- @elixir_apps, do: app_dir(app)
     roots = dependency_roots()
     closure = dependency_closure(roots)
     dep_dirs = for app <- closure, do: Path.join([Mix.Project.build_path(), "lib", app, "ebin"])
-    dirs = Enum.uniq(otp_dirs ++ elixir_dirs ++ dep_dirs)
+
+    extra_apps =
+      Enum.map(@elixir_apps, &%{app: Atom.to_string(&1), ebin: app_dir(&1)}) ++
+        Enum.map(
+          closure,
+          &%{app: &1, ebin: Path.join([Mix.Project.build_path(), "lib", &1, "ebin"])}
+        )
+
+    dirs = Enum.map(otp_apps, & &1.ebin) ++ elixir_dirs ++ dep_dirs
     missing_apps = missing_apps(otp_lib, elixir_dirs, dep_dirs)
 
-    {:ok, _} = :xref.start(:tier_sweep, xref_mode: :functions)
+    {xref_edges, exported, ingested} =
+      checked_xref_graph(otp_apps ++ extra_apps, evidence.lane.name)
 
-    :ok = :xref.set_default(:tier_sweep, warnings: false, verbose: false, builtins: true)
+    InstalledOtp.assert_parity!(
+      discovered,
+      inspected,
+      Enum.filter(ingested, &(&1.app in Enum.map(otp_apps, fn app -> app.app end))),
+      evidence.lane.name
+    )
 
-    for dir <- dirs, do: :xref.add_directory(:tier_sweep, String.to_charlist(dir))
-    {:ok, xref_edges} = :xref.q(:tier_sweep, ~c"E")
-    {:ok, exported} = :xref.q(:tier_sweep, ~c"X")
-    :xref.stop(:tier_sweep)
-    {form_edges, no_debug} = form_edges(dirs)
+    {other_form_edges, no_debug} = form_edges(elixir_dirs ++ dep_dirs)
+    otp_form_edges = Enum.flat_map(inspected, & &1.edges)
+    form_edges = otp_form_edges ++ other_form_edges
     edges = form_edges ++ for({caller, {m, f, _}} <- xref_edges, do: {caller, {m, f}})
-    reverse = reverse(edges)
-    forward = forward(edges)
+    full_reverse = reverse(edges)
+    full_forward = forward(edges)
+    otp_active_names = Enum.map(@historical_active_otp_apps, &Atom.to_string/1) |> MapSet.new()
+
+    extra_app_names = MapSet.new(Enum.map(extra_apps, & &1.app))
+
+    active_modules =
+      inspected
+      |> Enum.filter(&MapSet.member?(otp_active_names, &1.app))
+      |> Enum.map(& &1.module_atom)
+      |> Kernel.++(
+        ingested
+        |> Enum.filter(&MapSet.member?(extra_app_names, &1.app))
+        |> Enum.map(& &1.module_atom)
+      )
+      |> MapSet.new()
+
+    active_edges =
+      Enum.filter(edges, fn {{module, _function, _arity}, _callee} ->
+        MapSet.member?(active_modules, module)
+      end)
+
+    active_exported =
+      Enum.filter(exported, fn {module, _function, _arity} ->
+        MapSet.member?(active_modules, module)
+      end)
+
+    reverse = reverse(active_edges)
+    forward = forward(active_edges)
+    full_exported = MapSet.new(exported)
+    active_exported = MapSet.new(active_exported)
+
+    receipt = %{
+      lane: evidence.lane,
+      lock_sha256: evidence.lock_sha256,
+      discovered: discovered,
+      inspected: inspected,
+      ingested: Enum.filter(ingested, &(&1.app in Enum.map(otp_apps, fn app -> app.app end)))
+    }
+
+    receipt_lines = InstalledOtp.receipt_lines(receipt)
+    Enum.each(receipt_lines, &IO.puts/1)
+
+    pending_apps = Enum.reject(discovered, &MapSet.member?(otp_active_names, &1.app))
 
     %{
       dirs: dirs,
-      edges: edges,
-      exported: MapSet.new(exported),
+      edges: active_edges,
+      exported: active_exported,
       reverse: reverse,
       forward: forward,
       no_debug: no_debug,
       missing_apps: missing_apps,
       roots: roots,
       closure: closure,
-      out_of_scope: out_of_scope()
+      out_of_scope: Enum.map(pending_apps, & &1.app),
+      historical_active_otp_apps: MapSet.to_list(otp_active_names),
+      historical_active_modules: active_modules,
+      discovered: discovered,
+      inspected: inspected,
+      ingested: receipt.ingested,
+      full_edges: edges,
+      full_exported: full_exported,
+      full_reverse: full_reverse,
+      full_forward: full_forward,
+      pending_apps: pending_apps,
+      receipt_lines: receipt_lines,
+      lane: evidence.lane,
+      lock_sha256: evidence.lock_sha256
     }
   end
 
-  defp otp_app_dirs(otp_lib) do
-    otp_lib
-    |> File.ls!()
-    |> Enum.filter(fn dir ->
-      Enum.any?(@otp_apps, &String.starts_with?(dir, "#{&1}-")) and
-        File.dir?(Path.join([otp_lib, dir, "ebin"]))
-    end)
-    |> Enum.map(&Path.join([otp_lib, &1, "ebin"]))
+  defp checked_xref_graph(apps, lane) do
+    start_xref!(lane)
+
+    try do
+      set_xref_defaults!(lane)
+      ingested = Enum.flat_map(apps, &InstalledOtp.add_directory!(:tier_sweep, &1, lane: lane))
+      xref_edges = xref_query!(~c"E", :edges, lane)
+      exported = xref_query!(~c"X", :exports, lane)
+      {xref_edges, exported, ingested}
+    after
+      stop_xref!(lane)
+    end
+  end
+
+  defp start_xref!(lane) do
+    case :xref.start(:tier_sweep, xref_mode: :functions) do
+      {:ok, _} -> :ok
+      result -> raise "installed OTP inventory xref start failed for #{lane}: #{inspect(result)}"
+    end
+  end
+
+  defp set_xref_defaults!(lane) do
+    case :xref.set_default(:tier_sweep, warnings: false, verbose: false, builtins: true) do
+      :ok ->
+        :ok
+
+      result ->
+        raise "installed OTP inventory xref defaults failed for #{lane}: #{inspect(result)}"
+    end
+  end
+
+  defp xref_query!(query, label, lane) do
+    case :xref.q(:tier_sweep, query) do
+      {:ok, rows} when is_list(rows) ->
+        rows
+
+      result ->
+        raise "installed OTP inventory xref #{label} query failed for #{lane}: #{inspect(result)}"
+    end
+  end
+
+  defp stop_xref!(lane) do
+    case :xref.stop(:tier_sweep) do
+      :stopped -> :ok
+      result -> raise "installed OTP inventory xref stop failed for #{lane}: #{inspect(result)}"
+    end
   end
 
   defp missing_apps(otp_lib, elixir_dirs, dep_dirs) do
-    otp_apps = Enum.map(@otp_apps, &Atom.to_string/1)
+    otp_apps = Enum.map(@historical_active_otp_apps, &Atom.to_string/1)
     installed = otp_lib |> File.ls!() |> Enum.map(&String.replace(&1, ~r/-[0-9][0-9.]*$/, ""))
 
     Enum.reject(otp_apps, &(&1 in installed)) ++
@@ -2741,18 +2920,6 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp required_app(%{"optional" => false} = entry), do: [entry["app"] || entry["name"]]
   defp required_app(_entry), do: []
-
-  defp out_of_scope do
-    all = :code.lib_dir() |> to_string() |> File.ls!()
-    scoped = Enum.map(@otp_apps, &Atom.to_string/1)
-
-    all
-    |> Enum.filter(&File.dir?(Path.join([:code.lib_dir() |> to_string(), &1, "ebin"])))
-    |> Enum.map(&String.replace(&1, ~r/-[0-9][0-9.]*$/, ""))
-    |> Enum.uniq()
-    |> Enum.reject(&(&1 in scoped))
-    |> Enum.sort()
-  end
 
   defp form_edges(dirs) do
     beams =
@@ -3537,7 +3704,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:ok, ^module, beam} = :compile.forms(forms, [:debug_info])
     File.write!(Path.join(ebin, "#{Atom.to_string(module)}.beam"), beam)
 
-    app_resource = {:application, app_atom, [{:vsn, String.to_charlist(version)}, {:modules, [module]}]}
+    app_resource =
+      {:application, app_atom, [{:vsn, String.to_charlist(version)}, {:modules, [module]}]}
+
     File.write!(Path.join(ebin, "#{app}.app"), :io_lib.format("~tp.~n", [app_resource]))
   end
 end
