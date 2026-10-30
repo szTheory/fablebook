@@ -297,7 +297,7 @@ defmodule Fablebook.Test.InstalledOtp do
           })
         end
 
-        Enum.map(rows, &export_inventory_row!(&1, directory, filename, lane, module))
+        Enum.flat_map(rows, &xref_export_row!(&1, directory, filename, lane, module))
 
       result ->
         fail!(:export_inventory_read, %{
@@ -307,6 +307,15 @@ defmodule Fablebook.Test.InstalledOtp do
         })
     end
   end
+
+  defp xref_export_row!({:module_info, arity}, _directory, _filename, _lane, _module)
+       when arity in [0, 1],
+       do: []
+
+  defp xref_export_row!({:behaviour_info, 1}, _directory, _filename, _lane, _module), do: []
+
+  defp xref_export_row!(row, directory, filename, lane, module),
+    do: [export_inventory_row!(row, directory, filename, lane, module)]
 
   defp export_inventory_row!({function, arity}, _directory, _filename, _lane, module)
        when is_atom(function) and is_integer(arity) and arity >= 0,

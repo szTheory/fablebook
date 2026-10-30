@@ -4470,6 +4470,9 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     exports = InstalledOtp.export_inventory!([ebin], lane: "core")
 
     assert {:probe, :run, 0} in exports
+    refute {:probe, :module_info, 0} in exports
+    refute {:probe, :module_info, 1} in exports
+    refute {:probe, :behaviour_info, 1} in exports
 
     [source_app] =
       InstalledOtp.source_inventory!(discovered, inspected,
