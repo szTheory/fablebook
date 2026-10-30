@@ -160,7 +160,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 Last session: 2026-10-30T18:03:24.053Z
 Stopped at: Phase 01.1.1.2 research and two sequential plans verified; ready to execute
 Next independent command: $gsd-execute-phase 01.1.1.2 — implement the installed OTP inventory and Common Test guard slices
-Resume file: .planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-PLAN-CHECK.md
+Resume file: .planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-CHECK.md
 
 ## Completed phase receipt
 
@@ -168,4 +168,4 @@ Phase 01.1.1.1 is complete under its narrowed goal: all four success criteria pa
 
 The phase-completion query routes the pointer to Phase 1 because parent verification debt remains; no parent report or UAT gap was closed. Independent next work on 01.1.1.2 can be discussed using the verified child prerequisite. Later .3/.4 work still requires calibrated children and all original whole-audit/owner-judgment gates remain. No next-phase workflow was started.
 
-Discussion and planning for 01.1.1.2 are now complete; its independent verification is recorded in the phase PLAN-CHECK. Next command: `$gsd-execute-phase 01.1.1.2`. No implementation or next-phase workflow started during planning.
+Discussion and planning for 01.1.1.2 are now complete; its independent verification is recorded in the phase CHECK report. Next command: `$gsd-execute-phase 01.1.1.2`. No implementation or next-phase workflow started during planning.
