@@ -105,6 +105,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {Code, :format_file!, :_},
     {Code.Fragment, :container_cursor_to_quoted, :_},
     {Logger.Formatter, :compile, :_},
+    {Logger.Formatter, :new, 1},
     {EEx.Compiler, :compile, :_},
     {Phoenix.Template.ExsEngine, :compile, :_},
     {Phoenix.Template.EExEngine, :compile, :_},
@@ -612,6 +613,43 @@ defmodule Fablebook.Contract.BannedCallsTest do
         ] do
       assert {:mfa, mfa} in hits(scan)
     end
+  end
+
+  @tag :tmp_dir
+  test "caller-controlled Logger formatter options are banned through direct, capture, and apply probes",
+       %{tmp_dir: dir} do
+    source = """
+    defmodule Fablebook.GuardFixture.LoggerFormatterNew do
+      def direct(options), do: Logger.Formatter.new(options)
+      def capture, do: &Logger.Formatter.new/1
+      def apply(options), do: apply(Logger.Formatter, :new, [options])
+    end
+    """
+
+    assert credo_issues(source, "logger_formatter_new.ex") != []
+
+    source_path = Path.join(dir, "logger_formatter_new.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    assert {:mfa, {Logger.Formatter, :new, 1}} in hits(scan)
+  end
+
+  @tag :tmp_dir
+  test "a discarded Logger formatter quote is source-only", %{tmp_dir: dir} do
+    source = """
+    defmodule Fablebook.GuardFixture.LoggerFormatterQuote do
+      def quoted(options), do: quote(do: Logger.Formatter.new(unquote(options)))
+    end
+    """
+
+    assert credo_issues(source, "logger_formatter_quote.ex") != []
+
+    source_path = Path.join(dir, "logger_formatter_quote.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    assert hits(scan) == []
   end
 
   test "every MFA matcher names an existing function" do
