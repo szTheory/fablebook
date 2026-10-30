@@ -88,6 +88,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:file, :eval, :_},
     {:file, :path_script, :_},
     {:file, :path_eval, :_},
+    {:file, :consult, 1},
     {:file, :path_consult, 2},
     {:elixir, :eval_forms, :_},
     {:io, :read, :_},
@@ -118,6 +119,11 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:erl_compile_server, :compile, :_},
     {:leex, :compile, :_},
     {:yecc, :compile, :_},
+    {:yecc, :file, 1},
+    {:yecc, :file, 2},
+    {:yecc, :yecc, 2},
+    {:yecc, :yecc, 3},
+    {:yecc, :yecc, 4},
     {Mix.Project, :compile, :_},
     {:elixir_erl, :compile, :_},
     {:cover, :compile, :_},
@@ -493,6 +499,93 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert credo_issues(source, "caller_file.ex") != []
     assert credo_issues("quote do: :file.path_consult(dirs, path)", "quoted.ex") != []
     assert credo_issues("Regex.compile(pattern)", "regex.ex") == []
+
+    consult_sources = [
+      {"direct", "def direct(path), do: :file.consult(path)"},
+      {"capture", "def capture, do: &:file.consult/1"},
+      {"apply", "def dynamic(args), do: apply(:file, :consult, args)"}
+    ]
+
+    consult_paths =
+      for {shape, body} <- consult_sources do
+        source =
+          "defmodule Fablebook.GuardFixture.Consult#{String.capitalize(shape)} do\n#{body}\nend\n"
+
+        path = Path.join(dir, "caller_consult_#{shape}.ex")
+        File.write!(path, source)
+        assert credo_issues(source, "caller_consult_#{shape}.ex") != []
+        path
+      end
+
+    for consult_beam <- compile!(consult_paths, dir, true) do
+      assert {:ok, consult_scan} = BeamWalker.scan(consult_beam)
+
+      assert Enum.any?(hits(consult_scan), fn
+               {:mfa, {:file, :consult, arity}} when arity in [1, :_] -> true
+               _ -> false
+             end)
+    end
+
+    assert credo_issues("quote do: :file.consult(path)", "quoted_consult.ex") != []
+  end
+
+  @tag :tmp_dir
+  test "Yecc file and legacy fronts are caught through uncalled direct, capture and apply bodies",
+       %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    fronts = [
+      {:file, 1, "grammar"},
+      {:file, 2, "grammar, options"},
+      {:yecc, 2, "grammar, parserfile"},
+      {:yecc, 3, "grammar, parserfile, verbose"},
+      {:yecc, 4, "grammar, parserfile, verbose, includefile"}
+    ]
+
+    functions =
+      for {function, arity, args} <- fronts,
+          shape <- [:direct, :capture, :apply] do
+        name = "#{function}_#{arity}_#{shape}"
+
+        body =
+          case shape do
+            :direct -> "def #{name}(#{args}), do: :yecc.#{function}(#{args})"
+            :capture -> "def #{name}, do: &:yecc.#{function}/#{arity}"
+            :apply -> "def #{name}(args), do: apply(:yecc, :#{function}, args)"
+          end
+
+        {function, arity, body}
+      end
+
+    source =
+      "defmodule Fablebook.GuardFixture.YeccFrontShapes do\n" <>
+        Enum.map_join(functions, "\n", &elem(&1, 2)) <>
+        "\nend\n"
+
+    path = Path.join(dir, "caller_yecc.ex")
+    File.write!(path, source)
+    [beam] = compile!([path], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+
+    for {function, arity, _shape} <- functions do
+      assert Enum.any?(hits(scan), fn
+               {:mfa, {:yecc, ^function, found_arity}}
+               when found_arity == arity or found_arity == :_ ->
+                 true
+
+               _ ->
+                 false
+             end),
+             "no BEAM hit for yecc.#{function}/#{arity}"
+    end
+
+    assert credo_issues(source, "caller_yecc.ex") != []
+
+    for {function, arity, _args} <- fronts do
+      call = "quote do: :yecc.#{function}(#{Enum.map_join(1..arity, ", ", fn n -> "a#{n}" end)})"
+      assert credo_issues(call, "quoted_yecc_#{function}_#{arity}.ex") != []
+    end
   end
 
   for {file, hit} <- @fixtures do
@@ -626,6 +719,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
       Fablebook.GuardFixture.StrictPathConsult => [
         {:mfa, {:file, :path_consult, 2}},
         {:mfa, {:file, :path_consult, :_}}
+      ],
+      Fablebook.GuardFixture.StrictConsult => [
+        {:mfa, {:file, :consult, 1}},
+        {:mfa, {:file, :consult, :_}}
       ],
       Fablebook.GuardFixture.StrictCtMake => [],
       Fablebook.GuardFixture.StrictWriteThenLoad => []
@@ -771,6 +868,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     defmodule Fablebook.GuardFixture.StrictPathConsult do
       def run(dirs, file), do: :file.path_consult(dirs, file)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictConsult do
+      def run(path), do: :file.consult(path)
     end
 
     defmodule Fablebook.GuardFixture.StrictCtMake do
