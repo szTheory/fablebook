@@ -110,6 +110,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:file, :eval, :_},
     {:file, :path_script, :_},
     {:file, :path_eval, :_},
+    {:ct_make, :files, 2},
     {:file, :consult, 1},
     {:file, :path_consult, 2},
     {:elixir, :eval_forms, :_},
@@ -837,7 +838,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
         {:mfa, {:file, :consult, 1}},
         {:mfa, {:file, :consult, :_}}
       ],
-      Fablebook.GuardFixture.StrictCtMake => [{:mfa, {:ct_make, :files, 2}}],
+      Fablebook.GuardFixture.StrictCtMake => [
+        {:mfa, {:ct_make, :files, 2}},
+        {:mfa, {:ct_make, :files, :_}}
+      ],
       Fablebook.GuardFixture.StrictWriteThenLoad => []
     }
 
@@ -1169,7 +1173,19 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
   defp load_tier_apps do
     Enum.each(
-      [:xmerl, :syntax_tools, :tools, :parsetools, :iex, :mix, :asn1, :sasl, :ssl, :debugger],
+      [
+        :xmerl,
+        :syntax_tools,
+        :tools,
+        :parsetools,
+        :iex,
+        :mix,
+        :asn1,
+        :sasl,
+        :ssl,
+        :debugger,
+        :common_test
+      ],
       &Mix.ensure_application!/1
     )
   end

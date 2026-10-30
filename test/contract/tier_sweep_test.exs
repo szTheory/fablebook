@@ -88,6 +88,59 @@ defmodule Fablebook.Contract.TierSweepTest do
                            |> Enum.map(fn {citation, _expected_source} -> citation end)
                            |> Enum.uniq()
 
+  @ct_make_files2_source_by_lane %{
+    "core" => %{
+      sha256: "a6d46d0f31e75119b543ba5783782c7c48b358fa024a71763e5a7f2c6ff4d3a3",
+      citations: [
+        {"common_test/src/ct_make.erl:37", "-export([all/0,all/1,files/1,files/2])."},
+        {"common_test/src/ct_make.erl:58", "files(Fs0, Options) ->"},
+        {"common_test/src/ct_make.erl:61", "get_opts_from_emakefile(Fs,'Emakefile',CompileOpts)"},
+        {"common_test/src/ct_make.erl:63", "do_make_files(Files,MakeOpts)"},
+        {"common_test/src/ct_make.erl:69",
+         "process(Fs, lists:member(noexec, Opts), load_opt(Opts), [])"},
+        {"common_test/src/ct_make.erl:191", "load_opt(Opts) ->"},
+        {"common_test/src/ct_make.erl:192", "case lists:member(netload,Opts) of"},
+        {"common_test/src/ct_make.erl:194", "netload"},
+        {"common_test/src/ct_make.erl:196", "case lists:member(load,Opts) of"},
+        {"common_test/src/ct_make.erl:200", "noload"},
+        {"common_test/src/ct_make.erl:288", "do_recompile(File, false, Load, Opts) ->"},
+        {"common_test/src/ct_make.erl:290",
+         "compile:file(File, [report_errors, report_warnings |Opts])"},
+        {"common_test/src/ct_make.erl:292", "maybe_load(element(2,Ok), Load, Opts)"},
+        {"common_test/src/ct_make.erl:299", "maybe_load(Mod, Load, Opts) ->"},
+        {"common_test/src/ct_make.erl:313", "code:load_abs(filename:join(Dir, Mod),Mod)"},
+        {"common_test/src/ct_make.erl:319", "do_load(Dir, Mod, netload) ->"},
+        {"common_test/src/ct_make.erl:324",
+         "rpc:eval_everywhere(code,load_binary,[Mod,Fname,Bin])"}
+      ]
+    },
+    "floor" => %{
+      sha256: "7f5dce364ae35232780c7904b6e45475aed4ba0d95105ee114f04e992492e62b",
+      citations: [
+        {"common_test/src/ct_make.erl:33", "-export([all/0,all/1,files/1,files/2])."},
+        {"common_test/src/ct_make.erl:54", "files(Fs0, Options) ->"},
+        {"common_test/src/ct_make.erl:57", "get_opts_from_emakefile(Fs,'Emakefile',CompileOpts)"},
+        {"common_test/src/ct_make.erl:59", "do_make_files(Files,MakeOpts)"},
+        {"common_test/src/ct_make.erl:65",
+         "process(Fs, lists:member(noexec, Opts), load_opt(Opts), [])"},
+        {"common_test/src/ct_make.erl:187", "load_opt(Opts) ->"},
+        {"common_test/src/ct_make.erl:188", "case lists:member(netload,Opts) of"},
+        {"common_test/src/ct_make.erl:190", "netload"},
+        {"common_test/src/ct_make.erl:192", "case lists:member(load,Opts) of"},
+        {"common_test/src/ct_make.erl:196", "noload"},
+        {"common_test/src/ct_make.erl:284", "do_recompile(File, false, Load, Opts) ->"},
+        {"common_test/src/ct_make.erl:286",
+         "compile:file(File, [report_errors, report_warnings |Opts])"},
+        {"common_test/src/ct_make.erl:288", "maybe_load(element(2,Ok), Load, Opts)"},
+        {"common_test/src/ct_make.erl:295", "maybe_load(Mod, Load, Opts) ->"},
+        {"common_test/src/ct_make.erl:309", "code:load_abs(filename:join(Dir, Mod),Mod)"},
+        {"common_test/src/ct_make.erl:315", "do_load(Dir, Mod, netload) ->"},
+        {"common_test/src/ct_make.erl:320",
+         "rpc:eval_everywhere(code,load_binary,[Mod,Fname,Bin])"}
+      ]
+    }
+  }
+
   @escript_debug_exclusion {{:mfa, @escript_debug_mfa}, :private_front, @escript_debug_citations}
 
   @call_name_exclusions [
@@ -2145,6 +2198,33 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
 
     assert SweepEvidence.resolve!(evidence, "elixir/src/elixir_aliases.erl:1").origin == :archive
+  end
+
+  test "ct_make files/2 caller-file and optional load trace resolves from the exact archive" do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    lane = evidence.lane.name
+    expected = Map.fetch!(@ct_make_files2_source_by_lane, lane)
+    otp_ref = evidence.manifest["refs"][lane]["otp"] |> Enum.at(1)
+
+    source =
+      Enum.find(
+        evidence.manifest["files"],
+        &(&1["path"] == "#{lane}/common_test/src/ct_make.erl")
+      )
+
+    assert source["lane"] == lane
+    assert source["source_path"] == "common_test/src/ct_make.erl"
+    assert source["sha256"] == expected.sha256
+    assert source["status"] == "present"
+    assert source["url"] =~ "/#{otp_ref}/lib/common_test/src/ct_make.erl"
+
+    for {citation, expected_source} <- expected.citations do
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.origin == :archive, citation
+      assert resolved.sha256 == expected.sha256, citation
+      assert resolved.text =~ expected_source, citation
+    end
   end
 
   test "escript debugger code is a private path behind its already tiered public front", ctx do
