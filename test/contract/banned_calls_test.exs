@@ -572,6 +572,99 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
+  test "every ct_make export is caught through uncalled direct, capture and apply bodies", %{
+    tmp_dir: dir
+  } do
+    load_tier_apps()
+
+    fronts = [
+      {:all, 0, "", ""},
+      {:all, 1, "options", "options"},
+      {:files, 1, "files", "files"},
+      {:files, 2, "files, options", "files, options"}
+    ]
+
+    for shape <- [:direct, :capture, :apply] do
+      functions =
+        Enum.map(fronts, fn {function, arity, args, apply_args} ->
+          name = "#{shape}_#{function}_#{arity}"
+
+          body =
+            case shape do
+              :direct -> ":ct_make.#{function}(#{args})"
+              :capture -> "&:ct_make.#{function}/#{arity}"
+              :apply -> "apply(:ct_make, :#{function}, [#{apply_args}])"
+            end
+
+          head = if shape == :capture, do: "def #{name}()", else: "def #{name}(#{args})"
+          {function, arity, name, "#{head}, do: #{body}"}
+        end)
+
+      source =
+        "defmodule Fablebook.GuardFixture.CtMake#{String.capitalize(to_string(shape))} do\n" <>
+          Enum.map_join(functions, "\n", &elem(&1, 3)) <> "\nend\n"
+
+      assert credo_issues(source, "ct_make_#{shape}.ex") != []
+
+      for {function, arity, _name, line} <- functions do
+        one_front =
+          "defmodule Fablebook.GuardFixture.CtMakeSingle do\n#{line}\nend\n"
+
+        assert credo_issues(one_front, "ct_make_#{shape}_#{function}_#{arity}.ex") != [],
+               "Credo missed #{shape} ct_make.#{function}/#{arity}"
+      end
+
+      source_path = Path.join(dir, "ct_make_#{shape}.ex")
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      for {function, arity, _args, _apply_args} <- fronts do
+        assert Enum.any?(hits(scan), fn
+                 {:mfa, {:ct_make, ^function, found_arity}} when found_arity in [arity, :_] ->
+                   true
+
+                 _ ->
+                   false
+               end),
+               "BEAM walker missed #{shape} ct_make.#{function}/#{arity}"
+      end
+    end
+  end
+
+  @tag :tmp_dir
+  test "ct_make calls inside uninvoked macros remain source-only controls", %{tmp_dir: dir} do
+    load_tier_apps()
+
+    fronts = [
+      {:all, 0, ""},
+      {:all, 1, "options"},
+      {:files, 1, "files"},
+      {:files, 2, "files, options"}
+    ]
+
+    for {function, arity, args} <- fronts do
+      source = """
+      defmodule Fablebook.GuardFixture.CtMakeQuoted#{function}#{arity} do
+        defmacro quoted, do: quote(do: :ct_make.#{function}(#{args}))
+      end
+      """
+
+      assert credo_issues(source, "ct_make_quoted_#{function}_#{arity}.ex") != []
+
+      source_path = Path.join(dir, "ct_make_quoted_#{function}_#{arity}.ex")
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      assert hits(scan) == [],
+             "quoted ct_make code unexpectedly reached BEAM: #{inspect(hits(scan))}"
+    end
+
+    assert credo_issues("Regex.compile(pattern)", "ct_make_benign.ex") == []
+  end
+
+  @tag :tmp_dir
   test "Yecc file and legacy fronts are caught through uncalled direct, capture and apply bodies",
        %{tmp_dir: dir} do
     unless Process.whereis(Credo.Supervisor),
