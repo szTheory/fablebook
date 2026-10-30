@@ -161,7 +161,7 @@ Plans:
   6. A pair-tier call fails CI when a `lib/` macro quotes it (`quote(do: Module.concat(unquote(x)))`, quoted `:file.script/1`, quoted `apply(:erlang, :load_module, ...)`, a `__using__` that injects `:erlang.load_module/2`) and when module-body code makes it (`@r apply(:file, :script, [...])`, `@m Module.concat([...])`), on both lanes, each with a negative fixture (VR-01, WR-11). The `mix.exs` scan also matches the `apply/3`, alias and newline-after-dot spellings (WR-12).
   7. Every caught, over-caught and missed claim in the Credo explanation matches a fixture or a known-strictness row, "anywhere in function code" is true or gone, and a human wording check is recorded (truth 6).
   8. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
-**Plans:** 4/5 plans executed
+**Plans:** 5/5 plans executed; awaiting phase-wide verification
 
 Plans:
 **Wave 1**
@@ -177,7 +177,7 @@ Plans:
 - [x] 01.1.1-04-PLAN.md — Functions named like a banned module, and every barrier-module, sink-delegate, code-related `:erlang` and in-front-of-barrier export judged once from source, pinned by contract test (SC2 code-path record, SC3 record); the audit of the ported sweep exclusions (SC1's "every exclusion has a reason that is true") and the parser disposition move to Phase 01.1.1.1 (INT-20261029-02)
 
 **Wave 5** *(blocked on Wave 4 completion)*
-- [ ] 01.1.1-05-PLAN.md — Source-level MFA rules in the Credo check for quoted, module-body and `mix.exs` calls, the explanation rewrite and the human wording check (SC6, SC7)
+- [x] 01.1.1-05-PLAN.md — Source-level MFA rules in the Credo check for quoted, module-body and `mix.exs` calls, the explanation rewrite and the human wording check (SC6, SC7)
 
 **Cross-cutting constraints:**
 - SC8: the PR changes no lib/, .github/, mix.exs, lockfile or .credo.exs path and is merged green with a recorded ci-gate run link

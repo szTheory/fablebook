@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1
 current_phase_name: Close the eval and code-loading ban list (INSERTED)
 status: executing
-stopped_at: Completed 01.1.1-04-PLAN.md
-last_updated: "2026-10-30T00:35:47.368Z"
-last_activity: 2026-10-29
-last_activity_desc: Completed plan 01.1.1-04; PR 18 merged green
-state_head: 5ea778722b74fa8ca46d3e5834c2ff894fa58ee5
+stopped_at: Completed 01.1.1-05-PLAN.md; awaiting phase-wide verification
+last_updated: "2026-10-30T01:06:48Z"
+last_activity: 2026-10-30
+last_activity_desc: Plan 01.1.1-05 completed; PR 19 merged green; phase-wide verification pending
+state_head: 152992fae64d086f23e0adc4b9137d10e2dd5835
 progress:
   total_phases: 38
   completed_phases: 0
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
   percent: 0
 ---
 
@@ -29,27 +29,27 @@ See: .planning/PROJECT.md (updated 2026-10-28)
 
 Phase: 01.1.1 (Close the eval and code-loading ban list (INSERTED)) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
-Last activity: 2026-10-29 — Plan 01.1.1-04 merged green as PR #18; plan 05 ready
+Status: Awaiting phase-wide verification
+Last activity: 2026-10-30 — Plan 01.1.1-05 completed; PR #19 merged green; phase-wide verification pending
 
 Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: - min
-- Total execution time: 0.0 hours
+- Total plans completed: 15
+- Average duration: 34.2 min
+- Total execution time: 8.6 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01.1.1 | 5 | 316 min | 63.2 min |
 
 **Recent Trend:**
-- Last 5 plans: none yet
-- Trend: n/a
+- Last 5 plans: 16, 32, 73, 167, 28 min
+- Trend: mixed; execution time varies by plan scope
 
 *Updated after each plan completion*
 **Per-Plan Metrics:**
@@ -70,6 +70,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01.1.1 P02 | 32min | 3 tasks | 14 files |
 | Phase 01.1.1 P03 | 73min | 3 tasks | 18 files |
 | Phase 01.1.1 P04 | 167min | 3 tasks | 3 files |
+| Phase 01.1.1 P05 | 28min | 4 tasks | 13 files |
 
 ## Accumulated Context
 
