@@ -40,6 +40,28 @@ defmodule Fablebook.Contract.BannedCallsTest do
     Telemetry.Metrics
   ]
 
+  @caller_formatter_fronts [
+    {Logger.Formatter, :new, 1},
+    {Logger, :configure_backend, 2},
+    {Logger, :default_formatter, 0},
+    {Logger, :default_formatter, 1},
+    {Logger.App, :start, 0},
+    {Logger.App, :start, 2},
+    {ExUnit.CaptureServer, :handle_call, 3},
+    {ExUnit.CaptureServer, :log_capture_on, 3},
+    {ExUnit.CaptureLog, :capture_log, 1},
+    {ExUnit.CaptureLog, :capture_log, 2},
+    {ExUnit.CaptureLog, :with_log, 1},
+    {ExUnit.CaptureLog, :with_log, 2},
+    {ExUnit, :configure, 1},
+    {ExUnit, :start, 0},
+    {ExUnit, :start, 1},
+    {ExUnit, :run, 0},
+    {ExUnit, :run, 1},
+    {ExUnit, :async_run, 0},
+    {ExUnit.Runner, :run, 2}
+  ]
+
   @mfa_tier [
     {String, :to_atom, 1},
     {String, :to_existing_atom, 1},
@@ -106,6 +128,24 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {Code.Fragment, :container_cursor_to_quoted, :_},
     {Logger.Formatter, :compile, :_},
     {Logger.Formatter, :new, 1},
+    {Logger, :configure_backend, 2},
+    {Logger, :default_formatter, 0},
+    {Logger, :default_formatter, 1},
+    {Logger.App, :start, 0},
+    {Logger.App, :start, 2},
+    {ExUnit.CaptureServer, :handle_call, 3},
+    {ExUnit.CaptureServer, :log_capture_on, 3},
+    {ExUnit.CaptureLog, :capture_log, 1},
+    {ExUnit.CaptureLog, :capture_log, 2},
+    {ExUnit.CaptureLog, :with_log, 1},
+    {ExUnit.CaptureLog, :with_log, 2},
+    {ExUnit, :configure, 1},
+    {ExUnit, :start, 0},
+    {ExUnit, :start, 1},
+    {ExUnit, :run, 0},
+    {ExUnit, :run, 1},
+    {ExUnit, :async_run, 0},
+    {ExUnit.Runner, :run, 2},
     {EEx.Compiler, :compile, :_},
     {Phoenix.Template.ExsEngine, :compile, :_},
     {Phoenix.Template.EExEngine, :compile, :_},
@@ -618,6 +658,9 @@ defmodule Fablebook.Contract.BannedCallsTest do
   @tag :tmp_dir
   test "caller-controlled Logger formatter options are banned through direct, capture, and apply probes",
        %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
     source = """
     defmodule Fablebook.GuardFixture.LoggerFormatterNew do
       def direct(options), do: Logger.Formatter.new(options)
@@ -636,7 +679,39 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
+  test "Logger and ExUnit formatter wrappers are caught without being called", %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    for kind <- [:direct, :capture, :apply] do
+      source = caller_formatter_probe_source(kind)
+      assert credo_issues(source, "logger_formatter_#{kind}.ex") != []
+
+      source_path = Path.join(dir, "logger_formatter_#{kind}.ex")
+      File.write!(source_path, source)
+
+      for beam <- compile!([source_path], dir, true) do
+        assert {:ok, scan} = BeamWalker.scan(beam)
+
+        for {module, function, arity} <- @caller_formatter_fronts do
+          assert Enum.any?(hits(scan), fn
+                   {:mfa, {^module, ^function, found_arity}} ->
+                     found_arity in [arity, :_]
+
+                   _ ->
+                     false
+                 end),
+                 "#{kind} probe missed #{inspect({module, function, arity})}"
+        end
+      end
+    end
+  end
+
+  @tag :tmp_dir
   test "a discarded Logger formatter quote is source-only", %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
     source = """
     defmodule Fablebook.GuardFixture.LoggerFormatterQuote do
       def quoted(options), do: quote(do: Logger.Formatter.new(unquote(options)))
@@ -1189,6 +1264,40 @@ defmodule Fablebook.Contract.BannedCallsTest do
       end)
 
     "defmodule Fablebook.GuardProbe.P#{index} do\n#{functions}\nend\n"
+  end
+
+  defp caller_formatter_probe_source(kind) do
+    functions =
+      @caller_formatter_fronts
+      |> Enum.with_index()
+      |> Enum.map_join("\n", &caller_formatter_probe(kind, &1))
+
+    module_kind = kind |> Atom.to_string() |> String.capitalize()
+    "defmodule Fablebook.GuardProbe.LoggerFormatter.#{module_kind} do\n#{functions}\nend\n"
+  end
+
+  defp caller_formatter_probe(kind, {{module, function, arity}, index}) do
+    args = Enum.map_join(1..max(arity, 1), ", ", &"arg#{&1}")
+    args = if arity == 0, do: "", else: args
+    module_source = inspect(module)
+    function_source = Atom.to_string(function)
+
+    body =
+      caller_formatter_probe_body(kind, module_source, function, function_source, arity, args)
+
+    head = if kind == :capture, do: "", else: "(#{args})"
+    "  def probe_#{index}#{head}, do: #{body}"
+  end
+
+  defp caller_formatter_probe_body(:direct, module, _function, function_source, _arity, args),
+    do: "#{module}.#{function_source}(#{args})"
+
+  defp caller_formatter_probe_body(:capture, module, _function, function_source, arity, _args),
+    do: "&#{module}.#{function_source}/#{arity}"
+
+  defp caller_formatter_probe_body(:apply, module, function, _function_source, arity, args) do
+    apply_args = if arity == 0, do: "[]", else: "[#{args}]"
+    "apply(#{module}, #{inspect(function)}, #{apply_args})"
   end
 
   defp generated_probe_arguments(0), do: []
