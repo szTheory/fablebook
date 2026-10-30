@@ -2,18 +2,18 @@
 gsd_state_version: "1.0"
 current_phase: 01.1.1.1
 current_phase_name: "Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons"
-status: ready_to_execute
-stopped_at: Phase 01.1.1.1 plans verified; ready to execute five sequential plans; no auto-advance
-last_updated: "2026-10-30T04:28:00.592Z"
-last_activity: 2026-10-30 UTC — Phase 01.1.1.1 research refreshed; five plans independently verified; 14/14 decisions covered; execution pending
-state_head: 611e53f5794c3eef6a31d52b37c7b6fbd1185e30
+status: executing
+stopped_at: Plan 01 task 01-01 source tracer implemented after owner approval; preparing draft PR, no auto-advance
+last_updated: "2026-10-30T12:08:39.020Z"
+last_activity: 2026-10-30 — Source preflight checkpoint; 0/5 plans complete
+last_activity_desc: Source strategy approved; exact-source tracer implemented with PathConsult and integrity controls; local exact core/floor focused contracts pass
+state_head: f93953f67b3939c0314d152dbcba23c2c20ebe67
 progress:
   total_phases: 38
   completed_phases: 1
   total_plans: 20
   completed_plans: 15
   percent: 3
-last_activity_desc: Phase 01.1.1.1 planning verified; five sequential plans ready to execute
 ---
 
 # Project State
@@ -23,14 +23,14 @@ last_activity_desc: Phase 01.1.1.1 planning verified; five sequential plans read
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.1 ban-list closure: research and five sequential plans independently verified; execution pending. Exact-lane source availability, measured audit budget and Macro policy have explicit execution gates. Phase 1 automated acceptance retains 12 passes and one scheduled observation pending; read `.planning/VERIFICATION.md` and `01-UAT.md` before reopening those checks.
+**Current focus:** Phase 01.1.1.1 Plan 01. Source archive approved (INT-20261030-01); PathConsult and exact-lane source resolver implemented. Exact core/floor focused contracts pass locally. Preparing the scoped draft before expanding creator coverage; caller-AST policy remains separately reserved.
 
 ## Current Position
 
-Phase: 01.1.1.1 (Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons) — READY TO EXECUTE
-Plan: 0/5 executed (five plans ready)
-Status: Ready to execute; independent plan check passed without findings; parent verification debt remains separately open
-Last activity: 2026-10-30 UTC — Phase 01.1.1.1 research refreshed; five plans independently verified; 14/14 decisions covered; execution pending
+Phase: 01.1.1.1 (Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons) — EXECUTING
+Plan: 1 of 5 active; 0/5 complete; task 01-01 preflight
+Status: Executing Plan 01; source strategy approved in INT-20261030-01
+Last activity: 2026-10-30 — Source strategy approved; exact local core/floor focused contracts: 100 passing each
 
 Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 plans complete; five new plans unexecuted
 
@@ -146,7 +146,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T04:28:51Z
-Stopped at: Phase 01.1.1.1 plans independently verified; ready for five sequential scoped PRs; no auto-advance
-Next command: $gsd-execute-phase 01.1.1.1 — execute the five plans, starting with exact-source evidence and confirmed creator paths
-Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-01-PLAN.md
+Last session: 2026-10-30T12:30:46+00:00
+Stopped at: Plan 01 task 01-01 tracer verification; source strategy approved, draft PR next
+Next command: $gsd-execute-phase 01.1.1.1 — continue the creator/source tracer and scoped PR; caller-AST checkpoint remains
+Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.continue-here.md

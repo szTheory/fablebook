@@ -2,6 +2,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   use ExUnit.Case, async: false
 
   alias Fablebook.Credo.BannedCalls
+  alias Fablebook.Test.SweepEvidence
   @compile {:no_warn_undefined, :xref}
 
   Code.ensure_loaded?(BannedCalls) ||
@@ -315,8 +316,7 @@ defmodule Fablebook.Contract.TierSweepTest do
      ]},
     {{:erts_debug, [:lc_graph_merge, :lc_graph_to_dot]}, :pure_data,
      ["kernel/src/erts_debug.erl:481", "kernel/src/erts_debug.erl:471"]},
-    {{:file, [:path_consult, :consult]}, :pure_data,
-     ["kernel/src/file.erl:2314", "kernel/src/file.erl:2304"]},
+    {{:file, [:consult]}, :pure_data, ["kernel/src/file.erl:2314", "kernel/src/file.erl:2304"]},
     {{:otp_internal, [:obsolete]}, :pure_data,
      ["stdlib/src/otp_internal.erl:49", "stdlib/src/otp_internal.erl:29"]},
     {{:edlin_type_suggestion, [:get_atoms, :get_arity, :get_types]}, :console,
@@ -901,22 +901,187 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   test "source evidence rejects a wrong runtime patch before resolving citations" do
-    error = assert_raise RuntimeError, fn ->
-      apply(Fablebook.Test.SweepEvidence, :lane!, [%{elixir: "1.20.4", otp: "29.1.1"}])
-    end
+    error =
+      assert_raise Fablebook.Test.SweepEvidence.Error, fn ->
+        SweepEvidence.lane!(%{elixir: "1.20.4", otp: "29.1.1"})
+      end
 
-    assert error.message =~ "runtime_identity"
+    assert error.reason == :runtime_identity
   end
 
   test "source evidence resolves the caller-file atom trace on the exact running lane" do
-    evidence = apply(Fablebook.Test.SweepEvidence, :source_roots!, [])
+    evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
-    resolved = apply(Fablebook.Test.SweepEvidence, :resolve!, [evidence, "kernel/src/file.erl:1"])
+    resolved = SweepEvidence.resolve!(evidence, "kernel/src/file.erl:1")
 
     assert resolved.line == 1
     assert resolved.sha256 =~ ~r/^[a-f0-9]{64}$/
     assert resolved.origin in [:installed, :archive]
     assert evidence.lane.otp in ["29.1.2", "27.3.4.9"]
+
+    trace =
+      if evidence.lane.name == "core" do
+        [
+          {"kernel/src/file.erl:2314", "path_consult(Path, File)"},
+          {"kernel/src/file.erl:2317", "consult_stream(Fd)"},
+          {"kernel/src/file.erl:2905", "io:read(Fd"},
+          {"stdlib/src/io.erl:765", "erl_scan,tokens"},
+          {"stdlib/src/erl_scan.erl:788", "list_to_atom(Wcs)"}
+        ]
+      else
+        [
+          {"kernel/src/file.erl:2304", "path_consult(Path, File)"},
+          {"kernel/src/file.erl:2307", "consult_stream(Fd)"},
+          {"kernel/src/file.erl:2895", "io:read(Fd"},
+          {"stdlib/src/io.erl:734", "erl_scan,tokens"},
+          {"stdlib/src/erl_scan.erl:761", "list_to_atom(Wcs)"}
+        ]
+      end
+
+    for {citation, expected} <- trace do
+      assert SweepEvidence.resolve!(evidence, citation).text =~ expected
+    end
+
+    assert SweepEvidence.resolve!(evidence, "elixir/src/elixir_aliases.erl:1").origin == :archive
+  end
+
+  @tag :tmp_dir
+  test "source citations reject missing, escaped, unreadable and altered evidence", %{
+    tmp_dir: dir
+  } do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    evidence = %{evidence | installed: Map.put(evidence.installed, "kernel", dir)}
+    citation = "kernel/src/file.erl:1"
+    assert SweepEvidence.resolve!(evidence, citation).origin == :archive
+
+    for {invalid, reason} <- [
+          {"kernel/src/../file.erl:1", :citation_path},
+          {"/kernel/src/file.erl:1", :citation_format},
+          {"kernel/src/file.erl:0", :citation_format},
+          {"kernel/src/file.erl:9999999", :source_line},
+          {"wrong/src/file.erl:1", :unknown_app},
+          {"kernel/src/not-installed.erl:1", :missing_source}
+        ] do
+      error =
+        assert_raise SweepEvidence.Error, fn -> SweepEvidence.resolve!(evidence, invalid) end
+
+      assert error.reason == reason
+    end
+
+    missing_manifest =
+      Map.update!(evidence.manifest, "files", fn rows ->
+        Enum.reject(rows, &(&1["source_path"] == "kernel/src/file.erl"))
+      end)
+
+    assert_raise SweepEvidence.Error, ~r/missing_source/, fn ->
+      SweepEvidence.resolve!(%{evidence | manifest: missing_manifest}, citation)
+    end
+
+    source = Path.join([dir, "src", "file.erl"])
+    File.mkdir_p!(Path.dirname(source))
+    resolved = SweepEvidence.resolve!(evidence, citation)
+    File.cp!(resolved.path, source)
+    assert SweepEvidence.resolve!(evidence, citation).origin == :installed
+    File.chmod!(source, 0o000)
+
+    assert_raise SweepEvidence.Error, ~r/unreadable_source/, fn ->
+      SweepEvidence.resolve!(evidence, citation)
+    end
+
+    File.chmod!(source, 0o644)
+    File.write!(source, "different app/source bytes\n")
+
+    assert_raise SweepEvidence.Error, ~r/source_digest/, fn ->
+      SweepEvidence.resolve!(evidence, citation)
+    end
+
+    File.rm!(source)
+    File.ln_s!(resolved.path, source)
+
+    assert_raise SweepEvidence.Error, ~r/source_escape/, fn ->
+      SweepEvidence.resolve!(evidence, citation)
+    end
+
+    File.rm!(source)
+    File.rm!(resolved.path)
+
+    assert_raise SweepEvidence.Error, ~r/unreadable_source/, fn ->
+      SweepEvidence.resolve!(evidence, citation)
+    end
+  end
+
+  @tag :tmp_dir
+  test "source archives reject traversal, duplicate paths, links and corrupt bytes before extraction",
+       %{tmp_dir: dir} do
+    original = Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
+    {:ok, files} = :erl_tar.extract(String.to_charlist(original), [:compressed, :memory])
+
+    for {name, entries, reason} <- [
+          {"traversal", [{~c"../escape", "bad"} | files], :archive_path},
+          {"duplicate", [hd(files) | files], :archive_duplicate},
+          {"corrupt",
+           List.keyreplace(
+             files,
+             ~c"core/kernel/src/file.erl",
+             0,
+             {~c"core/kernel/src/file.erl", "corrupted"}
+           ), :source_digest}
+        ] do
+      path = Path.join(dir, name <> ".tar.gz")
+      :ok = :erl_tar.create(String.to_charlist(path), entries, [:compressed])
+      sha = :crypto.hash(:sha256, File.read!(path)) |> Base.encode16(case: :lower)
+      error = assert_raise SweepEvidence.Error, fn -> SweepEvidence.load_archive!(path, sha) end
+      assert error.reason == reason
+    end
+
+    for {name, transform, reason} <- [
+          {"version", &put_in(&1["refs"]["core"]["otp"], ["29.1.1", "wrong"]), :source_identity},
+          {"root",
+           fn manifest ->
+             Map.update!(manifest, "files", fn rows ->
+               Enum.map(rows, fn row ->
+                 if row["path"] == "core/kernel/src/file.erl",
+                   do: Map.put(row, "lane", "floor"),
+                   else: row
+               end)
+             end)
+           end, :source_root}
+        ] do
+      entries =
+        Enum.map(files, fn
+          {~c"manifest.json", data} ->
+            {~c"manifest.json", data |> JSON.decode!() |> transform.() |> JSON.encode!()}
+
+          entry ->
+            entry
+        end)
+
+      path = Path.join(dir, name <> ".tar.gz")
+      :ok = :erl_tar.create(String.to_charlist(path), entries, [:compressed])
+      sha = :crypto.hash(:sha256, File.read!(path)) |> Base.encode16(case: :lower)
+      error = assert_raise SweepEvidence.Error, fn -> SweepEvidence.load_archive!(path, sha) end
+      assert error.reason == reason
+    end
+
+    link = Path.join(dir, "link")
+    File.ln_s!(original, link)
+    path = Path.join(dir, "symlink.tar.gz")
+
+    :ok =
+      :erl_tar.create(String.to_charlist(path), [{~c"link", String.to_charlist(link)}], [
+        :compressed
+      ])
+
+    sha = :crypto.hash(:sha256, File.read!(path)) |> Base.encode16(case: :lower)
+
+    assert_raise SweepEvidence.Error, ~r/archive_link_or_type/, fn ->
+      SweepEvidence.load_archive!(path, sha)
+    end
+
+    assert_raise SweepEvidence.Error, ~r/archive_digest/, fn ->
+      SweepEvidence.load_archive!(original, "wrong")
+    end
   end
 
   test "every in-scope OTP app, Elixir app and prod-closure dependency has an ebin", ctx do

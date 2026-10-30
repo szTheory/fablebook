@@ -88,6 +88,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:file, :eval, :_},
     {:file, :path_script, :_},
     {:file, :path_eval, :_},
+    {:file, :path_consult, 2},
     {:elixir, :eval_forms, :_},
     {:io, :read, :_},
     {:io, :parse_erl_exprs, :_},
@@ -467,6 +468,31 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
   test "the scan covers every lib/ module" do
     assert MapSet.subset?(MapSet.new(@lib_modules), MapSet.new(lib_modules()))
+  end
+
+  @tag :tmp_dir
+  test "caller-file fronts are caught through uncalled direct, capture and apply bodies", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    source = """
+    defmodule Fablebook.GuardFixture.PathConsultShapes do
+      def direct(dirs, path), do: :file.path_consult(dirs, path)
+      def capture, do: &:file.path_consult/2
+      def dynamic(args), do: apply(:file, :path_consult, args)
+    end
+    """
+
+    path = Path.join(dir, "caller_file.ex")
+    File.write!(path, source)
+    [beam] = compile!([path], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    assert {:mfa, {:file, :path_consult, 2}} in hits(scan)
+    assert credo_issues(source, "caller_file.ex") != []
+    assert credo_issues("quote do: :file.path_consult(dirs, path)", "quoted.ex") != []
+    assert credo_issues("Regex.compile(pattern)", "regex.ex") == []
   end
 
   for {file, hit} <- @fixtures do

@@ -1,0 +1,1993 @@
+{
+  "schema_version": 1,
+  "status": "PROPOSAL_ONLY_NOT_APPROVED_OR_INSTALLED",
+  "scope": "Full files for all currently cited exclusion paths plus named Plan 01 source traces; future audit discoveries require explicit additions, never silent source omissions.",
+  "refs": {
+    "core": {
+      "otp": [
+        "29.1.2",
+        "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"
+      ],
+      "elixir": [
+        "1.20.4",
+        "759443e724f55bf58e71c0603644e99058918d52"
+      ]
+    },
+    "floor": {
+      "otp": [
+        "27.3.4.9",
+        "4aa809ae4eb4a20ad89c23837376acf179877f39"
+      ],
+      "elixir": [
+        "1.18.5",
+        "dfe6612e546cec6557900e67651f7d21805472ef"
+      ]
+    }
+  },
+  "locks": {
+    "core": {
+      "path": "mix.lock",
+      "sha256": "2ad4fd2225d5cdaf29673f84f8cc1e81bf4e8e93102f9ea6cde26167e08978b8",
+      "packages": {
+        "phoenix": {
+          "package": "phoenix",
+          "version": "1.8.16",
+          "hex_outer_sha256": "e7355c35889305bc539eb09dae2393abcbaf0f65f6874a3f0dcb5f0ec53737fe",
+          "hex_inner_sha256": "6a4742054740496bfabefc95253f978d8f595f07bb601039b7a18b384a873916",
+          "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar"
+        },
+        "phoenix_live_view": {
+          "package": "phoenix_live_view",
+          "version": "1.2.13",
+          "hex_outer_sha256": "a5cd2a3df10552bce6b7e68e5d376ff3b46cca3ca62d6c43bd4398d80c197fbe",
+          "hex_inner_sha256": "850284c529f013e82d9596325bd92cb5859c0872176616b6e2ec4294e2ef616e",
+          "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.13.tar"
+        },
+        "plug": {
+          "package": "plug",
+          "version": "1.20.3",
+          "hex_outer_sha256": "be266aee1b8536ef6409d58cf39a3121319f0ec47cfa1b24024485aa0e76ad76",
+          "hex_inner_sha256": "56c480c633ec2ce10140e236e15233bf576e1d323887d7c96711bd02ab5160db",
+          "url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar"
+        }
+      }
+    },
+    "floor": {
+      "path": "mix.floor.lock",
+      "sha256": "fb900bcbfd27792b93b186837a75ca2615d48d2022890f2d37da3e2d58eb8d2c",
+      "packages": {
+        "phoenix": {
+          "package": "phoenix",
+          "version": "1.8.9",
+          "hex_outer_sha256": "3477e2dd5a4f61820341169031bdfe21275f659923bea9c5c0ea2aa1c3fcc046",
+          "hex_inner_sha256": "a63ed0962ed5b903b146dab0ae8eb8387fe478f8171a5e26d56a165f35996fe1",
+          "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar"
+        },
+        "phoenix_live_view": {
+          "package": "phoenix_live_view",
+          "version": "1.2.9",
+          "hex_outer_sha256": "2f9528c3d7046edabbb30a91710ca33988f8d8bc20a964a1fc48b32134572afa",
+          "hex_inner_sha256": "d35ddac2fab4480e6bdbf712ff104fd9e969a2bbe81b578ee80f066b371f56db",
+          "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.9.tar"
+        },
+        "plug": {
+          "package": "plug",
+          "version": "1.20.3",
+          "hex_outer_sha256": "be266aee1b8536ef6409d58cf39a3121319f0ec47cfa1b24024485aa0e76ad76",
+          "hex_inner_sha256": "56c480c633ec2ce10140e236e15233bf576e1d323887d7c96711bd02ab5160db",
+          "url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar"
+        }
+      }
+    }
+  },
+  "files": [
+    {
+      "lane": "core",
+      "source_path": "compiler/src/beam_doc.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/compiler/src/beam_doc.erl",
+      "status": "present",
+      "path": "core/compiler/src/beam_doc.erl",
+      "bytes": 54621,
+      "sha256": "012e8d5e2fe944a865c278d2747672eaf4b0b25e8cdb0c22a80bff23d3bd0b57"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/code.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/code.ex",
+      "status": "present",
+      "path": "core/elixir/lib/code.ex",
+      "bytes": 85670,
+      "sha256": "b7488a05a8b7814ea7b017df6ec5349fc6aa1a29dccfa596e2921ae1641b7925"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/exception.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/exception.ex",
+      "status": "present",
+      "path": "core/elixir/lib/exception.ex",
+      "bytes": 81081,
+      "sha256": "27163eb2f834274bdfc7f9f416a8318dec4708f0da21062ee6a09f34f22cd10e"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/macro.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/macro.ex",
+      "status": "present",
+      "path": "core/elixir/lib/macro.ex",
+      "bytes": 96618,
+      "sha256": "67637f8f3b2d45fedd1e6b5545d84f6908d9d227817201941281f65f1d6de117"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/module/parallel_checker.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/module/parallel_checker.ex",
+      "status": "present",
+      "path": "core/elixir/lib/module/parallel_checker.ex",
+      "bytes": 21317,
+      "sha256": "bbb5ae467747a4f014f29d7e546d02323ccd8d5d982bf2d8915618ee2586f713"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/module/types.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/module/types.ex",
+      "status": "present",
+      "path": "core/elixir/lib/module/types.ex",
+      "bytes": 25250,
+      "sha256": "1feb59018b19eb85d8404705d4a4ef595fc8cc17d0005a7bfd3709009edc4f4b"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/module/types/apply.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/module/types/apply.ex",
+      "status": "present",
+      "path": "core/elixir/lib/module/types/apply.ex",
+      "bytes": 86559,
+      "sha256": "8c82c59741ced0257b089e26baa76f91582ae52d0ed62264658b23851a6c1a93"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/module/types/expr.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/module/types/expr.ex",
+      "status": "present",
+      "path": "core/elixir/lib/module/types/expr.ex",
+      "bytes": 42139,
+      "sha256": "7f89e33cf248490cedbb42165527ed25ddea351133a506d06c4b113f6f346cc2"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/module/types/of.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/module/types/of.ex",
+      "status": "present",
+      "path": "core/elixir/lib/module/types/of.ex",
+      "bytes": 27929,
+      "sha256": "223b44f2b21391cab351b697461d81e08d1ddb107e8d953e22e83065fcfa0803"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/module/types/pattern.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/module/types/pattern.ex",
+      "status": "present",
+      "path": "core/elixir/lib/module/types/pattern.ex",
+      "bytes": 59855,
+      "sha256": "a09c634aaf40c3e7df3aa39caf68f45ed7377887554592d113f55316dc791580"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/module/types/traverse.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/module/types/traverse.ex",
+      "status": "present",
+      "path": "core/elixir/lib/module/types/traverse.ex",
+      "bytes": 6417,
+      "sha256": "1ac275aecf19266ea70840d5f53f6d840ab61503f4c0a816971be470eabede22"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/lib/regex.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/regex.ex",
+      "status": "present",
+      "path": "core/elixir/lib/regex.ex",
+      "bytes": 35586,
+      "sha256": "aed875acf1eb2d27606575f8671da95cedf1d5b5c1d6b32b91bad7b00a045ba9"
+    },
+    {
+      "lane": "core",
+      "source_path": "elixir/src/elixir_aliases.erl",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/src/elixir_aliases.erl",
+      "status": "present",
+      "path": "core/elixir/src/elixir_aliases.erl",
+      "bytes": 8693,
+      "sha256": "a03900c11f93f69518df1bdf1c0d3c1ab39f4e6bd1ec3fb5705c75e8bb656698"
+    },
+    {
+      "lane": "core",
+      "source_path": "erts/src/erl_prim_loader.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/erts/preloaded/src/erl_prim_loader.erl",
+      "status": "present",
+      "path": "core/erts/src/erl_prim_loader.erl",
+      "bytes": 57524,
+      "sha256": "5bd40505a05451fec423c1fb3349e59e3de7b4b980b4f291620237bc4e1d278d"
+    },
+    {
+      "lane": "core",
+      "source_path": "erts/src/erlang.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/erts/preloaded/src/erlang.erl",
+      "status": "present",
+      "path": "core/erts/src/erlang.erl",
+      "bytes": 475966,
+      "sha256": "00d7672a16325e43ca221c6d6ceb4200390e2a961a243c2e31ddc141ac145047"
+    },
+    {
+      "lane": "core",
+      "source_path": "erts/src/erts_code_purger.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/erts/preloaded/src/erts_code_purger.erl",
+      "status": "present",
+      "path": "core/erts/src/erts_code_purger.erl",
+      "bytes": 14777,
+      "sha256": "2a9a4d8642be168ad818baf29cfd4f4ff913d0f9bd5f1f669947b575bffc443d"
+    },
+    {
+      "lane": "core",
+      "source_path": "erts/src/erts_internal.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/erts/preloaded/src/erts_internal.erl",
+      "status": "present",
+      "path": "core/erts/src/erts_internal.erl",
+      "bytes": 36419,
+      "sha256": "22b6a291c32778edb84dc1e9bb2cfd5af44ca7e9f0ae53cb01f3a674218bc260"
+    },
+    {
+      "lane": "core",
+      "source_path": "erts/src/init.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/erts/preloaded/src/init.erl",
+      "status": "present",
+      "path": "core/erts/src/init.erl",
+      "bytes": 62375,
+      "sha256": "935964685d79d925a8b170c342b256b8ff57e0bf1d48a4343d83bd8cb7f763f8"
+    },
+    {
+      "lane": "core",
+      "source_path": "erts/src/prim_eval.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/erts/preloaded/src/prim_eval.erl",
+      "status": "present",
+      "path": "core/erts/src/prim_eval.erl",
+      "bytes": 1020,
+      "sha256": "a816f8ca52ba870142f326299e4d4387a9cf5a3997a9c24e825fe8270ad70e1a"
+    },
+    {
+      "lane": "core",
+      "source_path": "erts/src/zlib.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/erts/preloaded/src/zlib.erl",
+      "status": "present",
+      "path": "core/erts/src/zlib.erl",
+      "bytes": 30865,
+      "sha256": "6657c86d46536bf23fd3ef653b90439d2b7394250c3497de5a983b251d8f357d"
+    },
+    {
+      "lane": "core",
+      "source_path": "ex_unit/lib/ex_unit/doc_test.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/ex_unit/lib/ex_unit/doc_test.ex",
+      "status": "present",
+      "path": "core/ex_unit/lib/ex_unit/doc_test.ex",
+      "bytes": 29948,
+      "sha256": "64cb5339bfc99c2925ddbb0811531666e62bf7572eb52c1776d2538cb69288b3"
+    },
+    {
+      "lane": "core",
+      "source_path": "inets/src/http_server/httpd.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/inets/src/http_server/httpd.erl",
+      "status": "present",
+      "path": "core/inets/src/http_server/httpd.erl",
+      "bytes": 63369,
+      "sha256": "cc9ffbd10c965f453cb46f51e1c74aa15303f6398ecb0dd70bfc95d24ac112ca"
+    },
+    {
+      "lane": "core",
+      "source_path": "inets/src/http_server/httpd_manager.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/inets/src/http_server/httpd_manager.erl",
+      "status": "present",
+      "path": "core/inets/src/http_server/httpd_manager.erl",
+      "bytes": 15463,
+      "sha256": "8e92e6c845c5eef3651ec75ea0d08df1beb275756e85aee1f77fe77b9cd828a6"
+    },
+    {
+      "lane": "core",
+      "source_path": "inets/src/http_server/httpd_sup.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/inets/src/http_server/httpd_sup.erl",
+      "status": "present",
+      "path": "core/inets/src/http_server/httpd_sup.erl",
+      "bytes": 8742,
+      "sha256": "7e55570473becdf77296cd0f11133e2b8515e9ad14d145039d394fa4ff3e6b0e"
+    },
+    {
+      "lane": "core",
+      "source_path": "inets/src/inets_app/inets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/inets/src/inets_app/inets.erl",
+      "status": "present",
+      "path": "core/inets/src/inets_app/inets.erl",
+      "bytes": 18519,
+      "sha256": "18d0c8091e7c9ce34fad897734c1b4105fd8c19d0912da28a32856664c760f00"
+    },
+    {
+      "lane": "core",
+      "source_path": "kernel/src/application_controller.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/kernel/src/application_controller.erl",
+      "status": "present",
+      "path": "core/kernel/src/application_controller.erl",
+      "bytes": 84914,
+      "sha256": "1e35868c4c2898305eaf9de240f14ceed0b225ac55feb937573b27adbf3b18d6"
+    },
+    {
+      "lane": "core",
+      "source_path": "kernel/src/code.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/kernel/src/code.erl",
+      "status": "present",
+      "path": "core/kernel/src/code.erl",
+      "bytes": 81282,
+      "sha256": "774b2307e0f49fe2974f3e9d10c870f8f8f59a6ae5073f133908a99756332f17"
+    },
+    {
+      "lane": "core",
+      "source_path": "kernel/src/error_handler.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/kernel/src/error_handler.erl",
+      "status": "present",
+      "path": "core/kernel/src/error_handler.erl",
+      "bytes": 6794,
+      "sha256": "f15cf5f795d7dd8c7d11a7087756dcef5bc6cac60daf3be206545ae531e12630"
+    },
+    {
+      "lane": "core",
+      "source_path": "kernel/src/erts_debug.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/kernel/src/erts_debug.erl",
+      "status": "present",
+      "path": "core/kernel/src/erts_debug.erl",
+      "bytes": 19610,
+      "sha256": "79775431d627fc04612726bf0d486a18a639b064ea3698d884eb7cca0959ed5f"
+    },
+    {
+      "lane": "core",
+      "source_path": "kernel/src/file.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/kernel/src/file.erl",
+      "status": "present",
+      "path": "core/kernel/src/file.erl",
+      "bytes": 106197,
+      "sha256": "a8fdd9f93bede84b1d1d00ffa92163826dc452703f50da12a85c2a8d82058e04"
+    },
+    {
+      "lane": "core",
+      "source_path": "kernel/src/inet_config.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/kernel/src/inet_config.erl",
+      "status": "present",
+      "path": "core/kernel/src/inet_config.erl",
+      "bytes": 14574,
+      "sha256": "311af8e9e0bf9aa4ade861507cd0a2403d7b80e2f710d66b75b94f81dcbac515"
+    },
+    {
+      "lane": "core",
+      "source_path": "kernel/src/inet_db.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/kernel/src/inet_db.erl",
+      "status": "present",
+      "path": "core/kernel/src/inet_db.erl",
+      "bytes": 69748,
+      "sha256": "34e8490241ad9458ab0d15f99dc8325d19677f851c6c08c244a4eeb407e22596"
+    },
+    {
+      "lane": "core",
+      "source_path": "kernel/src/kernel.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/kernel/src/kernel.erl",
+      "status": "present",
+      "path": "core/kernel/src/kernel.erl",
+      "bytes": 15515,
+      "sha256": "3b4e0499f6ad9a05bb035ed39086e199e5d5c66b7a7ee919999a0d96addbba67"
+    },
+    {
+      "lane": "core",
+      "source_path": "kernel/src/net_adm.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/kernel/src/net_adm.erl",
+      "status": "present",
+      "path": "core/kernel/src/net_adm.erl",
+      "bytes": 9594,
+      "sha256": "9787f544977d74973118e5abfbe9d3a29ca192f9cad5fb3a05fc899a2e9bb838"
+    },
+    {
+      "lane": "core",
+      "source_path": "logger/lib/logger/formatter.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/logger/lib/logger/formatter.ex",
+      "status": "present",
+      "path": "core/logger/lib/logger/formatter.ex",
+      "bytes": 19585,
+      "sha256": "03c016dc30698b346759c251a0c2dc994ef9d95260695df42c03b7eb00805c24"
+    },
+    {
+      "lane": "core",
+      "source_path": "mix/lib/mix.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix.ex",
+      "status": "present",
+      "path": "core/mix/lib/mix.ex",
+      "bytes": 39561,
+      "sha256": "a6150be75dd64e3ffa0b2b31c6756b58a110bbea085a25f34d373fd6e9edfe04"
+    },
+    {
+      "lane": "core",
+      "source_path": "mix/lib/mix/compilers/erlang.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/compilers/erlang.ex",
+      "status": "present",
+      "path": "core/mix/lib/mix/compilers/erlang.ex",
+      "bytes": 11473,
+      "sha256": "2da279b591b437ce695ba51214eb10bd962e6ce99b493b52355e21720de9b70d"
+    },
+    {
+      "lane": "core",
+      "source_path": "mix/lib/mix/compilers/protocol.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/compilers/protocol.ex",
+      "status": "present",
+      "path": "core/mix/lib/mix/compilers/protocol.ex",
+      "bytes": 6973,
+      "sha256": "c229bd91a98d00f3f85faf4d2ee6b33cec3be9bb29b2f644918fc08a2eaa87c7"
+    },
+    {
+      "lane": "core",
+      "source_path": "mix/lib/mix/dep.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/dep.ex",
+      "status": "present",
+      "path": "core/mix/lib/mix/dep.ex",
+      "bytes": 17729,
+      "sha256": "05ddab22eeeb3b1f656c65d2def2cd7fdc6fcce97546c7ce7b0f97a8e5759679"
+    },
+    {
+      "lane": "core",
+      "source_path": "mix/lib/mix/dep/loader.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/dep/loader.ex",
+      "status": "present",
+      "path": "core/mix/lib/mix/dep/loader.ex",
+      "bytes": 13452,
+      "sha256": "2c774991d849ebd22e8d601a3d79a03ae21d7062bc9d74e0dfdd5048fbc8a79c"
+    },
+    {
+      "lane": "core",
+      "source_path": "mix/lib/mix/generator.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/generator.ex",
+      "status": "present",
+      "path": "core/mix/lib/mix/generator.ex",
+      "bytes": 6663,
+      "sha256": "46ee4f89e5ee95662a9ba7d3de0781fd7111137902b6526ed7c3af8c6ad011b3"
+    },
+    {
+      "lane": "core",
+      "source_path": "mix/lib/mix/task.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/task.ex",
+      "status": "present",
+      "path": "core/mix/lib/mix/task.ex",
+      "bytes": 19842,
+      "sha256": "ff2c0759a1f2a28b79d71b153c5ec95425fa734df906d4f1e545083d03c960a1"
+    },
+    {
+      "lane": "core",
+      "source_path": "mix/lib/mix/tasks/release.init.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/tasks/release.init.ex",
+      "status": "present",
+      "path": "core/mix/lib/mix/tasks/release.init.ex",
+      "bytes": 16861,
+      "sha256": "8bdbd58420248a3226c68b8c0fb280065c9bb151e4a0c9fc835383c0905bfb43"
+    },
+    {
+      "lane": "core",
+      "source_path": "mix/lib/mix/tasks/test.coverage.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/tasks/test.coverage.ex",
+      "status": "present",
+      "path": "core/mix/lib/mix/tasks/test.coverage.ex",
+      "bytes": 13348,
+      "sha256": "7b9acfaff442817b19d370b79fa13e5444d593e7270a91d2c6746761fd8457f1"
+    },
+    {
+      "lane": "core",
+      "source_path": null,
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/LICENSE",
+      "status": "license",
+      "path": "core/notices/elixir/LICENSE",
+      "bytes": 10173,
+      "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+    },
+    {
+      "lane": "core",
+      "source_path": null,
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/LICENSE.txt",
+      "status": "license",
+      "path": "core/notices/otp/LICENSE.txt",
+      "bytes": 10175,
+      "sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
+    },
+    {
+      "lane": "core",
+      "source_path": null,
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/LICENSES/BSD-2-Clause.txt",
+      "status": "license",
+      "path": "core/notices/otp/LICENSES/BSD-2-Clause.txt",
+      "bytes": 1235,
+      "sha256": "06413eaf2855d173db853258579d9f8013d1599c8d7340adc32383ce658352af"
+    },
+    {
+      "lane": "core",
+      "source_path": null,
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "license",
+      "path": "core/notices/phoenix/LICENSE.md",
+      "bytes": 1071,
+      "sha256": "41a686069f0199ff369d7e5277d5267385cc54d9199f1efc960bacbe2e799255"
+    },
+    {
+      "lane": "core",
+      "source_path": null,
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.13.tar",
+      "status": "license",
+      "path": "core/notices/phoenix_live_view/LICENSE.md",
+      "bytes": 1071,
+      "sha256": "5a76ffa3373ac1fbc8c8645967b980896154c26113c827d3c01c4b0158c057c6"
+    },
+    {
+      "lane": "core",
+      "source_path": null,
+      "url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar",
+      "status": "license",
+      "path": "core/notices/plug/LICENSE",
+      "bytes": 577,
+      "sha256": "b25c71a74ae1e2961b15c611ee26d9b3bd171d0833e407867a3debd9d1de3759"
+    },
+    {
+      "lane": "core",
+      "source_path": "parsetools/src/leex.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/parsetools/src/leex.erl",
+      "status": "present",
+      "path": "core/parsetools/src/leex.erl",
+      "bytes": 87541,
+      "sha256": "13d5ae6d297f284fb1db18e00d93e856e3fa231cfdffb884cdc9cc78df81bf93"
+    },
+    {
+      "lane": "core",
+      "source_path": "parsetools/src/yecc.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/parsetools/src/yecc.erl",
+      "status": "present",
+      "path": "core/parsetools/src/yecc.erl",
+      "bytes": 122404,
+      "sha256": "b238ac0cdee0bb0ec525c295ef9b5387ab7f679deb2dc2d2a2bb8da29d947a65"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/mix/phoenix.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/mix/phoenix.ex",
+      "bytes": 11465,
+      "sha256": "10170067eb8bc4561c10b3b484c1ff7b427fc49e280b2e131683cd1a81d246d7"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/mix/phoenix/context.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/mix/phoenix/context.ex",
+      "bytes": 2852,
+      "sha256": "cef289592620b2b8102b16b9f792693b8f620cdf9277125e8eb47134355ff328"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/mix/tasks/phx.digest.clean.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/mix/tasks/phx.digest.clean.ex",
+      "bytes": 2446,
+      "sha256": "7eac6ca3bab953cb5fa3b6392e9223e09c76d1bd7805019c495d3decb31daf12"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/mix/tasks/phx.digest.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/mix/tasks/phx.digest.ex",
+      "bytes": 2798,
+      "sha256": "52c118ba1a14840471a5e80bd0fe9d84dddc8bdce1517651a89e7425e06dc984"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/mix/tasks/phx.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/mix/tasks/phx.ex",
+      "bytes": 951,
+      "sha256": "bd8a667763385e8456ebb3b040a667b7a45ae37450f78fef8beaf4c712ab7b5d"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/mix/tasks/phx.gen.cert.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/mix/tasks/phx.gen.cert.ex",
+      "bytes": 8175,
+      "sha256": "252ad4201e26f1dd95fb47d1e7253ecf021888c7fc0f60b9e28464725a1f810f"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/mix/tasks/phx.gen.context.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/mix/tasks/phx.gen.context.ex",
+      "bytes": 14760,
+      "sha256": "c7c6dc0e75b25769db626143ad37d43b9c45234190e13a6352b0a6629e05b73e"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/mix/tasks/phx.gen.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/mix/tasks/phx.gen.ex",
+      "bytes": 1699,
+      "sha256": "8d358841dd94a9b10211c9be71aebcd61b0ae2aba6fa0ad2cd1f913a305f183e"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/phoenix/code_reloader/server.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/phoenix/code_reloader/server.ex",
+      "bytes": 14944,
+      "sha256": "2be1db38351733165f07e4e3de0c28f14e1e2138796a7e8955729ef3c9b102d6"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/phoenix/controller/pipeline.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/phoenix/controller/pipeline.ex",
+      "bytes": 5850,
+      "sha256": "8f35016338bdc9a4efe674217dd5a552abd4e759015259ffd89796b0346a45c9"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/phoenix/digester.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/phoenix/digester.ex",
+      "bytes": 12415,
+      "sha256": "01bc50dc2769f1e6e7dcbef274cb5bbe5f93b5edee6afff58cf85b6d78731d75"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix/lib/phoenix/exceptions.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      "status": "present",
+      "path": "core/phoenix/lib/phoenix/exceptions.ex",
+      "bytes": 2171,
+      "sha256": "8e683455ea67128a9fb36eac209372d11e1617ae591ab3d13ca41ce0d2049678"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix_live_view/lib/phoenix_component/macro_component.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.13.tar",
+      "status": "present",
+      "path": "core/phoenix_live_view/lib/phoenix_component/macro_component.ex",
+      "bytes": 14581,
+      "sha256": "3248827532ae157eb21ab0ecac8003714e0d67049fc0e52f15930e9fb6aaac93"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.13.tar",
+      "status": "present",
+      "path": "core/phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex",
+      "bytes": 8580,
+      "sha256": "fec6745c584fe70c1808763b86ade20facd54a5907f1c9301d395a7470e3ce67"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix_live_view/lib/phoenix_live_view/html_algebra.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.13.tar",
+      "status": "present",
+      "path": "core/phoenix_live_view/lib/phoenix_live_view/html_algebra.ex",
+      "bytes": 20456,
+      "sha256": "8e91e7f7bf640292567fafb6252250ee01e01f3663dc03bd7add0557308de456"
+    },
+    {
+      "lane": "core",
+      "source_path": "phoenix_live_view/lib/phoenix_live_view/tag_engine.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.13.tar",
+      "status": "present",
+      "path": "core/phoenix_live_view/lib/phoenix_live_view/tag_engine.ex",
+      "bytes": 9111,
+      "sha256": "8c16c90476757fb70bacf117c6fd8b8d472c79902d8bda14a8ace3c7ff7f4897"
+    },
+    {
+      "lane": "core",
+      "source_path": "plug/lib/plug/builder.ex",
+      "url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar",
+      "status": "present",
+      "path": "core/plug/lib/plug/builder.ex",
+      "bytes": 13225,
+      "sha256": "8d1b87dd51870df64b20e0ad203a18f072ecb47a15f11132e75e3e0ca47f766b"
+    },
+    {
+      "lane": "core",
+      "source_path": "plug/lib/plug/debugger.ex",
+      "url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar",
+      "status": "present",
+      "path": "core/plug/lib/plug/debugger.ex",
+      "bytes": 66981,
+      "sha256": "73d6037ae14677354d6d3ac4a97ace2d8bcf4dd3c5d295bd0dfe80cc56b82d67"
+    },
+    {
+      "lane": "core",
+      "source_path": "runtime_tools/src/dbg.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/runtime_tools/src/dbg.erl",
+      "status": "present",
+      "path": "core/runtime_tools/src/dbg.erl",
+      "bytes": 105185,
+      "sha256": "d996e990b75251edb65d4930a1edf5c1914f6c18f77ac526313157612f95f5f2"
+    },
+    {
+      "lane": "core",
+      "source_path": "runtime_tools/src/msacc.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/runtime_tools/src/msacc.erl",
+      "status": "present",
+      "path": "core/runtime_tools/src/msacc.erl",
+      "bytes": 20156,
+      "sha256": "2972b1b9301b59a7d9b754c73921f15106ad9ad14255f779ca4ab740c1c3f391"
+    },
+    {
+      "lane": "core",
+      "source_path": "runtime_tools/src/system_information.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/runtime_tools/src/system_information.erl",
+      "status": "present",
+      "path": "core/runtime_tools/src/system_information.erl",
+      "bytes": 26206,
+      "sha256": "3f08bc4072d89e4099ff7e3d06f965e3ef311991d5aa66a7bd55bacc80f8eee5"
+    },
+    {
+      "lane": "core",
+      "source_path": "sasl/src/systools_lib.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/sasl/src/systools_lib.erl",
+      "status": "present",
+      "path": "core/sasl/src/systools_lib.erl",
+      "bytes": 6672,
+      "sha256": "7e98e06de76017e2df0901b6108ea3926c3c22f5a286a027195b1ca6aa1c9544"
+    },
+    {
+      "lane": "core",
+      "source_path": "sasl/src/systools_relup.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/sasl/src/systools_relup.erl",
+      "status": "present",
+      "path": "core/sasl/src/systools_relup.erl",
+      "bytes": 21145,
+      "sha256": "d063925d39d51dec70bed19960a3730fc66eba9f3e7d0c7a81747a6249fd018b"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/c.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/c.erl",
+      "status": "present",
+      "path": "core/stdlib/src/c.erl",
+      "bytes": 44850,
+      "sha256": "7a03078fa161f6a0c92d4774cb8b8bf0a7a33b9a1b78fdb3206b20cb6a1671fc"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/dets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/dets.erl",
+      "status": "present",
+      "path": "core/stdlib/src/dets.erl",
+      "bytes": 135783,
+      "sha256": "96a6de720afbbc0e79bc3c4dd96663a6f54ea150a04a2d100c042fa26fb3ca8c"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/dets_sup.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/dets_sup.erl",
+      "status": "present",
+      "path": "core/stdlib/src/dets_sup.erl",
+      "bytes": 1275,
+      "sha256": "c58f486da4f8a62e0d59b0c9e2a7b560e9f44a61f126cbb3d8f7a4173559b50a"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/dets_v9.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/dets_v9.erl",
+      "status": "present",
+      "path": "core/stdlib/src/dets_v9.erl",
+      "bytes": 100855,
+      "sha256": "9e69152a0a52a399e5390110571b8ad86031182af8a8aae7b631b8c2ac189e1b"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/edlin_type_suggestion.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/edlin_type_suggestion.erl",
+      "status": "present",
+      "path": "core/stdlib/src/edlin_type_suggestion.erl",
+      "bytes": 26370,
+      "sha256": "a74d347eabea112afa32c4c03f6b234983f01ea37f1f3cb2272b0f7969b71cf0"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/erl_anno.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/erl_anno.erl",
+      "status": "present",
+      "path": "core/stdlib/src/erl_anno.erl",
+      "bytes": 15503,
+      "sha256": "c1230bd58705ef8f5f070bed0a516a7d919458ef3d76da7758b518524bbae387"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/erl_expand_records.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/erl_expand_records.erl",
+      "status": "present",
+      "path": "core/stdlib/src/erl_expand_records.erl",
+      "bytes": 46128,
+      "sha256": "e15be4ec55253aba245d41b3af4b542ed8744bd45693d4f48f7967a62c82041d"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/erl_features.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/erl_features.erl",
+      "status": "present",
+      "path": "core/stdlib/src/erl_features.erl",
+      "bytes": 21662,
+      "sha256": "a70921d90084c411b6afb488379fe58bdbe72338f328b6206e69ac3ebbfac668"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/erl_internal.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/erl_internal.erl",
+      "status": "present",
+      "path": "core/stdlib/src/erl_internal.erl",
+      "bytes": 18240,
+      "sha256": "d7d62083e74560591851d85821b379274fdcc88a7e10870ae6a7448775abef9d"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/erl_lint.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/erl_lint.erl",
+      "status": "present",
+      "path": "core/stdlib/src/erl_lint.erl",
+      "bytes": 229242,
+      "sha256": "d849facd432331bceaf4c244a7d71b3b74cd962297b464b016a449c1e50e9292"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/erl_scan.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/erl_scan.erl",
+      "status": "present",
+      "path": "core/stdlib/src/erl_scan.erl",
+      "bytes": 92381,
+      "sha256": "3681f47a6a432eebcb01f9278cd9729b2ccda2978fb2c8a2729792c2142834f4"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/ets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/ets.erl",
+      "status": "present",
+      "path": "core/stdlib/src/ets.erl",
+      "bytes": 132893,
+      "sha256": "c630cebfa444a279fc69999f5c60538068112114e55d9f6aa6a85262d526c3df"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/file_sorter.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/file_sorter.erl",
+      "status": "present",
+      "path": "core/stdlib/src/file_sorter.erl",
+      "bytes": 64974,
+      "sha256": "4c4778026398712cff529e542a5b9ad4ad78d4f0c3cc6426ed7c3f04f419578b"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/io.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/io.erl",
+      "status": "present",
+      "path": "core/stdlib/src/io.erl",
+      "bytes": 60867,
+      "sha256": "076b1496bf625657b1eaceb9c598c3169d439c7e42567b35edaf6e96483c2449"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/io_lib.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/io_lib.erl",
+      "status": "present",
+      "path": "core/stdlib/src/io_lib.erl",
+      "bytes": 61968,
+      "sha256": "b6da306a37f9ddb4fad3779e65f154f09815cc1ebeb7fca991983033d92fc7c6"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/lists.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/lists.erl",
+      "status": "present",
+      "path": "core/stdlib/src/lists.erl",
+      "bytes": 123312,
+      "sha256": "d429e541ca76aca8c56bb9ff31130a3b636f33d3e1923a08683157bf5709ab47"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/maps.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/maps.erl",
+      "status": "present",
+      "path": "core/stdlib/src/maps.erl",
+      "bytes": 37402,
+      "sha256": "350c707ff10180e1677cd911a4e981abcce2207db69ce5c986bb1c000d69a816"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/orddict.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/orddict.erl",
+      "status": "present",
+      "path": "core/stdlib/src/orddict.erl",
+      "bytes": 15849,
+      "sha256": "ca497657f8813aeecd732003f85885b9545681918beed4d29cf539790a6723e1"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/ordsets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/ordsets.erl",
+      "status": "present",
+      "path": "core/stdlib/src/ordsets.erl",
+      "bytes": 13585,
+      "sha256": "526d1505d6cc482497f812879cdb41c533ea4bfc103e74850245f84c465cd70d"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/otp_internal.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/otp_internal.erl",
+      "status": "present",
+      "path": "core/stdlib/src/otp_internal.erl",
+      "bytes": 17444,
+      "sha256": "12d858d70cefa0f161201a8477cdbda8501616edec8703d4473988b5827da910"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/pool.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/pool.erl",
+      "status": "present",
+      "path": "core/stdlib/src/pool.erl",
+      "bytes": 8877,
+      "sha256": "a34242f9decc689e4ff9485db5e011a46de0e6b44e10f6dc4a067b9138143e88"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/qlc.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/qlc.erl",
+      "status": "present",
+      "path": "core/stdlib/src/qlc.erl",
+      "bytes": 163708,
+      "sha256": "f141af96f841b1a4bd45a0507eadaae47ac4e3eb5eac6880416685da0bbe82d4"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/re.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/re.erl",
+      "status": "present",
+      "path": "core/stdlib/src/re.erl",
+      "bytes": 72908,
+      "sha256": "4f121979023d8e5011d2e026600250dedd284c3a5b909e38688efd34d5b74128"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/records.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/records.erl",
+      "status": "present",
+      "path": "core/stdlib/src/records.erl",
+      "bytes": 8118,
+      "sha256": "564c31a3136213e8a8dd6ea5233182a626444dc4282766709fa7400b7ce7160c"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/sets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/sets.erl",
+      "status": "present",
+      "path": "core/stdlib/src/sets.erl",
+      "bytes": 32003,
+      "sha256": "74cd10e9fcf5e653ab7b999c733ac1b531f3b80a45c63ae5f87c638f3aa83812"
+    },
+    {
+      "lane": "core",
+      "source_path": "stdlib/src/shell.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/shell.erl",
+      "status": "present",
+      "path": "core/stdlib/src/shell.erl",
+      "bytes": 89833,
+      "sha256": "83a33200d64ab0e29d0d7050c112bd62ebc0301d4f365ff2b8387ffb4afad10a"
+    },
+    {
+      "lane": "core",
+      "source_path": "syntax_tools/src/erl_prettypr.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/syntax_tools/src/erl_prettypr.erl",
+      "status": "present",
+      "path": "core/syntax_tools/src/erl_prettypr.erl",
+      "bytes": 52815,
+      "sha256": "4485fd8211f49d4d10afe94f0b6ef91b58ae5b1d6e3d3af1b2fc4741caf1c441"
+    },
+    {
+      "lane": "core",
+      "source_path": "syntax_tools/src/erl_recomment.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/syntax_tools/src/erl_recomment.erl",
+      "status": "present",
+      "path": "core/syntax_tools/src/erl_recomment.erl",
+      "bytes": 22746,
+      "sha256": "d9e93f9a5aa02021f8638b756dd8ad62603aa9a423d5606d6cd61b09cb5f8b53"
+    },
+    {
+      "lane": "core",
+      "source_path": "syntax_tools/src/erl_syntax.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/syntax_tools/src/erl_syntax.erl",
+      "status": "present",
+      "path": "core/syntax_tools/src/erl_syntax.erl",
+      "bytes": 228602,
+      "sha256": "3d309106bf3897feb8e00c66c33220815ffc7e31be771e786916ca14c5e6f804"
+    },
+    {
+      "lane": "core",
+      "source_path": "syntax_tools/src/erl_syntax_lib.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/syntax_tools/src/erl_syntax_lib.erl",
+      "status": "present",
+      "path": "core/syntax_tools/src/erl_syntax_lib.erl",
+      "bytes": 74287,
+      "sha256": "fe42db67d1964f00c565a73966f72c96c607a9e82c121694b734a8698e36032f"
+    },
+    {
+      "lane": "core",
+      "source_path": "tools/src/xref.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/tools/src/xref.erl",
+      "status": "present",
+      "path": "core/tools/src/xref.erl",
+      "bytes": 88039,
+      "sha256": "0e000dc539e745be798e74d27174970a8f1b7244ce3e80510e91376d32e024c4"
+    },
+    {
+      "lane": "core",
+      "source_path": "tools/src/xref_base.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/tools/src/xref_base.erl",
+      "status": "present",
+      "path": "core/tools/src/xref_base.erl",
+      "bytes": 70784,
+      "sha256": "2f82927096ce21b5c0fcfd341dbf23cf628f35cc7df3bba4c66d629eb8f550d7"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/module/types/traverse.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/module/types/traverse.ex",
+      "status": "absent-at-immutable-ref"
+    },
+    {
+      "lane": "floor",
+      "source_path": "compiler/src/beam_doc.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/compiler/src/beam_doc.erl",
+      "status": "present",
+      "path": "floor/compiler/src/beam_doc.erl",
+      "bytes": 51935,
+      "sha256": "6c2ae9799254920dc21c0b1ed3c72b86efa082b80689dca049910793b9cd9085"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/code.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/code.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/code.ex",
+      "bytes": 79455,
+      "sha256": "1854c2ecd52c45db5aecb379f64f0857ebb9240a0fe57c450621080dda547add"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/exception.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/exception.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/exception.ex",
+      "bytes": 76848,
+      "sha256": "523214b563aa45dab869da4f24e2119125ea91527df82bd93786e50d3d2b0f8c"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/macro.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/macro.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/macro.ex",
+      "bytes": 92701,
+      "sha256": "34a366e712b37b6af22a686bfd859dce259e3b402f7b0779bf95cc44ad1c1360"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/module/parallel_checker.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/module/parallel_checker.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/module/parallel_checker.ex",
+      "bytes": 15434,
+      "sha256": "d6852121cdd15eef74a5a70bb41e8530cac7344173a712ab4e3b96b2d4fe57e6"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/module/types.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/module/types.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/module/types.ex",
+      "bytes": 14063,
+      "sha256": "e3326ad312476195b3b6dffb0aff17bc0695e40fb20a7ab371f1ac9a51104848"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/module/types/apply.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/module/types/apply.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/module/types/apply.ex",
+      "bytes": 34882,
+      "sha256": "e26cd5a86cd822ac6161e2a662ae2c0eba306fbeb4caadc5df95da7255a76e05"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/module/types/expr.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/module/types/expr.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/module/types/expr.ex",
+      "bytes": 24270,
+      "sha256": "88c88fbf430b6bc047bef26dc097831180f89eafb32a0253b2302037fd2eac24"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/module/types/of.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/module/types/of.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/module/types/of.ex",
+      "bytes": 15274,
+      "sha256": "24ae892a8fb93530e9650acbc326bfd550107c15da40c39992c4bf02424c31ba"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/module/types/pattern.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/module/types/pattern.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/module/types/pattern.ex",
+      "bytes": 25821,
+      "sha256": "63502df42524b344a8cd410c3bf75ac6d738a03e45a30f58f0ae650b9aa38efd"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/lib/regex.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/lib/regex.ex",
+      "status": "present",
+      "path": "floor/elixir/lib/regex.ex",
+      "bytes": 28400,
+      "sha256": "7e31bdf96292d100598c520338dc757d28cbb2cf0cbfa3a53e23a672268885bf"
+    },
+    {
+      "lane": "floor",
+      "source_path": "elixir/src/elixir_aliases.erl",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/elixir/src/elixir_aliases.erl",
+      "status": "present",
+      "path": "floor/elixir/src/elixir_aliases.erl",
+      "bytes": 8509,
+      "sha256": "e51f510576f7bbb71656ab80ddf84a92a31235793801b947a4bf564819a09f5e"
+    },
+    {
+      "lane": "floor",
+      "source_path": "erts/src/erl_prim_loader.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/erts/preloaded/src/erl_prim_loader.erl",
+      "status": "present",
+      "path": "floor/erts/src/erl_prim_loader.erl",
+      "bytes": 57242,
+      "sha256": "661190c496bc5e594a25ad454ab759b62a808ac599957db7dcb8cb23a03f752b"
+    },
+    {
+      "lane": "floor",
+      "source_path": "erts/src/erlang.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/erts/preloaded/src/erlang.erl",
+      "status": "present",
+      "path": "floor/erts/src/erlang.erl",
+      "bytes": 460858,
+      "sha256": "229f09216f0018f5433d601d73b58d8ce249ea509a56228c746aca3740df358b"
+    },
+    {
+      "lane": "floor",
+      "source_path": "erts/src/erts_code_purger.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/erts/preloaded/src/erts_code_purger.erl",
+      "status": "present",
+      "path": "floor/erts/src/erts_code_purger.erl",
+      "bytes": 14565,
+      "sha256": "299bf3f6b2e55f5e329a253b5147cc3cfe0bc3b20d3d37536d1543b5a3dddb32"
+    },
+    {
+      "lane": "floor",
+      "source_path": "erts/src/erts_internal.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/erts/preloaded/src/erts_internal.erl",
+      "status": "present",
+      "path": "floor/erts/src/erts_internal.erl",
+      "bytes": 34924,
+      "sha256": "2899363afa33fae445a8f6d0bab717251a54cebe7519a52fcc305af52880c30f"
+    },
+    {
+      "lane": "floor",
+      "source_path": "erts/src/init.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/erts/preloaded/src/init.erl",
+      "status": "present",
+      "path": "floor/erts/src/init.erl",
+      "bytes": 61503,
+      "sha256": "a598aaa48f4a7f8ffa7c16035732e45bab4691d030c91ef35f755f9e6b6cb452"
+    },
+    {
+      "lane": "floor",
+      "source_path": "erts/src/prim_eval.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/erts/preloaded/src/prim_eval.erl",
+      "status": "present",
+      "path": "floor/erts/src/prim_eval.erl",
+      "bytes": 978,
+      "sha256": "8ece87a888d4f28a774b9cbc9df11f0c6a881acc096fdaab833270fb73aafba8"
+    },
+    {
+      "lane": "floor",
+      "source_path": "erts/src/zlib.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/erts/preloaded/src/zlib.erl",
+      "status": "present",
+      "path": "floor/erts/src/zlib.erl",
+      "bytes": 30850,
+      "sha256": "8ec3a69b212f1ce6aeced46fb24cd6fb0d646bebb08413f53ae87e7ec378bafd"
+    },
+    {
+      "lane": "floor",
+      "source_path": "ex_unit/lib/ex_unit/doc_test.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/ex_unit/lib/ex_unit/doc_test.ex",
+      "status": "present",
+      "path": "floor/ex_unit/lib/ex_unit/doc_test.ex",
+      "bytes": 27594,
+      "sha256": "9419b5f73b66e4b3a429945074be6ce97ee188972a67c3945c01ce275dcf3984"
+    },
+    {
+      "lane": "floor",
+      "source_path": "inets/src/http_server/httpd.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/inets/src/http_server/httpd.erl",
+      "status": "present",
+      "path": "floor/inets/src/http_server/httpd.erl",
+      "bytes": 61054,
+      "sha256": "3d65722ef9039c337a87f55d07a65e443f34c5a0f1917ee41f1796eeffcc29e2"
+    },
+    {
+      "lane": "floor",
+      "source_path": "inets/src/http_server/httpd_manager.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/inets/src/http_server/httpd_manager.erl",
+      "status": "present",
+      "path": "floor/inets/src/http_server/httpd_manager.erl",
+      "bytes": 15787,
+      "sha256": "95cc895fc12bb928a55a93cc896638dc69ea82d0866f8e496656acb8d4c7b291"
+    },
+    {
+      "lane": "floor",
+      "source_path": "inets/src/http_server/httpd_sup.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/inets/src/http_server/httpd_sup.erl",
+      "status": "present",
+      "path": "floor/inets/src/http_server/httpd_sup.erl",
+      "bytes": 8560,
+      "sha256": "a7b2bd85eb9798fd76d5f4cb24dad3d6db0908df9d62228a94f7e396d50ec3f0"
+    },
+    {
+      "lane": "floor",
+      "source_path": "inets/src/inets_app/inets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/inets/src/inets_app/inets.erl",
+      "status": "present",
+      "path": "floor/inets/src/inets_app/inets.erl",
+      "bytes": 18409,
+      "sha256": "d8786fea1edde0d055e7198cdb279e9a1999daa070d4dc229f3ec66b75e8bd5e"
+    },
+    {
+      "lane": "floor",
+      "source_path": "kernel/src/application_controller.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/kernel/src/application_controller.erl",
+      "status": "present",
+      "path": "floor/kernel/src/application_controller.erl",
+      "bytes": 82978,
+      "sha256": "0d91dab589d3281d5e0b09b7bff6cc6f31eb66b1d9666988a5660d02436abc6f"
+    },
+    {
+      "lane": "floor",
+      "source_path": "kernel/src/code.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/kernel/src/code.erl",
+      "status": "present",
+      "path": "floor/kernel/src/code.erl",
+      "bytes": 79357,
+      "sha256": "3d2c645d60ed26108290a0cbbda653389cbb2e32d25b075bfe73fe612494ba08"
+    },
+    {
+      "lane": "floor",
+      "source_path": "kernel/src/error_handler.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/kernel/src/error_handler.erl",
+      "status": "present",
+      "path": "floor/kernel/src/error_handler.erl",
+      "bytes": 6752,
+      "sha256": "be52c67b666b629a65b78d5321ad8087f9ac85b4f06524716282c6b9f4bc3e85"
+    },
+    {
+      "lane": "floor",
+      "source_path": "kernel/src/erts_debug.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/kernel/src/erts_debug.erl",
+      "status": "present",
+      "path": "floor/kernel/src/erts_debug.erl",
+      "bytes": 17685,
+      "sha256": "abf745c8f259dcace83b4b889bebd96f74d1a19afe8c0d19be3e37c7eaa13187"
+    },
+    {
+      "lane": "floor",
+      "source_path": "kernel/src/file.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/kernel/src/file.erl",
+      "status": "present",
+      "path": "floor/kernel/src/file.erl",
+      "bytes": 105815,
+      "sha256": "cb535d2aabd0de531857d777d68f7c08c785f3ef19d301d79bb0916d746aefa8"
+    },
+    {
+      "lane": "floor",
+      "source_path": "kernel/src/inet_config.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/kernel/src/inet_config.erl",
+      "status": "present",
+      "path": "floor/kernel/src/inet_config.erl",
+      "bytes": 14495,
+      "sha256": "9d2fc67773eb53e3a3154d5c9b22f2fa34611da205eb8201d7e5c961f37f72e2"
+    },
+    {
+      "lane": "floor",
+      "source_path": "kernel/src/inet_db.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/kernel/src/inet_db.erl",
+      "status": "present",
+      "path": "floor/kernel/src/inet_db.erl",
+      "bytes": 67519,
+      "sha256": "157f29e45ceeac10184304122d5353a421e7b1c2e4d46dad4781f69563eee8bc"
+    },
+    {
+      "lane": "floor",
+      "source_path": "kernel/src/kernel.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/kernel/src/kernel.erl",
+      "status": "present",
+      "path": "floor/kernel/src/kernel.erl",
+      "bytes": 15478,
+      "sha256": "26a7adbcd333cd68ce5c6abd2f6eaee9fcbdc7ab7e4b307bf5838fc0d853e307"
+    },
+    {
+      "lane": "floor",
+      "source_path": "kernel/src/net_adm.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/kernel/src/net_adm.erl",
+      "status": "present",
+      "path": "floor/kernel/src/net_adm.erl",
+      "bytes": 9374,
+      "sha256": "0463e13cde82bf5ed2863e1d56fc059e5e47df1175808a2e929ad1da5dbdda71"
+    },
+    {
+      "lane": "floor",
+      "source_path": "logger/lib/logger/formatter.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/logger/lib/logger/formatter.ex",
+      "status": "present",
+      "path": "floor/logger/lib/logger/formatter.ex",
+      "bytes": 18484,
+      "sha256": "9fbca8e3d34d05134a92470f8b9171af20a0fee742d6222191f3a9af924b10af"
+    },
+    {
+      "lane": "floor",
+      "source_path": "mix/lib/mix.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix.ex",
+      "status": "present",
+      "path": "floor/mix/lib/mix.ex",
+      "bytes": 37684,
+      "sha256": "a16e9739232aa65a602e4ecb3edee1fd7d94f889af96f86c151f7d3cdf28d51b"
+    },
+    {
+      "lane": "floor",
+      "source_path": "mix/lib/mix/compilers/erlang.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix/compilers/erlang.ex",
+      "status": "present",
+      "path": "floor/mix/lib/mix/compilers/erlang.ex",
+      "bytes": 10595,
+      "sha256": "8ffe2208057e76db7c67ba97cbb8f99f03a9418cadf2d66e190e6b760cbf1568"
+    },
+    {
+      "lane": "floor",
+      "source_path": "mix/lib/mix/dep.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix/dep.ex",
+      "status": "present",
+      "path": "floor/mix/lib/mix/dep.ex",
+      "bytes": 17340,
+      "sha256": "2b993cb0fb78ba25710c61d44e626a45af997d9f7cb32263efee379a20a28694"
+    },
+    {
+      "lane": "floor",
+      "source_path": "mix/lib/mix/dep/loader.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix/dep/loader.ex",
+      "status": "present",
+      "path": "floor/mix/lib/mix/dep/loader.ex",
+      "bytes": 12552,
+      "sha256": "38b6171bcf3439f308791f2e37bcb63fd27de0ef992c22b5bfe9d2a66050e080"
+    },
+    {
+      "lane": "floor",
+      "source_path": "mix/lib/mix/generator.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix/generator.ex",
+      "status": "present",
+      "path": "floor/mix/lib/mix/generator.ex",
+      "bytes": 6192,
+      "sha256": "2fc7db47675c39e8a7247ecc07ab50ac4938ec586fa88fbddfbe33086222d21a"
+    },
+    {
+      "lane": "floor",
+      "source_path": "mix/lib/mix/task.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix/task.ex",
+      "status": "present",
+      "path": "floor/mix/lib/mix/task.ex",
+      "bytes": 19479,
+      "sha256": "9e102d7a3cd4efddbdf8d726df5e6b1e43d4b112d769ff4d182b7121f015e336"
+    },
+    {
+      "lane": "floor",
+      "source_path": "mix/lib/mix/tasks/release.init.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix/tasks/release.init.ex",
+      "status": "present",
+      "path": "floor/mix/lib/mix/tasks/release.init.ex",
+      "bytes": 16809,
+      "sha256": "95d15b4807b8d8491b40764a1487517a348564b93846034d9e134e41bbb07091"
+    },
+    {
+      "lane": "floor",
+      "source_path": "mix/lib/mix/tasks/test.coverage.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix/tasks/test.coverage.ex",
+      "status": "present",
+      "path": "floor/mix/lib/mix/tasks/test.coverage.ex",
+      "bytes": 12995,
+      "sha256": "1ce822c7628e9275f5398cbecd7f3d7912f6ab22b23d0a60c5ed772635b9f7a3"
+    },
+    {
+      "lane": "floor",
+      "source_path": null,
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/LICENSE",
+      "status": "license",
+      "path": "floor/notices/elixir/LICENSE",
+      "bytes": 10173,
+      "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+    },
+    {
+      "lane": "floor",
+      "source_path": null,
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/LICENSE.txt",
+      "status": "license",
+      "path": "floor/notices/otp/LICENSE.txt",
+      "bytes": 10175,
+      "sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
+    },
+    {
+      "lane": "floor",
+      "source_path": null,
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "license",
+      "path": "floor/notices/phoenix/LICENSE.md",
+      "bytes": 1071,
+      "sha256": "41a686069f0199ff369d7e5277d5267385cc54d9199f1efc960bacbe2e799255"
+    },
+    {
+      "lane": "floor",
+      "source_path": null,
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.9.tar",
+      "status": "license",
+      "path": "floor/notices/phoenix_live_view/LICENSE.md",
+      "bytes": 1071,
+      "sha256": "5a76ffa3373ac1fbc8c8645967b980896154c26113c827d3c01c4b0158c057c6"
+    },
+    {
+      "lane": "floor",
+      "source_path": null,
+      "url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar",
+      "status": "license",
+      "path": "floor/notices/plug/LICENSE",
+      "bytes": 577,
+      "sha256": "b25c71a74ae1e2961b15c611ee26d9b3bd171d0833e407867a3debd9d1de3759"
+    },
+    {
+      "lane": "floor",
+      "source_path": "parsetools/src/leex.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/parsetools/src/leex.erl",
+      "status": "present",
+      "path": "floor/parsetools/src/leex.erl",
+      "bytes": 87405,
+      "sha256": "d1a0a20abc09ae3e65fcf0ec043913b2ae551ecfa2f0134fbb43e05b075bca6f"
+    },
+    {
+      "lane": "floor",
+      "source_path": "parsetools/src/yecc.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/parsetools/src/yecc.erl",
+      "status": "present",
+      "path": "floor/parsetools/src/yecc.erl",
+      "bytes": 122334,
+      "sha256": "76ce6326ef9875aca6fbca18284c5727047d30470980d9f376d938a48169ac00"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/mix/phoenix.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/mix/phoenix.ex",
+      "bytes": 11465,
+      "sha256": "10170067eb8bc4561c10b3b484c1ff7b427fc49e280b2e131683cd1a81d246d7"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/mix/phoenix/context.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/mix/phoenix/context.ex",
+      "bytes": 2852,
+      "sha256": "cef289592620b2b8102b16b9f792693b8f620cdf9277125e8eb47134355ff328"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/mix/tasks/phx.digest.clean.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/mix/tasks/phx.digest.clean.ex",
+      "bytes": 2446,
+      "sha256": "7eac6ca3bab953cb5fa3b6392e9223e09c76d1bd7805019c495d3decb31daf12"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/mix/tasks/phx.digest.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/mix/tasks/phx.digest.ex",
+      "bytes": 2798,
+      "sha256": "52c118ba1a14840471a5e80bd0fe9d84dddc8bdce1517651a89e7425e06dc984"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/mix/tasks/phx.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/mix/tasks/phx.ex",
+      "bytes": 951,
+      "sha256": "bd8a667763385e8456ebb3b040a667b7a45ae37450f78fef8beaf4c712ab7b5d"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/mix/tasks/phx.gen.cert.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/mix/tasks/phx.gen.cert.ex",
+      "bytes": 8156,
+      "sha256": "8ba2b91cb6d920b93b792feb022e8ccea2544f93d641a6c7d68e86c415dd483d"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/mix/tasks/phx.gen.context.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/mix/tasks/phx.gen.context.ex",
+      "bytes": 14760,
+      "sha256": "c7c6dc0e75b25769db626143ad37d43b9c45234190e13a6352b0a6629e05b73e"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/mix/tasks/phx.gen.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/mix/tasks/phx.gen.ex",
+      "bytes": 1699,
+      "sha256": "8d358841dd94a9b10211c9be71aebcd61b0ae2aba6fa0ad2cd1f913a305f183e"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/phoenix/code_reloader/server.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/phoenix/code_reloader/server.ex",
+      "bytes": 12682,
+      "sha256": "adf4bf9a6957e00edcfdf6b0f715d4a33d7b6d6d1f366436bbf5acb575e2e66c"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/phoenix/controller/pipeline.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/phoenix/controller/pipeline.ex",
+      "bytes": 5850,
+      "sha256": "8f35016338bdc9a4efe674217dd5a552abd4e759015259ffd89796b0346a45c9"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/phoenix/digester.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/phoenix/digester.ex",
+      "bytes": 12415,
+      "sha256": "01bc50dc2769f1e6e7dcbef274cb5bbe5f93b5edee6afff58cf85b6d78731d75"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix/lib/phoenix/exceptions.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      "status": "present",
+      "path": "floor/phoenix/lib/phoenix/exceptions.ex",
+      "bytes": 2171,
+      "sha256": "8e683455ea67128a9fb36eac209372d11e1617ae591ab3d13ca41ce0d2049678"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix_live_view/lib/phoenix_component/macro_component.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.9.tar",
+      "status": "present",
+      "path": "floor/phoenix_live_view/lib/phoenix_component/macro_component.ex",
+      "bytes": 14581,
+      "sha256": "3248827532ae157eb21ab0ecac8003714e0d67049fc0e52f15930e9fb6aaac93"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.9.tar",
+      "status": "present",
+      "path": "floor/phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex",
+      "bytes": 7420,
+      "sha256": "06d0272db64b5d72559198114825b17d2b6b50e181993e81ef85db53163961eb"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix_live_view/lib/phoenix_live_view/html_algebra.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.9.tar",
+      "status": "present",
+      "path": "floor/phoenix_live_view/lib/phoenix_live_view/html_algebra.ex",
+      "bytes": 20404,
+      "sha256": "d97b6faf5b48b9172ae32d873f3e86882f1c14fb7fb7fd6895be181233f25081"
+    },
+    {
+      "lane": "floor",
+      "source_path": "phoenix_live_view/lib/phoenix_live_view/tag_engine.ex",
+      "url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.9.tar",
+      "status": "present",
+      "path": "floor/phoenix_live_view/lib/phoenix_live_view/tag_engine.ex",
+      "bytes": 9111,
+      "sha256": "8c16c90476757fb70bacf117c6fd8b8d472c79902d8bda14a8ace3c7ff7f4897"
+    },
+    {
+      "lane": "floor",
+      "source_path": "plug/lib/plug/builder.ex",
+      "url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar",
+      "status": "present",
+      "path": "floor/plug/lib/plug/builder.ex",
+      "bytes": 13225,
+      "sha256": "8d1b87dd51870df64b20e0ad203a18f072ecb47a15f11132e75e3e0ca47f766b"
+    },
+    {
+      "lane": "floor",
+      "source_path": "plug/lib/plug/debugger.ex",
+      "url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar",
+      "status": "present",
+      "path": "floor/plug/lib/plug/debugger.ex",
+      "bytes": 66981,
+      "sha256": "73d6037ae14677354d6d3ac4a97ace2d8bcf4dd3c5d295bd0dfe80cc56b82d67"
+    },
+    {
+      "lane": "floor",
+      "source_path": "runtime_tools/src/dbg.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/runtime_tools/src/dbg.erl",
+      "status": "present",
+      "path": "floor/runtime_tools/src/dbg.erl",
+      "bytes": 112878,
+      "sha256": "808aa7980e020fc529e153fc907b606fd0e2ff5fb4ad0b74e548b5eafaea0dae"
+    },
+    {
+      "lane": "floor",
+      "source_path": "runtime_tools/src/msacc.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/runtime_tools/src/msacc.erl",
+      "status": "present",
+      "path": "floor/runtime_tools/src/msacc.erl",
+      "bytes": 20045,
+      "sha256": "3f8f96f1ec501763faf6c42e9ba6aeec17243f2814cb88e71a920e4d49156f35"
+    },
+    {
+      "lane": "floor",
+      "source_path": "runtime_tools/src/system_information.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/runtime_tools/src/system_information.erl",
+      "status": "present",
+      "path": "floor/runtime_tools/src/system_information.erl",
+      "bytes": 25971,
+      "sha256": "743309839acbe8e2d4d1bd4acaabb464d490f65b5017c6300d8425891c6ca0f6"
+    },
+    {
+      "lane": "floor",
+      "source_path": "sasl/src/systools_lib.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/sasl/src/systools_lib.erl",
+      "status": "present",
+      "path": "floor/sasl/src/systools_lib.erl",
+      "bytes": 6241,
+      "sha256": "bd82435b06e1537780024dc4860011df9298aebdc3abefe73905e167d04b5fad"
+    },
+    {
+      "lane": "floor",
+      "source_path": "sasl/src/systools_relup.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/sasl/src/systools_relup.erl",
+      "status": "present",
+      "path": "floor/sasl/src/systools_relup.erl",
+      "bytes": 21106,
+      "sha256": "4f9f59a6453ed46ea495acd09b28959627bea4e5b79f28fe560fd741cefc12a1"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/c.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/c.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/c.erl",
+      "bytes": 43241,
+      "sha256": "5c6dea6873285ca917f3e08e3033a84089234d1d190302a100325c97b358880b"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/dets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/dets.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/dets.erl",
+      "bytes": 135178,
+      "sha256": "3effc6a97c38d259c070aedb028c4aa4b1f182a2430f19a318e023befe43c421"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/dets_sup.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/dets_sup.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/dets_sup.erl",
+      "bytes": 1233,
+      "sha256": "9700007c5794e45efdc765b096c013a5a2e5479f18dd91b9c25fca542b089a7b"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/dets_v9.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/dets_v9.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/dets_v9.erl",
+      "bytes": 100686,
+      "sha256": "b6c782cdc44068e7dc56e6a6026d313407e188bc6648e7d5eddf51b560bf0588"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/edlin_type_suggestion.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/edlin_type_suggestion.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/edlin_type_suggestion.erl",
+      "bytes": 25326,
+      "sha256": "ee117be17a8c31a27c110bbdb5b1236c2d23838d09bc4eb93fd64843078c89c7"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/erl_anno.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/erl_anno.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/erl_anno.erl",
+      "bytes": 14216,
+      "sha256": "31c8efae5dfbf62a98af14660ed19229639bb94857c025873f9fb79346046b50"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/erl_expand_records.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/erl_expand_records.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/erl_expand_records.erl",
+      "bytes": 35462,
+      "sha256": "1ec89406b54ed53ff44a25435917d3fcec55060e0359ddead4686e3591189e67"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/erl_features.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/erl_features.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/erl_features.erl",
+      "bytes": 19971,
+      "sha256": "b1d138eb10b8ca4a9433343f93a4533ea5ca5fa556511b123e7fe7e682d6d8ae"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/erl_internal.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/erl_internal.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/erl_internal.erl",
+      "bytes": 22139,
+      "sha256": "7d665d82f0c6a4ae48c5a2f1b1769cf32e5f9ec5c7591aa20d03ddcfa4f2deb7"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/erl_lint.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/erl_lint.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/erl_lint.erl",
+      "bytes": 187185,
+      "sha256": "b44f989b01c993bf2d0c3d255c95d7d11834bd9c78b34cfafd1b6d497047219d"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/erl_scan.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/erl_scan.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/erl_scan.erl",
+      "bytes": 85376,
+      "sha256": "6e1175072354516a34224ff3e74b57e2270798bf7b77aafc5dd3b749ac03a679"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/ets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/ets.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/ets.erl",
+      "bytes": 122215,
+      "sha256": "7aa6a3dffa303c5deaa66f582f539401abc8010d578ea95d21119c675a91425b"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/file_sorter.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/file_sorter.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/file_sorter.erl",
+      "bytes": 64820,
+      "sha256": "9286f6094ea176a1a9e7566a74a7bb05c6332ad8b326044f137b327bd87bc367"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/io.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/io.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/io.erl",
+      "bytes": 59827,
+      "sha256": "963950955ff26af688ccd76c8015ddd6c82d91110d3483bf45993ad1c5dab36c"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/io_lib.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/io_lib.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/io_lib.erl",
+      "bytes": 45825,
+      "sha256": "ed02603e72e1715eb2b18f762437620191edfa924c9dc9140fd0ceb93f8612f6"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/lists.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/lists.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/lists.erl",
+      "bytes": 119908,
+      "sha256": "5723edbbd69d555a94a3f34fabafad849130c6048c2c026e2450a09dcbbd5563"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/maps.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/maps.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/maps.erl",
+      "bytes": 36678,
+      "sha256": "bb26e21466e7592c4f493e123f315060ae8fa7d22f39f818f15cb6149b309b0c"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/orddict.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/orddict.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/orddict.erl",
+      "bytes": 15775,
+      "sha256": "f4a64a75733edb8212ebad531698289d9a6c2eb2c2e6d6d6052e08462101edb3"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/ordsets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/ordsets.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/ordsets.erl",
+      "bytes": 11030,
+      "sha256": "064acc495f9a5ddf0c1bdc9d97fa7d1b1b975b10076495dbce4babf73900f17d"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/otp_internal.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/otp_internal.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/otp_internal.erl",
+      "bytes": 14151,
+      "sha256": "9acfb074d4c217387f67a84e3c73c2d7c18b1e6d538ec4d6b3c36e67a82c560a"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/pool.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/pool.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/pool.erl",
+      "bytes": 8838,
+      "sha256": "cca59bd8153d9d6acc76485c2c68ff4b823b41cf80766f3cc48b49fd69bbeb55"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/qlc.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/qlc.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/qlc.erl",
+      "bytes": 163294,
+      "sha256": "22f280e725aa2aa98ac64fcf727733aa0dc27b0bc4450ea0fa6dc83c6ece7f9c"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/re.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/re.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/re.erl",
+      "bytes": 70857,
+      "sha256": "25b7b7cde4828533a241cf84d7b3b08617f57ddda31e7a2b7a4c4fd57452f742"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/sets.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/sets.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/sets.erl",
+      "bytes": 28101,
+      "sha256": "17bc091bd8dfe8ccf9d4ffba2429c1e53a2e1747b605ef383aab164dee95cb43"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/shell.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/shell.erl",
+      "status": "present",
+      "path": "floor/stdlib/src/shell.erl",
+      "bytes": 83337,
+      "sha256": "23c0d250c79e1a02d88e9913c57f09eaa38f6f5607d7fbf451b1648e686c64b3"
+    },
+    {
+      "lane": "floor",
+      "source_path": "syntax_tools/src/erl_prettypr.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/syntax_tools/src/erl_prettypr.erl",
+      "status": "present",
+      "path": "floor/syntax_tools/src/erl_prettypr.erl",
+      "bytes": 50626,
+      "sha256": "852b919aa9d22ee0f93db23e68d47df2a8be7cc7db5cdf290eff0d54d72d49c2"
+    },
+    {
+      "lane": "floor",
+      "source_path": "syntax_tools/src/erl_recomment.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/syntax_tools/src/erl_recomment.erl",
+      "status": "present",
+      "path": "floor/syntax_tools/src/erl_recomment.erl",
+      "bytes": 22912,
+      "sha256": "3c729f0ff351fe4fca8b675dd95c0c8a434801977ea1c1870c65c9f0014622dd"
+    },
+    {
+      "lane": "floor",
+      "source_path": "syntax_tools/src/erl_syntax.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/syntax_tools/src/erl_syntax.erl",
+      "status": "present",
+      "path": "floor/syntax_tools/src/erl_syntax.erl",
+      "bytes": 215722,
+      "sha256": "cf0f6182ce018b947cc6100d3ebe2f55a6d1393b958c5ae0dfc9dd971a98fd35"
+    },
+    {
+      "lane": "floor",
+      "source_path": "syntax_tools/src/erl_syntax_lib.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/syntax_tools/src/erl_syntax_lib.erl",
+      "status": "present",
+      "path": "floor/syntax_tools/src/erl_syntax_lib.erl",
+      "bytes": 71499,
+      "sha256": "81c38f1f0603331f4b4728603cc0b27dd95184069fba752be1a459a318ecad91"
+    },
+    {
+      "lane": "floor",
+      "source_path": "tools/src/xref.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/tools/src/xref.erl",
+      "status": "present",
+      "path": "floor/tools/src/xref.erl",
+      "bytes": 83045,
+      "sha256": "fbfa632ecf46446008e33a5e6d01418121d3d0daa8e9f7f5859820438c21fa07"
+    },
+    {
+      "lane": "floor",
+      "source_path": "tools/src/xref_base.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/tools/src/xref_base.erl",
+      "status": "present",
+      "path": "floor/tools/src/xref_base.erl",
+      "bytes": 63031,
+      "sha256": "9c95f30005ae1a9485bef2cd489427fc6bd3a7574d80ab0639cea5c02197e8d6"
+    },
+    {
+      "lane": "floor",
+      "source_path": "mix/lib/mix/compilers/protocol.ex",
+      "url": "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix/compilers/protocol.ex",
+      "status": "absent-at-immutable-ref"
+    },
+    {
+      "lane": "floor",
+      "source_path": "stdlib/src/records.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/records.erl",
+      "status": "absent-at-immutable-ref"
+    }
+  ]
+}
