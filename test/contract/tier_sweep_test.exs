@@ -722,6 +722,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   # version-pinned MFAs against the exports present on the exact installed lane.
   @logger_family_universe %{
     "core" => [
+      {"LOGGER", {Logger.Formatter, :compile, 1}},
       {"LOGGER", {Logger.Formatter, :new, 1}},
       {"LOGGER", {Logger, :configure_backend, 2}},
       {"LOGGER", {Logger, :default_formatter, 0}},
@@ -746,6 +747,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       {"EXUNIT", {ExUnit, :after_suite, 1}}
     ],
     "floor" => [
+      {"LOGGER", {Logger.Formatter, :compile, 1}},
       {"LOGGER", {Logger.Formatter, :new, 1}},
       {"LOGGER", {Logger, :configure_backend, 2}},
       {"LOGGER", {Logger, :default_formatter, 0}},
@@ -771,13 +773,15 @@ defmodule Fablebook.Contract.TierSweepTest do
     ]
   }
 
-  @logger_family_functions @logger_family_universe
-                           |> Map.values()
-                           |> List.flatten()
-                           |> Enum.map(fn {_family, {module, function, _arity}} ->
-                             {module, function}
-                           end)
-                           |> Enum.uniq()
+  @logger_family_modules [
+    Logger,
+    Logger.App,
+    Logger.Formatter,
+    ExUnit,
+    ExUnit.CaptureServer,
+    ExUnit.CaptureLog,
+    ExUnit.Runner
+  ]
 
   @logger_expected_mfas_by_lane Map.new(@logger_family_universe, fn {lane, rows} ->
                                   {lane, MapSet.new(Enum.map(rows, &elem(&1, 1)))}
@@ -789,6 +793,17 @@ defmodule Fablebook.Contract.TierSweepTest do
                         end)
 
   @logger_family_specs [
+    %{
+      family: "LOGGER",
+      mfa: {Logger.Formatter, :compile, 1},
+      disposition: :tier,
+      provenance: :caller_format_pattern,
+      trace: [{Logger.Formatter, :compile, 1}, {String, :to_atom, 1}],
+      verdict: :caller_format_pattern_reaches_atom_creation,
+      evidence: [:formatter_compile],
+      fixtures: [:generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
     %{
       family: "LOGGER",
       mfa: {Logger.Formatter, :new, 1},
@@ -1192,6 +1207,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @logger_source_evidence %{
     "core" => %{
+      formatter_compile: [
+        {"logger/lib/logger/formatter.ex:434", "def compile(pattern_or_function)"},
+        {"logger/lib/logger/formatter.ex:444", "String.to_atom(code)"}
+      ],
       formatter_input: [
         {"logger/lib/logger/formatter.ex:170", "def new(options"},
         {"logger/lib/logger/formatter.ex:171", "template = compile(options[:format])"},
@@ -1284,6 +1303,10 @@ defmodule Fablebook.Contract.TierSweepTest do
       ]
     },
     "floor" => %{
+      formatter_compile: [
+        {"logger/lib/logger/formatter.ex:397", "def compile(pattern_or_function)"},
+        {"logger/lib/logger/formatter.ex:407", "String.to_atom(code)"}
+      ],
       formatter_input: [
         {"logger/lib/logger/formatter.ex:152", "def new(options"},
         {"logger/lib/logger/formatter.ex:153", "template = compile(options[:format])"},
@@ -2254,6 +2277,56 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  test "Logger and ExUnit audit rejects newly named reached and explicitly disposed exports",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    records = Enum.filter(@creator_audit, &String.starts_with?(&1.original_id, "NEW-"))
+    tier = BannedCalls.banned_mfas()
+    new_front = {Logger.Formatter, :public_format_front, 1}
+    graph_with_new_front = add_exported_sink_caller(ctx.graph, new_front)
+
+    assert_raise ExUnit.AssertionError, ~r/public_format_front/, fn ->
+      assert_logger_audit!(records, graph_with_new_front, tier, evidence)
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/public_format_front/, fn ->
+      assert_logger_audit!(records, graph_with_new_front, tier ++ [new_front], evidence)
+    end
+
+    explicit_exclusion =
+      {{:mfa, new_front}, :pure_data, ["logger/lib/logger/formatter.ex:170"]}
+
+    assert_raise ExUnit.AssertionError, ~r/public_format_front/, fn ->
+      assert_logger_audit!(
+        records,
+        graph_with_new_front,
+        tier,
+        evidence,
+        @exclusions ++ [explicit_exclusion]
+      )
+    end
+
+    graph_with_unreached_export = %{
+      ctx.graph
+      | exported: MapSet.put(ctx.graph.exported, new_front)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/public_format_front/, fn ->
+      assert_logger_audit!(records, graph_with_unreached_export, tier ++ [new_front], evidence)
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/public_format_front/, fn ->
+      assert_logger_audit!(
+        records,
+        graph_with_unreached_export,
+        tier,
+        evidence,
+        @exclusions ++ [explicit_exclusion]
+      )
+    end
+  end
+
   @tag :tmp_dir
   test "source citations reject missing, escaped, unreadable and altered evidence", %{
     tmp_dir: dir
@@ -2697,6 +2770,16 @@ defmodule Fablebook.Contract.TierSweepTest do
     end)
   end
 
+  defp add_exported_sink_caller(graph, {module, function, arity} = mfa) do
+    sink = {:erlang, :load_module}
+
+    %{
+      graph
+      | exported: MapSet.put(graph.exported, mfa),
+        reverse: Map.update(graph.reverse, sink, [{module, function, arity}], &[mfa | &1])
+    }
+  end
+
   defp forward(edges) do
     Enum.reduce(edges, %{}, fn {{module, function, _arity}, callee}, acc ->
       Map.update(acc, {module, function}, [callee], &[callee | &1])
@@ -2948,31 +3031,35 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
 
     {reached, _parents} = reach(graph, tier, BannedCalls.banned_names())
-    family_functions = MapSet.new(@logger_family_functions)
+    family_modules = MapSet.new(@logger_family_modules)
 
-    reached_family =
-      reached
-      |> Enum.filter(fn {module, function, _arity} = mfa ->
-        MapSet.member?(graph.exported, mfa) and
-          MapSet.member?(family_functions, {module, function})
-      end)
+    family_exports =
+      graph.exported
+      |> Enum.filter(fn {module, _function, _arity} -> MapSet.member?(family_modules, module) end)
       |> MapSet.new()
 
-    explicit_family_roots =
-      Enum.filter(tier, fn {module, function, _arity} ->
-        MapSet.member?(family_functions, {module, function})
-      end) ++
-        Enum.flat_map(exclusions, fn
-          {{:mfa, {module, function, _arity} = mfa}, _reason, _citations} ->
-            if MapSet.member?(family_functions, {module, function}), do: [mfa], else: []
+    reached_family = MapSet.intersection(reached, family_exports)
 
-          _entry ->
-            []
-        end)
+    explicit_tier_roots =
+      family_tier_roots(tier, family_modules, family_exports, BannedCalls.banned_names())
 
-    live_family = MapSet.union(reached_family, MapSet.new(explicit_family_roots))
+    explicit_exclusion_roots = explicit_family_exclusion_roots(exclusions, family_exports)
+
+    live_family =
+      reached_family
+      |> MapSet.union(MapSet.new(explicit_tier_roots))
+      |> MapSet.union(MapSet.new(explicit_exclusion_roots))
 
     recorded_family = recorded_mfas
+    unrecorded_family = MapSet.difference(live_family, lane_universe)
+    missing_family = MapSet.difference(lane_universe, live_family)
+
+    assert live_family == lane_universe,
+           "Logger/ExUnit family live MFA set differs from exact-lane universe; " <>
+             "unrecorded=#{inspect(unrecorded_family)} " <>
+             "roots=#{inspect(Enum.filter(unrecorded_family, &covered?(&1, tier, BannedCalls.banned_names())))} " <>
+             "paths=#{inspect(Enum.map(unrecorded_family, &witness_line(graph, &1)))} " <>
+             "missing=#{inspect(missing_family)}"
 
     assert live_family == recorded_family,
            "Logger/ExUnit family records differ from reached exact-lane exports; " <>
@@ -3194,6 +3281,80 @@ defmodule Fablebook.Contract.TierSweepTest do
       _entry -> nil
     end)
   end
+
+  defp explicit_family_exclusion_roots(exclusions, family_exports) do
+    exact_roots =
+      Enum.flat_map(exclusions, fn
+        {{:mfa, {module, _function, _arity} = mfa}, _reason, _citations}
+        when module in @logger_family_modules ->
+          [mfa]
+
+        _entry ->
+          []
+      end)
+
+    module_scoped_roots =
+      Enum.filter(family_exports, fn {module, function, _arity} ->
+        Enum.any?(exclusions, &explicit_family_exclusion_match?(&1, module, function))
+      end)
+
+    exact_roots ++ module_scoped_roots
+  end
+
+  defp family_tier_roots(tier, family_modules, family_exports, names) do
+    tier_roots = Enum.flat_map(tier, &family_tier_root(&1, family_modules, family_exports))
+    named_roots = Enum.filter(family_exports, &covered?(&1, tier, names))
+    tier_roots ++ named_roots
+  end
+
+  defp family_tier_root({module, _function, _arity} = root, family_modules, family_exports) do
+    if MapSet.member?(family_modules, module) do
+      matching_exports = Enum.filter(family_exports, &tier_root_matches?(&1, root))
+      if matching_exports == [], do: [root], else: matching_exports
+    else
+      []
+    end
+  end
+
+  defp tier_root_matches?(
+         {module, function, arity},
+         {root_module, root_function, root_arity}
+       ),
+       do:
+         root_module == module and root_function in [:_, function] and
+           root_arity in [:_, arity]
+
+  defp explicit_family_exclusion_match?(
+         {{matcher_module, matcher_function}, _reason, _citations},
+         module,
+         function
+       )
+       when matcher_module in @logger_family_modules and is_atom(matcher_function),
+       do: matcher_module == module and matcher_function == function
+
+  defp explicit_family_exclusion_match?(
+         {{matcher_module, functions}, _reason, _citations},
+         module,
+         function
+       )
+       when matcher_module in @logger_family_modules and is_list(functions),
+       do: matcher_module == module and function in functions
+
+  defp explicit_family_exclusion_match?(
+         {{:prefix, prefix}, _reason, _citations},
+         module,
+         _function
+       ),
+       do: String.starts_with?(inspect(module), prefix)
+
+  defp explicit_family_exclusion_match?({module, _reason}, module, _function)
+       when module in @logger_family_modules,
+       do: true
+
+  defp explicit_family_exclusion_match?({{:prefix, prefix}, _reason}, module, _function),
+    do: String.starts_with?(inspect(module), prefix)
+
+  defp explicit_family_exclusion_match?(_entry, _module, _function), do: false
 
   defp exclusion_reason(m, f, exclusions) do
     Enum.find_value(exclusions, fn
