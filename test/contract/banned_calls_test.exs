@@ -575,6 +575,9 @@ defmodule Fablebook.Contract.BannedCallsTest do
   test "every ct_make export is caught through uncalled direct, capture and apply bodies", %{
     tmp_dir: dir
   } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
     load_tier_apps()
 
     fronts = [
@@ -634,6 +637,9 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
   @tag :tmp_dir
   test "ct_make calls inside uninvoked macros remain source-only controls", %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
     load_tier_apps()
 
     fronts = [
