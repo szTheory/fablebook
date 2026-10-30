@@ -507,7 +507,9 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
-  test "source-only fixtures raise a Credo issue and pass the BEAM walker (pinned)", %{tmp_dir: dir} do
+  test "source-only fixtures raise a Credo issue and pass the BEAM walker (pinned)", %{
+    tmp_dir: dir
+  } do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
 
