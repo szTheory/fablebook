@@ -202,7 +202,7 @@ defmodule Fablebook.Contract.TierSweepTest do
           {"common_test/src/ct_make.erl:269", "include_opt([{i,Path}|Rest]) ->"},
           {"common_test/src/ct_make.erl:270", "[Path|include_opt(Rest)];"},
           {"common_test/src/ct_make.erl:271", "include_opt([_First|Rest]) ->"},
-          {"common_test/src/ct_make.erl:272", "include_opt([]) ->"},
+          {"common_test/src/ct_make.erl:273", "include_opt([]) ->"},
           {"common_test/src/ct_make.erl:280", "recompile(File, NoExec, Load, Opts) ->"},
           {"common_test/src/ct_make.erl:354", "check_includes(File, IncludePath, ObjMTime) ->"},
           {"common_test/src/ct_make.erl:355", "Path = [filename:dirname(File)|IncludePath],"},
@@ -316,7 +316,7 @@ defmodule Fablebook.Contract.TierSweepTest do
           {"common_test/src/ct_make.erl:265", "include_opt([{i,Path}|Rest]) ->"},
           {"common_test/src/ct_make.erl:266", "[Path|include_opt(Rest)];"},
           {"common_test/src/ct_make.erl:267", "include_opt([_First|Rest]) ->"},
-          {"common_test/src/ct_make.erl:268", "include_opt([]) ->"},
+          {"common_test/src/ct_make.erl:269", "include_opt([]) ->"},
           {"common_test/src/ct_make.erl:276", "recompile(File, NoExec, Load, Opts) ->"},
           {"common_test/src/ct_make.erl:350", "check_includes(File, IncludePath, ObjMTime) ->"},
           {"common_test/src/ct_make.erl:351", "Path = [filename:dirname(File)|IncludePath],"},
@@ -2550,8 +2550,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> MapSet.new()
 
     expected_active_apps =
-      Enum.map(graph.historical_active_otp_apps, &Atom.to_string/1) ++
-        Enum.map(@elixir_apps, &Atom.to_string/1) ++ graph.closure
+      graph.historical_active_otp_apps ++ Enum.map(@elixir_apps, &Atom.to_string/1) ++ graph.closure
 
     assert active_apps == MapSet.new(expected_active_apps)
 
