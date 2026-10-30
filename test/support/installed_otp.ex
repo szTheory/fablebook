@@ -5,7 +5,26 @@ defmodule Fablebook.Test.InstalledOtp do
   alias Fablebook.Test.BeamWalker
   alias Fablebook.Test.SweepEvidence
 
-  @marker "FABLEBOOK_OTP_INVENTORY_V1 "
+  @marker "FABLEBOOK_OTP_INVENTORY_V2 "
+  @record_kinds ~w(
+                  meta
+                  app
+                  beam
+                  source_app
+                  source_file
+                  active_app
+                  active_module
+                  active_export
+                  active_edge
+                  export
+                  reached
+                  boundary
+                  pending_app
+                  pending_module
+                  pending_mfa
+                  metrics
+                  footer
+                )
   @lanes %{
     "core" => %{elixir: "1.20.4", otp: "29.1.2"},
     "floor" => %{elixir: "1.18.5", otp: "27.3.4.9"}
@@ -21,6 +40,7 @@ defmodule Fablebook.Test.InstalledOtp do
 
   def discover!(root, opts \\ []) do
     lane = Keyword.get(opts, :lane, lane_name())
+    beam_chunks = Keyword.get(opts, :beam_chunks, &:beam_lib.chunks/2)
     root = Path.expand(root)
     ensure_directory!(root, %{lane: lane, root: root})
 
@@ -33,7 +53,7 @@ defmodule Fablebook.Test.InstalledOtp do
 
         case File.lstat(path) do
           {:ok, %{type: :directory}} ->
-            [discover_app!(name, path, lane)]
+            [discover_app!(name, path, lane, beam_chunks)]
 
           {:ok, %{type: :symlink}} ->
             fail!(:app_root_symlink, %{lane: lane, path: relative(root, path)})
@@ -123,10 +143,71 @@ defmodule Fablebook.Test.InstalledOtp do
     end)
   end
 
+  def assert_discovery_complete!(root, discovered, opts \\ []) do
+    lane = Keyword.get(opts, :lane, lane_name())
+    installed = raw_inventory!(root, lane)
+
+    expected =
+      Map.new(discovered, fn app ->
+        {app.relative, MapSet.new(app.beams, &Path.basename(&1.relative, ".beam"))}
+      end)
+
+    expected_names = MapSet.new(Map.keys(installed))
+    actual_names = MapSet.new(Map.keys(expected))
+
+    missing_apps = MapSet.difference(expected_names, actual_names)
+    extra_apps = MapSet.difference(actual_names, expected_names)
+
+    beam_mismatches =
+      Enum.flat_map(installed, fn {app, modules} ->
+        actual_modules = Map.get(expected, app, MapSet.new())
+        missing = MapSet.difference(modules, actual_modules)
+        extra = MapSet.difference(actual_modules, modules)
+
+        if MapSet.size(missing) + MapSet.size(extra) == 0,
+          do: [],
+          else: [
+            %{
+              app: app,
+              missing_beams: MapSet.to_list(missing),
+              extra_beams: MapSet.to_list(extra)
+            }
+          ]
+      end)
+
+    if MapSet.size(missing_apps) > 0 or MapSet.size(extra_apps) > 0 or beam_mismatches != [] do
+      fail!(:discovery_parity, %{
+        lane: lane,
+        missing_apps: MapSet.to_list(missing_apps),
+        extra_apps: MapSet.to_list(extra_apps),
+        beam_mismatches: beam_mismatches
+      })
+    end
+
+    :ok
+  end
+
+  def source_inventory!(apps, inspected, opts \\ []) do
+    lane = Keyword.get(opts, :lane, lane_name())
+    reader = Keyword.get(opts, :source_reader, &File.read/1)
+    required_modules = opts |> Keyword.get(:required_modules, []) |> module_names()
+
+    Enum.map(apps, fn app ->
+      source_app!(
+        app,
+        Enum.filter(inspected, &(&1.app == app.app)),
+        lane,
+        reader,
+        required_modules
+      )
+    end)
+  end
+
   def add_directory!(xref, app, opts \\ []) do
     lane = Keyword.get(opts, :lane, lane_name())
+    add_directory = Keyword.get(opts, :add_directory, &:xref.add_directory/2)
 
-    case :xref.add_directory(xref, String.to_charlist(app.ebin)) do
+    case add_directory.(xref, String.to_charlist(app.ebin)) do
       {:ok, modules} when is_list(modules) ->
         rows = Enum.map(modules, &%{app: app.app, module: Atom.to_string(&1), module_atom: &1})
         assert_unique!(rows, :xref, lane)
@@ -181,11 +262,52 @@ defmodule Fablebook.Test.InstalledOtp do
     inspected_by_id = Map.new(inspected, &{{&1.app, &1.module}, &1})
     ingested_ids = identities(ingested)
 
+    sources =
+      Map.get_lazy(receipt, :sources, fn ->
+        source_inventory!(discovered, inspected, lane: lane.name)
+      end)
+
+    source_apps = Map.new(sources, &{&1.app, &1})
+
+    source_beams =
+      Map.new(sources, fn source ->
+        {source.app, Map.new(source.beams, &{&1.module, &1})}
+      end)
+
+    source_file_records =
+      Enum.flat_map(sources, fn source ->
+        source.source_files
+        |> Enum.sort_by(&elem(&1, 0))
+        |> Enum.map(fn {path, bytes} ->
+          %{"kind" => "source_file", "app" => source.app, "path" => path, "bytes" => bytes}
+        end)
+      end)
+
+    active_records = Map.get(receipt, :active_membership, [])
+    export_records = Map.get(receipt, :export_records, [])
+    reached_records = Map.get(receipt, :reached_records, [])
+    boundary_records = Map.get(receipt, :boundary_records, [])
+    pending_records = Map.get(receipt, :pending_records, [])
+
+    metrics =
+      Map.get_lazy(receipt, :metrics, fn ->
+        default_metrics(
+          discovered,
+          inspected,
+          sources,
+          active_records,
+          export_records,
+          reached_records,
+          boundary_records,
+          pending_records
+        )
+      end)
+
     records =
       [
         %{
           "kind" => "meta",
-          "schema" => "fablebook.otp-inventory.v1",
+          "schema" => "fablebook.otp-inventory.v2",
           "lane" => lane.name,
           "elixir" => lane.elixir,
           "otp" => lane.otp,
@@ -197,12 +319,16 @@ defmodule Fablebook.Test.InstalledOtp do
             "kind" => "app",
             "app" => app.app,
             "version" => app.version,
-            "path" => app.relative
+            "path" => app.relative,
+            "source_dir_status" => Map.fetch!(source_apps, app.app).source_dir_status,
+            "source_file_count" => Map.fetch!(source_apps, app.app).source_file_count,
+            "source_bytes" => Map.fetch!(source_apps, app.app).source_bytes
           }
 
           beam_records =
             Enum.map(app.beams, fn beam ->
               inspection = Map.fetch!(inspected_by_id, {app.app, beam.module})
+              source = Map.fetch!(source_beams[app.app], beam.module)
 
               %{
                 "kind" => "beam",
@@ -217,12 +343,41 @@ defmodule Fablebook.Test.InstalledOtp do
                     else: "missing"
                   ),
                 "function_count" => inspection.function_count,
-                "source" => safe_source(app.app, app.relative, inspection.source)
+                "function_bytes" => inspection.function_bytes,
+                "beam_bytes" => File.stat!(beam.path).size,
+                "source" => source.source,
+                "source_status" => source.status,
+                "source_bytes" => source.bytes
               }
             end)
 
           [app_record | beam_records]
         end)
+
+    source_app_records =
+      Enum.map(sources, fn source ->
+        %{
+          "kind" => "source_app",
+          "app" => source.app,
+          "version" => source.version,
+          "source_dir_status" => source.source_dir_status,
+          "source_file_count" => source.source_file_count,
+          "source_bytes" => source.source_bytes,
+          "mapped_beams" => source.mapped_beams,
+          "missing_source_beams" => source.missing_source_beams,
+          "unavailable_source_beams" => source.unavailable_source_beams
+        }
+      end)
+
+    measurement_record = Map.put(metrics, "kind", "metrics")
+
+    records =
+      records ++
+        source_app_records ++
+        source_file_records ++
+        active_records ++
+        export_records ++
+        reached_records ++ boundary_records ++ pending_records ++ [measurement_record]
 
     encoded = Enum.map(records, &([@marker, JSON.encode!(&1)] |> IO.iodata_to_binary()))
     digest = sha256(Enum.join(encoded, "\n") <> "\n")
@@ -231,6 +386,12 @@ defmodule Fablebook.Test.InstalledOtp do
       "kind" => "footer",
       "apps" => length(discovered),
       "beams" => length(inspected),
+      "source_files" => length(source_file_records),
+      "active_records" => length(active_records),
+      "export_records" => length(export_records),
+      "reached_records" => length(reached_records),
+      "boundary_records" => length(boundary_records),
+      "pending_records" => length(pending_records),
       "sha256" => digest
     }
 
@@ -250,14 +411,63 @@ defmodule Fablebook.Test.InstalledOtp do
     body = Enum.drop(records, -1)
     beam_rows = Enum.filter(body, &(&1["kind"] == "beam"))
     app_rows = Enum.filter(body, &(&1["kind"] == "app"))
+    source_app_rows = Enum.filter(body, &(&1["kind"] == "source_app"))
+    source_file_rows = Enum.filter(body, &(&1["kind"] == "source_file"))
+    active_rows = Enum.filter(body, &String.starts_with?(&1["kind"] || "", "active_"))
+    export_rows = Enum.filter(body, &(&1["kind"] == "export"))
+    reached_rows = Enum.filter(body, &(&1["kind"] == "reached"))
+    boundary_rows = Enum.filter(body, &(&1["kind"] == "boundary"))
+    pending_rows = Enum.filter(body, &String.starts_with?(&1["kind"] || "", "pending_"))
+    metric_rows = Enum.filter(body, &(&1["kind"] == "metrics"))
 
     validate_receipt_meta!(meta)
-    validate_receipt_footer!(footer, app_rows, beam_rows, Enum.drop(lines, -1))
+
+    footer_counts = %{
+      "apps" => length(app_rows),
+      "beams" => length(beam_rows),
+      "source_files" => length(source_file_rows),
+      "active_records" => length(active_rows),
+      "export_records" => length(export_rows),
+      "reached_records" => length(reached_rows),
+      "boundary_records" => length(boundary_rows),
+      "pending_records" => length(pending_rows)
+    }
+
+    validate_receipt_footer!(footer, footer_counts, Enum.drop(lines, -1))
+
     validate_receipt_rows!(app_rows, beam_rows)
+    validate_source_rows!(app_rows, beam_rows, source_app_rows, source_file_rows)
+    validate_membership_rows!(active_rows, export_rows, reached_rows, boundary_rows, pending_rows)
+
+    validate_receipt_links!(%{
+      apps: app_rows,
+      beams: beam_rows,
+      source_files: source_file_rows,
+      membership: active_rows ++ export_rows ++ reached_rows ++ boundary_rows ++ pending_rows
+    })
+
+    validate_receipt_metrics!(metric_rows, %{
+      apps: app_rows,
+      beams: beam_rows,
+      source_files: source_file_rows,
+      active: active_rows,
+      exports: export_rows,
+      reached: reached_rows,
+      boundaries: boundary_rows,
+      pending: pending_rows
+    })
+
     validate_lane!(meta["lane"], meta["elixir"], meta["otp"])
     validate_lock!(meta["lane"], meta["lock_sha256"], lock_digests)
 
-    %{lane: meta["lane"], apps: app_rows, beams: beam_rows, sha256: footer["sha256"]}
+    %{
+      lane: meta["lane"],
+      apps: app_rows,
+      beams: beam_rows,
+      metrics: hd(metric_rows),
+      pending: pending_rows,
+      sha256: footer["sha256"]
+    }
   end
 
   def extract_receipt!(log_path, receipt_path) do
@@ -318,7 +528,7 @@ defmodule Fablebook.Test.InstalledOtp do
     end)
   end
 
-  defp discover_app!(name, path, lane) do
+  defp discover_app!(name, path, lane, beam_chunks) do
     app = read_app_resource!(name, path, lane)
 
     beams =
@@ -326,7 +536,7 @@ defmodule Fablebook.Test.InstalledOtp do
       |> File.ls!()
       |> Enum.filter(&String.ends_with?(&1, ".beam"))
       |> Enum.sort()
-      |> Enum.map(fn file -> read_beam_identity!(app, file, lane) end)
+      |> Enum.map(fn file -> read_beam_identity!(app, file, lane, beam_chunks) end)
 
     duplicate =
       beams
@@ -411,13 +621,13 @@ defmodule Fablebook.Test.InstalledOtp do
       fail!(:app_resource_read, %{lane: lane, app_root: name, error: Exception.message(error)})
   end
 
-  defp read_beam_identity!(app, file, lane) do
+  defp read_beam_identity!(app, file, lane, beam_chunks) do
     path = Path.join(app.ebin, file)
     relative_path = Path.join([app.relative, "ebin", file])
     ensure_regular_file!(path, %{lane: lane, app: app.app, beam: relative_path})
 
     module =
-      case :beam_lib.chunks(String.to_charlist(path), []) do
+      case beam_chunks.(String.to_charlist(path), []) do
         {:ok, {module, []}} when is_atom(module) ->
           Atom.to_string(module)
 
@@ -445,17 +655,211 @@ defmodule Fablebook.Test.InstalledOtp do
     %{app: app.app, version: app.version, module: module, path: path, relative: relative_path}
   end
 
+  defp source_app!(app, inspected, lane, reader, required_modules) do
+    source_root = Path.join(app.root, "src")
+    {source_dir_status, files} = source_tree!(source_root, app, lane, reader)
+
+    beams =
+      Enum.map(inspected, fn beam ->
+        relative_source = source_mapping!(app, beam, lane)
+
+        status =
+          if is_nil(relative_source),
+            do: "unavailable",
+            else: source_status(files, relative_source)
+
+        if MapSet.member?(required_modules, beam.module) and status != "present" do
+          fail!(:required_source_missing, %{
+            lane: lane,
+            app: app.app,
+            beam: beam.relative,
+            source: relative_source,
+            status: status
+          })
+        end
+
+        %{
+          module: beam.module,
+          source: relative_source,
+          status: status,
+          bytes: if(status == "present", do: Map.fetch!(files, relative_source), else: nil)
+        }
+      end)
+
+    %{
+      app: app.app,
+      version: app.version,
+      source_dir_status: source_dir_status,
+      source_file_count: map_size(files),
+      source_bytes: Enum.sum(Map.values(files)),
+      source_files: files,
+      mapped_beams: Enum.count(beams, &(&1.status == "present")),
+      missing_source_beams: Enum.count(beams, &(&1.status == "missing")),
+      unavailable_source_beams: Enum.count(beams, &(&1.status == "unavailable")),
+      beams: beams
+    }
+  end
+
+  defp source_tree!(source_root, app, lane, reader) do
+    case File.lstat(source_root) do
+      {:ok, %{type: :directory}} ->
+        {"present", walk_source_tree!(app.root, source_root, app, lane, reader, %{})}
+
+      {:error, :enoent} ->
+        {"missing", %{}}
+
+      {:error, reason} ->
+        fail!(:source_directory_unreadable, %{lane: lane, app: app.app, reason: reason})
+
+      {:ok, stat} ->
+        fail!(:source_directory_type, %{lane: lane, app: app.app, type: stat.type})
+    end
+  end
+
+  defp walk_source_tree!(root, directory, app, lane, reader, files) do
+    children =
+      case File.ls(directory) do
+        {:ok, names} ->
+          Enum.sort(names)
+
+        {:error, reason} ->
+          fail!(:source_directory_unreadable, %{
+            lane: lane,
+            app: app.app,
+            path: relative(root, directory),
+            reason: reason
+          })
+      end
+
+    Enum.reduce(children, files, fn name, acc ->
+      path = Path.join(directory, name)
+
+      case File.lstat(path) do
+        {:ok, %{type: :directory}} ->
+          walk_source_tree!(root, path, app, lane, reader, acc)
+
+        {:ok, %{type: :regular}} ->
+          relative_path = Path.relative_to(path, root)
+          Map.put(acc, relative_path, source_file_size!(path, app, lane, reader))
+
+        {:ok, %{type: :symlink}} ->
+          validate_source_link!(root, path, app, lane)
+
+        {:ok, stat} ->
+          fail!(:source_file_type, %{
+            lane: lane,
+            app: app.app,
+            path: relative(root, path),
+            type: stat.type
+          })
+
+        {:error, reason} ->
+          fail!(:source_file_unreadable, %{
+            lane: lane,
+            app: app.app,
+            path: relative(root, path),
+            reason: reason
+          })
+      end
+    end)
+  end
+
+  defp source_file_size!(path, app, lane, reader) do
+    case reader.(path) do
+      {:ok, bytes} when is_binary(bytes) ->
+        byte_size(bytes)
+
+      {:error, reason} ->
+        fail!(:source_file_unreadable, %{
+          lane: lane,
+          app: app.app,
+          path: Path.basename(path),
+          reason: reason
+        })
+
+      other ->
+        fail!(:source_read_result, %{
+          lane: lane,
+          app: app.app,
+          path: Path.basename(path),
+          result: inspect(other)
+        })
+    end
+  rescue
+    error ->
+      fail!(:source_file_unreadable, %{
+        lane: lane,
+        app: app.app,
+        path: Path.basename(path),
+        error: Exception.message(error)
+      })
+  end
+
+  defp validate_source_link!(root, path, app, lane) do
+    target =
+      case File.read_link(path) do
+        {:ok, link} ->
+          Path.expand(link, Path.dirname(path))
+
+        {:error, reason} ->
+          fail!(:source_link_unreadable, %{
+            lane: lane,
+            app: app.app,
+            path: relative(root, path),
+            reason: reason
+          })
+      end
+
+    unless path_within?(root, target),
+      do:
+        fail!(:source_escape, %{
+          lane: lane,
+          app: app.app,
+          path: relative(root, path),
+          target: relative(root, target)
+        })
+
+    fail!(:source_symlink, %{lane: lane, app: app.app, path: relative(root, path)})
+  end
+
+  defp source_mapping!(app, beam, lane) do
+    case safe_source(app.app, app.relative, beam.source) do
+      nil when is_nil(beam.source) ->
+        nil
+
+      nil ->
+        fail!(:source_escape, %{
+          lane: lane,
+          app: app.app,
+          beam: beam.relative,
+          source: beam.source
+        })
+
+      path ->
+        path
+    end
+  end
+
+  defp source_status(files, path),
+    do: if(Map.has_key?(files, path), do: "present", else: "missing")
+
+  defp path_within?(root, path) do
+    root = Path.expand(root)
+    path = Path.expand(path)
+    path == root or String.starts_with?(path, root <> "/")
+  end
+
+  defp module_names(modules) do
+    MapSet.new(modules, fn module ->
+      if is_atom(module), do: Atom.to_string(module), else: module
+    end)
+  end
+
   defp parse_lines!(lines) do
     unless Enum.all?(lines, &String.starts_with?(&1, @marker)),
       do: fail!(:receipt_marker, :missing_or_invalid)
 
-    records =
-      Enum.map(lines, fn line ->
-        case JSON.decode(String.replace_prefix(line, @marker, "")) do
-          {:ok, row} when is_map(row) -> row
-          result -> fail!(:receipt_json, inspect(result))
-        end
-      end)
+    records = Enum.map(lines, &decode_receipt_line!/1)
 
     kinds = Enum.map(records, & &1["kind"])
 
@@ -465,21 +869,87 @@ defmodule Fablebook.Test.InstalledOtp do
     unless Enum.count(kinds, &(&1 == "footer")) == 1 and Enum.count(kinds, &(&1 == "meta")) == 1,
       do: fail!(:receipt_duplicate_record, kinds)
 
+    unknown = Enum.reject(kinds, &(&1 in @record_kinds))
+    if unknown != [], do: fail!(:receipt_record_kind, unknown)
+
     records
   end
 
+  defp decode_receipt_line!(line) do
+    case JSON.decode(String.replace_prefix(line, @marker, "")) do
+      {:ok, row} when is_map(row) -> row
+      result -> fail!(:receipt_json, inspect(result))
+    end
+  end
+
+  defp raw_inventory!(root, lane) do
+    root = Path.expand(root)
+    ensure_directory!(root, %{lane: lane, root: root})
+
+    root
+    |> File.ls!()
+    |> Enum.sort()
+    |> Enum.reduce(%{}, fn name, inventory ->
+      path = Path.join(root, name)
+
+      case File.lstat(path) do
+        {:ok, %{type: :directory}} ->
+          Map.put(inventory, name, raw_app_modules!(path, name, lane))
+
+        {:ok, %{type: :symlink}} ->
+          fail!(:app_root_symlink, %{lane: lane, path: name})
+
+        {:ok, %{type: :regular}} ->
+          inventory
+
+        {:ok, stat} ->
+          fail!(:app_root_type, %{lane: lane, path: name, type: stat.type})
+
+        {:error, reason} ->
+          fail!(:app_root_unreadable, %{lane: lane, path: name, reason: reason})
+      end
+    end)
+  rescue
+    error in Error -> reraise error, __STACKTRACE__
+    error -> fail!(:raw_inventory, %{lane: lane, root: root, error: Exception.message(error)})
+  end
+
+  defp raw_app_modules!(path, name, lane) do
+    ebin = Path.join(path, "ebin")
+    ensure_directory!(ebin, %{lane: lane, app_root: name, ebin: "#{name}/ebin"})
+
+    ebin
+    |> File.ls!()
+    |> Enum.filter(&String.ends_with?(&1, ".beam"))
+    |> Enum.map(fn file ->
+      beam_path = Path.join(ebin, file)
+
+      ensure_regular_file!(beam_path, %{
+        lane: lane,
+        app_root: name,
+        beam: "#{name}/ebin/#{file}"
+      })
+
+      String.replace_suffix(file, ".beam", "")
+    end)
+    |> MapSet.new()
+  end
+
   defp validate_receipt_meta!(meta) do
-    unless meta["kind"] == "meta" and meta["schema"] == "fablebook.otp-inventory.v1",
+    unless meta["kind"] == "meta" and meta["schema"] == "fablebook.otp-inventory.v2",
       do: fail!(:receipt_meta, meta)
   end
 
-  defp validate_receipt_footer!(footer, app_rows, beam_rows, body_lines) do
-    valid =
-      footer["kind"] == "footer" and footer["apps"] == length(app_rows) and
-        footer["beams"] == length(beam_rows) and
-        footer["sha256"] == sha256(Enum.join(body_lines, "\n") <> "\n")
+  defp validate_receipt_footer!(footer, expected_counts, body_lines) do
+    count_mismatches =
+      Enum.reject(expected_counts, fn {key, expected} -> footer[key] == expected end)
 
-    unless valid, do: fail!(:receipt_footer, footer)
+    expected_digest = sha256(Enum.join(body_lines, "\n") <> "\n")
+
+    unless footer["kind"] == "footer" and count_mismatches == [] and
+             footer["sha256"] == expected_digest do
+      fail!(:receipt_footer, %{footer: footer, count_mismatches: count_mismatches})
+    end
   end
 
   defp validate_receipt_rows!(app_rows, beam_rows) do
@@ -487,6 +957,240 @@ defmodule Fablebook.Test.InstalledOtp do
     validate_unique_apps!(app_rows)
     validate_unique_beams!(beam_rows)
     validate_beam_app_links!(app_rows, beam_rows)
+  end
+
+  defp validate_source_rows!(app_rows, beam_rows, source_app_rows, source_file_rows) do
+    apps = Map.new(app_rows, &{&1["app"], &1["version"]})
+    source_apps = Map.new(source_app_rows, &{&1["app"], &1})
+
+    problems = %{
+      source_apps: invalid_source_app_rows(app_rows, source_app_rows),
+      source_files: invalid_source_file_rows(apps, source_file_rows),
+      file_totals: invalid_source_file_totals(app_rows, source_apps, source_file_rows),
+      beam_totals: invalid_source_beam_totals(source_app_rows, beam_rows),
+      beam_rows: invalid_source_beam_rows(source_apps, beam_rows)
+    }
+
+    if length(source_app_rows) != length(app_rows) or map_size(source_apps) != length(app_rows) or
+         Enum.any?(Map.values(problems), &(&1 != [])) do
+      fail!(
+        :receipt_source_records,
+        Map.put(problems, :source_app_count, length(source_app_rows))
+      )
+    end
+  end
+
+  defp invalid_source_app_rows(app_rows, source_rows) do
+    app_versions = Map.new(app_rows, &{&1["app"], &1["version"]})
+
+    invalid =
+      Enum.reject(source_rows, fn row ->
+        app_versions[row["app"]] == row["version"] and
+          row["source_dir_status"] in ["present", "missing"] and
+          Enum.all?(
+            ~w(source_file_count source_bytes mapped_beams missing_source_beams unavailable_source_beams),
+            &valid_byte_count?(row[&1])
+          )
+      end)
+
+    duplicate =
+      source_rows
+      |> Enum.group_by(& &1["app"])
+      |> Enum.filter(fn {_app, rows} -> length(rows) > 1 end)
+
+    invalid ++ duplicate
+  end
+
+  defp invalid_source_file_rows(apps, rows) do
+    invalid =
+      Enum.reject(rows, fn row ->
+        is_binary(apps[row["app"]]) and safe_receipt_path?(row["path"]) and
+          String.starts_with?(row["path"], "src/") and
+          valid_byte_count?(row["bytes"])
+      end)
+
+    duplicate =
+      rows
+      |> Enum.group_by(&{&1["app"], &1["path"]})
+      |> Enum.filter(fn {_path, records} -> length(records) > 1 end)
+
+    invalid ++ duplicate
+  end
+
+  defp invalid_source_file_totals(app_rows, source_apps, source_file_rows) do
+    grouped_files = Enum.group_by(source_file_rows, & &1["app"])
+
+    Enum.flat_map(app_rows, fn app ->
+      source = source_apps[app["app"]]
+      files = Map.get(grouped_files, app["app"], [])
+      actual_count = length(files)
+      actual_bytes = Enum.sum(Enum.map(files, &(&1["bytes"] || 0)))
+
+      if is_map(source) and source["source_file_count"] == actual_count and
+           source["source_bytes"] == actual_bytes and app["source_file_count"] == actual_count and
+           app["source_bytes"] == actual_bytes do
+        []
+      else
+        [
+          %{
+            app: app["app"],
+            source_app: source,
+            actual_files: actual_count,
+            actual_bytes: actual_bytes
+          }
+        ]
+      end
+    end)
+  end
+
+  defp invalid_source_beam_totals(source_app_rows, beam_rows) do
+    Enum.flat_map(source_app_rows, fn source ->
+      beams = Enum.filter(beam_rows, &(&1["app"] == source["app"]))
+
+      counts = %{
+        "mapped_beams" => Enum.count(beams, &(&1["source_status"] == "present")),
+        "missing_source_beams" => Enum.count(beams, &(&1["source_status"] == "missing")),
+        "unavailable_source_beams" => Enum.count(beams, &(&1["source_status"] == "unavailable"))
+      }
+
+      mismatches = Enum.reject(counts, fn {key, value} -> source[key] == value end)
+      if mismatches == [], do: [], else: [%{app: source["app"], mismatches: mismatches}]
+    end)
+  end
+
+  defp invalid_source_beam_rows(source_apps, beam_rows) do
+    Enum.reject(beam_rows, fn row ->
+      is_map(source_apps[row["app"]]) and valid_source_beam_row?(row)
+    end)
+  end
+
+  defp validate_receipt_links!(context) do
+    app_names = MapSet.new(context.apps, & &1["app"])
+    beam_ids = MapSet.new(context.beams, &{&1["app"], &1["module"]})
+
+    source_files =
+      Map.new(context.source_files, &{{&1["app"], &1["path"]}, &1["bytes"]})
+
+    invalid_sources = Enum.reject(context.beams, &valid_source_mapping?(&1, source_files))
+
+    invalid_membership =
+      Enum.reject(context.membership, &valid_membership_link?(&1, app_names, beam_ids))
+
+    if invalid_sources != [] or invalid_membership != [] do
+      fail!(:receipt_links, %{sources: invalid_sources, membership: invalid_membership})
+    end
+  end
+
+  defp valid_source_mapping?(
+         %{"source_status" => "present", "source" => source, "source_bytes" => bytes} = row,
+         files
+       ),
+       do: Map.get(files, {row["app"], source}) == bytes
+
+  defp valid_source_mapping?(
+         %{"source_status" => "missing", "source" => source, "source_bytes" => nil} = row,
+         files
+       ),
+       do: not Map.has_key?(files, {row["app"], source})
+
+  defp valid_source_mapping?(
+         %{"source_status" => "unavailable", "source" => nil, "source_bytes" => nil},
+         _files
+       ),
+       do: true
+
+  defp valid_source_mapping?(_row, _files), do: false
+
+  defp valid_membership_link?(%{"kind" => "pending_app", "app" => app}, app_names, _beam_ids),
+    do: MapSet.member?(app_names, app)
+
+  defp valid_membership_link?(
+         %{"kind" => "pending_module", "app" => app, "module" => module},
+         _app_names,
+         beam_ids
+       ),
+       do: MapSet.member?(beam_ids, {app, module})
+
+  defp valid_membership_link?(
+         %{"kind" => "pending_mfa", "app" => app, "module" => module},
+         _app_names,
+         beam_ids
+       ),
+       do: MapSet.member?(beam_ids, {app, module})
+
+  defp valid_membership_link?(%{"kind" => "active_app", "app" => app}, _app_names, _beam_ids),
+    do: is_binary(app)
+
+  defp valid_membership_link?(%{"app" => app, "module" => module}, app_names, beam_ids) do
+    not MapSet.member?(app_names, app) or MapSet.member?(beam_ids, {app, module})
+  end
+
+  defp valid_membership_link?(_row, _app_names, _beam_ids), do: false
+
+  defp validate_membership_rows!(
+         active_rows,
+         export_rows,
+         reached_rows,
+         boundary_rows,
+         pending_rows
+       ) do
+    all = active_rows ++ export_rows ++ reached_rows ++ boundary_rows ++ pending_rows
+    invalid = Enum.reject(all, &valid_membership_row?/1)
+
+    duplicate =
+      all
+      |> Enum.group_by(&receipt_membership_key/1)
+      |> Enum.filter(fn {_key, rows} -> length(rows) > 1 end)
+
+    pending_invalid = Enum.reject(pending_rows, &valid_pending_record?/1)
+
+    unless invalid == [] and duplicate == [] and pending_invalid == [] do
+      fail!(:receipt_membership_records, %{
+        invalid: invalid,
+        duplicate: duplicate,
+        pending_invalid: pending_invalid
+      })
+    end
+  end
+
+  defp valid_membership_row?(%{"kind" => kind, "app" => app})
+       when kind in ["active_app", "pending_app"] and is_binary(app),
+       do: true
+
+  defp valid_membership_row?(%{"kind" => kind, "app" => app, "module" => module})
+       when kind in ["active_module", "pending_module"] and is_binary(app) and is_binary(module),
+       do: true
+
+  defp valid_membership_row?(%{"kind" => "active_edge"} = row) do
+    is_binary(row["app"]) and valid_mfa_fields?(row) and is_binary(row["callee_module"]) and
+      is_binary(row["callee_function"])
+  end
+
+  defp valid_membership_row?(%{"kind" => kind} = row)
+       when kind in ["active_export", "export", "reached", "boundary", "pending_mfa"],
+       do: is_binary(row["app"]) and valid_mfa_fields?(row)
+
+  defp valid_membership_row?(_row), do: false
+
+  defp valid_pending_record?(%{"kind" => "pending_app", "owner" => "01.1.1.3", "app" => app}),
+    do: is_binary(app)
+
+  defp valid_pending_record?(%{"kind" => "pending_module", "owner" => "01.1.1.3"} = row) do
+    is_binary(row["app"]) and is_binary(row["module"]) and
+      valid_function_count?(row["function_count"]) and valid_byte_count?(row["function_bytes"]) and
+      valid_source_beam_row?(row)
+  end
+
+  defp valid_pending_record?(%{"kind" => "pending_mfa", "owner" => "01.1.1.3"} = row) do
+    valid_membership_row?(row) and is_list(row["caller_chain"]) and row["caller_chain"] != [] and
+      Enum.all?(row["caller_chain"], &is_binary/1)
+  end
+
+  defp valid_pending_record?(_row), do: false
+
+  defp valid_mfa_fields?(row) do
+    is_binary(row["module"]) and is_binary(row["function"]) and
+      is_integer(row["arity"]) and row["arity"] >= 0
   end
 
   defp validate_nonempty_inventory!(discovered, inspected, ingested) do
@@ -558,7 +1262,155 @@ defmodule Fablebook.Test.InstalledOtp do
 
     valid_app_version?(app, version) and valid_module?(module) and valid_beam_path?(path, module) and
       row["inspection"] == "ok" and row["xref"] == "ok" and
-      valid_function_count?(row["function_count"])
+      valid_function_count?(row["function_count"]) and valid_byte_count?(row["function_bytes"]) and
+      valid_byte_count?(row["beam_bytes"]) and valid_source_beam_row?(row)
+  end
+
+  defp receipt_membership_key(row) do
+    case row["kind"] do
+      "active_app" ->
+        {row["kind"], row["app"]}
+
+      "active_module" ->
+        {row["kind"], row["app"], row["module"]}
+
+      "active_export" ->
+        {row["kind"], row["app"], row["module"], row["function"], row["arity"]}
+
+      "active_edge" ->
+        {row["kind"], row["app"], row["module"], row["function"], row["arity"],
+         row["callee_module"], row["callee_function"]}
+
+      "pending_app" ->
+        {row["kind"], row["app"]}
+
+      "pending_module" ->
+        {row["kind"], row["app"], row["module"]}
+
+      _ ->
+        {row["kind"], row["app"], row["module"], row["function"], row["arity"]}
+    end
+  end
+
+  defp validate_receipt_metrics!(metric_rows, context) do
+    [metrics] = metric_rows
+    expected = receipt_metric_expectations(context)
+    timing_keys = ~w(discovery_ms inspection_ms source_scan_ms xref_ms graph_ms)
+    invalid_counts = Enum.reject(expected, fn {key, value} -> metrics[key] == value end)
+    invalid_times = Enum.reject(timing_keys, &valid_byte_count?(metrics[&1]))
+
+    unless length(metric_rows) == 1 and metrics["kind"] == "metrics" and
+             metrics["pending_owner"] == "01.1.1.3" and invalid_counts == [] and
+             invalid_times == [] do
+      fail!(:receipt_metrics, %{
+        expected: expected,
+        actual: metrics,
+        invalid_counts: invalid_counts,
+        invalid_times: invalid_times
+      })
+    end
+  rescue
+    error in MatchError ->
+      fail!(:receipt_metrics, %{
+        records: length(metric_rows),
+        expected: 1,
+        error: Exception.message(error)
+      })
+  end
+
+  defp valid_source_beam_row?(row) do
+    source = row["source"]
+    status = row["source_status"]
+    bytes = row["source_bytes"]
+
+    case status do
+      "present" -> valid_mapped_source?(source, bytes)
+      "missing" -> valid_missing_source?(source, bytes)
+      "unavailable" -> is_nil(source) and is_nil(bytes)
+      _ -> false
+    end
+  end
+
+  defp valid_mapped_source?(source, bytes),
+    do: is_binary(source) and safe_receipt_path?(source) and valid_byte_count?(bytes)
+
+  defp valid_missing_source?(source, bytes),
+    do: is_binary(source) and safe_receipt_path?(source) and is_nil(bytes)
+
+  defp receipt_metric_expectations(context) do
+    active_count = fn kind -> Enum.count(context.active, &(&1["kind"] == kind)) end
+    pending_count = fn kind -> Enum.count(context.pending, &(&1["kind"] == kind)) end
+    beams = context.beams
+
+    %{
+      "app_count" => length(context.apps),
+      "beam_count" => length(beams),
+      "function_count" => Enum.sum(Enum.map(beams, & &1["function_count"])),
+      "function_bytes" => Enum.sum(Enum.map(beams, & &1["function_bytes"])),
+      "beam_bytes" => Enum.sum(Enum.map(beams, & &1["beam_bytes"])),
+      "source_file_count" => length(context.source_files),
+      "source_bytes" => Enum.sum(Enum.map(context.source_files, & &1["bytes"])),
+      "mapped_beams" => Enum.count(beams, &(&1["source_status"] == "present")),
+      "missing_source_beams" => Enum.count(beams, &(&1["source_status"] == "missing")),
+      "unavailable_source_beams" => Enum.count(beams, &(&1["source_status"] == "unavailable")),
+      "exported_matches" => length(context.exports),
+      "reached_matches" => length(context.reached),
+      "boundary_matches" => length(context.boundaries),
+      "active_app_count" => active_count.("active_app"),
+      "active_module_count" => active_count.("active_module"),
+      "active_export_count" => active_count.("active_export"),
+      "active_edge_count" => active_count.("active_edge"),
+      "pending_app_count" => pending_count.("pending_app"),
+      "pending_module_count" => pending_count.("pending_module"),
+      "pending_mfa_count" => pending_count.("pending_mfa")
+    }
+  end
+
+  defp valid_byte_count?(count), do: is_integer(count) and count >= 0
+
+  defp default_metrics(
+         discovered,
+         inspected,
+         sources,
+         active,
+         exports,
+         reached,
+         boundaries,
+         pending
+       ) do
+    source_beams = Enum.flat_map(sources, & &1.beams)
+    source_files = Enum.flat_map(sources, &Map.values(&1.source_files))
+    active_count = fn kind -> Enum.count(active, &(&1["kind"] == kind)) end
+    pending_count = fn kind -> Enum.count(pending, &(&1["kind"] == kind)) end
+
+    %{
+      "app_count" => length(discovered),
+      "beam_count" => length(inspected),
+      "function_count" => Enum.sum(Enum.map(inspected, & &1.function_count)),
+      "function_bytes" => Enum.sum(Enum.map(inspected, & &1.function_bytes)),
+      "beam_bytes" => Enum.sum(Enum.map(inspected, fn beam -> File.stat!(beam.path).size end)),
+      "source_file_count" => length(source_files),
+      "source_bytes" => Enum.sum(source_files),
+      "mapped_beams" => Enum.count(source_beams, &(&1.status == "present")),
+      "missing_source_beams" => Enum.count(source_beams, &(&1.status == "missing")),
+      "unavailable_source_beams" => Enum.count(source_beams, &(&1.status == "unavailable")),
+      "exported_matches" => length(exports),
+      "reached_matches" => length(reached),
+      "boundary_matches" => length(boundaries),
+      "active_app_count" => active_count.("active_app"),
+      "active_module_count" => active_count.("active_module"),
+      "active_export_count" => active_count.("active_export"),
+      "active_edge_count" => active_count.("active_edge"),
+      "pending_app_count" => pending_count.("pending_app"),
+      "pending_module_count" => pending_count.("pending_module"),
+      "pending_mfa_count" => pending_count.("pending_mfa"),
+      "discovery_ms" => 0,
+      "inspection_ms" => 0,
+      "source_scan_ms" => 0,
+      "xref_ms" => 0,
+      "graph_ms" => 0,
+      "pending_owner" => "01.1.1.3"
+    }
   end
 
   defp valid_app_version?(app, version) do
@@ -672,6 +1524,7 @@ defmodule Fablebook.Test.InstalledOtp do
           source: scan.source,
           function_mfas: scan.function_mfas,
           function_count: scan.function_count,
+          function_bytes: scan.function_bytes,
           edges: scan.edges,
           imports: scan.mfas,
           pairs: scan.pairs,

@@ -36,6 +36,7 @@ defmodule Fablebook.Test.BeamWalker do
          mfas: imports,
          function_mfas: function_mfas,
          function_count: length(function_mfas),
+         function_bytes: :erlang.external_size(code),
          edges: edges,
          pairs: pairs(code, MapSet.new()),
          literals: literals(code, MapSet.new())
