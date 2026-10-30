@@ -42,6 +42,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     dist_config: "evaluates the VM's own TLS distribution option file named on its command line",
     iex_console:
       "IEx console internal, reached only inside a running IEx through the banned IEx front doors",
+    private_front:
+      "private implementation reached only through an already tiered public front that the guard rejects",
     fixed_app:
       "puts only a named OTP application or Mix's own archive directory on the code path; loads no caller code",
     fixed_args: "calls a code-loading front door only with arguments fixed in its own source",
@@ -56,6 +58,37 @@ defmodule Fablebook.Contract.TierSweepTest do
     runtime_internal:
       "operates on processes, ports, tables, tracing, counters or code already loaded; prepares, loads and evaluates nothing, as cited"
   }
+
+  @escript_debug_mfa {:escript, :debug, 3}
+  @escript_debug_source_assertions_by_lane %{
+    "core" => [
+      {"stdlib/src/escript.erl:36", "-export([start/0, start/1, parse_file/1])."},
+      {"stdlib/src/escript.erl:422", "parse_and_run(File, Args, EscriptOptions);"},
+      {"stdlib/src/escript.erl:475", "debug(Module, {Module, File, File, BeamBin}, Args);"},
+      {"stdlib/src/escript.erl:889", "debug(Module, AbsMod, Args) ->"},
+      {"stdlib/src/escript.erl:890", "hidden_apply(debugger, debugger, start, [])"},
+      {"stdlib/src/escript.erl:892", "hidden_apply(debugger, int, i, [AbsMod])"},
+      {"stdlib/src/escript.erl:894", "hidden_apply(debugger, debugger, auto_attach, [[init]])"},
+      {"stdlib/src/escript.erl:1084", "apply(fun() -> M end(), F, Args)"}
+    ],
+    "floor" => [
+      {"stdlib/src/escript.erl:32", "-export([start/0, start/1, parse_file/1])."},
+      {"stdlib/src/escript.erl:418", "parse_and_run(File, Args, EscriptOptions);"},
+      {"stdlib/src/escript.erl:471", "debug(Module, {Module, File, File, BeamBin}, Args);"},
+      {"stdlib/src/escript.erl:885", "debug(Module, AbsMod, Args) ->"},
+      {"stdlib/src/escript.erl:886", "hidden_apply(debugger, debugger, start, [])"},
+      {"stdlib/src/escript.erl:888", "hidden_apply(debugger, int, i, [AbsMod])"},
+      {"stdlib/src/escript.erl:890", "hidden_apply(debugger, debugger, auto_attach, [[init]])"},
+      {"stdlib/src/escript.erl:1080", "apply(fun() -> M end(), F, Args)"}
+    ]
+  }
+  @escript_debug_citations @escript_debug_source_assertions_by_lane
+                           |> Map.values()
+                           |> List.flatten()
+                           |> Enum.map(fn {citation, _expected_source} -> citation end)
+                           |> Enum.uniq()
+
+  @escript_debug_exclusion {{:mfa, @escript_debug_mfa}, :private_front, @escript_debug_citations}
 
   @call_name_exclusions [
     {{Mix.Compilers.Protocol, [:compile]}, :not_compile_module,
@@ -1974,6 +2007,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:ok, graph: graph}
   end
 
+  @exclusions @exclusions ++ [@escript_debug_exclusion]
+
   test "discovers and traces a compile-only app outside historical active membership", ctx do
     dir =
       Path.join(
@@ -2110,6 +2145,76 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
 
     assert SweepEvidence.resolve!(evidence, "elixir/src/elixir_aliases.erl:1").origin == :archive
+  end
+
+  test "escript debugger code is a private path behind its already tiered public front", ctx do
+    graph = ctx.graph
+    debug_mfa = @escript_debug_mfa
+    parse_and_run = {:escript, :parse_and_run, 3}
+    start = {:escript, :start, 1}
+
+    assert MapSet.member?(graph.full_reached, debug_mfa)
+    refute MapSet.member?(graph.historical_reached, debug_mfa)
+    refute MapSet.member?(graph.full_exported, debug_mfa)
+    refute MapSet.member?(graph.full_exported, {:escript, :hidden_apply, 4})
+    assert MapSet.member?(graph.full_exported, start)
+    assert {:escript, :start, :_} in BannedCalls.banned_mfas()
+    assert MapSet.member?(graph.historical_reached, start)
+
+    assert(
+      disposition(
+        debug_mfa,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        @exclusions
+      ) == :private_front
+    )
+
+    debug_callers =
+      for {caller, {:escript, :debug}} <- graph.full_edges, into: MapSet.new(), do: caller
+
+    parse_callers =
+      for {caller, {:escript, :parse_and_run}} <- graph.full_edges,
+          into: MapSet.new(),
+          do: caller
+
+    assert debug_callers == MapSet.new([parse_and_run])
+    assert parse_callers == MapSet.new([start])
+
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    expected_citations =
+      Map.fetch!(@escript_debug_source_assertions_by_lane, evidence.lane.name)
+
+    record_citations = @escript_debug_exclusion |> elem(2) |> MapSet.new()
+
+    expected_record_citations =
+      @escript_debug_source_assertions_by_lane
+      |> Map.values()
+      |> List.flatten()
+      |> Enum.map(&elem(&1, 0))
+      |> MapSet.new()
+
+    assert record_citations == expected_record_citations
+
+    for {citation, expected} <- expected_citations do
+      assert SweepEvidence.resolve!(evidence, citation).text =~ expected, citation
+    end
+
+    without_private_front = List.delete(@exclusions, @escript_debug_exclusion)
+
+    assert_raise RuntimeError, ~r/escript, :debug, 3/, fn ->
+      assert_no_new_active_failures!(
+        graph.full_reached,
+        graph.historical_reached,
+        graph.historical_active_modules,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        graph.lane.name,
+        without_private_front
+      )
+    end
   end
 
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
@@ -3032,14 +3137,15 @@ defmodule Fablebook.Contract.TierSweepTest do
          historical_modules,
          tier,
          names,
-         lane
+         lane,
+         exclusions \\ @exclusions
        ) do
     failures =
       full_reached
       |> MapSet.difference(historical_reached)
       |> Enum.filter(fn {module, _function, _arity} = mfa ->
         MapSet.member?(historical_modules, module) and
-          disposition(mfa, tier, names, @exclusions) == nil
+          disposition(mfa, tier, names, exclusions) == nil
       end)
 
     if failures != [] do
