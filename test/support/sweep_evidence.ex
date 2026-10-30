@@ -87,7 +87,7 @@ defmodule Fablebook.Test.SweepEvidence do
     if not String.starts_with?(path, root <> "/"), do: fail!(:source_escape, citation)
     data = read!(path)
     if digest(data) != row["sha256"], do: fail!(:source_digest, {citation, origin})
-    lines = String.split(String.trim_trailing(data, "\n"), "\n")
+    lines = source_lines(data)
     if line > length(lines), do: fail!(:source_line, citation)
 
     %{
@@ -223,6 +223,13 @@ defmodule Fablebook.Test.SweepEvidence do
       _invalid ->
         fail!(:citation_format, citation)
     end
+  end
+
+  defp source_lines(""), do: []
+
+  defp source_lines(data) do
+    lines = String.split(data, "\n")
+    if String.ends_with?(data, "\n"), do: Enum.drop(lines, -1), else: lines
   end
 
   defp safe_path?(path) do

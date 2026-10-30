@@ -919,6 +919,12 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert resolved.origin in [:installed, :archive]
     assert evidence.lane.otp in ["29.1.2", "27.3.4.9"]
 
+    trailing = SweepEvidence.resolve!(evidence, "kernel/src/inet_config.erl:1")
+    data = File.read!(trailing.path)
+    assert String.ends_with?(data, "\n\n")
+    last_line = length(String.split(data, "\n")) - 1
+    assert SweepEvidence.resolve!(evidence, "kernel/src/inet_config.erl:#{last_line}").text == ""
+
     trace =
       if evidence.lane.name == "core" do
         [
