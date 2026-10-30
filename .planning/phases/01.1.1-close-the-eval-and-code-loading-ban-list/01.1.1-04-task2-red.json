@@ -1,0 +1,10 @@
+{
+  "command": "MIX_QUIET=1 ASDF_ERLANG_VERSION=29.1.1 mix test --warnings-as-errors --no-color --formatter ExUnitTapFormatter test/contract/tier_sweep_test.exs",
+  "exitCode": 2,
+  "output": "TAP version 13\n1..7\nok 1 - test every function the sweep reaches is covered by the tier or excluded with a reason\nok 2 - test every function named like a wholly banned module is covered or excluded with a cited reason\nok 3 - test every exclusion names a known reason and every citation is an app-relative source line\nnot ok 4 - test every barrier-module and sink-delegate export is covered or excluded with a cited reason\nok 5 - test every in-scope OTP app, Elixir app and prod-closure dependency has an ebin\nok 6 - test removing a tier entry leaves its front door undisposed\nok 7 - test every in-scope beam carries debug info\n",
+  "targetTest": "test every barrier-module and sink-delegate export is covered or excluded with a cited reason",
+  "targetFile": "test/contract/tier_sweep_test.exs",
+  "expected": "All boundary exports are covered by the tier or a cited boundary exclusion.",
+  "actual": "The target assertion failed with 588 undisposed exports across 23 modules; the derived delegates include the planned OTP evaluator helpers plus records.",
+  "semanticAssessment": "Valid RED: the exact planned boundary-contract test executed and failed its undisposed-set assertion. Six existing tests passed; there were no load, setup, syntax, or fixture failures."
+}
