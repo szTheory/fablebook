@@ -448,8 +448,11 @@ defmodule Fablebook.Credo.BannedCalls do
   defp literal_module_name(module, _aliases) when is_atom(module), do: inspect(module)
   defp literal_module_name(_module, _aliases), do: nil
 
+  defp module_name({:__aliases__, _, [:"Elixir" | parts]}, _aliases),
+    do: Enum.map_join(parts, ".", &alias_segment/1)
+
   defp module_name({:__aliases__, _, parts}, aliases) do
-    name = parts |> Enum.map_join(".", &alias_segment/1) |> String.replace_prefix("Elixir.", "")
+    name = Enum.map_join(parts, ".", &alias_segment/1)
     expand_alias(name, aliases)
   end
 
