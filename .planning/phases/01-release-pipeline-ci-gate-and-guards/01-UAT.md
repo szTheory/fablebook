@@ -145,6 +145,7 @@ The existing `.github/workflows/ci.yml` Monday `ci-health` job runs `bin/ci_heal
 - Fresh full command: `ASDF_ERLANG_VERSION=29.1.1 mix ci` — 257 passed; format, unused lock check, forced compile, strict Credo, compile cycles and docs all passed.
 - Mutation receipt: `01-CI-HEALTH-MUTATIONS.json`; mutations ran only in temporary files, never against tracked implementation.
 - Live reads: `01-LIVE-EVIDENCE.json`; no issue comments, publication, secrets or baseline acceptance performed.
+- Automation implementation CI (commit `72b9c820c36b97600a37e1fc4964d69f2101ff6f`): https://github.com/szTheory/fablebook/actions/runs/40991407462 — core, floor, dialyzer, security and ci-gate passed; nightly/ci-health skipped as designed for this PR. Draft PR: https://github.com/szTheory/fablebook/pull/22
 - Existing green main CI: https://github.com/szTheory/fablebook/actions/runs/40987211785
 - Historical green release: https://github.com/szTheory/fablebook/actions/runs/40803980465
 - Historical intent red control: https://github.com/szTheory/fablebook/actions/runs/40802432347
