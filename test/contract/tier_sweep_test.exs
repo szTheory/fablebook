@@ -320,7 +320,12 @@ defmodule Fablebook.Contract.TierSweepTest do
                 {:erlang, :load_nif},
                 {:erl_ddll, :try_load}
               ] ++ for(fun <- @eval_funs, do: {:erl_eval, fun})
-  @boundary_lane_specific [{:records, :latest}]
+  @boundary_lane_specific [
+    {:ordsets, :latest},
+    {:sets, :latest},
+    {:erl_features, :latest},
+    {:records, :latest}
+  ]
   @boundary_exclusions [
     {{:code,
       [
@@ -1389,7 +1394,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp lane_specific_call_name?({matcher, _reason, _citation}, named) do
-    case List.keyfind(@call_name_lane_specific, 0, matcher) do
+    case List.keyfind(@call_name_lane_specific, matcher, 0) do
       {^matcher, :latest} ->
         System.get_env("FABLEBOOK_FLOOR") not in [nil, ""] and
           not Enum.any?(named, &call_name_exclusion_match?(matcher, &1))
