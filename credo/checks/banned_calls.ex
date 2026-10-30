@@ -118,6 +118,7 @@ defmodule Fablebook.Credo.BannedCalls do
           {:file, :eval, :_},
           {:file, :path_script, :_},
           {:file, :path_eval, :_},
+          {:file, :consult, 1},
           {:file, :path_consult, 2},
           {:elixir, :eval_forms, :_},
           {:io, :read, :_},
