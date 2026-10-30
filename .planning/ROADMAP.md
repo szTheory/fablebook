@@ -194,10 +194,30 @@ Plans:
   4. If a newly judged front door is one that `lib/` already calls (for example `Macro.expand/2` at `lib/fablebook/router.ex:35`), work stops and the case is reported. The front door is never weakened or excluded. Resolving it needs an owner-recorded decision: either an ADR-backed allowlist entry or a `lib/` change in its own PR.
   5. The Credo explanation no longer lists the two open items. Every changed claim maps to a fixture or a strictness row, and a human wording check is recorded before merge.
   6. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
-**Plans:** 0 plans
+**Plans:** 5 plans
+
+Sequential scoped PRs; each depends on the previous green merge.
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 01.1.1.1 to break down)
+**Wave 1**
+- [ ] 01.1.1.1-01-PLAN.md — Exact-source evidence, confirmed caller-text/file creators, and owner AST policy gate
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01.1.1.1-02-PLAN.md — Every installed OTP app/BEAM, Common Test/debugger fronts, and call-name/boundary audit
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 01.1.1.1-03-PLAN.md — General exclusion semantic audit EX-001 through EX-091 with source and removal proof
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 01.1.1.1-04-PLAN.md — General exclusion semantic audit EX-092 through EX-182 with source and removal proof
+
+**Wave 5** *(blocked on Wave 4 completion)*
+- [ ] 01.1.1.1-05-PLAN.md — Complete audit gates, changed Credo wording approval, and green-merge evidence
+
+**Cross-cutting constraints:**
+- SC1 / D-01–D-03: caller-text/file creators exposed by this audit are caught with compile-only fixtures in both guards; existing-atom bans stay.
+- SC4 / D-10, D-11: AST classification follows the owner record and a newly banned lib call halts its affected work.
+- SC6 / D-13, D-14: scoped audit PR merges green; no new dependency or runtime-property completion is claimed.
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.

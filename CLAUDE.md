@@ -20,6 +20,7 @@ When the owner gives direction, add a verbatim entry to `.planning/intent/source
 - Copy-paste beats a new dependency. A new dependency needs an ADR. Adopters never need Node (ADR 0018).
 - Push early. Every phase ends in a merged green PR. Evidence means a CI run link, not prose.
 - End every GSD flow with the next command and its purpose, including partial/blocked flows (INT-20261029-09).
+- Report model profiles and effort levels only when the owner asks; omit routine GSD model-routing footers (INT-20261029-11).
 - Never edit a contract test in the same PR as the implementation it guards (definition and enforcement: ADR 0021).
 - Never auto-accept a visual baseline.
 - No PII in git: no email addresses, no absolute home paths (write `~/`).

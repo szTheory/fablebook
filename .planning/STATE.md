@@ -1,17 +1,17 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 1
-current_phase_name: Release pipeline, CI gate and guards
-status: verifying
-stopped_at: Phase 1 automated UAT recorded; scheduled timing observation remains
-last_updated: "2026-10-30T02:19:42Z"
-last_activity: 2026-10-30
-last_activity_desc: Phase 1 automated UAT and verification policy recorded
-state_head: 8a2237f6161e36aa924895c62296e0a3a8beba62
+current_phase: 01.1.1.1
+current_phase_name: "Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons"
+status: halted
+stopped_at: Plan 01 task 01-02 measured audit budget requires split; source tracer independently green, final receipts in PR 23
+last_updated: "2026-10-30T12:56:12Z"
+last_activity: 2026-10-30 — Source tracer implemented; expanded audit measured; split required
+last_activity_desc: Plan 01 halted at documented source/context budget; 221 original exclusions expand to 2395 core and 2307 floor functions; no dependent plan dispatched
+state_head: 21bfbc00f6765bc4c20f801289713387a34425c8
 progress:
   total_phases: 38
   completed_phases: 1
-  total_plans: 15
+  total_plans: 20
   completed_plans: 15
   percent: 3
 ---
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 1 automated acceptance: 12 passed, one scheduled observation pending; no human UAT. Follow-on ban-list work stays owned by Phase 01.1.1.1. Read `.planning/VERIFICATION.md` and `01-UAT.md` before reopening any checks.
+**Current focus:** Phase 01.1.1.1 Plan 01 is halted after the source/PathConsult tracer. Source archive approved (INT-20261030-01), exact-lane source integrity and static detection implemented in PR #23. The original exclusion scope expands to about 11.0 MB/core and 10.2 MB/floor of source; split/re-plan before bulk audit. Macro caller-AST policy remains unresolved; SEC-01 stays pending Phase 5.
 
 ## Current Position
 
-Phase: 1 — Release pipeline, CI gate and guards
-Plan: 5
-Status: Automated UAT partial; first Monday timing publication pending; canonical execution re-verification remains a gate
-Last activity: 2026-10-30 UTC — mix ci 257 passed, new CI-health seam tests and caught mutations, live timing n=41 / p50=63s / p95=122s; automation preference captured in INT-20261029-08
+Phase: 01.1.1.1 (Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons) — HALTED FOR RE-PLANNING
+Plan: 01 halted after task 01-01; task 01-02 partial, task 01-03 pending; 0/5 plans complete
+Status: Designed stop at the explicit audit-size gate; Plans 02–05 blocked by halted Plan 01
+Last activity: 2026-10-30 — Exact local source tracer passes 100 focused tests per lane; original audit counts corrected and both-lane source budget recorded
 
-Progress: [████████████████████] 15/15 planned plans (100%); 1/38 phases complete (3%)
+Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 plans complete; current phase has one halted partial plan and four blocked plans
 
 ## Performance Metrics
 
@@ -122,6 +122,8 @@ None yet.
 
 ### Blockers/Concerns
 
+- [Phase 01.1.1.1 execution]: Plan 01 task 01-02 explicitly requires a split: 221 original exclusions expand to 2,395/core and 2,307/floor matching functions and 10,970,916/core and 10,244,028/floor source bytes. Read the phase AUDIT-BUDGET and halted SUMMARY; original boundary count is 33, not 44. Source archive approval is resolved. Remaining creator WIP and its six Logger/ExUnit findings are preserved separately; do not merge it or dispatch dependent plans.
+
 - [Parent verification debt]: Phase 1 and 01.1 reports remain gaps_found; phase.complete routed to Phase 1 for re-verification. Do not mark either parent complete from the child report.
 - [Phase 01.1.1.1]: Parser disposition, unswept installed OTP apps/debugger remainder, and full carried-exclusion audit remain open per INT-20261029-02.
 
@@ -146,7 +148,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T01:52:39.500Z
-Stopped at: Automated Phase 1 UAT recorded; merge PR #22 when green. Monday timing and parent canonical reports remain separate gates, while successor planning can proceed.
-Next command: `$gsd-plan-phase 01.1.1.1` — plan the already assigned remaining ban-list work; Phase 01.1.1 dependency is verified. See `.planning/CI-PERFORMANCE.md` for measured CI opportunities.
-Resume file: None
+Last session: 2026-10-30T12:56:12Z
+Stopped at: Plan 01 task 01-02 documented size gate; source/PathConsult tracer independently green in PR 23; no phase completion
+Next command: $gsd-plan-phase 01.1.1.1 — split/re-plan the remaining audit using measured source-based partitions and preserved WIP
+Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.continue-here.md
