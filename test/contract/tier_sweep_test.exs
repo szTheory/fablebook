@@ -88,58 +88,445 @@ defmodule Fablebook.Contract.TierSweepTest do
                            |> Enum.map(fn {citation, _expected_source} -> citation end)
                            |> Enum.uniq()
 
-  @ct_make_files2_source_by_lane %{
+  @ct_make_expected_mfas [
+    {:ct_make, :all, 0},
+    {:ct_make, :all, 1},
+    {:ct_make, :files, 1},
+    {:ct_make, :files, 2}
+  ]
+
+  @ct_make_expected_reached_mfas @ct_make_expected_mfas ++
+                                   [
+                                     {:ct_make, :check_includes, 3},
+                                     {:ct_make, :check_includes2, 3},
+                                     {:ct_make, :do_load, 3},
+                                     {:ct_make, :do_make_files, 2},
+                                     {:ct_make, :do_recompile, 4},
+                                     {:ct_make, :get_opts_from_emakefile, 3},
+                                     {:ct_make, :maybe_load, 3},
+                                     {:ct_make, :process, 4},
+                                     {:ct_make, :read_emakefile, 2},
+                                     {:ct_make, :recompile, 4},
+                                     {:ct_make, :recompile2, 5},
+                                     {:ct_make, :recompilep, 4},
+                                     {:ct_make, :recompilep1, 5},
+                                     {:ct_make, :recompilep1, 6}
+                                   ]
+
+  @ct_make_source_by_lane %{
     "core" => %{
       sha256: "a6d46d0f31e75119b543ba5783782c7c48b358fa024a71763e5a7f2c6ff4d3a3",
-      citations: [
-        {"common_test/src/ct_make.erl:37", "-export([all/0,all/1,files/1,files/2])."},
-        {"common_test/src/ct_make.erl:58", "files(Fs0, Options) ->"},
-        {"common_test/src/ct_make.erl:61", "get_opts_from_emakefile(Fs,'Emakefile',CompileOpts)"},
-        {"common_test/src/ct_make.erl:63", "do_make_files(Files,MakeOpts)"},
-        {"common_test/src/ct_make.erl:69",
-         "process(Fs, lists:member(noexec, Opts), load_opt(Opts), [])"},
-        {"common_test/src/ct_make.erl:191", "load_opt(Opts) ->"},
-        {"common_test/src/ct_make.erl:192", "case lists:member(netload,Opts) of"},
-        {"common_test/src/ct_make.erl:194", "netload"},
-        {"common_test/src/ct_make.erl:196", "case lists:member(load,Opts) of"},
-        {"common_test/src/ct_make.erl:200", "noload"},
-        {"common_test/src/ct_make.erl:288", "do_recompile(File, false, Load, Opts) ->"},
-        {"common_test/src/ct_make.erl:290",
-         "compile:file(File, [report_errors, report_warnings |Opts])"},
-        {"common_test/src/ct_make.erl:292", "maybe_load(element(2,Ok), Load, Opts)"},
-        {"common_test/src/ct_make.erl:299", "maybe_load(Mod, Load, Opts) ->"},
-        {"common_test/src/ct_make.erl:313", "code:load_abs(filename:join(Dir, Mod),Mod)"},
-        {"common_test/src/ct_make.erl:319", "do_load(Dir, Mod, netload) ->"},
-        {"common_test/src/ct_make.erl:324",
-         "rpc:eval_everywhere(code,load_binary,[Mod,Fname,Bin])"}
-      ]
+      groups: %{
+        all0: [
+          {"common_test/src/ct_make.erl:37", "-export([all/0,all/1,files/1,files/2])."},
+          {"common_test/src/ct_make.erl:43", "all() ->"},
+          {"common_test/src/ct_make.erl:44", "all([])."}
+        ],
+        all1: [
+          {"common_test/src/ct_make.erl:46", "all(Options) ->"},
+          {"common_test/src/ct_make.erl:47", "sort_options(Options,[],[])"},
+          {"common_test/src/ct_make.erl:48", "read_emakefile('Emakefile',CompileOpts)"},
+          {"common_test/src/ct_make.erl:50", "do_make_files(Files,MakeOpts)"}
+        ],
+        files1: [
+          {"common_test/src/ct_make.erl:55", "files(Fs) ->"},
+          {"common_test/src/ct_make.erl:56", "files(Fs, [])."}
+        ],
+        files2: [
+          {"common_test/src/ct_make.erl:58", "files(Fs0, Options) ->"},
+          {"common_test/src/ct_make.erl:59", "filename:rootname(F,\".erl\")"},
+          {"common_test/src/ct_make.erl:60", "sort_options(Options,[],[])"},
+          {"common_test/src/ct_make.erl:61",
+           "get_opts_from_emakefile(Fs,'Emakefile',CompileOpts)"},
+          {"common_test/src/ct_make.erl:63", "do_make_files(Files,MakeOpts)"}
+        ],
+        emake_read: [
+          {"common_test/src/ct_make.erl:94", "read_emakefile(Emakefile,Opts) ->"},
+          {"common_test/src/ct_make.erl:95", "file:consult(Emakefile)"},
+          {"common_test/src/ct_make.erl:97", "transform(Emake,Opts,[],[])"},
+          {"common_test/src/ct_make.erl:101", "filelib:wildcard(\"*.erl\")"},
+          {"common_test/src/ct_make.erl:102", "[{Mods, Opts}]"},
+          {"common_test/src/ct_make.erl:108",
+           "transform([{Mod,ModOpts}|Emake],Opts,Files,Already) ->"},
+          {"common_test/src/ct_make.erl:125", "expand(Mod,Already) when is_atom(Mod) ->"}
+        ],
+        emake_files: [
+          {"common_test/src/ct_make.erl:150", "get_opts_from_emakefile(Mods,Emakefile,Opts) ->"},
+          {"common_test/src/ct_make.erl:151", "file:consult(Emakefile)"},
+          {"common_test/src/ct_make.erl:153", "transform(Emake,Opts,[],[])"},
+          {"common_test/src/ct_make.erl:156", "{error,enoent} ->"},
+          {"common_test/src/ct_make.erl:157", "[{Mods, Opts}]"}
+        ],
+        options: [
+          {"common_test/src/ct_make.erl:41", "-define(MakeOpts,[noexec,load,netload,noload])."},
+          {"common_test/src/ct_make.erl:72", "sort_options([H|T],Make,Comp) ->"},
+          {"common_test/src/ct_make.erl:80", "{Make,lists:reverse(Comp)}."},
+          {"common_test/src/ct_make.erl:191", "load_opt(Opts) ->"},
+          {"common_test/src/ct_make.erl:192", "lists:member(netload,Opts)"},
+          {"common_test/src/ct_make.erl:194", "netload"},
+          {"common_test/src/ct_make.erl:196", "lists:member(load,Opts)"},
+          {"common_test/src/ct_make.erl:198", "load"},
+          {"common_test/src/ct_make.erl:200", "noload"}
+        ],
+        process: [
+          {"common_test/src/ct_make.erl:68", "do_make_files(Fs, Opts) ->"},
+          {"common_test/src/ct_make.erl:69",
+           "process(Fs, lists:member(noexec, Opts), load_opt(Opts), [])"},
+          {"common_test/src/ct_make.erl:205",
+           "process([{[],_Opts}|Rest], NoExec, Load, Result) ->"},
+          {"common_test/src/ct_make.erl:208", "recompilep(coerce_2_list(H), NoExec, Load, Opts)"}
+        ],
+        compile: [
+          {"common_test/src/ct_make.erl:288", "do_recompile(File, false, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:290",
+           "compile:file(File, [report_errors, report_warnings |Opts])"},
+          {"common_test/src/ct_make.erl:292", "maybe_load(element(2,Ok), Load, Opts)"}
+        ],
+        recompile: [
+          {"common_test/src/ct_make.erl:226", "recompilep(File, NoExec, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:235", "case exists(ObjFile) of"},
+          {"common_test/src/ct_make.erl:237", "recompilep1(File, NoExec, Load, Opts, ObjFile)"},
+          {"common_test/src/ct_make.erl:242",
+           "recompilep1(File, NoExec, Load, Opts, ObjFile) ->"},
+          {"common_test/src/ct_make.erl:243",
+           "file:read_file_info(lists:append(File, \".erl\"))"},
+          {"common_test/src/ct_make.erl:247", "recompilep1(Erl, Obj, File, NoExec, Load, Opts)"},
+          {"common_test/src/ct_make.erl:252", "recompilep1(#file_info{mtime=Te},"},
+          {"common_test/src/ct_make.erl:255",
+           "recompilep1(_Erl, #file_info{mtime=To}, File, NoExec, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:260",
+           "recompile2(ObjMTime, File, NoExec, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:261", "IncludePath = include_opt(Opts),"},
+          {"common_test/src/ct_make.erl:262",
+           "check_includes(lists:append(File, \".erl\"), IncludePath, ObjMTime)"},
+          {"common_test/src/ct_make.erl:269", "include_opt([{i,Path}|Rest]) ->"},
+          {"common_test/src/ct_make.erl:270", "[Path|include_opt(Rest)];"},
+          {"common_test/src/ct_make.erl:271", "include_opt([_First|Rest]) ->"},
+          {"common_test/src/ct_make.erl:272", "include_opt([]) ->"},
+          {"common_test/src/ct_make.erl:280", "recompile(File, NoExec, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:354", "check_includes(File, IncludePath, ObjMTime) ->"},
+          {"common_test/src/ct_make.erl:355", "Path = [filename:dirname(File)|IncludePath],"},
+          {"common_test/src/ct_make.erl:356", "epp:open(File, Path, [])"},
+          {"common_test/src/ct_make.erl:363", "check_includes2(Epp, File, ObjMTime) ->"},
+          {"common_test/src/ct_make.erl:365", "epp:parse_erl_form(Epp)"},
+          {"common_test/src/ct_make.erl:368", "{IncFile, A1}"},
+          {"common_test/src/ct_make.erl:369", "file:read_file_info(IncFile)"}
+        ],
+        noload: [
+          {"common_test/src/ct_make.erl:200", "noload"},
+          {"common_test/src/ct_make.erl:297", "maybe_load(_Mod, noload, _Opts) ->"}
+        ],
+        load_paths: [
+          {"common_test/src/ct_make.erl:299", "maybe_load(Mod, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:302", "compile:output_generated(Opts)"},
+          {"common_test/src/ct_make.erl:311", "do_load(Dir, Mod, load) ->"},
+          {"common_test/src/ct_make.erl:313", "code:load_abs(filename:join(Dir, Mod),Mod)"},
+          {"common_test/src/ct_make.erl:319", "do_load(Dir, Mod, netload) ->"},
+          {"common_test/src/ct_make.erl:322", "file:read_file(Fname)"},
+          {"common_test/src/ct_make.erl:324",
+           "rpc:eval_everywhere(code,load_binary,[Mod,Fname,Bin])"}
+        ]
+      }
     },
     "floor" => %{
       sha256: "7f5dce364ae35232780c7904b6e45475aed4ba0d95105ee114f04e992492e62b",
-      citations: [
-        {"common_test/src/ct_make.erl:33", "-export([all/0,all/1,files/1,files/2])."},
-        {"common_test/src/ct_make.erl:54", "files(Fs0, Options) ->"},
-        {"common_test/src/ct_make.erl:57", "get_opts_from_emakefile(Fs,'Emakefile',CompileOpts)"},
-        {"common_test/src/ct_make.erl:59", "do_make_files(Files,MakeOpts)"},
-        {"common_test/src/ct_make.erl:65",
-         "process(Fs, lists:member(noexec, Opts), load_opt(Opts), [])"},
-        {"common_test/src/ct_make.erl:187", "load_opt(Opts) ->"},
-        {"common_test/src/ct_make.erl:188", "case lists:member(netload,Opts) of"},
-        {"common_test/src/ct_make.erl:190", "netload"},
-        {"common_test/src/ct_make.erl:192", "case lists:member(load,Opts) of"},
-        {"common_test/src/ct_make.erl:196", "noload"},
-        {"common_test/src/ct_make.erl:284", "do_recompile(File, false, Load, Opts) ->"},
-        {"common_test/src/ct_make.erl:286",
-         "compile:file(File, [report_errors, report_warnings |Opts])"},
-        {"common_test/src/ct_make.erl:288", "maybe_load(element(2,Ok), Load, Opts)"},
-        {"common_test/src/ct_make.erl:295", "maybe_load(Mod, Load, Opts) ->"},
-        {"common_test/src/ct_make.erl:309", "code:load_abs(filename:join(Dir, Mod),Mod)"},
-        {"common_test/src/ct_make.erl:315", "do_load(Dir, Mod, netload) ->"},
-        {"common_test/src/ct_make.erl:320",
-         "rpc:eval_everywhere(code,load_binary,[Mod,Fname,Bin])"}
-      ]
+      groups: %{
+        all0: [
+          {"common_test/src/ct_make.erl:33", "-export([all/0,all/1,files/1,files/2])."},
+          {"common_test/src/ct_make.erl:39", "all() ->"},
+          {"common_test/src/ct_make.erl:40", "all([])."}
+        ],
+        all1: [
+          {"common_test/src/ct_make.erl:42", "all(Options) ->"},
+          {"common_test/src/ct_make.erl:43", "sort_options(Options,[],[])"},
+          {"common_test/src/ct_make.erl:44", "read_emakefile('Emakefile',CompileOpts)"},
+          {"common_test/src/ct_make.erl:46", "do_make_files(Files,MakeOpts)"}
+        ],
+        files1: [
+          {"common_test/src/ct_make.erl:51", "files(Fs) ->"},
+          {"common_test/src/ct_make.erl:52", "files(Fs, [])."}
+        ],
+        files2: [
+          {"common_test/src/ct_make.erl:54", "files(Fs0, Options) ->"},
+          {"common_test/src/ct_make.erl:55", "filename:rootname(F,\".erl\")"},
+          {"common_test/src/ct_make.erl:56", "sort_options(Options,[],[])"},
+          {"common_test/src/ct_make.erl:57",
+           "get_opts_from_emakefile(Fs,'Emakefile',CompileOpts)"},
+          {"common_test/src/ct_make.erl:59", "do_make_files(Files,MakeOpts)"}
+        ],
+        emake_read: [
+          {"common_test/src/ct_make.erl:90", "read_emakefile(Emakefile,Opts) ->"},
+          {"common_test/src/ct_make.erl:91", "file:consult(Emakefile)"},
+          {"common_test/src/ct_make.erl:93", "transform(Emake,Opts,[],[])"},
+          {"common_test/src/ct_make.erl:97", "filelib:wildcard(\"*.erl\")"},
+          {"common_test/src/ct_make.erl:98", "[{Mods, Opts}]"},
+          {"common_test/src/ct_make.erl:104",
+           "transform([{Mod,ModOpts}|Emake],Opts,Files,Already) ->"},
+          {"common_test/src/ct_make.erl:121", "expand(Mod,Already) when is_atom(Mod) ->"}
+        ],
+        emake_files: [
+          {"common_test/src/ct_make.erl:146", "get_opts_from_emakefile(Mods,Emakefile,Opts) ->"},
+          {"common_test/src/ct_make.erl:147", "file:consult(Emakefile)"},
+          {"common_test/src/ct_make.erl:149", "transform(Emake,Opts,[],[])"},
+          {"common_test/src/ct_make.erl:152", "{error,enoent} ->"},
+          {"common_test/src/ct_make.erl:153", "[{Mods, Opts}]"}
+        ],
+        options: [
+          {"common_test/src/ct_make.erl:37", "-define(MakeOpts,[noexec,load,netload,noload])."},
+          {"common_test/src/ct_make.erl:68", "sort_options([H|T],Make,Comp) ->"},
+          {"common_test/src/ct_make.erl:76", "{Make,lists:reverse(Comp)}."},
+          {"common_test/src/ct_make.erl:187", "load_opt(Opts) ->"},
+          {"common_test/src/ct_make.erl:188", "lists:member(netload,Opts)"},
+          {"common_test/src/ct_make.erl:190", "netload"},
+          {"common_test/src/ct_make.erl:192", "lists:member(load,Opts)"},
+          {"common_test/src/ct_make.erl:194", "load"},
+          {"common_test/src/ct_make.erl:196", "noload"}
+        ],
+        process: [
+          {"common_test/src/ct_make.erl:64", "do_make_files(Fs, Opts) ->"},
+          {"common_test/src/ct_make.erl:65",
+           "process(Fs, lists:member(noexec, Opts), load_opt(Opts), [])"},
+          {"common_test/src/ct_make.erl:201",
+           "process([{[],_Opts}|Rest], NoExec, Load, Result) ->"},
+          {"common_test/src/ct_make.erl:204", "recompilep(coerce_2_list(H), NoExec, Load, Opts)"}
+        ],
+        compile: [
+          {"common_test/src/ct_make.erl:284", "do_recompile(File, false, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:286",
+           "compile:file(File, [report_errors, report_warnings |Opts])"},
+          {"common_test/src/ct_make.erl:288", "maybe_load(element(2,Ok), Load, Opts)"}
+        ],
+        recompile: [
+          {"common_test/src/ct_make.erl:222", "recompilep(File, NoExec, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:231", "case exists(ObjFile) of"},
+          {"common_test/src/ct_make.erl:233", "recompilep1(File, NoExec, Load, Opts, ObjFile)"},
+          {"common_test/src/ct_make.erl:238",
+           "recompilep1(File, NoExec, Load, Opts, ObjFile) ->"},
+          {"common_test/src/ct_make.erl:239",
+           "file:read_file_info(lists:append(File, \".erl\"))"},
+          {"common_test/src/ct_make.erl:243", "recompilep1(Erl, Obj, File, NoExec, Load, Opts)"},
+          {"common_test/src/ct_make.erl:248", "recompilep1(#file_info{mtime=Te},"},
+          {"common_test/src/ct_make.erl:251",
+           "recompilep1(_Erl, #file_info{mtime=To}, File, NoExec, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:256",
+           "recompile2(ObjMTime, File, NoExec, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:257", "IncludePath = include_opt(Opts),"},
+          {"common_test/src/ct_make.erl:258",
+           "check_includes(lists:append(File, \".erl\"), IncludePath, ObjMTime)"},
+          {"common_test/src/ct_make.erl:265", "include_opt([{i,Path}|Rest]) ->"},
+          {"common_test/src/ct_make.erl:266", "[Path|include_opt(Rest)];"},
+          {"common_test/src/ct_make.erl:267", "include_opt([_First|Rest]) ->"},
+          {"common_test/src/ct_make.erl:268", "include_opt([]) ->"},
+          {"common_test/src/ct_make.erl:276", "recompile(File, NoExec, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:350", "check_includes(File, IncludePath, ObjMTime) ->"},
+          {"common_test/src/ct_make.erl:351", "Path = [filename:dirname(File)|IncludePath],"},
+          {"common_test/src/ct_make.erl:352", "epp:open(File, Path, [])"},
+          {"common_test/src/ct_make.erl:359", "check_includes2(Epp, File, ObjMTime) ->"},
+          {"common_test/src/ct_make.erl:361", "epp:parse_erl_form(Epp)"},
+          {"common_test/src/ct_make.erl:364", "{IncFile, A1}"},
+          {"common_test/src/ct_make.erl:365", "file:read_file_info(IncFile)"}
+        ],
+        noload: [
+          {"common_test/src/ct_make.erl:196", "noload"},
+          {"common_test/src/ct_make.erl:293", "maybe_load(_Mod, noload, _Opts) ->"}
+        ],
+        load_paths: [
+          {"common_test/src/ct_make.erl:295", "maybe_load(Mod, Load, Opts) ->"},
+          {"common_test/src/ct_make.erl:298", "compile:output_generated(Opts)"},
+          {"common_test/src/ct_make.erl:307", "do_load(Dir, Mod, load) ->"},
+          {"common_test/src/ct_make.erl:309", "code:load_abs(filename:join(Dir, Mod),Mod)"},
+          {"common_test/src/ct_make.erl:315", "do_load(Dir, Mod, netload) ->"},
+          {"common_test/src/ct_make.erl:318", "file:read_file(Fname)"},
+          {"common_test/src/ct_make.erl:320",
+           "rpc:eval_everywhere(code,load_binary,[Mod,Fname,Bin])"}
+        ]
+      }
     }
   }
+
+  @ct_make_family_specs [
+    %{
+      mfa: {:ct_make, :all, 0},
+      source_group: :all0,
+      source_groups: [:all0, :emake_read, :options, :noload, :process, :compile, :recompile],
+      caller_input: :current_directory_emakefile_and_erl_sources,
+      defaults: :fixed_empty_options,
+      option_paths: [:noload],
+      trace: [
+        {:ct_make, :all, 0},
+        {:ct_make, :all, 1},
+        {:ct_make, :read_emakefile, 2},
+        {:file, :consult, 1},
+        {:ct_make, :transform, 4},
+        {:ct_make, :expand, 2},
+        {:ct_make, :do_make_files, 2},
+        {:ct_make, :process, 4},
+        {:ct_make, :recompilep, 4},
+        {:ct_make, :recompilep1, 5},
+        {:ct_make, :recompilep1, 6},
+        {:ct_make, :recompile2, 5},
+        {:ct_make, :check_includes, 3},
+        {:ct_make, :check_includes2, 3},
+        {:ct_make, :recompile, 4},
+        {:ct_make, :do_recompile, 4},
+        {:compile, :file, 2},
+        {:ct_make, :maybe_load, 3}
+      ],
+      verdict: :default_compiles_current_directory_sources_without_loading,
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe]
+    },
+    %{
+      mfa: {:ct_make, :all, 1},
+      source_group: :all1,
+      source_groups: [:all1, :emake_read, :options, :load_paths, :process, :compile, :recompile],
+      caller_input: :caller_options_and_current_directory_emakefile_sources,
+      defaults: :caller_options_choose_compile_and_load_mode,
+      option_paths: [:noload, :load, :netload],
+      trace: [
+        {:ct_make, :all, 1},
+        {:ct_make, :sort_options, 3},
+        {:ct_make, :read_emakefile, 2},
+        {:file, :consult, 1},
+        {:ct_make, :transform, 4},
+        {:ct_make, :expand, 2},
+        {:ct_make, :do_make_files, 2},
+        {:ct_make, :load_opt, 1},
+        {:ct_make, :process, 4},
+        {:ct_make, :recompilep, 4},
+        {:ct_make, :recompilep1, 5},
+        {:ct_make, :recompilep1, 6},
+        {:ct_make, :recompile2, 5},
+        {:ct_make, :check_includes, 3},
+        {:ct_make, :check_includes2, 3},
+        {:ct_make, :recompile, 4},
+        {:ct_make, :do_recompile, 4},
+        {:compile, :file, 2},
+        {:ct_make, :maybe_load, 3},
+        {:ct_make, :do_load, 3},
+        {:code, :load_abs, 2},
+        {:rpc, :eval_everywhere, 3}
+      ],
+      verdict: :caller_options_select_compile_and_local_or_remote_load,
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe, :discarded_quote_source_only]
+    },
+    %{
+      mfa: {:ct_make, :files, 1},
+      source_group: :files1,
+      source_groups: [
+        :files1,
+        :files2,
+        :emake_files,
+        :options,
+        :noload,
+        :process,
+        :compile,
+        :recompile
+      ],
+      caller_input: :caller_file_list_and_matching_emakefile_options,
+      defaults: :fixed_empty_options,
+      option_paths: [:noload],
+      trace: [
+        {:ct_make, :files, 1},
+        {:ct_make, :files, 2},
+        {:ct_make, :get_opts_from_emakefile, 3},
+        {:file, :consult, 1},
+        {:ct_make, :transform, 4},
+        {:ct_make, :expand, 2},
+        {:ct_make, :get_opts_from_emakefile2, 4},
+        {:ct_make, :do_make_files, 2},
+        {:ct_make, :process, 4},
+        {:ct_make, :recompilep, 4},
+        {:ct_make, :recompilep1, 5},
+        {:ct_make, :recompilep1, 6},
+        {:ct_make, :recompile2, 5},
+        {:ct_make, :check_includes, 3},
+        {:ct_make, :check_includes2, 3},
+        {:ct_make, :recompile, 4},
+        {:ct_make, :do_recompile, 4},
+        {:compile, :file, 2},
+        {:ct_make, :maybe_load, 3}
+      ],
+      verdict: :default_compiles_caller_file_list_without_loading,
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe]
+    },
+    %{
+      mfa: {:ct_make, :files, 2},
+      source_group: :files2,
+      source_groups: [
+        :files2,
+        :emake_files,
+        :options,
+        :load_paths,
+        :process,
+        :compile,
+        :recompile
+      ],
+      caller_input: :caller_file_list_options_and_matching_emakefile_options,
+      defaults: :caller_options_choose_compile_and_load_mode,
+      option_paths: [:noload, :load, :netload],
+      trace: [
+        {:ct_make, :files, 2},
+        {:ct_make, :get_opts_from_emakefile, 3},
+        {:file, :consult, 1},
+        {:ct_make, :transform, 4},
+        {:ct_make, :expand, 2},
+        {:ct_make, :get_opts_from_emakefile2, 4},
+        {:ct_make, :sort_options, 3},
+        {:ct_make, :do_make_files, 2},
+        {:ct_make, :load_opt, 1},
+        {:ct_make, :process, 4},
+        {:ct_make, :recompilep, 4},
+        {:ct_make, :recompilep1, 5},
+        {:ct_make, :recompilep1, 6},
+        {:ct_make, :recompile2, 5},
+        {:ct_make, :check_includes, 3},
+        {:ct_make, :check_includes2, 3},
+        {:ct_make, :recompile, 4},
+        {:ct_make, :do_recompile, 4},
+        {:compile, :file, 2},
+        {:ct_make, :maybe_load, 3},
+        {:ct_make, :do_load, 3},
+        {:code, :load_abs, 2},
+        {:rpc, :eval_everywhere, 3}
+      ],
+      verdict: :caller_files_and_options_select_compile_and_local_or_remote_load,
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe, :discarded_quote_source_only]
+    }
+  ]
+
+  @ct_make_lanes ~w(core floor)
+  @ct_make_expected_ids (for lane <- @ct_make_lanes, spec <- @ct_make_family_specs do
+                           {"CT-#{String.upcase(lane)}-ct_make-#{elem(spec.mfa, 1)}-#{elem(spec.mfa, 2)}",
+                            lane}
+                         end)
+
+  @ct_make_audit (for lane <- @ct_make_lanes, spec <- @ct_make_family_specs do
+                    lane_source = Map.fetch!(@ct_make_source_by_lane, lane)
+
+                    citations =
+                      Enum.flat_map(spec.source_groups, &Map.fetch!(lane_source.groups, &1))
+
+                    %{
+                      original_id:
+                        "CT-#{String.upcase(lane)}-ct_make-#{elem(spec.mfa, 1)}-#{elem(spec.mfa, 2)}",
+                      original_matcher: {:mfa, spec.mfa},
+                      original_reason: :tier,
+                      lane: lane,
+                      matched_mfas: [spec.mfa],
+                      caller_input: spec.caller_input,
+                      defaults: spec.defaults,
+                      option_paths: spec.option_paths,
+                      trace: spec.trace,
+                      verdict: spec.verdict,
+                      replacements: %{spec.mfa => {:tier, spec.mfa}},
+                      tier: [spec.mfa],
+                      fixtures: spec.fixtures,
+                      citations: citations,
+                      source_sha256: lane_source.sha256,
+                      applicability: :each_exact_installed_lane,
+                      removal_witness: :individual_exact_mfa
+                    }
+                  end)
 
   @escript_debug_exclusion {{:mfa, @escript_debug_mfa}, :private_front, @escript_debug_citations}
 
@@ -2139,11 +2526,44 @@ defmodule Fablebook.Contract.TierSweepTest do
     discovered_apps = MapSet.new(graph.discovered, & &1.app)
     historical_apps = MapSet.new(graph.historical_active_otp_apps)
 
+    active_ct_exports =
+      graph.exported
+      |> Enum.filter(&(elem(&1, 0) == :ct_make))
+      |> MapSet.new()
+
     assert MapSet.subset?(historical_apps, discovered_apps)
     assert graph.pending_apps != []
     assert Enum.all?(graph.pending_apps, &(not MapSet.member?(historical_apps, &1.app)))
-    assert graph.exported == graph.historical_active_exported
-    assert MapSet.new(graph.edges) == MapSet.new(graph.historical_active_edges)
+    assert Enum.any?(graph.pending_apps, &(&1.app == "common_test"))
+    refute "common_test" in graph.historical_active_otp_apps
+    assert MapSet.member?(graph.active_modules, :ct_make)
+    refute Enum.any?(graph.pending_modules, &(&1.module_atom == :ct_make))
+    assert active_ct_exports == MapSet.new(@ct_make_expected_mfas)
+    assert MapSet.subset?(graph.historical_active_exported, graph.exported)
+    assert MapSet.subset?(MapSet.new(graph.historical_active_edges), MapSet.new(graph.edges))
+    assert MapSet.size(graph.exported) > MapSet.size(graph.historical_active_exported)
+
+    active_apps =
+      graph.active_membership
+      |> Enum.filter(&(&1["kind"] == "active_app"))
+      |> Enum.map(& &1["app"])
+      |> MapSet.new()
+
+    expected_active_apps =
+      Enum.map(graph.historical_active_otp_apps, &Atom.to_string/1) ++
+        Enum.map(@elixir_apps, &Atom.to_string/1) ++ graph.closure
+
+    assert active_apps == MapSet.new(expected_active_apps)
+
+    refute Enum.any?(graph.active_membership, fn row ->
+             row["kind"] == "active_app" and row["app"] == "common_test"
+           end)
+
+    assert Enum.any?(graph.active_membership, fn row ->
+             row["kind"] == "active_module" and row["app"] == "common_test" and
+               row["module"] == "ct_make"
+           end)
+
     assert MapSet.subset?(graph.historical_active_exported, graph.full_exported)
     assert MapSet.subset?(MapSet.new(graph.historical_active_edges), MapSet.new(graph.full_edges))
     assert MapSet.size(graph.historical_active_modules) > 0
@@ -2200,12 +2620,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert SweepEvidence.resolve!(evidence, "elixir/src/elixir_aliases.erl:1").origin == :archive
   end
 
-  test "ct_make files/2 caller-file and optional load trace resolves from the exact archive" do
+  test "ct_make four-export caller, default and load traces resolve from exact sources", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     lane = evidence.lane.name
-    expected = Map.fetch!(@ct_make_files2_source_by_lane, lane)
+    expected = Map.fetch!(@ct_make_source_by_lane, lane)
     otp_ref = evidence.manifest["refs"][lane]["otp"] |> Enum.at(1)
+    records = Enum.filter(@ct_make_audit, &(&1.lane == lane))
 
     source =
       Enum.find(
@@ -2219,11 +2640,98 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert source["status"] == "present"
     assert source["url"] =~ "/#{otp_ref}/lib/common_test/src/ct_make.erl"
 
-    for {citation, expected_source} <- expected.citations do
+    assert MapSet.new(Enum.map(records, &hd(&1.matched_mfas))) ==
+             MapSet.new(@ct_make_expected_mfas)
+
+    assert MapSet.new(
+             ctx.graph.full_exported
+             |> Enum.filter(&(elem(&1, 0) == :ct_make))
+           ) == MapSet.new(@ct_make_expected_mfas)
+
+    for record <- records, {citation, expected_source} <- record.citations do
       resolved = SweepEvidence.resolve!(evidence, citation)
       assert resolved.origin in [:archive, :installed], citation
       assert resolved.sha256 == expected.sha256, citation
       assert resolved.text =~ expected_source, citation
+    end
+  end
+
+  test "CT audit maps each export and rejects incomplete matches, sources and redundant retention",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    records = @ct_make_audit
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+
+    assert_ct_make_audit!(records, ctx.graph, tier, evidence)
+
+    lane_records = Enum.filter(records, &(&1.lane == evidence.lane.name))
+    record = Enum.find(lane_records, &(&1.matched_mfas == [{:ct_make, :all, 0}]))
+    record_index = Enum.find_index(records, &(&1.original_id == record.original_id))
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_ct_make_audit!(
+        Enum.reject(records, &(&1.original_id == record.original_id)),
+        ctx.graph,
+        tier,
+        evidence
+      )
+    end
+
+    wrong_lane = %{record | lane: "wrong-lane"}
+    missing_mfa = %{record | matched_mfas: []}
+    two_tuple = %{record | matched_mfas: [{:ct_make, :all}]}
+    missing_verdict = %{record | verdict: :unreviewed}
+    missing_citations = %{record | citations: []}
+
+    for malformed <- [wrong_lane, missing_mfa, two_tuple, missing_verdict, missing_citations] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_ct_make_audit!(
+          List.replace_at(records, record_index, malformed),
+          ctx.graph,
+          tier,
+          evidence
+        )
+      end
+    end
+
+    missing_source = %{
+      record
+      | citations: [{"common_test/src/ct_make.erl:999999", "all() ->"}]
+    }
+
+    assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
+      assert_ct_make_audit!(
+        List.replace_at(records, record_index, missing_source),
+        ctx.graph,
+        tier,
+        evidence
+      )
+    end
+
+    omitted_tier = Enum.reject(tier, &(&1 == {:ct_make, :all, 0}))
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_ct_make_audit!(records, ctx.graph, omitted_tier, evidence)
+    end
+
+    redundant_retention =
+      {{:mfa, {:ct_make, :all, 0}}, :private_front, [hd(record.citations) |> elem(0)]}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_ct_make_audit!(
+        records,
+        ctx.graph,
+        tier,
+        evidence,
+        @exclusions ++ [redundant_retention]
+      )
+    end
+
+    for mfa <- @ct_make_expected_mfas do
+      assert mfa in undisposed(ctx.graph, Enum.reject(tier, &(&1 == mfa)), names),
+             "removing only #{inspect(mfa)} must expose that previously covered front"
     end
   end
 
@@ -3006,19 +3514,24 @@ defmodule Fablebook.Contract.TierSweepTest do
     historical_exported = MapSet.new(xref_graph.historical_exports)
     full_exported = MapSet.new(xref_graph.full_exports)
     module_app = Map.new(xref_graph.ingested, &{&1.module_atom, &1.app})
+    active_modules = MapSet.put(historical_modules, :ct_make)
+
+    active_ingested =
+      Enum.filter(xref_graph.ingested, &MapSet.member?(active_modules, &1.module_atom))
 
     active_edges =
       Enum.filter(full_edges, fn {{module, _, _}, _} ->
-        MapSet.member?(historical_modules, module)
+        MapSet.member?(active_modules, module)
       end)
 
     active_exported =
       Enum.filter(full_exported, fn {module, _, _} ->
-        MapSet.member?(historical_modules, module)
+        MapSet.member?(active_modules, module)
       end)
 
     active_reverse = reverse(active_edges)
     active_forward = forward(active_edges)
+    active_exported = MapSet.new(active_exported)
     no_debug = no_debug_otp ++ no_debug_other
 
     historical_reached_graph = %{
@@ -3027,18 +3540,17 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
 
     full_reached_graph = %{reverse: full_reverse, exported: full_exported}
+    active_reached_graph = %{reverse: active_reverse, exported: active_exported}
     tier = BannedCalls.banned_mfas()
     names = BannedCalls.banned_names()
     {historical_reached, _historical_parent} = reach(historical_reached_graph, tier, names)
+    {active_reached, _active_parent} = reach(active_reached_graph, tier, names)
     {full_reached, full_parent} = reach(full_reached_graph, tier, names)
 
     assert_active_sets_preserved!(
-      historical_reached,
-      full_reached,
-      historical_exported,
-      full_exported,
-      historical_edges,
-      full_edges,
+      %{reached: historical_reached, exported: historical_exported, edges: historical_edges},
+      %{reached: active_reached, exported: active_exported, edges: active_edges},
+      %{reached: full_reached, exported: full_exported, edges: full_edges},
       evidence.lane.name
     )
 
@@ -3055,8 +3567,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     active_membership =
       active_membership_records(
         xref_graph.historical_ingested,
-        xref_graph.historical_exports,
-        historical_edges,
+        active_ingested,
+        active_exported,
+        active_edges,
         module_app
       )
 
@@ -3080,10 +3593,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     pending_modules =
       for inspection <- inspected,
-          not MapSet.member?(historical_modules, inspection.module_atom),
+          not MapSet.member?(active_modules, inspection.module_atom),
           do: inspection
 
-    pending_mfas = MapSet.difference(full_reached, historical_reached)
+    pending_mfas = MapSet.difference(full_reached, active_reached)
 
     pending_records =
       pending_inventory_records(
@@ -3160,7 +3673,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     %{
       dirs: dirs,
       edges: active_edges,
-      exported: MapSet.new(active_exported),
+      exported: active_exported,
       reverse: active_reverse,
       forward: active_forward,
       no_debug: no_debug,
@@ -3172,6 +3685,11 @@ defmodule Fablebook.Contract.TierSweepTest do
       historical_active_modules: historical_modules,
       historical_active_edges: historical_edges,
       historical_active_exported: historical_exported,
+      active_modules: active_modules,
+      active_edges: active_edges,
+      active_exported: active_exported,
+      active_membership: active_membership,
+      active_reached: active_reached,
       discovered: discovered,
       inspected: inspected,
       ingested: receipt.ingested,
@@ -3193,22 +3711,20 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
   end
 
-  defp assert_active_sets_preserved!(
-         historical_reached,
-         full_reached,
-         historical_exported,
-         full_exported,
-         historical_edges,
-         full_edges,
-         lane
-       ) do
+  defp assert_active_sets_preserved!(historical, active, full, lane) do
     preserved =
-      MapSet.subset?(historical_reached, full_reached) and
-        MapSet.subset?(historical_exported, full_exported) and
-        MapSet.subset?(MapSet.new(historical_edges), MapSet.new(full_edges))
+      MapSet.subset?(historical.reached, active.reached) and
+        MapSet.subset?(active.reached, full.reached) and
+        MapSet.subset?(historical.exported, active.exported) and
+        MapSet.subset?(active.exported, full.exported) and
+        MapSet.subset?(MapSet.new(historical.edges), MapSet.new(active.edges)) and
+        MapSet.subset?(MapSet.new(active.edges), MapSet.new(full.edges))
 
     unless preserved,
-      do: raise("installed OTP expansion removed historical active coverage for #{lane}")
+      do:
+        raise(
+          "installed OTP active projection lost historical or full-scope coverage for #{lane}"
+        )
   end
 
   defp assert_no_new_active_failures!(
@@ -3244,8 +3760,9 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp active_membership_records(
          historical_ingested,
-         historical_exports,
-         historical_edges,
+         active_ingested,
+         active_exports,
+         active_edges,
          module_app
        ) do
     apps =
@@ -3256,17 +3773,17 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> Enum.map(&%{"kind" => "active_app", "app" => &1})
 
     modules =
-      historical_ingested
+      active_ingested
       |> Enum.uniq_by(&{&1.app, &1.module})
       |> Enum.map(
         &%{"kind" => "active_module", "app" => &1.app, "module" => Atom.to_string(&1.module_atom)}
       )
       |> Enum.sort_by(&{&1["app"], &1["module"]})
 
-    exports = mfa_records("active_export", historical_exports, module_app)
+    exports = mfa_records("active_export", active_exports, module_app)
 
     edges =
-      historical_edges
+      active_edges
       |> Enum.uniq()
       |> Enum.map(fn {{module, function, arity}, {callee_module, callee_function}} ->
         %{
@@ -3701,6 +4218,126 @@ defmodule Fablebook.Contract.TierSweepTest do
       :tier
     else
       exact_mfa_exclusion_reason(mfa, exclusions) || exclusion_reason(m, f, exclusions)
+    end
+  end
+
+  defp assert_ct_make_audit!(records, graph, tier, evidence, exclusions \\ @exclusions) do
+    lane = evidence.lane.name
+    lane_source = Map.fetch!(@ct_make_source_by_lane, lane)
+    lane_records = Enum.filter(records, &(&1.lane == lane))
+
+    expected_ids =
+      @ct_make_expected_ids
+      |> Enum.filter(&(elem(&1, 1) == lane))
+      |> MapSet.new()
+
+    assert length(records) == length(@ct_make_expected_ids)
+
+    assert MapSet.new(Enum.map(records, &{&1.original_id, &1.lane})) ==
+             MapSet.new(@ct_make_expected_ids)
+
+    assert length(lane_records) == length(@ct_make_family_specs)
+    assert MapSet.new(Enum.map(lane_records, &{&1.original_id, &1.lane})) == expected_ids
+
+    actual_exports =
+      graph.full_exported
+      |> Enum.filter(&(elem(&1, 0) == :ct_make))
+      |> MapSet.new()
+
+    active_exports =
+      graph.exported
+      |> Enum.filter(&(elem(&1, 0) == :ct_make))
+      |> MapSet.new()
+
+    reached_exports = MapSet.intersection(actual_exports, graph.full_reached)
+    active_reached_exports = MapSet.intersection(active_exports, graph.active_reached)
+    expected_exports = MapSet.new(@ct_make_expected_mfas)
+    expected_reached = MapSet.new(@ct_make_expected_reached_mfas)
+
+    actual_reached =
+      graph.full_reached
+      |> Enum.filter(&(elem(&1, 0) == :ct_make))
+      |> MapSet.new()
+
+    active_reached =
+      graph.active_reached
+      |> Enum.filter(&(elem(&1, 0) == :ct_make))
+      |> MapSet.new()
+
+    assert actual_exports == expected_exports,
+           "the complete exact-lane ct_make export set differs from its four audited rows"
+
+    assert MapSet.new(Enum.flat_map(lane_records, & &1.matched_mfas)) == actual_exports
+    assert reached_exports == expected_exports
+    assert active_exports == expected_exports
+    assert active_reached_exports == expected_exports
+
+    assert actual_reached == expected_reached,
+           "the exact-lane ct_make reached set differs from the reviewed caller/load paths"
+
+    assert active_reached == expected_reached
+    assert MapSet.member?(graph.active_modules, :ct_make)
+    assert Enum.any?(graph.pending_apps, &(&1.app == "common_test"))
+    refute Enum.any?(graph.pending_modules, &(&1.module_atom == :ct_make))
+
+    refute Enum.any?(graph.active_membership, fn row ->
+             row["kind"] == "active_app" and row["app"] == "common_test"
+           end)
+
+    assert Enum.any?(graph.active_membership, fn row ->
+             row["kind"] == "active_module" and row["app"] == "common_test" and
+               row["module"] == "ct_make"
+           end)
+
+    for spec <- @ct_make_family_specs do
+      mfa = spec.mfa
+      {module, function, _arity} = mfa
+
+      record =
+        Enum.find(
+          lane_records,
+          &(&1.original_id == "CT-#{String.upcase(lane)}-ct_make-#{function}-#{elem(mfa, 2)}")
+        )
+
+      assert record != nil, "missing CT record for #{inspect(mfa)} on #{lane}"
+      assert record.original_matcher == {:mfa, mfa}
+      assert record.original_reason == :tier
+      assert record.matched_mfas == [mfa]
+      assert record.caller_input == spec.caller_input
+      assert record.defaults == spec.defaults
+      assert record.option_paths == spec.option_paths
+      assert record.trace == spec.trace
+      assert record.verdict == spec.verdict
+      assert record.replacements == %{mfa => {:tier, mfa}}
+      assert record.tier == [mfa]
+      assert record.fixtures == spec.fixtures
+      assert record.applicability == :each_exact_installed_lane
+      assert record.removal_witness == :individual_exact_mfa
+      assert record.source_sha256 == lane_source.sha256
+
+      assert covered?(mfa, tier, BannedCalls.banned_names()),
+             "#{inspect(mfa)} has no replacement tier"
+
+      assert exact_mfa_exclusion_reason(mfa, exclusions) == nil,
+             "#{inspect(mfa)} has a redundant exact exclusion"
+
+      assert exclusion_reason(module, function, exclusions) == nil,
+             "#{inspect(mfa)} has a redundant broad exclusion"
+
+      expected_citations = Enum.flat_map(spec.source_groups, &Map.fetch!(lane_source.groups, &1))
+      assert record.citations == expected_citations
+
+      for {citation, expected_source} <- record.citations do
+        resolved = SweepEvidence.resolve!(evidence, citation)
+        assert resolved.origin in [:archive, :installed], citation
+        assert resolved.sha256 == lane_source.sha256, citation
+        assert resolved.text =~ expected_source, citation
+      end
+
+      tier_without_front = Enum.reject(tier, &(&1 == mfa))
+
+      assert mfa in undisposed(graph, tier_without_front, BannedCalls.banned_names(), exclusions),
+             "removing only #{inspect(mfa)} must expose that previously covered front"
     end
   end
 
