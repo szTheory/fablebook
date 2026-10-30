@@ -147,5 +147,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-10-30T01:52:39.500Z
-Stopped at: Automated Phase 1 UAT recorded; no manual testing requested. Await existing Monday timing automation; canonical report remains a separate gate.
+Stopped at: Automated Phase 1 UAT recorded; merge PR #22 when green. Monday timing and parent canonical reports remain separate gates, while successor planning can proceed.
+Next command: `$gsd-plan-phase 01.1.1.1` — plan the already assigned remaining ban-list work; Phase 01.1.1 dependency is verified. See `.planning/CI-PERFORMANCE.md` for measured CI opportunities.
 Resume file: None

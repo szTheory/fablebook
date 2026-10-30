@@ -12,6 +12,8 @@ Owner direction: INT-20261029-08. Applies to every GSD discussion, plan, executi
 
 INT-20261029-05 still applies: finish the requested GSD step and show its next command; the owner chooses when to advance. Autonomous verification does not enable workflow auto-advance.
 
+INT-20261029-09: End every GSD response with a concrete next command and its purpose, even when a phase is partial or blocked. State separately whether a PR can merge, whether the phase can close, and what independent work can proceed. A pending scheduled observation does not itself block a green, scoped automation PR or planning work whose own dependencies are verified. Batch bookkeeping with substantive pushes; link final CI evidence from the PR instead of creating a receipt-only commit that triggers another identical run.
+
 ## Phase 1 receipt
 
 `phases/01-release-pipeline-ci-gate-and-guards/01-UAT.md` maps acceptance to executable checks and live read-only evidence. `test/contract/ci_health_test.exs` exercises `bin/ci_health` through a fake GitHub CLI, including percentile boundaries, history eligibility, drift and regression reporting; it runs in the existing core/floor test suites. Existing package, prod-guard, release-workflow, ban and planning contracts remain the primary proofs. Consult this receipt before proposing another manual Phase 1 walkthrough.
