@@ -1,0 +1,166 @@
+{
+  "collected_at": "2026-10-30T02:15:23.749210+00:00",
+  "tested_head": "44d4f7bcefc41efa705dd88383312f58edf0d629",
+  "ci_health": {
+    "exit_code": 0,
+    "stdout": "ci-gate on pull_request, attempt 1, last 7 days (n=41): p50 63 s, p95 122 s. a local run",
+    "stderr": "",
+    "issue_writes": "intercepted locally; no comments or issues sent",
+    "intercepted_writes": [
+      [
+        "issue",
+        "comment",
+        "2",
+        "--repo",
+        "szTheory/fablebook",
+        "--body",
+        "ci-gate on pull_request, attempt 1, last 7 days (n=41): p50 63 s, p95 122 s. a local run"
+      ]
+    ]
+  },
+  "main_required_checks": [
+    "ci-gate"
+  ],
+  "main_ci": {
+    "conclusion": "success",
+    "databaseId": 40987211785,
+    "headSha": "a7363fb8b8d10c1fc5b01771e5e3e981144ee165",
+    "jobs": [
+      {
+        "name": "security",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40987211785/job/123840920480"
+      },
+      {
+        "name": "core",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40987211785/job/123840920623"
+      },
+      {
+        "name": "floor",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40987211785/job/123840920751"
+      },
+      {
+        "name": "dialyzer",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40987211785/job/123840920768"
+      },
+      {
+        "name": "ci-health",
+        "conclusion": "skipped",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40987211785/job/123840921654"
+      },
+      {
+        "name": "nightly",
+        "conclusion": "skipped",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40987211785/job/123840921956"
+      },
+      {
+        "name": "ci-gate",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40987211785/job/123841283852"
+      }
+    ],
+    "url": "https://github.com/szTheory/fablebook/actions/runs/40987211785"
+  },
+  "release_ci": {
+    "conclusion": "success",
+    "databaseId": 40803980465,
+    "headSha": "f4bb34f2908cfec1aba021a8af50dcb1435a1504",
+    "jobs": [
+      {
+        "name": "release-please",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40803980465/job/123218407852"
+      },
+      {
+        "name": "publish / build",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40803980465/job/123218473369"
+      },
+      {
+        "name": "publish / publish",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40803980465/job/123219471261"
+      },
+      {
+        "name": "publish / smoke (floor)",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40803980465/job/123219792205"
+      },
+      {
+        "name": "publish / smoke (latest)",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40803980465/job/123219792207"
+      },
+      {
+        "name": "publish / finalize",
+        "conclusion": "success",
+        "url": "https://github.com/szTheory/fablebook/actions/runs/40803980465/job/123220417582"
+      }
+    ],
+    "url": "https://github.com/szTheory/fablebook/actions/runs/40803980465"
+  },
+  "intent_red_ci": {
+    "conclusion": "failure",
+    "databaseId": 40802432347,
+    "url": "https://github.com/szTheory/fablebook/actions/runs/40802432347"
+  },
+  "release": {
+    "assets": [
+      {
+        "name": "fablebook-0.1.0.cdx.json",
+        "url": "https://github.com/szTheory/fablebook/releases/download/v0.1.0/fablebook-0.1.0.cdx.json"
+      }
+    ],
+    "isDraft": false,
+    "tagName": "v0.1.0",
+    "url": "https://github.com/szTheory/fablebook/releases/tag/v0.1.0"
+  },
+  "scheduled_ci": [
+    {
+      "conclusion": "failure",
+      "created_at": "2026-10-29T03:26:12Z",
+      "html_url": "https://github.com/szTheory/fablebook/actions/runs/40812122621",
+      "id": 40812122621
+    }
+  ],
+  "hex_release": {
+    "version": "0.1.0",
+    "checksum": "9fd4c3c31d7e4ded6e40d2ab4548a4de4a78d34d51e2824a1b580ac6e4ffe834",
+    "has_docs": true,
+    "url": "https://hex.pm/api/packages/fablebook/releases/0.1.0",
+    "requirements": {
+      "nimble_options": {
+        "app": "nimble_options",
+        "optional": false,
+        "requirement": "~> 1.1"
+      },
+      "phoenix": {
+        "app": "phoenix",
+        "optional": false,
+        "requirement": ">= 1.8.9 and < 2.0.0"
+      },
+      "phoenix_html": {
+        "app": "phoenix_html",
+        "optional": false,
+        "requirement": "~> 4.1"
+      },
+      "phoenix_live_view": {
+        "app": "phoenix_live_view",
+        "optional": false,
+        "requirement": ">= 1.2.9 and < 2.0.0"
+      },
+      "telemetry": {
+        "app": "telemetry",
+        "optional": false,
+        "requirement": "~> 1.0"
+      }
+    }
+  },
+  "hexdocs": {
+    "status": 200,
+    "final_url": "https://fablebook.hexdocs.pm/0.1.0/"
+  }
+}

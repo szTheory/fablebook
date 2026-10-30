@@ -1,0 +1,17 @@
+[
+  {
+    "mutation": "missing-history-is-measured",
+    "exit_code": 2,
+    "failed_tests": 3
+  },
+  {
+    "mutation": "p95-regression-disabled",
+    "exit_code": 2,
+    "failed_tests": 1
+  },
+  {
+    "mutation": "ruleset-drift-disabled",
+    "exit_code": 2,
+    "failed_tests": 11
+  }
+]

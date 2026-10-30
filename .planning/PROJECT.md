@@ -312,6 +312,8 @@ Every item below is a v1.0 commitment.
 
 | Decision | Rationale | Outcome |
 |---|---|---|
+| End GSD flows with the next command; distinguish merge readiness from pending phase observations (INT-20261029-09) | Keep useful work moving and make the next action explicit | Merge green scoped PRs under existing checks; retain scheduled evidence; auto-advance stays off |
+| Automate verification by default; hand off only irreducible checks (INT-20261029-08) | Reduce owner toil and repeated UAT; add CI coverage when it has recurring value | `.planning/VERIFICATION.md`; Phase 1 automation and evidence recorded in `01-UAT.md`; GSD auto-advance stays off |
 | Stories are compiled `.ex` modules in `storybook/` (ADR 0001) | No eval surface; manifest available in test; colocated hooks work | — Pending |
 | Scenarios are functions; slots are never strings (ADR 0002) | The string round-trip caused the incumbent's root bugs and its CVE | — Pending |
 | Iframe canvas through the host's pipeline and root layout (ADR 0003) | Fidelity is the product; it removes CSS and hook isolation problems | — Pending |
@@ -332,6 +334,9 @@ Every item below is a v1.0 commitment.
 | Static export in v1.x; render seam now (ADR 0022) | Keeps the 1.0 design uncompromised | — Pending |
 | Four tiers Primitive…Screen; "Scenario" (ADR 0023) | One clear question per tier; "variant" collides with `attr :variant` | — Pending |
 | Split rule beats "8–12 phases": about 35 sequential phases under the 12 family headings, with research's ordering moves (INT-20261028-16, OPEN-QUESTIONS Q6) | Research found 8 of 12 families exceed the 5-plan cap; the split rule is non-negotiable | — Pending |
+| Mirrored source and BEAM guard tiers with derived reachability and boundary contracts (ADR 0004, INT-20261029-04) | Quoted and module-body calls need source inspection; generated probes and both-lane sweeps keep tier entries live | Verified in Phase 01.1.1, PRs #15–#20; SEC-01 remains Pending for Phase 5 |
+| Parser disposition, unswept OTP apps, and carried-exclusion audit remain separate owned work (INT-20261029-02) | Keep the scoped phase complete without claiming the transferred guarantees | Open in Phase 01.1.1.1; accepted computed-dispatch and write-then-load residuals retain the Phase 5 backstop |
+| Absolute Elixir module names bypass local alias expansion (01.1.1-REVIEW CR-01) | A local alias must not hide a root-qualified quoted call | Fixed in PR #20; source-only fixture and direct/apply/benign controls pass on both lanes |
 
 ## Roadmap constraints (for the roadmapper)
 
@@ -411,4 +416,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-28 after research (INT-20261028-16: phase split, four research REQs added)*
+*Last updated: 2026-10-30 after Phase 01.1.1 verification and transition*

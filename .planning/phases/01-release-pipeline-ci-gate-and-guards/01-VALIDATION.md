@@ -1,109 +1,42 @@
 ---
 phase: "1"
 slug: "release-pipeline-ci-gate-and-guards"
-# status lifecycle: draft (seeded by plan-phase) → validated (set by validate-phase §6)
-# audit-milestone §5.5 distinguishes NOT-VALIDATED (draft) from PARTIAL (validated + nyquist_compliant: false) (#2117)
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: validated
+nyquist_compliant: true
+wave_0_complete: true
 created: "2026-10-28"
+updated: "2026-10-30T02:19:42Z"
 ---
 
-# Phase 1 — Validation Strategy
+# Phase 1 validation strategy
 
-> Per-phase validation contract for feedback sampling during execution.
+Policy: INT-20261029-08 and `.planning/VERIFICATION.md`. Acceptance-to-evidence mapping and honest residuals: `01-UAT.md`.
 
----
+| Boundary | Executable verification | Evidence |
+|---|---|---|
+| Clean dev/prod host, unguarded failure | `mix test --include prod_guard test/contract/prod_guard_test.exs` | Fresh mix ci; exact CI floor in run 40987211785 |
+| Canonical CompileError | `mix test test/contract/prod_guard_message_test.exs` | Fresh mix ci |
+| Eval/atom/source/style bans and reachability | `mix test test/contract/banned_calls_test.exs test/contract/tier_sweep_test.exs test/contract/style_attr_test.exs`; `mix credo --strict` | Fresh mix ci; Phase 01.1.1 verification |
+| Dependency closure, package allowlist | `mix test --include release test/contract/dependency_budget_test.exs test/contract/tarball_test.exs` | Fresh mix ci; recorded release tag build |
+| CI caps, pins, wiring and negative mutations | `mix test test/contract/ci_shape_test.exs` | Fresh mix ci; main CI |
+| Git diff, intent and contract pairing | `mix test test/planning/intent_test.exs test/planning/contract_rule_test.exs` | Fresh mix ci; real red run 40802432347 |
+| Release provenance and recovery | `mix test test/contract/hex_publish_test.exs` | Executes actual workflow shell steps with isolated external commands |
+| CI timing, sample rules, drift, failure reporting | `mix test test/contract/ci_health_test.exs` | 13 seam tests; three caught mutations |
+| Published artifact, docs, SBOM, consumer smoke | Read Hex API, HexDocs, GitHub release/run APIs | `01-LIVE-EVIDENCE.json`; release run 40803980465 |
+| Weekly timing publication | Existing Monday ci-health job; read its run and issue #2 | First trigger 2026-11-02T05:23:00Z; pending scheduled observation |
 
-## Test Infrastructure
+Wave 0 infrastructure, helpers and fixtures all exist. Each task's recurring behavior has executable verification; existing core/floor lanes discover all tests. Run the targeted test after changes and `mix ci` before committing. The full local alias ran in about 49 seconds; network consumer checks remain in nightly/release lanes. Exact floor runtime is supplied by CI.
 
-| Property | Value |
-|----------|-------|
-| **Framework** | ExUnit (latest lane Elixir 1.20.4 / OTP 29, or Elixir 1.19.5 / OTP 28 if the 01-01-T1 sign-off is approve-except-d16; floor lane Elixir 1.18.5 / OTP 27) |
-| **Config file** | none yet. Wave 0 creates `mix.exs` (with `test_ignore_filters` and a `ci` alias) and `test/test_helper.exs` |
-| **Quick run command** | `mix test` (fast guards; excludes `:prod_guard` and `:release`) |
-| **Full suite command** | `mix ci` (adds `--include prod_guard --include release`) |
-| **Floor command** | `FABLEBOOK_FLOOR=1 mix test --warnings-as-errors --include prod_guard` |
-| **Estimated runtime** | quick ~10 s; full ~60 s warm (each prod-guard lane takes ~8 s plus fixture compiles) |
+## Human-only verification
 
----
+No new human UAT is required. Historical amendment/publication/key-rotation approvals are reused from INT sources and 01-05-SUMMARY. New visual baselines and unresolved product decisions still follow their existing owner gates. The weekly trigger is external evidence, not a manual-only check.
 
-## Sampling Rate
+## Sign-off
 
-- **After every task commit:** run `mix test`, plus the specific test file under work.
-- **After every plan wave:** run `mix ci` locally, then push to the draft PR. CI is the real gate.
-- **Before `/gsd-verify-work`:**
-  - green `ci-gate` on PR #1;
-  - the D-22 red-run link;
-  - the release PR green, including `nightly`;
-  - the hex-publish run link;
-  - the follow-up PR that removes `release-as`, merged green.
-- **Max feedback latency:** 120 seconds for the fast and per-task commands. The slow-lane checks below are excluded from that budget and run once per wave or per push, never after every commit.
+- [x] All recurring acceptance criteria map to executable checks.
+- [x] Bootstrap dependencies and fixtures exist.
+- [x] No watch-mode commands.
+- [x] Fast/full feedback stays inside the 120-second local budget.
+- [x] Time-gated observations remain explicitly pending; automation is not equated with a passing observation.
 
-### Slow-lane checks (minutes, network or GitHub-bound)
-
-| Check | Where | Typical time |
-|-------|-------|--------------|
-| `mix test --include prod_guard test/contract/prod_guard_test.exs` (nested mix, both lanes) | 01-01-T2, 01-01-T3 | 1 to 3 min per lane cold |
-| `bin/smoke_consumer --path .` (phx.new, deps.get, two compiles) | 01-02-T2, `nightly` | 3 to 10 min |
-| `mix test --include release test/contract/tarball_test.exs` (hex.build) | 01-03-T3 | about 1 min |
-| `gh pr checks <n> --watch` then the all-checks merge rule | 01-02-T4, 01-04-T3, 01-05-T1/T3/T5/T7 | one full CI run, 5 to 15 min |
-| `bin/ci_health` against the live API | 01-05-T1, `ci-health` | under 1 min |
-| hex-publish build, publish, smoke and finalize | 01-05-T5 | 15 to 30 min |
-
----
-
-## Per-Task Verification Map
-
-Task IDs filled by the planner (`<plan>-T<task>`). Threat Refs map to each plan's STRIDE register (T-01-01 to T-01-41). Rows map requirements to the proving command (from 01-RESEARCH.md § Validation Architecture).
-
-| Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
-|---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 01-01-T2 | 01-01 | 1 | SEC-02 | prod exposure | False `dev_routes` mount compiles in prod; an unguarded mount raises the canonical error once; no routes, no story beams | integration | `mix test test/contract/prod_guard_test.exs --include prod_guard` | ❌ W0 | ⬜ pending |
-| 01-01-T3 | 01-01 | 1 | SEC-02 | — | The CompileError's first line equals the Troubleshooting heading | unit | `mix test test/contract/prod_guard_message_test.exs` | ❌ W0 | ⬜ pending |
-| 01-03-T1 | 01-03 | 3 | SEC-01 (partial) | eval/atom DoS | No banned call or banned dep in `lib/` beams; 8 bypass fixtures fail | unit | `mix test test/contract/banned_calls_test.exs` | ❌ W0 | ⬜ pending |
-| 01-03-T2 | 01-03 | 3 | SEC-01 (partial) | — | Credo source bans | lint | `mix credo --strict` | ❌ W0 | ⬜ pending |
-| 01-03-T2 | 01-03 | 3 | SEC-01 (partial) | CSP | No `style=` in `lib/` | unit | `mix test test/contract/style_attr_test.exs` | ❌ W0 | ⬜ pending |
-| 01-03-T3 | 01-03 | 3 | SEC-01 / SC4 | supply chain | Prod closure has no banned dep; direct deps exact; `only:` correct | unit | `mix test test/contract/dependency_budget_test.exs` | ❌ W0 | ⬜ pending |
-| 01-03-T3 | 01-03 | 3 | REL-01 / SC4 | PII, leaks | Tarball allowlist, metadata, PII scan | integration | `mix test test/contract/tarball_test.exs --include release` | ❌ W0 | ⬜ pending |
-| 01-04-T3 | 01-04 | 4 | CI-01 | T-01-26, T-01-28 | Caps, ci-gate, pins, bypass bans, no Node, no phase names; test-wiring pins (ignore filters, alias test step, ExUnit excludes, checkout depth, ci-health shape step) | unit | `mix test test/contract/ci_shape_test.exs` | ❌ W0 | ⬜ pending |
-| 01-02-T1/T2 | 01-02 | 2 | CI-01 | template injection | Workflows lint clean | lint | actionlint and zizmor in the `security` job | n/a | ⬜ pending |
-| 01-04-T1 | 01-04 | 4 | INTENT-01 | — | Add-only sources, INT id form, REQ citations, ADR existence | unit | `mix test test/planning/intent_test.exs` | ❌ W0 | ⬜ pending |
-| 01-04-T2 | 01-04 | 4 | D-21 (Q15) | T-01-25, T-01-28 | A guard `M`/`D` plus its paired implementation in one PR fails; the diff seam is proven in a real tmp git repo | unit | `mix test test/planning/contract_rule_test.exs` | ❌ W0 | ⬜ pending |
-| 01-03-T3 | 01-03 | 3 | COMPAT floor | — | The floor lane really resolves the floor versions named in mix.exs (Phoenix 1.8.9 / LiveView 1.2.9 under approve-all) | unit | `FABLEBOOK_FLOOR=1 mix test test/contract/dependency_budget_test.exs` | ❌ W0 | ⬜ pending |
-| 01-05-T1 | 01-05 | 5 | INTENT-01 | T-01-41 | The signed amendments pass the citation rules | unit | `mix test test/planning/intent_test.exs test/planning/contract_rule_test.exs` | ❌ W0 | ⬜ pending |
-
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
-
----
-
-## Wave 0 Requirements
-
-- [ ] `mix.exs`, `.formatter.exs`, `mix.lock`, `mix.floor.lock`, `test/test_helper.exs`: framework bootstrap. `test_ignore_filters` must be set before the first `mix test --warnings-as-errors`.
-- [ ] `test/support/mix_cmd.ex`, `test/support/git_diff.ex`, `test/support/beam_walker.ex`: shared helpers.
-- [ ] Fixture directories `test/fixtures/prod_guard_host/`, `test/fixtures/guards/` and `test/fixtures/ci_shape/`.
-
----
-
-## Manual-Only Verifications
-
-| Behavior | Requirement | Why Manual | Test Instructions |
-|----------|-------------|------------|-------------------|
-| 0.1.0 is on hex.pm via release-please, with smoke, recovery and SBOM | REL-01 | Needs real GitHub and Hex runs and human-held credentials | Link the hex-publish run, the hex.pm page, and the release asset `fablebook-0.1.0.cdx.json` |
-| Weekly p50/p95 published | CI-01 | Needs real CI history and a scheduled run | Dispatch `ci.yml` (`ci-health`); link the run and the `ci-timing` issue comment (`not-run (n=K)` is acceptable while n<10) |
-| Ruleset requires exactly `ci-gate` | CI-01 | A GitHub-side setting | `ci-health` drift-check link |
-| An edited INT source fails real CI | INTENT-01 | Proves the wiring, not the fixture | Red-run link from a throwaway draft PR, closed unmerged (D-22) |
-| Owner sign-offs (D-12, D-16, D-21, D-26/27, D-31) | — | Owner decisions | 01-01-T1 checkpoint (`blocking-human`); INT source in 01-01-T3; amendments and strikes in 01-05-T1; amendment diff shown to the owner at 01-05-T2 |
-
----
-
-## Validation Sign-Off
-
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 120s
-- [ ] `nyquist_compliant: true` set in frontmatter
-
-**Approval:** pending
+Validation coverage is complete; phase acceptance remains partial until the scheduled observation and canonical execution re-verification are resolved.
