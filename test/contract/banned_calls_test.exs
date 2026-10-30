@@ -837,7 +837,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
         {:mfa, {:file, :consult, 1}},
         {:mfa, {:file, :consult, :_}}
       ],
-      Fablebook.GuardFixture.StrictCtMake => [],
+      Fablebook.GuardFixture.StrictCtMake => [{:mfa, {:ct_make, :files, 2}}],
       Fablebook.GuardFixture.StrictWriteThenLoad => []
     }
 
@@ -1134,7 +1134,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       {"defmodule StrictModuleAlias do\n  alias __MODULE__.Generated, as: M\n  def run(x), do: M.concat(x)\nend",
        false},
       {":file.path_consult(dirs, file)", true},
-      {":ct_make.files(files, [:load])", false},
+      {":ct_make.files(files, [:load])", true},
       {"File.write!(path, bin)\nCode.ensure_loaded?(mod)", false}
     ]
 
