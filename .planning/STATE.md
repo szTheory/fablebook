@@ -3,11 +3,11 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.2
 current_phase_name: Installed OTP inventory and Common Test guard slice
 status: executing
-stopped_at: Resuming authorized Phoenix.HTML security maintenance and source-lock provenance refresh under INT-20261030-05
-last_updated: "2026-10-30T21:52:18.872Z"
+stopped_at: Completed 01.1.1.2-01-PLAN.md
+last_updated: "2026-10-30T22:44:24.207Z"
 last_activity: 2026-10-30
-last_activity_desc: Exact core/floor inventory receipts pass; Plan 01 delivery is blocked by phoenix_html security advisory and failed ci-gate
-state_head: 0f33179261c0a99325919d45967a124e2e9ce561
+last_activity_desc: Plan 01 is merged green with exact receipts; Plan 02 is next and has not started
+state_head: c084f37f3d4c046515af5fcdea3ada3d3a4ad423
 progress:
   total_phases: 42
   completed_phases: 1
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.2 — executing the owner-authorized security prerequisite; inventory delivery and Plan 02 retain their green-merge gates
+**Current focus:** Phase 01.1.1.2 — Plan 01 is complete; Plan 02 Common Test is next, with the final review pass reserved for it
 
 ## Current Position
 
 Phase: 01.1.1.2 (Installed OTP inventory and Common Test guard slice) — IN PROGRESS
-Plan: 1 of 2 (Plan 01 halted; Plan 02 blocked)
-Status: Owner authorized separate `phoenix_html` 4.4.0 maintenance, lock provenance refresh, and one maintenance review; continuing selected phase without another acknowledgment
-Last activity: 2026-10-30 — Exact core/floor tests and receipts passed on PR #27 head 9c326cf; security and ci-gate failed for EEF-CVE-2026-117645
+Plan: 2 of 2 (Plan 01 complete; Plan 02 not started)
+Status: Plan 01 merged green after the separately authorized Phoenix.HTML 4.4.0 maintenance PR and exact final-head CI; parent executor owns Plan 02 dispatch
+Last activity: 2026-10-30 — PR #27 merged at tested head 3dc865e with complete core/floor receipts; SEC-01 remains Pending for Phase 5
 
 Progress: [░░░░░░░░░░] 2%
 
@@ -74,6 +74,7 @@ Progress: [░░░░░░░░░░] 2%
 | Phase 01.1.1 P05 | 28min | 4 tasks | 13 files |
 | Phase 01.1.1.1 P06 | 57 min | 2 tasks | 3 files |
 | Phase 01.1.1.1 P07 | 48 min | 2 tasks | 5 files |
+| Phase 01.1.1.2 P01 | 264min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -125,6 +126,9 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.1]: Caller-controlled format, config, and message paths that reach formatter atom creation are represented by exact mirrored tiers on both lanes.
 - [Phase 01.1.1.1]: Retain exact exclusions only for Logger.Formatter.new/0, ExUnit.plural_rule/2, and ExUnit.after_suite/1; each has a per-lane source trace and removal witness.
 - [Phase 01.1.1.1]: SEC-01 stays Pending for Phase 5; remaining inventory, carried-exclusion, Macro, and wording work stays with its planned owners.
+- [Phase 01.1.1.2]: Phoenix.HTML 4.4.0 was merged in a separate security PR with both lockfile provenance records refreshed before exact inventory delivery.
+- [Phase 01.1.1.2]: The inventory PR merged only after exact core and floor receipts validated against the final tested head and all required checks passed.
+- [Phase 01.1.1.2]: Four of five review passes are used; the final pass remains reserved for Common Test, and SEC-01 stays Pending for Phase 5.
 
 ### Pending Todos
 
@@ -140,8 +144,8 @@ None yet.
 - [Phase 3 onward]: LiveView 1.2 upgrade PRs in the dogfood repos should start early (Q2, Q22), so the 14-day soak is not reset at the end.
 - [Phase 17 and 18]: depend on abracabrand's two-session process; keep the minimal-token fallback so the phase can merge.
 - [Phases 2 and 18]: neither completes a requirement on its own (a vertical slice and a content track); they feed QA-04, VIS-01/02 and QA-06.
-- Historical CI run 41127014456 on PR head 76edcb6 stopped both exact lanes at the newly coupled `escript.debug/3` active MFA. The source-backed private-front correction and removal witness are now present on PR head 9c326cf; exact core/floor tests and receipts pass on run 41132579711.
-- Plan 01 exact core/floor tests and receipts pass on PR #27 head 9c326cf, but security and ci-gate fail because both locks pin vulnerable phoenix_html 4.3.0 (EEF-CVE-2026-117645). Do not merge or start Plan 02. Recommend a separately authorized lockfile-only update of mix.lock and mix.floor.lock to phoenix_html 4.4.0, followed by exact core/floor and security checks; obtain an explicit review-budget decision because pass 4 is reserved for Common Test.
+- Historical CI run 41127014456 on PR head 76edcb6 stopped both exact lanes at `escript.debug/3`; the source-backed private-front correction and removal witness are in the merged PR.
+- Plan 01 is complete: PR #27 merged at `3dc865e` after run 41137949115 passed core, floor, dialyzer, security and ci-gate and both receipts validated. PR #28 separately merged Phoenix.HTML 4.4.0 with lock provenance refreshed. Plan 02 is next but not started; review pass 5 remains reserved for Common Test. SEC-01 remains Pending for Phase 5.
 
 ### Roadmap Evolution
 
@@ -159,10 +163,10 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T21:52:18.539Z
-Stopped at: Exact core/floor inventory evidence is preserved; delivery remains blocked by the phoenix_html security advisory and failed ci-gate
-Next independent command: Owner decides whether to authorize a separate lockfile-only phoenix_html 4.4.0 security PR and how to allocate its review; keep Plan 02 blocked until PR #27 is green and merged
-Resume file: .planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-01-SUMMARY.md
+Last session: 2026-10-30T22:44:24.080Z
+Stopped at: Completed 01.1.1.2-01-PLAN.md
+Next independent command: Parent executor dispatches Plan 02 after this completed Plan 01 handoff; no user action or acknowledgment is needed
+Resume file: None
 
 ## Completed phase receipt
 
@@ -170,4 +174,4 @@ Phase 01.1.1.1 is complete under its narrowed goal: all four success criteria pa
 
 The phase-completion query routes the pointer to Phase 1 because parent verification debt remains; no parent report or UAT gap was closed. Independent next work on 01.1.1.2 can be discussed using the verified child prerequisite. Later .3/.4 work still requires calibrated children and all original whole-audit/owner-judgment gates remain. No next-phase workflow was started.
 
-Discussion and planning for 01.1.1.2 are now complete; its independent verification is recorded in the phase CHECK report. Next command: `$gsd-execute-phase 01.1.1.2`. No implementation or next-phase workflow started during planning.
+At the planning close, the next command was `$gsd-execute-phase 01.1.1.2`; Plan 01 is now complete, and Plan 02 remains the next owner-dispatched plan. No phase or requirement completion is claimed here.
