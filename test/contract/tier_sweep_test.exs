@@ -2,13 +2,16 @@ defmodule Fablebook.Contract.TierSweepTest do
   use ExUnit.Case, async: false
 
   alias Fablebook.Credo.BannedCalls
+  alias Fablebook.Test.BeamWalker
+  alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.SweepEvidence
   @compile {:no_warn_undefined, :xref}
 
   Code.ensure_loaded?(BannedCalls) ||
     Code.require_file(Path.expand("../../credo/checks/banned_calls.ex", __DIR__))
 
-  @otp_apps ~w(
+  # Historical active-disposition membership only. Discovery and inspection use the full install.
+  @historical_active_otp_apps ~w(
     kernel stdlib compiler erts crypto public_key asn1 ssl inets syntax_tools tools parsetools
     runtime_tools sasl dialyzer xmerl os_mon
   )a
@@ -39,6 +42,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     dist_config: "evaluates the VM's own TLS distribution option file named on its command line",
     iex_console:
       "IEx console internal, reached only inside a running IEx through the banned IEx front doors",
+    private_front:
+      "private implementation reached only through an already tiered public front that the guard rejects",
     fixed_app:
       "puts only a named OTP application or Mix's own archive directory on the code path; loads no caller code",
     fixed_args: "calls a code-loading front door only with arguments fixed in its own source",
@@ -53,6 +58,37 @@ defmodule Fablebook.Contract.TierSweepTest do
     runtime_internal:
       "operates on processes, ports, tables, tracing, counters or code already loaded; prepares, loads and evaluates nothing, as cited"
   }
+
+  @escript_debug_mfa {:escript, :debug, 3}
+  @escript_debug_source_assertions_by_lane %{
+    "core" => [
+      {"stdlib/src/escript.erl:36", "-export([start/0, start/1, parse_file/1])."},
+      {"stdlib/src/escript.erl:422", "parse_and_run(File, Args, EscriptOptions);"},
+      {"stdlib/src/escript.erl:475", "debug(Module, {Module, File, File, BeamBin}, Args);"},
+      {"stdlib/src/escript.erl:889", "debug(Module, AbsMod, Args) ->"},
+      {"stdlib/src/escript.erl:890", "hidden_apply(debugger, debugger, start, [])"},
+      {"stdlib/src/escript.erl:892", "hidden_apply(debugger, int, i, [AbsMod])"},
+      {"stdlib/src/escript.erl:894", "hidden_apply(debugger, debugger, auto_attach, [[init]])"},
+      {"stdlib/src/escript.erl:1084", "apply(fun() -> M end(), F, Args)"}
+    ],
+    "floor" => [
+      {"stdlib/src/escript.erl:32", "-export([start/0, start/1, parse_file/1])."},
+      {"stdlib/src/escript.erl:418", "parse_and_run(File, Args, EscriptOptions);"},
+      {"stdlib/src/escript.erl:471", "debug(Module, {Module, File, File, BeamBin}, Args);"},
+      {"stdlib/src/escript.erl:885", "debug(Module, AbsMod, Args) ->"},
+      {"stdlib/src/escript.erl:886", "hidden_apply(debugger, debugger, start, [])"},
+      {"stdlib/src/escript.erl:888", "hidden_apply(debugger, int, i, [AbsMod])"},
+      {"stdlib/src/escript.erl:890", "hidden_apply(debugger, debugger, auto_attach, [[init]])"},
+      {"stdlib/src/escript.erl:1080", "apply(fun() -> M end(), F, Args)"}
+    ]
+  }
+  @escript_debug_citations @escript_debug_source_assertions_by_lane
+                           |> Map.values()
+                           |> List.flatten()
+                           |> Enum.map(fn {citation, _expected_source} -> citation end)
+                           |> Enum.uniq()
+
+  @escript_debug_exclusion {{:mfa, @escript_debug_mfa}, :private_front, @escript_debug_citations}
 
   @call_name_exclusions [
     {{Mix.Compilers.Protocol, [:compile]}, :not_compile_module,
@@ -1971,6 +2007,95 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:ok, graph: graph}
   end
 
+  @exclusions @exclusions ++ [@escript_debug_exclusion]
+
+  test "discovers and traces a compile-only app outside historical active membership", ctx do
+    dir =
+      Path.join(
+        System.tmp_dir!(),
+        "fablebook-inventory-probe-#{System.unique_integer([:positive])}"
+      )
+
+    File.mkdir_p!(dir)
+    on_exit(fn -> File.rm_rf!(dir) end)
+
+    otp_lib = Path.join(dir, "lib")
+    app = "mix_pruned_probe"
+    app_atom = :mix_pruned_probe
+    module = :fablebook_inventory_pruned_probe
+    install_probe_app!(otp_lib, app, app_atom, "1.2.3", module)
+
+    installed = InstalledOtp.discover!(otp_lib)
+
+    discovered = Enum.find(installed, &(&1.app == app))
+
+    assert discovered != nil, "installation discovery omitted #{app}"
+    assert discovered.version == "1.2.3"
+    assert Enum.any?(discovered.beams, &(&1.module == Atom.to_string(module)))
+    assert :code.is_loaded(module) == false
+
+    known = Enum.find(ctx.graph.discovered, &(&1.app == "kernel"))
+    assert known != nil, "installed discovery omitted kernel"
+    assert Enum.any?(known.beams, &(&1.module == "application"))
+
+    inspected = InstalledOtp.inspect!([discovered], lane: ctx.graph.lane.name)
+    {:ok, _} = :xref.start(:inventory_probe, xref_mode: :functions)
+
+    try do
+      :ok = :xref.set_default(:inventory_probe, warnings: false, verbose: false, builtins: true)
+
+      ingested =
+        InstalledOtp.add_directory!(:inventory_probe, discovered, lane: ctx.graph.lane.name)
+
+      assert InstalledOtp.assert_parity!(
+               [discovered],
+               inspected,
+               ingested,
+               ctx.graph.lane.name
+             ) == :ok
+
+      receipt = %{
+        lane: ctx.graph.lane,
+        lock_sha256: ctx.graph.lock_sha256,
+        discovered: [discovered],
+        inspected: inspected,
+        ingested: ingested
+      }
+
+      lines = InstalledOtp.receipt_lines(receipt)
+      verified = InstalledOtp.verify_receipt_lines!(lines)
+      assert verified.lane == ctx.graph.lane.name
+      assert Enum.any?(verified.beams, &(&1["module"] == Atom.to_string(module)))
+
+      assert_raise InstalledOtp.Error, ~r/identity_parity/, fn ->
+        InstalledOtp.assert_parity!(
+          [discovered],
+          inspected,
+          [],
+          ctx.graph.lane.name
+        )
+      end
+    after
+      :stopped = :xref.stop(:inventory_probe)
+    end
+  end
+
+  test "full installed graph preserves the historical active view and exposes pending apps",
+       ctx do
+    graph = ctx.graph
+    discovered_apps = MapSet.new(graph.discovered, & &1.app)
+    historical_apps = MapSet.new(graph.historical_active_otp_apps)
+
+    assert MapSet.subset?(historical_apps, discovered_apps)
+    assert graph.pending_apps != []
+    assert Enum.all?(graph.pending_apps, &(not MapSet.member?(historical_apps, &1.app)))
+    assert graph.exported == graph.historical_active_exported
+    assert MapSet.new(graph.edges) == MapSet.new(graph.historical_active_edges)
+    assert MapSet.subset?(graph.historical_active_exported, graph.full_exported)
+    assert MapSet.subset?(MapSet.new(graph.historical_active_edges), MapSet.new(graph.full_edges))
+    assert MapSet.size(graph.historical_active_modules) > 0
+  end
+
   test "source evidence rejects a wrong runtime patch before resolving citations" do
     error =
       assert_raise Fablebook.Test.SweepEvidence.Error, fn ->
@@ -2020,6 +2145,76 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
 
     assert SweepEvidence.resolve!(evidence, "elixir/src/elixir_aliases.erl:1").origin == :archive
+  end
+
+  test "escript debugger code is a private path behind its already tiered public front", ctx do
+    graph = ctx.graph
+    debug_mfa = @escript_debug_mfa
+    parse_and_run = {:escript, :parse_and_run, 3}
+    start = {:escript, :start, 1}
+
+    assert MapSet.member?(graph.full_reached, debug_mfa)
+    refute MapSet.member?(graph.historical_reached, debug_mfa)
+    refute MapSet.member?(graph.full_exported, debug_mfa)
+    refute MapSet.member?(graph.full_exported, {:escript, :hidden_apply, 4})
+    assert MapSet.member?(graph.full_exported, start)
+    assert {:escript, :start, :_} in BannedCalls.banned_mfas()
+    assert MapSet.member?(graph.historical_reached, start)
+
+    assert(
+      disposition(
+        debug_mfa,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        @exclusions
+      ) == :private_front
+    )
+
+    debug_callers =
+      for {caller, {:escript, :debug}} <- graph.full_edges, into: MapSet.new(), do: caller
+
+    parse_callers =
+      for {caller, {:escript, :parse_and_run}} <- graph.full_edges,
+          into: MapSet.new(),
+          do: caller
+
+    assert debug_callers == MapSet.new([parse_and_run])
+    assert parse_callers == MapSet.new([start])
+
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    expected_citations =
+      Map.fetch!(@escript_debug_source_assertions_by_lane, evidence.lane.name)
+
+    record_citations = @escript_debug_exclusion |> elem(2) |> MapSet.new()
+
+    expected_record_citations =
+      @escript_debug_source_assertions_by_lane
+      |> Map.values()
+      |> List.flatten()
+      |> Enum.map(&elem(&1, 0))
+      |> MapSet.new()
+
+    assert record_citations == expected_record_citations
+
+    for {citation, expected} <- expected_citations do
+      assert SweepEvidence.resolve!(evidence, citation).text =~ expected, citation
+    end
+
+    without_private_front = List.delete(@exclusions, @escript_debug_exclusion)
+
+    assert_raise RuntimeError, ~r/escript, :debug, 3/, fn ->
+      assert_no_new_active_failures!(
+        graph.full_reached,
+        graph.historical_reached,
+        graph.historical_active_modules,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        graph.lane.name,
+        without_private_front
+      )
+    end
   end
 
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
@@ -2616,55 +2811,641 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp build_graph do
+    evidence = SweepEvidence.source_roots!()
+
+    try do
+      build_graph(evidence)
+    after
+      File.rm_rf!(evidence.archive_root)
+    end
+  end
+
+  defp build_graph(evidence) do
+    graph_started = System.monotonic_time()
     Mix.ensure_application!(:tools)
     otp_lib = :code.lib_dir() |> to_string()
-    otp_dirs = otp_app_dirs(otp_lib)
+    discovery_started = System.monotonic_time()
+    discovered = InstalledOtp.discover!(otp_lib, lane: evidence.lane.name)
+    :ok = InstalledOtp.assert_discovery_complete!(otp_lib, discovered, lane: evidence.lane.name)
+    discovery_ms = elapsed_ms(discovery_started)
+
+    inspection_started = System.monotonic_time()
+    inspected = InstalledOtp.inspect!(discovered, lane: evidence.lane.name)
+    inspection_ms = elapsed_ms(inspection_started)
+
+    source_scan_started = System.monotonic_time()
+
+    sources =
+      InstalledOtp.source_inventory!(discovered, inspected,
+        lane: evidence.lane.name,
+        required_modules: ~w(file io erl_scan yecc)
+      )
+
+    source_scan_ms = elapsed_ms(source_scan_started)
+    otp_apps = discovered
     elixir_dirs = for app <- @elixir_apps, do: app_dir(app)
     roots = dependency_roots()
     closure = dependency_closure(roots)
     dep_dirs = for app <- closure, do: Path.join([Mix.Project.build_path(), "lib", app, "ebin"])
-    dirs = Enum.uniq(otp_dirs ++ elixir_dirs ++ dep_dirs)
+
+    extra_apps =
+      Enum.map(@elixir_apps, &%{app: Atom.to_string(&1), ebin: app_dir(&1)}) ++
+        Enum.map(
+          closure,
+          &%{app: &1, ebin: Path.join([Mix.Project.build_path(), "lib", &1, "ebin"])}
+        )
+
+    dirs = Enum.map(otp_apps, & &1.ebin) ++ elixir_dirs ++ dep_dirs
     missing_apps = missing_apps(otp_lib, elixir_dirs, dep_dirs)
+    otp_active_names = Enum.map(@historical_active_otp_apps, &Atom.to_string/1) |> MapSet.new()
+    historical_otp_apps = Enum.filter(otp_apps, &MapSet.member?(otp_active_names, &1.app))
+    pending_apps = Enum.reject(otp_apps, &MapSet.member?(otp_active_names, &1.app))
 
-    {:ok, _} = :xref.start(:tier_sweep, xref_mode: :functions)
+    historical_otp_dirs = Enum.map(historical_otp_apps, & &1.ebin)
+    historical_app_names = MapSet.new(historical_otp_apps, & &1.app)
+    {historical_otp_edges, no_debug_otp} = form_edges(historical_otp_dirs)
+    {other_form_edges, no_debug_other} = form_edges(elixir_dirs ++ dep_dirs)
+    {other_xref_edges, _no_debug_other_xref} = xref_form_edges(elixir_dirs ++ dep_dirs)
+    otp_form_edges = Enum.flat_map(inspected, & &1.edges)
+    otp_xref_edges = Enum.flat_map(inspected, & &1.xref_edges)
 
-    :ok = :xref.set_default(:tier_sweep, warnings: false, verbose: false, builtins: true)
+    expected_historical_edges =
+      Enum.flat_map(inspected, fn inspection ->
+        if MapSet.member?(historical_app_names, inspection.app),
+          do: inspection.xref_edges,
+          else: []
+      end) ++ other_xref_edges
 
-    for dir <- dirs, do: :xref.add_directory(:tier_sweep, String.to_charlist(dir))
-    {:ok, xref_edges} = :xref.q(:tier_sweep, ~c"E")
-    {:ok, exported} = :xref.q(:tier_sweep, ~c"X")
-    :xref.stop(:tier_sweep)
-    {form_edges, no_debug} = form_edges(dirs)
-    edges = form_edges ++ for({caller, {m, f, _}} <- xref_edges, do: {caller, {m, f}})
-    reverse = reverse(edges)
-    forward = forward(edges)
+    expected_full_edges = otp_xref_edges ++ other_xref_edges
+    historical_graph_dirs = historical_otp_dirs ++ elixir_dirs ++ dep_dirs
+    full_graph_dirs = Enum.map(otp_apps, & &1.ebin) ++ elixir_dirs ++ dep_dirs
+
+    expected_historical_exports =
+      InstalledOtp.export_inventory!(historical_graph_dirs,
+        lane: evidence.lane.name,
+        edges: expected_historical_edges
+      )
+
+    expected_full_exports =
+      InstalledOtp.export_inventory!(full_graph_dirs,
+        lane: evidence.lane.name,
+        edges: expected_full_edges
+      )
+
+    xref_started = System.monotonic_time()
+
+    xref_graph =
+      checked_xref_graph(
+        historical_otp_apps ++ extra_apps,
+        pending_apps,
+        evidence.lane.name,
+        expected_historical_edges,
+        expected_historical_exports,
+        expected_full_edges,
+        expected_full_exports
+      )
+
+    xref_ms = elapsed_ms(xref_started)
+
+    InstalledOtp.assert_parity!(
+      discovered,
+      inspected,
+      Enum.filter(xref_graph.ingested, &(&1.app in Enum.map(otp_apps, fn app -> app.app end))),
+      evidence.lane.name
+    )
+
+    historical_xref_edges =
+      for {caller, {m, f, _}} <- xref_graph.historical_edges, do: {caller, {m, f}}
+
+    full_xref_edges = for {caller, {m, f, _}} <- xref_graph.full_edges, do: {caller, {m, f}}
+    historical_edges = historical_otp_edges ++ other_form_edges ++ historical_xref_edges
+    full_edges = otp_form_edges ++ other_form_edges ++ full_xref_edges
+    full_reverse = reverse(full_edges)
+    full_forward = forward(full_edges)
+    historical_modules = MapSet.new(xref_graph.historical_ingested, & &1.module_atom)
+    historical_exported = MapSet.new(xref_graph.historical_exports)
+    full_exported = MapSet.new(xref_graph.full_exports)
+    module_app = Map.new(xref_graph.ingested, &{&1.module_atom, &1.app})
+
+    active_edges =
+      Enum.filter(full_edges, fn {{module, _, _}, _} ->
+        MapSet.member?(historical_modules, module)
+      end)
+
+    active_exported =
+      Enum.filter(full_exported, fn {module, _, _} ->
+        MapSet.member?(historical_modules, module)
+      end)
+
+    active_reverse = reverse(active_edges)
+    active_forward = forward(active_edges)
+    no_debug = no_debug_otp ++ no_debug_other
+
+    historical_reached_graph = %{
+      reverse: reverse(historical_edges),
+      exported: historical_exported
+    }
+
+    full_reached_graph = %{reverse: full_reverse, exported: full_exported}
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    {historical_reached, _historical_parent} = reach(historical_reached_graph, tier, names)
+    {full_reached, full_parent} = reach(full_reached_graph, tier, names)
+
+    assert_active_sets_preserved!(
+      historical_reached,
+      full_reached,
+      historical_exported,
+      full_exported,
+      historical_edges,
+      full_edges,
+      evidence.lane.name
+    )
+
+    active_expansion_failures =
+      assert_no_new_active_failures!(
+        full_reached,
+        historical_reached,
+        historical_modules,
+        tier,
+        names,
+        evidence.lane.name
+      )
+
+    active_membership =
+      active_membership_records(
+        xref_graph.historical_ingested,
+        xref_graph.historical_exports,
+        historical_edges,
+        module_app
+      )
+
+    export_records = mfa_records("export", full_exported, module_app)
+    reached_records = mfa_records("reached", full_reached, module_app)
+
+    boundary_graph = %{
+      edges: full_edges,
+      exported: full_exported,
+      forward: full_forward,
+      reverse: full_reverse
+    }
+
+    boundary_mfas = boundary_set(boundary_graph, tier, names)
+    boundary_records = boundary_inventory_records(boundary_mfas, module_app)
+
+    sources_by_module =
+      Map.new(sources, fn source ->
+        {source.app, Map.new(source.beams, &{&1.module, &1})}
+      end)
+
+    pending_modules =
+      for inspection <- inspected,
+          not MapSet.member?(historical_modules, inspection.module_atom),
+          do: inspection
+
+    pending_mfas = MapSet.difference(full_reached, historical_reached)
+
+    pending_records =
+      pending_inventory_records(
+        pending_apps,
+        pending_modules,
+        pending_mfas,
+        full_parent,
+        full_edges,
+        module_app,
+        sources_by_module
+      )
+
+    discovery_count = length(discovered)
+    beam_count = length(inspected)
+    function_count = Enum.sum(Enum.map(inspected, & &1.function_count))
+    function_bytes = Enum.sum(Enum.map(inspected, & &1.function_bytes))
+    beam_bytes = Enum.sum(Enum.map(inspected, fn beam -> File.stat!(beam.path).size end))
+    source_file_count = Enum.sum(Enum.map(sources, & &1.source_file_count))
+    source_bytes = Enum.sum(Enum.map(sources, & &1.source_bytes))
+    mapped_beams = Enum.sum(Enum.map(sources, & &1.mapped_beams))
+    missing_source_beams = Enum.sum(Enum.map(sources, & &1.missing_source_beams))
+    unavailable_source_beams = Enum.sum(Enum.map(sources, & &1.unavailable_source_beams))
+
+    metrics = %{
+      "app_count" => discovery_count,
+      "beam_count" => beam_count,
+      "function_count" => function_count,
+      "function_bytes" => function_bytes,
+      "beam_bytes" => beam_bytes,
+      "source_file_count" => source_file_count,
+      "source_bytes" => source_bytes,
+      "mapped_beams" => mapped_beams,
+      "missing_source_beams" => missing_source_beams,
+      "unavailable_source_beams" => unavailable_source_beams,
+      "exported_matches" => MapSet.size(full_exported),
+      "reached_matches" => MapSet.size(full_reached),
+      "boundary_matches" => length(boundary_records),
+      "active_app_count" => Enum.count(active_membership, &(&1["kind"] == "active_app")),
+      "active_module_count" => Enum.count(active_membership, &(&1["kind"] == "active_module")),
+      "active_export_count" => Enum.count(active_membership, &(&1["kind"] == "active_export")),
+      "active_edge_count" => Enum.count(active_membership, &(&1["kind"] == "active_edge")),
+      "pending_app_count" => Enum.count(pending_records, &(&1["kind"] == "pending_app")),
+      "pending_module_count" => Enum.count(pending_records, &(&1["kind"] == "pending_module")),
+      "pending_mfa_count" => Enum.count(pending_records, &(&1["kind"] == "pending_mfa")),
+      "discovery_ms" => discovery_ms,
+      "inspection_ms" => inspection_ms,
+      "source_scan_ms" => source_scan_ms,
+      "xref_ms" => xref_ms,
+      "graph_ms" => elapsed_ms(graph_started),
+      "pending_owner" => "01.1.1.3"
+    }
+
+    receipt = %{
+      lane: evidence.lane,
+      lock_sha256: evidence.lock_sha256,
+      discovered: discovered,
+      inspected: inspected,
+      sources: sources,
+      ingested:
+        Enum.filter(xref_graph.ingested, &(&1.app in Enum.map(otp_apps, fn app -> app.app end))),
+      active_membership: active_membership,
+      export_records: export_records,
+      reached_records: reached_records,
+      boundary_records: boundary_records,
+      pending_records: pending_records,
+      metrics: metrics
+    }
+
+    receipt_lines = InstalledOtp.receipt_lines(receipt)
+    Enum.each(receipt_lines, &IO.puts/1)
+
+    pending_apps = Enum.reject(discovered, &MapSet.member?(otp_active_names, &1.app))
 
     %{
       dirs: dirs,
-      edges: edges,
-      exported: MapSet.new(exported),
-      reverse: reverse,
-      forward: forward,
+      edges: active_edges,
+      exported: MapSet.new(active_exported),
+      reverse: active_reverse,
+      forward: active_forward,
       no_debug: no_debug,
       missing_apps: missing_apps,
       roots: roots,
       closure: closure,
-      out_of_scope: out_of_scope()
+      out_of_scope: Enum.map(pending_apps, & &1.app),
+      historical_active_otp_apps: MapSet.to_list(otp_active_names),
+      historical_active_modules: historical_modules,
+      historical_active_edges: historical_edges,
+      historical_active_exported: historical_exported,
+      discovered: discovered,
+      inspected: inspected,
+      ingested: receipt.ingested,
+      full_edges: full_edges,
+      full_exported: full_exported,
+      full_reverse: full_reverse,
+      full_forward: full_forward,
+      pending_apps: pending_apps,
+      sources: sources,
+      metrics: metrics,
+      historical_reached: historical_reached,
+      full_reached: full_reached,
+      pending_mfas: pending_mfas,
+      pending_modules: pending_modules,
+      active_expansion_failures: active_expansion_failures,
+      receipt_lines: receipt_lines,
+      lane: evidence.lane,
+      lock_sha256: evidence.lock_sha256
     }
   end
 
-  defp otp_app_dirs(otp_lib) do
-    otp_lib
-    |> File.ls!()
-    |> Enum.filter(fn dir ->
-      Enum.any?(@otp_apps, &String.starts_with?(dir, "#{&1}-")) and
-        File.dir?(Path.join([otp_lib, dir, "ebin"]))
+  defp assert_active_sets_preserved!(
+         historical_reached,
+         full_reached,
+         historical_exported,
+         full_exported,
+         historical_edges,
+         full_edges,
+         lane
+       ) do
+    preserved =
+      MapSet.subset?(historical_reached, full_reached) and
+        MapSet.subset?(historical_exported, full_exported) and
+        MapSet.subset?(MapSet.new(historical_edges), MapSet.new(full_edges))
+
+    unless preserved,
+      do: raise("installed OTP expansion removed historical active coverage for #{lane}")
+  end
+
+  defp assert_no_new_active_failures!(
+         full_reached,
+         historical_reached,
+         historical_modules,
+         tier,
+         names,
+         lane,
+         exclusions \\ @exclusions
+       ) do
+    failures =
+      full_reached
+      |> MapSet.difference(historical_reached)
+      |> Enum.filter(fn {module, _function, _arity} = mfa ->
+        MapSet.member?(historical_modules, module) and
+          disposition(mfa, tier, names, exclusions) == nil
+      end)
+
+    if failures != [] do
+      raise "installed OTP expansion reached undisposed historical active MFAs on #{lane}: " <>
+              Enum.map_join(failures, ", ", &inspect/1)
+    end
+
+    failures
+  end
+
+  defp elapsed_ms(started) do
+    System.monotonic_time()
+    |> Kernel.-(started)
+    |> System.convert_time_unit(:native, :millisecond)
+  end
+
+  defp active_membership_records(
+         historical_ingested,
+         historical_exports,
+         historical_edges,
+         module_app
+       ) do
+    apps =
+      historical_ingested
+      |> Enum.map(& &1.app)
+      |> Enum.uniq()
+      |> Enum.sort()
+      |> Enum.map(&%{"kind" => "active_app", "app" => &1})
+
+    modules =
+      historical_ingested
+      |> Enum.uniq_by(&{&1.app, &1.module})
+      |> Enum.map(
+        &%{"kind" => "active_module", "app" => &1.app, "module" => Atom.to_string(&1.module_atom)}
+      )
+      |> Enum.sort_by(&{&1["app"], &1["module"]})
+
+    exports = mfa_records("active_export", historical_exports, module_app)
+
+    edges =
+      historical_edges
+      |> Enum.uniq()
+      |> Enum.map(fn {{module, function, arity}, {callee_module, callee_function}} ->
+        %{
+          "kind" => "active_edge",
+          "app" => Map.fetch!(module_app, module),
+          "module" => Atom.to_string(module),
+          "function" => Atom.to_string(function),
+          "arity" => arity,
+          "callee_app" => Map.get(module_app, callee_module),
+          "callee_module" => Atom.to_string(callee_module),
+          "callee_function" => Atom.to_string(callee_function)
+        }
+      end)
+      |> Enum.sort_by(
+        &{&1["app"], &1["module"], &1["function"], &1["arity"], &1["callee_module"],
+         &1["callee_function"]}
+      )
+
+    apps ++ modules ++ exports ++ edges
+  end
+
+  defp mfa_records(kind, mfas, module_app) do
+    mfas
+    |> Enum.sort_by(fn {module, function, arity} ->
+      {Atom.to_string(module), Atom.to_string(function), arity}
     end)
-    |> Enum.map(&Path.join([otp_lib, &1, "ebin"]))
+    |> Enum.map(fn {module, function, arity} ->
+      %{
+        "kind" => kind,
+        "app" => Map.fetch!(module_app, module),
+        "module" => Atom.to_string(module),
+        "function" => Atom.to_string(function),
+        "arity" => arity
+      }
+    end)
+  end
+
+  defp boundary_inventory_records(mfas, module_app) do
+    mfas
+    |> Enum.sort_by(fn {module, function, arity} ->
+      {Atom.to_string(module), Atom.to_string(function), arity}
+    end)
+    |> Enum.map(fn {module, function, arity} = mfa ->
+      record =
+        mfa_records("boundary", [mfa], module_app)
+        |> hd()
+
+      explicit_exclusion =
+        Enum.any?(@boundary_exclusions, fn {matcher, _reason, _citations} ->
+          boundary_match?(matcher, mfa)
+        end)
+
+      record
+      |> Map.put("explicit_boundary_exclusion", explicit_exclusion)
+      |> Map.put("function", Atom.to_string(function))
+      |> Map.put("module", Atom.to_string(module))
+      |> Map.put("arity", arity)
+    end)
+  end
+
+  defp pending_inventory_records(
+         pending_apps,
+         pending_modules,
+         pending_mfas,
+         parent,
+         edges,
+         module_app,
+         sources_by_module
+       ) do
+    app_records =
+      pending_apps
+      |> Enum.sort_by(& &1.app)
+      |> Enum.map(fn app ->
+        %{"kind" => "pending_app", "app" => app.app, "owner" => "01.1.1.3"}
+      end)
+
+    module_records =
+      pending_modules
+      |> Enum.sort_by(&{&1.app, &1.module})
+      |> Enum.map(fn beam ->
+        source = get_in(sources_by_module, [beam.app, beam.module])
+
+        %{
+          "kind" => "pending_module",
+          "app" => beam.app,
+          "module" => beam.module,
+          "function_count" => beam.function_count,
+          "function_bytes" => beam.function_bytes,
+          "source_status" => source.status,
+          "source" => source.source,
+          "source_bytes" => source.bytes,
+          "owner" => "01.1.1.3"
+        }
+      end)
+
+    mfa_records =
+      pending_mfas
+      |> Enum.sort_by(fn {module, function, arity} ->
+        {Atom.to_string(module), Atom.to_string(function), arity}
+      end)
+      |> Enum.map(fn {module, function, arity} ->
+        caller_chain =
+          parent
+          |> caller_chain({module, function, arity}, edges)
+          |> Enum.map(fn {caller_module, caller_function, caller_arity} ->
+            "#{Atom.to_string(caller_module)}.#{Atom.to_string(caller_function)}/#{caller_arity}"
+          end)
+
+        %{
+          "kind" => "pending_mfa",
+          "app" => Map.fetch!(module_app, module),
+          "module" => Atom.to_string(module),
+          "function" => Atom.to_string(function),
+          "arity" => arity,
+          "caller_chain" => caller_chain,
+          "owner" => "01.1.1.3"
+        }
+      end)
+
+    app_records ++ module_records ++ mfa_records
+  end
+
+  defp caller_chain(parent, {module, function, _arity} = start_mfa, edges) do
+    path = witness(parent, {module, function}, []) |> Enum.reverse()
+
+    callers =
+      path
+      |> Enum.chunk_every(2, 1, :discard)
+      |> Enum.with_index()
+      |> Enum.map(fn
+        {[{start_module, start_function}, _next], 0} ->
+          {start_module, start_function, elem(start_mfa, 2)}
+
+        {[caller_pair, next], _index} ->
+          edges
+          |> Enum.flat_map(fn
+            {{caller_module, caller_function, caller_arity}, ^next}
+            when {caller_module, caller_function} == caller_pair ->
+              [{caller_module, caller_function, caller_arity}]
+
+            _edge ->
+              []
+          end)
+          |> Enum.uniq()
+          |> Enum.sort_by(fn {caller_module, caller_function, caller_arity} ->
+            {Atom.to_string(caller_module), Atom.to_string(caller_function), caller_arity}
+          end)
+          |> List.first()
+          |> case do
+            nil ->
+              raise "installed OTP inventory caller-chain edge missing for #{inspect(caller_pair)} -> #{inspect(next)}"
+
+            caller_mfa ->
+              caller_mfa
+          end
+      end)
+
+    if callers == [], do: [start_mfa], else: callers
+  end
+
+  defp checked_xref_graph(
+         historical_apps,
+         pending_apps,
+         lane,
+         expected_historical_edges,
+         expected_historical_exports,
+         expected_full_edges,
+         expected_full_exports
+       ) do
+    start_xref!(lane)
+
+    try do
+      set_xref_defaults!(lane)
+      historical_ingested = ingest_xref_apps!(historical_apps, lane)
+
+      historical_edges =
+        xref_query!(
+          ~c"E",
+          :historical_edges,
+          lane,
+          expected_historical_edges,
+          &xref_edge_identity!/1
+        )
+
+      historical_exports =
+        xref_query!(~c"X", :historical_exports, lane, expected_historical_exports)
+
+      pending_ingested = ingest_xref_apps!(pending_apps, lane)
+
+      full_edges =
+        xref_query!(~c"E", :full_edges, lane, expected_full_edges, &xref_edge_identity!/1)
+
+      full_exports = xref_query!(~c"X", :full_exports, lane, expected_full_exports)
+
+      %{
+        historical_ingested: historical_ingested,
+        historical_edges: historical_edges,
+        historical_exports: historical_exports,
+        pending_ingested: pending_ingested,
+        ingested: historical_ingested ++ pending_ingested,
+        full_edges: full_edges,
+        full_exports: full_exports
+      }
+    after
+      stop_xref!(lane)
+    end
+  end
+
+  defp ingest_xref_apps!(apps, lane) do
+    Enum.flat_map(apps, &InstalledOtp.add_directory!(:tier_sweep, &1, lane: lane))
+  end
+
+  defp start_xref!(lane) do
+    case :xref.start(:tier_sweep, xref_mode: :functions) do
+      {:ok, _} -> :ok
+      result -> raise "installed OTP inventory xref start failed for #{lane}: #{inspect(result)}"
+    end
+  end
+
+  defp set_xref_defaults!(lane) do
+    case :xref.set_default(:tier_sweep, warnings: false, verbose: false, builtins: true) do
+      :ok ->
+        :ok
+
+      result ->
+        raise "installed OTP inventory xref defaults failed for #{lane}: #{inspect(result)}"
+    end
+  end
+
+  defp xref_query!(query, label, lane, expected_rows, normalize \\ &Function.identity/1) do
+    InstalledOtp.assert_xref_query!(
+      fn -> :xref.q(:tier_sweep, query) end,
+      label,
+      lane,
+      expected_rows,
+      normalize
+    )
+  end
+
+  defp xref_edge_identity!({caller, {module, function}} = row)
+       when is_tuple(caller) and is_atom(module) and is_atom(function),
+       do: row
+
+  defp xref_edge_identity!({caller, {module, function, _arity}})
+       when is_tuple(caller) and is_atom(module) and is_atom(function),
+       do: {caller, {module, function}}
+
+  defp xref_edge_identity!(row),
+    do: raise("unexpected installed OTP Xref edge row: #{inspect(row)}")
+
+  defp stop_xref!(lane) do
+    case :xref.stop(:tier_sweep) do
+      :stopped -> :ok
+      result -> raise "installed OTP inventory xref stop failed for #{lane}: #{inspect(result)}"
+    end
   end
 
   defp missing_apps(otp_lib, elixir_dirs, dep_dirs) do
-    otp_apps = Enum.map(@otp_apps, &Atom.to_string/1)
+    otp_apps = Enum.map(@historical_active_otp_apps, &Atom.to_string/1)
     installed = otp_lib |> File.ls!() |> Enum.map(&String.replace(&1, ~r/-[0-9][0-9.]*$/, ""))
 
     Enum.reject(otp_apps, &(&1 in installed)) ++
@@ -2717,23 +3498,23 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp required_app(%{"optional" => false} = entry), do: [entry["app"] || entry["name"]]
   defp required_app(_entry), do: []
 
-  defp out_of_scope do
-    all = :code.lib_dir() |> to_string() |> File.ls!()
-    scoped = Enum.map(@otp_apps, &Atom.to_string/1)
-
-    all
-    |> Enum.filter(&File.dir?(Path.join([:code.lib_dir() |> to_string(), &1, "ebin"])))
-    |> Enum.map(&String.replace(&1, ~r/-[0-9][0-9.]*$/, ""))
-    |> Enum.uniq()
-    |> Enum.reject(&(&1 in scoped))
-    |> Enum.sort()
-  end
-
   defp form_edges(dirs) do
     beams =
       for dir <- dirs, file <- File.ls!(dir), String.ends_with?(file, ".beam"), do: {dir, file}
 
     Enum.reduce(beams, {[], []}, fn {dir, file}, acc -> collect_beam_edges(dir, file, acc) end)
+  end
+
+  defp xref_form_edges(dirs) do
+    beams =
+      for dir <- dirs, file <- File.ls!(dir), String.ends_with?(file, ".beam"), do: {dir, file}
+
+    Enum.reduce(beams, {[], []}, fn {dir, file}, {edges, missing} ->
+      case BeamWalker.xref_edges(Path.join(dir, file)) do
+        {:ok, found} -> {found ++ edges, missing}
+        {:error, _reason} -> {edges, [file | missing]}
+      end
+    end)
   end
 
   defp collect_beam_edges(dir, file, {edges, missing}) do
@@ -3496,5 +4277,822 @@ defmodule Fablebook.Contract.TierSweepTest do
       nil -> [key | acc]
       next -> witness(parent, next, [key | acc])
     end
+  end
+
+  defp install_probe_app!(otp_lib, app, app_atom, version, module) do
+    app_root = Path.join(otp_lib, "#{app}-#{version}")
+    ebin = Path.join(app_root, "ebin")
+    File.mkdir_p!(ebin)
+
+    forms = [
+      {:attribute, 1, :module, module},
+      {:attribute, 1, :export, [probe: 0]},
+      {:function, 1, :probe, 0, [{:clause, 1, [], [], [{:atom, 1, :ok}]}]}
+    ]
+
+    {:ok, ^module, beam} = :compile.forms(forms, [:debug_info])
+    File.write!(Path.join(ebin, "#{Atom.to_string(module)}.beam"), beam)
+
+    app_resource =
+      {:application, app_atom, [{:vsn, String.to_charlist(version)}, {:modules, [module]}]}
+
+    File.write!(Path.join(ebin, "#{app}.app"), :io_lib.format("~tp.~n", [app_resource]))
+  end
+end
+
+defmodule Fablebook.Test.InstalledOtpReceiptTest do
+  use ExUnit.Case, async: false
+  alias Fablebook.Test.{BeamWalker, InstalledOtp, SweepEvidence}
+
+  @moduletag :inventory_support
+  @marker "FABLEBOOK_OTP_INVENTORY_V2 "
+  @probe_app_atoms %{"probe" => :probe, "probe_one" => :probe_one, "probe_two" => :probe_two}
+
+  test "extracts a receipt from CI lines with job and timestamp prefixes" do
+    lines = receipt_lines("core")
+    dir = Path.join(System.tmp_dir!(), "fablebook-receipt-#{System.unique_integer([:positive])}")
+    File.mkdir_p!(dir)
+    on_exit(fn -> File.rm_rf!(dir) end)
+
+    log_path = Path.join(dir, "core.log")
+    receipt_path = Path.join(dir, "core.jsonl")
+    prefix = "core\tUNKNOWN STEP\t2026-10-30T18:56:49.0917397Z "
+    File.write!(log_path, Enum.map_join(lines, "\n", &(prefix <> &1)) <> "\n")
+
+    assert InstalledOtp.extract_receipt!(log_path, receipt_path) == receipt_path
+    assert File.read!(receipt_path) == Enum.join(lines, "\n") <> "\n"
+    assert InstalledOtp.verify_receipt_lines!(lines).lane == "core"
+  end
+
+  test "Xref query parity rejects successful empty and truncated results" do
+    expected = [{:probe, :run, 0}, {:probe, :stop, 1}]
+
+    assert InstalledOtp.assert_xref_query!(fn -> {:ok, expected} end, :exports, "core", expected) ==
+             expected
+
+    assert_raise InstalledOtp.Error, ~r/xref_query_parity/, fn ->
+      InstalledOtp.assert_xref_query!(fn -> {:ok, []} end, :exports, "core", expected)
+    end
+
+    assert_raise InstalledOtp.Error, ~r/xref_query_parity/, fn ->
+      InstalledOtp.assert_xref_query!(
+        fn -> {:ok, Enum.take(expected, 1)} end,
+        :exports,
+        "core",
+        expected
+      )
+    end
+  end
+
+  test "Xref edge query parity normalizes callee arity without losing caller MFA" do
+    caller = {:probe, :caller, 2}
+    expected = [{caller, {:sink, :run}}]
+    returned = [{caller, {:sink, :run, 0}}, {caller, {:sink, :run, 1}}]
+
+    normalize = fn
+      {from, {module, function, _arity}} -> {from, {module, function}}
+      row -> row
+    end
+
+    assert InstalledOtp.assert_xref_query!(
+             fn -> {:ok, returned} end,
+             :edges,
+             "core",
+             expected,
+             normalize
+           ) == returned
+
+    assert_raise InstalledOtp.Error, ~r/xref_query_parity/, fn ->
+      InstalledOtp.assert_xref_query!(
+        fn -> {:ok, [hd(returned), hd(returned)]} end,
+        :edges,
+        "core",
+        expected,
+        normalize
+      )
+    end
+  end
+
+  test "independent beam AST inventory follows local, remote, operator, and dynamic calls" do
+    anno = 1
+
+    forms = [
+      {:attribute, anno, :module, :probe},
+      {:function, anno, :local, 0, [{:clause, anno, [], [], [{:atom, anno, :ok}]}]},
+      {:function, anno, :caller, 0,
+       [
+         {:clause, anno, [], [],
+          [
+            {:call, anno, {:atom, anno, :local}, []},
+            {:call, anno, {:remote, anno, {:atom, anno, :sink}, {:atom, anno, :run}},
+             [{:atom, anno, :x}]},
+            {:op, anno, :+, {:integer, anno, 1}, {:integer, anno, 2}},
+            {:call, anno, {:remote, anno, {:atom, anno, :erlang}, {:atom, anno, :is_list}},
+             [{nil, anno}]},
+            {:call, anno, {:remote, anno, {:var, anno, :module}, {:atom, anno, :run}},
+             [{:atom, anno, :x}]},
+            {:call, anno, {:var, anno, :function}, [{:atom, anno, :x}]}
+          ]}
+       ]}
+    ]
+
+    caller = {:probe, :caller, 0}
+
+    assert BeamWalker.xref_edges(:probe, forms) ==
+             Enum.sort([
+               {caller, {:probe, :local, 0}},
+               {caller, {:sink, :run, 1}},
+               {caller, {:erlang, :+, 2}},
+               {caller, {:"$M_EXPR", :run, 1}},
+               {caller, {:"$M_EXPR", :"$F_EXPR", 1}}
+             ])
+  end
+
+  test "receipts reject missing measurement records even when identity rows are intact" do
+    lines =
+      receipt_lines("core")
+      |> Enum.reject(fn line ->
+        case JSON.decode(String.replace_prefix(line, @marker, "")) do
+          {:ok, %{"kind" => "metrics"}} -> true
+          _ -> false
+        end
+      end)
+
+    body = Enum.drop(lines, -1)
+    {:ok, footer} = JSON.decode(String.replace_prefix(List.last(lines), @marker, ""))
+    digest = :crypto.hash(:sha256, Enum.join(body, "\n") <> "\n") |> Base.encode16(case: :lower)
+    footer_line = @marker <> JSON.encode!(Map.put(footer, "sha256", digest))
+
+    assert_raise InstalledOtp.Error, ~r/receipt_metrics/, fn ->
+      InstalledOtp.verify_receipt_lines!(body ++ [footer_line])
+    end
+  end
+
+  test "receipts reject wrong lanes, duplicate or missing identities, and inconsistent totals" do
+    lines = receipt_lines("core")
+
+    wrong_lane =
+      rewrite_receipt(lines, fn rows ->
+        Enum.map(rows, fn
+          %{"kind" => "meta"} = row -> Map.put(row, "lane", "nearby")
+          row -> row
+        end)
+      end)
+
+    assert_raise InstalledOtp.Error, ~r/receipt_lane/, fn ->
+      InstalledOtp.verify_receipt_lines!(wrong_lane)
+    end
+
+    duplicate_beam =
+      rewrite_receipt(lines, fn rows ->
+        beam = Enum.find(rows, &(&1["kind"] == "beam"))
+        rows ++ [beam]
+      end)
+
+    assert_raise InstalledOtp.Error, ~r/receipt_beam_records/, fn ->
+      InstalledOtp.verify_receipt_lines!(duplicate_beam)
+    end
+
+    missing_beam =
+      rewrite_receipt(lines, fn rows -> Enum.reject(rows, &(&1["kind"] == "beam")) end)
+
+    assert_raise InstalledOtp.Error, ~r/receipt_empty_inventory/, fn ->
+      InstalledOtp.verify_receipt_lines!(missing_beam)
+    end
+
+    wrong_total =
+      rewrite_receipt(lines, fn rows ->
+        Enum.map(rows, fn
+          %{"kind" => "metrics"} = row ->
+            Map.put(row, "function_bytes", row["function_bytes"] + 1)
+
+          row ->
+            row
+        end)
+      end)
+
+    assert_raise InstalledOtp.Error, ~r/receipt_metrics/, fn ->
+      InstalledOtp.verify_receipt_lines!(wrong_total)
+    end
+
+    wrong_membership_link =
+      rewrite_receipt(lines, fn rows ->
+        Enum.map(rows, fn
+          %{"kind" => "active_module"} = row -> Map.put(row, "module", "missing_probe")
+          row -> row
+        end)
+      end)
+
+    assert_raise InstalledOtp.Error, ~r/receipt_links/, fn ->
+      InstalledOtp.verify_receipt_lines!(wrong_membership_link)
+    end
+
+    wrong_caller_chain =
+      rewrite_receipt(lines, fn rows ->
+        Enum.map(rows, fn
+          %{"kind" => "pending_mfa"} = row -> Map.put(row, "caller_chain", ["probe.run"])
+          row -> row
+        end)
+      end)
+
+    assert_raise InstalledOtp.Error, ~r/receipt_membership_records/, fn ->
+      InstalledOtp.verify_receipt_lines!(wrong_caller_chain)
+    end
+
+    wrong_source_link =
+      rewrite_receipt(lines, fn rows ->
+        rows =
+          Enum.map(rows, fn
+            %{"kind" => "app", "app" => "probe"} = row ->
+              %{
+                row
+                | "source_dir_status" => "present",
+                  "source_file_count" => 1,
+                  "source_bytes" => 1
+              }
+
+            %{"kind" => "beam", "app" => "probe"} = row ->
+              %{
+                row
+                | "source" => "src/probe.erl",
+                  "source_status" => "present",
+                  "source_bytes" => 1
+              }
+
+            %{"kind" => "source_app", "app" => "probe"} = row ->
+              %{
+                row
+                | "source_dir_status" => "present",
+                  "source_file_count" => 1,
+                  "source_bytes" => 1,
+                  "mapped_beams" => 1,
+                  "unavailable_source_beams" => 0
+              }
+
+            %{"kind" => "metrics"} = row ->
+              %{
+                row
+                | "source_file_count" => 1,
+                  "source_bytes" => 1,
+                  "mapped_beams" => 1,
+                  "unavailable_source_beams" => 0
+              }
+
+            row ->
+              row
+          end)
+
+        rows ++
+          [%{"kind" => "source_file", "app" => "probe", "path" => "src/other.erl", "bytes" => 1}]
+      end)
+
+    assert_raise InstalledOtp.Error, ~r/receipt_links/, fn ->
+      InstalledOtp.verify_receipt_lines!(wrong_source_link)
+    end
+
+    assert_raise InstalledOtp.Error, ~r/receipt_json/, fn ->
+      InstalledOtp.verify_receipt_lines!([@marker <> "{"])
+    end
+  end
+
+  test "source inventory maps every readable installed source file to a BEAM and counts bytes" do
+    dir = temp_dir!()
+    root = Path.join(dir, "lib")
+    app_root = Path.join(root, "probe-1.0.0")
+    ebin = Path.join(app_root, "ebin")
+    src = Path.join(app_root, "src")
+    File.mkdir_p!(ebin)
+    File.mkdir_p!(src)
+    source = Path.join(src, "probe.erl")
+
+    source_text =
+      "-module(probe).\n-export([run/0, behaviour_info/1]).\n" <>
+        "behaviour_info(callbacks) -> [].\nrun() -> ok.\n"
+
+    File.write!(source, source_text)
+    File.write!(Path.join(ebin, "probe.app"), app_resource(:probe, "1.0.0", [:probe]))
+
+    :ok =
+      File.cd!(app_root, fn ->
+        {:ok, :probe} =
+          :compile.file(~c"src/probe.erl", [:debug_info, {:outdir, String.to_charlist(ebin)}])
+
+        :ok
+      end)
+
+    discovered = InstalledOtp.discover!(root, lane: "core")
+    assert InstalledOtp.assert_discovery_complete!(root, discovered, lane: "core") == :ok
+    inspected = InstalledOtp.inspect!(discovered, lane: "core")
+    exports = InstalledOtp.export_inventory!([ebin], lane: "core")
+
+    assert {:probe, :run, 0} in exports
+    refute {:probe, :module_info, 0} in exports
+    refute {:probe, :module_info, 1} in exports
+    assert {:probe, :behaviour_info, 1} in exports
+
+    used_predefined_exports =
+      InstalledOtp.export_inventory!([ebin],
+        lane: "core",
+        edges: [{{:consumer, :run, 0}, {:probe, :module_info, 0}}]
+      )
+
+    assert {:probe, :module_info, 0} in used_predefined_exports
+    refute {:probe, :module_info, 1} in used_predefined_exports
+
+    [source_app] =
+      InstalledOtp.source_inventory!(discovered, inspected,
+        lane: "core",
+        required_modules: [:probe]
+      )
+
+    assert source_app.source_dir_status == "present"
+    assert source_app.source_file_count == 1
+    assert source_app.source_bytes == byte_size(source_text)
+    assert source_app.mapped_beams == 1
+
+    assert source_app.beams == [
+             %{
+               module: "probe",
+               source: "src/probe.erl",
+               status: "present",
+               bytes: byte_size(source_text)
+             }
+           ]
+  end
+
+  test "source inventory and receipts include contained generated sources outside src" do
+    root = temp_dir!() |> Path.join("lib")
+    %{ebin: ebin} = create_probe_app!(root, "probe", "1.0.0", :probe, true)
+    generated_source = "-module(probe).\n"
+    File.write!(Path.join(ebin, "generated_probe.erl"), generated_source)
+
+    discovered = InstalledOtp.discover!(root, lane: "core")
+    inspected = InstalledOtp.inspect!(discovered, lane: "core")
+    inspected = [%{hd(inspected) | source: "src/../ebin/generated_probe.erl"}]
+
+    [source_app] = InstalledOtp.source_inventory!(discovered, inspected, lane: "core")
+
+    assert source_app.source_dir_status == "missing"
+    assert source_app.source_file_count == 1
+    assert source_app.source_bytes == byte_size(generated_source)
+    assert source_app.mapped_beams == 1
+
+    assert source_app.beams == [
+             %{
+               module: "probe",
+               source: "ebin/generated_probe.erl",
+               status: "present",
+               bytes: byte_size(generated_source)
+             }
+           ]
+
+    receipt_lines =
+      InstalledOtp.receipt_lines(%{
+        lane: %{name: "core", elixir: "1.20.4", otp: "29.1.2"},
+        lock_sha256: SweepEvidence.lock_digests!()["core"],
+        discovered: discovered,
+        inspected: inspected,
+        ingested: [%{app: "probe", module: "probe", module_atom: :probe}],
+        sources: [source_app]
+      })
+
+    receipt = InstalledOtp.verify_receipt_lines!(receipt_lines)
+    beam = Enum.find(receipt.beams, &(&1["module"] == "probe"))
+
+    assert beam["source"] == "ebin/generated_probe.erl"
+    assert beam["source_status"] == "present"
+
+    assert Enum.any?(receipt_lines, fn line ->
+             {:ok, row} = JSON.decode(String.replace_prefix(line, @marker, ""))
+             row["kind"] == "source_file" and row["path"] == "ebin/generated_probe.erl"
+           end)
+  end
+
+  test "source inventory fails on unreadable files and required active source gaps" do
+    root = temp_dir!() |> Path.join("lib")
+    app_root = Path.join(root, "probe-1.0.0")
+    ebin = Path.join(app_root, "ebin")
+    File.mkdir_p!(ebin)
+    File.write!(Path.join(ebin, "probe.app"), app_resource(:probe, "1.0.0", [:probe]))
+    write_probe_beam!(ebin, :probe, debug_info: true)
+    discovered = InstalledOtp.discover!(root, lane: "core")
+    inspected = InstalledOtp.inspect!(discovered, lane: "core")
+
+    assert_raise InstalledOtp.Error, ~r/required_source_missing/, fn ->
+      InstalledOtp.source_inventory!(discovered, inspected,
+        lane: "core",
+        required_modules: [:probe]
+      )
+    end
+
+    source_root = Path.join(app_root, "src")
+    File.mkdir_p!(source_root)
+    File.write!(Path.join(source_root, "probe.erl"), "source")
+    inspected = [%{hd(inspected) | source: "src/probe.erl"}]
+
+    assert_raise InstalledOtp.Error, ~r/source_file_unreadable/, fn ->
+      InstalledOtp.source_inventory!(discovered, inspected,
+        lane: "core",
+        required_modules: [:probe],
+        source_reader: fn _path -> {:error, :eacces} end
+      )
+    end
+
+    escaped = [%{hd(inspected) | source: "../../outside.erl"}]
+
+    assert_raise InstalledOtp.Error, ~r/source_escape/, fn ->
+      InstalledOtp.source_inventory!(discovered, escaped, lane: "core")
+    end
+
+    outside = Path.join(Path.dirname(app_root), "outside.erl")
+    File.write!(outside, "outside")
+    source_path = Path.join(source_root, "probe.erl")
+    File.rm!(source_path)
+    File.ln_s!(outside, source_path)
+
+    assert_raise InstalledOtp.Error, ~r/source_escape/, fn ->
+      InstalledOtp.source_inventory!(discovered, inspected, lane: "core")
+    end
+  end
+
+  test "parity rejects omission of a discovered app or BEAM during inspection and Xref intake" do
+    root = temp_dir!() |> Path.join("lib")
+    app_one = create_probe_app!(root, "probe_one", "1.0.0", :probe_one, true)
+    app_two = create_probe_app!(root, "probe_two", "1.0.0", :probe_two, true)
+    discovered = InstalledOtp.discover!(root, lane: "core")
+    inspected = InstalledOtp.inspect!(discovered, lane: "core")
+
+    assert_raise InstalledOtp.Error, ~r/discovery_parity/, fn ->
+      InstalledOtp.assert_discovery_complete!(
+        root,
+        Enum.reject(discovered, &(&1.app == app_two.app)),
+        lane: "core"
+      )
+    end
+
+    app_one_discovered = Enum.find(discovered, &(&1.app == app_one.app))
+
+    omitted_app_beams = [
+      %{app_one_discovered | beams: []} | Enum.reject(discovered, &(&1.app == app_one.app))
+    ]
+
+    assert_raise InstalledOtp.Error, ~r/discovery_parity/, fn ->
+      InstalledOtp.assert_discovery_complete!(root, omitted_app_beams, lane: "core")
+    end
+
+    incomplete_inspection = Enum.reject(inspected, &(&1.app == app_two.app))
+    complete_ingestion = Enum.map(inspected, &%{app: &1.app, module: &1.module})
+
+    assert_raise InstalledOtp.Error, ~r/identity_parity/, fn ->
+      InstalledOtp.assert_parity!(discovered, incomplete_inspection, complete_ingestion, "core")
+    end
+
+    app_one_inspected = Enum.filter(inspected, &(&1.app == app_one.app))
+    incomplete_ingestion = Enum.map(app_one_inspected, &%{app: &1.app, module: &1.module})
+
+    assert_raise InstalledOtp.Error, ~r/identity_parity/, fn ->
+      InstalledOtp.assert_parity!(discovered, inspected, incomplete_ingestion, "core")
+    end
+
+    discovered_one = Enum.find(discovered, &(&1.app == app_one.app))
+    [first_beam | _] = discovered_one.beams
+
+    omitted_beam_inspection =
+      Enum.reject(inspected, &(&1.app == app_one.app and &1.module == first_beam.module))
+
+    assert_raise InstalledOtp.Error, ~r/identity_parity/, fn ->
+      InstalledOtp.assert_parity!(discovered, omitted_beam_inspection, complete_ingestion, "core")
+    end
+  end
+
+  test "discovery and ingestion reject duplicate, unreadable, corrupt, missing-debug, and incomplete identities" do
+    root = temp_dir!() |> Path.join("lib")
+    create_probe_app!(root, "probe_one", "1.0.0", :same_probe, true)
+    create_probe_app!(root, "probe_two", "1.0.0", :same_probe, true)
+
+    assert_raise InstalledOtp.Error, ~r/duplicate_module/, fn ->
+      InstalledOtp.discover!(root, lane: "core")
+    end
+
+    clean_root = temp_dir!() |> Path.join("lib")
+    app = create_probe_app!(clean_root, "probe", "1.0.0", :probe, true)
+    [discovered] = InstalledOtp.discover!(clean_root, lane: "core")
+    beam = hd(discovered.beams)
+
+    assert_raise InstalledOtp.Error, ~r/beam_identity/, fn ->
+      InstalledOtp.discover!(clean_root,
+        lane: "core",
+        beam_chunks: fn _path, _chunks -> {:error, :beam_lib, :eacces} end
+      )
+    end
+
+    File.write!(beam.path, "not a beam")
+
+    assert_raise InstalledOtp.Error, ~r/beam_identity/, fn ->
+      InstalledOtp.discover!(clean_root, lane: "core")
+    end
+
+    write_probe_beam!(app.ebin, :probe, debug_info: false)
+    discovered = InstalledOtp.discover!(clean_root, lane: "core")
+
+    assert_raise InstalledOtp.Error, ~r/inspection_failed/, fn ->
+      InstalledOtp.inspect!(discovered, lane: "core")
+    end
+
+    write_probe_beam!(app.ebin, :probe, debug_info: true)
+    discovered = InstalledOtp.discover!(clean_root, lane: "core")
+    inspected = InstalledOtp.inspect!(discovered, lane: "core")
+    app = hd(discovered)
+
+    assert_raise InstalledOtp.Error, ~r/xref_ingest/, fn ->
+      InstalledOtp.add_directory!(:ignored, app,
+        lane: "core",
+        add_directory: fn _xref, _path -> {:error, :injected_failure} end
+      )
+    end
+
+    incomplete =
+      InstalledOtp.add_directory!(:ignored, app,
+        lane: "core",
+        add_directory: fn _xref, _path -> {:ok, []} end
+      )
+
+    assert_raise InstalledOtp.Error, ~r/identity_parity/, fn ->
+      InstalledOtp.assert_parity!(discovered, inspected, incomplete, "core")
+    end
+  end
+
+  defp receipt_lines(lane) do
+    {elixir, otp} =
+      case lane do
+        "core" -> {"1.20.4", "29.1.2"}
+        "floor" -> {"1.18.5", "27.3.4.9"}
+      end
+
+    rows = [
+      %{
+        "kind" => "meta",
+        "schema" => "fablebook.otp-inventory.v2",
+        "lane" => lane,
+        "elixir" => elixir,
+        "otp" => otp,
+        "lock_sha256" => SweepEvidence.lock_digests!()[lane]
+      },
+      %{
+        "kind" => "app",
+        "app" => "probe",
+        "version" => "1.0.0",
+        "path" => "probe-1.0.0",
+        "source_dir_status" => "missing",
+        "source_file_count" => 0,
+        "source_bytes" => 0
+      },
+      %{
+        "kind" => "beam",
+        "app" => "probe",
+        "version" => "1.0.0",
+        "module" => "probe",
+        "path" => "probe-1.0.0/ebin/probe.beam",
+        "inspection" => "ok",
+        "xref" => "ok",
+        "function_count" => 1,
+        "function_bytes" => 1,
+        "beam_bytes" => 1,
+        "source" => nil,
+        "source_status" => "unavailable",
+        "source_bytes" => nil
+      },
+      %{
+        "kind" => "app",
+        "app" => "pending_probe",
+        "version" => "1.0.0",
+        "path" => "pending_probe-1.0.0",
+        "source_dir_status" => "missing",
+        "source_file_count" => 0,
+        "source_bytes" => 0
+      },
+      %{
+        "kind" => "beam",
+        "app" => "pending_probe",
+        "version" => "1.0.0",
+        "module" => "pending_probe",
+        "path" => "pending_probe-1.0.0/ebin/pending_probe.beam",
+        "inspection" => "ok",
+        "xref" => "ok",
+        "function_count" => 1,
+        "function_bytes" => 1,
+        "beam_bytes" => 1,
+        "source" => "src/pending_probe.erl",
+        "source_status" => "missing",
+        "source_bytes" => nil
+      },
+      %{
+        "kind" => "source_app",
+        "app" => "probe",
+        "version" => "1.0.0",
+        "source_dir_status" => "missing",
+        "source_file_count" => 0,
+        "source_bytes" => 0,
+        "mapped_beams" => 0,
+        "missing_source_beams" => 0,
+        "unavailable_source_beams" => 1
+      },
+      %{
+        "kind" => "source_app",
+        "app" => "pending_probe",
+        "version" => "1.0.0",
+        "source_dir_status" => "missing",
+        "source_file_count" => 0,
+        "source_bytes" => 0,
+        "mapped_beams" => 0,
+        "missing_source_beams" => 1,
+        "unavailable_source_beams" => 0
+      },
+      %{"kind" => "active_app", "app" => "probe"},
+      %{"kind" => "active_module", "app" => "probe", "module" => "probe"},
+      %{
+        "kind" => "active_export",
+        "app" => "probe",
+        "module" => "probe",
+        "function" => "run",
+        "arity" => 0
+      },
+      %{
+        "kind" => "active_edge",
+        "app" => "probe",
+        "module" => "probe",
+        "function" => "run",
+        "arity" => 0,
+        "callee_app" => "pending_probe",
+        "callee_module" => "pending_probe",
+        "callee_function" => "run"
+      },
+      %{
+        "kind" => "export",
+        "app" => "probe",
+        "module" => "probe",
+        "function" => "run",
+        "arity" => 0
+      },
+      %{
+        "kind" => "reached",
+        "app" => "probe",
+        "module" => "probe",
+        "function" => "run",
+        "arity" => 0
+      },
+      %{
+        "kind" => "boundary",
+        "app" => "probe",
+        "module" => "probe",
+        "function" => "run",
+        "arity" => 0,
+        "explicit_boundary_exclusion" => true
+      },
+      %{"kind" => "pending_app", "app" => "pending_probe", "owner" => "01.1.1.3"},
+      %{
+        "kind" => "pending_module",
+        "app" => "pending_probe",
+        "module" => "pending_probe",
+        "function_count" => 1,
+        "function_bytes" => 1,
+        "source_status" => "missing",
+        "source" => "src/pending_probe.erl",
+        "source_bytes" => nil,
+        "owner" => "01.1.1.3"
+      },
+      %{
+        "kind" => "pending_mfa",
+        "app" => "pending_probe",
+        "module" => "pending_probe",
+        "function" => "run",
+        "arity" => 0,
+        "caller_chain" => ["probe.run/0"],
+        "owner" => "01.1.1.3"
+      },
+      %{
+        "kind" => "metrics",
+        "app_count" => 2,
+        "beam_count" => 2,
+        "function_count" => 2,
+        "function_bytes" => 2,
+        "beam_bytes" => 2,
+        "source_file_count" => 0,
+        "source_bytes" => 0,
+        "mapped_beams" => 0,
+        "missing_source_beams" => 1,
+        "unavailable_source_beams" => 1,
+        "exported_matches" => 1,
+        "reached_matches" => 1,
+        "boundary_matches" => 1,
+        "active_app_count" => 1,
+        "active_module_count" => 1,
+        "active_export_count" => 1,
+        "active_edge_count" => 1,
+        "pending_app_count" => 1,
+        "pending_module_count" => 1,
+        "pending_mfa_count" => 1,
+        "discovery_ms" => 0,
+        "inspection_ms" => 0,
+        "source_scan_ms" => 0,
+        "xref_ms" => 0,
+        "graph_ms" => 0,
+        "pending_owner" => "01.1.1.3"
+      }
+    ]
+
+    body = Enum.map(rows, &(@marker <> JSON.encode!(&1)))
+    digest = :crypto.hash(:sha256, Enum.join(body, "\n") <> "\n") |> Base.encode16(case: :lower)
+
+    footer =
+      @marker <>
+        JSON.encode!(%{
+          "kind" => "footer",
+          "apps" => 2,
+          "beams" => 2,
+          "source_files" => 0,
+          "active_records" => 4,
+          "export_records" => 1,
+          "reached_records" => 1,
+          "boundary_records" => 1,
+          "pending_records" => 3,
+          "sha256" => digest
+        })
+
+    body ++ [footer]
+  end
+
+  defp rewrite_receipt(lines, transform) do
+    body =
+      lines
+      |> Enum.drop(-1)
+      |> Enum.map(fn line ->
+        {:ok, row} = JSON.decode(String.replace_prefix(line, @marker, ""))
+        row
+      end)
+      |> transform.()
+
+    encoded = Enum.map(body, &(@marker <> JSON.encode!(&1)))
+    counts = Enum.frequencies_by(body, & &1["kind"])
+
+    footer = %{
+      "kind" => "footer",
+      "apps" => counts["app"] || 0,
+      "beams" => counts["beam"] || 0,
+      "source_files" => counts["source_file"] || 0,
+      "active_records" =>
+        Enum.sum(
+          Enum.map(~w(active_app active_module active_export active_edge), &(counts[&1] || 0))
+        ),
+      "export_records" => counts["export"] || 0,
+      "reached_records" => counts["reached"] || 0,
+      "boundary_records" => counts["boundary"] || 0,
+      "pending_records" =>
+        Enum.sum(Enum.map(~w(pending_app pending_module pending_mfa), &(counts[&1] || 0))),
+      "sha256" =>
+        :crypto.hash(:sha256, Enum.join(encoded, "\n") <> "\n") |> Base.encode16(case: :lower)
+    }
+
+    encoded ++ [@marker <> JSON.encode!(footer)]
+  end
+
+  defp temp_dir! do
+    dir =
+      Path.join(System.tmp_dir!(), "fablebook-inventory-#{System.unique_integer([:positive])}")
+
+    File.mkdir_p!(dir)
+    on_exit(fn -> File.rm_rf!(dir) end)
+    dir
+  end
+
+  defp create_probe_app!(root, app, version, module, debug_info?) do
+    app_root = Path.join(root, "#{app}-#{version}")
+    ebin = Path.join(app_root, "ebin")
+    File.mkdir_p!(ebin)
+
+    File.write!(
+      Path.join(ebin, "#{app}.app"),
+      app_resource(Map.fetch!(@probe_app_atoms, app), version, [module])
+    )
+
+    write_probe_beam!(ebin, module, debug_info: debug_info?)
+    %{app: app, root: app_root, ebin: ebin}
+  end
+
+  defp write_probe_beam!(ebin, module, opts) do
+    forms = [
+      {:attribute, 1, :module, module},
+      {:attribute, 1, :export, [probe: 0]},
+      {:function, 1, :probe, 0, [{:clause, 1, [], [], [{:atom, 1, :ok}]}]}
+    ]
+
+    compile_opts = if Keyword.get(opts, :debug_info), do: [:debug_info], else: []
+    {:ok, ^module, beam} = :compile.forms(forms, compile_opts)
+    File.write!(Path.join(ebin, "#{Atom.to_string(module)}.beam"), beam)
+  end
+
+  defp app_resource(app, version, modules) do
+    resource = {:application, app, [{:vsn, String.to_charlist(version)}, {:modules, modules}]}
+    :io_lib.format("~tp.~n", [resource])
   end
 end
