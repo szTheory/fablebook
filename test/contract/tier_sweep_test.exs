@@ -715,6 +715,79 @@ defmodule Fablebook.Contract.TierSweepTest do
                 }
               end)
 
+  # Independent boundary for the source-reviewed MFA family on each pinned lane.
+  # This inventory deliberately does not come from @logger_family_specs: if a
+  # spec and the records generated from it disappear together, the audit must
+  # still detect the omitted export. The active graph below checks these
+  # version-pinned MFAs against the exports present on the exact installed lane.
+  @logger_family_universe %{
+    "core" => [
+      {"LOGGER", {Logger.Formatter, :new, 1}},
+      {"LOGGER", {Logger, :configure_backend, 2}},
+      {"LOGGER", {Logger, :default_formatter, 0}},
+      {"LOGGER", {Logger, :default_formatter, 1}},
+      {"LOGGER", {Logger.Formatter, :new, 0}},
+      {"LOGGER", {Logger.App, :start, 0}},
+      {"LOGGER", {Logger.App, :start, 2}},
+      {"EXUNIT", {ExUnit.CaptureServer, :handle_call, 3}},
+      {"EXUNIT", {ExUnit.CaptureServer, :log_capture_on, 3}},
+      {"EXUNIT", {ExUnit.CaptureLog, :capture_log, 1}},
+      {"EXUNIT", {ExUnit.CaptureLog, :capture_log, 2}},
+      {"EXUNIT", {ExUnit.CaptureLog, :with_log, 1}},
+      {"EXUNIT", {ExUnit.CaptureLog, :with_log, 2}},
+      {"EXUNIT", {ExUnit, :configure, 1}},
+      {"EXUNIT", {ExUnit, :start, 0}},
+      {"EXUNIT", {ExUnit, :start, 1}},
+      {"EXUNIT", {ExUnit, :run, 0}},
+      {"EXUNIT", {ExUnit, :run, 1}},
+      {"EXUNIT", {ExUnit, :async_run, 0}},
+      {"EXUNIT", {ExUnit.Runner, :run, 2}},
+      {"EXUNIT", {ExUnit, :plural_rule, 2}},
+      {"EXUNIT", {ExUnit, :after_suite, 1}}
+    ],
+    "floor" => [
+      {"LOGGER", {Logger.Formatter, :new, 1}},
+      {"LOGGER", {Logger, :configure_backend, 2}},
+      {"LOGGER", {Logger, :default_formatter, 0}},
+      {"LOGGER", {Logger, :default_formatter, 1}},
+      {"LOGGER", {Logger.Formatter, :new, 0}},
+      {"LOGGER", {Logger.App, :start, 0}},
+      {"LOGGER", {Logger.App, :start, 2}},
+      {"EXUNIT", {ExUnit.CaptureServer, :handle_call, 3}},
+      {"EXUNIT", {ExUnit.CaptureServer, :log_capture_on, 3}},
+      {"EXUNIT", {ExUnit.CaptureLog, :capture_log, 1}},
+      {"EXUNIT", {ExUnit.CaptureLog, :capture_log, 2}},
+      {"EXUNIT", {ExUnit.CaptureLog, :with_log, 1}},
+      {"EXUNIT", {ExUnit.CaptureLog, :with_log, 2}},
+      {"EXUNIT", {ExUnit, :configure, 1}},
+      {"EXUNIT", {ExUnit, :start, 0}},
+      {"EXUNIT", {ExUnit, :start, 1}},
+      {"EXUNIT", {ExUnit, :run, 0}},
+      {"EXUNIT", {ExUnit, :run, 1}},
+      {"EXUNIT", {ExUnit, :async_run, 0}},
+      {"EXUNIT", {ExUnit.Runner, :run, 2}},
+      {"EXUNIT", {ExUnit, :plural_rule, 2}},
+      {"EXUNIT", {ExUnit, :after_suite, 1}}
+    ]
+  }
+
+  @logger_family_functions @logger_family_universe
+                           |> Map.values()
+                           |> List.flatten()
+                           |> Enum.map(fn {_family, {module, function, _arity}} ->
+                             {module, function}
+                           end)
+                           |> Enum.uniq()
+
+  @logger_expected_mfas_by_lane Map.new(@logger_family_universe, fn {lane, rows} ->
+                                  {lane, MapSet.new(Enum.map(rows, &elem(&1, 1)))}
+                                end)
+
+  @logger_expected_ids (for {lane, rows} <- @logger_family_universe,
+                            {family, {module, function, arity}} <- rows do
+                          {"NEW-#{family}-#{lane}-#{inspect(module)}-#{function}-#{arity}", lane}
+                        end)
+
   @logger_family_specs [
     %{
       family: "LOGGER",
@@ -1117,19 +1190,6 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
   ]
 
-  @logger_family_functions @logger_family_specs
-                           |> Enum.map(fn %{mfa: {module, function, _arity}} ->
-                             {module, function}
-                           end)
-                           |> Enum.uniq()
-
-  @logger_expected_ids (for lane <- @creator_expected_lanes, spec <- @logger_family_specs do
-                          {module, function, arity} = spec.mfa
-
-                          {"NEW-#{spec.family}-#{lane}-#{inspect(module)}-#{function}-#{arity}",
-                           lane}
-                        end)
-
   @logger_source_evidence %{
     "core" => %{
       formatter_input: [
@@ -1316,8 +1376,6 @@ defmodule Fablebook.Contract.TierSweepTest do
       ]
     }
   }
-
-  @logger_expected_mfas Enum.map(@logger_family_specs, & &1.mfa)
 
   @logger_audit (for lane <- @creator_expected_lanes, spec <- @logger_family_specs do
                    {module, function, arity} = mfa = spec.mfa
@@ -2102,6 +2160,24 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_logger_audit!(records, ctx.graph, tier, evidence)
 
+    omitted_spec_mfa = {Logger.Formatter, :new, 1}
+    specs_without_front = Enum.reject(@logger_family_specs, &(&1.mfa == omitted_spec_mfa))
+    records_without_front = Enum.reject(records, &(&1.matched_mfas == [omitted_spec_mfa]))
+
+    assert covered?(omitted_spec_mfa, tier, names)
+    assert length(records) - length(records_without_front) == length(@creator_expected_lanes)
+
+    assert_raise ExUnit.AssertionError, ~r/spec MFA set differs from pinned lane universe/, fn ->
+      assert_logger_audit!(
+        records_without_front,
+        ctx.graph,
+        tier,
+        evidence,
+        @exclusions,
+        specs_without_front
+      )
+    end
+
     lane_records = Enum.filter(records, &(&1.lane == evidence.lane.name))
     safe_spec = Enum.find(@logger_family_specs, &(&1.disposition == :exact_exclusion))
     safe_record = Enum.find(lane_records, &(&1.matched_mfas == [safe_spec.mfa]))
@@ -2791,15 +2867,40 @@ defmodule Fablebook.Contract.TierSweepTest do
            "format_error/1 was retained although the changed atom-creator fronts do not reach it"
   end
 
-  defp assert_logger_audit!(records, graph, tier, evidence, exclusions \\ @exclusions) do
+  defp assert_logger_audit!(
+         records,
+         graph,
+         tier,
+         evidence,
+         exclusions \\ @exclusions,
+         family_specs \\ @logger_family_specs
+       ) do
+    spec_mfas = MapSet.new(Enum.map(family_specs, & &1.mfa))
+
+    for lane <- @creator_expected_lanes do
+      expected_mfas = Map.fetch!(@logger_expected_mfas_by_lane, lane)
+
+      assert spec_mfas == expected_mfas,
+             "Logger/ExUnit spec MFA set differs from pinned lane universe for #{lane}; " <>
+               "missing=#{inspect(MapSet.difference(expected_mfas, spec_mfas))} " <>
+               "unexpected=#{inspect(MapSet.difference(spec_mfas, expected_mfas))}"
+    end
+
+    lane_universe = Map.fetch!(@logger_expected_mfas_by_lane, evidence.lane.name)
+    missing_exports = MapSet.difference(lane_universe, MapSet.new(graph.exported))
+
+    assert MapSet.size(missing_exports) == 0,
+           "pinned Logger/ExUnit MFA universe is absent from #{evidence.lane.name} exports: " <>
+             inspect(missing_exports)
+
     assert MapSet.new(Enum.map(records, &{&1.original_id, &1.lane})) ==
              MapSet.new(@logger_expected_ids)
 
     lane_records = Enum.filter(records, &(&1.lane == evidence.lane.name))
     recorded_mfas = lane_records |> Enum.flat_map(& &1.matched_mfas) |> MapSet.new()
-    assert recorded_mfas == MapSet.new(@logger_expected_mfas)
+    assert recorded_mfas == lane_universe
 
-    for spec <- @logger_family_specs do
+    for spec <- family_specs do
       {module, function, _arity} = mfa = spec.mfa
 
       id =
