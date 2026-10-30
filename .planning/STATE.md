@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 1
-current_phase_name: Release pipeline, CI gate and guards
-status: verifying
-stopped_at: Phase 01.1.1.1 context gathered; research-first planning next; no auto-advance
-last_updated: "2026-10-30T03:03:36.296Z"
-last_activity: 2026-10-30 UTC — Phase 01.1.1.1 context captured; 32 planning contract tests passed locally; research-first planning next
-state_head: 69e819222f4bc903437b4462899d033eae39a04a
+current_phase: 01.1.1.1
+current_phase_name: "Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons"
+status: ready_to_execute
+stopped_at: Phase 01.1.1.1 plans verified; ready to execute five sequential plans; no auto-advance
+last_updated: "2026-10-30T04:28:00.592Z"
+last_activity: 2026-10-30 UTC — Phase 01.1.1.1 research refreshed; five plans independently verified; 14/14 decisions covered; execution pending
+state_head: 611e53f5794c3eef6a31d52b37c7b6fbd1185e30
 progress:
   total_phases: 38
   completed_phases: 1
-  total_plans: 15
+  total_plans: 20
   completed_plans: 15
   percent: 3
-last_activity_desc: Phase 1 automated UAT and verification policy recorded
+last_activity_desc: Phase 01.1.1.1 planning verified; five sequential plans ready to execute
 ---
 
 # Project State
@@ -23,16 +23,16 @@ last_activity_desc: Phase 1 automated UAT and verification policy recorded
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 1 automated acceptance: 12 passed, one scheduled observation pending; no human UAT. Follow-on ban-list work stays owned by Phase 01.1.1.1. Read `.planning/VERIFICATION.md` and `01-UAT.md` before reopening any checks.
+**Current focus:** Phase 01.1.1.1 ban-list closure: research and five sequential plans independently verified; execution pending. Exact-lane source availability, measured audit budget and Macro policy have explicit execution gates. Phase 1 automated acceptance retains 12 passes and one scheduled observation pending; read `.planning/VERIFICATION.md` and `01-UAT.md` before reopening those checks.
 
 ## Current Position
 
-Phase: 1 — Release pipeline, CI gate and guards
-Plan: 5
-Status: Automated UAT partial; first Monday timing publication pending; canonical execution re-verification remains a gate
-Last activity: 2026-10-30 UTC — Phase 01.1.1.1 context captured; 32 planning contract tests passed locally; research-first planning next
+Phase: 01.1.1.1 (Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons) — READY TO EXECUTE
+Plan: 0/5 executed (five plans ready)
+Status: Ready to execute; independent plan check passed without findings; parent verification debt remains separately open
+Last activity: 2026-10-30 UTC — Phase 01.1.1.1 research refreshed; five plans independently verified; 14/14 decisions covered; execution pending
 
-Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/15 previously planned plans complete
+Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 plans complete; five new plans unexecuted
 
 ## Performance Metrics
 
@@ -146,7 +146,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T03:03:07.044Z
-Stopped at: Phase 01.1.1.1 context gathered; research-first planning next; no auto-advance
-Next command: $gsd-plan-phase 01.1.1.1 --research — research the atom policy, installed OTP inventory and exclusion audit before creating plans
-Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-CONTEXT.md
+Last session: 2026-10-30T04:28:51Z
+Stopped at: Phase 01.1.1.1 plans independently verified; ready for five sequential scoped PRs; no auto-advance
+Next command: $gsd-execute-phase 01.1.1.1 — execute the five plans, starting with exact-source evidence and confirmed creator paths
+Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-01-PLAN.md
