@@ -2,12 +2,12 @@
 gsd_state_version: "1.0"
 current_phase: 01.1.1.2
 current_phase_name: Installed OTP inventory and Common Test guard slice
-status: ready_to_execute
-stopped_at: Phase 01.1.1.2 research and two sequential plans verified; ready to execute
-last_updated: "2026-10-30T18:03:24.053Z"
+status: executing
+stopped_at: Plan 01 halted at exact active-graph safety gate; receipts and green merge are pending
+last_updated: "2026-10-30T21:06:04.257Z"
 last_activity: 2026-10-30
-last_activity_desc: Phase 01.1.1.2 planning verified; two sequential plans ready; parent debt and later ownership preserved
-state_head: 293d92482d3994477de11a33f6a32730a345747c
+last_activity_desc: Plan 01 halted at the exact active-graph gate; Plan 02 is blocked pending owner resolution and green exact-lane delivery
+state_head: 8d10033ceaef98b107d8b1cb3d0928fb6c9a1a06
 progress:
   total_phases: 42
   completed_phases: 1
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.2 research and two sequential plans are verified and ready to execute. Its narrowed prerequisite is complete; parent Phase 1 verification debt remains open. Exact-lane inventory and Common Test execution evidence is still pending.
+**Current focus:** Phase 01.1.1.2 — Plan 01 halted at an exact-lane active-graph safety gate; Plan 02 is blocked
 
 ## Current Position
 
-Phase: 01.1.1.2 (Installed OTP inventory and Common Test guard slice) — READY TO EXECUTE
-Plan: 0 of 2 complete
-Status: Ready to execute Phase 01.1.1.2; parent verification debt remains pending
-Last activity: 2026-10-30 — Research refreshed, two plans independently verified, decision coverage complete; no implementation started
+Phase: 01.1.1.2 (Installed OTP inventory and Common Test guard slice) — IN PROGRESS
+Plan: 1 of 2 (Plan 01 halted; Plan 02 blocked)
+Status: Awaiting owner resolution of the `escript.debug/3` active path, then exact receipts and green merge
+Last activity: 2026-10-30 — Core and floor both stopped at `assert_no_new_active_failures!/6`; no receipts emitted
 
 Progress: [░░░░░░░░░░] 2%
 
@@ -140,6 +140,7 @@ None yet.
 - [Phase 3 onward]: LiveView 1.2 upgrade PRs in the dogfood repos should start early (Q2, Q22), so the 14-day soak is not reset at the end.
 - [Phase 17 and 18]: depend on abracabrand's two-session process; keep the minimal-token fallback so the phase can merge.
 - [Phases 2 and 18]: neither completes a requirement on its own (a vertical slice and a content track); they feed QA-04, VIS-01/02 and QA-06.
+- Exact CI run 41127014456 on PR head 76edcb6 fails core 1.20.4/OTP 29.1.2 and floor 1.18.5/OTP 27.3.4.9 at assert_no_new_active_failures!: the one newly coupled historical active MFA is escript.debug/3. The assertion runs before receipts are emitted; do not merge PR 27 or start Plan 02 until the active path is resolved by its owner.
 
 ### Roadmap Evolution
 
@@ -157,10 +158,10 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T18:03:24.053Z
-Stopped at: Phase 01.1.1.2 research and two sequential plans verified; ready to execute
-Next independent command: $gsd-execute-phase 01.1.1.2 — implement the installed OTP inventory and Common Test guard slices
-Resume file: .planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-CHECK.md
+Last session: 2026-10-30T21:06:04.159Z
+Stopped at: Plan 01 halted at exact active-graph safety gate; receipts and green merge are pending
+Next independent command: $gsd-execute-phase 01.1.1.2 — resume Plan 01 after owner resolution; Plan 02 remains blocked until the exact-lane green merge
+Resume file: .planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-01-SUMMARY.md
 
 ## Completed phase receipt
 
