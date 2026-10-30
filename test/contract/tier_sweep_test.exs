@@ -2053,8 +2053,10 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert MapSet.subset?(historical_apps, discovered_apps)
     assert graph.pending_apps != []
     assert Enum.all?(graph.pending_apps, &(not MapSet.member?(historical_apps, &1.app)))
-    assert MapSet.subset?(graph.exported, graph.full_exported)
-    assert MapSet.subset?(MapSet.new(graph.edges), MapSet.new(graph.full_edges))
+    assert graph.exported == graph.historical_active_exported
+    assert MapSet.new(graph.edges) == MapSet.new(graph.historical_active_edges)
+    assert MapSet.subset?(graph.historical_active_exported, graph.full_exported)
+    assert MapSet.subset?(MapSet.new(graph.historical_active_edges), MapSet.new(graph.full_edges))
     assert MapSet.size(graph.historical_active_modules) > 0
   end
 
@@ -2732,59 +2734,62 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     dirs = Enum.map(otp_apps, & &1.ebin) ++ elixir_dirs ++ dep_dirs
     missing_apps = missing_apps(otp_lib, elixir_dirs, dep_dirs)
+    otp_active_names = Enum.map(@historical_active_otp_apps, &Atom.to_string/1) |> MapSet.new()
+    historical_otp_apps = Enum.filter(otp_apps, &MapSet.member?(otp_active_names, &1.app))
+    pending_apps = Enum.reject(otp_apps, &MapSet.member?(otp_active_names, &1.app))
 
-    {xref_edges, exported, ingested} =
-      checked_xref_graph(otp_apps ++ extra_apps, evidence.lane.name)
+    xref_graph =
+      checked_xref_graph(
+        historical_otp_apps ++ extra_apps,
+        pending_apps,
+        evidence.lane.name
+      )
 
     InstalledOtp.assert_parity!(
       discovered,
       inspected,
-      Enum.filter(ingested, &(&1.app in Enum.map(otp_apps, fn app -> app.app end))),
+      Enum.filter(xref_graph.ingested, &(&1.app in Enum.map(otp_apps, fn app -> app.app end))),
       evidence.lane.name
     )
 
-    {other_form_edges, no_debug} = form_edges(elixir_dirs ++ dep_dirs)
+    historical_otp_dirs = Enum.map(historical_otp_apps, & &1.ebin)
+    {historical_otp_edges, no_debug_otp} = form_edges(historical_otp_dirs)
+    {other_form_edges, no_debug_other} = form_edges(elixir_dirs ++ dep_dirs)
     otp_form_edges = Enum.flat_map(inspected, & &1.edges)
-    form_edges = otp_form_edges ++ other_form_edges
-    edges = form_edges ++ for({caller, {m, f, _}} <- xref_edges, do: {caller, {m, f}})
-    full_reverse = reverse(edges)
-    full_forward = forward(edges)
-    otp_active_names = Enum.map(@historical_active_otp_apps, &Atom.to_string/1) |> MapSet.new()
 
-    extra_app_names = MapSet.new(Enum.map(extra_apps, & &1.app))
+    historical_xref_edges =
+      for {caller, {m, f, _}} <- xref_graph.historical_edges, do: {caller, {m, f}}
 
-    active_modules =
-      inspected
-      |> Enum.filter(&MapSet.member?(otp_active_names, &1.app))
-      |> Enum.map(& &1.module_atom)
-      |> Kernel.++(
-        ingested
-        |> Enum.filter(&MapSet.member?(extra_app_names, &1.app))
-        |> Enum.map(& &1.module_atom)
-      )
-      |> MapSet.new()
+    full_xref_edges = for {caller, {m, f, _}} <- xref_graph.full_edges, do: {caller, {m, f}}
+    historical_edges = historical_otp_edges ++ other_form_edges ++ historical_xref_edges
+    full_edges = otp_form_edges ++ other_form_edges ++ full_xref_edges
+    full_reverse = reverse(full_edges)
+    full_forward = forward(full_edges)
+    historical_modules = MapSet.new(xref_graph.historical_ingested, & &1.module_atom)
+    historical_exported = MapSet.new(xref_graph.historical_exports)
+    full_exported = MapSet.new(xref_graph.full_exports)
 
     active_edges =
-      Enum.filter(edges, fn {{module, _function, _arity}, _callee} ->
-        MapSet.member?(active_modules, module)
+      Enum.filter(full_edges, fn {{module, _, _}, _} ->
+        MapSet.member?(historical_modules, module)
       end)
 
     active_exported =
-      Enum.filter(exported, fn {module, _function, _arity} ->
-        MapSet.member?(active_modules, module)
+      Enum.filter(full_exported, fn {module, _, _} ->
+        MapSet.member?(historical_modules, module)
       end)
 
-    reverse = reverse(active_edges)
-    forward = forward(active_edges)
-    full_exported = MapSet.new(exported)
-    active_exported = MapSet.new(active_exported)
+    active_reverse = reverse(active_edges)
+    active_forward = forward(active_edges)
+    no_debug = no_debug_otp ++ no_debug_other
 
     receipt = %{
       lane: evidence.lane,
       lock_sha256: evidence.lock_sha256,
       discovered: discovered,
       inspected: inspected,
-      ingested: Enum.filter(ingested, &(&1.app in Enum.map(otp_apps, fn app -> app.app end)))
+      ingested:
+        Enum.filter(xref_graph.ingested, &(&1.app in Enum.map(otp_apps, fn app -> app.app end)))
     }
 
     receipt_lines = InstalledOtp.receipt_lines(receipt)
@@ -2795,20 +2800,22 @@ defmodule Fablebook.Contract.TierSweepTest do
     %{
       dirs: dirs,
       edges: active_edges,
-      exported: active_exported,
-      reverse: reverse,
-      forward: forward,
+      exported: MapSet.new(active_exported),
+      reverse: active_reverse,
+      forward: active_forward,
       no_debug: no_debug,
       missing_apps: missing_apps,
       roots: roots,
       closure: closure,
       out_of_scope: Enum.map(pending_apps, & &1.app),
       historical_active_otp_apps: MapSet.to_list(otp_active_names),
-      historical_active_modules: active_modules,
+      historical_active_modules: historical_modules,
+      historical_active_edges: historical_edges,
+      historical_active_exported: historical_exported,
       discovered: discovered,
       inspected: inspected,
       ingested: receipt.ingested,
-      full_edges: edges,
+      full_edges: full_edges,
       full_exported: full_exported,
       full_reverse: full_reverse,
       full_forward: full_forward,
@@ -2819,18 +2826,34 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
   end
 
-  defp checked_xref_graph(apps, lane) do
+  defp checked_xref_graph(historical_apps, pending_apps, lane) do
     start_xref!(lane)
 
     try do
       set_xref_defaults!(lane)
-      ingested = Enum.flat_map(apps, &InstalledOtp.add_directory!(:tier_sweep, &1, lane: lane))
-      xref_edges = xref_query!(~c"E", :edges, lane)
-      exported = xref_query!(~c"X", :exports, lane)
-      {xref_edges, exported, ingested}
+      historical_ingested = ingest_xref_apps!(historical_apps, lane)
+      historical_edges = xref_query!(~c"E", :historical_edges, lane)
+      historical_exports = xref_query!(~c"X", :historical_exports, lane)
+      pending_ingested = ingest_xref_apps!(pending_apps, lane)
+      full_edges = xref_query!(~c"E", :full_edges, lane)
+      full_exports = xref_query!(~c"X", :full_exports, lane)
+
+      %{
+        historical_ingested: historical_ingested,
+        historical_edges: historical_edges,
+        historical_exports: historical_exports,
+        pending_ingested: pending_ingested,
+        ingested: historical_ingested ++ pending_ingested,
+        full_edges: full_edges,
+        full_exports: full_exports
+      }
     after
       stop_xref!(lane)
     end
+  end
+
+  defp ingest_xref_apps!(apps, lane) do
+    Enum.flat_map(apps, &InstalledOtp.add_directory!(:tier_sweep, &1, lane: lane))
   end
 
   defp start_xref!(lane) do

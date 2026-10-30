@@ -3,6 +3,7 @@ defmodule Fablebook.Test.InstalledOtp do
   @compile {:no_warn_undefined, :xref}
 
   alias Fablebook.Test.BeamWalker
+  alias Fablebook.Test.SweepEvidence
 
   @marker "FABLEBOOK_OTP_INVENTORY_V1 "
   @lanes %{
@@ -174,6 +175,9 @@ defmodule Fablebook.Test.InstalledOtp do
         %{lane: lane, discovered: discovered, inspected: inspected, ingested: ingested} = receipt
       ) do
     assert_parity!(discovered, inspected, ingested, lane.name)
+    validate_nonempty_inventory!(discovered, inspected, ingested)
+    validate_lane!(lane.name, lane.elixir, lane.otp)
+    validate_lock!(lane.name, receipt.lock_sha256, SweepEvidence.lock_digests!())
     inspected_by_id = Map.new(inspected, &{{&1.app, &1.module}, &1})
     ingested_ids = identities(ingested)
 
@@ -234,6 +238,12 @@ defmodule Fablebook.Test.InstalledOtp do
   end
 
   def verify_receipt_lines!(lines) when is_list(lines) do
+    verify_receipt_lines!(lines, SweepEvidence.lock_digests!())
+  end
+
+  def verify_receipt_lines!(_lines), do: fail!(:receipt_format, :not_a_list)
+
+  defp verify_receipt_lines!(lines, lock_digests) when is_list(lines) do
     records = parse_lines!(lines)
     [meta | _] = records
     footer = List.last(records)
@@ -243,13 +253,12 @@ defmodule Fablebook.Test.InstalledOtp do
 
     validate_receipt_meta!(meta)
     validate_receipt_footer!(footer, app_rows, beam_rows, Enum.drop(lines, -1))
-    validate_receipt_beams!(beam_rows)
-    validate_receipt_lane!(meta)
+    validate_receipt_rows!(app_rows, beam_rows)
+    validate_lane!(meta["lane"], meta["elixir"], meta["otp"])
+    validate_lock!(meta["lane"], meta["lock_sha256"], lock_digests)
 
     %{lane: meta["lane"], apps: app_rows, beams: beam_rows, sha256: footer["sha256"]}
   end
-
-  def verify_receipt_lines!(_lines), do: fail!(:receipt_format, :not_a_list)
 
   def extract_receipt!(log_path, receipt_path) do
     lines =
@@ -275,17 +284,26 @@ defmodule Fablebook.Test.InstalledOtp do
   end
 
   def verify_receipt_files!(paths) when is_list(paths) do
+    lock_digests = SweepEvidence.lock_digests!()
+
     receipts =
       Enum.map(paths, fn path ->
-        {path, verify_receipt_lines!(File.read!(path) |> String.split("\n", trim: true))}
+        {path,
+         verify_receipt_lines!(
+           File.read!(path) |> String.split("\n", trim: true),
+           lock_digests
+         )}
       end)
 
     lanes = Map.new(receipts, fn {path, receipt} -> {receipt.lane, {path, receipt}} end)
 
-    unless Map.keys(lanes) |> Enum.sort() == ["core", "floor"],
-      do: fail!(:receipt_set, Map.keys(lanes))
+    unless length(receipts) == 2 and map_size(lanes) == 2 and
+             Map.keys(lanes) |> Enum.sort() == ["core", "floor"],
+           do: fail!(:receipt_set, Map.keys(lanes))
 
-    Enum.map(lanes, fn {lane, {path, receipt}} ->
+    lanes
+    |> Enum.sort_by(&elem(&1, 0))
+    |> Enum.map(fn {lane, {path, receipt}} ->
       %{
         lane: lane,
         path: path,
@@ -460,17 +478,115 @@ defmodule Fablebook.Test.InstalledOtp do
     unless valid, do: fail!(:receipt_footer, footer)
   end
 
-  defp validate_receipt_beams!(beam_rows) do
-    incomplete = Enum.reject(beam_rows, &(&1["inspection"] == "ok" and &1["xref"] == "ok"))
-    if incomplete != [], do: fail!(:receipt_incomplete, incomplete)
+  defp validate_receipt_rows!(app_rows, beam_rows) do
+    validate_nonempty_inventory!(app_rows, beam_rows)
+    validate_unique_apps!(app_rows)
+    validate_unique_beams!(beam_rows)
+    validate_beam_app_links!(app_rows, beam_rows)
   end
 
-  defp validate_receipt_lane!(meta) do
-    lane = meta["lane"]
+  defp validate_nonempty_inventory!(discovered, inspected, ingested) do
+    if discovered == [] or inspected == [] or ingested == [],
+      do:
+        fail!(:receipt_empty_inventory, %{
+          apps: length(discovered),
+          inspected: length(inspected),
+          ingested: length(ingested)
+        })
+  end
+
+  defp validate_nonempty_inventory!(app_rows, beam_rows) do
+    if app_rows == [] or beam_rows == [],
+      do: fail!(:receipt_empty_inventory, %{apps: length(app_rows), beams: length(beam_rows)})
+  end
+
+  defp validate_unique_apps!(app_rows) do
+    invalid =
+      Enum.reject(app_rows, fn row ->
+        app = row["app"]
+        version = row["version"]
+        path = row["path"]
+
+        valid_app_version?(app, version) and path == "#{app}-#{version}" and
+          safe_receipt_path?(path)
+      end)
+
+    duplicate =
+      app_rows
+      |> Enum.group_by(& &1["app"])
+      |> Enum.filter(fn {_app, rows} -> length(rows) > 1 end)
+
+    if invalid != [] or duplicate != [],
+      do: fail!(:receipt_app_records, %{invalid: invalid, duplicate: duplicate})
+  end
+
+  defp validate_unique_beams!(beam_rows) do
+    duplicate =
+      beam_rows
+      |> Enum.group_by(&{&1["app"], &1["module"]})
+      |> Enum.filter(fn {_id, rows} -> length(rows) > 1 end)
+
+    invalid = Enum.reject(beam_rows, &valid_beam_row?/1)
+
+    if duplicate != [] or invalid != [],
+      do: fail!(:receipt_beam_records, %{duplicate: duplicate, invalid: invalid})
+  end
+
+  defp validate_beam_app_links!(app_rows, beam_rows) do
+    apps = Map.new(app_rows, &{&1["app"], &1["version"]})
+
+    invalid =
+      Enum.reject(beam_rows, fn row ->
+        version = apps[row["app"]]
+
+        is_binary(version) and version == row["version"] and
+          String.starts_with?(row["path"], "#{row["app"]}-#{version}/ebin/")
+      end)
+
+    if invalid != [], do: fail!(:receipt_beam_app, invalid)
+  end
+
+  defp valid_beam_row?(row) do
+    app = row["app"]
+    version = row["version"]
+    module = row["module"]
+    path = row["path"]
+
+    valid_app_version?(app, version) and valid_module?(module) and valid_beam_path?(path, module) and
+      row["inspection"] == "ok" and row["xref"] == "ok" and
+      valid_function_count?(row["function_count"])
+  end
+
+  defp valid_app_version?(app, version) do
+    is_binary(app) and app != "" and is_binary(version) and version != ""
+  end
+
+  defp valid_module?(module), do: is_binary(module) and module != ""
+
+  defp valid_beam_path?(path, module) do
+    is_binary(path) and safe_receipt_path?(path) and Path.basename(path) == module <> ".beam"
+  end
+
+  defp valid_function_count?(count), do: is_integer(count) and count >= 0
+
+  defp validate_lane!(lane, elixir, otp) do
     expected = @lanes[lane]
 
-    unless expected && meta["elixir"] == expected.elixir && meta["otp"] == expected.otp,
-      do: fail!(:receipt_lane, %{lane: lane, elixir: meta["elixir"], otp: meta["otp"]})
+    unless expected && elixir == expected.elixir && otp == expected.otp,
+      do: fail!(:receipt_lane, %{lane: lane, elixir: elixir, otp: otp})
+  end
+
+  defp validate_lock!(lane, actual, lock_digests) do
+    expected = lock_digests[lane]
+
+    unless is_binary(actual) and Regex.match?(~r/^[a-f0-9]{64}$/, actual) and actual == expected,
+      do: fail!(:receipt_lock_identity, %{lane: lane, expected: expected, actual: actual})
+  end
+
+  defp safe_receipt_path?(path) do
+    is_binary(path) and path != "" and Path.type(path) == :relative and
+      not String.contains?(path, ["\\", "\0", ":"]) and
+      Enum.all?(String.split(path, "/"), &(&1 not in ["", ".", ".."]))
   end
 
   defp safe_source(app, app_root, source) when is_binary(source) do

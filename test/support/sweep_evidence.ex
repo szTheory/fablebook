@@ -82,6 +82,18 @@ defmodule Fablebook.Test.SweepEvidence do
     %{archive_root: extract_files!(files), manifest: manifest}
   end
 
+  def lock_digests! do
+    evidence = load_archive!(@archive, @archive_sha)
+
+    try do
+      Map.new(["core", "floor"], fn lane ->
+        {lane, evidence.manifest["locks"][lane]["sha256"]}
+      end)
+    after
+      File.rm_rf!(evidence.archive_root)
+    end
+  end
+
   def resolve!(evidence, citation) do
     {relative, line} = parse_citation!(citation)
     row = source_record!(evidence, relative, citation)
@@ -138,6 +150,7 @@ defmodule Fablebook.Test.SweepEvidence do
 
   defp validate_manifest!(manifest, files) do
     if manifest["refs"] != @refs, do: fail!(:source_identity, manifest["refs"])
+    validate_lock_manifest!(manifest["locks"])
     records = manifest["files"]
     declared = for row <- records, row["status"] in ["present", "license"], do: row["path"]
 
@@ -148,6 +161,22 @@ defmodule Fablebook.Test.SweepEvidence do
       do: fail!(:manifest_inventory, Map.keys(files))
 
     Enum.each(records, &validate_record!(&1, files))
+  end
+
+  defp validate_lock_manifest!(locks) do
+    lanes = ["core", "floor"]
+
+    if Map.keys(locks) |> Enum.sort() != lanes,
+      do: fail!(:lock_manifest_lanes, Map.keys(locks))
+
+    Enum.each(lanes, fn lane ->
+      lock = Map.fetch!(locks, lane)
+      expected_path = if lane == "core", do: "mix.lock", else: "mix.floor.lock"
+
+      unless lock["path"] == expected_path and
+               is_binary(lock["sha256"]) and Regex.match?(~r/^[a-f0-9]{64}$/, lock["sha256"]),
+             do: fail!(:lock_manifest_record, {lane, lock})
+    end)
   end
 
   defp validate_record!(%{"status" => "absent-at-immutable-ref"} = row, _files) do
