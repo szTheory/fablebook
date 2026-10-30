@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.1
 current_phase_name: Exact-source evidence and named atom-creator guards
 status: executing
-stopped_at: Planning complete; bounded Plans 06/07 pass independent checker; no execution or auto-advance
-last_updated: "2026-10-30T13:55:30.370Z"
+stopped_at: Completed 01.1.1.1-06-PLAN.md
+last_updated: "2026-10-30T15:02:20.832Z"
 last_activity: 2026-10-30
-last_activity_desc: Bounded replan checked independently; zero blockers/warnings; 14/14 decisions and 15/15 post-planning items accounted for
-state_head: 9075f35cb7c0442a7950feb312c1992c480081a2
+last_activity_desc: Plan 06 merged green; Plan 07 remains next
+state_head: 819fb1a7e7e1908172eece87715f286c7665e861
 progress:
   total_phases: 42
   completed_phases: 0
   total_plans: 17
-  completed_plans: 15
+  completed_plans: 16
   percent: 0
 ---
 
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.1 is replanned and ready for bounded Plans 06/07: consult/Yecc then Logger/ExUnit. PR 23 source/PathConsult tracer is merged green. Installed inventory, remaining installed fronts, full exclusion audit and final enforcement/wording have explicit owners in 01.1.1.2–01.1.1.5. Macro judgment and SEC-01 completion remain with their assigned owners.
+**Current focus:** Phase 01.1.1.1 — Exact-source evidence and named atom-creator guards
 
 ## Current Position
 
-Phase: 01.1.1.1 (Exact-source evidence and named atom-creator guards) — READY TO EXECUTE
-Plan: 06 next; 0/2 active plans complete; original 01–05 and halted partial summary are archived history
+Phase: 01.1.1.1 (Exact-source evidence and named atom-creator guards) — EXECUTING
+Plan: 2 of 2
 Status: Ready to execute
-Last activity: 2026-10-30 — Bounded replan checked independently; zero blockers/warnings; 14/14 decisions and 15/15 post-planning items accounted for
+Last activity: 2026-10-30 — Plan 06 merged green; Plan 07 remains next
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -71,6 +71,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01.1.1 P03 | 73min | 3 tasks | 18 files |
 | Phase 01.1.1 P04 | 167min | 3 tasks | 3 files |
 | Phase 01.1.1 P05 | 28min | 4 tasks | 13 files |
+| Phase 01.1.1.1 P06 | 57 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,9 @@ Recent decisions affecting current work:
 - [Phase 01.1.1]: The live boundary contract shares sweep barriers and base sinks and derives delegates from the forward call graph on each supported lane.
 - [Phase 01.1.1]: New loader and evaluator fronts are mirrored in the contract tier and Credo; safe sweep rows use cited function-scoped dispositions, and SEC-01 stays Pending for Phase 5.
 - [Phase 01.1.1.1]: Measured audit size stop resolved by bounded Plans 06/07 and explicit 01.1.1.2–01.1.1.5 ownership; original partial Plan 01 and blocked Plans 02–05 preserved in the superseded archive — INT-20261029-02, INT-20261030-02 and ADR 0021: preserve all 221 exclusions/226 identities and future full guards; no lowered gate or phase completion
+- [Phase 01.1.1.1]: Retire EX-089's blanket epp_guard; tier each atom-creating Yecc public front.
+- [Phase 01.1.1.1]: Map Yecc format_error/1 as a formatter callback outside the atom-creator graph.
+- [Phase 01.1.1.1]: SEC-01 remains Pending for Phase 5; Plan 06 advances only static contract coverage.
 
 ### Pending Todos
 
@@ -148,7 +152,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T13:51:07.585Z
-Stopped at: Planning complete; bounded Plans 06/07 pass independent checker; no execution or auto-advance
+Last session: 2026-10-30T15:02:20.781Z
+Stopped at: Completed 01.1.1.1-06-PLAN.md
 Next command: $gsd-execute-phase 01.1.1.1 — execute only bounded Plans 06/07
-Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SPLIT.md
+Resume file: None

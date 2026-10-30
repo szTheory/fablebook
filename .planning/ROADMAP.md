@@ -205,7 +205,7 @@ Sequential scoped PRs; each depends on the previous green merge.
 
 Plans:
 **Wave 1**
-- [ ] 01.1.1.1-06-PLAN.md — Consult/Yecc caller-file guards and bounded source-backed dispositions
+- [x] 01.1.1.1-06-PLAN.md — Consult/Yecc caller-file guards and bounded source-backed dispositions
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01.1.1.1-07-PLAN.md — Logger/ExUnit caller-format paths and all six discovered wrapper dispositions
