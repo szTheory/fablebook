@@ -471,27 +471,61 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
-  test "caller-file fronts are caught through uncalled direct, capture and apply bodies", %{
+  test "creator fronts are caught in each uncalled direct, capture and apply body", %{
     tmp_dir: dir
   } do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
 
-    source = """
-    defmodule Fablebook.GuardFixture.PathConsultShapes do
-      def direct(dirs, path), do: :file.path_consult(dirs, path)
-      def capture, do: &:file.path_consult/2
-      def dynamic(args), do: apply(:file, :path_consult, args)
-    end
-    """
+    fronts = [
+      {:file, :path_consult, 2},
+      {:file, :consult, 1},
+      {:yecc, :file, 1},
+      {:yecc, :file, 2},
+      {:yecc, :yecc, 2},
+      {:yecc, :yecc, 3},
+      {:yecc, :yecc, 4},
+      {Logger.Formatter, :new, 1}
+    ]
 
-    path = Path.join(dir, "caller_file.ex")
-    File.write!(path, source)
-    [beam] = compile!([path], dir, true)
-    assert {:ok, scan} = BeamWalker.scan(beam)
-    assert {:mfa, {:file, :path_consult, 2}} in hits(scan)
-    assert credo_issues(source, "caller_file.ex") != []
-    assert credo_issues("quote do: :file.path_consult(dirs, path)", "quoted.ex") != []
+    for {{module, function, arity} = front, index} <- Enum.with_index(fronts) do
+      assert Code.ensure_loaded?(module)
+      assert {function, arity} in module.module_info(:exports)
+      args = generated_probe_arguments(arity) |> Enum.join(", ")
+      call = "#{inspect(module)}.#{function}(#{args})"
+
+      for {shape, body} <- [
+            {"direct", "def run(#{args}), do: #{call}"},
+            {"capture", "def run, do: &#{inspect(module)}.#{function}/#{arity}"},
+            {"apply", "def run(args), do: apply(#{inspect(module)}, :#{function}, args)"}
+          ] do
+        source = "defmodule Fablebook.GuardCreator.P#{index}#{shape} do\n#{body}\nend\n"
+        path = Path.join(dir, "creator_#{index}_#{shape}.ex")
+        File.write!(path, source)
+        [beam] = compile!([path], dir, true)
+        assert {:ok, scan} = BeamWalker.scan(beam)
+
+        assert Enum.any?(hits(scan), fn
+                 {:mfa, {^module, ^function, actual}} -> actual in [arity, :_]
+                 _hit -> false
+               end),
+               "no BEAM finding for #{inspect(front)} #{shape}"
+
+        assert credo_issues(source, "creator.ex") != [],
+               "no source finding for #{inspect(front)} #{shape}"
+      end
+
+      quoted =
+        "defmodule Fablebook.QuoteCreator.P#{index} do\n_ = quote do: #{call}\ndef ok, do: :ok\nend\n"
+
+      path = Path.join(dir, "quoted_#{index}.ex")
+      File.write!(path, quoted)
+      [beam] = compile!([path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+      assert hits(scan) == []
+      assert credo_issues(quoted, "quoted_creator.ex") != []
+    end
+
     assert credo_issues("Regex.compile(pattern)", "regex.ex") == []
   end
 

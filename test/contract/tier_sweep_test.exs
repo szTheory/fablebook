@@ -1233,6 +1233,27 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert invalid == [], "invalid exclusion records: #{inspect(invalid)}"
   end
 
+  test "the original exclusion identities survive narrowing and removal" do
+    originals = apply(Fablebook.Test.ExclusionAudit, :original_entries, [])
+    records = apply(Fablebook.Test.ExclusionAudit, :records, [])
+
+    for {prefix, count} <- [{"CN", 6}, {"EX", 182}, {"BD", 44}, {"CN-LANE", 1}, {"BD-LANE", 4}] do
+      expected =
+        for n <- 1..count, do: prefix <> "-" <> String.pad_leading(Integer.to_string(n), 3, "0")
+
+      assert Enum.filter(originals, &(&1.table == prefix)) |> Enum.map(& &1.id) == expected
+    end
+
+    assert length(originals) == 237
+    assert Enum.map(originals, & &1.id) == Enum.map(records, & &1.id)
+    assert Enum.uniq_by(records, & &1.id) == records
+
+    assert originals
+           |> :erlang.term_to_binary()
+           |> then(&:crypto.hash(:sha256, &1))
+           |> Base.encode16(case: :lower) == "PENDING"
+  end
+
   defp build_graph do
     Mix.ensure_application!(:tools)
     otp_lib = :code.lib_dir() |> to_string()
