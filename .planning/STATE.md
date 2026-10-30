@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1
 current_phase_name: Close the eval and code-loading ban list (INSERTED)
 status: executing
-stopped_at: Completed 01.1.1-02-PLAN.md
-last_updated: "2026-10-29T20:28:02.025Z"
+stopped_at: Completed 01.1.1-03-PLAN.md
+last_updated: "2026-10-29T21:46:28.077Z"
 last_activity: 2026-10-29
 last_activity_desc: Completed plan 01.1.1-02; PR 16 merged green
-state_head: 7bd400b02b40e9e29c30194fdfbb5bb1cd6977ee
+state_head: 3e4d961d9a67b7252c745a5471d7a72904100deb
 progress:
   total_phases: 38
   completed_phases: 0
   total_plans: 15
-  completed_plans: 12
+  completed_plans: 13
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-10-28)
 ## Current Position
 
 Phase: 01.1.1 (Close the eval and code-loading ban list (INSERTED)) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-10-29 — Plan 01.1.1-02 merged green as PR #16; plan 03 ready
 
@@ -68,6 +68,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01.1 P05 | 17min | 2 tasks | 1 files |
 | Phase 01.1.1 P01 | 16 min | 3 tasks | 27 files |
 | Phase 01.1.1 P02 | 32min | 3 tasks | 14 files |
+| Phase 01.1.1 P03 | 73min | 3 tasks | 18 files |
 
 ## Accumulated Context
 
@@ -107,6 +108,9 @@ Recent decisions affecting current work:
 - [Phase 01.1.1]: Mix.Project.compile/1,2 and :elixir_erl.compile are tier entries: argv reaches --erl-config (:file.consult) and --tracer (Module.concat); the module map's definitions reach compile:noenv_forms
 - [Phase 01.1.1]: The whole-module literal check ignores called and captured function names; m.compile(s) is the one shape it stops catching, pinned by StrictVarModuleCompile (Phase 5 backstop)
 - [Phase 01.1.1]: debugger:start/1,2 reads caller-selected settings and interprets their files; add the function wildcard entry, giving 172 tier entries
+- [Phase 01.1.1]: Mix.Tasks.Phx.Gen.run/1 is fixed_args on both lanes because its arguments are ignored and it invokes fixed help-search arguments.
+- [Phase 01.1.1]: SEC-01 remains Pending; Phase 5 owns requirement completion.
+- [Phase 01.1.1]: The cited INT-20261029-06 source was added verbatim so the existing phase-summary citation and intent-corpus CI checks resolve.
 
 ### Pending Todos
 
@@ -135,6 +139,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-29T20:28:02.002Z
-Stopped at: Completed 01.1.1-02-PLAN.md
+Last session: 2026-10-29T21:46:28.056Z
+Stopped at: Completed 01.1.1-03-PLAN.md
 Resume file: None
