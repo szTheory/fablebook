@@ -1,0 +1,11 @@
+{
+  "command": "ASDF_ERLANG_VERSION=29.1.1 elixir -e \"<inline TAP formatter>\" -S mix test --warnings-as-errors test/contract/tier_sweep_test.exs:1975 --formatter TapFormatter",
+  "exitCode": 2,
+  "output": "TAP version 13\nnot ok 1 - test discovers a compile-only app outside the previous OTP filter\n1..1\n",
+  "targetTest": "test discovers a compile-only app outside the previous OTP filter",
+  "targetFile": "test/contract/tier_sweep_test.exs",
+  "expected": "the installed app and its BEAM identity are independently discovered without loading the module",
+  "actual": "the target assertion reports that mix_pruned_probe was omitted; the test module remains unloaded",
+  "semanticAssessment": "The intended target test executed and failed on the discovery assertion; other tests were filtered out.",
+  "stderr": ""
+}

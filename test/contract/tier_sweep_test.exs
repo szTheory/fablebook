@@ -1971,6 +1971,31 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:ok, graph: graph}
   end
 
+  @tag :tmp_dir
+  test "discovers a compile-only app outside the previous OTP filter", %{tmp_dir: dir} do
+    otp_lib = Path.join(dir, "lib")
+    app = "mix_pruned_probe"
+    app_atom = :mix_pruned_probe
+    module = :fablebook_inventory_pruned_probe
+    install_probe_app!(otp_lib, app, app_atom, "1.2.3", module)
+
+    installed_otp = Fablebook.Test.InstalledOtp
+
+    installed =
+      if Code.ensure_loaded?(installed_otp) do
+        apply(installed_otp, :discover!, [otp_lib])
+      else
+        []
+      end
+
+    discovered = Enum.find(installed, &(&1.app == app))
+
+    assert discovered != nil, "installation discovery omitted #{app}"
+    assert discovered.version == "1.2.3"
+    assert Enum.any?(discovered.beams, &(&1.module == Atom.to_string(module)))
+    assert :code.is_loaded(module) == false
+  end
+
   test "source evidence rejects a wrong runtime patch before resolving citations" do
     error =
       assert_raise Fablebook.Test.SweepEvidence.Error, fn ->
@@ -3496,5 +3521,23 @@ defmodule Fablebook.Contract.TierSweepTest do
       nil -> [key | acc]
       next -> witness(parent, next, [key | acc])
     end
+  end
+
+  defp install_probe_app!(otp_lib, app, app_atom, version, module) do
+    app_root = Path.join(otp_lib, "#{app}-#{version}")
+    ebin = Path.join(app_root, "ebin")
+    File.mkdir_p!(ebin)
+
+    forms = [
+      {:attribute, 1, :module, module},
+      {:attribute, 1, :export, [probe: 0]},
+      {:function, 1, :probe, 0, [{:clause, 1, [], [], [{:atom, 1, :ok}]}]}
+    ]
+
+    {:ok, ^module, beam} = :compile.forms(forms, [:debug_info])
+    File.write!(Path.join(ebin, "#{Atom.to_string(module)}.beam"), beam)
+
+    app_resource = {:application, app_atom, [{:vsn, String.to_charlist(version)}, {:modules, [module]}]}
+    File.write!(Path.join(ebin, "#{app}.app"), :io_lib.format("~tp.~n", [app_resource]))
   end
 end
