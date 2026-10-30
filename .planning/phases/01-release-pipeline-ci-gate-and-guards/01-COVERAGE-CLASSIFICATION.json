@@ -1,0 +1,85 @@
+[
+  {
+    "summary": "01-01-SUMMARY.md",
+    "mode": "coverage",
+    "total": 4,
+    "errors": []
+  },
+  {
+    "summary": "01-02-SUMMARY.md",
+    "mode": "coverage",
+    "total": 6,
+    "errors": [
+      {
+        "index": 1,
+        "id": "D2",
+        "code": "invalid_status",
+        "field": "verification[1].status",
+        "message": "verification status must be one of pass, fail, unknown"
+      },
+      {
+        "index": 4,
+        "id": "D5",
+        "code": "invalid_status",
+        "field": "verification[0].status",
+        "message": "verification status must be one of pass, fail, unknown"
+      },
+      {
+        "index": 5,
+        "id": "D6",
+        "code": "invalid_status",
+        "field": "verification[0].status",
+        "message": "verification status must be one of pass, fail, unknown"
+      }
+    ]
+  },
+  {
+    "summary": "01-03-SUMMARY.md",
+    "mode": "coverage",
+    "total": 5,
+    "errors": [
+      {
+        "index": 4,
+        "id": "D5",
+        "code": "invalid_status",
+        "field": "verification[2].status",
+        "message": "verification status must be one of pass, fail, unknown"
+      }
+    ]
+  },
+  {
+    "summary": "01-04-SUMMARY.md",
+    "mode": "coverage",
+    "total": 6,
+    "errors": [
+      {
+        "index": 5,
+        "id": "D6",
+        "code": "invalid_status",
+        "field": "verification[0].status",
+        "message": "verification status must be one of pass, fail, unknown"
+      }
+    ]
+  },
+  {
+    "summary": "01-05-SUMMARY.md",
+    "mode": "coverage",
+    "total": 5,
+    "errors": [
+      {
+        "index": 0,
+        "id": "D1",
+        "code": "missing_rationale",
+        "field": "rationale",
+        "message": "rationale is required when human_judgment is true"
+      },
+      {
+        "index": 3,
+        "id": "D4",
+        "code": "invalid_status",
+        "field": "verification[0].status",
+        "message": "verification status must be one of pass, fail, unknown"
+      }
+    ]
+  }
+]

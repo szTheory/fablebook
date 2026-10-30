@@ -4,6 +4,7 @@
 1. `.planning/intent/NORTH-STAR.md` and `.planning/intent/CLEARANCE.md`
 2. `GLOSSARY.md`, the only source of vocabulary. Never call a scenario a "variant" or "variation".
 3. `docs/adr/README.md` (locked decisions)
+4. `.planning/VERIFICATION.md` when discussing, planning, executing, reviewing, verifying or resuming work; automate acceptance checks and reuse recorded evidence before handing work to the owner.
 
 GSD researchers, synthesizers and the roadmapper also read `FABLEBOOK-SEED.md`, `docs/adr/*` and `docs/research/*` before writing anything. Every REQ keeps its INT/ADR citations.
 

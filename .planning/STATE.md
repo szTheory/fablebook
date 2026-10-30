@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 current_phase: 1
 current_phase_name: Release pipeline, CI gate and guards
 status: verifying
-stopped_at: Phase 01.1.1 complete, ready to verify Phase 1
-last_updated: "2026-10-30T01:52:39.500Z"
+stopped_at: Phase 1 automated UAT recorded; scheduled timing observation remains
+last_updated: "2026-10-30T02:19:42Z"
 last_activity: 2026-10-30
-last_activity_desc: Phase 01.1.1 complete, transitioned to Phase 1
+last_activity_desc: Phase 1 automated UAT and verification policy recorded
 state_head: 8a2237f6161e36aa924895c62296e0a3a8beba62
 progress:
   total_phases: 38
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 1 parent verification debt; Phase 01.1.1 complete, follow-on ban-list work owned by Phase 01.1.1.1
+**Current focus:** Phase 1 automated acceptance: 12 passed, one scheduled observation pending; no human UAT. Follow-on ban-list work stays owned by Phase 01.1.1.1. Read `.planning/VERIFICATION.md` and `01-UAT.md` before reopening any checks.
 
 ## Current Position
 
 Phase: 1 — Release pipeline, CI gate and guards
 Plan: 5
-Status: Ready to reverify existing Phase 1 implementation; Phase 01.1.1 is complete
-Last activity: 2026-10-30 UTC — Phase 01.1.1 verified 8/8; PR #20 merged green; parent Phase 1 report still needs re-verification
+Status: Automated UAT partial; first Monday timing publication pending; canonical execution re-verification remains a gate
+Last activity: 2026-10-30 UTC — mix ci 257 passed, new CI-health seam tests and caught mutations, live timing n=41 / p50=63s / p95=122s; automation preference captured in INT-20261029-08
 
 Progress: [████████████████████] 15/15 planned plans (100%); 1/38 phases complete (3%)
 
@@ -147,5 +147,5 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-10-30T01:52:39.500Z
-Stopped at: Phase 01.1.1 complete and verified; parent Phase 1 re-verification is next
+Stopped at: Automated Phase 1 UAT recorded; no manual testing requested. Await existing Monday timing automation; canonical report remains a separate gate.
 Resume file: None
