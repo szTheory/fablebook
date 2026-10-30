@@ -208,7 +208,7 @@ Plans:
 - [x] 01.1.1.1-06-PLAN.md — Consult/Yecc caller-file guards and bounded source-backed dispositions
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01.1.1.1-07-PLAN.md — Logger/ExUnit caller-format paths and all six discovered wrapper dispositions
+- [x] 01.1.1.1-07-PLAN.md — Logger/ExUnit caller-format paths and all six discovered wrapper dispositions
 
 **Cross-cutting constraints:**
 - D-01–D-03: caller-text/file creators exposed by each named family have compile-only fixtures in both guards; existing-atom bans stay.

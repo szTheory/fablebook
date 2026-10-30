@@ -2,17 +2,17 @@
 gsd_state_version: "1.0"
 current_phase: 01.1.1.1
 current_phase_name: Exact-source evidence and named atom-creator guards
-status: executing
-stopped_at: Completed 01.1.1.1-06-PLAN.md
-last_updated: "2026-10-30T15:02:20.832Z"
+status: verifying
+stopped_at: Completed 01.1.1.1-07-PLAN.md
+last_updated: "2026-10-30T15:51:45.381Z"
 last_activity: 2026-10-30
 last_activity_desc: Plan 06 merged green; Plan 07 remains next
-state_head: 819fb1a7e7e1908172eece87715f286c7665e861
+state_head: 304c6485628d1c449012db973f9eabc263e97b56
 progress:
   total_phases: 42
   completed_phases: 0
   total_plans: 17
-  completed_plans: 16
+  completed_plans: 17
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-10-30)
 
 Phase: 01.1.1.1 (Exact-source evidence and named atom-creator guards) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-10-30 — Plan 06 merged green; Plan 07 remains next
 
 Progress: [░░░░░░░░░░] 0%
@@ -72,6 +72,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01.1.1 P04 | 167min | 3 tasks | 3 files |
 | Phase 01.1.1 P05 | 28min | 4 tasks | 13 files |
 | Phase 01.1.1.1 P06 | 57 min | 2 tasks | 3 files |
+| Phase 01.1.1.1 P07 | 48 min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -120,6 +121,9 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.1]: Retire EX-089's blanket epp_guard; tier each atom-creating Yecc public front.
 - [Phase 01.1.1.1]: Map Yecc format_error/1 as a formatter callback outside the atom-creator graph.
 - [Phase 01.1.1.1]: SEC-01 remains Pending for Phase 5; Plan 06 advances only static contract coverage.
+- [Phase 01.1.1.1]: Caller-controlled format, config, and message paths that reach formatter atom creation are represented by exact mirrored tiers on both lanes.
+- [Phase 01.1.1.1]: Retain exact exclusions only for Logger.Formatter.new/0, ExUnit.plural_rule/2, and ExUnit.after_suite/1; each has a per-lane source trace and removal witness.
+- [Phase 01.1.1.1]: SEC-01 stays Pending for Phase 5; remaining inventory, carried-exclusion, Macro, and wording work stays with its planned owners.
 
 ### Pending Todos
 
@@ -152,7 +156,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T15:02:20.781Z
-Stopped at: Completed 01.1.1.1-06-PLAN.md
+Last session: 2026-10-30T15:51:45.292Z
+Stopped at: Completed 01.1.1.1-07-PLAN.md
 Next command: $gsd-execute-phase 01.1.1.1 — execute only bounded Plans 06/07
 Resume file: None
