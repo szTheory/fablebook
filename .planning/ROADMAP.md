@@ -36,7 +36,11 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [ ] **Phase 1: Release pipeline, CI gate and guards** - 0.1.0 published, three workflows with caps, intent test, prod guard, eval and atom bans
 - [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
-- [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
+- [ ] **Phase 01.1.1.1: Exact-source evidence and named atom-creator guards** (INSERTED) - preserve merged source/PathConsult tracer; finish consult/Yecc and Logger/ExUnit fronts
+- [ ] **Phase 01.1.1.2: Installed OTP inventory and Common Test guard slice** (INSERTED) - independent exact-lane installation discovery and real Common Test guard
+- [ ] **Phase 01.1.1.3: Installed OTP front-door coverage in calibrated source families** (INSERTED) - unplanned scope reservation; split into bounded source-family phases before execution
+- [ ] **Phase 01.1.1.4: Carried exclusion truth in calibrated source families** (INSERTED) - unplanned scope reservation; preserve every original identity and matched function across bounded audit phases
+- [ ] **Phase 01.1.1.5: Complete audit enforcement and truthful guard explanation** (INSERTED) - unconditional full coverage/removal gates and approved changed wording; closes original three transfers
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -150,6 +154,8 @@ Plans:
 
 **Goal**: No direct, public eval, compile-and-load, interpret, native-load or code-path-changing function, and no atom-creating parser, on the Mix dev code path passes the compiled-BEAM guard. That includes the project's runtime dependencies (Phoenix, LiveView, Plug), every exclusion has a reason that is true, and the whole-module literal check stops flagging ordinary functions named like a banned module, such as `Regex.compile/1`. This closes 01.1-VERIFICATION truth 7 (CR-02) and the over-catch fix, both re-homed here per INT-20261029-03, and the inbound threats T-01.1-28 (was T-01.1-03 in 01.1-SECURITY), T-01.1-22, T-01.1-23 and T-01.1-25. No literal dispatch hides in a user-defined `__info__` of another arity, and no pair-tier call passes when a `lib/` macro quotes it or module-body code makes it, so the bans hold against every literal dispatch form and the Credo explanation is literally true. This closes the re-verification's CR-04, VR-01 and truth 6, with WR-11 fixed rather than accepted, all re-homed here per INT-20261029-04, and reopens threats T-01.1-15 and T-01.1-27 until they land.
 **Transfer** (INT-20261029-02, recorded at planning on 2026-10-29): Phase 01.1.1.1 owns and closes three things: the atom-creating-parser clause, the "every exclusion has a reason that is true" clause of SC1, and the eval front doors in installed OTP apps outside this phase's sweep scope. They stay open here, the plans record them as open, and none of them is a known limit.
+
+**Transfer update** (2026-10-30; INT-20261029-02, INT-20261030-02; ADR 0021): the measured 01.1.1.1 audit exceeded its context budget. Its unchanged obligations now span 01.1.1.1–01.1.1.5 and bounded source-family children. Only 01.1.1.5 can close these three transfers after all required implementation and owner judgments; the narrowed named-creator phase alone cannot.
 **Depends on**: Phase 01.1
 **Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
 **Success Criteria** (what must be TRUE):
@@ -182,47 +188,98 @@ Plans:
 **Cross-cutting constraints:**
 - SC8: the PR changes no lib/, .github/, mix.exs, lockfile or .credo.exs path and is merged green with a recorded ci-gate run link
 
-### Phase 01.1.1.1: Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons (INSERTED)
+### Phase 01.1.1.1: Exact-source evidence and named atom-creator guards (INSERTED)
 
-**Goal**: Close what Phase 01.1.1 left open (INT-20261029-02). No function that turns caller-chosen text or files into atoms passes the compiled-BEAM guard. No eval, compile-and-load, interpret, native-load or code-path-changing front door passes it in any OTP app installed on either lane. Every sweep exclusion carries a cited reason that is true under the caller-argument rule. This closes 01.1.1's parser clause and its "every exclusion has a reason that is true" clause, along with the parser share of T-01.1-28, the out-of-scope share of T-01.1-22 and T-01.1-25 (T-01.1.1-28) and T-01.1.1-24.
+**Goal**: Preserve the merged exact-source/PathConsult tracer and finish source-backed static guards for the named consult/Yecc and Logger/ExUnit caller-input families. The measured audit exceeded its context budget; INT-20261029-02 and ADR 0021 require the structural split recorded in `phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-REPLAN.md`. Original acceptance is preserved across 01.1.1.1–01.1.1.5; no whole-ban-list completion is claimed here.
 **Depends on**: Phase 01.1.1
 **Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
 **Success Criteria** (what must be TRUE):
-  1. Every function on the dev code path (the swept scope plus every installed OTP app) that turns caller-chosen text or files into atoms is either a tier entry with a negative fixture or excluded with a cited reason, whatever its name. A both-lane contract test enforces this. `:file.path_consult/2`, `:yecc.file/2`, `:yecc.yecc/2..4` and `Logger.Formatter.new/1` with `format:` each have a disposition, and StrictPathConsult reports hits.
-  2. The reachability sweep and the boundary contract cover every OTP app installed on each lane (18 at planning, including the debugger app's `dbg_idb`, `dbg_istk` and `dbg_wx_*` modules), with no reached function left undisposed. StrictCtMake reports hits.
-  3. Every ported sweep exclusion is a `{matcher, reason_key, citation}` entry whose app-relative citation supports its reason on both lanes. The citation test rejects a 2-tuple, and removing an audited exclusion leaves its rows undisposed. An audit table records a verdict for each ported entry. Each false entry is replaced by tier entries or function-level exclusions.
-  4. If a newly judged front door is one that `lib/` already calls (for example `Macro.expand/2` at `lib/fablebook/router.ex:35`), work stops and the case is reported. The front door is never weakened or excluded. Resolving it needs an owner-recorded decision: either an ADR-backed allowlist entry or a `lib/` change in its own PR.
-  5. The Credo explanation no longer lists the two open items. Every changed claim maps to a fixture or a strictness row, and a human wording check is recorded before merge.
-  6. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
-**Plans:** 5 plans
+  1. The owner-approved exact-lane resolver/archive and StrictPathConsult remain intact; reuse merged PR 23 and its final exact-lane CI evidence.
+  2. `:file.consult/1`, exported Yecc file/legacy fronts, `Logger.Formatter.new/1`, `Logger.configure_backend/2`, `Logger.default_formatter/0,1`, `Logger.Formatter.new/0`, `Logger.App.start/2` and `ExUnit.CaptureServer.handle_call/3` have exact-lane caller-input traces and explicit dispositions. Unsafe fronts have mirrored tiers and uncalled source/BEAM probes; conservative existing-atom bans and benign controls remain.
+  3. Every changed exclusion is a substantive cited triple with full changed-slice match coverage and an individual nonvacuous removal witness where retained. EX-089/EX-159 original identities and every affected match stay mapped; other original identities remain with 01.1.1.4.
+  4. Each new scoped PR changes no `lib/`, `.github/`, dependency, lockfile or `.credo.exs` path and merges with all required checks green and a current-head CI link. A newly banned `lib/` call stops affected work for an owner-recorded ADR-backed allowlist or separate-library-PR decision.
+**Transfer**: Original SC1's remaining unnamed fronts and SC2 belong to 01.1.1.2/.3; original SC3's full 221 exclusions plus five metadata identities belong to 01.1.1.4; original SC4's unresolved Macro AST judgment belongs to a substantive AST-family audit there, while the collision hard stop applies everywhere. Original SC5 and final unconditional SC1–SC3 enforcement belong to 01.1.1.5. Original SC6 applies to every inserted executable phase. The three transfers from 01.1.1 and their T-IDs remain open until 01.1.1.5; parent debt and Phase 5 runtime proofs do not move.
+**Plans:** 2 active plans; original Plans 01–05 are superseded history, with Plan 01 honestly partial
 
 Sequential scoped PRs; each depends on the previous green merge.
 
 Plans:
 **Wave 1**
-- [ ] 01.1.1.1-01-PLAN.md — Exact-source evidence, confirmed caller-text/file creators, and owner AST policy gate
+- [ ] 01.1.1.1-06-PLAN.md — Consult/Yecc caller-file guards and bounded source-backed dispositions
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01.1.1.1-02-PLAN.md — Every installed OTP app/BEAM, Common Test/debugger fronts, and call-name/boundary audit
-
-**Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01.1.1.1-03-PLAN.md — General exclusion semantic audit EX-001 through EX-091 with source and removal proof
-
-**Wave 4** *(blocked on Wave 3 completion)*
-- [ ] 01.1.1.1-04-PLAN.md — General exclusion semantic audit EX-092 through EX-182 with source and removal proof
-
-**Wave 5** *(blocked on Wave 4 completion)*
-- [ ] 01.1.1.1-05-PLAN.md — Complete audit gates, changed Credo wording approval, and green-merge evidence
+- [ ] 01.1.1.1-07-PLAN.md — Logger/ExUnit caller-format paths and all six discovered wrapper dispositions
 
 **Cross-cutting constraints:**
-- SC1 / D-01–D-03: caller-text/file creators exposed by this audit are caught with compile-only fixtures in both guards; existing-atom bans stay.
-- SC4 / D-10, D-11: AST classification follows the owner record and a newly banned lib call halts its affected work.
-- SC6 / D-13, D-14: scoped audit PR merges green; no new dependency or runtime-property completion is claimed.
+- D-01–D-03: caller-text/file creators exposed by each named family have compile-only fixtures in both guards; existing-atom bans stay.
+- D-10, D-11: no Macro policy is inferred; any newly banned library caller halts affected work.
+- D-13, D-14: each scoped PR merges green; command boundaries, dependency budget and Phase 5 runtime-proof ownership remain.
+
+### Phase 01.1.1.2: Installed OTP inventory and Common Test guard slice (INSERTED)
+
+**Goal:** Discover every installed OTP app/BEAM independently on each exact lane, including Mix-pruned and unstarted apps; deliver the real Common Test caller-file/load guard with StrictCtMake hits. (INT-20261029-02; ADR 0004, 0021; D-04, D-05, D-09)
+**Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
+**Depends on:** Phase 01.1.1.1
+**Success Criteria**:
+  1. Complete discovered app/BEAM inventory, versions, source availability and source/function budget are recorded per exact lane; unreadable files, Xref ingestion and no-debug-info failures are observable and fatal. Omission/synthetic-installation controls demonstrate failure without starting apps.
+  2. The Common Test caller-file/load path is source-disposed and statically caught in both guards with uncalled fixtures; StrictCtMake reports hits.
+  3. Discovered, successfully inspected and active-disposition sets are distinct. Existing sweep scope never shrinks; pending families are explicit transfers to 01.1.1.3, never exclusions or a full-coverage pass. Full installed equality/zero-undisposed enforcement is owned by its final bounded child and 01.1.1.5.
+  4. At most five bounded plans/about three working days; all scoped PRs merge green with exact-lane CI links and the unchanged collision/diff gates. Further newly reached work is split before exceeding the budget.
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run $gsd-plan-phase 01.1.1.2 to break down)
+
+### Phase 01.1.1.3: Installed OTP front-door coverage in calibrated source families (INSERTED)
+
+**Goal:** Complete source dispositions and static guard coverage for every remaining installed-app eval, compile-and-load, interpret, native-load and code-path front, including debugger `dbg_idb`, `dbg_istk` and `dbg_wx_*` remainder and atom creators reached through them. (INT-20261029-02; ADR 0004, 0021; original SC1/SC2)
+**Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Unplanned scope reservation, never dispatchable as one bulk audit. Use complete installed inventory and observed named-family review cost to narrow this entry to one bounded source family and insert adjacent decimal children owning the exact remainder before creating executable plans. Every executable phase has at most five plans/about three working days and every plan fits 50% of a 200k executor context. Unknown expansion is not a fabricated schedule.
+**Success Criteria**:
+  1. Each discovered module/function and caller-input chain belongs to a named bounded child; every reached front has a source-backed disposition and unsafe fronts have mirrored tiers/uncalled probes, without blanket app/module exceptions.
+  2. Final child enforces installed-app versus swept-app equality, full discovered BEAM ingestion and zero undisposed reached/boundary fronts on both lanes, with fatal omission/scan/no-debug controls. Discovered inventory defines scope, never a fixed 17/18-app count.
+  3. Pending scope never becomes a safe exclusion or a full-sweep pass; each substantive child merges green under the same collision and PR-scope gates. Final acceptance is rechecked by 01.1.1.5.
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run $gsd-plan-phase 01.1.1.3 to break down)
+
+### Phase 01.1.1.4: Carried exclusion truth in calibrated source families (INSERTED)
+
+**Goal:** Establish the semantic truth of every carried/new exclusion with complete per-lane source/match coverage and independent removal witnesses: CN-001..006, EX-001..182, BD-001..033, and five metadata identities (221 exclusions/226 identities). (INT-20261029-02; ADR 0004, 0021; original SC3/SC4; D-06–D-10)
+**Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
+**Depends on:** Phase 01.1.1.3 and all its inventory-derived children
+**Planning gate:** Unplanned scope reservation. Before execution, partition by actual source module/function/caller chain, calibrate a representative substantive family and materialize bounded children. No row-halving or five-plan promise for the 10+ MB corpus. Each original identity may span child records, whose union equals its complete per-lane matched-MFA set, including overlaps and new installed scope. Every executable phase obeys ADR 0021 and the 50% context bound.
+**Success Criteria**:
+  1. All original/new entries have substantive exact-lane semantic verdicts, caller traces and valid app-relative source citations; false reasons become tier entries with uncalled fixtures or narrower function exclusions. Absence needs inventory/export evidence.
+  2. Every retained exclusion has a nonvacuous individual removal witness against the complete active disposition set on every applicable lane. Narrow/merge/remove overlap; no capped matches, fabricated entries or regex-as-semantic-proof claims.
+  3. The substantive AST-family child obtains the owner Macro caller-AST judgment before changing its disposition. Any newly banned library call stops for its exact MFA/callsite/input/guard report and owner-recorded remedy; no automatic allowlist/refactor choice.
+  4. Every substantive audit child merges green with complete scope transfers and recurring changed-slice checks. 01.1.1.5 owns final unconditional whole-table enforcement and closure.
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run $gsd-plan-phase 01.1.1.4 to break down)
+
+### Phase 01.1.1.5: Complete audit enforcement and truthful guard explanation (INSERTED)
+
+**Goal:** Implement unconditional whole-table atom/eval/boundary/source/removal enforcement and the evidence-mapped Credo explanation, closing the original three 01.1.1 transfers only after all source-family children are merged green. (INT-20261029-02; ADR 0004, 0021; original SC1–SC6)
+**Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
+**Depends on:** Phase 01.1.1.4 and every 01.1.1.3/01.1.1.4 audit child
+**Success Criteria**:
+  1. Both-lane recurring contracts enforce complete original/active identity and matched-function equality, true cited triples, exact source validity, complete installed/ingested/swept equality and zero undisposed atom/eval/boundary fronts; no pending/slice selector can make this global gate pass.
+  2. Whole-table negative controls reject two-tuples, empty/invalid/missing/wrong-lane source, missing identities/functions/verdicts and every redundant retained exclusion; individual removal witnesses cover every applicable lane.
+  3. Two transferred-open-item paragraphs are removed only after their guarantees pass; every changed claim maps to a fixture/strictness/sweep assertion. Preserve computed-dispatch/write-then-load limits and Phase 5 ownership; record explicit owner approval of exact changed wording before merge.
+  4. All original SC4 owner decisions/remedies are resolved where needed, and every scoped PR is merged with required checks green and exact tested CI links. This is substantive enforcement/wording work, never a receipt-only phase. Parent verification debt remains separately owned.
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run $gsd-plan-phase 01.1.1.5 to break down)
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
 **Mode:** mvp
-**Depends on**: Phase 01.1.1.1
+**Depends on**: Phase 01.1.1.5
 **Requirements**: None completed here (a vertical slice and a spike; see Partial delivery).
 **Partial delivery**: QA-04 (skeleton `hosts/operator`, completes in Phase 9), VIS-01 and VIS-02 (guards, complete in Phase 21), CANVAS-01 and SEC-03 (nonce CSP exercised, complete in Phase 7).
 **Provisional on:** Q9
