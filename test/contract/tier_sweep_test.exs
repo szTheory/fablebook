@@ -46,6 +46,10 @@ defmodule Fablebook.Contract.TierSweepTest do
       "named compile but compiles only regexes, assets or the host project's own build, as cited",
     pure_data:
       "transforms or queries the caller's data and returns it; loads, evaluates and changes no code or code path, as cited",
+    fixed_default:
+      "runs Logger.Formatter.new/0 with only the built-in default pattern and no caller options, as cited",
+    unrelated_exunit_config:
+      "writes only ExUnit plural-rule or after-suite configuration; it does not carry capture_log formatter options, as cited",
     runtime_internal:
       "operates on processes, ports, tables, tracing, counters or code already loaded; prepares, loads and evaluates nothing, as cited"
   }
@@ -356,7 +360,30 @@ defmodule Fablebook.Contract.TierSweepTest do
     {{Phoenix.Component.MacroComponent, [:build_ast]}, :compiler_pass,
      ["phoenix_live_view/lib/phoenix_component/macro_component.ex:214"]},
     {{:c, [:xm]}, :compiler_pass, ["stdlib/src/c.erl:1406", "stdlib/src/c.erl:1372"]},
-    {{:kernel, [:init]}, :callback}
+    {{:kernel, [:init]}, :callback},
+    {{:mfa, {Logger.Formatter, :new, 0}}, :fixed_default,
+     [
+       "logger/lib/logger/formatter.ex:117",
+       "logger/lib/logger/formatter.ex:170",
+       "logger/lib/logger/formatter.ex:436",
+       "logger/lib/logger/formatter.ex:99",
+       "logger/lib/logger/formatter.ex:152",
+       "logger/lib/logger/formatter.ex:399"
+     ]},
+    {{:mfa, {ExUnit, :plural_rule, 2}}, :unrelated_exunit_config,
+     [
+       "ex_unit/lib/ex_unit.ex:456",
+       "ex_unit/lib/ex_unit.ex:461",
+       "ex_unit/lib/ex_unit.ex:392",
+       "ex_unit/lib/ex_unit.ex:397"
+     ]},
+    {{:mfa, {ExUnit, :after_suite, 1}}, :unrelated_exunit_config,
+     [
+       "ex_unit/lib/ex_unit.ex:530",
+       "ex_unit/lib/ex_unit.ex:532",
+       "ex_unit/lib/ex_unit.ex:466",
+       "ex_unit/lib/ex_unit.ex:468"
+     ]}
   ]
 
   @creator_expected_lanes ~w(core floor)
@@ -483,7 +510,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:yecc, :write_file, 1},
     {:yecc, :output_state_actions, 5},
     {:yecc, :inlined_function_name, 3},
-    {:erlang, :list_to_atom, 1}
+    {String, :to_atom, 1}
   ]
   @yecc_expected_replacements %{
     {:yecc, :compile, 3} => {:tier, {:yecc, :compile, :_}},
@@ -688,7 +715,641 @@ defmodule Fablebook.Contract.TierSweepTest do
                 }
               end)
 
-  @creator_audit @consult_creator_audit ++ @yecc_audit
+  @logger_family_specs [
+    %{
+      family: "LOGGER",
+      mfa: {Logger.Formatter, :new, 1},
+      disposition: :tier,
+      provenance: :caller_format_options,
+      trace: [
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :caller_format_text_reaches_atom_creation,
+      evidence: [:formatter_input],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe, :discarded_quote_source_only],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "LOGGER",
+      mfa: {Logger, :configure_backend, 2},
+      disposition: :tier,
+      provenance: :caller_options_and_logger_console_config,
+      trace: [
+        {Logger, :configure_backend, 2},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :console_options_reach_formatter_parser_other_backends_delegate,
+      evidence: [:logger_configure_backend],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "LOGGER",
+      mfa: {Logger, :default_formatter, 0},
+      disposition: :tier,
+      provenance: :logger_default_formatter_application_config,
+      trace: [
+        {Logger, :default_formatter, 0},
+        {Application, :get_env, 3},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :application_formatter_config_reaches_atom_creation,
+      evidence: [:logger_default_formatter],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "LOGGER",
+      mfa: {Logger, :default_formatter, 1},
+      disposition: :tier,
+      provenance: :caller_overrides_and_logger_default_formatter_config,
+      trace: [
+        {Logger, :default_formatter, 1},
+        {Application, :get_env, 3},
+        {Keyword, :merge, 2},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :caller_override_and_application_config_reach_atom_creation,
+      evidence: [:logger_default_formatter],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "LOGGER",
+      mfa: {Logger.Formatter, :new, 0},
+      disposition: :exact_exclusion,
+      provenance: :fixed_builtin_default_pattern,
+      trace: [
+        {Logger.Formatter, :new, 0},
+        {Logger.Formatter, :compile, 1},
+        {Logger.Formatter, :compile_code, 1}
+      ],
+      verdict: :fixed_default_pattern_has_no_caller_text,
+      reason: :fixed_default,
+      evidence: [:formatter_fixed_default],
+      fixtures: [:fixed_default_source_trace, :individual_exact_removal_witness],
+      removal_witness: :individual_exact_mfa
+    },
+    %{
+      family: "LOGGER",
+      mfa: {Logger.App, :start, 0},
+      disposition: :tier,
+      provenance: :logger_application_environment,
+      trace: [
+        {Logger.App, :start, 0},
+        {Application, :start, 1},
+        {Logger.App, :start, 2},
+        {Logger, :default_formatter, 0},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :starting_logger_uses_configured_formatter_options,
+      evidence: [:logger_app_start_zero, :logger_app_start],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "LOGGER",
+      mfa: {Logger.App, :start, 2},
+      disposition: :tier,
+      provenance: :logger_application_environment,
+      trace: [
+        {Logger.App, :start, 2},
+        {Application, :get_env, 3},
+        {Logger, :default_formatter, 0},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :application_start_reads_configured_formatter_options,
+      evidence: [:logger_app_start],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit.CaptureServer, :handle_call, 3},
+      disposition: :tier,
+      provenance: :caller_process_message_options,
+      trace: [
+        {ExUnit.CaptureServer, :handle_call, 3},
+        {Logger, :default_formatter, 1},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :log_capture_message_options_reach_atom_creation,
+      evidence: [:capture_server_handler],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit.CaptureServer, :log_capture_on, 3},
+      disposition: :tier,
+      provenance: :caller_options_forwarded_in_genserver_message,
+      trace: [
+        {ExUnit.CaptureServer, :log_capture_on, 3},
+        {:gen_server, :call, 3},
+        {ExUnit.CaptureServer, :handle_call, 3},
+        {Logger, :default_formatter, 1},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :log_capture_options_cross_process_message_to_formatter,
+      evidence: [:capture_server_wrapper, :capture_server_handler],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit.CaptureLog, :capture_log, 1},
+      disposition: :tier,
+      provenance: :logger_environment_via_default_capture_options,
+      trace: [
+        {ExUnit.CaptureLog, :capture_log, 1},
+        {ExUnit.CaptureLog, :with_log, 1},
+        {ExUnit.CaptureServer, :log_capture_on, 3},
+        {ExUnit.CaptureServer, :handle_call, 3},
+        {Logger, :default_formatter, 0},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :default_capture_reads_configured_formatter,
+      evidence: [:capture_log_capture, :capture_log_with],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit.CaptureLog, :capture_log, 2},
+      disposition: :tier,
+      provenance: :caller_capture_options,
+      trace: [
+        {ExUnit.CaptureLog, :capture_log, 2},
+        {ExUnit.CaptureLog, :with_log, 2},
+        {ExUnit.CaptureServer, :log_capture_on, 3},
+        {ExUnit.CaptureServer, :handle_call, 3},
+        {Logger, :default_formatter, 1},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :caller_capture_options_reach_formatter_parser,
+      evidence: [:capture_log_capture, :capture_log_with],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit.CaptureLog, :with_log, 1},
+      disposition: :tier,
+      provenance: :logger_environment_via_default_capture_options,
+      trace: [
+        {ExUnit.CaptureLog, :with_log, 1},
+        {ExUnit.CaptureServer, :log_capture_on, 3},
+        {ExUnit.CaptureServer, :handle_call, 3},
+        {Logger, :default_formatter, 0},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :default_capture_reads_configured_formatter,
+      evidence: [:capture_log_with],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit.CaptureLog, :with_log, 2},
+      disposition: :tier,
+      provenance: :caller_capture_options,
+      trace: [
+        {ExUnit.CaptureLog, :with_log, 2},
+        {ExUnit.CaptureServer, :log_capture_on, 3},
+        {ExUnit.CaptureServer, :handle_call, 3},
+        {Logger, :default_formatter, 1},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :caller_capture_options_reach_formatter_parser,
+      evidence: [:capture_log_with],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit, :configure, 1},
+      disposition: :tier,
+      provenance: :caller_exunit_configuration,
+      trace: [
+        {ExUnit, :configure, 1},
+        {Application, :put_env, 3},
+        {ExUnit.Runner, :run, 2},
+        {ExUnit.CaptureLog, :with_log, 2},
+        {Logger, :default_formatter, 1},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :capture_log_configuration_reaches_formatter_parser,
+      evidence: [:exunit_configure, :exunit_runner],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit, :start, 0},
+      disposition: :tier,
+      provenance: :exunit_default_start_and_application_configuration,
+      trace: [
+        {ExUnit, :start, 0},
+        {ExUnit, :start, 1},
+        {ExUnit, :configure, 1},
+        {ExUnit.Runner, :run, 2},
+        {ExUnit.CaptureLog, :with_log, 2},
+        {Logger, :default_formatter, 0},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :default_start_uses_configured_capture_log_options,
+      evidence: [:exunit_start, :exunit_runner],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit, :start, 1},
+      disposition: :tier,
+      provenance: :caller_exunit_configuration,
+      trace: [
+        {ExUnit, :start, 1},
+        {ExUnit, :configure, 1},
+        {Application, :put_env, 3},
+        {ExUnit.Runner, :run, 2},
+        {ExUnit.CaptureLog, :with_log, 2},
+        {Logger, :default_formatter, 1},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :caller_start_options_reach_formatter_parser,
+      evidence: [:exunit_start, :exunit_configure, :exunit_runner],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit, :run, 0},
+      disposition: :tier,
+      provenance: :exunit_application_configuration,
+      trace: [
+        {ExUnit, :run, 0},
+        {ExUnit, :configuration, 0},
+        {ExUnit.Runner, :run, 2},
+        {ExUnit.CaptureLog, :with_log, 2},
+        {Logger, :default_formatter, 0},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :run_reads_configured_capture_log_options,
+      evidence: [:exunit_run, :exunit_runner],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit, :run, 1},
+      disposition: :tier,
+      provenance: :caller_module_list_and_exunit_application_configuration,
+      trace: [
+        {ExUnit, :run, 1},
+        {ExUnit, :configuration, 0},
+        {ExUnit.Runner, :run, 2},
+        {ExUnit.CaptureLog, :with_log, 2},
+        {Logger, :default_formatter, 1},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :run_reads_configured_capture_log_options,
+      evidence: [:exunit_run, :exunit_runner],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit, :async_run, 0},
+      disposition: :tier,
+      provenance: :exunit_application_configuration,
+      trace: [
+        {ExUnit, :async_run, 0},
+        {ExUnit, :configuration, 0},
+        {ExUnit.Runner, :run, 2},
+        {ExUnit.CaptureLog, :with_log, 2},
+        {Logger, :default_formatter, 0},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :async_run_reads_configured_capture_log_options,
+      evidence: [:exunit_async_run, :exunit_runner],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit.Runner, :run, 2},
+      disposition: :tier,
+      provenance: :exunit_config_and_test_tag_options,
+      trace: [
+        {ExUnit.Runner, :run, 2},
+        {ExUnit.CaptureLog, :with_log, 2},
+        {ExUnit.CaptureServer, :log_capture_on, 3},
+        {ExUnit.CaptureServer, :handle_call, 3},
+        {Logger, :default_formatter, 1},
+        {Logger.Formatter, :new, 1},
+        {Logger.Formatter, :compile, 1},
+        {String, :to_atom, 1}
+      ],
+      verdict: :capture_log_config_and_test_tags_reach_formatter_parser,
+      evidence: [:exunit_runner],
+      fixtures: [:direct, :capture, :apply, :generated_mfa_probe],
+      removal_witness: :not_applicable_tiered
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit, :plural_rule, 2},
+      disposition: :exact_exclusion,
+      provenance: :pluralization_text_only,
+      trace: [{ExUnit, :plural_rule, 2}, {ExUnit, :configure, 1}],
+      verdict: :pluralization_config_does_not_set_capture_log,
+      reason: :unrelated_exunit_config,
+      evidence: [:exunit_plural_rule],
+      fixtures: [:source_trace, :individual_exact_removal_witness],
+      removal_witness: :individual_exact_mfa
+    },
+    %{
+      family: "EXUNIT",
+      mfa: {ExUnit, :after_suite, 1},
+      disposition: :exact_exclusion,
+      provenance: :suite_callback_registration,
+      trace: [{ExUnit, :after_suite, 1}, {ExUnit, :configure, 1}],
+      verdict: :after_suite_callback_config_does_not_set_capture_log,
+      reason: :unrelated_exunit_config,
+      evidence: [:exunit_after_suite],
+      fixtures: [:source_trace, :individual_exact_removal_witness],
+      removal_witness: :individual_exact_mfa
+    }
+  ]
+
+  @logger_family_functions @logger_family_specs
+                           |> Enum.map(fn %{mfa: {module, function, _arity}} ->
+                             {module, function}
+                           end)
+                           |> Enum.uniq()
+
+  @logger_expected_ids (for lane <- @creator_expected_lanes, spec <- @logger_family_specs do
+                          {module, function, arity} = spec.mfa
+
+                          {"NEW-#{spec.family}-#{lane}-#{inspect(module)}-#{function}-#{arity}",
+                           lane}
+                        end)
+
+  @logger_source_evidence %{
+    "core" => %{
+      formatter_input: [
+        {"logger/lib/logger/formatter.ex:170", "def new(options"},
+        {"logger/lib/logger/formatter.ex:171", "template = compile(options[:format])"},
+        {"logger/lib/logger/formatter.ex:444", "String.to_atom(code)"}
+      ],
+      formatter_fixed_default: [
+        {"logger/lib/logger/formatter.ex:117", "@default_pattern"},
+        {"logger/lib/logger/formatter.ex:170", "def new(options"},
+        {"logger/lib/logger/formatter.ex:436", "def compile(nil), do: compile(@default_pattern)"}
+      ],
+      logger_configure_backend: [
+        {"logger/lib/logger.ex:953", "def configure_backend(:console, options)"},
+        {"logger/lib/logger.ex:954",
+         "Keyword.merge(Application.get_env(:logger, :console, []), options)"},
+        {"logger/lib/logger.ex:957", "Logger.Formatter.new(without_level)"},
+        {"logger/lib/logger.ex:961", "def configure_backend(backend, options)"},
+        {"logger/lib/logger.ex:962", "Logger.Backends.Internal.configure(backend, options)"}
+      ],
+      logger_default_formatter: [
+        {"logger/lib/logger.ex:578", "def default_formatter(overrides"},
+        {"logger/lib/logger.ex:579", "Application.get_env(:logger, :default_formatter, [])"},
+        {"logger/lib/logger.ex:580", "Keyword.merge(overrides)"},
+        {"logger/lib/logger.ex:581", "Logger.Formatter.new()"}
+      ],
+      logger_app_start: [
+        {"logger/lib/logger/app.ex:11", "def start(_type, _args)"},
+        {"logger/lib/logger/app.ex:42", "Application.get_env(:logger, :console)"},
+        {"logger/lib/logger/app.ex:45", "Application.fetch_env(:logger, :default_formatter)"},
+        {"logger/lib/logger/app.ex:149",
+         "Keyword.put_new_lazy(:formatter, &Logger.default_formatter/0)"}
+      ],
+      logger_app_start_zero: [
+        {"logger/lib/logger/app.ex:84", "def start do"},
+        {"logger/lib/logger/app.ex:85", "Application.start(:logger)"}
+      ],
+      capture_server_handler: [
+        {"ex_unit/lib/ex_unit/capture_server.ex:73",
+         "def handle_call({:log_capture_on, pid, string_io, opts}"},
+        {"ex_unit/lib/ex_unit/capture_server.ex:77", "Keyword.pop(opts, :level)"},
+        {"ex_unit/lib/ex_unit/capture_server.ex:80", "Logger.default_formatter(opts)"},
+        {"ex_unit/lib/ex_unit/capture_server.ex:82", ":ets.insert(@ets"}
+      ],
+      capture_server_wrapper: [
+        {"ex_unit/lib/ex_unit/capture_server.ex:30", "def log_capture_on(pid, string_io, opts)"},
+        {"ex_unit/lib/ex_unit/capture_server.ex:31",
+         "GenServer.call(@name, {:log_capture_on, pid, string_io, opts}"}
+      ],
+      capture_log_capture: [
+        {"ex_unit/lib/ex_unit/capture_log.ex:88", "def capture_log(opts"},
+        {"ex_unit/lib/ex_unit/capture_log.ex:89", "with_log(opts, fun)"}
+      ],
+      capture_log_with: [
+        {"ex_unit/lib/ex_unit/capture_log.ex:112", "def with_log(opts"},
+        {"ex_unit/lib/ex_unit/capture_log.ex:124",
+         "ExUnit.CaptureServer.log_capture_on(self(), string_io, opts)"}
+      ],
+      exunit_configure: [
+        {"ex_unit/lib/ex_unit.ex:420", "def configure(options)"},
+        {"ex_unit/lib/ex_unit.ex:422", "Application.put_env(:ex_unit, k, v)"}
+      ],
+      exunit_start: [
+        {"ex_unit/lib/ex_unit.ex:279", "def start(options"},
+        {"ex_unit/lib/ex_unit.ex:282", "configure(options)"}
+      ],
+      exunit_run: [
+        {"ex_unit/lib/ex_unit.ex:476", "def run(additional_modules"},
+        {"ex_unit/lib/ex_unit.ex:487", "options = persist_defaults(configuration())"},
+        {"ex_unit/lib/ex_unit.ex:575", "ExUnit.Runner.run(options, load_us)"}
+      ],
+      exunit_async_run: [
+        {"ex_unit/lib/ex_unit.ex:499", "def async_run()"},
+        {"ex_unit/lib/ex_unit.ex:501", "options = persist_defaults(configuration())"},
+        {"ex_unit/lib/ex_unit.ex:503", "Task.async(fn ->"}
+      ],
+      exunit_runner: [
+        {"ex_unit/lib/ex_unit/runner.ex:12", "def run(opts, load_us)"},
+        {"ex_unit/lib/ex_unit/runner.ex:79", "capture_log: opts[:capture_log]"},
+        {"ex_unit/lib/ex_unit/runner.ex:452", "Map.get(context, :capture_log, capture_log)"},
+        {"ex_unit/lib/ex_unit/runner.ex:482", "ExUnit.CaptureLog.with_log(capture_log_opts, fun)"}
+      ],
+      exunit_plural_rule: [
+        {"ex_unit/lib/ex_unit.ex:456", "def plural_rule(word, pluralization)"},
+        {"ex_unit/lib/ex_unit.ex:458", "Application.get_env(:ex_unit, :plural_rules, %{})"},
+        {"ex_unit/lib/ex_unit.ex:461", "configure(plural_rules: plural_rules)"}
+      ],
+      exunit_after_suite: [
+        {"ex_unit/lib/ex_unit.ex:530", "def after_suite(function)"},
+        {"ex_unit/lib/ex_unit.ex:531", "Application.fetch_env!(:ex_unit, :after_suite)"},
+        {"ex_unit/lib/ex_unit.ex:532", "configure(after_suite: [function | current_callbacks])"}
+      ]
+    },
+    "floor" => %{
+      formatter_input: [
+        {"logger/lib/logger/formatter.ex:152", "def new(options"},
+        {"logger/lib/logger/formatter.ex:153", "template = compile(options[:format])"},
+        {"logger/lib/logger/formatter.ex:407", "String.to_atom(code)"}
+      ],
+      formatter_fixed_default: [
+        {"logger/lib/logger/formatter.ex:99", "@default_pattern"},
+        {"logger/lib/logger/formatter.ex:152", "def new(options"},
+        {"logger/lib/logger/formatter.ex:399", "def compile(nil), do: compile(@default_pattern)"}
+      ],
+      logger_configure_backend: [
+        {"logger/lib/logger.ex:880", "def configure_backend(:console, options)"},
+        {"logger/lib/logger.ex:881",
+         "Keyword.merge(Application.get_env(:logger, :console, []), options)"},
+        {"logger/lib/logger.ex:884", "Logger.Formatter.new(without_level)"},
+        {"logger/lib/logger.ex:888", "def configure_backend(backend, options)"},
+        {"logger/lib/logger.ex:889", "Logger.Backends.Internal.configure(backend, options)"}
+      ],
+      logger_default_formatter: [
+        {"logger/lib/logger.ex:524", "def default_formatter(overrides"},
+        {"logger/lib/logger.ex:525", "Application.get_env(:logger, :default_formatter, [])"},
+        {"logger/lib/logger.ex:526", "Keyword.merge(overrides)"},
+        {"logger/lib/logger.ex:527", "Logger.Formatter.new()"}
+      ],
+      logger_app_start: [
+        {"logger/lib/logger/app.ex:8", "def start(_type, _args)"},
+        {"logger/lib/logger/app.ex:22", "Application.get_env(:logger, :console)"},
+        {"logger/lib/logger/app.ex:25", "Application.fetch_env(:logger, :default_formatter)"},
+        {"logger/lib/logger/app.ex:129",
+         "Keyword.put_new_lazy(:formatter, &Logger.default_formatter/0)"}
+      ],
+      logger_app_start_zero: [
+        {"logger/lib/logger/app.ex:64", "def start do"},
+        {"logger/lib/logger/app.ex:65", "Application.start(:logger)"}
+      ],
+      capture_server_handler: [
+        {"ex_unit/lib/ex_unit/capture_server.ex:69",
+         "def handle_call({:log_capture_on, pid, string_io, opts}"},
+        {"ex_unit/lib/ex_unit/capture_server.ex:73", "Keyword.pop(opts, :level)"},
+        {"ex_unit/lib/ex_unit/capture_server.ex:74", "Logger.default_formatter(opts)"},
+        {"ex_unit/lib/ex_unit/capture_server.ex:75", ":ets.insert(@ets"}
+      ],
+      capture_server_wrapper: [
+        {"ex_unit/lib/ex_unit/capture_server.ex:26", "def log_capture_on(pid, string_io, opts)"},
+        {"ex_unit/lib/ex_unit/capture_server.ex:27",
+         "GenServer.call(@name, {:log_capture_on, pid, string_io, opts}"}
+      ],
+      capture_log_capture: [
+        {"ex_unit/lib/ex_unit/capture_log.ex:74", "def capture_log(opts"},
+        {"ex_unit/lib/ex_unit/capture_log.ex:75", "with_log(opts, fun)"}
+      ],
+      capture_log_with: [
+        {"ex_unit/lib/ex_unit/capture_log.ex:98", "def with_log(opts"},
+        {"ex_unit/lib/ex_unit/capture_log.ex:110",
+         "ExUnit.CaptureServer.log_capture_on(self(), string_io, opts)"}
+      ],
+      exunit_configure: [
+        {"ex_unit/lib/ex_unit.ex:356", "def configure(options)"},
+        {"ex_unit/lib/ex_unit.ex:358", "Application.put_env(:ex_unit, k, v)"}
+      ],
+      exunit_start: [
+        {"ex_unit/lib/ex_unit.ex:217", "def start(options"},
+        {"ex_unit/lib/ex_unit.ex:220", "configure(options)"}
+      ],
+      exunit_run: [
+        {"ex_unit/lib/ex_unit.ex:412", "def run(additional_modules"},
+        {"ex_unit/lib/ex_unit.ex:423", "options = persist_defaults(configuration())"},
+        {"ex_unit/lib/ex_unit.ex:509", "ExUnit.Runner.run(options, load_us)"}
+      ],
+      exunit_async_run: [
+        {"ex_unit/lib/ex_unit.ex:435", "def async_run()"},
+        {"ex_unit/lib/ex_unit.ex:437", "options = persist_defaults(configuration())"},
+        {"ex_unit/lib/ex_unit.ex:439", "Task.async(fn ->"}
+      ],
+      exunit_runner: [
+        {"ex_unit/lib/ex_unit/runner.ex:8", "def run(opts, load_us)"},
+        {"ex_unit/lib/ex_unit/runner.ex:75", "capture_log: opts[:capture_log]"},
+        {"ex_unit/lib/ex_unit/runner.ex:430", "Map.get(context, :capture_log, capture_log)"},
+        {"ex_unit/lib/ex_unit/runner.ex:460", "ExUnit.CaptureLog.with_log(capture_log_opts, fun)"}
+      ],
+      exunit_plural_rule: [
+        {"ex_unit/lib/ex_unit.ex:392", "def plural_rule(word, pluralization)"},
+        {"ex_unit/lib/ex_unit.ex:394", "Application.get_env(:ex_unit, :plural_rules, %{})"},
+        {"ex_unit/lib/ex_unit.ex:397", "configure(plural_rules: plural_rules)"}
+      ],
+      exunit_after_suite: [
+        {"ex_unit/lib/ex_unit.ex:466", "def after_suite(function)"},
+        {"ex_unit/lib/ex_unit.ex:467", "Application.fetch_env!(:ex_unit, :after_suite)"},
+        {"ex_unit/lib/ex_unit.ex:468", "configure(after_suite: [function | current_callbacks])"}
+      ]
+    }
+  }
+
+  @logger_expected_mfas Enum.map(@logger_family_specs, & &1.mfa)
+
+  @logger_audit (for lane <- @creator_expected_lanes, spec <- @logger_family_specs do
+                   {module, function, arity} = mfa = spec.mfa
+
+                   source =
+                     Enum.flat_map(spec.evidence, &Map.fetch!(@logger_source_evidence[lane], &1))
+
+                   %{
+                     original_id:
+                       "NEW-#{spec.family}-#{lane}-#{inspect(module)}-#{function}-#{arity}",
+                     original_matcher: {:mfa, mfa},
+                     original_reason: spec.disposition,
+                     lane: lane,
+                     matched_mfas: [mfa],
+                     trace: spec.trace,
+                     provenance: spec.provenance,
+                     verdict: spec.verdict,
+                     replacements:
+                       if(spec.disposition == :tier,
+                         do: %{mfa => {:tier, mfa}},
+                         else: %{mfa => {:exact_exclusion, spec.reason}}
+                       ),
+                     tier: if(spec.disposition == :tier, do: [mfa], else: []),
+                     fixtures: spec.fixtures,
+                     citations: source,
+                     evidence_groups: spec.evidence,
+                     applicability: :each_exact_installed_lane,
+                     removal_witness: spec.removal_witness
+                   }
+                 end)
+
+  @creator_audit @consult_creator_audit ++ @yecc_audit ++ @logger_audit
 
   @eval_funs [:eval_str, :expr, :expr_list, :exprs, :match_clause]
   @barrier_modules [:code_server, :error_handler, :erl_prim_loader, :init, :erl_lint]
@@ -1431,6 +2092,92 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  test "Logger and ExUnit format fronts have exact-lane records and necessary arity dispositions",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    records = Enum.filter(@creator_audit, &String.starts_with?(&1.original_id, "NEW-"))
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+
+    assert_logger_audit!(records, ctx.graph, tier, evidence)
+
+    lane_records = Enum.filter(records, &(&1.lane == evidence.lane.name))
+    safe_spec = Enum.find(@logger_family_specs, &(&1.disposition == :exact_exclusion))
+    safe_record = Enum.find(lane_records, &(&1.matched_mfas == [safe_spec.mfa]))
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_logger_audit!(
+        Enum.reject(records, &(&1.original_id == safe_record.original_id)),
+        ctx.graph,
+        tier,
+        evidence
+      )
+    end
+
+    lane_index = Enum.find_index(records, &(&1.original_id == safe_record.original_id))
+    wrong_lane = %{safe_record | lane: "wrong-lane"}
+    omitted_mfa = %{safe_record | matched_mfas: []}
+    two_tuple = %{safe_record | matched_mfas: [Tuple.delete_at(safe_spec.mfa, 2)]}
+    empty_citations = %{safe_record | citations: []}
+
+    for malformed <- [wrong_lane, omitted_mfa, two_tuple, empty_citations] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_logger_audit!(
+          List.replace_at(records, lane_index, malformed),
+          ctx.graph,
+          tier,
+          evidence
+        )
+      end
+    end
+
+    malformed_source = %{
+      safe_record
+      | citations: [{"logger/lib/logger/formatter.ex:999999", "@default_pattern"}]
+    }
+
+    assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
+      assert_logger_audit!(
+        List.replace_at(records, lane_index, malformed_source),
+        ctx.graph,
+        tier,
+        evidence
+      )
+    end
+
+    missing_tier = Enum.reject(tier, &(&1 == {Logger.Formatter, :new, 1}))
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_logger_audit!(records, ctx.graph, missing_tier, evidence)
+    end
+
+    redundant_retention =
+      {{:mfa, {Logger.Formatter, :new, 1}}, :fixed_default,
+       ["logger/lib/logger/formatter.ex:170"]}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_logger_audit!(
+        records,
+        ctx.graph,
+        tier,
+        evidence,
+        @exclusions ++ [redundant_retention]
+      )
+    end
+
+    for spec <- @logger_family_specs, spec.disposition == :exact_exclusion do
+      {module, function, _arity} = spec.mfa
+      mfa = spec.mfa
+      entry = Enum.find(@exclusions, &match?({{:mfa, ^mfa}, _, _}, &1))
+
+      assert entry != nil
+      assert exact_mfa_exclusion_reason(mfa, @exclusions) == spec.reason
+      assert exclusion_reason(module, function, @exclusions) == nil
+      assert mfa in undisposed(ctx.graph, tier, names, List.delete(@exclusions, entry))
+    end
+  end
+
   @tag :tmp_dir
   test "source citations reject missing, escaped, unreadable and altered evidence", %{
     tmp_dir: dir
@@ -1911,14 +2658,14 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
-  defp undisposed(graph, tier, names) do
+  defp undisposed(graph, tier, names, exclusions \\ @exclusions) do
     graph
-    |> dispositions(tier, names)
+    |> dispositions(tier, names, exclusions)
     |> Enum.filter(&(elem(&1, 1) == nil))
     |> Enum.map(&elem(&1, 0))
   end
 
-  defp dispositions(graph, tier, names) do
+  defp dispositions(graph, tier, names, exclusions \\ @exclusions) do
     {reached, _parent} = reach(graph, tier, names)
 
     reached
@@ -1926,11 +2673,15 @@ defmodule Fablebook.Contract.TierSweepTest do
     |> Enum.reject(fn {m, f, _arity} ->
       m in [:erlang, :erl_eval, :erl_ddll] or f == :module_info
     end)
-    |> Enum.map(fn mfa -> {mfa, disposition(mfa, tier, names)} end)
+    |> Enum.map(fn mfa -> {mfa, disposition(mfa, tier, names, exclusions)} end)
   end
 
-  defp disposition({m, f, a}, tier, names) do
-    if covered?({m, f, a}, tier, names), do: :tier, else: exclusion_reason(m, f)
+  defp disposition({m, f, _a} = mfa, tier, names, exclusions) do
+    if covered?(mfa, tier, names) do
+      :tier
+    else
+      exact_mfa_exclusion_reason(mfa, exclusions) || exclusion_reason(m, f, exclusions)
+    end
   end
 
   defp assert_creator_audit!(records, graph, tier, evidence, exclusions \\ @exclusions) do
@@ -2038,6 +2789,94 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     refute MapSet.member?(reached, formatter_mfa),
            "format_error/1 was retained although the changed atom-creator fronts do not reach it"
+  end
+
+  defp assert_logger_audit!(records, graph, tier, evidence, exclusions \\ @exclusions) do
+    assert MapSet.new(Enum.map(records, &{&1.original_id, &1.lane})) ==
+             MapSet.new(@logger_expected_ids)
+
+    lane_records = Enum.filter(records, &(&1.lane == evidence.lane.name))
+    recorded_mfas = lane_records |> Enum.flat_map(& &1.matched_mfas) |> MapSet.new()
+    assert recorded_mfas == MapSet.new(@logger_expected_mfas)
+
+    for spec <- @logger_family_specs do
+      {module, function, _arity} = mfa = spec.mfa
+
+      id =
+        "NEW-#{spec.family}-#{evidence.lane.name}-#{inspect(module)}-#{function}-#{elem(mfa, 2)}"
+
+      record = Enum.find(lane_records, &(&1.original_id == id))
+      assert record != nil, "missing #{id}"
+
+      for {citation, expected} <- record.citations do
+        assert SweepEvidence.resolve!(evidence, citation).text =~ expected, citation
+      end
+
+      expected_citations =
+        Enum.flat_map(spec.evidence, &Map.fetch!(@logger_source_evidence[evidence.lane.name], &1))
+
+      assert record.original_matcher == {:mfa, mfa}
+      assert record.original_reason == spec.disposition
+      assert record.matched_mfas == [mfa]
+      assert record.trace == spec.trace
+      assert record.provenance == spec.provenance
+      assert record.verdict == spec.verdict
+      assert record.fixtures == spec.fixtures
+      assert record.citations == expected_citations
+      assert record.evidence_groups == spec.evidence
+      assert record.applicability == :each_exact_installed_lane
+      assert record.removal_witness == spec.removal_witness
+
+      if spec.disposition == :tier do
+        assert record.tier == [mfa]
+        assert record.replacements == %{mfa => {:tier, mfa}}
+        assert covered?(mfa, tier, BannedCalls.banned_names()), "#{inspect(mfa)} lacks a tier"
+
+        assert exact_mfa_exclusion_reason(mfa, exclusions) == nil,
+               "#{inspect(mfa)} has a redundant safe exclusion"
+
+        assert exclusion_reason(module, function, exclusions) == nil,
+               "#{inspect(mfa)} overlaps a broad safe exclusion"
+      else
+        assert record.tier == []
+        assert record.replacements == %{mfa => {:exact_exclusion, spec.reason}}
+        refute covered?(mfa, tier, BannedCalls.banned_names())
+        assert exact_mfa_exclusion_reason(mfa, exclusions) == spec.reason
+        assert exclusion_reason(module, function, exclusions) == nil
+      end
+    end
+
+    {reached, _parents} = reach(graph, tier, BannedCalls.banned_names())
+    family_functions = MapSet.new(@logger_family_functions)
+
+    reached_family =
+      reached
+      |> Enum.filter(fn {module, function, _arity} = mfa ->
+        MapSet.member?(graph.exported, mfa) and
+          MapSet.member?(family_functions, {module, function})
+      end)
+      |> MapSet.new()
+
+    explicit_family_roots =
+      Enum.filter(tier, fn {module, function, _arity} ->
+        MapSet.member?(family_functions, {module, function})
+      end) ++
+        Enum.flat_map(exclusions, fn
+          {{:mfa, {module, function, _arity} = mfa}, _reason, _citations} ->
+            if MapSet.member?(family_functions, {module, function}), do: [mfa], else: []
+
+          _entry ->
+            []
+        end)
+
+    live_family = MapSet.union(reached_family, MapSet.new(explicit_family_roots))
+
+    recorded_family = recorded_mfas
+
+    assert live_family == recorded_family,
+           "Logger/ExUnit family records differ from reached exact-lane exports; " <>
+             "unrecorded=#{inspect(MapSet.difference(live_family, recorded_family))} " <>
+             "stale=#{inspect(MapSet.difference(recorded_family, live_family))}"
   end
 
   defp yecc_original_match?({:yecc, :epp_guard}, {:yecc, function, _arity})
@@ -2248,7 +3087,12 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
-  defp exclusion_reason(m, f), do: exclusion_reason(m, f, @exclusions)
+  defp exact_mfa_exclusion_reason(mfa, exclusions) do
+    Enum.find_value(exclusions, fn
+      {{:mfa, ^mfa}, reason, _citations} -> known_reason(reason)
+      _entry -> nil
+    end)
+  end
 
   defp exclusion_reason(m, f, exclusions) do
     Enum.find_value(exclusions, fn
