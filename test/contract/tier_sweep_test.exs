@@ -3041,22 +3041,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     reached_family = MapSet.intersection(reached, family_exports)
 
     explicit_tier_roots =
-      Enum.flat_map(tier, fn {module, function, arity} = root ->
-        if MapSet.member?(family_modules, module) do
-          matching_exports =
-            Enum.filter(family_exports, fn {exported_module, exported_function, exported_arity} ->
-              exported_module == module and function in [:_, exported_function] and
-                arity in [:_, exported_arity]
-            end)
-
-          if matching_exports == [], do: [root], else: matching_exports
-        else
-          []
-        end
-      end) ++
-        Enum.filter(family_exports, fn mfa ->
-          covered?(mfa, tier, BannedCalls.banned_names())
-        end)
+      family_tier_roots(tier, family_modules, family_exports, BannedCalls.banned_names())
 
     explicit_exclusion_roots = explicit_family_exclusion_roots(exclusions, family_exports)
 
@@ -3315,6 +3300,29 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     exact_roots ++ module_scoped_roots
   end
+
+  defp family_tier_roots(tier, family_modules, family_exports, names) do
+    tier_roots = Enum.flat_map(tier, &family_tier_root(&1, family_modules, family_exports))
+    named_roots = Enum.filter(family_exports, &covered?(&1, tier, names))
+    tier_roots ++ named_roots
+  end
+
+  defp family_tier_root({module, _function, _arity} = root, family_modules, family_exports) do
+    if MapSet.member?(family_modules, module) do
+      matching_exports = Enum.filter(family_exports, &tier_root_matches?(&1, root))
+      if matching_exports == [], do: [root], else: matching_exports
+    else
+      []
+    end
+  end
+
+  defp tier_root_matches?(
+         {module, function, arity},
+         {root_module, root_function, root_arity}
+       ),
+       do:
+         root_module == module and root_function in [:_, function] and
+           root_arity in [:_, arity]
 
   defp explicit_family_exclusion_match?(
          {{matcher_module, matcher_function}, _reason, _citations},
