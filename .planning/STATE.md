@@ -2,11 +2,11 @@
 gsd_state_version: "1.0"
 current_phase: 01.1.1.1
 current_phase_name: Exact-source evidence and named atom-creator guards
-status: verifying
-stopped_at: Completed 01.1.1.1-07-PLAN.md
-last_updated: "2026-10-30T15:52:44.041Z"
+status: awaiting_decision
+stopped_at: Two-review budget exhausted; WR-02 remains open; PR 26 unmerged
+last_updated: "2026-10-30T16:17:31Z"
 last_activity: 2026-10-30
-last_activity_desc: Plan 07 merged green; narrowed phase ready for verification
+last_activity_desc: Both plan PRs merged green; follow-up PR 26 green but held for remaining audit gap and owner review-budget decision
 state_head: fb55870301be650d3c8a5d409cff45f4fd0cde98
 progress:
   total_phases: 42
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-10-30)
 
 ## Current Position
 
-Phase: 01.1.1.1 (Exact-source evidence and named atom-creator guards) — EXECUTING
+Phase: 01.1.1.1 (Exact-source evidence and named atom-creator guards) — REVIEW HOLD
 Plan: 2 of 2
-Status: Phase complete — ready for verification
-Last activity: 2026-10-30 — Plan 07 merged green; narrowed phase ready for verification
+Status: Awaiting owner review-budget decision; phase remains open
+Last activity: 2026-10-30 — Two independent review passes completed; remaining audit-completeness gap recorded; PR 26 unmerged
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -157,6 +157,12 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-10-30T15:51:45.292Z
-Stopped at: Completed 01.1.1.1-07-PLAN.md
-Next command: $gsd-execute-phase 01.1.1.1 — execute only bounded Plans 06/07
-Resume file: None
+Stopped at: Review-budget decision; WR-02 open; PR 26 unmerged
+Next command after budget renewal: $gsd-code-review 01.1.1.1 --fix — resolve the remaining family completeness gap
+Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-REVIEW-DISPOSITION.md
+
+## Current execution hold
+
+Plans 06/07 merged in PRs 24/25 with required CI green. Follow-up PR 26 fixes the known-MFA spec omission and is green, but review pass 2 found WR-02 (new function names outside the family-record filter). Plan 07 limits delivery to two review passes, then owner decides. Preserve PR 26 unmerged and phase/SEC-01/parents open. The owner has been asked whether to renew the review budget for one additional fix-and-review pass.
+
+Next useful command after renewal: `$gsd-code-review 01.1.1.1 --fix` — address the remaining record-completeness finding and verify the scoped follow-up. Independent future planning can proceed against the merged evidence, without claiming this phase closed.
