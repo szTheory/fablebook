@@ -857,9 +857,13 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   test "the source check matches by alias-expanded name and adjacency (known strictness)" do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
     samples = [
       {"alias Module, as: M\nM.concat([x])", true},
       {"alias :file, as: F\nF.script(p)", true},
+      {"require :file, as: F\nF.script(p)", true},
       {"Module.\nconcat([x])", true},
       {"x |> Module.concat()", true},
       {"Elixir.Module.concat(x)", true},
@@ -868,13 +872,20 @@ defmodule Fablebook.Contract.BannedCallsTest do
       {"import IEx.Helpers", true},
       {"apply(:compile, f, a)", true},
       {"[epp: 1]", true},
+      {"[io: :read]", true},
+      {"[compile: true]", true},
       {"[:erlang, :load_module]", true},
       {"Mix.Task.run(\"run\", [\"-e\", code])", true},
       {"Regex.compile(s)", false},
       {"&Regex.compile/1", false},
       {"m = Module\nm.concat(x)", false},
+      {"m.compile(s)", false},
+      {"defmodule StrictHelper do\n  def run(x), do: module().concat(x)\n  defp module, do: Module\nend",
+       false},
       {"apply(m, f, a)", false},
       {"%{m: :erlang, f: :load_module}", false},
+      {"defmodule StrictModuleAlias do\n  alias __MODULE__.Generated, as: M\n  def run(x), do: M.concat(x)\nend",
+       false},
       {":file.path_consult(dirs, file)", false},
       {":ct_make.files(files, [:load])", false},
       {"File.write!(path, bin)\nCode.ensure_loaded?(mod)", false}

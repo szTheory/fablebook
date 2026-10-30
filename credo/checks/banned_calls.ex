@@ -4,48 +4,38 @@ defmodule Fablebook.Credo.BannedCalls do
     category: :warning,
     explanations: [
       check: """
-      Fablebook never evaluates code, compiles templates at runtime, creates
-      atoms from input or references a banned dependency (ADR 0004, ADR 0018).
+      Fablebook never evaluates code, compiles templates at runtime, creates atoms from input,
+      or references a banned dependency (ADR 0004, ADR 0018).
 
-      Any call or atom literal with one of these names is flagged, whatever
-      the module. That covers aliases, imports, and `apply/3` or
-      `Function.capture/3` with a literal function name.
+      The Credo source check scans the whole file, including module bodies, `quote` blocks, and
+      `mix.exs`. It flags banned names and remote calls to a tier entry through a direct call,
+      an alias, `apply/3`, a pipe, or a newline after the dot; this includes a Mix task run through
+      `Mix.Task.run`.
+      It also flags adjacent module/function literals in argument lists, list literals, tuples,
+      maps and keyword pairs, whole-module tier names outside call-name positions, and imports of
+      tier modules.
 
-      The compiled-BEAM guard in `test/contract/banned_calls_test.exs` checks
-      the compiled code of each lib/ module (D-23). It matches direct remote
-      calls. It also matches every place where a literal module atom is
-      directly followed by a literal function atom in one argument list, tuple
-      or map entry, anywhere in function code. That covers `apply/3`,
-      `:erlang.apply/3`, `spawn/3`, `:erpc` and `:rpc` calls, `Task.async/3`,
-      `Function.capture/3` at any arity, `{module, function}` and
-      `{module, function, args}` tuples (also when a helper returns them or a
-      module attribute holds them), `%{module => function}` entries and
-      `[module: function]` keyword pairs. It also flags a literal reference to
-      a module that is banned whole, and the banned names anywhere. The
-      whole-module check ignores the name of a called or captured function, so
-      `Regex.compile/1`, `:re.compile/2`, a local `compile/1` and
-      `&Regex.compile/1` are not flagged. It still flags a wholly banned module
-      named in any other position, such as `apply(:compile, fun, args)` or a
-      keyword such as `[epp: 1]`. The pair check still flags data whose two
-      adjacent atoms spell a banned call, such as `[io: :read]` or
-      `[compile: true]`. `Regex.compile!/1` and a `~r` sigil are not flagged.
-      The fix is a change in lib/, never an allowlist entry without an ADR.
+      The compiled-BEAM guard in `test/contract/banned_calls_test.exs` reads compiled functions in
+      each `lib/` module, including user-defined `__info__` functions other than the compiler's
+      `__info__/1`. It checks imported MFAs, adjacent literal pairs in call arguments, tuples and
+      maps, whole-module literals outside call-name positions, and banned names. Its pair walker
+      does not flag a plain list such as `[:erlang, :load_module]`, which the source check flags.
+      The tier data is checked by the reachability sweep, the banned-module-named check, and the
+      boundary contract in `test/contract/tier_sweep_test.exs`.
 
-      Neither static layer matches a module and function that are not
-      adjacent literals in one list, tuple or map entry, unless the module is
-      banned whole. That includes a module held in a variable or returned
-      alone by a helper, a plain list such as `[:erlang, :load_module]`,
-      separate map fields such as `%{m: :erlang, f: :load_module}`, and names
-      passed in or computed at runtime. Nor does either layer match a dispatch
-      by name inside OTP or Elixir.
-      The Phase 5 atom-count property and never-eval proof (ADR 0004) cover
-      those. Unlisted atom creators are open and owned by Phase 01.1.1.1:
-      a direct call to a function that turns caller-chosen text or files into
-      atoms that no tier lists yet, such as `:file.path_consult/2`, passes both
-      layers until that phase bans it. Eval front doors in installed OTP apps
-      outside the swept scope are open and owned by Phase 01.1.1.1: a direct
-      call to one, such as `:ct_make.files/2` with the `load` option, passes
-      both layers until that phase sweeps those apps.
+      Neither static layer follows names held in variables, including a module variable in
+      `m.compile(s)`, returned alone by a helper, split across map fields, computed at runtime, or
+      built as aliases from `__MODULE__`. Neither layer catches code that writes a `.beam` file
+      into a directory already on the code path and then loads it by name; the Phase 5 atom-count
+      property and never-eval proof (ADR 0004) are the backstop.
+      An open item owned by Phase 01.1.1.1 is a direct call to an unlisted function that turns
+      caller-chosen text or files into atoms; `:file.path_consult/2` passes both layers until that
+      phase bans it.
+      Another open item owned by Phase 01.1.1.1 is a direct call to an eval, compile-and-load, or
+      load front door in an installed OTP app outside the swept scope; `:ct_make.files/2` with the
+      `load` option passes both layers until that phase sweeps those apps.
+      The source strictness rows preserve the over-catches `[epp: 1]`, `[io: :read]`, and
+      `[compile: true]`.
       """
     ]
 
@@ -344,6 +334,7 @@ defmodule Fablebook.Credo.BannedCalls do
 
   @whole_mfa_modules for {module, :_, :_} <- @mfas, do: inspect(module)
   @whole_modules Enum.uniq(@aliases ++ @whole_mfa_modules)
+  @tier_modules @mfa_pairs |> Enum.map(&elem(&1, 0)) |> Enum.uniq()
 
   def banned_names, do: @names
 
@@ -379,6 +370,17 @@ defmodule Fablebook.Credo.BannedCalls do
     {ast, record_alias(ctx, args)}
   end
 
+  defp walk({:import, meta, [module | _]} = ast, ctx) do
+    ctx = track(ctx, meta)
+    name = module_name(module, ctx.aliases)
+    if name in @tier_modules, do: {ast, flag(ctx, name)}, else: {ast, ctx}
+  end
+
+  defp walk({:{}, meta, elems} = ast, ctx) do
+    ctx = track(ctx, meta)
+    {ast, flag_pairs(ctx, elems)}
+  end
+
   defp walk({name, meta, args} = ast, ctx) when is_atom(name) and is_list(args) do
     ctx = track(ctx, meta)
     ctx = if name in @names, do: flag(ctx, name), else: ctx
@@ -387,7 +389,18 @@ defmodule Fablebook.Credo.BannedCalls do
 
   defp walk({_, meta, _} = ast, ctx) when is_list(meta), do: {ast, track(ctx, meta)}
 
+  defp walk({module, function} = ast, ctx) do
+    {ast, flag_literal_pair(ctx, module, function)}
+  end
+
+  defp walk(nodes, ctx) when is_list(nodes), do: {nodes, flag_pairs(ctx, nodes)}
+
   defp walk(atom, ctx) when is_atom(atom) and atom in @names, do: {atom, flag(ctx, atom)}
+
+  defp walk(atom, ctx) when is_atom(atom) do
+    name = inspect(atom)
+    if name in @whole_modules, do: {atom, flag(ctx, name)}, else: {atom, ctx}
+  end
 
   defp walk(ast, ctx), do: {ast, ctx}
 
@@ -412,12 +425,23 @@ defmodule Fablebook.Credo.BannedCalls do
   defp flag_pair([module, function], ctx) do
     case literal_module_name(module, ctx.aliases) do
       nil -> ctx
-      name -> flag_tier_pair(ctx, name, function)
+      name -> flag_module_or_pair(ctx, name, function)
     end
   end
 
-  defp flag_tier_pair(ctx, module, function) do
-    if tier_pair?(module, function), do: flag(ctx, "#{module}.#{function}"), else: ctx
+  defp flag_literal_pair(ctx, module, function) do
+    case literal_module_name(module, ctx.aliases) do
+      nil -> ctx
+      name -> flag_module_or_pair(ctx, name, function)
+    end
+  end
+
+  defp flag_module_or_pair(ctx, module, function) do
+    cond do
+      module in @whole_modules -> flag(ctx, module)
+      tier_pair?(module, function) -> flag(ctx, "#{module}.#{function}")
+      true -> ctx
+    end
   end
 
   defp literal_module_name({:__aliases__, _, _} = ast, aliases), do: module_name(ast, aliases)
@@ -425,12 +449,16 @@ defmodule Fablebook.Credo.BannedCalls do
   defp literal_module_name(_module, _aliases), do: nil
 
   defp module_name({:__aliases__, _, parts}, aliases) do
-    name = parts |> Enum.join(".") |> String.replace_prefix("Elixir.", "")
+    name = parts |> Enum.map_join(".", &alias_segment/1) |> String.replace_prefix("Elixir.", "")
     expand_alias(name, aliases)
   end
 
   defp module_name(module, _aliases) when is_atom(module), do: inspect(module)
   defp module_name(_module, _aliases), do: nil
+
+  defp alias_segment({:__MODULE__, _, _}), do: "__MODULE__"
+  defp alias_segment(segment) when is_atom(segment), do: Atom.to_string(segment)
+  defp alias_segment(segment), do: Macro.to_string(segment)
 
   defp expand_alias(name, aliases) do
     case Enum.find(aliases, fn {alias_name, _target} ->
