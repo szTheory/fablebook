@@ -252,6 +252,120 @@ defmodule Fablebook.Test.InstalledOtp do
     :ok
   end
 
+  def export_inventory!(directories, opts \\ []) when is_list(directories) do
+    lane = Keyword.get(opts, :lane, lane_name())
+    beam_chunks = Keyword.get(opts, :beam_chunks, &:beam_lib.chunks/2)
+
+    exports =
+      directories
+      |> Enum.flat_map(&export_inventory_directory!(&1, lane, beam_chunks))
+
+    duplicate = exports |> Enum.frequencies() |> Enum.filter(fn {_row, count} -> count > 1 end)
+    if duplicate != [], do: fail!(:export_inventory_duplicate, %{lane: lane, exports: duplicate})
+    exports
+  rescue
+    error in Error ->
+      reraise error, __STACKTRACE__
+
+    error ->
+      fail!(:export_inventory_read, %{
+        lane: Keyword.get(opts, :lane, lane_name()),
+        error: Exception.message(error)
+      })
+  end
+
+  defp export_inventory_directory!(directory, lane, beam_chunks) do
+    directory
+    |> File.ls!()
+    |> Enum.sort()
+    |> Enum.filter(&String.ends_with?(&1, ".beam"))
+    |> Enum.flat_map(&export_inventory_beam!(directory, &1, lane, beam_chunks))
+  end
+
+  defp export_inventory_beam!(directory, filename, lane, beam_chunks) do
+    path = Path.join(directory, filename)
+    expected_module = String.replace_suffix(filename, ".beam", "")
+
+    case beam_chunks.(String.to_charlist(path), [:exports]) do
+      {:ok, {module, [exports: rows]}} when is_atom(module) and is_list(rows) ->
+        if Atom.to_string(module) != expected_module do
+          fail!(:export_inventory_identity, %{
+            lane: lane,
+            beam: Path.join(Path.basename(directory), filename),
+            expected: expected_module,
+            actual: Atom.to_string(module)
+          })
+        end
+
+        Enum.map(rows, &export_inventory_row!(&1, directory, filename, lane, module))
+
+      result ->
+        fail!(:export_inventory_read, %{
+          lane: lane,
+          beam: Path.join(Path.basename(directory), filename),
+          result: inspect(result)
+        })
+    end
+  end
+
+  defp export_inventory_row!({function, arity}, _directory, _filename, _lane, module)
+       when is_atom(function) and is_integer(arity) and arity >= 0,
+       do: {module, function, arity}
+
+  defp export_inventory_row!(row, directory, filename, lane, _module) do
+    fail!(:export_inventory_row, %{
+      lane: lane,
+      beam: Path.join(Path.basename(directory), filename),
+      row: inspect(row)
+    })
+  end
+
+  def assert_xref_query!(query_fun, label, lane, expected_rows, normalize \\ &Function.identity/1)
+      when is_function(query_fun, 0) and is_list(expected_rows) and is_function(normalize, 1) do
+    case query_fun.() do
+      {:ok, rows} when is_list(rows) ->
+        normalized = Enum.map(rows, normalize)
+        expected = MapSet.new(Enum.map(expected_rows, normalize))
+        actual = MapSet.new(normalized)
+
+        duplicate_rows =
+          normalized
+          |> Enum.frequencies()
+          |> Enum.filter(fn {_row, count} -> count > 1 end)
+          |> Enum.map(&elem(&1, 0))
+
+        missing = MapSet.difference(expected, actual) |> MapSet.to_list() |> Enum.sort()
+        extra = MapSet.difference(actual, expected) |> MapSet.to_list() |> Enum.sort()
+
+        if duplicate_rows != [] or missing != [] or extra != [] do
+          fail!(:xref_query_parity, %{
+            lane: lane,
+            query: label,
+            duplicate_rows: Enum.take(duplicate_rows, 20),
+            missing: Enum.take(missing, 20),
+            extra: Enum.take(extra, 20),
+            expected_count: MapSet.size(expected),
+            actual_count: MapSet.size(actual)
+          })
+        end
+
+        rows
+
+      result ->
+        fail!(:xref_query, %{lane: lane, query: label, result: inspect(result)})
+    end
+  rescue
+    error in Error ->
+      reraise error, __STACKTRACE__
+
+    error ->
+      fail!(:xref_query_row, %{
+        lane: lane,
+        query: label,
+        error: Exception.message(error)
+      })
+  end
+
   def receipt_lines(
         %{lane: lane, discovered: discovered, inspected: inspected, ingested: ingested} = receipt
       ) do
@@ -1166,8 +1280,13 @@ defmodule Fablebook.Test.InstalledOtp do
       is_binary(row["callee_function"])
   end
 
+  defp valid_membership_row?(%{"kind" => "boundary"} = row) do
+    is_binary(row["app"]) and valid_mfa_fields?(row) and
+      is_boolean(row["explicit_boundary_exclusion"])
+  end
+
   defp valid_membership_row?(%{"kind" => kind} = row)
-       when kind in ["active_export", "export", "reached", "boundary", "pending_mfa"],
+       when kind in ["active_export", "export", "reached", "pending_mfa"],
        do: is_binary(row["app"]) and valid_mfa_fields?(row)
 
   defp valid_membership_row?(_row), do: false
@@ -1183,7 +1302,7 @@ defmodule Fablebook.Test.InstalledOtp do
 
   defp valid_pending_record?(%{"kind" => "pending_mfa", "owner" => "01.1.1.3"} = row) do
     valid_membership_row?(row) and is_list(row["caller_chain"]) and row["caller_chain"] != [] and
-      Enum.all?(row["caller_chain"], &is_binary/1)
+      Enum.all?(row["caller_chain"], &valid_mfa_text?/1)
   end
 
   defp valid_pending_record?(_row), do: false
@@ -1192,6 +1311,22 @@ defmodule Fablebook.Test.InstalledOtp do
     is_binary(row["module"]) and is_binary(row["function"]) and
       is_integer(row["arity"]) and row["arity"] >= 0
   end
+
+  defp valid_mfa_text?(value) when is_binary(value) do
+    case String.split(value, "/", parts: 2) do
+      [identity, arity] when identity != "" ->
+        String.contains?(identity, ".") and
+          case Integer.parse(arity) do
+            {parsed, ""} when parsed >= 0 -> Integer.to_string(parsed) == arity
+            _ -> false
+          end
+
+      _ ->
+        false
+    end
+  end
+
+  defp valid_mfa_text?(_value), do: false
 
   defp validate_nonempty_inventory!(discovered, inspected, ingested) do
     if discovered == [] or inspected == [] or ingested == [],

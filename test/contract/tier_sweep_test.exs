@@ -2755,13 +2755,38 @@ defmodule Fablebook.Contract.TierSweepTest do
     historical_otp_apps = Enum.filter(otp_apps, &MapSet.member?(otp_active_names, &1.app))
     pending_apps = Enum.reject(otp_apps, &MapSet.member?(otp_active_names, &1.app))
 
+    historical_otp_dirs = Enum.map(historical_otp_apps, & &1.ebin)
+    historical_app_names = MapSet.new(historical_otp_apps, & &1.app)
+    {historical_otp_edges, no_debug_otp} = form_edges(historical_otp_dirs)
+    {other_form_edges, no_debug_other} = form_edges(elixir_dirs ++ dep_dirs)
+    otp_form_edges = Enum.flat_map(inspected, & &1.edges)
+
+    expected_historical_edges =
+      Enum.flat_map(inspected, fn inspection ->
+        if MapSet.member?(historical_app_names, inspection.app), do: inspection.edges, else: []
+      end) ++ other_form_edges
+
+    expected_full_edges = otp_form_edges ++ other_form_edges
+    historical_graph_dirs = historical_otp_dirs ++ elixir_dirs ++ dep_dirs
+    full_graph_dirs = Enum.map(otp_apps, & &1.ebin) ++ elixir_dirs ++ dep_dirs
+
+    expected_historical_exports =
+      InstalledOtp.export_inventory!(historical_graph_dirs, lane: evidence.lane.name)
+
+    expected_full_exports =
+      InstalledOtp.export_inventory!(full_graph_dirs, lane: evidence.lane.name)
+
     xref_started = System.monotonic_time()
 
     xref_graph =
       checked_xref_graph(
         historical_otp_apps ++ extra_apps,
         pending_apps,
-        evidence.lane.name
+        evidence.lane.name,
+        expected_historical_edges,
+        expected_historical_exports,
+        expected_full_edges,
+        expected_full_exports
       )
 
     xref_ms = elapsed_ms(xref_started)
@@ -2772,11 +2797,6 @@ defmodule Fablebook.Contract.TierSweepTest do
       Enum.filter(xref_graph.ingested, &(&1.app in Enum.map(otp_apps, fn app -> app.app end))),
       evidence.lane.name
     )
-
-    historical_otp_dirs = Enum.map(historical_otp_apps, & &1.ebin)
-    {historical_otp_edges, no_debug_otp} = form_edges(historical_otp_dirs)
-    {other_form_edges, no_debug_other} = form_edges(elixir_dirs ++ dep_dirs)
-    otp_form_edges = Enum.flat_map(inspected, & &1.edges)
 
     historical_xref_edges =
       for {caller, {m, f, _}} <- xref_graph.historical_edges, do: {caller, {m, f}}
@@ -2847,9 +2867,15 @@ defmodule Fablebook.Contract.TierSweepTest do
     export_records = mfa_records("export", full_exported, module_app)
     reached_records = mfa_records("reached", full_reached, module_app)
 
-    boundary_mfas = boundary_reached_mfas(full_reached)
+    boundary_graph = %{
+      edges: full_edges,
+      exported: full_exported,
+      forward: full_forward,
+      reverse: full_reverse
+    }
 
-    boundary_records = mfa_records("boundary", boundary_mfas, module_app)
+    boundary_mfas = boundary_set(boundary_graph, tier, names)
+    boundary_records = boundary_inventory_records(boundary_mfas, module_app)
 
     sources_by_module =
       Map.new(sources, fn source ->
@@ -2869,6 +2895,7 @@ defmodule Fablebook.Contract.TierSweepTest do
         pending_modules,
         pending_mfas,
         full_parent,
+        full_edges,
         module_app,
         sources_by_module
       )
@@ -3012,14 +3039,6 @@ defmodule Fablebook.Contract.TierSweepTest do
     failures
   end
 
-  defp boundary_reached_mfas(reached) do
-    Enum.filter(reached, fn mfa ->
-      Enum.any?(@boundary_exclusions, fn {matcher, _reason, _citations} ->
-        boundary_match?(matcher, mfa)
-      end)
-    end)
-  end
-
   defp elapsed_ms(started) do
     System.monotonic_time()
     |> Kernel.-(started)
@@ -3088,11 +3107,35 @@ defmodule Fablebook.Contract.TierSweepTest do
     end)
   end
 
+  defp boundary_inventory_records(mfas, module_app) do
+    mfas
+    |> Enum.sort_by(fn {module, function, arity} ->
+      {Atom.to_string(module), Atom.to_string(function), arity}
+    end)
+    |> Enum.map(fn {module, function, arity} = mfa ->
+      record =
+        mfa_records("boundary", [mfa], module_app)
+        |> hd()
+
+      explicit_exclusion =
+        Enum.any?(@boundary_exclusions, fn {matcher, _reason, _citations} ->
+          boundary_match?(matcher, mfa)
+        end)
+
+      record
+      |> Map.put("explicit_boundary_exclusion", explicit_exclusion)
+      |> Map.put("function", Atom.to_string(function))
+      |> Map.put("module", Atom.to_string(module))
+      |> Map.put("arity", arity)
+    end)
+  end
+
   defp pending_inventory_records(
          pending_apps,
          pending_modules,
          pending_mfas,
          parent,
+         edges,
          module_app,
          sources_by_module
        ) do
@@ -3129,9 +3172,10 @@ defmodule Fablebook.Contract.TierSweepTest do
       end)
       |> Enum.map(fn {module, function, arity} ->
         caller_chain =
-          witness(parent, {module, function}, [])
-          |> Enum.map(fn {caller_module, caller_function} ->
-            "#{Atom.to_string(caller_module)}.#{Atom.to_string(caller_function)}"
+          parent
+          |> caller_chain({module, function, arity}, edges)
+          |> Enum.map(fn {caller_module, caller_function, caller_arity} ->
+            "#{Atom.to_string(caller_module)}.#{Atom.to_string(caller_function)}/#{caller_arity}"
           end)
 
         %{
@@ -3148,17 +3192,77 @@ defmodule Fablebook.Contract.TierSweepTest do
     app_records ++ module_records ++ mfa_records
   end
 
-  defp checked_xref_graph(historical_apps, pending_apps, lane) do
+  defp caller_chain(parent, {module, function, _arity} = start_mfa, edges) do
+    path = witness(parent, {module, function}, []) |> Enum.reverse()
+
+    callers =
+      path
+      |> Enum.chunk_every(2, 1, :discard)
+      |> Enum.with_index()
+      |> Enum.map(fn
+        {[{start_module, start_function}, _next], 0} ->
+          {start_module, start_function, elem(start_mfa, 2)}
+
+        {[caller_pair, next], _index} ->
+          edges
+          |> Enum.flat_map(fn
+            {{caller_module, caller_function, caller_arity}, ^next}
+            when {caller_module, caller_function} == caller_pair ->
+              [{caller_module, caller_function, caller_arity}]
+
+            _edge ->
+              []
+          end)
+          |> Enum.uniq()
+          |> Enum.sort_by(fn {caller_module, caller_function, caller_arity} ->
+            {Atom.to_string(caller_module), Atom.to_string(caller_function), caller_arity}
+          end)
+          |> List.first()
+          |> case do
+            nil ->
+              raise "installed OTP inventory caller-chain edge missing for #{inspect(caller_pair)} -> #{inspect(next)}"
+
+            caller_mfa ->
+              caller_mfa
+          end
+      end)
+
+    if callers == [], do: [start_mfa], else: callers
+  end
+
+  defp checked_xref_graph(
+         historical_apps,
+         pending_apps,
+         lane,
+         expected_historical_edges,
+         expected_historical_exports,
+         expected_full_edges,
+         expected_full_exports
+       ) do
     start_xref!(lane)
 
     try do
       set_xref_defaults!(lane)
       historical_ingested = ingest_xref_apps!(historical_apps, lane)
-      historical_edges = xref_query!(~c"E", :historical_edges, lane)
-      historical_exports = xref_query!(~c"X", :historical_exports, lane)
+
+      historical_edges =
+        xref_query!(
+          ~c"E",
+          :historical_edges,
+          lane,
+          expected_historical_edges,
+          &xref_edge_identity!/1
+        )
+
+      historical_exports =
+        xref_query!(~c"X", :historical_exports, lane, expected_historical_exports)
+
       pending_ingested = ingest_xref_apps!(pending_apps, lane)
-      full_edges = xref_query!(~c"E", :full_edges, lane)
-      full_exports = xref_query!(~c"X", :full_exports, lane)
+
+      full_edges =
+        xref_query!(~c"E", :full_edges, lane, expected_full_edges, &xref_edge_identity!/1)
+
+      full_exports = xref_query!(~c"X", :full_exports, lane, expected_full_exports)
 
       %{
         historical_ingested: historical_ingested,
@@ -3195,15 +3299,26 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
-  defp xref_query!(query, label, lane) do
-    case :xref.q(:tier_sweep, query) do
-      {:ok, rows} when is_list(rows) ->
-        rows
-
-      result ->
-        raise "installed OTP inventory xref #{label} query failed for #{lane}: #{inspect(result)}"
-    end
+  defp xref_query!(query, label, lane, expected_rows, normalize \\ &Function.identity/1) do
+    InstalledOtp.assert_xref_query!(
+      fn -> :xref.q(:tier_sweep, query) end,
+      label,
+      lane,
+      expected_rows,
+      normalize
+    )
   end
+
+  defp xref_edge_identity!({caller, {module, function}} = row)
+       when is_tuple(caller) and is_atom(module) and is_atom(function),
+       do: row
+
+  defp xref_edge_identity!({caller, {module, function, _arity}})
+       when is_tuple(caller) and is_atom(module) and is_atom(function),
+       do: {caller, {module, function}}
+
+  defp xref_edge_identity!(row),
+    do: raise("unexpected installed OTP Xref edge row: #{inspect(row)}")
 
   defp stop_xref!(lane) do
     case :xref.stop(:tier_sweep) do
@@ -4080,6 +4195,45 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     assert InstalledOtp.verify_receipt_lines!(lines).lane == "core"
   end
 
+  test "Xref query parity rejects successful empty and truncated results" do
+    expected = [{:probe, :run, 0}, {:probe, :stop, 1}]
+
+    assert InstalledOtp.assert_xref_query!(fn -> {:ok, expected} end, :exports, "core", expected) ==
+             expected
+
+    assert_raise InstalledOtp.Error, ~r/xref_query_parity/, fn ->
+      InstalledOtp.assert_xref_query!(fn -> {:ok, []} end, :exports, "core", expected)
+    end
+
+    assert_raise InstalledOtp.Error, ~r/xref_query_parity/, fn ->
+      InstalledOtp.assert_xref_query!(
+        fn -> {:ok, Enum.take(expected, 1)} end,
+        :exports,
+        "core",
+        expected
+      )
+    end
+  end
+
+  test "Xref edge query parity normalizes callee arity without losing caller MFA" do
+    caller = {:probe, :caller, 2}
+    expected = [{caller, {:sink, :run}}]
+    returned = [{caller, {:sink, :run, 0}}]
+
+    normalize = fn
+      {from, {module, function, _arity}} -> {from, {module, function}}
+      row -> row
+    end
+
+    assert InstalledOtp.assert_xref_query!(
+             fn -> {:ok, returned} end,
+             :edges,
+             "core",
+             expected,
+             normalize
+           ) == returned
+  end
+
   test "receipts reject missing measurement records even when identity rows are intact" do
     lines =
       receipt_lines("core")
@@ -4157,6 +4311,18 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
 
     assert_raise InstalledOtp.Error, ~r/receipt_links/, fn ->
       InstalledOtp.verify_receipt_lines!(wrong_membership_link)
+    end
+
+    wrong_caller_chain =
+      rewrite_receipt(lines, fn rows ->
+        Enum.map(rows, fn
+          %{"kind" => "pending_mfa"} = row -> Map.put(row, "caller_chain", ["probe.run"])
+          row -> row
+        end)
+      end)
+
+    assert_raise InstalledOtp.Error, ~r/receipt_membership_records/, fn ->
+      InstalledOtp.verify_receipt_lines!(wrong_caller_chain)
     end
 
     wrong_source_link =
@@ -4239,6 +4405,9 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     discovered = InstalledOtp.discover!(root, lane: "core")
     assert InstalledOtp.assert_discovery_complete!(root, discovered, lane: "core") == :ok
     inspected = InstalledOtp.inspect!(discovered, lane: "core")
+    exports = InstalledOtp.export_inventory!([ebin], lane: "core")
+
+    assert {:probe, :run, 0} in exports
 
     [source_app] =
       InstalledOtp.source_inventory!(discovered, inspected,
@@ -4539,7 +4708,8 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
         "app" => "probe",
         "module" => "probe",
         "function" => "run",
-        "arity" => 0
+        "arity" => 0,
+        "explicit_boundary_exclusion" => true
       },
       %{"kind" => "pending_app", "app" => "pending_probe", "owner" => "01.1.1.3"},
       %{
