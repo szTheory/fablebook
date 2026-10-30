@@ -447,7 +447,14 @@ defmodule Fablebook.Contract.BannedCallsTest do
     phx_server_eval.ex
   )
 
-  @source_only_fixtures ~w(macro_concat.ex macro_apply_load.ex)
+  @source_only_fixtures ~w(
+    macro_concat.ex
+    macro_apply_load.ex
+    macro_script.ex
+    using_load_module.ex
+    body_script.ex
+    body_concat.ex
+  )
 
   @fixture_dir Path.expand("../fixtures/guards", __DIR__)
 
@@ -590,7 +597,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
       ],
       Fablebook.GuardFixture.StrictInt => [{:mfa, {:int, :i, :_}}],
       Fablebook.GuardFixture.StrictPathConsult => [],
-      Fablebook.GuardFixture.StrictCtMake => []
+      Fablebook.GuardFixture.StrictCtMake => [],
+      Fablebook.GuardFixture.StrictWriteThenLoad => []
     }
 
     source = Path.join(dir, "strict.ex")
@@ -738,6 +746,13 @@ defmodule Fablebook.Contract.BannedCallsTest do
     defmodule Fablebook.GuardFixture.StrictCtMake do
       def run(files), do: :ct_make.files(files, [:load])
     end
+
+    defmodule Fablebook.GuardFixture.StrictWriteThenLoad do
+      def run(path, bin, mod) do
+        File.write!(path, bin)
+        Code.ensure_loaded?(mod)
+      end
+    end
     """)
 
     scans =
@@ -822,6 +837,52 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
   test "mix.exs names no banned call or module" do
     assert mix_exs_hits(File.read!("mix.exs")) == []
+  end
+
+  test "the Credo check scans mix.exs and source text samples" do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    assert credo_issues(File.read!("mix.exs"), "mix.exs") == []
+
+    for text <- [
+          "apply(:erlang, :load_module, [m, b])",
+          "alias Module, as: M\nM.concat([x])",
+          "Module.\nconcat([x])"
+        ] do
+      assert credo_issues(text, "mix.exs") != [], "no Credo issue for #{text}"
+    end
+
+    assert credo_issues("Regex.compile(s)", "mix.exs") == []
+  end
+
+  test "the source check matches by alias-expanded name and adjacency (known strictness)" do
+    samples = [
+      {"alias Module, as: M\nM.concat([x])", true},
+      {"alias :file, as: F\nF.script(p)", true},
+      {"Module.\nconcat([x])", true},
+      {"x |> Module.concat()", true},
+      {"Elixir.Module.concat(x)", true},
+      {"%{:erlang => :load_module}", true},
+      {"{:erlang, :load_module, a}", true},
+      {"import IEx.Helpers", true},
+      {"apply(:compile, f, a)", true},
+      {"[epp: 1]", true},
+      {"[:erlang, :load_module]", true},
+      {"Mix.Task.run(\"run\", [\"-e\", code])", true},
+      {"Regex.compile(s)", false},
+      {"&Regex.compile/1", false},
+      {"m = Module\nm.concat(x)", false},
+      {"apply(m, f, a)", false},
+      {"%{m: :erlang, f: :load_module}", false},
+      {":file.path_consult(dirs, file)", false},
+      {":ct_make.files(files, [:load])", false},
+      {"File.write!(path, bin)\nCode.ensure_loaded?(mod)", false}
+    ]
+
+    for {source, flagged?} <- samples do
+      assert credo_issues(source, "known_strictness.ex") != [] == flagged?, source
+    end
   end
 
   test "the mix.exs scan matches bare and qualified calls" do
