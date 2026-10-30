@@ -265,8 +265,12 @@ defmodule Fablebook.Test.InstalledOtp do
       log_path
       |> File.read!()
       |> String.split("\n")
-      |> Enum.map(&String.trim/1)
-      |> Enum.filter(&String.starts_with?(&1, @marker))
+      |> Enum.flat_map(fn line ->
+        case String.split(String.trim(line), @marker, parts: 2) do
+          [_prefix, payload] -> [@marker <> String.trim(payload)]
+          _ -> []
+        end
+      end)
 
     verify_receipt_lines!(lines)
     File.write!(receipt_path, Enum.join(lines, "\n") <> "\n")
