@@ -332,7 +332,6 @@ Every item below is a v1.0 commitment.
 | Static export in v1.x; render seam now (ADR 0022) | Keeps the 1.0 design uncompromised | — Pending |
 | Four tiers Primitive…Screen; "Scenario" (ADR 0023) | One clear question per tier; "variant" collides with `attr :variant` | — Pending |
 | Split rule beats "8–12 phases": about 35 sequential phases under the 12 family headings, with research's ordering moves (INT-20261028-16, OPEN-QUESTIONS Q6) | Research found 8 of 12 families exceed the 5-plan cap; the split rule is non-negotiable | — Pending |
-
 | Mirrored source and BEAM guard tiers with derived reachability and boundary contracts (ADR 0004, INT-20261029-04) | Quoted and module-body calls need source inspection; generated probes and both-lane sweeps keep tier entries live | Verified in Phase 01.1.1, PRs #15–#20; SEC-01 remains Pending for Phase 5 |
 | Parser disposition, unswept OTP apps, and carried-exclusion audit remain separate owned work (INT-20261029-02) | Keep the scoped phase complete without claiming the transferred guarantees | Open in Phase 01.1.1.1; accepted computed-dispatch and write-then-load residuals retain the Phase 5 backstop |
 | Absolute Elixir module names bypass local alias expansion (01.1.1-REVIEW CR-01) | A local alias must not hide a root-qualified quoted call | Fixed in PR #20; source-only fixture and direct/apply/benign controls pass on both lanes |
