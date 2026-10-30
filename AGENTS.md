@@ -13,3 +13,4 @@
 - At every pause or handoff, state what is happening, the concrete blocker and consequence, the recommended next step, and who acts next. Say clearly whether work is waiting for the user or continuing.
 - Before asking for a decision, explain the risk or consequence in plain language and recommend a concrete option when the user has not expressed a preference. An uncertain or indifferent answer does not mean the user accepted a risk.
 - When an actual blocker prevents authorized work, describe it with an actionable next step. Do not pause for a redundant acknowledgment; continue through the selected phase's implementation, tests, and review, stopping only at a real decision or phase boundary.
+- Prefer the least disruptive evidence-supported remedy for stuck project tests. Inspect attributable processes and try targeted cleanup first; recommend a whole-machine restart only when its need and impact are established.
