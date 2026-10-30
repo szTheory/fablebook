@@ -88,6 +88,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:file, :eval, :_},
     {:file, :path_script, :_},
     {:file, :path_eval, :_},
+    {:file, :consult, 1},
     {:file, :path_consult, 2},
     {:elixir, :eval_forms, :_},
     {:io, :read, :_},
@@ -494,20 +495,32 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert credo_issues("quote do: :file.path_consult(dirs, path)", "quoted.ex") != []
     assert credo_issues("Regex.compile(pattern)", "regex.ex") == []
 
-    consult_source = """
-    defmodule Fablebook.GuardFixture.ConsultShapes do
-      def direct(path), do: :file.consult(path)
-      def capture, do: &:file.consult/1
-      def dynamic(args), do: apply(:file, :consult, args)
-    end
-    """
+    consult_sources = [
+      {"direct", "def direct(path), do: :file.consult(path)"},
+      {"capture", "def capture, do: &:file.consult/1"},
+      {"apply", "def dynamic(args), do: apply(:file, :consult, args)"}
+    ]
 
-    consult_path = Path.join(dir, "caller_consult.ex")
-    File.write!(consult_path, consult_source)
-    [consult_beam] = compile!([consult_path], dir, true)
-    assert {:ok, consult_scan} = BeamWalker.scan(consult_beam)
-    assert {:mfa, {:file, :consult, 1}} in hits(consult_scan)
-    assert credo_issues(consult_source, "caller_consult.ex") != []
+    consult_paths =
+      for {shape, body} <- consult_sources do
+        source =
+          "defmodule Fablebook.GuardFixture.Consult#{String.capitalize(shape)} do\n#{body}\nend\n"
+
+        path = Path.join(dir, "caller_consult_#{shape}.ex")
+        File.write!(path, source)
+        assert credo_issues(source, "caller_consult_#{shape}.ex") != []
+        path
+      end
+
+    for consult_beam <- compile!(consult_paths, dir, true) do
+      assert {:ok, consult_scan} = BeamWalker.scan(consult_beam)
+
+      assert Enum.any?(hits(consult_scan), fn
+               {:mfa, {:file, :consult, arity}} when arity in [1, :_] -> true
+               _ -> false
+             end)
+    end
+
     assert credo_issues("quote do: :file.consult(path)", "quoted_consult.ex") != []
   end
 
@@ -642,6 +655,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
       Fablebook.GuardFixture.StrictPathConsult => [
         {:mfa, {:file, :path_consult, 2}},
         {:mfa, {:file, :path_consult, :_}}
+      ],
+      Fablebook.GuardFixture.StrictConsult => [
+        {:mfa, {:file, :consult, 1}},
+        {:mfa, {:file, :consult, :_}}
       ],
       Fablebook.GuardFixture.StrictCtMake => [],
       Fablebook.GuardFixture.StrictWriteThenLoad => []
@@ -787,6 +804,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     defmodule Fablebook.GuardFixture.StrictPathConsult do
       def run(dirs, file), do: :file.path_consult(dirs, file)
+    end
+
+    defmodule Fablebook.GuardFixture.StrictConsult do
+      def run(path), do: :file.consult(path)
     end
 
     defmodule Fablebook.GuardFixture.StrictCtMake do
