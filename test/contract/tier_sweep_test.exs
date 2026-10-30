@@ -321,10 +321,10 @@ defmodule Fablebook.Contract.TierSweepTest do
                 {:erl_ddll, :try_load}
               ] ++ for(fun <- @eval_funs, do: {:erl_eval, fun})
   @boundary_lane_specific [
-    {:ordsets, :latest},
-    {:sets, :latest},
-    {:erl_features, :latest},
-    {:records, :latest}
+    {:ordsets, :floor},
+    {:sets, :floor},
+    {:erl_features, :floor},
+    {:records, :floor}
   ]
   @boundary_exclusions [
     {{:code,
