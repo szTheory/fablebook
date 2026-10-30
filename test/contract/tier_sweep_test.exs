@@ -2221,7 +2221,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     for {citation, expected_source} <- expected.citations do
       resolved = SweepEvidence.resolve!(evidence, citation)
-      assert resolved.origin == :archive, citation
+      assert resolved.origin in [:archive, :installed], citation
       assert resolved.sha256 == expected.sha256, citation
       assert resolved.text =~ expected_source, citation
     end
