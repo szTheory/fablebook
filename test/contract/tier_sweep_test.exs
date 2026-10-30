@@ -3733,3 +3733,67 @@ defmodule Fablebook.Contract.TierSweepTest do
     File.write!(Path.join(ebin, "#{app}.app"), :io_lib.format("~tp.~n", [app_resource]))
   end
 end
+
+defmodule Fablebook.Test.InstalledOtpReceiptTest do
+  use ExUnit.Case, async: false
+  alias Fablebook.Test.{InstalledOtp, SweepEvidence}
+
+  @moduletag :inventory_support
+  @marker "FABLEBOOK_OTP_INVENTORY_V1 "
+
+  test "extracts a receipt from CI lines with job and timestamp prefixes" do
+    lines = receipt_lines("core")
+    dir = Path.join(System.tmp_dir!(), "fablebook-receipt-#{System.unique_integer([:positive])}")
+    File.mkdir_p!(dir)
+    on_exit(fn -> File.rm_rf!(dir) end)
+
+    log_path = Path.join(dir, "core.log")
+    receipt_path = Path.join(dir, "core.jsonl")
+    prefix = "core\tUNKNOWN STEP\t2026-10-30T18:56:49.0917397Z "
+    File.write!(log_path, Enum.map_join(lines, "\n", &(prefix <> &1)) <> "\n")
+
+    assert InstalledOtp.extract_receipt!(log_path, receipt_path) == receipt_path
+    assert File.read!(receipt_path) == Enum.join(lines, "\n") <> "\n"
+    assert InstalledOtp.verify_receipt_lines!(lines).lane == "core"
+  end
+
+  defp receipt_lines(lane) do
+    {elixir, otp} =
+      case lane do
+        "core" -> {"1.20.4", "29.1.2"}
+        "floor" -> {"1.18.5", "27.3.4.9"}
+      end
+
+    rows = [
+      %{
+        "kind" => "meta",
+        "schema" => "fablebook.otp-inventory.v1",
+        "lane" => lane,
+        "elixir" => elixir,
+        "otp" => otp,
+        "lock_sha256" => SweepEvidence.lock_digests!()[lane]
+      },
+      %{"kind" => "app", "app" => "probe", "version" => "1.0.0", "path" => "probe-1.0.0"},
+      %{
+        "kind" => "beam",
+        "app" => "probe",
+        "version" => "1.0.0",
+        "module" => "probe",
+        "path" => "probe-1.0.0/ebin/probe.beam",
+        "inspection" => "ok",
+        "xref" => "ok",
+        "function_count" => 1,
+        "source" => "src/probe.erl"
+      }
+    ]
+
+    body = Enum.map(rows, &(@marker <> JSON.encode!(&1)))
+    digest = :crypto.hash(:sha256, Enum.join(body, "\n") <> "\n") |> Base.encode16(case: :lower)
+
+    footer =
+      @marker <>
+        JSON.encode!(%{"kind" => "footer", "apps" => 1, "beams" => 1, "sha256" => digest})
+
+    body ++ [footer]
+  end
+end
