@@ -12,12 +12,14 @@ import argparse
 import copy
 import gzip
 import hashlib
+import importlib.util
 import io
 import json
 import re
 import subprocess
 import sys
 import tarfile
+from collections import Counter
 from pathlib import Path
 
 
@@ -28,6 +30,10 @@ ARCHIVE = ROOT / "test/fixtures/guards/exact_sources.tar.gz"
 CANDIDATE = PHASE_DIR / "01.1.1.3.1-SOURCE-CANDIDATE.json"
 DECISION = PHASE_DIR / "01.1.1.3.1-SOURCE-DECISION.md"
 LEDGER = ROOT / ".planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz"
+PARENT_OWNERSHIP = LEDGER.with_name("ownership.py")
+RESERVATION_PREFLIGHT = PHASE_DIR / "preflight.py"
+RESERVATION_ADOPT = PHASE_DIR / "adopt.py"
+sys.dont_write_bytecode = True
 
 BASE_GIT_BLOB = "155874cb8152bcdf65ac3fd1afd063d7add6e7c3"
 BASE_SHA256 = "a31f1d1b19e1c8df543f4844af9d47b7ca7a79985b42bd78186f56c04da06342"
@@ -663,6 +669,186 @@ def verify_source(include_negative_controls: bool = False) -> dict:
     return report
 
 
+def load_readonly_module(name: str, path: Path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    reject(spec is not None and spec.loader is not None, "history-import", str(path))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def history_control_rows(expected: list[dict], adopt) -> list[str]:
+    def index(rows: list[dict], predicate) -> int:
+        match = next((i for i, row in enumerate(rows) if predicate(row)), None)
+        if match is None:
+            raise VerificationError("history-control-fixture", "required adopted row is absent")
+        return match
+
+    controls = [
+        (
+            "missing-selected-module-original",
+            lambda rows: rows.pop(index(rows, lambda r: r.get("t") == "module" and r.get("lane") == "core" and r.get("module") == "dbg_wx_settings")),
+        ),
+        (
+            "missing-remainder-module-observed",
+            lambda rows: rows.pop(index(rows, lambda r: r.get("t") == "observed_module" and r.get("lane") == "core" and r.get("module") == "dbg_wx_mon")),
+        ),
+        (
+            "missing-selected-root-observed",
+            lambda rows: rows.pop(index(rows, lambda r: r.get("t") == "observed_root" and r.get("lane") == "core" and r.get("module") == "dbg_wx_mon" and r.get("function") == "start")),
+        ),
+        (
+            "duplicate-canonical-root",
+            lambda rows: rows.append(copy.deepcopy(rows[index(rows, lambda r: r.get("t") == "root" and r.get("lane") == "core")])),
+        ),
+        (
+            "wrong-selected-owner",
+            lambda rows: rows[index(rows, lambda r: r.get("t") == "module" and r.get("lane") == "core" and r.get("module") == "dbg_wx_settings")].update(owner="01.1.1.3.1.2"),
+        ),
+        (
+            "changed-canonical-chain",
+            lambda rows: rows[index(rows, lambda r: r.get("t") == "root" and r.get("lane") == "core")].update(chain_id="0" * 64),
+        ),
+        (
+            "changed-current-reference",
+            lambda rows: rows[index(rows, lambda r: r.get("t") == "root" and r.get("lane") == "core")].update(references=["tampered-owner"]),
+        ),
+        (
+            "missing-overlap-occurrence",
+            lambda rows: rows[index(rows, lambda r: r.get("t") == "overlap" and r.get("lane") == "core")]["occurrences"].pop(),
+        ),
+        (
+            "missing-source-branch",
+            lambda rows: rows.pop(index(rows, lambda r: r.get("t") == "source_branch" and r.get("lane") == "core")),
+        ),
+        (
+            "bad-origin-fingerprint",
+            lambda rows: rows[index(rows, lambda r: r.get("t") == "module" and r.get("lane") == "core" and r.get("module") == "dbg_wx_settings")].update(origin_record_sha256="0" * 64),
+        ),
+    ]
+    rejected = []
+    for name, mutate in controls:
+        altered = copy.deepcopy(expected)
+        mutate(altered)
+        try:
+            adopt.validate(expected, altered)
+        except ValueError:
+            rejected.append(name + ":rejected")
+        else:
+            raise VerificationError("history-control-accepted", name)
+    return rejected
+
+
+def verify_history(include_negative_controls: bool = False) -> dict:
+    """Re-derive both immutable receipt namespaces and verify the adopted rows read-only."""
+    ownership = load_readonly_module("fablebook_parent_ownership", PARENT_OWNERSHIP)
+    preflight = load_readonly_module("fablebook_settings_preflight", RESERVATION_PREFLIGHT)
+    adopt = load_readonly_module("fablebook_settings_adopt", RESERVATION_ADOPT)
+
+    parent_rows = ownership.load_ledger()
+    parent_meta = parent_rows[0]
+    proposal = preflight.partition()
+    proposed_original = [a["record"] for a in proposal["assignments"]]
+    receipt_report: dict[str, dict] = {}
+
+    for lane in ("core", "floor"):
+        path, file_hash, rows = ownership.receipt(lane)
+        derived_original = ownership.derive(lane, path, file_hash, rows)
+        derived_original = [r for r in derived_original if r.get("t") in {"module", "root"} and r.get("owner") == preflight.PHASE]
+        parent_original = [r for r in parent_rows if r.get("t") in {"module", "root"} and r.get("lane") == lane and r.get("owner") == preflight.PHASE]
+        reject(
+            Counter(preflight.record_id(r) for r in derived_original) == Counter(preflight.record_id(r) for r in parent_original),
+            "history-original-union",
+            {"lane": lane, "derived": len(derived_original), "adopted_parent": len(parent_original)},
+        )
+        proposal_original_lane = [r for r in proposed_original if r.get("lane") == lane]
+        reject(
+            Counter(preflight.record_id(r) for r in derived_original) == Counter(preflight.record_id(r) for r in proposal_original_lane),
+            "history-original-partition",
+            {"lane": lane, "derived": len(derived_original), "partition": len(proposal_original_lane)},
+        )
+
+        observed_path = ownership.OBSERVED_FILES[lane]
+        observed_hash, observed_rows, body_hash = ownership.receipt_file(observed_path, lane)
+        derived_observed = ownership.derive_observed(
+            lane,
+            observed_path,
+            observed_hash,
+            body_hash,
+            observed_rows,
+            rows,
+            ownership.derive(lane, path, file_hash, rows),
+            parent_meta["tested_code_head"],
+            parent_meta["ci_run_id"],
+        )
+        derived_observed = [r for r in derived_observed if r.get("t") in {"observed_module", "observed_root"} and r.get("owner") == preflight.PHASE]
+        parent_observed = [r for r in parent_rows if r.get("t") in {"observed_module", "observed_root"} and r.get("lane") == lane and r.get("owner") == preflight.PHASE]
+        reject(
+            Counter(preflight.record_id(r) for r in derived_observed) == Counter(preflight.record_id(r) for r in parent_observed),
+            "history-observed-union",
+            {"lane": lane, "derived": len(derived_observed), "adopted_parent": len(parent_observed)},
+        )
+        proposal_observed_lane = [
+            a["record_sha256"]
+            for a in proposal["observed_assignments"]
+            if a["identity"].get("lane") == lane
+        ]
+        reject(
+            Counter(preflight.record_id(r) for r in derived_observed) == Counter(proposal_observed_lane),
+            "history-observed-partition",
+            {"lane": lane, "derived": len(derived_observed), "partition": len(proposal_observed_lane)},
+        )
+        receipt_report[lane] = {
+            "original_receipt_sha256": file_hash,
+            "observed_receipt_sha256": observed_hash,
+            "original_assignments": len(derived_original),
+            "observed_assignments": len(derived_observed),
+        }
+
+    expected = adopt.materialize()
+    delegated_bytes = read_bytes(adopt.OUTPUT, "adopted-delegation-unavailable")
+    try:
+        actual = [json.loads(line) for line in gzip.decompress(delegated_bytes).splitlines()]
+    except (OSError, gzip.BadGzipFile, json.JSONDecodeError) as error:
+        raise VerificationError("adopted-delegation-format", str(error)) from error
+    adopt.validate(expected, actual)
+    expected_bytes = adopt.packed(expected)
+    reject(delegated_bytes == expected_bytes, "adopted-delegation-bytes", "compressed serialization differs from read-only derivation")
+
+    parent_bytes = read_bytes(preflight.LEDGER, "parent-ledger-unavailable")
+    partition_path = preflight.HERE / (preflight.PHASE + "-PARTITION.json.gz")
+    partition_bytes = read_bytes(partition_path, "partition-unavailable")
+    metadata = actual[0]
+    parent_sha = sha256(parent_bytes)
+    partition_sha = sha256(partition_bytes)
+    reject(metadata.get("historical_sha256") == parent_sha, "adopted-parent-digest", {"expected": parent_sha, "actual": metadata.get("historical_sha256")})
+    reject(metadata.get("partition_sha256") == partition_sha, "adopted-partition-digest", {"expected": partition_sha, "actual": metadata.get("partition_sha256")})
+    source_branches = [r for r in actual if r.get("t") == "source_branch"]
+    reject(
+        len(source_branches) == 2
+        and {r.get("lane") for r in source_branches} == {"core", "floor"}
+        and all(r.get("owner") == preflight.PHASE + ".1" and r.get("origin_owner") == preflight.PHASE and r.get("completion") == "pending" for r in source_branches),
+        "adopted-source-branches",
+        source_branches,
+    )
+
+    controls = history_control_rows(expected, adopt) if include_negative_controls else None
+    return {
+        "status": "verified",
+        "parent_ledger_sha256": parent_sha,
+        "partition_sha256": partition_sha,
+        "adopted_delegation_sha256": sha256(delegated_bytes),
+        "adopted_records": len(actual),
+        "original_observed_receipts": receipt_report,
+        "original_partition_records": len(proposed_original),
+        "observed_partition_records": len(proposal["observed_assignments"]),
+        "source_branch_lanes": sorted(r["lane"] for r in source_branches),
+        "adopted_serialization_exact": True,
+        "history_controls": controls,
+        "parent_history_unchanged": True,
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Verify the approved installed exact-source successor without network access."
@@ -670,14 +856,23 @@ def main(argv: list[str] | None = None) -> int:
     subparsers = parser.add_subparsers(dest="command", required=True)
     verify = subparsers.add_parser("verify-source")
     verify.add_argument("--negative-controls", action="store_true")
+    history = subparsers.add_parser("verify-history")
+    history.add_argument("--negative-controls", action="store_true")
     args = parser.parse_args(argv)
 
     try:
-        report = verify_source(include_negative_controls=args.negative_controls)
-    except VerificationError as error:
+        if args.command == "verify-source":
+            report = verify_source(include_negative_controls=args.negative_controls)
+        else:
+            report = verify_history(include_negative_controls=args.negative_controls)
+    except (VerificationError, ValueError, OSError, KeyError, IndexError) as error:
         print(
             json.dumps(
-                {"status": "rejected", "reason": error.reason, "detail": error.detail},
+                {
+                    "status": "rejected",
+                    "reason": getattr(error, "reason", type(error).__name__),
+                    "detail": getattr(error, "detail", str(error)),
+                },
                 sort_keys=True,
             ),
             file=sys.stderr,

@@ -3746,7 +3746,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
-    audit_module = Module.concat([Fablebook, Test, DebuggerSettings])
+    audit_module = DebuggerSettings
 
     assert Code.ensure_loaded?(audit_module),
            "the settings audit must provide source-backed records for the complete dialog and replay path"
@@ -3982,7 +3982,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :saved_settings_audit
   test "deferred callback routes have distinct source branch identities" do
-    audit_module = Module.concat([Fablebook, Test, DebuggerSettings])
+    audit_module = DebuggerSettings
     assert Code.ensure_loaded?(audit_module)
     branch_ids = apply(audit_module, :branch_ids, []) |> MapSet.new()
 
