@@ -2,17 +2,17 @@
 gsd_state_version: "1.0"
 current_phase: 01.1.1.2
 current_phase_name: Installed OTP inventory and Common Test guard slice
-status: executing
-stopped_at: Completed 01.1.1.2-01-PLAN.md
-last_updated: "2026-10-30T22:44:24.207Z"
-last_activity: 2026-10-30
-last_activity_desc: Plan 01 is merged green with exact receipts; Plan 02 is next and has not started
-state_head: c084f37f3d4c046515af5fcdea3ada3d3a4ad423
+status: ready_for_verification
+stopped_at: Completed 01.1.1.2-02-PLAN.md; parent phase verification pending
+last_updated: "2026-10-31T00:47:19.290Z"
+last_activity: 2026-10-31
+last_activity_desc: Plan 02 merged green at its exact tested head; parent phase verification is pending
+state_head: 1c232f69e7315ca09e02b9b3a2163487e66aee5c
 progress:
   total_phases: 42
   completed_phases: 1
   total_plans: 19
-  completed_plans: 18
+  completed_plans: 19
   percent: 2
 ---
 
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.2 — Plan 01 is complete; Plan 02 Common Test is next, with the final review pass reserved for it
+**Current focus:** Phase 01.1.1.2 — Plans 01 and 02 are complete; parent phase verification is pending
 
 ## Current Position
 
 Phase: 01.1.1.2 (Installed OTP inventory and Common Test guard slice) — IN PROGRESS
-Plan: 2 of 2 (Plan 01 complete; Plan 02 not started)
-Status: Plan 01 merged green after the separately authorized Phoenix.HTML 4.4.0 maintenance PR and exact final-head CI; parent executor owns Plan 02 dispatch
-Last activity: 2026-10-30 — PR #27 merged at tested head 3dc865e with complete core/floor receipts; SEC-01 remains Pending for Phase 5
+Plan: 2 of 2 (Plans 01 and 02 complete; phase verification pending)
+Status: PR #27 and PR #29 are merged green at their exact tested heads; parent executor owns the shared phase-verification gates
+Last activity: 2026-10-31 — PR #29 merged at tested head 3f9590c with complete CommonTest coverage and final core/floor receipts; SEC-01 remains Pending for Phase 5
 
 Progress: [░░░░░░░░░░] 2%
 
@@ -75,6 +75,7 @@ Progress: [░░░░░░░░░░] 2%
 | Phase 01.1.1.1 P06 | 57 min | 2 tasks | 3 files |
 | Phase 01.1.1.1 P07 | 48 min | 2 tasks | 5 files |
 | Phase 01.1.1.2 P01 | 264min | 3 tasks | 11 files |
+| Phase 01.1.1.2 P02 | 102min | 3 tasks | 18 files |
 
 ## Accumulated Context
 
@@ -128,7 +129,9 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.1]: SEC-01 stays Pending for Phase 5; remaining inventory, carried-exclusion, Macro, and wording work stays with its planned owners.
 - [Phase 01.1.1.2]: Phoenix.HTML 4.4.0 was merged in a separate security PR with both lockfile provenance records refreshed before exact inventory delivery.
 - [Phase 01.1.1.2]: The inventory PR merged only after exact core and floor receipts validated against the final tested head and all required checks passed.
-- [Phase 01.1.1.2]: Four of five review passes are used; the final pass remains reserved for Common Test, and SEC-01 stays Pending for Phase 5.
+- [Phase 01.1.1.2]: All five allocated review passes are used, with the final CommonTest finding fixed and verified on the exact merged head; SEC-01 remains Pending for Phase 5.
+- [Phase 01.1.1.2]: ct_make four-export caller-file and load coverage is source-disposed and mirrored on both exact lanes; other CommonTest families remain pending for 01.1.1.3
+- [Phase 01.1.1.2]: SEC-01 remains Pending for Phase 5; static coverage does not claim runtime or mutation proof
 
 ### Pending Todos
 
@@ -145,7 +148,7 @@ None yet.
 - [Phase 17 and 18]: depend on abracabrand's two-session process; keep the minimal-token fallback so the phase can merge.
 - [Phases 2 and 18]: neither completes a requirement on its own (a vertical slice and a content track); they feed QA-04, VIS-01/02 and QA-06.
 - Historical CI run 41127014456 on PR head 76edcb6 stopped both exact lanes at `escript.debug/3`; the source-backed private-front correction and removal witness are in the merged PR.
-- Plan 01 is complete: PR #27 merged at `3dc865e` after run 41137949115 passed core, floor, dialyzer, security and ci-gate and both receipts validated. PR #28 separately merged Phoenix.HTML 4.4.0 with lock provenance refreshed. Plan 02 is next but not started; review pass 5 remains reserved for Common Test. SEC-01 remains Pending for Phase 5.
+- Plan 01 is complete: PR #27 merged at `3dc865e` after run 41137949115 passed core, floor, dialyzer, security and ci-gate and both receipts validated. PR #28 separately merged Phoenix.HTML 4.4.0 with lock provenance refreshed. Plan 02 is complete: PR #29 merged green at exact head 3f9590c; pass 5 is consumed and SEC-01 remains Pending for Phase 5. Parent phase verification is pending.
 
 ### Roadmap Evolution
 
@@ -163,8 +166,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T22:44:24.080Z
-Stopped at: Completed 01.1.1.2-01-PLAN.md
+Last session: 2026-10-31T00:47:19.197Z
+Stopped at: Completed 01.1.1.2-02-PLAN.md; parent phase verification pending
 Next independent command: Parent executor dispatches Plan 02 after this completed Plan 01 handoff; no user action or acknowledgment is needed
 Resume file: None
 

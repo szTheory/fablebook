@@ -234,7 +234,7 @@ Plans:
 - [x] 01.1.1.2-01-PLAN.md — Independent full installed OTP discovery/inspection, fatal omission controls and exact-lane inventory receipts (merged green; final head receipts recorded)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01.1.1.2-02-PLAN.md — Exact-source Common Test export dispositions, mirrored static guards and final scoped green delivery
+- [x] 01.1.1.2-02-PLAN.md — Exact-source Common Test export dispositions, mirrored static guards and final scoped green delivery
 
 ### Phase 01.1.1.3: Installed OTP front-door coverage in calibrated source families (INSERTED)
 
