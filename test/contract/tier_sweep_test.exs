@@ -2914,6 +2914,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     lane_record = Enum.find(records, &(&1.lane == evidence.lane.name))
     record_index = Enum.find_index(records, &(&1.original_id == lane_record.original_id))
 
+    assert Map.get(lane_record, :branch_citations) != nil,
+           "the selected-file audit must cover local/global, cancel, empty/error and parser-filter branches"
+
     assert_raise ExUnit.AssertionError, fn ->
       assert_debugger_audit!(
         List.delete_at(records, record_index),
