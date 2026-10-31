@@ -3153,6 +3153,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_debugger_audit!(records, ctx.graph, tier, evidence, @exclusions)
 
     lane_record = Enum.find(records, &(&1.lane == evidence.lane.name))
+    assert Map.has_key?(lane_record, :family_function_audit),
+           "the debugger audit must source-dispose every discovered assigned function"
+
     record_index = Enum.find_index(records, &(&1.original_id == lane_record.original_id))
 
     assert Map.get(lane_record, :branch_citations) != nil,
