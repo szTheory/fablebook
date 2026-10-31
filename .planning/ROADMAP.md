@@ -225,15 +225,15 @@ Plans:
   2. The Common Test caller-file/load path is source-disposed and statically caught in both guards with uncalled fixtures; StrictCtMake reports hits.
   3. Discovered, successfully inspected and active-disposition sets are distinct. Existing sweep scope never shrinks; pending families are explicit transfers to 01.1.1.3, never exclusions or a full-coverage pass. Full installed equality/zero-undisposed enforcement is owned by its final bounded child and 01.1.1.5.
   4. At most five bounded plans/about three working days; all scoped PRs merge green with exact-lane CI links and the unchanged collision/diff gates. Further newly reached work is split before exceeding the budget.
-**Plans:** 2 (Plan 01 complete; Plan 02 not started; phase remains in progress)
+**Plans:** 2 (both plans complete; phase goal verification pending)
 
-**Execution status:** Plan 01 is merged green. Separate security PR #28 merged Phoenix.HTML 4.4.0 and refreshed both lock provenance records; inventory PR #27 then passed core, floor, dialyzer, security and ci-gate on exact head `3dc865e449f357d3fe4651d2525fff189ca51f4b` in run 41137949115, with both validated receipts, and merged as `5f8ce38b200b24925845587bf9f09072a52ea6c0` (current main). Plan 02 is next and not started. SEC-01 remains Pending for Phase 5.
+**Execution status:** Both plans are merged green. Security prerequisite PR #28 updated Phoenix.HTML to 4.4.0 and refreshed lock provenance; inventory PR #27 merged with complete exact-lane receipts. Common Test PR #29 merged as `54c6afbc6b2c2bdd8982ff50f807637d636c05ba` after run 41150169442 passed every required check on its exact tested head, with final validated receipts and the last review finding resolved. Shared phase goal verification remains pending. SEC-01 stays Pending for Phase 5; parent verification debt is unchanged.
 
 Plans:
 **Wave 1**
 - [x] 01.1.1.2-01-PLAN.md — Independent full installed OTP discovery/inspection, fatal omission controls and exact-lane inventory receipts (merged green; final head receipts recorded)
 
-**Wave 2** *(blocked on Wave 1 completion)*
+**Wave 2**
 - [x] 01.1.1.2-02-PLAN.md — Exact-source Common Test export dispositions, mirrored static guards and final scoped green delivery
 
 ### Phase 01.1.1.3: Installed OTP front-door coverage in calibrated source families (INSERTED)
