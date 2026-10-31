@@ -3739,6 +3739,27 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :saved_settings_audit
+  test "saved-settings dialog and replay have exact lane source and branch coverage", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    audit_module = Module.concat([Fablebook, Test, DebuggerSettings])
+
+    assert Code.ensure_loaded?(audit_module),
+           "the settings audit must provide source-backed records for the complete dialog and replay path"
+
+    record = apply(audit_module, :records, [evidence.lane.name])
+
+    apply(audit_module, :assert_audit!, [
+      record,
+      ctx.graph,
+      BannedCalls.banned_mfas(),
+      evidence,
+      @exclusions
+    ])
+  end
+
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
