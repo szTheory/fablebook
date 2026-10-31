@@ -17,10 +17,12 @@ import io
 import json
 import os
 import re
+import select
 import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 import uuid
 from collections import Counter
 from pathlib import Path
@@ -72,6 +74,7 @@ GENERATION_ARTIFACTS = {
     "validation": f"{OWNER}-VALIDATION.md",
 }
 RECEIPT_PREFIX = b"FABLEBOOK_OTP_INVENTORY_V2 "
+MAX_CI_JOB_LOG_BYTES = 128 * 1024 * 1024
 OBSERVED_SCHEMA = "fablebook.debugger-saved-settings-observed.v1"
 SUPPORTED_RUNTIMES = {
     "core": {"elixir": "1.20.4", "otp": "29.1.2"},
@@ -1250,13 +1253,58 @@ def current_run(ownership, pr: dict, required_run: str | None = None) -> tuple[d
     return run, snapshot, required_jobs
 
 
+def download_job_log(run_id: str, job: dict, lane: str) -> Path:
+    command = [
+        "gh", "api", "--allow-escape-sequences",
+        f"repos/szTheory/fablebook/actions/jobs/{job['databaseId']}/logs",
+    ]
+    fd, log_name = tempfile.mkstemp(prefix=f"{OWNER}-{run_id}-{lane}-ci-job-", suffix=".log", dir="/private/tmp")
+    log_path = Path(log_name)
+    process = None
+    try:
+        with os.fdopen(fd, "wb") as stream:
+            try:
+                process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            except OSError as error:
+                raise VerificationError("ci-log-unavailable", str(error)) from error
+            assert process.stdout is not None and process.stderr is not None
+            deadline = time.monotonic() + 300
+            log_size = 0
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise VerificationError("ci-log-timeout", {"lane": lane, "bytes": log_size})
+                readable, _writable, _exceptional = select.select([process.stdout], [], [], min(remaining, 1.0))
+                if not readable:
+                    continue
+                chunk = os.read(process.stdout.fileno(), 64 * 1024)
+                if not chunk:
+                    break
+                log_size += len(chunk)
+                reject(log_size <= MAX_CI_JOB_LOG_BYTES, "ci-job-log-size", {"lane": lane, "bytes": log_size})
+                stream.write(chunk)
+            stderr = process.stderr.read()
+            try:
+                process.wait(timeout=max(0.1, deadline - time.monotonic()))
+            except subprocess.TimeoutExpired as error:
+                raise VerificationError("ci-log-timeout", {"lane": lane, "bytes": log_size}) from error
+            reject(process.returncode == 0, "ci-job-log", {"command": command, "exit": process.returncode,
+                   "stderr": stderr[-500:].decode("utf-8", "replace")})
+            stream.flush()
+            os.fsync(stream.fileno())
+        reject(0 < log_size <= MAX_CI_JOB_LOG_BYTES, "ci-job-log-size", {"run_id": run_id, "lane": lane, "bytes": log_size})
+        return log_path
+    except Exception:
+        if process is not None and process.poll() is None:
+            process.kill()
+            process.wait()
+        log_path.unlink(missing_ok=True)
+        raise
+
+
 def extract_job_receipt(run_id: str, job: dict, lane: str, output_path: Path) -> dict:
     output_path = artifact_target(output_path)
-    command = ["gh", "run", "view", run_id, "--log", "--job", str(job["databaseId"])]
-    try:
-        process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    except OSError as error:
-        raise VerificationError("ci-log-unavailable", str(error)) from error
+    log_path = download_job_log(run_id, job, lane)
     rows = 0
     file_hash = hashlib.sha256()
     body_hash = hashlib.sha256()
@@ -1264,24 +1312,21 @@ def extract_job_receipt(run_id: str, job: dict, lane: str, output_path: Path) ->
     temporary = Path(temporary_name)
     try:
         with os.fdopen(fd, "wb") as stream:
-            assert process.stdout is not None
-            for log_line in process.stdout:
-                if "FABLEBOOK_OTP_INVENTORY_V2 " not in log_line:
-                    continue
-                payload = log_line.split("FABLEBOOK_OTP_INVENTORY_V2 ", 1)[1].rstrip("\r\n")
-                line = RECEIPT_PREFIX + payload.encode("utf-8") + b"\n"
-                stream.write(line)
-                file_hash.update(line)
-                try:
-                    row = json.loads(line[len(RECEIPT_PREFIX):])
-                except json.JSONDecodeError as error:
-                    raise VerificationError("ci-log-receipt-json", {"lane": lane, "row": rows + 1}) from error
-                if row.get("kind") != "footer":
-                    body_hash.update(line)
-                rows += 1
-            stderr = process.stderr.read() if process.stderr else ""
-            exit_code = process.wait(timeout=90)
-            reject(exit_code == 0, "ci-job-log", {"command": command, "exit": exit_code, "stderr": stderr[-2000:]})
+            with log_path.open("r", encoding="utf-8-sig") as log_stream:
+                for log_line in log_stream:
+                    if "FABLEBOOK_OTP_INVENTORY_V2 " not in log_line:
+                        continue
+                    payload = log_line.split("FABLEBOOK_OTP_INVENTORY_V2 ", 1)[1].rstrip("\r\n")
+                    line = RECEIPT_PREFIX + payload.encode("utf-8") + b"\n"
+                    stream.write(line)
+                    file_hash.update(line)
+                    try:
+                        row = json.loads(line[len(RECEIPT_PREFIX):])
+                    except json.JSONDecodeError as error:
+                        raise VerificationError("ci-log-receipt-json", {"lane": lane, "row": rows + 1}) from error
+                    if row.get("kind") != "footer":
+                        body_hash.update(line)
+                    rows += 1
             stream.flush()
             os.fsync(stream.fileno())
         reject(rows >= 4, "ci-log-receipt-missing", {"lane": lane, "rows": rows})
@@ -1302,11 +1347,9 @@ def extract_job_receipt(run_id: str, job: dict, lane: str, output_path: Path) ->
                 "body_sha256": body_digest, "rows": rows, "runtime": SUPPORTED_RUNTIMES[lane],
                 "lock_sha256": expected_lock}
     finally:
+        log_path.unlink(missing_ok=True)
         if temporary.exists():
             temporary.unlink()
-        if process.poll() is None:
-            process.kill()
-            process.wait()
 
 
 def lock_digests_from_archive() -> dict[str, str]:
@@ -1795,6 +1838,14 @@ def validation_markdown(delivery: dict, source: dict, history: dict, controls: d
         merge_line,
         "",
     ]
+    archived_red = delivery.get("red_capture_archive")
+    if archived_red is not None:
+        lines.extend([
+            "## Preserved TDD RED capture",
+            "",
+            f"- Archived outside this generation at `{archived_red['path']}` with SHA-256 `{archived_red['sha256']}`; the RED payload is not copied into the final delivery generation.",
+            "",
+        ])
     return "\n".join(lines)
 
 
@@ -1937,16 +1988,29 @@ def self_test_delivery_verification() -> dict:
     return {"status": "passed", "controls": controls}
 
 
-def collect_ci() -> dict:
+def red_capture_archive_metadata(path_text: str | None) -> dict | None:
+    if path_text is None:
+        return None
+    path = Path(path_text)
+    expected_parent = Path("/private/tmp")
+    reject(path.is_absolute() and path.parent == expected_parent,
+           "red-capture-archive-path", str(path))
+    cursor = path
+    while cursor != Path("/"):
+        reject(not cursor.is_symlink(), "red-capture-archive-symlink", str(cursor))
+        cursor = cursor.parent
+    reject(path.is_file(), "red-capture-archive-unavailable", str(path))
+    payload = path.read_bytes()
+    return {"path": str(path), "sha256": sha256(payload), "included": False}
+
+
+def collect_ci(red_capture_archive_path: str | None = None) -> dict:
     check_artifact_paths()
     ownership, adopt = load_ownership_context()
     pr = current_pr(ownership)
     run, snapshot, jobs = current_run(ownership, pr)
     review_passes = read_review_passes()
-    prior_delivery = load_previous_delivery()
-    red_evidence = prior_delivery.get("tdd_red_evidence")
-    if red_evidence is None and prior_delivery.get("targetTest"):
-        red_evidence = prior_delivery
+    red_capture_archive = red_capture_archive_metadata(red_capture_archive_path)
 
     generation_id = new_generation_id(pr["tested_head"], str(run["databaseId"]))
     artifact_path_map = generation_artifact_path_map(generation_id)
@@ -1983,10 +2047,10 @@ def collect_ci() -> dict:
         "observed_sha256": sha256(observed_data), "authority_sha256": meta["authority_sha256"],
         "historical_sha256": meta["historical_sha256"], "partition_sha256": meta["partition_sha256"],
         "review_passes": review_passes, "merge_commit": None,
+        "red_capture_archive": red_capture_archive,
         "verification": delivery_verification_fingerprint(
             receipt_summaries, source, history, observed_controls
         ),
-        "tdd_red_evidence": red_evidence,
         "remaining_owners": {"selected": SELECTED_OWNER, "remainder": REMAINDER_OWNER,
                               "final_installed_scope": PARENT_PHASE + ".13", "later": ["01.1.1.3.1.4", "01.1.1.3.1.5"],
                               "sec_01": "pending-for-phase-5"},
@@ -2192,6 +2256,7 @@ def main(argv: list[str] | None = None) -> int:
     subparsers.add_parser("self-test-delivery-verification")
     collect = subparsers.add_parser("collect-ci")
     collect.add_argument("--pr-current", action="store_true", required=True)
+    collect.add_argument("--red-capture-archive")
     verify_ci_parser = subparsers.add_parser("verify-ci")
     verify_ci_parser.add_argument("--pr-current", action="store_true", required=True)
     verify_ci_parser.add_argument("--negative-controls", action="store_true")
@@ -2211,7 +2276,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "self-test-delivery-verification":
             report = self_test_delivery_verification()
         elif args.command == "collect-ci":
-            report = collect_ci()
+            report = collect_ci(args.red_capture_archive)
         elif args.command == "verify-ci":
             report = verify_ci(negative_controls=args.negative_controls)
         else:
