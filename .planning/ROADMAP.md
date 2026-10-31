@@ -37,7 +37,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
 - [x] **Phase 01.1.1.1: Exact-source evidence and named atom-creator guards** (INSERTED) - preserve merged source/PathConsult tracer; finish consult/Yecc and Logger/ExUnit fronts (completed 2026-10-30)
-- [ ] **Phase 01.1.1.2: Installed OTP inventory and Common Test guard slice** (INSERTED) - independent exact-lane installation discovery and real Common Test guard
+- [x] **Phase 01.1.1.2: Installed OTP inventory and Common Test guard slice** (INSERTED) - independent exact-lane installation discovery and real Common Test guard (completed 2026-10-30)
 - [ ] **Phase 01.1.1.3: Installed OTP front-door coverage in calibrated source families** (INSERTED) - unplanned scope reservation; split into bounded source-family phases before execution
 - [ ] **Phase 01.1.1.4: Carried exclusion truth in calibrated source families** (INSERTED) - unplanned scope reservation; preserve every original identity and matched function across bounded audit phases
 - [ ] **Phase 01.1.1.5: Complete audit enforcement and truthful guard explanation** (INSERTED) - unconditional full coverage/removal gates and approved changed wording; closes original three transfers
@@ -225,9 +225,9 @@ Plans:
   2. The Common Test caller-file/load path is source-disposed and statically caught in both guards with uncalled fixtures; StrictCtMake reports hits.
   3. Discovered, successfully inspected and active-disposition sets are distinct. Existing sweep scope never shrinks; pending families are explicit transfers to 01.1.1.3, never exclusions or a full-coverage pass. Full installed equality/zero-undisposed enforcement is owned by its final bounded child and 01.1.1.5.
   4. At most five bounded plans/about three working days; all scoped PRs merge green with exact-lane CI links and the unchanged collision/diff gates. Further newly reached work is split before exceeding the budget.
-**Plans:** 2 (both plans complete; phase goal verification pending)
+**Plans:** 2/2 complete; phase goal verification passed
 
-**Execution status:** Both plans are merged green. Security prerequisite PR #28 updated Phoenix.HTML to 4.4.0 and refreshed lock provenance; inventory PR #27 merged with complete exact-lane receipts. Common Test PR #29 merged as `54c6afbc6b2c2bdd8982ff50f807637d636c05ba` after run 41150169442 passed every required check on its exact tested head, with final validated receipts and the last review finding resolved. Shared phase goal verification remains pending. SEC-01 stays Pending for Phase 5; parent verification debt is unchanged.
+**Execution status:** Complete and verified. Both plans are merged green. Security prerequisite PR #28 updated Phoenix.HTML to 4.4.0 and refreshed lock provenance; inventory PR #27 merged with complete exact-lane receipts. Common Test PR #29 merged as `54c6afbc6b2c2bdd8982ff50f807637d636c05ba` after run 41150169442 passed every required check on its exact tested head, with final validated receipts and the last review finding resolved. Canonical goal verification passed all 12 must-haves, with no human UAT. SEC-01 stays Pending for Phase 5; parent verification debt is unchanged.
 
 Plans:
 **Wave 1**

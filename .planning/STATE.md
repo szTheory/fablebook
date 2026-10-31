@@ -1,13 +1,13 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.2
-current_phase_name: Installed OTP inventory and Common Test guard slice
+current_phase: 1
+current_phase_name: Release pipeline, CI gate and guards
 status: ready_for_verification
-stopped_at: Completed 01.1.1.2-02-PLAN.md; parent phase verification pending
-last_updated: "2026-10-31T00:47:19.290Z"
+stopped_at: Phase 01.1.1.2 verified complete; parent debt retained; independent 01.1.1.3 discussion ready, not started
+last_updated: "2026-10-31T01:01:25.951Z"
 last_activity: 2026-10-31
-last_activity_desc: Plan 02 merged green at its exact tested head; parent phase verification is pending
-state_head: 1c232f69e7315ca09e02b9b3a2163487e66aee5c
+last_activity_desc: Phase 01.1.1.2 complete, transitioned to Phase 1
+state_head: 98a0b7c1042ec701f882ad6049a53381e5a63e38
 progress:
   total_phases: 42
   completed_phases: 1
@@ -23,21 +23,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.2 — Plans 01 and 02 are complete; parent phase verification is pending
+**Current focus:** Phase 01.1.1.2 is verified complete. The Phase 1 pointer retains unresolved parent debt; independent next work is discussing calibrated 01.1.1.3 audit families. No next workflow is running.
 
 ## Current Position
 
-Phase: 01.1.1.2 (Installed OTP inventory and Common Test guard slice) — IN PROGRESS
-Plan: 2 of 2 (Plans 01 and 02 complete; phase verification pending)
-Status: PR #27 and PR #29 are merged green at their exact tested heads; parent executor owns the shared phase-verification gates
-Last activity: 2026-10-31 — PR #29 merged at tested head 3f9590c with complete CommonTest coverage and final core/floor receipts; SEC-01 remains Pending for Phase 5
+Phase: 1 — Release pipeline, CI gate and guards
+Plan: 5
+Status: Phase 01.1.1.2 verified complete; Phase 1 verification debt remains pending and no parent workflow has started
+Last activity: 2026-10-30 — Phase 01.1.1.2 complete, transitioned to Phase 1
 
 Progress: [░░░░░░░░░░] 2%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 9
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -47,6 +47,7 @@ Progress: [░░░░░░░░░░] 2%
 |-------|-------|-------|----------|
 | 01.1.1 | 5 | 316 min | 63.2 min |
 | 01.1.1.1 | 2 | - | - |
+| 01.1.1.2 | 2 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -140,7 +141,7 @@ None yet.
 ### Blockers/Concerns
 
 - [Parent verification debt]: Phase 1 and 01.1 reports remain gaps_found; phase.complete routed to Phase 1 for re-verification. Do not mark either parent complete from the child report.
-- [Phase 01.1.1.1]: Parser disposition, unswept installed OTP apps/debugger remainder, and full carried-exclusion audit remain open per INT-20261029-02.
+- [Later audit ownership]: Installed OTP discovery/inspection is complete. Remaining source-family front dispositions and debugger remainder stay with calibrated 01.1.1.3 children; full carried-exclusion/Macro work stays with .4 and unconditional enforcement/wording with .5. SEC-01 remains Pending / Phase 5.
 
 - [Before Phase 1 to 4 planning]: owner answers (or accepts the recommended answers) for Q7, Q9, Q12, Q13, Q15, Q19, Q20, Q24. Q14 and Q16 before Phase 4. Q8 before Phase 7. Q17 before Phase 25. Q21 before Phase 1 (SBOM) and Phase 13 (QR).
 - [Phase 2]: the runner spike decides Q1; media emulation through the wrapper is the blocker candidate.
@@ -148,7 +149,7 @@ None yet.
 - [Phase 17 and 18]: depend on abracabrand's two-session process; keep the minimal-token fallback so the phase can merge.
 - [Phases 2 and 18]: neither completes a requirement on its own (a vertical slice and a content track); they feed QA-04, VIS-01/02 and QA-06.
 - Historical CI run 41127014456 on PR head 76edcb6 stopped both exact lanes at `escript.debug/3`; the source-backed private-front correction and removal witness are in the merged PR.
-- Plan 01 is complete: PR #27 merged at `3dc865e` after run 41137949115 passed core, floor, dialyzer, security and ci-gate and both receipts validated. PR #28 separately merged Phoenix.HTML 4.4.0 with lock provenance refreshed. Plan 02 is complete: PR #29 merged green at exact head 3f9590c; pass 5 is consumed and SEC-01 remains Pending for Phase 5. Parent phase verification is pending.
+- Phase 01.1.1.2 is verified complete: PRs #27/#28/#29 are merged, final exact core/floor receipts validate, all required checks pass, and the final review warning is resolved. Five owner-approved review passes are consumed. Parent debt and SEC-01 remain with their owners.
 
 ### Roadmap Evolution
 
@@ -166,15 +167,15 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-31T00:47:19.197Z
-Stopped at: Completed 01.1.1.2-02-PLAN.md; parent phase verification pending
-Next independent command: Parent executor dispatches Plan 02 after this completed Plan 01 handoff; no user action or acknowledgment is needed
+Last session: 2026-10-31T01:03:24Z
+Stopped at: Phase 01.1.1.2 verified complete; no next workflow started
+Next independent command: $gsd-discuss-phase 01.1.1.3 — scope and calibrate the remaining installed OTP source-family audit children
 Resume file: None
 
 ## Completed phase receipt
 
-Phase 01.1.1.1 is complete under its narrowed goal: all four success criteria passed, no human verification remains, both review findings are fixed, and the owner-renewed independent review is clean. PRs 24/25/26 are merged with required exact-head CI green. The canonical VERIFICATION report contains the CLI-generated covered-input digest and explicit future ownership. No new requirement was completed; SEC-01 remains Pending / Phase 5.
+Phase 01.1.1.2 is complete under its bounded goal: both plans and all twelve verified must-haves passed, all scoped code and the security prerequisite merged green, exact core/floor receipts validate, and no human UAT remains. The canonical VERIFICATION report contains the CLI-generated covered-input fingerprint. No requirement was completed; SEC-01 remains Pending for Phase 5.
 
-The phase-completion query routes the pointer to Phase 1 because parent verification debt remains; no parent report or UAT gap was closed. Independent next work on 01.1.1.2 can be discussed using the verified child prerequisite. Later .3/.4 work still requires calibrated children and all original whole-audit/owner-judgment gates remain. No next-phase workflow was started.
+The completion query retains the Phase 1 pointer because parent verification debt remains. No parent report, UAT gap or debug session was closed. Installed-versus-active semantic equality, remaining front doors, carried exclusions, Macro judgment, unconditional enforcement, explanation wording and runtime/mutation proof remain with their stated .3/.4/.5/Phase 5 owners.
 
-At the planning close, the next command was `$gsd-execute-phase 01.1.1.2`; Plan 01 is now complete, and Plan 02 remains the next owner-dispatched plan. No phase or requirement completion is claimed here.
+Independent next work is `$gsd-discuss-phase 01.1.1.3`, using this phase's measured inventory and verified prerequisite to define bounded source-family children. This command has not been started; the owner acts next at the phase boundary.
