@@ -1186,6 +1186,34 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
+  @tag :saved_settings_tracer
+  test "saved-settings monitor front is caught by both guards without invocation", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    source = """
+    defmodule Fablebook.GuardFixture.SavedSettingsTracer do
+      def probe(mode, path), do: :dbg_wx_mon.start(mode, path)
+    end
+    """
+
+    source_path = Path.join(dir, "saved_settings_tracer.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    mfa = {:dbg_wx_mon, :start, 2}
+    assert {:mfa, mfa} in hits(scan)
+
+    refute {:mfa, mfa} in hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+           "the uncalled positive probe must depend on its individual MFA tier"
+
+    assert credo_issues(source_path) != []
+  end
+
+  @tag :tmp_dir
   test "selected-file debugger direct capture apply and UTF-8 probes stay uncalled", %{
     tmp_dir: dir
   } do
