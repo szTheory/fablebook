@@ -1,0 +1,16 @@
+{
+  "command": "mix test --warnings-as-errors test/contract/banned_calls_test.exs --name-pattern \"exported stack decoder caller binary hits both guards without invocation\"",
+  "exitCode": 2,
+  "output": "TAP version 13\nnot ok 1 - exported stack decoder caller binary hits both guards without invocation\n  ---\n  message: direct probe missed the exported decoder\n  ...\n1..1\n",
+  "targetTest": "exported stack decoder caller binary hits both guards without invocation",
+  "targetFile": "test/contract/banned_calls_test.exs",
+  "expected": "The compiled uncalled decoder probe has an exact guard hit.",
+  "actual": "The direct probe missed the exported decoder.",
+  "provenance": {
+    "kind": "isolated-test-commit-replay",
+    "commit": "7c8e4bd2dfb08d9fc7c454fcbee83ba0cea34e63",
+    "elixir": "1.20.4",
+    "otp": "29.1.2",
+    "raw_report": "01.1.1.3-DECODER-RED-REPLAY.md"
+  }
+}
