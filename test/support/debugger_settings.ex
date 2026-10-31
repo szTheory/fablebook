@@ -583,6 +583,38 @@ defmodule Fablebook.Test.DebuggerSettings do
   def records(lane_name),
     do: raise(ArgumentError, "unsupported debugger settings lane: #{inspect(lane_name)}")
 
+  def assert_receipt!(graph, evidence, records, receipt_lines) when is_list(receipt_lines) do
+    lane = graph.lane.name
+
+    require_ownership!(
+      evidence.lane.name == lane,
+      "lane #{lane} owner=#{@owner} source evidence lane=#{evidence.lane.name} caller-chain=receipt validator remedy=use matching lane source evidence"
+    )
+
+    current_receipt = Fablebook.Test.InstalledOtp.verify_receipt_lines!(graph.receipt_lines)
+    supplied_receipt = Fablebook.Test.InstalledOtp.verify_receipt_lines!(receipt_lines)
+
+    require_ownership!(
+      supplied_receipt.lane == lane and supplied_receipt.sha256 == current_receipt.sha256,
+      "lane #{lane} owner=#{@owner} supplied receipt differs from the current installed graph; caller-chain=graph receipt_lines remedy=use the complete current-lane receipt"
+    )
+
+    ownership = assert_ownership!(Map.put(graph, :receipt_lines, receipt_lines), evidence, records)
+
+    require_ownership!(
+      ownership.status == :verified and ownership.receipt_sha256 == supplied_receipt.sha256 and
+        ownership.selected_module == @settings_module and
+        ownership.remainder_module_count > 0,
+      "lane #{lane} owner=#{@owner} current selected/remainder evidence does not match the validated receipt; caller-chain=assert_ownership!/3 remedy=restore selected settings evidence and the complete pending remainder"
+    )
+
+    ownership
+  end
+
+  def assert_receipt!(_graph, _evidence, _records, _receipt_lines) do
+    ownership_fail!("current installed receipt must be a complete list of tagged lines")
+  end
+
   def load_delegation! do
     root = File.cwd!()
     delegation_path = Path.join([root, @delegation_dir, @delegation_file])
