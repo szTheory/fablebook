@@ -766,3 +766,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 35 (decimal insertion
 | 35. Dogfood setup | 0/4 | Not started | - |
 
 Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a phase that needs more than 5 plans splits.
+
+### Phase 01.1.1.3.1.1: Debugger saved-settings replay and deferred callback guards
+
+### Phase 01.1.1.3.1.2: Debugger trace breakpoint monitor and interpreter remainder research
