@@ -4136,8 +4136,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert ownership.status == :verified
     assert ownership.lane == ctx.graph.lane.name
+
     assert ownership.receipt_sha256 ==
              InstalledOtp.verify_receipt_lines!(receipt_lines).sha256
+
     assert ownership.selected_module == :dbg_wx_settings
     assert ownership.remainder_module_count == 20
 
@@ -4168,7 +4170,12 @@ defmodule Fablebook.Contract.TierSweepTest do
     wrong_source_records = Map.put(records, :source_sha256, String.duplicate("0", 64))
 
     assert_raise ExUnit.AssertionError, fn ->
-      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, wrong_source_records, receipt_lines])
+      apply(DebuggerSettings, :assert_receipt!, [
+        ctx.graph,
+        evidence,
+        wrong_source_records,
+        receipt_lines
+      ])
     end
   end
 
@@ -4185,7 +4192,10 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> transform.()
 
     encoded = Enum.map(body, &(marker <> JSON.encode!(&1)))
-    digest = :crypto.hash(:sha256, Enum.join(encoded, "\n") <> "\n") |> Base.encode16(case: :lower)
+
+    digest =
+      :crypto.hash(:sha256, Enum.join(encoded, "\n") <> "\n") |> Base.encode16(case: :lower)
+
     {:ok, footer} = JSON.decode(String.replace_prefix(List.last(lines), marker, ""))
 
     encoded ++ [marker <> JSON.encode!(Map.put(footer, "sha256", digest))]

@@ -599,7 +599,8 @@ defmodule Fablebook.Test.DebuggerSettings do
       "lane #{lane} owner=#{@owner} supplied receipt differs from the current installed graph; caller-chain=graph receipt_lines remedy=use the complete current-lane receipt"
     )
 
-    ownership = assert_ownership!(Map.put(graph, :receipt_lines, receipt_lines), evidence, records)
+    ownership =
+      assert_ownership!(Map.put(graph, :receipt_lines, receipt_lines), evidence, records)
 
     require_ownership!(
       ownership.status == :verified and ownership.receipt_sha256 == supplied_receipt.sha256 and
