@@ -1184,6 +1184,65 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert credo_issues(source_path) != []
   end
 
+  @tag :tmp_dir
+  test "selected-file debugger direct capture apply and UTF-8 probes stay uncalled", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    mfa = {:dbg_wx_interpret, :start, 4}
+
+    for form <- [:direct, :capture, :apply, :utf8] do
+      source = debugger_selected_file_probe_source(form)
+      source_path = Path.join(dir, "debugger_selected_file_#{form}.ex")
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "#{form} probe missed the selected-file front: #{inspect(hits(scan))}"
+
+      refute Enum.any?(hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))), &mfa_hit?(&1, mfa)),
+             "#{form} probe must depend on the individual selected-file MFA tier"
+
+      assert credo_issues(source, "debugger_selected_file_#{form}.ex") != []
+    end
+  end
+
+  @tag :tmp_dir
+  test "selected-file calls in discarded quotes and uninvoked macros stay source-only", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    source = """
+    defmodule Fablebook.GuardFixture.DebuggerSelectedFileSourceOnly do
+      def quoted(window, directory) do
+        quote do
+          :dbg_wx_interpret.start(unquote(window), {0, 0}, unquote(directory), :local)
+        end
+      end
+
+      defmacro uninvoked(window, directory) do
+        quote do
+          :dbg_wx_interpret.start(unquote(window), {0, 0}, unquote(directory), :local)
+        end
+      end
+    end
+    """
+
+    source_path = Path.join(dir, "debugger_selected_file_source_only.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+
+    assert credo_issues(source_path) != []
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    refute {:mfa, {:dbg_wx_interpret, :start, 4}} in hits(scan)
+  end
+
   test "the Credo check bans the same names and flags the source-level fixtures" do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
@@ -1348,6 +1407,29 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
   end
 
+  defp debugger_selected_file_probe_source(form) do
+    body =
+      case form do
+        :direct ->
+          "def probe(window, directory), do: :dbg_wx_interpret.start(window, {0, 0}, directory, :local)"
+
+        :capture ->
+          "def probe, do: &:dbg_wx_interpret.start/4"
+
+        :apply ->
+          "def probe(window, directory), do: apply(:dbg_wx_interpret, :start, [window, {0, 0}, directory, :global])"
+
+        :utf8 ->
+          "def probe(window) do\n    selected_directory = \"café.erl\"\n    {selected_directory, :dbg_wx_interpret.start(window, {0, 0}, selected_directory, :local)}\n  end"
+      end
+
+    """
+    defmodule Fablebook.GuardFixture.DebuggerSelectedFile#{Macro.camelize(to_string(form))} do
+      #{body}
+    end
+    """
+  end
+
   defp hits(%{atoms: atoms, mfas: mfas, pairs: pairs, literals: literals}, mfa_tier \\ @mfa_tier) do
     atom_hits = for atom <- @atom_tier, atom in atoms, do: {:atom, atom}
     mfa_hits = for mfa <- mfas, Enum.any?(mfa_tier, &mfa_match?(&1, mfa)), do: {:mfa, mfa}
@@ -1367,6 +1449,9 @@ defmodule Fablebook.Contract.BannedCallsTest do
     |> Enum.zip(Tuple.to_list(mfa))
     |> Enum.all?(fn {expected, actual} -> expected == :_ or expected == actual end)
   end
+
+  defp mfa_hit?({:mfa, pattern}, mfa), do: mfa_match?(pattern, mfa)
+  defp mfa_hit?(_hit, _mfa), do: false
 
   defp generated_probe_module({module, :_, :_}, index) do
     {function, arity} =
