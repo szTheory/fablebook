@@ -1215,6 +1215,88 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
+  @tag :saved_settings_probes
+  test "saved-settings exact monitor-front probe forms are caught without invocation", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    mfa = {:dbg_wx_mon, :start, 2}
+    active_without_monitor_front = Enum.reject(@mfa_tier, &(&1 == mfa))
+
+    for form <- [:direct, :default, :capture, :apply_local, :apply_global, :utf8] do
+      source = debugger_settings_probe_source(form)
+      filename = "debugger_settings_#{form}.ex"
+      source_path = Path.join(tmp_dir, filename)
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+
+      assert {:ok, scan} = BeamWalker.scan(beam)
+      assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)), "#{form} missed #{inspect(mfa)}"
+
+      refute Enum.any?(hits(scan, active_without_monitor_front), &mfa_hit?(&1, mfa)),
+             "#{form} did not depend on the exact monitor-front tier"
+
+      assert credo_issues(source, filename) != [], "Credo missed the #{form} source probe"
+    end
+  end
+
+  @tag :tmp_dir
+  @tag :saved_settings_probes
+  test "saved-settings source-only and stop controls preserve monitor-front behavior", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    mfa = {:dbg_wx_mon, :start, 2}
+
+    for form <- [:discarded_quote, :uninvoked_macro] do
+      source = debugger_settings_probe_source(form)
+      filename = "debugger_settings_#{form}.ex"
+      source_path = Path.join(tmp_dir, filename)
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+
+      assert {:ok, scan} = BeamWalker.scan(beam)
+      refute Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "#{form} must remain source-only, not become a called MFA"
+
+      assert credo_issues(source, filename) != [],
+             "Credo must retain the #{form} source-only finding"
+    end
+
+    stop_source = debugger_settings_probe_source(:stop)
+    stop_filename = "debugger_settings_stop.ex"
+    stop_path = Path.join(tmp_dir, stop_filename)
+    File.write!(stop_path, stop_source)
+    [stop_beam] = compile!([stop_path], dir, true)
+    assert {:ok, stop_scan} = BeamWalker.scan(stop_beam)
+    refute Enum.any?(hits(stop_scan), &mfa_hit?(&1, mfa))
+    assert credo_issues(stop_source, stop_filename) == [],
+           "dbg_wx_mon.stop/0 is a benign control"
+
+    wrapper_source = debugger_settings_probe_source(:wrapper)
+    wrapper_filename = "debugger_settings_wrapper.ex"
+    wrapper_path = Path.join(dir, wrapper_filename)
+    File.write!(wrapper_path, wrapper_source)
+    [wrapper_beam] = compile!([wrapper_path], dir, true)
+    assert {:ok, wrapper_scan} = BeamWalker.scan(wrapper_beam)
+
+    wrapper_mfa = {:debugger, :start, 1}
+    assert Enum.any?(hits(wrapper_scan), &mfa_hit?(&1, wrapper_mfa)),
+           "the forwarded debugger wrapper must remain covered by its existing wildcard"
+
+    refute Enum.any?(hits(wrapper_scan, Enum.reject(@mfa_tier, &(&1 == mfa))), &mfa_hit?(&1, mfa))
+
+    assert Enum.any?(hits(wrapper_scan, Enum.reject(@mfa_tier, &(&1 == mfa))), &mfa_hit?(&1, wrapper_mfa)),
+           "removing only the monitor-front tier must not remove the forwarded wrapper finding"
+
+    assert credo_issues(wrapper_source, wrapper_filename) != []
+  end
+
+  @tag :tmp_dir
   test "selected-file debugger direct capture apply and UTF-8 probes stay uncalled", %{
     tmp_dir: dir
   } do
@@ -1526,6 +1608,47 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     """
     defmodule Fablebook.GuardFixture.DebuggerSelectedFile#{Macro.camelize(to_string(form))} do
+      #{body}
+    end
+    """
+  end
+
+  defp debugger_settings_probe_source(form) do
+    body =
+      case form do
+        :direct ->
+          "def probe(mode, path), do: :dbg_wx_mon.start(mode, path)"
+
+        :default ->
+          "def probe, do: :dbg_wx_mon.start(:local, :default)"
+
+        :capture ->
+          "def probe, do: &:dbg_wx_mon.start/2"
+
+        :apply_local ->
+          "def probe(path), do: apply(:dbg_wx_mon, :start, [:local, path])"
+
+        :apply_global ->
+          "def probe(path), do: apply(:dbg_wx_mon, :start, [:global, path])"
+
+        :utf8 ->
+          "def probe, do: :dbg_wx_mon.start(:local, \"café.state\")"
+
+        :discarded_quote ->
+          "def probe do\n  quote do\n    :dbg_wx_mon.start(:local, \"café.state\")\n  end\nend"
+
+        :uninvoked_macro ->
+          "defmacro never_called(path) do\n  quote do\n    :dbg_wx_mon.start(:local, unquote(path))\n  end\nend"
+
+        :stop ->
+          "def probe, do: :dbg_wx_mon.stop()"
+
+        :wrapper ->
+          "def probe(mode), do: :debugger.start(mode)"
+      end
+
+    """
+    defmodule Fablebook.GuardFixture.DebuggerSettings#{Macro.camelize(to_string(form))} do
       #{body}
     end
     """

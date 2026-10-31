@@ -3847,6 +3847,33 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :saved_settings_audit
+  test "deferred callback routes have distinct source branch identities" do
+    audit_module = Module.concat([Fablebook, Test, DebuggerSettings])
+    assert Code.ensure_loaded?(audit_module)
+    branch_ids = apply(audit_module, :branch_ids, []) |> MapSet.new()
+
+    required =
+      MapSet.new([
+        :auto_attach_init_event,
+        :auto_attach_break_event,
+        :auto_attach_exit_event,
+        :auto_attach_event_match_spawn,
+        :auto_attach_event_nonmatch_ignore,
+        :auto_attach_already_attached_ignore,
+        :conditional_callback_clause,
+        :condition_user_eval_suppressed,
+        :condition_null_true,
+        :condition_tuple_callback,
+        :condition_callback_exception_false,
+        :condition_action_disable,
+        :condition_action_delete
+      ])
+
+    assert MapSet.subset?(required, branch_ids),
+           "deferred callback source disposition is missing #{inspect(MapSet.to_list(MapSet.difference(required, branch_ids)))}"
+  end
+
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
