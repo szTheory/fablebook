@@ -1,13 +1,13 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.3
-current_phase_name: Debugger selected-file interpreter and seed provenance
-status: awaiting_human_verification
-stopped_at: Phase 01.1.1.3 implementation merged green; two scope-acceptance items pending
-last_updated: "2026-10-31T10:32:01Z"
+current_phase: 1
+current_phase_name: Release pipeline, CI gate and guards
+status: verifying
+stopped_at: Phase 01.1.1.3 complete, ready to verify Phase 1
+last_updated: "2026-10-31T12:44:58.642Z"
 last_activity: 2026-10-31
-last_activity_desc: Phase gates completed; independent goal verification requires human scope disposition
-state_head: a1c518f
+last_activity_desc: Phase 01.1.1.3 complete, transitioned to Phase 1
+state_head: 540343205074e0f869703dd74789539c87780b26
 progress:
   total_phases: 55
   completed_phases: 1
@@ -20,24 +20,24 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-30)
+See: .planning/PROJECT.md (updated 2026-10-31)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.3 — Debugger selected-file interpreter and seed provenance
+**Current focus:** Phase 1 parent verification debt; Phase 01.1.1.3 is complete
 
 ## Current Position
 
-Phase: 01.1.1.3 (Debugger selected-file interpreter and seed provenance) — AWAITING HUMAN VERIFICATION
-Plan: 4 of 4
-Status: All plans and phase-level checks completed; two unresolved plan prohibitions require scope-acceptance review before phase closure
-Last activity: 2026-10-31 — PR #30 merged, required PR/main CI green, independent verification confirmed all positive truths; UAT records the two pending scope reviews
+Phase: 1 — Release pipeline, CI gate and guards
+Plan: 5
+Status: Parent verification remains open; selected child Phase 01.1.1.3 completed and accepted
+Last activity: 2026-10-31 — Phase 01.1.1.3 complete, transitioned to Phase 1
 
-Progress: [░░░░░░░░░░] 2%
+Progress: [████████████████████] 23/23 plans (100% of currently materialized plans; milestone and parent verification remain open)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 13
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -48,6 +48,7 @@ Progress: [░░░░░░░░░░] 2%
 | 01.1.1 | 5 | 316 min | 63.2 min |
 | 01.1.1.1 | 2 | - | - |
 | 01.1.1.2 | 2 | - | - |
+| 01.1.1.3 | 4 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -138,14 +139,14 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.2]: ct_make four-export caller-file and load coverage is source-disposed and mirrored on both exact lanes; other CommonTest families remain pending for 01.1.1.3
 - [Phase 01.1.1.2]: SEC-01 remains Pending for Phase 5; static coverage does not claim runtime or mutation proof
 - [Phase 01.1.1.3]: Discussion complete under INT-20261030-06: connected caller-chain families, independently checked exact ownership, debugger calibration first, and unconditional final installed-scope acceptance. Source review and roadmap child materialization precede executable plans. This session supersedes the older .2 receipt next-command text; no auto-advance, policy exception or budget renewal.
-- [Phase 01.1.1.3]: Research/partition/planning complete: four independently checked sequential plans guard selected-file interpretation and exported stack decoding; thirteen exact-owned reservations preserve the remainder and final unconditional installed gate. Source fixture extension is prepared but approval remains pending; SEC-01 and parent debt remain open.
+- [Phase 01.1.1.3]: Research/partition/planning and execution complete: four independently checked sequential plans guard selected-file interpretation and exported stack decoding; thirteen exact-owned reservations preserve the remainder and final unconditional installed gate. The owner-approved 22-entry source extension is delivered; SEC-01 and parent debt remain open.
 - [Phase 01.1.1.3]: Owner approved only the 22 enumerated exact-version debugger source entries under the recorded compressed-storage caps.
 - [Phase 01.1.1.3]: Only dbg_wx_interpret is active for this selected-file slice; the other debugger and wx modules remain with their pending owners.
 - [Phase 01.1.1.3]: SEC-01 remains Pending for Phase 5; this plan adds static evidence without claiming runtime or mutation proof.
 - [Phase 01.1.1.3]: Guard dbg_istk:from_external/1 as an unconstrained public binary decoder despite observed internal term_to_binary provenance.
 - [Phase 01.1.1.3]: SEC-01 remains Pending for Phase 5; this plan advances only static guard coverage.
 - [Phase 01.1.1.3]: Pin debugger function, root, active, pending-owner, source, review, and expected sets independently.
-- [Phase 01.1.1.3]: SEC-01 remains pending for Phase 5; keep PR 30 open for Plan04 changed-code review, CI, and final merge.
+- [Phase 01.1.1.3]: Plan03 retained PR 30 for Plan04 changed-code review, CI and merge; Plan04 delivered the merged green PR. SEC-01 remains pending for Phase 5.
 - [Phase 01.1.1.3]: Keep original .2 receipts and canonical owners immutable; write fresh evidence only under the observed namespace.
 - [Phase 01.1.1.3]: Require independent live PR, tested-head, run, and required-check evidence for generation and verification.
 - [Phase 01.1.1.3]: SEC-01 remains pending for Phase 5; later installed-scope, exclusion, explanation, and parent-debt obligations stay with their named owners.
@@ -156,7 +157,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 01.1.1.3 acceptance]: No observable implementation gap remains. The independent verifier returned human_needed solely for two unresolved, descriptor-less plan prohibitions about static-only claims and pending-family ownership. The owner acts next through `$gsd-verify-work 01.1.1.3`; recommended disposition is acceptance of the bounded static deliverable while retaining both limitations. No additional implementation or automatic phase advance is authorized by this handoff.
+- [Phase 01.1.1.3 retained limitations]: Owner accepted the bounded static deliverable and retained ownership in UAT; canonical verification passed and the phase is complete. Runtime atom safety, complete computed-dispatch proof, remaining source families and final installed-scope acceptance remain unverified with their recorded owners. This acceptance does not renew the review budget or authorize another phase.
 - [Parent verification debt]: Phase 1 and 01.1 reports remain gaps_found; phase.complete routed to Phase 1 for re-verification. Do not mark either parent complete from the child report.
 - [Later audit ownership]: Installed OTP discovery/inspection is complete. Remaining source-family front dispositions and debugger remainder stay with calibrated 01.1.1.3 children; full carried-exclusion/Macro work stays with .4 and unconditional enforcement/wording with .5. SEC-01 remains Pending / Phase 5.
 
@@ -185,10 +186,10 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-31T10:32:01Z
-Stopped at: Implementation merged green and phase checks completed; waiting for owner scope-acceptance review, not more tests or source approval
-Next independent command: `$gsd-verify-work 01.1.1.3` — review the delivered static claim and retained later-family ownership. Two items are persisted in the phase UAT. The phase remains pending; no later phase starts. SEC-01 and parent debt remain open.
-Resume file: .planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-UAT.md
+Last session: 2026-10-31T12:44:58Z
+Stopped at: Phase 01.1.1.3 complete after owner acceptance; no later phase started
+Next independent command: `$gsd-progress` — review the retained parent verification debt and select the next bounded audit reservation. The completion query retains Phase 1 as the next verification pointer; this child did not close its parent. No user action is needed to finish Phase 01.1.1.3.
+Resume file: None
 
 ## Completed phase receipt
 
@@ -196,4 +197,4 @@ Phase 01.1.1.2 is complete under its bounded goal: both plans and all twelve ver
 
 The historical .2 completion query retained the Phase 1 pointer because parent verification debt remained. The current pointer tracks the checked .3 plan set; parent debt is still open. No parent report, UAT gap or debug session was closed. Installed-versus-active semantic equality, remaining front doors, carried exclusions, Macro judgment, unconditional enforcement, explanation wording and runtime/mutation proof remain with their stated .3/.4/.5/Phase 5 owners.
 
-Historical .2 next-command guidance is superseded by the current Session Continuity entry. Phase .3's approved source extension and all four implementation plans are delivered in merged PR #30. Validation, security, bounded code review, regression and independent goal verification are recorded. The canonical verification status remains human_needed for the two scope-acceptance items in UAT; the phase checkbox remains open. The owner acts next through verify-work. No parent report, UAT gap or debug session was closed, and SEC-01 remains Pending for Phase 5.
+Historical .2 next-command guidance is superseded by the current Session Continuity entry. Phase .3's approved source extension and all four implementation plans are delivered in merged PR #30. Validation, security, bounded code review, regression and independent goal verification are recorded. After the owner replied "yes i accept" to the recommendation covering both scope reviews, UAT completed and canonical verification passed. Phase .3 is complete; no parent report, UAT gap or debug session was closed. SEC-01 remains Pending for Phase 5. The generic completion helper attempted to complete SEC-01 from the phase's partial reference; that bookkeeping change was corrected before commit to preserve the explicit requirement boundary.

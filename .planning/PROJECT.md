@@ -341,6 +341,7 @@ Every item below is a v1.0 commitment.
 | Installed OTP discovery is independent of active dispositions (INT-20261029-02; Phase 01.1.1.2) | Mix-pruned and unstarted applications must not disappear from inspection; new semantic work must not shrink existing coverage | Complete core/floor discovery, checked BEAM/Xref identities and receipts verified; pending families remain with calibrated 01.1.1.3 children |
 | Every ct_make public front is statically guarded, including no-load defaults (ADR 0004; Phase 01.1.1.2) | Default Emakefile/caller-file compilation and explicit load/netload paths need their own exact-source traces | All four exports have mirrored source/BEAM controls and individual tier witnesses; PR #29 merged green; runtime and SEC-01 completion remain Phase 5 |
 | Dependency security updates preserve lock/source provenance in a separate PR (INT-20261030-05) | Fixing an advisory must not bypass the source-identity gate or contract-test separation | Phoenix.HTML 4.4.0 and both lock provenance records merged in PR #28; final inventory and CT checks pass on that baseline |
+| Selected-file and exported stack-decoder fronts have independently checked static guards (Phase 01.1.1.3) | Caller-controlled selected files and public decoder inputs require their own exact-source traces; internal producer provenance does not constrain an exported input | PR #30 merged green on both exact lanes; source/function/root omissions and ownership/provenance mutations fail closed. Owner accepted the bounded static deliverable; runtime proof, remaining source families, final installed scope and SEC-01 completion remain with their named owners |
 
 ## Roadmap constraints (for the roadmapper)
 
@@ -420,4 +421,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-30 after Phase 01.1.1.2 verification and completion*
+*Last updated: 2026-10-31 after Phase 01.1.1.3 verification, owner acceptance and completion*

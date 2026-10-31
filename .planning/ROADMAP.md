@@ -38,7 +38,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
 - [x] **Phase 01.1.1.1: Exact-source evidence and named atom-creator guards** (INSERTED) - preserve merged source/PathConsult tracer; finish consult/Yecc and Logger/ExUnit fronts (completed 2026-10-30)
 - [x] **Phase 01.1.1.2: Installed OTP inventory and Common Test guard slice** (INSERTED) - independent exact-lane installation discovery and real Common Test guard (completed 2026-10-30)
-- [ ] **Phase 01.1.1.3: Debugger selected-file interpreter and seed provenance** (INSERTED) - unplanned scope reservation; split into bounded source-family phases before execution
+- [x] **Phase 01.1.1.3: Debugger selected-file interpreter and seed provenance** (INSERTED) - selected-file and exported stack-decoder static guards, exact-source audit and ownership verification (completed 2026-10-31)
 - [ ] **Phase 01.1.1.4: Carried exclusion truth in calibrated source families** (INSERTED) - unplanned scope reservation; preserve every original identity and matched function across bounded audit phases
 - [ ] **Phase 01.1.1.5: Complete audit enforcement and truthful guard explanation** (INSERTED) - unconditional full coverage/removal gates and approved changed wording; closes original three transfers
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
@@ -246,7 +246,9 @@ Plans:
   1. Every assigned root and seed path has exact-lane source-backed dispositions; unsafe exported fronts have mirrored Credo/BEAM tiers, uncalled direct/capture/apply/source-only probes, independent discovery, benign controls and individual removal witnesses. New exports/roots and omitted assignments fail closed.
   2. Offline citations pass provenance, digest, containment and line checks; changed exclusions retain full match/original identity truth and individual nonvacuous removal witnesses against complete active dispositions. Supporting sources keep their distinct owners.
   3. Existing active coverage cannot shrink; installation semantics remain pending with exact owners. A slice pass cannot satisfy final .3.13 acceptance. A scoped guard PR merges green on the exact tested head within the ordinary review cap; collision/source/policy stops remain.
-**Plans:** 4/4 plans executed
+**Plans:** 4/4 plans complete
+
+**Execution status:** Complete and accepted. PR [#30](https://github.com/szTheory/fablebook/pull/30) merged with required exact core/floor and merged-main CI green. Independent verification confirmed every positive implementation truth. The owner accepted both bounded-scope review items in `01.1.1.3-UAT.md`; canonical verification is passed. Runtime atom safety, full computed-dispatch proof, SEC-01 completion, thirteen remaining research reservations, final installed-scope acceptance, .4/.5 obligations and parent verification debt remain open with their existing owners.
 
 Plans:
 **Wave 1**
