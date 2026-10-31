@@ -3750,7 +3750,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert_debugger_audit!(records, ctx.graph, tier, wrong_lane, @exclusions)
     end
 
-    missing_source_path = "core/debugger/src/dbg_idb.erl"
+    missing_source_path = "#{evidence.lane.name}/debugger/src/dbg_idb.erl"
 
     missing_source_evidence = %{
       evidence
@@ -3796,7 +3796,10 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(corrupt_evidence.archive_root) end)
 
     File.write!(
-      Path.join(corrupt_evidence.archive_root, "core/debugger/src/dbg_idb.erl"),
+      Path.join(
+        corrupt_evidence.archive_root,
+        "#{evidence.lane.name}/debugger/src/dbg_idb.erl"
+      ),
       "corrupt source bytes"
     )
 
