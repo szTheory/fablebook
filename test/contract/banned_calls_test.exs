@@ -281,6 +281,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:dbg_iserver, :handle_call, :_},
     {:dbg_iload, :load_mod, :_},
     {:dbg_wx_interpret, :start, 4},
+    {:dbg_wx_mon, :start, 2},
     {:dbg_istk, :from_external, 1},
     {:dbg_debugged, :eval, :_},
     {Mix.Tasks.Format, :formatter_for_file, :_},

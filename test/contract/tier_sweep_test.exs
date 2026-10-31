@@ -3652,6 +3652,29 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  test "saved-settings monitor source retains a private replay initializer and pending ownership" do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    {export_line, init_line, read_line, decode_line} =
+      if evidence.lane.name == "core",
+        do: {33, 115, 676, 678},
+        else: {29, 111, 672, 674}
+
+    resolve = fn line ->
+      SweepEvidence.resolve!(evidence, "debugger/src/dbg_wx_mon.erl:#{line}")
+    end
+
+    assert resolve.(export_line).text == "-export([start/2, stop/0])."
+    assert resolve.(init_line).text == "init(CallingPid, Mode, SFile) ->"
+    assert resolve.(read_line).text =~ "file:read_file(SFile)"
+    assert resolve.(decode_line).text =~ "binary_to_term(Binary)"
+    assert {:dbg_wx_mon, :start, 2} in BannedCalls.banned_mfas()
+    refute {:dbg_wx_mon, :init, 3} in BannedCalls.banned_mfas()
+    assert :dbg_wx_mon in DebuggerPendingOwnership.baseline_modules()
+    assert DebuggerPendingOwnership.owners()[:dbg_wx_mon] == "01.1.1.3.1"
+  end
+
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
@@ -3782,7 +3805,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     corrupt_evidence =
       SweepEvidence.load_archive!(
         Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__),
-        "a31f1d1b19e1c8df543f4844af9d47b7ca7a79985b42bd78186f56c04da06342"
+        SweepEvidence.archive_sha256()
       )
       |> Map.merge(%{lane: evidence.lane, lock_sha256: evidence.lock_sha256})
 
