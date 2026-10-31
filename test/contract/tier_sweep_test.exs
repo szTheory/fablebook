@@ -550,7 +550,14 @@ defmodule Fablebook.Contract.TierSweepTest do
                   end)
 
   @debugger_family_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
-  @debugger_active_modules [:dbg_wx_interpret]
+  @debugger_active_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
+  @debugger_source_only_seed_mfas [
+    {:dbg_idb, :insert, 3},
+    {:dbg_idb, :lookup, 2},
+    {:dbg_idb, :match_object, 2},
+    {:dbg_istk, :delayed_to_external, 0}
+  ]
+  @debugger_expected_exclusion_matches []
   @debugger_selected_file_mfa {:dbg_wx_interpret, :start, 4}
   @debugger_explicit_roots [
     {:dbg_wx_interpret, :start, 4},
@@ -608,6 +615,249 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:dbg_wx_interpret, :interpret_all, 5},
     {:dbg_wx_interpret, :format_error, 1}
   ]
+  @debugger_function_reviews %{
+    {:dbg_idb, :insert, 3} => %{
+      caller_input: :interpreter_database_reference_key_and_value,
+      defaults: :none,
+      option_paths: [:local_ets_insert, :remote_rpc_to_fixed_ets_insert],
+      trace: [{:dbg_idb, :insert, 3}, {:ets, :insert, 2}],
+      verdict: :fixed_ets_storage_dispatch_without_term_execution,
+      owner: :plan_02
+    },
+    {:dbg_idb, :lookup, 2} => %{
+      caller_input: :interpreter_database_reference_and_key,
+      defaults: :none,
+      option_paths: [:local_ets_lookup, :remote_rpc_to_fixed_ets_lookup],
+      trace: [{:dbg_idb, :lookup, 2}, {:ets, :lookup, 2}, :ok_or_not_found],
+      verdict: :fixed_ets_lookup_with_found_and_missing_results,
+      owner: :plan_02
+    },
+    {:dbg_idb, :match_object, 2} => %{
+      caller_input: :interpreter_database_reference_and_match_pattern,
+      defaults: :none,
+      option_paths: [:local_ets_match_object, :remote_rpc_to_fixed_ets_match_object],
+      trace: [{:dbg_idb, :match_object, 2}, {:ets, :match_object, 2}],
+      verdict: :fixed_ets_pattern_match_without_term_execution,
+      owner: :plan_02
+    },
+    {:dbg_istk, :init, 0} => %{
+      caller_input: :interpreter_process_initialization,
+      defaults: :empty_stack,
+      option_paths: [:delegate_to_init_1],
+      trace: [{:dbg_istk, :init, 0}, {:dbg_istk, :init, 1}],
+      verdict: :initializes_process_local_stack,
+      owner: :plan_02
+    },
+    {:dbg_istk, :delayed_to_external, 0} => %{
+      caller_input: :current_interpreter_process_stack,
+      defaults: :none,
+      option_paths: [:deferred_term_to_binary],
+      trace: [{:dbg_istk, :delayed_to_external, 0}, {:erlang, :term_to_binary, 1}],
+      verdict: :internal_stack_encoder_only,
+      owner: :plan_02
+    },
+    {:dbg_istk, :from_external, 1} => %{
+      caller_input: :caller_supplied_stack_binary,
+      defaults: :no_validation_or_safe_decode_option,
+      option_paths: [:binary_to_term_without_safe_option],
+      trace: [
+        {:dbg_istk, :from_external, 1},
+        {:erlang, :binary_to_term, 1},
+        :process_dictionary_stack_write
+      ],
+      verdict: :caller_binary_reaches_unrestricted_decode,
+      owner: :plan_02
+    },
+    {:dbg_istk, :init, 1} => %{
+      caller_input: :interpreter_initial_stack,
+      defaults: :none,
+      option_paths: [:process_dictionary_stack_write],
+      trace: [{:dbg_istk, :init, 1}, :process_dictionary_stack_write],
+      verdict: :initializes_internal_process_local_state,
+      owner: :plan_02
+    },
+    {:dbg_istk, :push, 3} => %{
+      caller_input: :bindings_ieval_frame_and_tail_call_flag,
+      defaults: :trace_stack_mode_from_process_dictionary,
+      option_paths: [:trace_stack_false, :no_tail_tail_call, :record_frame],
+      trace: [{:dbg_istk, :push, 3}, :process_dictionary_stack_read_write],
+      verdict: :records_internal_interpreter_frames_by_trace_mode,
+      owner: :plan_02
+    },
+    {:dbg_istk, :pop, 0} => %{
+      caller_input: :current_interpreter_stack,
+      defaults: :trace_stack_mode_from_process_dictionary,
+      option_paths: [:trace_stack_false, :pop_head, :empty_stack_ignore],
+      trace: [{:dbg_istk, :pop, 0}, :process_dictionary_stack_read_write],
+      verdict: :removes_internal_frame_or_ignores_empty_stack,
+      owner: :plan_02
+    },
+    {:dbg_istk, :pop, 1} => %{
+      caller_input: :requested_interpreter_level,
+      defaults: :trace_stack_mode_from_process_dictionary,
+      option_paths: [:trace_stack_false, :recursive_level_trim],
+      trace: [{:dbg_istk, :pop, 1}, {:dbg_istk, :pop, 2}, :process_dictionary_stack_write],
+      verdict: :trims_internal_frames_to_requested_level,
+      owner: :plan_02
+    },
+    {:dbg_istk, :pop, 2} => %{
+      caller_input: :requested_level_and_internal_stack,
+      defaults: :none,
+      option_paths: [:discard_frame_when_level_is_not_greater],
+      trace: [{:dbg_istk, :pop, 2}, :recursive_stack_walk],
+      verdict: :internal_recursive_stack_trimming,
+      owner: :plan_02
+    },
+    {:dbg_istk, :stack_level, 0} => %{
+      caller_input: :current_interpreter_stack,
+      defaults: :empty_stack_level_is_one,
+      option_paths: [:delegate_to_stack_level_1],
+      trace: [{:dbg_istk, :stack_level, 0}, {:dbg_istk, :stack_level, 1}],
+      verdict: :reports_top_internal_call_level,
+      owner: :plan_02
+    },
+    {:dbg_istk, :stack_level, 1} => %{
+      caller_input: :internal_stack_list,
+      defaults: :empty_stack_level_is_one,
+      option_paths: [:empty_stack, :top_frame_level],
+      trace: [{:dbg_istk, :stack_level, 1}],
+      verdict: :reads_internal_stack_level_only,
+      owner: :plan_02
+    },
+    {:dbg_istk, :delayed_stacktrace, 0} => %{
+      caller_input: :current_interpreter_stack,
+      defaults: :none,
+      option_paths: [:return_deferred_stacktrace_function],
+      trace: [{:dbg_istk, :delayed_stacktrace, 0}, {:dbg_istk, :stacktrace, 3}],
+      verdict: :converts_internal_frames_on_deferred_invocation,
+      owner: :plan_02
+    },
+    {:dbg_istk, :delayed_stacktrace, 2} => %{
+      caller_input: :argument_flag_and_interpreter_frame,
+      defaults: :none,
+      option_paths: [:include_args, :no_args],
+      trace: [{:dbg_istk, :delayed_stacktrace, 2}, {:dbg_istk, :stacktrace, 3}],
+      verdict: :returns_deferred_stacktrace_for_internal_frames,
+      owner: :plan_02
+    },
+    {:dbg_istk, :stacktrace, 3} => %{
+      caller_input: :entry_limit_internal_stack_and_accumulator,
+      defaults: :none,
+      option_paths: [:skip_tail_call_frames, :collapse_repeated_frames, :stop_at_limit],
+      trace: [{:dbg_istk, :stacktrace, 3}, {:dbg_istk, :normalize, 1}],
+      verdict: :formats_internal_stacktrace_without_invoking_frames,
+      owner: :plan_02
+    },
+    {:dbg_istk, :normalize, 1} => %{
+      caller_input: :internal_stack_entry,
+      defaults: :none,
+      option_paths: [:function_valued_frame, :module_function_frame],
+      trace: [{:dbg_istk, :normalize, 1}],
+      verdict: :converts_frame_to_trace_data_without_invocation,
+      owner: :plan_02
+    },
+    {:dbg_istk, :finalize, 1} => %{
+      caller_input: :normalized_internal_frame,
+      defaults: :none,
+      option_paths: [:module_tuple_frame, :function_frame],
+      trace: [{:dbg_istk, :finalize, 1}, {:dbg_istk, :line, 1}],
+      verdict: :formats_frame_metadata,
+      owner: :plan_02
+    },
+    {:dbg_istk, :line, 1} => %{
+      caller_input: :internal_location_metadata,
+      defaults: :nonpositive_line_has_no_file_line_fields,
+      option_paths: [:positive_line, :no_line],
+      trace: [{:dbg_istk, :line, 1}, {:erlang, :atom_to_list, 1}],
+      verdict: :formats_internal_source_location,
+      owner: :plan_02
+    },
+    {:dbg_istk, :bindings, 1} => %{
+      caller_input: :requested_internal_stack_pointer,
+      defaults: :empty_stack_uses_new_bindings,
+      option_paths: [:delegate_to_bindings_2],
+      trace: [{:dbg_istk, :bindings, 1}, {:dbg_istk, :bindings, 2}],
+      verdict: :reads_internal_interpreter_bindings,
+      owner: :plan_02
+    },
+    {:dbg_istk, :bindings, 2} => %{
+      caller_input: :stack_pointer_and_internal_stack_list,
+      defaults: :empty_stack_uses_new_bindings,
+      option_paths: [:matching_frame, :skip_frame, :empty_stack],
+      trace: [{:dbg_istk, :bindings, 2}, {:erl_eval, :new_bindings, 0}],
+      verdict: :reads_bindings_or_returns_empty_interpreter_bindings,
+      owner: :plan_02
+    },
+    {:dbg_istk, :stack_frame, 2} => %{
+      caller_input: :direction_and_internal_stack_pointer,
+      defaults: :none,
+      option_paths: [:up, :down_with_reversed_stack],
+      trace: [{:dbg_istk, :stack_frame, 2}, {:dbg_istk, :stack_frame, 3}],
+      verdict: :selects_adjacent_internal_frame_or_boundary,
+      owner: :plan_02
+    },
+    {:dbg_istk, :stack_frame, 3} => %{
+      caller_input: :stack_pointer_direction_and_internal_stack_list,
+      defaults: :none,
+      option_paths: [:next_lower_level, :next_higher_level, :top, :bottom],
+      trace: [{:dbg_istk, :stack_frame, 3}],
+      verdict: :walks_internal_frames_without_executing_them,
+      owner: :plan_02
+    },
+    {:dbg_istk, :backtrace, 2} => %{
+      caller_input: :entry_count_or_all_and_interpreter_frame,
+      defaults: :none,
+      option_paths: [:all_frames, :lists_sublist_count],
+      trace: [{:dbg_istk, :backtrace, 2}, {:lists, :sublist, 2}],
+      verdict: :returns_internal_frame_data,
+      owner: :plan_02
+    },
+    {:dbg_istk, :in_use_p, 2} => %{
+      caller_input: :module_atoms_and_internal_stack,
+      defaults: :trace_disabled_treats_module_as_in_use,
+      option_paths: [:same_module_true, :trace_stack_false_true, :scan_stack],
+      trace: [{:dbg_istk, :in_use_p, 2}, {:lists, :any, 2}],
+      verdict: :checks_internal_stack_module_presence,
+      owner: :plan_02
+    },
+    {:dbg_wx_interpret, :start, 4} => %{
+      caller_input: :caller_selected_filenames_directory_and_mode,
+      defaults: :monitor_supplied_local_or_global_mode,
+      option_paths: [:dialog_accept, :dialog_cancel],
+      trace: [{:dbg_wx_interpret, :start, 4}, {:dbg_wx_interpret, :interpret_all, 5}],
+      verdict: :caller_selected_files_reach_interpreter,
+      owner: :plan_02
+    },
+    {:dbg_wx_interpret, :filter_files, 2} => %{
+      caller_input: :file_dialog_directory_and_name,
+      defaults: :other_extension_is_generic_file,
+      option_paths: [:erl_source, :header, :beam, :other],
+      trace: [{:dbg_wx_interpret, :filter_files, 2}, {:int, :interpretable, 1}],
+      verdict: :filters_dialog_names_but_does_not_bound_interpreter_input,
+      owner: :plan_02
+    },
+    {:dbg_wx_interpret, :interpret_all, 5} => %{
+      caller_input: :caller_selected_directory_files_and_mode,
+      defaults: :empty_file_list_returns_or_reports_errors,
+      option_paths: [:local_int_i, :global_int_ni, :per_file_error],
+      trace: [
+        {:dbg_wx_interpret, :interpret_all, 5},
+        {:filename, :join, 2},
+        {:int, :i, 1},
+        {:int, :ni, 1}
+      ],
+      verdict: :selected_file_path_reaches_interpreter_entry_points,
+      owner: :plan_02
+    },
+    {:dbg_wx_interpret, :format_error, 1} => %{
+      caller_input: :interpreter_error_result,
+      defaults: :unknown_error_tuple_has_no_clause,
+      option_paths: [:known_file_or_debug_info_errors, :missing_file_error, :app_error],
+      trace: [{:dbg_wx_interpret, :format_error, 1}],
+      verdict: :maps_interpreter_failures_to_fixed_messages,
+      owner: :plan_02
+    }
+  }
 
   @debugger_core_source %{
     sha256: %{
@@ -623,6 +873,10 @@ defmodule Fablebook.Contract.TierSweepTest do
         "0731379c05425123893f08dab6d149f2e42f095f9245ff18d098691ab87520bb",
       "debugger/src/dbg_wx_mon.erl" =>
         "c47574e6f066df305154bbd893762011cf04ecb8315d8263cab415befbab22ff",
+      "debugger/src/dbg_wx_mon_win.erl" =>
+        "914439f252dc785d467980e163f001969a484cda8ae485b5833a3fcb65cbea30",
+      "debugger/src/dbg_iload.erl" =>
+        "a2dd4ad09550a866e5cc16834c0f006a146a21c3abc983f72d8ed44dd1a4b250",
       "debugger/src/dbg_wx_win.erl" =>
         "109bffa861fa1e6d71310a8ca91d57f2b2aa941d7220dfd440a79ad4bc286599"
     },
@@ -703,6 +957,66 @@ defmodule Fablebook.Contract.TierSweepTest do
         "format_error({error,no_beam}) -> \"No BEAM file\";"}}
     ],
     branch_citations: %{
+      database_dispatch: [
+        {"debugger/src/dbg_idb.erl:33", "case DbRef of"},
+        {"debugger/src/dbg_idb.erl:35",
+         "rpc:block_call(Node, ets, insert, [ModDb, {Key, Value}]);"},
+        {"debugger/src/dbg_idb.erl:37", "ets:insert(ModDb, {Key, Value})"},
+        {"debugger/src/dbg_idb.erl:42", "{Node, ModDb} ->"},
+        {"debugger/src/dbg_idb.erl:43", "rpc:block_call(Node, ets, lookup, [ModDb, Key]);"},
+        {"debugger/src/dbg_idb.erl:45", "ets:lookup(ModDb, Key)"},
+        {"debugger/src/dbg_idb.erl:48", "[{Key, Value}] -> {ok, Value};"},
+        {"debugger/src/dbg_idb.erl:49", "_ -> not_found"},
+        {"debugger/src/dbg_idb.erl:55", "rpc:block_call(Node, ets, match_object, [ModDb, Key]);"},
+        {"debugger/src/dbg_idb.erl:57", "ets:match_object(ModDb, Key)"}
+      ],
+      stack_lifecycle: [
+        {"debugger/src/dbg_istk.erl:47", "init([])."},
+        {"debugger/src/dbg_istk.erl:50", "Stack = get(?STACK),"},
+        {"debugger/src/dbg_istk.erl:51", "fun() -> {stack,term_to_binary(Stack)} end."},
+        {"debugger/src/dbg_istk.erl:54", "put(?STACK, binary_to_term(Stk))."},
+        {"debugger/src/dbg_istk.erl:57", "put(?STACK, Stack)."},
+        {"debugger/src/dbg_istk.erl:76", "case get(trace_stack) of"},
+        {"debugger/src/dbg_istk.erl:77", "false ->"},
+        {"debugger/src/dbg_istk.erl:79", "no_tail when Lc ->"},
+        {"debugger/src/dbg_istk.erl:82", "put(?STACK, [Entry|get(?STACK)]),"},
+        {"debugger/src/dbg_istk.erl:91", "[_Entry|Entries] ->"},
+        {"debugger/src/dbg_istk.erl:93", "[] ->"},
+        {"debugger/src/dbg_istk.erl:102", "put(?STACK, pop(Le, get(?STACK)))"},
+        {"debugger/src/dbg_istk.erl:105", "pop(Level, [#e{level=Le}|Stack]) when Level =< Le ->"},
+        {"debugger/src/dbg_istk.erl:107", "pop(_Level, Stack) ->"},
+        {"debugger/src/dbg_istk.erl:116", "stack_level([]) -> 1;"},
+        {"debugger/src/dbg_istk.erl:117", "stack_level([#e{level=Le}|_]) -> Le."}
+      ],
+      stack_trace: [
+        {"debugger/src/dbg_istk.erl:134", "delayed_stacktrace(include_args, Ieval) ->"},
+        {"debugger/src/dbg_istk.erl:147", "delayed_stacktrace(no_args, Ieval) ->"},
+        {"debugger/src/dbg_istk.erl:155", "stacktrace(N, [#e{lc=true}|T], Acc) ->"},
+        {"debugger/src/dbg_istk.erl:159", "stacktrace(N, [E|T], [{P,_}|_]=Acc) when N > 0 ->"},
+        {"debugger/src/dbg_istk.erl:166", "stacktrace(_, _, Acc) ->"},
+        {"debugger/src/dbg_istk.erl:169",
+         "normalize(#e{mfa={M,Fun,As},line=Li,error_info=ErrorInfo}) when is_function(Fun) ->"},
+        {"debugger/src/dbg_istk.erl:172",
+         "normalize(#e{mfa={M,F,As},line=Li,error_info=ErrorInfo}) ->"},
+        {"debugger/src/dbg_istk.erl:176", "finalize({M,F,A,Loc}) -> {M,F,A,line(Loc)};"},
+        {"debugger/src/dbg_istk.erl:179", "line({Mod,Line,ErrorInfo}) ->"},
+        {"debugger/src/dbg_istk.erl:185", "line(_) -> []."},
+        {"debugger/src/dbg_istk.erl:193", "bindings(SP, [#e{level=SP,bindings=Bs}|_]) ->"},
+        {"debugger/src/dbg_istk.erl:195", "bindings(SP, [_Entry|Entries]) ->"},
+        {"debugger/src/dbg_istk.erl:197", "bindings(_SP, []) ->"},
+        {"debugger/src/dbg_istk.erl:209", "stack_frame(up, SP) ->"},
+        {"debugger/src/dbg_istk.erl:211", "stack_frame(down, SP) ->"},
+        {"debugger/src/dbg_istk.erl:214",
+         "stack_frame(SP, up, [#e{level=Le,mfa={Cm,_,_},line=Li,bindings=Bs}|_])"},
+        {"debugger/src/dbg_istk.erl:217",
+         "stack_frame(SP, down, [#e{level=Le,mfa={Cm,_,_},line=Li,bindings=Bs}|_])"},
+        {"debugger/src/dbg_istk.erl:220", "stack_frame(SP, Dir, [#e{level=SP}|Stack]) ->"},
+        {"debugger/src/dbg_istk.erl:239", "Stack = case HowMany of"},
+        {"debugger/src/dbg_istk.erl:250", "in_use_p(Mod, Mod) -> true;"},
+        {"debugger/src/dbg_istk.erl:252", "case get(trace_stack) of"},
+        {"debugger/src/dbg_istk.erl:255",
+         "lists:any(fun(#e{mfa={M,_,_}}) when M =:= Mod -> true;"}
+      ],
       dialog_return: [
         {"debugger/src/dbg_wx_interpret.erl:53", "case wxFileDialog:showModal(FD) of"},
         {"debugger/src/dbg_wx_interpret.erl:54", "?wxID_OK ->"},
@@ -770,6 +1084,46 @@ defmodule Fablebook.Contract.TierSweepTest do
         {"debugger/src/dbg_wx_interpret.erl:134", "format_error({error,{app,App}}) ->"}
       ]
     },
+    ui_provenance_citations: [
+      {"debugger/src/dbg_wx_mon.erl:173", "State3 = init_contents(int:interpreted(),"},
+      {"debugger/src/dbg_wx_mon_win.erl:311",
+       "MenuBtn = wxMenu:append(Menu, ?wxID_ANY, atom_to_list(Mod), Sub),"},
+      {"debugger/src/dbg_wx_mon_win.erl:312",
+       "wxListBox:append(WinInfo#winInfo.listbox, atom_to_list(Mod)),"},
+      {"debugger/src/dbg_wx_mon_win.erl:120",
+       "Fbtn = wxCheckBox:new(Panel, ?autoId, \"First Call\"),"},
+      {"debugger/src/dbg_wx_mon_win.erl:122",
+       "Bbtn = wxCheckBox:new(Panel, ?autoId, \"On Break\"),"},
+      {"debugger/src/dbg_wx_mon_win.erl:124",
+       "Ebtn = wxCheckBox:new(Panel, ?autoId, \"On Exit\"),"},
+      {"debugger/src/dbg_wx_mon_win.erl:530",
+       "handle_event(_Ev = #wx{event=#wxKey{keyCode=Key, controlDown=true}}, _WinInfo) ->"},
+      {"debugger/src/dbg_wx_mon_win.erl:534", "{shortcut, list_to_atom([Key+($a-$A)])}"},
+      {"debugger/src/dbg_wx_mon_win.erl:555",
+       "handle_event(#wx{event=#wxCommand{type=command_listbox_doubleclicked, cmdString=ModS}},"},
+      {"debugger/src/dbg_wx_mon_win.erl:557", "{module, list_to_atom(ModS), view};"},
+      {"debugger/src/dbg_wx_mon_win.erl:573", "Check = fun(Button, NamesAcc) ->"},
+      {"debugger/src/dbg_wx_mon_win.erl:577", "[list_to_atom(Name)|NamesAcc];"}
+    ],
+    cross_owner_support_citations: [
+      {"debugger/src/dbg_iload.erl:78", "dbg_idb:insert(Db, mod_file, File),"},
+      {"debugger/src/dbg_iload.erl:88", "store_forms(Forms, Mod, Db,"},
+      {"debugger/src/dbg_iload.erl:97",
+       "NewBinary = store_mod_line_no(Mod, Db, binary_to_list(Src)),"},
+      {"debugger/src/dbg_iload.erl:98", "dbg_idb:insert(Db, mod_bin, NewBinary),"},
+      {"debugger/src/dbg_iload.erl:99",
+       "dbg_idb:insert(Db, mod_raw, <<Src/binary,0:8>>). %% Add eos"},
+      {"debugger/src/dbg_iload.erl:162", "dbg_idb:insert(Db, {Mod,Name,Arity,Exported}, Cs),"},
+      {"debugger/src/dbg_iload.erl:164",
+       "store_forms([{attribute,_,record,{Name,Defs}}|Fs], Mod, Db, St) ->"},
+      {"debugger/src/dbg_iload.erl:167",
+       "dbg_idb:insert(Db, {record,Mod,Name,length(Fields)}, Fields),"},
+      {"debugger/src/dbg_ieval.erl:538",
+       "case dbg_idb:match_object(DbRef, {{Mod,Name,Arity,'_'},'_'}) of"},
+      {"debugger/src/dbg_ieval.erl:546", "get_function(Mod, Name, Args, extern) ->"},
+      {"debugger/src/dbg_ieval.erl:554", "case dbg_idb:lookup(DbRef, {Mod,Name,Arity,true}) of"},
+      {"debugger/src/dbg_ieval.erl:558", "not_found ->"}
+    ],
     seed_citations: [
       {"debugger/src/dbg_idb.erl:32", "insert(DbRef, Key, Value) ->"},
       {"debugger/src/dbg_idb.erl:40", "lookup(DbRef, Key) ->"},
@@ -798,15 +1152,46 @@ defmodule Fablebook.Contract.TierSweepTest do
     ]
   }
 
+  @debugger_core_source Map.put(
+                          @debugger_core_source,
+                          :family_function_audit,
+                          Enum.map(@debugger_expected_family_mfas, fn mfa ->
+                            {^mfa, citation} =
+                              Enum.find(@debugger_core_source.family_function_sources, fn
+                                {candidate, _citation} -> candidate == mfa
+                              end)
+
+                            Map.merge(Map.fetch!(@debugger_function_reviews, mfa), %{
+                              mfa: mfa,
+                              citations: [citation]
+                            })
+                          end)
+                        )
+
   @debugger_floor_source (
                            shift = fn {citation, expected} ->
                              [path, line] = String.split(citation, ":", parts: 2)
 
                              offset =
                                cond do
-                                 String.ends_with?(path, "dbg_istk.erl") -> 5
-                                 String.ends_with?(path, "dbg_wx_mon.erl") -> 4
-                                 true -> 2
+                                 String.ends_with?(path, "dbg_istk.erl") ->
+                                   5
+
+                                 String.ends_with?(path, "dbg_wx_mon.erl") ->
+                                   4
+
+                                 String.ends_with?(path, "dbg_wx_mon_win.erl") ->
+                                   4
+
+                                 String.ends_with?(path, "dbg_iload.erl") and
+                                     String.to_integer(line) >= 160 ->
+                                   17
+
+                                 String.ends_with?(path, "dbg_iload.erl") ->
+                                   1
+
+                                 true ->
+                                   2
                                end
 
                              {"#{path}:#{String.to_integer(line) - offset}", expected}
@@ -825,6 +1210,10 @@ defmodule Fablebook.Contract.TierSweepTest do
                                "d41c9d6225a8817bd792abb202916020782d72b59e439a891b0ebc4864e38098",
                              "debugger/src/dbg_wx_mon.erl" =>
                                "8beded69315466f8b941d4395e4047453667c31404226a8e53ab229b47a6a05e",
+                             "debugger/src/dbg_wx_mon_win.erl" =>
+                               "971779c05b5d7c08317c04d33d7354a24a701ed35c2f96c9eef67d77d5a4cb25",
+                             "debugger/src/dbg_iload.erl" =>
+                               "530955c6525821e0382d53375ce5750cb4fd290ce4c323dd38521538452dae03",
                              "debugger/src/dbg_wx_win.erl" =>
                                "31b4f35b2f1c871404ce5d261aff965d630f6347edcfc9b084e1f8dc90ad061e"
                            }
@@ -839,6 +1228,10 @@ defmodule Fablebook.Contract.TierSweepTest do
                                                                                            citation} ->
                                  {mfa, shift.(citation)}
                                end),
+                             family_function_audit:
+                               Enum.map(@debugger_core_source.family_function_audit, fn review ->
+                                 %{review | citations: Enum.map(review.citations, shift)}
+                               end),
                              branch_citations:
                                Map.new(@debugger_core_source.branch_citations, fn {group,
                                                                                    citations} ->
@@ -849,7 +1242,14 @@ defmodule Fablebook.Contract.TierSweepTest do
                              decoder_citations:
                                Enum.map(@debugger_core_source.decoder_citations, shift),
                              decoder_provenance_citations:
-                               Enum.map(@debugger_core_source.decoder_provenance_citations, shift)
+                               Enum.map(@debugger_core_source.decoder_provenance_citations, shift),
+                             ui_provenance_citations:
+                               Enum.map(@debugger_core_source.ui_provenance_citations, shift),
+                             cross_owner_support_citations:
+                               Enum.map(
+                                 @debugger_core_source.cross_owner_support_citations,
+                                 shift
+                               )
                            })
                          )
 
@@ -905,6 +1305,15 @@ defmodule Fablebook.Contract.TierSweepTest do
                          :process_dictionary_stack_write
                        ],
                        decoder_verdict: :caller_binary_is_unconstrained_at_export,
+                       decoder_fixtures: [
+                         :direct,
+                         :capture,
+                         :apply,
+                         :discarded_quote,
+                         :uninvoked_macro,
+                         :serializing_only_control
+                       ],
+                       decoder_removal_witness: :uncalled_probe_mfa_tier_reduction,
                        decoder_citations: source.decoder_citations,
                        decoder_provenance_citations: source.decoder_provenance_citations,
                        internal_provenance: %{
@@ -915,7 +1324,38 @@ defmodule Fablebook.Contract.TierSweepTest do
                        },
                        export_citations: source.export_citations,
                        family_function_sources: source.family_function_sources,
+                       family_function_audit: source.family_function_audit,
                        branch_citations: source.branch_citations,
+                       ui_provenance_citations: source.ui_provenance_citations,
+                       cross_owner_support_citations: source.cross_owner_support_citations,
+                       seed_dispositions:
+                         Enum.zip(@debugger_source_only_seed_mfas, source.seed_citations)
+                         |> Enum.map(fn {mfa, citation} ->
+                           %{
+                             mfa: mfa,
+                             reached: false,
+                             verdict: :source_disposed_without_graph_hit,
+                             citation: citation
+                           }
+                         end),
+                       ui_provenance: %{
+                         module_list_origin: {:int, :interpreted, 0},
+                         module_name_display: :atom_to_list,
+                         checkbox_labels: ["First Call", "On Break", "On Exit"],
+                         label_conversion: :list_to_atom,
+                         callback_owner: :phase_01_1_1_3_1,
+                         callback_verdict: :synthetic_events_and_keyboard_inputs_pending
+                       },
+                       cross_owner_support: %{
+                         dbg_iload: :cited_support_only_whole_module_review_pending,
+                         dbg_ieval: :decoder_consumer_provenance_only,
+                         dbg_wx_filedialog_win: :dialog_getters_only,
+                         dbg_wx_mon: :module_list_origin_only,
+                         dbg_wx_mon_win: :labels_and_callback_boundary_only,
+                         dbg_wx_win: :error_dialog_provenance_only
+                       },
+                       exclusion_matches: @debugger_expected_exclusion_matches,
+                       exclusion_identity_replacements: %{},
                        source_sha256: source.sha256,
                        empty_selection: :source_disposed_without_invocation,
                        limitations: [
@@ -3153,6 +3593,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_debugger_audit!(records, ctx.graph, tier, evidence, @exclusions)
 
     lane_record = Enum.find(records, &(&1.lane == evidence.lane.name))
+
     assert Map.has_key?(lane_record, :family_function_audit),
            "the debugger audit must source-dispose every discovered assigned function"
 
@@ -3160,6 +3601,104 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert Map.get(lane_record, :branch_citations) != nil,
            "the selected-file audit must cover local/global, cancel, empty/error and parser-filter branches"
+
+    actual_family_universe = debugger_family_universe(ctx.graph, tier, @exclusions)
+    omitted_mfa = {:dbg_istk, :normalize, 1}
+
+    source_rows_without_mfa =
+      lane_record.family_function_sources
+      |> Enum.reject(&(elem(&1, 0) == omitted_mfa))
+      |> Enum.map(&elem(&1, 0))
+
+    review_rows_without_mfa =
+      lane_record.family_function_audit
+      |> Enum.reject(&(&1.mfa == omitted_mfa))
+      |> Enum.map(& &1.mfa)
+
+    assert_raise ExUnit.AssertionError, ~r/actual installed family universe differs/, fn ->
+      assert_debugger_function_inventory!(
+        actual_family_universe,
+        source_rows_without_mfa,
+        review_rows_without_mfa,
+        evidence.lane.name
+      )
+    end
+
+    new_name_export = {:dbg_istk, :unreviewed_family_entry, 0}
+
+    graph_with_new_name_export = %{
+      ctx.graph
+      | full_exported: MapSet.put(ctx.graph.full_exported, new_name_export)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/actual installed family universe differs/, fn ->
+      assert_debugger_function_inventory!(
+        debugger_family_universe(graph_with_new_name_export, tier, @exclusions),
+        Enum.map(lane_record.family_function_sources, &elem(&1, 0)),
+        Enum.map(lane_record.family_function_audit, & &1.mfa),
+        evidence.lane.name
+      )
+    end
+
+    wrong_lane = %{evidence | lane: Map.put(evidence.lane, :name, "floor")}
+
+    assert_raise ExUnit.AssertionError, ~r/does not match inspected graph lane/, fn ->
+      assert_debugger_audit!(records, ctx.graph, tier, wrong_lane, @exclusions)
+    end
+
+    missing_source_path = "core/debugger/src/dbg_idb.erl"
+
+    missing_source_evidence = %{
+      evidence
+      | manifest:
+          Map.update!(evidence.manifest, "files", fn files ->
+            Enum.reject(files, &(&1["path"] == missing_source_path))
+          end)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/missing exact-lane source record/, fn ->
+      assert_debugger_audit!(records, ctx.graph, tier, missing_source_evidence, @exclusions)
+    end
+
+    absent_source_evidence = %{
+      evidence
+      | manifest:
+          Map.update!(evidence.manifest, "files", fn files ->
+            Enum.map(files, fn
+              %{"path" => ^missing_source_path} = row -> Map.put(row, "status", "absent")
+              row -> row
+            end)
+          end)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/claims absence or non-present status/, fn ->
+      assert_debugger_audit!(records, ctx.graph, tier, absent_source_evidence, @exclusions)
+    end
+
+    corrupt_evidence =
+      SweepEvidence.load_archive!(
+        Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__),
+        "a31f1d1b19e1c8df543f4844af9d47b7ca7a79985b42bd78186f56c04da06342"
+      )
+      |> Map.merge(%{lane: evidence.lane, lock_sha256: evidence.lock_sha256})
+
+    corrupt_evidence =
+      Map.put(
+        corrupt_evidence,
+        :installed,
+        %{"debugger" => Path.join(corrupt_evidence.archive_root, "missing-installed")}
+      )
+
+    on_exit(fn -> File.rm_rf!(corrupt_evidence.archive_root) end)
+
+    File.write!(
+      Path.join(corrupt_evidence.archive_root, "core/debugger/src/dbg_idb.erl"),
+      "corrupt source bytes"
+    )
+
+    assert_raise SweepEvidence.Error, ~r/source_digest/, fn ->
+      assert_debugger_audit!(records, ctx.graph, tier, corrupt_evidence, @exclusions)
+    end
 
     assert_raise ExUnit.AssertionError, fn ->
       assert_debugger_audit!(
@@ -3247,11 +3786,40 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert_debugger_audit!(records, ctx.graph, omitted_tier, evidence, @exclusions)
     end
 
+    omitted_decoder_tier = Enum.reject(tier, &(&1 == {:dbg_istk, :from_external, 1}))
+
+    assert_raise ExUnit.AssertionError,
+                 ~r/exported stack decoder must retain its exact MFA tier/,
+                 fn ->
+                   assert_debugger_audit!(
+                     records,
+                     ctx.graph,
+                     omitted_decoder_tier,
+                     evidence,
+                     @exclusions
+                   )
+                 end
+
+    missing_seed_disposition = %{
+      lane_record
+      | seed_dispositions: List.delete_at(lane_record.seed_dispositions, 0)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/omitted or invented a source-only debugger seed/, fn ->
+      assert_debugger_audit!(
+        List.replace_at(records, record_index, missing_seed_disposition),
+        ctx.graph,
+        tier,
+        evidence,
+        @exclusions
+      )
+    end
+
     redundant_retention =
       {{:mfa, @debugger_selected_file_mfa}, :private_front,
        [hd(lane_record.citations) |> elem(0)]}
 
-    assert_raise ExUnit.AssertionError, fn ->
+    assert_raise ExUnit.AssertionError, ~r/changed debugger exclusion match set/, fn ->
       assert_debugger_audit!(
         records,
         ctx.graph,
@@ -4791,11 +5359,143 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  defp debugger_family_universe(graph, tier, exclusions) do
+    inspections = Enum.filter(graph.inspected, &(&1.module_atom in @debugger_family_modules))
+    inspected_modules = MapSet.new(inspections, & &1.module_atom)
+
+    assert inspected_modules == MapSet.new(@debugger_family_modules),
+           "lane #{graph.lane.name} app debugger is missing an assigned inspected BEAM"
+
+    scanned_functions =
+      Enum.reduce(inspections, MapSet.new(), fn inspection, functions ->
+        case BeamWalker.scan(inspection.path) do
+          {:ok, scan} ->
+            assert scan.module == inspection.module_atom,
+                   "lane #{graph.lane.name} app #{inspection.app} module #{inspection.module} " <>
+                     "scanned as #{inspect(scan.module)}"
+
+            scanned_family_functions =
+              scan.function_mfas
+              |> Enum.filter(&debugger_family_mfa?/1)
+              |> MapSet.new()
+
+            MapSet.union(functions, scanned_family_functions)
+
+          {:error, reason} ->
+            flunk(
+              "lane #{graph.lane.name} app #{inspection.app} module #{inspection.module} " <>
+                "could not be inventoried from #{inspection.path}: #{inspect(reason)}"
+            )
+        end
+      end)
+
+    graph_candidates =
+      graph.full_edges
+      |> Enum.flat_map(fn {caller, callee} -> [caller, callee] end)
+      |> Enum.concat(graph.full_reached)
+      |> Enum.concat(graph.full_exported)
+      |> Enum.filter(&debugger_family_mfa?/1)
+      |> MapSet.new()
+
+    all_candidates = MapSet.union(scanned_functions, graph_candidates)
+    names = BannedCalls.banned_names()
+
+    tier_roots =
+      Enum.filter(all_candidates, &covered?(&1, tier, names))
+      |> MapSet.new()
+
+    exclusion_roots =
+      Enum.filter(all_candidates, fn {module, function, _arity} = mfa ->
+        exact_mfa_exclusion_reason(mfa, exclusions) != nil or
+          exclusion_reason(module, function, exclusions) != nil
+      end)
+      |> MapSet.new()
+
+    MapSet.new()
+    |> MapSet.union(scanned_functions)
+    |> MapSet.union(graph_candidates)
+    |> MapSet.union(MapSet.new(@debugger_explicit_roots))
+    |> MapSet.union(tier_roots)
+    |> MapSet.union(exclusion_roots)
+  end
+
+  defp debugger_family_mfa?({module, _function, _arity}),
+    do: module in @debugger_family_modules
+
+  defp debugger_family_mfa?(_candidate), do: false
+
+  defp debugger_exclusion_matches(universe, exclusions) do
+    Enum.flat_map(exclusions, &debugger_exclusion_match(universe, &1))
+  end
+
+  defp debugger_exclusion_match(universe, exclusion) do
+    matches = Enum.filter(universe, &debugger_exclusion_matches_mfa?(&1, exclusion))
+    debugger_exclusion_record(exclusion, matches)
+  end
+
+  defp debugger_exclusion_matches_mfa?({module, function, _arity} = mfa, exclusion) do
+    exact_mfa_exclusion_reason(mfa, [exclusion]) != nil or
+      exclusion_reason(module, function, [exclusion]) != nil
+  end
+
+  defp debugger_exclusion_matches_mfa?(_mfa, _exclusion), do: false
+
+  defp debugger_exclusion_record(_exclusion, []), do: []
+
+  defp debugger_exclusion_record(exclusion, matches) do
+    reason = if tuple_size(exclusion) >= 2, do: elem(exclusion, 1), else: :unknown
+    citations = if tuple_size(exclusion) >= 3, do: elem(exclusion, 2), else: []
+
+    [
+      %{
+        original_identity: exclusion,
+        cited_triple: {elem(exclusion, 0), reason, citations},
+        matched_mfas: Enum.sort(matches)
+      }
+    ]
+  end
+
+  defp assert_debugger_exclusion_witnesses!(matches, graph, tier, names, exclusions) do
+    active = %{reverse: graph.reverse, exported: graph.exported}
+
+    for match <- matches do
+      without_original = List.delete(exclusions, match.original_identity)
+      newly_uncovered = undisposed(active, tier, names, without_original)
+
+      assert Enum.any?(match.matched_mfas, &(&1 in newly_uncovered)),
+             "lane #{graph.lane.name} retained exclusion #{inspect(match.original_identity)} " <>
+               "has no individual active removal witness for its complete matched set " <>
+               "#{inspect(match.matched_mfas)}"
+    end
+  end
+
+  defp assert_debugger_function_inventory!(actual_universe, source_mfas, review_mfas, lane) do
+    source_set = MapSet.new(source_mfas)
+    review_set = MapSet.new(review_mfas)
+
+    assert length(source_mfas) == MapSet.size(source_set),
+           "lane #{lane} app debugger source inventory contains duplicate functions"
+
+    assert length(review_mfas) == MapSet.size(review_set),
+           "lane #{lane} app debugger semantic inventory contains duplicate functions"
+
+    assert source_set == review_set,
+           "lane #{lane} app debugger source and semantic function inventories differ"
+
+    assert actual_universe == source_set,
+           "lane #{lane} app debugger actual installed family universe differs from reviewed " <>
+             "source records; actual=#{inspect(actual_universe)} source=#{inspect(source_set)}"
+  end
+
   defp assert_debugger_audit!(records, graph, tier, evidence, exclusions) do
     lane = evidence.lane.name
     lane_source = Map.fetch!(@debugger_source_by_lane, lane)
     lane_records = Enum.filter(records, &(&1.lane == lane))
     mfa = @debugger_selected_file_mfa
+    family_universe = debugger_family_universe(graph, tier, exclusions)
+
+    assert graph.lane.name == lane,
+           "evidence lane #{lane} does not match inspected graph lane #{graph.lane.name}"
 
     assert length(records) == length(@debugger_expected_ids)
 
@@ -4839,15 +5539,19 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> Enum.filter(&(elem(&1, 0) in @debugger_family_modules))
       |> MapSet.new()
 
-    assert active_exports == MapSet.new([mfa])
-    assert MapSet.member?(graph.active_modules, :dbg_wx_interpret)
+    assert active_exports == expected_exports,
+           "lane #{lane} active debugger exports do not preserve the exact assigned family"
+
+    assert MapSet.subset?(MapSet.new(@debugger_active_modules), graph.active_modules),
+           "lane #{lane} active projection omitted a completed assigned debugger module"
 
     for pending_module <- [
-          :dbg_idb,
-          :dbg_istk,
           :dbg_wx_mon,
+          :dbg_wx_mon_win,
           :dbg_wx_filedialog_win,
-          :dbg_wx_win
+          :dbg_wx_win,
+          :dbg_iload,
+          :dbg_ieval
         ] do
       refute MapSet.member?(graph.active_modules, pending_module)
       assert Enum.any?(graph.pending_modules, &(&1.module_atom == pending_module))
@@ -4889,9 +5593,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert record.applicability == :each_exact_installed_lane
     assert record.removal_witness == :uncalled_probe_mfa_tier_reduction
     assert record.source_sha256 == lane_source.sha256
+    assert record.citations == lane_source.citations
     assert record.export_citations == lane_source.export_citations
     assert record.family_function_sources == lane_source.family_function_sources
+    assert record.family_function_audit == lane_source.family_function_audit
     assert record.branch_citations == lane_source.branch_citations
+    assert record.ui_provenance_citations == lane_source.ui_provenance_citations
+    assert record.cross_owner_support_citations == lane_source.cross_owner_support_citations
     assert record.empty_selection == :source_disposed_without_invocation
     assert record.decoder_mfa == decoder_mfa
     assert record.decoder_caller_input == :arbitrary_exported_stack_binary
@@ -4905,6 +5613,17 @@ defmodule Fablebook.Contract.TierSweepTest do
            ]
 
     assert record.decoder_verdict == :caller_binary_is_unconstrained_at_export
+
+    assert record.decoder_fixtures == [
+             :direct,
+             :capture,
+             :apply,
+             :discarded_quote,
+             :uninvoked_macro,
+             :serializing_only_control
+           ]
+
+    assert record.decoder_removal_witness == :uncalled_probe_mfa_tier_reduction
 
     assert record.internal_provenance == %{
              producer: {:dbg_istk, :delayed_to_external, 0},
@@ -4925,6 +5644,9 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert MapSet.new(Map.keys(record.branch_citations)) ==
              MapSet.new([
+               :database_dispatch,
+               :stack_lifecycle,
+               :stack_trace,
                :dialog_return,
                :dialog_cancel,
                :parser_filter,
@@ -4934,33 +5656,105 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert Enum.all?(record.branch_citations, fn {_group, citations} -> citations != [] end)
 
-    family_function_mfas = Enum.map(record.family_function_sources, &elem(&1, 0))
-    assert length(family_function_mfas) == 29
-    assert MapSet.new(family_function_mfas) == MapSet.new(@debugger_expected_family_mfas)
-    assert length(Enum.uniq(family_function_mfas)) == 29
+    source_function_mfas = Enum.map(record.family_function_sources, &elem(&1, 0))
+    reviewed_function_mfas = Enum.map(record.family_function_audit, & &1.mfa)
+    actual_function_mfas = family_universe
+
+    assert_debugger_function_inventory!(
+      actual_function_mfas,
+      source_function_mfas,
+      reviewed_function_mfas,
+      lane
+    )
+
+    assert MapSet.new(source_function_mfas) == MapSet.new(@debugger_expected_family_mfas),
+           "lane #{lane} app debugger source identities differ from the assigned reviewed set"
+
+    assert debugger_function_audit_complete?(record.family_function_audit),
+           "lane #{lane} app debugger has a function row without input/default/option/trace/verdict/source/owner"
+
+    expected_seed_dispositions =
+      Enum.zip(@debugger_source_only_seed_mfas, lane_source.seed_citations)
+      |> Enum.map(fn {seed_mfa, citation} ->
+        %{
+          mfa: seed_mfa,
+          reached: false,
+          verdict: :source_disposed_without_graph_hit,
+          citation: citation
+        }
+      end)
+
+    assert record.seed_dispositions == expected_seed_dispositions,
+           "lane #{lane} omitted or invented a source-only debugger seed disposition"
+
+    for seed_mfa <- @debugger_source_only_seed_mfas do
+      refute MapSet.member?(graph.full_reached, seed_mfa),
+             "lane #{lane} source-only seed #{inspect(seed_mfa)} was absent from full_reached"
+    end
+
+    assert record.ui_provenance == %{
+             module_list_origin: {:int, :interpreted, 0},
+             module_name_display: :atom_to_list,
+             checkbox_labels: ["First Call", "On Break", "On Exit"],
+             label_conversion: :list_to_atom,
+             callback_owner: :phase_01_1_1_3_1,
+             callback_verdict: :synthetic_events_and_keyboard_inputs_pending
+           }
+
+    assert record.cross_owner_support == %{
+             dbg_iload: :cited_support_only_whole_module_review_pending,
+             dbg_ieval: :decoder_consumer_provenance_only,
+             dbg_wx_filedialog_win: :dialog_getters_only,
+             dbg_wx_mon: :module_list_origin_only,
+             dbg_wx_mon_win: :labels_and_callback_boundary_only,
+             dbg_wx_win: :error_dialog_provenance_only
+           }
+
+    exclusion_matches = debugger_exclusion_matches(actual_function_mfas, exclusions)
+    assert record.exclusion_matches == @debugger_expected_exclusion_matches
+
+    assert exclusion_matches == record.exclusion_matches,
+           "lane #{lane} changed debugger exclusion match set or original identity"
+
+    assert record.exclusion_identity_replacements == %{}
+
+    assert_debugger_exclusion_witnesses!(
+      exclusion_matches,
+      graph,
+      tier,
+      BannedCalls.banned_names(),
+      exclusions
+    )
 
     for {relative_path, expected_sha} <- lane_source.sha256 do
       archived_path = "#{lane}/#{relative_path}"
 
       row = Enum.find(evidence.manifest["files"], &(&1["path"] == archived_path))
       assert row != nil, "missing exact-lane source record #{archived_path}"
-      assert row["status"] == "present"
+
+      assert row["status"] == "present",
+             "lane #{lane} source record #{archived_path} claims absence or non-present status"
+
       assert row["source_path"] == relative_path
       assert row["sha256"] == expected_sha
     end
 
-    assert map_size(lane_source.sha256) == 7
+    assert map_size(lane_source.sha256) == 9
 
     branch_citations = record.branch_citations |> Map.values() |> List.flatten()
     family_citations = Enum.map(record.family_function_sources, &elem(&1, 1))
+    function_citations = Enum.flat_map(record.family_function_audit, & &1.citations)
 
     all_source_citations =
       record.citations ++
         record.export_citations ++
         family_citations ++
+        function_citations ++
         branch_citations ++
         record.decoder_citations ++
-        record.decoder_provenance_citations
+        record.decoder_provenance_citations ++
+        record.ui_provenance_citations ++
+        record.cross_owner_support_citations
 
     for {citation, expected_source} <- all_source_citations do
       [relative_file, _line] = String.split(citation, ":", parts: 2)
@@ -4971,15 +5765,27 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert resolved.text =~ expected_source, citation
     end
 
-    assert covered?(mfa, tier, BannedCalls.banned_names())
+    assert covered?(mfa, tier, BannedCalls.banned_names()),
+           "lane #{lane} selected-file root must retain its exact MFA tier"
+
     assert exact_mfa_exclusion_reason(mfa, exclusions) == nil
     assert exclusion_reason(elem(mfa, 0), elem(mfa, 1), exclusions) == nil
 
-    assert covered?(decoder_mfa, tier, BannedCalls.banned_names())
+    assert covered?(decoder_mfa, tier, BannedCalls.banned_names()),
+           "lane #{lane} exported stack decoder must retain its exact MFA tier"
+
     assert {:dbg_istk, :from_external, 1} in BannedCalls.banned_mfas()
     assert :binary_to_term in BannedCalls.banned_names()
     assert exact_mfa_exclusion_reason(decoder_mfa, exclusions) == nil
     assert exclusion_reason(elem(decoder_mfa, 0), elem(decoder_mfa, 1), exclusions) == nil
+  end
+
+  defp debugger_function_audit_complete?(reviews) do
+    Enum.all?(reviews, fn review ->
+      review.caller_input != nil and review.defaults != nil and review.option_paths != nil and
+        review.trace != [] and review.verdict != nil and review.owner == :plan_02 and
+        review.citations != []
+    end)
   end
 
   defp assert_ct_make_audit!(records, graph, tier, evidence, exclusions \\ @exclusions) do
