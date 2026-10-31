@@ -3758,6 +3758,93 @@ defmodule Fablebook.Contract.TierSweepTest do
       evidence,
       @exclusions
     ])
+
+    assert MapSet.new(apply(audit_module, :branch_ids, [])) == MapSet.new(Map.keys(record.branch_citations))
+
+    assert_raise ExUnit.AssertionError, ~r/required audit fields/, fn ->
+      apply(audit_module, :assert_audit!, [%{}, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+    end
+
+    branchless = %{record | branch_citations: %{}, source_branches: []}
+
+    assert_raise ExUnit.AssertionError, ~r/complete settings and replay branch map/, fn ->
+      apply(audit_module, :assert_audit!, [branchless, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+    end
+
+    for omitted_branch <- [:default_path, :settings_read_error] do
+      incomplete_branches = %{
+        record
+        | branch_citations: Map.delete(record.branch_citations, omitted_branch),
+          source_branches: Enum.reject(record.source_branches, &(&1.id == omitted_branch))
+      }
+
+      assert_raise ExUnit.AssertionError, ~r/complete settings and replay branch map/, fn ->
+        apply(audit_module, :assert_audit!, [incomplete_branches, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+      end
+    end
+
+    incomplete_functions = %{
+      record
+      | function_sources: tl(record.function_sources),
+        function_audit: tl(record.function_audit)
+    }
+
+    omitted_function_error =
+      assert_raise ExUnit.AssertionError, ~r/missing_source=/, fn ->
+        apply(audit_module, :assert_audit!, [incomplete_functions, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+      end
+
+    assert omitted_function_error.message =~ "lane #{evidence.lane.name}"
+    assert omitted_function_error.message =~ "dbg_wx_settings:default_settings_dir/1"
+    assert omitted_function_error.message =~ "owner=01.1.1.3.1.1"
+    assert omitted_function_error.message =~ "caller-chain="
+    assert omitted_function_error.message =~ "remedy="
+
+    wrong_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+    wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, wrong_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph lane/, fn ->
+      apply(audit_module, :assert_audit!, [record, ctx.graph, BannedCalls.banned_mfas(), wrong_lane_evidence, @exclusions])
+    end
+
+    first_source = hd(record.function_sources)
+    [first_citation | rest_citations] = first_source.citation
+
+    wrong_source_record = %{
+      record
+      | function_sources: [
+          %{first_source | citation: [%{first_citation | expected_text: "not the source line"} | rest_citations]}
+          | tl(record.function_sources)
+        ]
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/restore matching branch text/, fn ->
+      apply(audit_module, :assert_audit!, [wrong_source_record, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+    end
+
+    wrong_hash_record = %{
+      record
+      | function_sources: [
+          %{first_source | citation: [%{first_citation | sha256: String.duplicate("0", 64)} | rest_citations]}
+          | tl(record.function_sources)
+        ]
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/restore exact lane SHA/, fn ->
+      apply(audit_module, :assert_audit!, [wrong_hash_record, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+    end
+
+    wrong_line_record = %{
+      record
+      | function_sources: [
+          %{first_source | citation: [%{first_citation | line: 999_999} | rest_citations]}
+          | tl(record.function_sources)
+        ]
+    }
+
+    assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
+      apply(audit_module, :assert_audit!, [wrong_line_record, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+    end
   end
 
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do
