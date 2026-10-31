@@ -1,0 +1,238 @@
+{
+  "approval": "pending-owner-decision",
+  "base_archive": "test/fixtures/guards/exact_sources.tar.gz",
+  "base_bytes": 2362990,
+  "base_sha256": "31b6289b8258b6979fc70255f478020d370aaf4af3d3736a11eb0d771c4509b5",
+  "candidate_bytes": 2481736,
+  "candidate_sha256": "a31f1d1b19e1c8df543f4844af9d47b7ca7a79985b42bd78186f56c04da06342",
+  "compressed_delta_bytes": 118746,
+  "mappings": [
+    {
+      "bytes": 1585,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_idb.erl",
+      "sha256": "3505ba8ce32c8ca147a1195a183cc78a841b28de479c29b5e92822afefea3593",
+      "source_path": "debugger/src/dbg_idb.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/dbg_idb.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_idb.erl"
+    },
+    {
+      "bytes": 84733,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_ieval.erl",
+      "sha256": "60362d2aa47470b70a9264c5a4f7c5e60e8362f844e3ec4171cc3733d2ff31d1",
+      "source_path": "debugger/src/dbg_ieval.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/dbg_ieval.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_ieval.erl"
+    },
+    {
+      "bytes": 48353,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_iload.erl",
+      "sha256": "a2dd4ad09550a866e5cc16834c0f006a146a21c3abc983f72d8ed44dd1a4b250",
+      "source_path": "debugger/src/dbg_iload.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/dbg_iload.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_iload.erl"
+    },
+    {
+      "bytes": 7574,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_istk.erl",
+      "sha256": "a71cef371ac1875a22e851d44e4e47b5a1b87309709fca32073e78d51825e01c",
+      "source_path": "debugger/src/dbg_istk.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/dbg_istk.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_istk.erl"
+    },
+    {
+      "bytes": 18391,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_wx_filedialog_win.erl",
+      "sha256": "d9a2e6bffb2f673d830c1c76585076c8510681a356a57c31547f838eaa9d858e",
+      "source_path": "debugger/src/dbg_wx_filedialog_win.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/dbg_wx_filedialog_win.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_wx_filedialog_win.erl"
+    },
+    {
+      "bytes": 3988,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_wx_interpret.erl",
+      "sha256": "0731379c05425123893f08dab6d149f2e42f095f9245ff18d098691ab87520bb",
+      "source_path": "debugger/src/dbg_wx_interpret.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/dbg_wx_interpret.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_wx_interpret.erl"
+    },
+    {
+      "bytes": 23660,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_wx_mon.erl",
+      "sha256": "c47574e6f066df305154bbd893762011cf04ecb8315d8263cab415befbab22ff",
+      "source_path": "debugger/src/dbg_wx_mon.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/dbg_wx_mon.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_wx_mon.erl"
+    },
+    {
+      "bytes": 21725,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_wx_mon_win.erl",
+      "sha256": "914439f252dc785d467980e163f001969a484cda8ae485b5833a3fcb65cbea30",
+      "source_path": "debugger/src/dbg_wx_mon_win.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/dbg_wx_mon_win.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_wx_mon_win.erl"
+    },
+    {
+      "bytes": 11397,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_wx_win.erl",
+      "sha256": "109bffa861fa1e6d71310a8ca91d57f2b2aa941d7220dfd440a79ad4bc286599",
+      "source_path": "debugger/src/dbg_wx_win.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/dbg_wx_win.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_wx_win.erl"
+    },
+    {
+      "bytes": 14484,
+      "lane": "core",
+      "path": "core/debugger/src/i.erl",
+      "sha256": "1cc52b78f0416ecbe6584b0f920924a4b271321607dca3fd6f104bdaf397e2ba",
+      "source_path": "debugger/src/i.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/i.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/i.erl"
+    },
+    {
+      "bytes": 37435,
+      "lane": "core",
+      "path": "core/debugger/src/int.erl",
+      "sha256": "14b667aa97d23b3ead643eae3bf2acabbc804919935f978a04846b353cac7a39",
+      "source_path": "debugger/src/int.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-29.1.2/lib/debugger/src/int.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/int.erl"
+    },
+    {
+      "bytes": 1546,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_idb.erl",
+      "sha256": "990726cde6815d7616b01d13adf4f8cacc7540b702507ba0fea8ca349bbbe2c5",
+      "source_path": "debugger/src/dbg_idb.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/dbg_idb.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_idb.erl"
+    },
+    {
+      "bytes": 63001,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_ieval.erl",
+      "sha256": "393085c1fc6324687bc12b5184b5a501491f07c8f55dc293ee07774ea96d0b6a",
+      "source_path": "debugger/src/dbg_ieval.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/dbg_ieval.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_ieval.erl"
+    },
+    {
+      "bytes": 39691,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_iload.erl",
+      "sha256": "530955c6525821e0382d53375ce5750cb4fd290ce4c323dd38521538452dae03",
+      "source_path": "debugger/src/dbg_iload.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/dbg_iload.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_iload.erl"
+    },
+    {
+      "bytes": 7454,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_istk.erl",
+      "sha256": "4f68bca517244f361bb915000fe299259242d6a8d733b064ed47d2f8872b8f66",
+      "source_path": "debugger/src/dbg_istk.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/dbg_istk.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_istk.erl"
+    },
+    {
+      "bytes": 18349,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_wx_filedialog_win.erl",
+      "sha256": "4c4f8d9af1f3f326a952c1b4e181d1533c692f08b8954fd884233f7b2500ab2a",
+      "source_path": "debugger/src/dbg_wx_filedialog_win.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/dbg_wx_filedialog_win.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_wx_filedialog_win.erl"
+    },
+    {
+      "bytes": 3949,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_wx_interpret.erl",
+      "sha256": "d41c9d6225a8817bd792abb202916020782d72b59e439a891b0ebc4864e38098",
+      "source_path": "debugger/src/dbg_wx_interpret.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/dbg_wx_interpret.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_wx_interpret.erl"
+    },
+    {
+      "bytes": 23541,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_wx_mon.erl",
+      "sha256": "8beded69315466f8b941d4395e4047453667c31404226a8e53ab229b47a6a05e",
+      "source_path": "debugger/src/dbg_wx_mon.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/dbg_wx_mon.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_wx_mon.erl"
+    },
+    {
+      "bytes": 21608,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_wx_mon_win.erl",
+      "sha256": "971779c05b5d7c08317c04d33d7354a24a701ed35c2f96c9eef67d77d5a4cb25",
+      "source_path": "debugger/src/dbg_wx_mon_win.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/dbg_wx_mon_win.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_wx_mon_win.erl"
+    },
+    {
+      "bytes": 11355,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_wx_win.erl",
+      "sha256": "31b4f35b2f1c871404ce5d261aff965d630f6347edcfc9b084e1f8dc90ad061e",
+      "source_path": "debugger/src/dbg_wx_win.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/dbg_wx_win.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_wx_win.erl"
+    },
+    {
+      "bytes": 14370,
+      "lane": "floor",
+      "path": "floor/debugger/src/i.erl",
+      "sha256": "b224f283e91d9ff0183c619893461e7699b4821f6b6f5725e96db992392d9e5f",
+      "source_path": "debugger/src/i.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/i.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/i.erl"
+    },
+    {
+      "bytes": 36182,
+      "lane": "floor",
+      "path": "floor/debugger/src/int.erl",
+      "sha256": "913d32eaf82c21b9c9902e023f46dc88317ff729d66cc91078469d7c3b9b043c",
+      "source_path": "debugger/src/int.erl",
+      "status": "present",
+      "tagged_research_url": "https://raw.githubusercontent.com/erlang/otp/OTP-27.3.4.9/lib/debugger/src/int.erl",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/int.erl"
+    }
+  ],
+  "max_compressed_delta_bytes": 200000,
+  "max_total_compressed_bytes": 2562990,
+  "new_raw_source_bytes": 514371,
+  "new_source_count": 22,
+  "schema": "fablebook.debugger-source-extension.v1",
+  "unchanged_members": 226,
+  "unchanged_source_rows": 229
+}

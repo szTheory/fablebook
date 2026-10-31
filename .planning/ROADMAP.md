@@ -38,7 +38,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
 - [x] **Phase 01.1.1.1: Exact-source evidence and named atom-creator guards** (INSERTED) - preserve merged source/PathConsult tracer; finish consult/Yecc and Logger/ExUnit fronts (completed 2026-10-30)
 - [x] **Phase 01.1.1.2: Installed OTP inventory and Common Test guard slice** (INSERTED) - independent exact-lane installation discovery and real Common Test guard (completed 2026-10-30)
-- [ ] **Phase 01.1.1.3: Installed OTP front-door coverage in calibrated source families** (INSERTED) - unplanned scope reservation; split into bounded source-family phases before execution
+- [ ] **Phase 01.1.1.3: Debugger selected-file interpreter and seed provenance** (INSERTED) - unplanned scope reservation; split into bounded source-family phases before execution
 - [ ] **Phase 01.1.1.4: Carried exclusion truth in calibrated source families** (INSERTED) - unplanned scope reservation; preserve every original identity and matched function across bounded audit phases
 - [ ] **Phase 01.1.1.5: Complete audit enforcement and truthful guard explanation** (INSERTED) - unconditional full coverage/removal gates and approved changed wording; closes original three transfers
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
@@ -236,26 +236,232 @@ Plans:
 **Wave 2**
 - [x] 01.1.1.2-02-PLAN.md — Exact-source Common Test export dispositions, mirrored static guards and final scoped green delivery
 
-### Phase 01.1.1.3: Installed OTP front-door coverage in calibrated source families (INSERTED)
+### Phase 01.1.1.3: Debugger selected-file interpreter and seed provenance (INSERTED)
 
-**Goal:** Complete source dispositions and static guard coverage for every remaining installed-app eval, compile-and-load, interpret, native-load and code-path front, including debugger `dbg_idb`, `dbg_istk` and `dbg_wx_*` remainder and atom creators reached through them. (INT-20261029-02; ADR 0004, 0021; original SC1/SC2)
-**Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
+**Goal:** Statically guard the remaining exported dbg_wx_interpret:start/4 selected-file interpreter front on both exact lanes and source-dispose its assigned start/filter/interpret roots plus dbg_idb/dbg_istk seed paths. Retain supporting caller-input provenance, benign controls and complete active coverage without claiming debugger-wide or installed-wide completion. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021; original SC1/SC2)
+**Requirements**: SEC-01 advanced only; Phase 5 retains requirement completion
 **Depends on:** Phase 01.1.1.2
-**Planning gate:** Unplanned scope reservation, never dispatchable as one bulk audit. Use complete installed inventory and observed named-family review cost to narrow this entry to one bounded source family and insert adjacent decimal children owning the exact remainder before creating executable plans. Every executable phase has at most five plans/about three working days and every plan fits 50% of a 200k executor context. Unknown expansion is not a fabricated schedule.
+**Planning gate:** Adopted measured first family only; original installed-scope remainder is owned by 01.1.1.3.1–01.1.1.3.13. Those entries are research-only reservations, never bulk executable audits. Each future connected slice must be calibrated and partitioned before PLAN files. See `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md` and the single machine-readable ownership ledger.
 **Success Criteria**:
-  1. Each discovered module/function and caller-input chain belongs to a named bounded child; every reached front has a source-backed disposition and unsafe fronts have mirrored tiers/uncalled probes, without blanket app/module exceptions.
-  2. Final child enforces installed-app versus swept-app equality, full discovered BEAM ingestion and zero undisposed reached/boundary fronts on both lanes, with fatal omission/scan/no-debug controls. Discovered inventory defines scope, never a fixed 17/18-app count.
-  3. Pending scope never becomes a safe exclusion or a full-sweep pass; each substantive child merges green under the same collision and PR-scope gates. Final acceptance is rechecked by 01.1.1.5.
+  1. Every assigned root and seed path has exact-lane source-backed dispositions; unsafe exported fronts have mirrored Credo/BEAM tiers, uncalled direct/capture/apply/source-only probes, independent discovery, benign controls and individual removal witnesses. New exports/roots and omitted assignments fail closed.
+  2. Offline citations pass provenance, digest, containment and line checks; changed exclusions retain full match/original identity truth and individual nonvacuous removal witnesses against complete active dispositions. Supporting sources keep their distinct owners.
+  3. Existing active coverage cannot shrink; installation semantics remain pending with exact owners. A slice pass cannot satisfy final .3.13 acceptance. A scoped guard PR merges green on the exact tested head within the ordinary review cap; collision/source/policy stops remain.
+**Plans:** 4 plans
+
+Plans:
+**Wave 1**
+- [ ] 01.1.1.3-01-PLAN.md — Approve exact source extension, then guard the selected-file interpreter path and branches
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01.1.1.3-02-PLAN.md — Guard the public stack decoder and finish assigned seed/source dispositions
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 01.1.1.3-03-PLAN.md — Complete omission controls, bounded internal review and scoped current-head CI
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 01.1.1.3-04-PLAN.md — Prove fresh receipt/ownership history correctness, then finish the same green PR and phase evidence
+
+### Phase 01.1.1.3.1: Debugger remaining settings, trace, breakpoint and monitor routes (INSERTED)
+
+**Goal:** Own and research debugger remaining settings, trace, breakpoint and monitor routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2, Phase 01.1.1.3
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
 **Plans:** 0 plans
 
 Plans:
-- [ ] TBD (run $gsd-plan-phase 01.1.1.3 to break down)
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.2: Common Test remaining runner, specification and source-input routes (INSERTED)
+
+**Goal:** Own and research common Test remaining runner, specification and source-input routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.3: EUnit remaining runner and test-description input routes (INSERTED)
+
+**Goal:** Own and research eUnit remaining runner and test-description input routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.4: EDoc remaining source, generation and callback routes (INSERTED)
+
+**Goal:** Own and research eDoc remaining source, generation and callback routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.5: Diameter remaining dictionary and service-input routes (INSERTED)
+
+**Goal:** Own and research diameter remaining dictionary and service-input routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.6: Reltool remaining configuration and code-path routes (INSERTED)
+
+**Goal:** Own and research reltool remaining configuration and code-path routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.7: SNMP remaining compiler and service-input routes (INSERTED)
+
+**Goal:** Own and research sNMP remaining compiler and service-input routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.8: Megaco remaining codec and configuration-input routes (INSERTED)
+
+**Goal:** Own and research megaco remaining codec and configuration-input routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.9: Observer and ET remaining trace and match-specification routes (INSERTED)
+
+**Goal:** Own and research observer and ET remaining trace and match-specification routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.10: Mnesia remaining schema and configuration-input routes (INSERTED)
+
+**Goal:** Own and research mnesia remaining schema and configuration-input routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.11: SSH remaining service, shell and configuration-input routes (INSERTED)
+
+**Goal:** Own and research sSH remaining service, shell and configuration-input routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.12: FTP, TFTP, ODBC and ELDAP unresolved source-input routes (INSERTED)
+
+**Goal:** Own and research fTP, TFTP, ODBC and ELDAP unresolved source-input routes. Extract measured connected source families and retain exact ownership of every unresolved remainder before executable plans. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
+
+### Phase 01.1.1.3.13: wx native/source-input coverage, erl_interface accounting and final installed-scope gate (INSERTED)
+
+**Goal:** Own unresolved substantive wx/native/source-input coverage and erl_interface zero-BEAM accounting, then enforce unconditional full installed-scope acceptance on both lanes. (INT-20261029-02, INT-20261030-02, INT-20261030-06; ADR 0004, 0021)
+**Requirements**: SEC-01 advanced only; Phase 5 completes it
+**Depends on:** Phase 01.1.1.2, Phase 01.1.1.3, Phase 01.1.1.3.1, Phase 01.1.1.3.2, Phase 01.1.1.3.3, Phase 01.1.1.3.4, Phase 01.1.1.3.5, Phase 01.1.1.3.6, Phase 01.1.1.3.7, Phase 01.1.1.3.8, Phase 01.1.1.3.9, Phase 01.1.1.3.10, Phase 01.1.1.3.11, Phase 01.1.1.3.12
+**Planning gate:** Research-only unresolved source-task reservation; no executable plans or bulk dispatch. Exact assignments: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz`; partition contract: `.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-SPLIT.md`. Further splits extend .4/.5 dependencies and preserve a substantive final gate owner.
+**Success Criteria**:
+  1. Every assigned app/module/root/caller chain, including zero-hit and unmapped-source tasks, stays owned in the complete receipt-derived ledger; source evidence and overlaps preserve original identities and active scope.
+  2. Before executable plans, calibrate connected caller-input/source closure, materialize exact remaining owners and respect five plans/about three working days, two–three tasks per plan, five files per task and at most half a 200k executor context. This reservation is not a size or schedule claim.
+  3. Substantive static guard changes preserve exact-lane citations, mirrored uncalled probes, changed-match/removal controls, existing required green checks, scoped PRs and finite review/collision/source gates.
+  4. After substantive source coverage and all preceding source tasks close, unconditionally require installed OTP versus semantically swept OTP app identity equality, discovered/inspected/ingested BEAM identity equality and zero undisposed reached/boundary fronts on both lanes. Omitted apps/BEAMs, failed/corrupt scans, no debug information and unresolved required sources are fatal; no pending selector can pass this gate. Phase .5 rechecks independently.
+**Plans:** 0 plans
+
+Plans:
+- [ ] Research and calibrate this reservation before executable planning
 
 ### Phase 01.1.1.4: Carried exclusion truth in calibrated source families (INSERTED)
 
 **Goal:** Establish the semantic truth of every carried/new exclusion with complete per-lane source/match coverage and independent removal witnesses: CN-001..006, EX-001..182, BD-001..033, and five metadata identities (221 exclusions/226 identities). (INT-20261029-02; ADR 0004, 0021; original SC3/SC4; D-06–D-10)
 **Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
-**Depends on:** Phase 01.1.1.3 and all its inventory-derived children
+**Depends on:** Phase 01.1.1.3, Phase 01.1.1.3.1, Phase 01.1.1.3.2, Phase 01.1.1.3.3, Phase 01.1.1.3.4, Phase 01.1.1.3.5, Phase 01.1.1.3.6, Phase 01.1.1.3.7, Phase 01.1.1.3.8, Phase 01.1.1.3.9, Phase 01.1.1.3.10, Phase 01.1.1.3.11, Phase 01.1.1.3.12, Phase 01.1.1.3.13
 **Planning gate:** Unplanned scope reservation. Before execution, partition by actual source module/function/caller chain, calibrate a representative substantive family and materialize bounded children. No row-halving or five-plan promise for the 10+ MB corpus. Each original identity may span child records, whose union equals its complete per-lane matched-MFA set, including overlaps and new installed scope. Every executable phase obeys ADR 0021 and the 50% context bound.
 **Success Criteria**:
   1. All original/new entries have substantive exact-lane semantic verdicts, caller traces and valid app-relative source citations; false reasons become tier entries with uncalled fixtures or narrower function exclusions. Absence needs inventory/export evidence.
@@ -271,7 +477,7 @@ Plans:
 
 **Goal:** Implement unconditional whole-table atom/eval/boundary/source/removal enforcement and the evidence-mapped Credo explanation, closing the original three 01.1.1 transfers only after all source-family children are merged green. (INT-20261029-02; ADR 0004, 0021; original SC1–SC6)
 **Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
-**Depends on:** Phase 01.1.1.4 and every 01.1.1.3/01.1.1.4 audit child
+**Depends on:** Phase 01.1.1.4, Phase 01.1.1.3, Phase 01.1.1.3.1, Phase 01.1.1.3.2, Phase 01.1.1.3.3, Phase 01.1.1.3.4, Phase 01.1.1.3.5, Phase 01.1.1.3.6, Phase 01.1.1.3.7, Phase 01.1.1.3.8, Phase 01.1.1.3.9, Phase 01.1.1.3.10, Phase 01.1.1.3.11, Phase 01.1.1.3.12, Phase 01.1.1.3.13
 **Success Criteria**:
   1. Both-lane recurring contracts enforce complete original/active identity and matched-function equality, true cited triples, exact source validity, complete installed/ingested/swept equality and zero undisposed atom/eval/boundary fronts; no pending/slice selector can make this global gate pass.
   2. Whole-table negative controls reject two-tuples, empty/invalid/missing/wrong-lane source, missing identities/functions/verdicts and every redundant retained exclusion; individual removal witnesses cover every applicable lane.

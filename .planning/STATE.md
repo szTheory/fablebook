@@ -1,17 +1,17 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 1
-current_phase_name: Release pipeline, CI gate and guards
-status: ready_for_verification
-stopped_at: Phase 01.1.1.3 discussion complete; research and calibrated partitioning next; no next workflow started; parent debt and safety stops retained
-last_updated: "2026-10-31T01:12:57.328Z"
+current_phase: 01.1.1.3
+current_phase_name: Debugger selected-file interpreter and seed provenance
+status: Ready to execute Phase 01.1.1.3; source-fixture approval required before archive mutation; parent verification debt remains open
+stopped_at: Phase 01.1.1.3 planning complete; four checked plans, thirteen research-only remainder owners; waiting for owner to choose execution; source-extension approval required before archive mutation; no implementation started
+last_updated: "2026-10-31T02:34:31.427Z"
 last_activity: 2026-10-31
-last_activity_desc: Phase 01.1.1.2 complete, transitioned to Phase 1
-state_head: 914a0a6d2dba01d32b1dc6c74525afa0a7777e7b
+last_activity_desc: Phase 01.1.1.3 research, calibrated partition and four-plan independent verification complete; no implementation started
+state_head: 7a0549a6453c7b19f4f5f396e55cc6f3ab112e70
 progress:
-  total_phases: 42
+  total_phases: 55
   completed_phases: 1
-  total_plans: 19
+  total_plans: 23
   completed_plans: 19
   percent: 2
 ---
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.3 discussion is captured. Next independent work is research and calibrated source-family partitioning before executable plans. The Phase 1 pointer retains parent verification debt; no next workflow is running.
+**Current focus:** Phase 01.1.1.3 planning complete: four checked sequential plans for the selected debugger family; thirteen named research-only reservations retain all remaining ownership. Execution is owner-chosen and begins with a concrete source-fixture approval checkpoint; parent debt and later safety gates remain open.
 
 ## Current Position
 
-Phase: 1 — Release pipeline, CI gate and guards
-Plan: 5
-Status: Phase 01.1.1.2 verified complete; Phase 1 verification debt remains pending and no parent workflow has started
-Last activity: 2026-10-30 — Phase 01.1.1.2 complete, transitioned to Phase 1
+Phase: 01.1.1.3 (Debugger selected-file interpreter and seed provenance) — READY TO EXECUTE
+Plan: 0 of 4 (planning complete; execution not started)
+Status: Ready to execute Phase 01.1.1.3; source-fixture approval required before archive mutation; parent verification debt remains open
+Last activity: 2026-10-30 — Phase 01.1.1.3 research, calibrated partition and four-plan independent verification complete; no implementation started
 
 Progress: [░░░░░░░░░░] 2%
 
@@ -134,6 +134,7 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.2]: ct_make four-export caller-file and load coverage is source-disposed and mirrored on both exact lanes; other CommonTest families remain pending for 01.1.1.3
 - [Phase 01.1.1.2]: SEC-01 remains Pending for Phase 5; static coverage does not claim runtime or mutation proof
 - [Phase 01.1.1.3]: Discussion complete under INT-20261030-06: connected caller-chain families, independently checked exact ownership, debugger calibration first, and unconditional final installed-scope acceptance. Source review and roadmap child materialization precede executable plans. This session supersedes the older .2 receipt next-command text; no auto-advance, policy exception or budget renewal.
+- [Phase 01.1.1.3]: Research/partition/planning complete: four independently checked sequential plans guard selected-file interpretation and exported stack decoding; thirteen exact-owned reservations preserve the remainder and final unconditional installed gate. Source fixture extension is prepared but approval remains pending; SEC-01 and parent debt remain open.
 
 ### Pending Todos
 
@@ -157,6 +158,7 @@ None yet.
 - Phase 01.1 inserted after Phase 1: Close phase 1 guard gaps (atom-ban bypass, code loading, hex-publish hardening); split per INT-20261029-01 to keep the 5-plan cap (URGENT)
 - Phase 01.1.1.1 inserted after Phase 01.1.1: Finish the ban list: open items transferred from 01.1.1 at planning (INT-20261029-02) (URGENT)
 - Phase 01.1.1.1 replanned: INT-20261029-02 and INT-20261030-02: preserve merged PR23 and partial history; active06/07 finish named creators; explicit01.1.1.2–.5 transfers and bounded bulk-audit children preserve all original gates
+- Phase 01.1.1.3 edited: Narrowed to measured debugger selected-file/seed family; inserted thirteen exact-owned research reservations and preserved final installed-scope/.4/.5 gates under delegated structural authority
 
 ## Deferred Items
 
@@ -168,15 +170,15 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-31T01:12:56.385Z
-Stopped at: Phase 01.1.1.3 discussion complete; research and calibrated partitioning next; no next workflow started; parent debt and safety stops retained
-Next independent command: $gsd-plan-phase 01.1.1.3 --research — research the debugger calibration target, verify exact ownership and materialize bounded children before executable plans
-Resume file: .planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-CONTEXT.md
+Last session: 2026-10-31T02:33:33.916Z
+Stopped at: Phase 01.1.1.3 planning complete; four checked plans, thirteen research-only remainder owners; waiting for owner to choose execution; source-extension approval required before archive mutation; no implementation started
+Next independent command: $gsd-execute-phase 01.1.1.3 — execute the four checked plans after the owner chooses the execution boundary; first present the enumerated source-fixture extension decision.
+Resume file: .planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-01-PLAN.md
 
 ## Completed phase receipt
 
 Phase 01.1.1.2 is complete under its bounded goal: both plans and all twelve verified must-haves passed, all scoped code and the security prerequisite merged green, exact core/floor receipts validate, and no human UAT remains. The canonical VERIFICATION report contains the CLI-generated covered-input fingerprint. No requirement was completed; SEC-01 remains Pending for Phase 5.
 
-The completion query retains the Phase 1 pointer because parent verification debt remains. No parent report, UAT gap or debug session was closed. Installed-versus-active semantic equality, remaining front doors, carried exclusions, Macro judgment, unconditional enforcement, explanation wording and runtime/mutation proof remain with their stated .3/.4/.5/Phase 5 owners.
+The historical .2 completion query retained the Phase 1 pointer because parent verification debt remained. The current pointer tracks the checked .3 plan set; parent debt is still open. No parent report, UAT gap or debug session was closed. Installed-versus-active semantic equality, remaining front doors, carried exclusions, Macro judgment, unconditional enforcement, explanation wording and runtime/mutation proof remain with their stated .3/.4/.5/Phase 5 owners.
 
-Independent next work is `$gsd-discuss-phase 01.1.1.3`, using this phase's measured inventory and verified prerequisite to define bounded source-family children. This command has not been started; the owner acts next at the phase boundary.
+Historical .2 next-command guidance is superseded by the current Session Continuity entry. Phase .3 discussion, research, exact ownership partition and four-plan independent review are complete. The owner chooses when to run `$gsd-execute-phase 01.1.1.3`; its first task requires the concrete source-fixture extension decision.
