@@ -3,11 +3,11 @@ gsd_state_version: "1.0"
 current_phase: 1
 current_phase_name: Release pipeline, CI gate and guards
 status: ready_for_verification
-stopped_at: Phase 01.1.1.2 verified complete; parent debt retained; independent 01.1.1.3 discussion ready, not started
-last_updated: "2026-10-31T01:01:25.951Z"
+stopped_at: Phase 01.1.1.3 discussion complete; research and calibrated partitioning next; no next workflow started; parent debt and safety stops retained
+last_updated: "2026-10-31T01:12:57.328Z"
 last_activity: 2026-10-31
 last_activity_desc: Phase 01.1.1.2 complete, transitioned to Phase 1
-state_head: 98a0b7c1042ec701f882ad6049a53381e5a63e38
+state_head: 914a0a6d2dba01d32b1dc6c74525afa0a7777e7b
 progress:
   total_phases: 42
   completed_phases: 1
@@ -23,7 +23,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.2 is verified complete. The Phase 1 pointer retains unresolved parent debt; independent next work is discussing calibrated 01.1.1.3 audit families. No next workflow is running.
+**Current focus:** Phase 01.1.1.3 discussion is captured. Next independent work is research and calibrated source-family partitioning before executable plans. The Phase 1 pointer retains parent verification debt; no next workflow is running.
 
 ## Current Position
 
@@ -133,6 +133,7 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.2]: All five allocated review passes are used, with the final CommonTest finding fixed and verified on the exact merged head; SEC-01 remains Pending for Phase 5.
 - [Phase 01.1.1.2]: ct_make four-export caller-file and load coverage is source-disposed and mirrored on both exact lanes; other CommonTest families remain pending for 01.1.1.3
 - [Phase 01.1.1.2]: SEC-01 remains Pending for Phase 5; static coverage does not claim runtime or mutation proof
+- [Phase 01.1.1.3]: Discussion complete under INT-20261030-06: connected caller-chain families, independently checked exact ownership, debugger calibration first, and unconditional final installed-scope acceptance. Source review and roadmap child materialization precede executable plans. This session supersedes the older .2 receipt next-command text; no auto-advance, policy exception or budget renewal.
 
 ### Pending Todos
 
@@ -167,10 +168,10 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-31T01:03:24Z
-Stopped at: Phase 01.1.1.2 verified complete; no next workflow started
-Next independent command: $gsd-discuss-phase 01.1.1.3 — scope and calibrate the remaining installed OTP source-family audit children
-Resume file: None
+Last session: 2026-10-31T01:12:56.385Z
+Stopped at: Phase 01.1.1.3 discussion complete; research and calibrated partitioning next; no next workflow started; parent debt and safety stops retained
+Next independent command: $gsd-plan-phase 01.1.1.3 --research — research the debugger calibration target, verify exact ownership and materialize bounded children before executable plans
+Resume file: .planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-CONTEXT.md
 
 ## Completed phase receipt
 
