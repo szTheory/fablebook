@@ -259,7 +259,44 @@ def controls(expected):
     reject("missing-zero-beam-app", expected, expected[:at] + expected[at+1:])
     at = next(i for i, r in enumerate(expected) if r["t"] == "module" and r["owner"] == BASELINE)
     reject("baseline-shrink", expected, expected[:at] + expected[at+1:])
+    if missing_observed_assignment_control():
+        reports.append("missing-observed-assignment")
     return reports
+
+
+def missing_observed_assignment_control():
+    path = HERE / f"{PHASE}-INVENTORY-core.jsonl"
+    with path.open("rb") as stream:
+        for line in stream:
+            if not line.startswith(PREFIX):
+                raise ValueError(f"core observed receipt has an untagged row: {path}")
+            row = json.loads(line[len(PREFIX):])
+            if row.get("kind") == "pending_module" and row.get("app") == "debugger":
+                observed = {
+                    "t": "observed_module",
+                    "namespace": "observed",
+                    "lane": "core",
+                    "identity": {"kind": "module", "app": row["app"], "module": row["module"]},
+                    "app": row["app"],
+                    "module": row["module"],
+                    "owner": owner(row["app"], row["module"]),
+                    "record_sha256": digest(canon(row).encode()),
+                }
+                try:
+                    assert_equal([observed], [])
+                except ValueError as error:
+                    message = str(error)
+                    return all(
+                        value in message
+                        for value in (
+                            "lane=core",
+                            "type=module",
+                            "identity=",
+                            f"owner={observed['owner']}",
+                        )
+                    )
+                return False
+    raise ValueError(f"core observed receipt lacks debugger:dbg_idb pending identity: {path}")
 
 
 def main():
