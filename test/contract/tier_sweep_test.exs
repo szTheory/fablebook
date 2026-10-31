@@ -1,4 +1,6 @@
 defmodule Fablebook.Test.DebuggerPendingOwnership do
+  alias Fablebook.Test.DebuggerSettings
+
   @baseline_modules [
     :dbg_wx_mon,
     :dbg_wx_mon_win,
@@ -11,7 +13,7 @@ defmodule Fablebook.Test.DebuggerPendingOwnership do
   def baseline_modules, do: @baseline_modules
 
   def owners do
-    current = Fablebook.Test.DebuggerSettings.pending_owners()
+    current = DebuggerSettings.pending_owners()
     Map.new(@baseline_modules, &{&1, Map.fetch!(current, Atom.to_string(&1))})
   end
 
@@ -3746,36 +3748,34 @@ defmodule Fablebook.Contract.TierSweepTest do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
-    audit_module = DebuggerSettings
-
-    assert Code.ensure_loaded?(audit_module),
+    assert Code.ensure_loaded?(DebuggerSettings),
            "the settings audit must provide source-backed records for the complete dialog and replay path"
 
-    record = apply(audit_module, :records, [evidence.lane.name])
+    record = DebuggerSettings.records(evidence.lane.name)
     changed_universe = saved_settings_changed_family_universe(ctx.graph, record)
-    exclusion_matches = apply(audit_module, :exclusion_matches, [changed_universe, @exclusions])
+    exclusion_matches = DebuggerSettings.exclusion_matches(changed_universe, @exclusions)
 
     assert exclusion_matches == @saved_settings_expected_exclusion_matches,
            "changed saved-settings exclusions differ from the measured exact set: #{inspect(exclusion_matches)}"
 
     record = %{record | exclusion_matches: exclusion_matches}
 
-    apply(audit_module, :assert_audit!, [
+    DebuggerSettings.assert_audit!(
       record,
       ctx.graph,
       BannedCalls.banned_mfas(),
       evidence,
       @exclusions
-    ])
+    )
 
     assert :ok ==
-             apply(audit_module, :assert_exclusion_witnesses!, [
+             DebuggerSettings.assert_exclusion_witnesses!(
                exclusion_matches,
                ctx.graph,
                BannedCalls.banned_mfas(),
                BannedCalls.banned_names(),
                @exclusions
-             ])
+             )
 
     monitor_front = {:dbg_wx_mon, :start, 2}
 
@@ -3791,69 +3791,71 @@ defmodule Fablebook.Contract.TierSweepTest do
       {{:mfa, monitor_front}, :redundant_tier_overlap, source_disposition}
 
     overlap_matches =
-      apply(audit_module, :exclusion_matches, [changed_universe, @exclusions ++ [exact_overlap]])
+      DebuggerSettings.exclusion_matches(changed_universe, @exclusions ++ [exact_overlap])
 
     [overlap_match] = overlap_matches
     assert overlap_match.matched_mfas == [monitor_front]
 
     assert_raise ExUnit.AssertionError, ~r/no individual active removal witness/, fn ->
-      apply(audit_module, :assert_exclusion_witnesses!, [
+      DebuggerSettings.assert_exclusion_witnesses!(
         overlap_matches,
         ctx.graph,
         BannedCalls.banned_mfas(),
         BannedCalls.banned_names(),
         @exclusions ++ [exact_overlap]
-      ])
+      )
     end
 
     assert_raise ExUnit.AssertionError, ~r/incomplete matches/, fn ->
-      apply(audit_module, :assert_exclusion_witnesses!, [
+      DebuggerSettings.assert_exclusion_witnesses!(
         [%{overlap_match | matched_mfas: []}],
         ctx.graph,
         BannedCalls.banned_mfas(),
         BannedCalls.banned_names(),
         @exclusions ++ [exact_overlap]
-      ])
+      )
     end
 
     blanket_overlap = {{:dbg_wx_mon, :_}, :blanket_overlap, source_disposition}
 
     blanket_matches =
-      apply(audit_module, :exclusion_matches, [changed_universe, [blanket_overlap]])
+      DebuggerSettings.exclusion_matches(changed_universe, [blanket_overlap])
 
     assert_raise ExUnit.AssertionError, ~r/blanket or non-exact/, fn ->
-      apply(audit_module, :assert_exclusion_witnesses!, [
+      DebuggerSettings.assert_exclusion_witnesses!(
         blanket_matches,
         ctx.graph,
         BannedCalls.banned_mfas(),
         BannedCalls.banned_names(),
         [blanket_overlap]
-      ])
+      )
     end
 
-    assert MapSet.new(apply(audit_module, :branch_ids, [])) ==
+    assert MapSet.new(DebuggerSettings.branch_ids()) ==
              MapSet.new(Map.keys(record.branch_citations))
 
+    assert_invalid_audit = Function.capture(DebuggerSettings, :assert_audit!, 5)
+
     assert_raise ExUnit.AssertionError, ~r/required audit fields/, fn ->
-      apply(audit_module, :assert_audit!, [
-        %{},
+      assert_invalid_audit.(
+        Map.new(),
         ctx.graph,
         BannedCalls.banned_mfas(),
         evidence,
         @exclusions
-      ])
+      )
     end
 
     branchless = %{record | branch_citations: %{}, source_branches: []}
 
     assert_raise ExUnit.AssertionError, ~r/complete settings and replay branch map/, fn ->
-      apply(audit_module, :assert_audit!, [
+      DebuggerSettings.assert_audit!(
         branchless,
         ctx.graph,
         BannedCalls.banned_mfas(),
         evidence,
         @exclusions
-      ])
+      )
     end
 
     for omitted_branch <- [
@@ -3868,13 +3870,13 @@ defmodule Fablebook.Contract.TierSweepTest do
       }
 
       assert_raise ExUnit.AssertionError, ~r/complete settings and replay branch map/, fn ->
-        apply(audit_module, :assert_audit!, [
+        DebuggerSettings.assert_audit!(
           incomplete_branches,
           ctx.graph,
           BannedCalls.banned_mfas(),
           evidence,
           @exclusions
-        ])
+        )
       end
     end
 
@@ -3886,13 +3888,13 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     omitted_function_error =
       assert_raise ExUnit.AssertionError, ~r/missing_source=/, fn ->
-        apply(audit_module, :assert_audit!, [
+        DebuggerSettings.assert_audit!(
           incomplete_functions,
           ctx.graph,
           BannedCalls.banned_mfas(),
           evidence,
           @exclusions
-        ])
+        )
       end
 
     assert omitted_function_error.message =~ "lane #{evidence.lane.name}"
@@ -3905,13 +3907,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, wrong_lane)}
 
     assert_raise ExUnit.AssertionError, ~r/graph lane/, fn ->
-      apply(audit_module, :assert_audit!, [
+      DebuggerSettings.assert_audit!(
         record,
         ctx.graph,
         BannedCalls.banned_mfas(),
         wrong_lane_evidence,
         @exclusions
-      ])
+      )
     end
 
     first_source = hd(record.function_sources)
@@ -3931,13 +3933,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
 
     assert_raise ExUnit.AssertionError, ~r/restore matching branch text/, fn ->
-      apply(audit_module, :assert_audit!, [
+      DebuggerSettings.assert_audit!(
         wrong_source_record,
         ctx.graph,
         BannedCalls.banned_mfas(),
         evidence,
         @exclusions
-      ])
+      )
     end
 
     wrong_hash_record = %{
@@ -3952,13 +3954,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
 
     assert_raise ExUnit.AssertionError, ~r/restore exact lane SHA/, fn ->
-      apply(audit_module, :assert_audit!, [
+      DebuggerSettings.assert_audit!(
         wrong_hash_record,
         ctx.graph,
         BannedCalls.banned_mfas(),
         evidence,
         @exclusions
-      ])
+      )
     end
 
     wrong_line_record = %{
@@ -3970,21 +3972,20 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
 
     assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
-      apply(audit_module, :assert_audit!, [
+      DebuggerSettings.assert_audit!(
         wrong_line_record,
         ctx.graph,
         BannedCalls.banned_mfas(),
         evidence,
         @exclusions
-      ])
+      )
     end
   end
 
   @tag :saved_settings_audit
   test "deferred callback routes have distinct source branch identities" do
-    audit_module = DebuggerSettings
-    assert Code.ensure_loaded?(audit_module)
-    branch_ids = apply(audit_module, :branch_ids, []) |> MapSet.new()
+    assert Code.ensure_loaded?(DebuggerSettings)
+    branch_ids = DebuggerSettings.branch_ids() |> MapSet.new()
 
     required =
       MapSet.new([
@@ -4132,7 +4133,7 @@ defmodule Fablebook.Contract.TierSweepTest do
            "expected a public validator for the current lane's installed receipt"
 
     ownership =
-      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, records, receipt_lines])
+      DebuggerSettings.assert_receipt!(ctx.graph, evidence, records, receipt_lines)
 
     assert ownership.status == :verified
     assert ownership.lane == ctx.graph.lane.name
@@ -4144,7 +4145,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert ownership.remainder_module_count == 20
 
     assert_raise InstalledOtp.Error, fn ->
-      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, records, []])
+      DebuggerSettings.assert_receipt!(ctx.graph, evidence, records, [])
     end
 
     other_lane = if ctx.graph.lane.name == "core", do: "floor", else: "core"
@@ -4155,7 +4156,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       end)
 
     assert_raise InstalledOtp.Error, fn ->
-      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, records, wrong_lane])
+      DebuggerSettings.assert_receipt!(ctx.graph, evidence, records, wrong_lane)
     end
 
     wrong_lock =
@@ -4164,18 +4165,18 @@ defmodule Fablebook.Contract.TierSweepTest do
       end)
 
     assert_raise InstalledOtp.Error, fn ->
-      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, records, wrong_lock])
+      DebuggerSettings.assert_receipt!(ctx.graph, evidence, records, wrong_lock)
     end
 
     wrong_source_records = Map.put(records, :source_sha256, String.duplicate("0", 64))
 
     assert_raise ExUnit.AssertionError, fn ->
-      apply(DebuggerSettings, :assert_receipt!, [
+      DebuggerSettings.assert_receipt!(
         ctx.graph,
         evidence,
         wrong_source_records,
         receipt_lines
-      ])
+      )
     end
   end
 

@@ -21,6 +21,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import uuid
 from collections import Counter
 from pathlib import Path
 
@@ -59,14 +60,17 @@ REMAINDER_OWNER = PARENT_PHASE + ".2"
 ADOPTION_SCRIPT = PHASE_DIR / "adopt.py"
 ADOPTION_LEDGER = PHASE_DIR / (PARENT_PHASE + "-OWNERSHIP.jsonl.gz")
 ADOPTION_PARTITION = PHASE_DIR / (PARENT_PHASE + "-PARTITION.json.gz")
-INVENTORY_PATHS = {
-    lane: CHILD_DIR / f"{OWNER}-INVENTORY-{lane}.jsonl"
-    for lane in ("core", "floor")
-}
-OBSERVED_PATH = CHILD_DIR / f"{OWNER}-OBSERVED.jsonl.gz"
+GENERATION_ROOT = CHILD_DIR / f"{OWNER}-evidence"
 DELIVERY_PATH = CHILD_DIR / f"{OWNER}-DELIVERY.json"
 REVIEW_PATH = CHILD_DIR / f"{OWNER}-REVIEW.md"
-VALIDATION_PATH = CHILD_DIR / f"{OWNER}-VALIDATION.md"
+GENERATION_POINTER_SCHEMA = "fablebook.debugger-saved-settings-generation-pointer.v1"
+GENERATION_ARTIFACTS = {
+    "inventory_core": f"{OWNER}-INVENTORY-core.jsonl",
+    "inventory_floor": f"{OWNER}-INVENTORY-floor.jsonl",
+    "observed": f"{OWNER}-OBSERVED.jsonl.gz",
+    "delivery": f"{OWNER}-DELIVERY.json",
+    "validation": f"{OWNER}-VALIDATION.md",
+}
 RECEIPT_PREFIX = b"FABLEBOOK_OTP_INVENTORY_V2 "
 OBSERVED_SCHEMA = "fablebook.debugger-saved-settings-observed.v1"
 SUPPORTED_RUNTIMES = {
@@ -939,9 +943,245 @@ def artifact_target(path: Path) -> Path:
     return path
 
 
-def check_artifact_paths() -> None:
-    for path in [*INVENTORY_PATHS.values(), OBSERVED_PATH, DELIVERY_PATH, REVIEW_PATH, VALIDATION_PATH]:
+def artifact_directory_target(path: Path, create: bool = False) -> Path:
+    path = Path(path)
+    reject(not CHILD_DIR.is_symlink(), "artifact-root-symlink", str(CHILD_DIR))
+    child_root = CHILD_DIR.resolve()
+    try:
+        child_root.relative_to(ROOT.resolve())
+        relative = path.relative_to(CHILD_DIR)
+    except ValueError as error:
+        raise VerificationError("artifact-directory-path", str(path)) from error
+
+    cursor = ROOT
+    for component in CHILD_DIR.relative_to(ROOT).parts + relative.parts:
+        cursor = cursor / component
+        reject(not cursor.is_symlink(), "artifact-directory-symlink", str(cursor))
+
+    if create:
+        path.mkdir(parents=True, exist_ok=True)
+
+    reject(not path.exists() or path.is_dir(), "artifact-directory-type", str(path))
+    return path
+
+
+def generation_artifact_paths(generation_id: str, generation_root: Path = GENERATION_ROOT) -> dict[str, Path]:
+    reject(re.fullmatch(r"[a-f0-9]{12}-[0-9]+-[a-f0-9]{32}", generation_id) is not None,
+           "artifact-generation-id", generation_id)
+    return {
+        key: generation_root / generation_id / filename
+        for key, filename in GENERATION_ARTIFACTS.items()
+    }
+
+
+def generation_artifact_path_map(generation_id: str, generation_root: Path = GENERATION_ROOT) -> dict[str, str]:
+    return {
+        key: str(path.relative_to(ROOT))
+        for key, path in generation_artifact_paths(generation_id, generation_root).items()
+    }
+
+
+def fsync_directory(path: Path) -> None:
+    directory_fd = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(directory_fd)
+    finally:
+        os.close(directory_fd)
+
+
+def validate_generation_pointer_data(data: bytes, generation_root: Path) -> tuple[dict, dict[str, Path]]:
+    try:
+        pointer = json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise VerificationError("generation-pointer-format", str(error)) from error
+
+    reject(isinstance(pointer, dict), "generation-pointer-format", type(pointer).__name__)
+    reject(pointer.get("schema") == GENERATION_POINTER_SCHEMA, "generation-pointer-schema", pointer.get("schema"))
+    generation_root = artifact_directory_target(generation_root)
+    generation_relative = pointer.get("generation")
+    reject(isinstance(generation_relative, str) and not Path(generation_relative).is_absolute(),
+           "generation-pointer-path", generation_relative)
+    generation_path = ROOT / generation_relative
+    reject(generation_path.parent.resolve() == generation_root.resolve(),
+           "generation-pointer-root", pointer.get("generation"))
+    artifact_directory_target(generation_path)
+
+    records = pointer.get("artifacts")
+    reject(isinstance(records, dict) and set(records) == set(GENERATION_ARTIFACTS),
+           "generation-pointer-artifacts", records)
+    paths = {}
+    for key, filename in GENERATION_ARTIFACTS.items():
+        path = generation_path / filename
         artifact_target(path)
+        record = records[key]
+        reject(isinstance(record, dict)
+               and record.get("path") == str(path.relative_to(ROOT))
+               and SHA256_RE.fullmatch(record.get("sha256", "")) is not None,
+               "generation-pointer-artifact", {"key": key, "record": record})
+        reject(sha256(read_bytes(path, "generation-artifact-unavailable")) == record["sha256"],
+               "generation-artifact-digest", key)
+        paths[key] = path
+    return pointer, paths
+
+
+def load_generation_pointer(pointer_path: Path = DELIVERY_PATH,
+                            generation_root: Path = GENERATION_ROOT) -> tuple[dict, dict[str, Path]]:
+    artifact_target(pointer_path)
+    return validate_generation_pointer_data(read_bytes(pointer_path, "delivery-pointer-unavailable"), generation_root)
+
+
+def load_current_delivery() -> tuple[dict, dict[str, Path], dict]:
+    pointer, paths = load_generation_pointer()
+    try:
+        delivery = json.loads(read_bytes(paths["delivery"], "generation-delivery-unavailable").decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise VerificationError("generation-delivery-format", str(error)) from error
+
+    reject(isinstance(delivery, dict), "generation-delivery-format", type(delivery).__name__)
+    expected_paths = {key: record["path"] for key, record in pointer["artifacts"].items()}
+    ci_run = delivery.get("ci_run")
+    reject(delivery.get("schema") == "fablebook.debugger-saved-settings-delivery.v1"
+           and delivery.get("artifact_generation") == pointer.get("generation")
+           and delivery.get("artifact_paths") == expected_paths
+           and delivery.get("tested_head") == pointer.get("tested_head")
+           and isinstance(ci_run, dict)
+           and str(ci_run.get("databaseId")) == str(pointer.get("ci_run_id")),
+           "generation-delivery-pointer-mismatch", pointer)
+    return delivery, paths, pointer
+
+
+def load_previous_delivery() -> dict:
+    if not DELIVERY_PATH.exists():
+        return {}
+    try:
+        previous = json.loads(read_bytes(DELIVERY_PATH, "delivery-pointer-unavailable").decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return {}
+    if previous.get("schema") == GENERATION_POINTER_SCHEMA:
+        return load_current_delivery()[0]
+    return previous
+
+
+def publish_generation(artifact_data: dict[str, bytes], generation_id: str,
+                       metadata: dict, generation_root: Path = GENERATION_ROOT,
+                       pointer_path: Path = DELIVERY_PATH, before_activate=None,
+                       validator=None) -> dict:
+    reject(set(artifact_data) == set(GENERATION_ARTIFACTS), "generation-artifact-set", sorted(artifact_data))
+    generation_root = artifact_directory_target(generation_root, create=True)
+    generation_artifact_paths(generation_id, generation_root)
+    staging = Path(tempfile.mkdtemp(prefix=".generation-staging-", dir=generation_root))
+    final_dir = generation_root / generation_id
+
+    try:
+        for key, filename in GENERATION_ARTIFACTS.items():
+            path = staging / filename
+            artifact_target(path)
+            with path.open("xb") as stream:
+                stream.write(artifact_data[key])
+                stream.flush()
+                os.fsync(stream.fileno())
+            reject(sha256(read_bytes(path, "generation-stage-unavailable")) == sha256(artifact_data[key]),
+                   "generation-stage-digest", key)
+
+        if validator is not None:
+            validator(staging)
+        fsync_directory(staging)
+        reject(not final_dir.exists(), "generation-already-exists", str(final_dir))
+        os.rename(staging, final_dir)
+        fsync_directory(generation_root)
+
+        paths = {key: final_dir / filename for key, filename in GENERATION_ARTIFACTS.items()}
+        pointer = {
+            "schema": GENERATION_POINTER_SCHEMA,
+            "generation": str(final_dir.relative_to(ROOT)),
+            "tested_head": metadata["tested_head"],
+            "ci_run_id": str(metadata["ci_run_id"]),
+            "artifacts": {
+                key: {"path": str(paths[key].relative_to(ROOT)),
+                      "sha256": sha256(artifact_data[key])}
+                for key in GENERATION_ARTIFACTS
+            },
+        }
+        pointer_data = json.dumps(pointer, sort_keys=True, indent=2).encode() + b"\n"
+        if before_activate is not None:
+            before_activate(pointer)
+
+        atomic_write_bytes(
+            pointer_path,
+            pointer_data,
+            lambda candidate: validate_generation_pointer_data(read_bytes(candidate, "generation-pointer-staging"), generation_root),
+        )
+        return pointer
+    finally:
+        if staging.exists():
+            import shutil
+            shutil.rmtree(staging)
+
+
+def new_generation_id(tested_head: str, ci_run_id: str) -> str:
+    reject(isinstance(tested_head, str) and GIT_SHA_RE.fullmatch(tested_head) is not None,
+           "generation-tested-head", tested_head)
+    reject(str(ci_run_id).isdigit(), "generation-ci-run", ci_run_id)
+    return f"{tested_head[:12]}-{ci_run_id}-{uuid.uuid4().hex}"
+
+
+def self_test_publication() -> dict:
+    with tempfile.TemporaryDirectory(prefix=f"{OWNER}-publication-self-test-", dir=CHILD_DIR) as temporary:
+        root = Path(temporary)
+        generation_root = root / "evidence"
+        pointer_path = root / f"{OWNER}-DELIVERY.json"
+        metadata = {"tested_head": "a" * 40, "ci_run_id": "12345"}
+        old_data = {key: f"old-generation:{key}".encode() for key in GENERATION_ARTIFACTS}
+        old_id = new_generation_id(metadata["tested_head"], metadata["ci_run_id"])
+        publish_generation(old_data, old_id, metadata, generation_root, pointer_path)
+        old_pointer = pointer_path.read_bytes()
+
+        next_data = {key: f"next-generation:{key}".encode() for key in GENERATION_ARTIFACTS}
+        next_id = new_generation_id("b" * 40, "67890")
+
+        def interrupt_before_pointer(_pointer):
+            raise VerificationError("simulated-publication-interruption", "before pointer replacement")
+
+        try:
+            publish_generation(
+                next_data,
+                next_id,
+                {"tested_head": "b" * 40, "ci_run_id": "67890"},
+                generation_root,
+                pointer_path,
+                before_activate=interrupt_before_pointer,
+            )
+        except VerificationError as error:
+            reject(error.reason == "simulated-publication-interruption",
+                   "publication-interruption-control", error.reason)
+        else:
+            raise VerificationError("publication-interruption-control", "simulated interruption was not raised")
+
+        reject(pointer_path.read_bytes() == old_pointer,
+               "publication-previous-pointer-changed", str(pointer_path))
+        active_pointer, active_paths = load_generation_pointer(pointer_path, generation_root)
+        reject(active_pointer.get("tested_head") == metadata["tested_head"],
+               "publication-previous-generation-not-active", active_pointer.get("tested_head"))
+        for key, path in active_paths.items():
+            reject(read_bytes(path, "publication-old-artifact-unavailable") == old_data[key],
+                   "publication-previous-artifact-changed", key)
+
+    return {
+        "status": "passed",
+        "controls": {"interruption-before-pointer-preserves-previous-generation": "rejected"},
+    }
+
+
+def check_artifact_paths() -> None:
+    artifact_target(DELIVERY_PATH)
+    artifact_target(REVIEW_PATH)
+    if DELIVERY_PATH.exists():
+        try:
+            pointer = json.loads(read_bytes(DELIVERY_PATH, "delivery-pointer-unavailable").decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            return
+        if pointer.get("schema") == GENERATION_POINTER_SCHEMA:
+            validate_generation_pointer_data(read_bytes(DELIVERY_PATH, "delivery-pointer-unavailable"), GENERATION_ROOT)
 
 
 def run_json(command: list[str], label: str) -> object:
@@ -1465,11 +1705,7 @@ def atomic_write_bytes(path: Path, data: bytes, validator=None) -> None:
         if validator:
             validator(temporary)
         os.replace(temporary, path)
-        directory_fd = os.open(CHILD_DIR, os.O_RDONLY)
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
+        fsync_directory(path.parent)
     finally:
         if temporary.exists():
             temporary.unlink()
@@ -1520,11 +1756,16 @@ def verify_observed(path: Path, pr: dict, run: dict, jobs: dict,
     return {"status": "verified", "records": len(actual), "sha256": sha256(path.read_bytes())}
 
 
-def validation_markdown(delivery: dict, source: dict, history: dict, installed: dict, controls: dict) -> str:
+def validation_markdown(delivery: dict, source: dict, history: dict, controls: dict) -> str:
     pr = delivery["pr"]
     run = delivery["ci_run"]
     jobs = delivery["jobs"]
     checks = delivery["check_results"]
+    merge_line = (
+        f"- Merge verified in commit `{delivery['merge_commit']}`; no later phase has started."
+        if delivery.get("status") == "merged"
+        else "- No later phase has started. Merge is intentionally pending the user’s final approval."
+    )
     lines = [
         f"# {OWNER} Validation",
         "",
@@ -1536,12 +1777,13 @@ def validation_markdown(delivery: dict, source: dict, history: dict, installed: 
         f"- Core job: [{jobs['core']['id']}]({jobs['core']['url']}) — {jobs['core']['conclusion']}; floor job: [{jobs['floor']['id']}]({jobs['floor']['url']}) — {jobs['floor']['conclusion']}.",
         f"- Required checks: {', '.join(f'`{name}`={bucket}' for name, bucket in sorted(checks.items()))}.",
         "- Local exact-head receipts and observed projection are workspace artifacts. Committing them would change the SHA they certify; no artifact-only commit is made.",
+        f"- Immutable evidence generation: `{delivery.get('artifact_generation', 'pending')}`; the top-level DELIVERY file is its atomic pointer.",
         "",
         "## Fresh receipt verification",
         "",
         f"- Source successor: `{delivery['source_archive_sha256']}`; source controls: {source['status']}.",
         f"- Historical and adopted authority: verified read-only; original ledger SHA `{delivery['historical_sha256']}`, adopted authority SHA `{delivery['authority_sha256']}`.",
-        f"- InstalledOtp receipt validation: passed for both complete lanes (`{installed['command'][0]} run --no-start ...`).",
+        "- InstalledOtp.verify_receipt_files!/1 passed for both complete lane receipts.",
         f"- CI provenance controls: {controls['status']}; history negative controls: {len(history.get('history_controls') or [])} rejected.",
         "- Review use: " + str(delivery["review_passes"]) + "/2 ordinary passes.",
         "",
@@ -1550,7 +1792,7 @@ def validation_markdown(delivery: dict, source: dict, history: dict, installed: 
         "- This static slice binds the current graph receipt to exact lane/runtime/lock/source and current selected/remainder ownership. It does not establish runtime atom safety, full computed-dispatch proof, or SEC-01 completion.",
         f"- Selected settings and monitor roots: `{SELECTED_OWNER}`. Remaining debugger routes stay with `{REMAINDER_OWNER}`.",
         "- `.3.13` final installed-scope acceptance, `.4`, `.5`, parent verification debt, and SEC-01 remain with their existing downstream owners; SEC-01 remains pending for Phase 5.",
-        "- No later phase was started. Merge is intentionally pending the user’s final approval.",
+        merge_line,
         "",
     ]
     return "\n".join(lines)
@@ -1604,32 +1846,123 @@ def validate_delivery_fingerprints(delivery: dict, pr: dict, run: dict, snapshot
         reject(delivery.get("merge_commit") is None, "delivery-merge-state", delivery.get("merge_commit"))
 
 
+def installed_receipt_fingerprint(receipt_summaries: dict[str, dict]) -> dict:
+    reject(set(receipt_summaries) == {"core", "floor"},
+           "installed-receipt-lanes", sorted(receipt_summaries))
+    fields = ("sha256", "body_sha256", "rows", "footer_present", "footer_sha256", "runtime", "lock_sha256")
+    lanes = {}
+    for lane in ("core", "floor"):
+        summary = receipt_summaries[lane]
+        reject(all(field in summary for field in fields),
+               "installed-receipt-summary", {"lane": lane, "fields": sorted(summary)})
+        lanes[lane] = {field: summary[field] for field in fields}
+    return {"status": "passed", "lanes": lanes}
+
+
+def delivery_verification_fingerprint(receipt_summaries: dict[str, dict], source: dict,
+                                      history: dict, observed_controls: dict) -> dict:
+    return {
+        "installed_otp": installed_receipt_fingerprint(receipt_summaries),
+        "source": source,
+        "history": history,
+        "observed_controls": observed_controls,
+    }
+
+
+def validate_delivery_verification(delivery: dict, receipt_summaries: dict[str, dict], source: dict,
+                                   history: dict, observed_controls: dict,
+                                   merged_pr: dict | None = None) -> dict:
+    expected = delivery_verification_fingerprint(receipt_summaries, source, history, observed_controls)
+    if merged_pr is not None:
+        expected["merged_pr"] = merged_pr
+    actual = delivery.get("verification")
+    reject(isinstance(actual, dict) and set(actual) == set(expected),
+           "delivery-verification-shape", sorted(actual) if isinstance(actual, dict) else actual)
+    for field, value in expected.items():
+        reject(actual.get(field) == value,
+               "delivery-verification-fingerprint", {"field": field, "expected": value, "actual": actual.get(field)})
+    return expected
+
+
+def self_test_delivery_verification() -> dict:
+    receipt_summaries = {
+        lane: {"path": f"some/path/{lane}.jsonl", "sha256": lane * 64, "body_sha256": (lane + "b") * 32,
+               "rows": 4, "footer_present": True, "footer_sha256": (lane + "c") * 32,
+               "runtime": SUPPORTED_RUNTIMES[lane], "lock_sha256": (lane + "d") * 32}
+        for lane in ("core", "floor")
+    }
+    source = {"status": "verified", "successor_sha256": SUCCESSOR_SHA256, "negative_controls": ["rejected"]}
+    history = {"status": "verified", "parent_ledger_sha256": "a" * 64, "history_controls": ["rejected"]}
+    observed_controls = {"status": "passed", "controls": {"wrong-head": "rejected"}}
+    expected = delivery_verification_fingerprint(receipt_summaries, source, history, observed_controls)
+    delivery = {"verification": expected}
+    validate_delivery_verification(delivery, receipt_summaries, source, history, observed_controls)
+
+    controls = {}
+    for field in expected:
+        altered = copy.deepcopy(delivery)
+        altered["verification"][field] = None
+        try:
+            validate_delivery_verification(altered, receipt_summaries, source, history, observed_controls)
+        except VerificationError as error:
+            reject(error.reason == "delivery-verification-fingerprint",
+                   "delivery-verification-control", {"field": field, "error": error.reason})
+            controls[field] = "rejected"
+        else:
+            raise VerificationError("delivery-verification-control-accepted", field)
+
+    merged_pr = {"url": "https://example.invalid/pull/1", "head": "a" * 40,
+                 "merge_commit": "b" * 40, "run_id": "12345",
+                 "installed_otp": expected["installed_otp"]}
+    merged_delivery = {"verification": {**expected, "merged_pr": merged_pr}}
+    validate_delivery_verification(merged_delivery, receipt_summaries, source, history,
+                                   observed_controls, merged_pr)
+    altered_merged = copy.deepcopy(merged_delivery)
+    altered_merged["verification"]["merged_pr"]["merge_commit"] = "c" * 40
+    try:
+        validate_delivery_verification(altered_merged, receipt_summaries, source, history,
+                                       observed_controls, merged_pr)
+    except VerificationError as error:
+        reject(error.reason == "delivery-verification-fingerprint",
+               "delivery-verification-merged-control", error.reason)
+        controls["merged_pr"] = "rejected"
+    else:
+        raise VerificationError("delivery-verification-control-accepted", "merged_pr")
+
+    altered_path = copy.deepcopy(receipt_summaries)
+    altered_path["core"]["path"] = "another/generation/core.jsonl"
+    reject(installed_receipt_fingerprint(altered_path) == installed_receipt_fingerprint(receipt_summaries),
+           "delivery-verification-path-independence", "receipt fingerprint must not depend on generation paths")
+    controls["path-independent-installed-receipts"] = "passed"
+    return {"status": "passed", "controls": controls}
+
+
 def collect_ci() -> dict:
     check_artifact_paths()
     ownership, adopt = load_ownership_context()
     pr = current_pr(ownership)
     run, snapshot, jobs = current_run(ownership, pr)
     review_passes = read_review_passes()
-    prior_delivery = {}
-    if DELIVERY_PATH.exists():
-        try:
-            prior_delivery = json.loads(DELIVERY_PATH.read_text())
-        except (OSError, json.JSONDecodeError):
-            prior_delivery = {}
+    prior_delivery = load_previous_delivery()
     red_evidence = prior_delivery.get("tdd_red_evidence")
     if red_evidence is None and prior_delivery.get("targetTest"):
         red_evidence = prior_delivery
 
+    generation_id = new_generation_id(pr["tested_head"], str(run["databaseId"]))
+    artifact_path_map = generation_artifact_path_map(generation_id)
+    artifact_generation = str((GENERATION_ROOT / generation_id).relative_to(ROOT))
     receipt_summaries = {}
     with tempfile.TemporaryDirectory(prefix="collect-ci-", dir=CHILD_DIR) as temporary_dir:
         staged_paths = {lane: Path(temporary_dir) / f"{lane}.jsonl" for lane in ("core", "floor")}
         for lane in ("core", "floor"):
             extract_job_receipt(str(run["databaseId"]), jobs[lane], lane, staged_paths[lane])
             receipt_summaries[lane] = summarize_receipt(staged_paths[lane], lane)
-            receipt_summaries[lane]["path"] = str(INVENTORY_PATHS[lane].relative_to(ROOT))
-        installed = verify_installed_receipts([staged_paths["core"], staged_paths["floor"]])
+            receipt_key = f"inventory_{lane}"
+            receipt_summaries[lane]["path"] = artifact_path_map[receipt_key]
+        verify_installed_receipts([staged_paths["core"], staged_paths["floor"]])
         fingerprints = artifact_fingerprints()
         source, history = fingerprints["source"], fingerprints["history"]
+        observed_controls = self_test_observed()
         document = observed_document(pr, run, jobs, staged_paths, receipt_summaries,
                                      ownership, adopt, review_passes)
         observed_data = gzip.compress(jsonl_bytes(document), mtime=0)
@@ -1640,6 +1973,7 @@ def collect_ci() -> dict:
         "repository": "szTheory/fablebook", "pr": {k: pr.get(k) for k in ("number", "url", "state", "headRefName", "baseRefName")},
         "tested_head": pr["tested_head"], "artifact_head": None,
         "artifact_relationship": "local-evidence-for-exact-tested-code-head; not committed to avoid invalidating receipt provenance",
+        "artifact_generation": artifact_generation, "artifact_paths": artifact_path_map,
         "ci_run": {k: run.get(k) for k in ("databaseId", "headSha", "headBranch", "event", "workflowName", "status", "conclusion", "url", "createdAt")},
         "jobs": meta["jobs"], "check_results": {check["name"]: check["bucket"] for check in snapshot["checks"]},
         "runtimes": SUPPORTED_RUNTIMES, "locks": meta["locks"],
@@ -1649,28 +1983,52 @@ def collect_ci() -> dict:
         "observed_sha256": sha256(observed_data), "authority_sha256": meta["authority_sha256"],
         "historical_sha256": meta["historical_sha256"], "partition_sha256": meta["partition_sha256"],
         "review_passes": review_passes, "merge_commit": None,
-        "verification": {"installed_otp": installed, "source": source, "history": history,
-                         "observed_controls": self_test_observed()},
+        "verification": delivery_verification_fingerprint(
+            receipt_summaries, source, history, observed_controls
+        ),
         "tdd_red_evidence": red_evidence,
         "remaining_owners": {"selected": SELECTED_OWNER, "remainder": REMAINDER_OWNER,
                               "final_installed_scope": PARENT_PHASE + ".13", "later": ["01.1.1.3.1.4", "01.1.1.3.1.5"],
                               "sec_01": "pending-for-phase-5"},
     }
-    for lane in ("core", "floor"):
-        atomic_write_bytes(INVENTORY_PATHS[lane], staged_inventory_bytes[lane],
-                           lambda p, current_lane=lane: load_ownership_context()[0].receipt_file(p, current_lane))
-    observed_path = OBSERVED_PATH
-    atomic_write_bytes(observed_path, observed_data,
-                       lambda p: validate_observed_records(parse_jsonl_gzip(p),
-                           parent_unadopted_rows(ownership, adopt) + adopt.materialize(),
-                           pr["tested_head"], str(run["databaseId"])))
-    validation = validation_markdown(delivery, source, history, installed, delivery["verification"]["observed_controls"]).encode()
-    atomic_write_bytes(VALIDATION_PATH, validation)
-    atomic_write_bytes(DELIVERY_PATH, json.dumps(delivery, sort_keys=True, indent=2).encode() + b"\n")
+    validation = validation_markdown(delivery, source, history, observed_controls).encode()
+    artifact_data = {
+        "inventory_core": staged_inventory_bytes["core"],
+        "inventory_floor": staged_inventory_bytes["floor"],
+        "observed": observed_data,
+        "delivery": json.dumps(delivery, sort_keys=True, indent=2).encode() + b"\n",
+        "validation": validation,
+    }
+
+    def validate_staged_generation(staging: Path) -> None:
+        staged_inventory_paths = {}
+        for lane in ("core", "floor"):
+            key = f"inventory_{lane}"
+            path = staging / GENERATION_ARTIFACTS[key]
+            actual = summarize_receipt(path, lane)
+            actual["path"] = artifact_path_map[key]
+            reject(actual == receipt_summaries[lane], "staged-inventory-summary", lane)
+            staged_inventory_paths[lane] = path
+
+        staged_observed = staging / GENERATION_ARTIFACTS["observed"]
+        staged_document = parse_jsonl_gzip(staged_observed)
+        expected_history = parent_unadopted_rows(ownership, adopt) + adopt.materialize()
+        validate_observed_records(staged_document, expected_history,
+                                  pr["tested_head"], str(run["databaseId"]))
+        staged_delivery = json.loads((staging / GENERATION_ARTIFACTS["delivery"]).read_text())
+        reject(staged_delivery == delivery, "staged-delivery-mismatch", str(staging))
+
+    pointer = publish_generation(
+        artifact_data,
+        generation_id,
+        {"tested_head": pr["tested_head"], "ci_run_id": str(run["databaseId"])},
+        validator=validate_staged_generation,
+    )
     return {"status": delivery["status"], "pr": pr["number"], "tested_head": pr["tested_head"],
             "ci_run_id": run["databaseId"], "jobs": {lane: jobs[lane]["conclusion"] for lane in ("core", "floor")},
             "inventories": {lane: receipt_summaries[lane]["rows"] for lane in ("core", "floor")},
-            "observed_records": len(document), "artifacts": [str(p.relative_to(ROOT)) for p in [*INVENTORY_PATHS.values(), OBSERVED_PATH, DELIVERY_PATH, VALIDATION_PATH]]}
+            "observed_records": len(document), "generation": pointer["generation"],
+            "artifacts": [str(DELIVERY_PATH.relative_to(ROOT)), *[item["path"] for item in pointer["artifacts"].values()]]}
 
 
 def parse_jsonl_gzip(path: Path) -> list[dict]:
@@ -1685,18 +2043,22 @@ def parse_jsonl_gzip(path: Path) -> list[dict]:
 def verify_ci(negative_controls: bool = False) -> dict:
     check_artifact_paths()
     ownership, adopt = load_ownership_context()
-    delivery = json.loads(read_bytes(DELIVERY_PATH, "delivery-unavailable").decode("utf-8"))
+    delivery, artifact_paths, pointer = load_current_delivery()
     reject(delivery.get("schema") == "fablebook.debugger-saved-settings-delivery.v1"
            and delivery.get("status") in {"prepared-before-merge", "merged"}, "delivery-format", delivery.get("schema"))
+    inventory_paths = {lane: artifact_paths[f"inventory_{lane}"] for lane in ("core", "floor")}
+    observed_path = artifact_paths["observed"]
     tested_head = delivery.get("tested_head")
     pr = current_pr(ownership, tested_head)
     reject(pr["number"] == delivery["pr"]["number"], "delivery-pr", delivery["pr"])
     run, snapshot, jobs = current_run(ownership, pr, str(delivery["ci_run"]["databaseId"]))
     validate_delivery_fingerprints(delivery, pr, run, snapshot, jobs, ownership)
+    receipt_summaries = {}
     for lane in ("core", "floor"):
-        summary = summarize_receipt(INVENTORY_PATHS[lane], lane)
+        summary = summarize_receipt(inventory_paths[lane], lane)
         reject(summary == delivery["receipt_summaries"][lane], "inventory-summary", lane)
-    installed = verify_installed_receipts([INVENTORY_PATHS["core"], INVENTORY_PATHS["floor"]])
+        receipt_summaries[lane] = summary
+    verify_installed_receipts([inventory_paths["core"], inventory_paths["floor"]])
     fresh_logs = {}
     with tempfile.TemporaryDirectory(prefix="verify-ci-", dir=CHILD_DIR) as temporary_dir:
         for lane in ("core", "floor"):
@@ -1704,24 +2066,32 @@ def verify_ci(negative_controls: bool = False) -> dict:
             extract_job_receipt(str(run["databaseId"]), jobs[lane], lane, path)
             fresh_logs[lane] = sha256(path.read_bytes())
             reject(fresh_logs[lane] == delivery["inventory_sha256"][lane], "live-log-inventory-mismatch", lane)
-    observed = verify_observed(OBSERVED_PATH, pr, run, jobs, INVENTORY_PATHS,
+    observed = verify_observed(observed_path, pr, run, jobs, inventory_paths,
                                delivery["receipt_summaries"], ownership, adopt, delivery["review_passes"])
-    observed_hash = sha256(OBSERVED_PATH.read_bytes())
+    observed_hash = sha256(observed_path.read_bytes())
     reject(observed_hash == delivery["observed_sha256"], "observed-digest", {"expected": delivery["observed_sha256"], "actual": observed_hash})
-    source = verify_source(include_negative_controls=negative_controls)
-    history = verify_history(include_negative_controls=negative_controls)
-    controls = self_test_observed() if negative_controls else None
+    source = verify_source(include_negative_controls=True)
+    history = verify_history(include_negative_controls=True)
+    observed_controls = self_test_observed()
+    validate_delivery_verification(delivery, receipt_summaries, source, history, observed_controls)
+    controls = (
+        {"observed": observed_controls, "delivery_verification": self_test_delivery_verification()}
+        if negative_controls else None
+    )
     return {"status": "verified", "pr": pr["number"], "tested_head": tested_head,
             "run_id": run["databaseId"], "jobs": {lane: jobs[lane]["conclusion"] for lane in ("core", "floor")},
             "checks": {check["name"]: check["bucket"] for check in snapshot["checks"]},
-            "installed_otp": installed, "source": source["status"], "history": history["status"],
-            "observed_records": observed["records"], "negative_controls": controls}
+            "installed_otp": "passed", "source": source["status"], "history": history["status"],
+            "observed_records": observed["records"], "generation": pointer["generation"],
+            "negative_controls": controls}
 
 
 def verify_merged() -> dict:
     check_artifact_paths()
     ownership, adopt = load_ownership_context()
-    delivery = json.loads(read_bytes(DELIVERY_PATH, "delivery-unavailable").decode("utf-8"))
+    delivery, artifact_paths, pointer = load_current_delivery()
+    inventory_paths = {lane: artifact_paths[f"inventory_{lane}"] for lane in ("core", "floor")}
+    observed_path = artifact_paths["observed"]
     pr_number = delivery.get("pr", {}).get("number")
     reject(isinstance(pr_number, int) and pr_number > 0, "delivery-pr", pr_number)
     pr = ownership.gh_json(["pr", "view", str(pr_number), "--json", "number,url,state,headRefOid,headRefName,baseRefName,mergeCommit"])
@@ -1731,28 +2101,81 @@ def verify_merged() -> dict:
     delivery["pr"]["state"] = pr.get("state")
     validate_delivery_fingerprints(delivery, {**pr, "tested_head": delivery["tested_head"]}, run, snapshot, jobs, ownership)
     reject(all(jobs[lane].get("conclusion") == "success" for lane in ("core", "floor")), "merged-required-jobs", jobs)
-    receipt_summaries = {lane: summarize_receipt(INVENTORY_PATHS[lane], lane) for lane in ("core", "floor")}
+    receipt_summaries = {lane: summarize_receipt(inventory_paths[lane], lane) for lane in ("core", "floor")}
     reject(receipt_summaries == delivery.get("receipt_summaries"), "merged-receipts", "receipt summaries differ")
-    installed = verify_installed_receipts([INVENTORY_PATHS["core"], INVENTORY_PATHS["floor"]])
+    verify_installed_receipts([inventory_paths["core"], inventory_paths["floor"]])
+    with tempfile.TemporaryDirectory(prefix="verify-merged-", dir=CHILD_DIR) as temporary_dir:
+        for lane in ("core", "floor"):
+            path = Path(temporary_dir) / f"{lane}.jsonl"
+            extract_job_receipt(str(run["databaseId"]), jobs[lane], lane, path)
+            reject(sha256(path.read_bytes()) == delivery["inventory_sha256"][lane],
+                   "merged-live-log-inventory-mismatch", lane)
     merged_pr = {**pr, "tested_head": delivery["tested_head"]}
-    observed = parse_jsonl_gzip(OBSERVED_PATH)
-    expected = observed_document(merged_pr, run, jobs, INVENTORY_PATHS, receipt_summaries,
+    observed = parse_jsonl_gzip(observed_path)
+    expected = observed_document(merged_pr, run, jobs, inventory_paths, receipt_summaries,
                                  ownership, adopt, delivery["review_passes"])
-    reject(observed == expected and sha256(OBSERVED_PATH.read_bytes()) == delivery.get("observed_sha256"),
+    reject(observed == expected and sha256(observed_path.read_bytes()) == delivery.get("observed_sha256"),
            "merged-observed", "observed projection differs from the final exact-head derivation")
     merge_commit = pr.get("mergeCommit", {}).get("oid")
     reject(GIT_SHA_RE.fullmatch(merge_commit or "") is not None, "merge-commit", merge_commit)
+    source = verify_source(include_negative_controls=True)
+    history = verify_history(include_negative_controls=True)
+    observed_controls = self_test_observed()
     delivery["status"] = "merged"
     delivery["merge_commit"] = merge_commit
     delivery["pr"]["state"] = "MERGED"
-    delivery["verification"]["merged_pr"] = {"url": pr.get("url"), "head": pr.get("headRefOid"),
-                                              "merge_commit": merge_commit, "run_id": run["databaseId"],
-                                              "installed_otp": installed}
-    data = json.dumps(delivery, sort_keys=True, indent=2).encode() + b"\n"
-    atomic_write_bytes(DELIVERY_PATH, data)
+    merged_verification = {
+        "url": pr.get("url"), "head": pr.get("headRefOid"), "merge_commit": merge_commit,
+        "run_id": run["databaseId"],
+        "installed_otp": installed_receipt_fingerprint(receipt_summaries),
+    }
+    delivery["verification"]["merged_pr"] = merged_verification
+    validate_delivery_verification(delivery, receipt_summaries, source, history,
+                                   observed_controls, merged_verification)
+    generation_id = new_generation_id(delivery["tested_head"], str(run["databaseId"]))
+    artifact_path_map = generation_artifact_path_map(generation_id)
+    artifact_generation = str((GENERATION_ROOT / generation_id).relative_to(ROOT))
+    delivery["artifact_generation"] = artifact_generation
+    delivery["artifact_paths"] = artifact_path_map
+    for lane in ("core", "floor"):
+        delivery["receipt_summaries"][lane]["path"] = artifact_path_map[f"inventory_{lane}"]
+
+    merged_observed_document = observed_document(merged_pr, run, jobs, inventory_paths,
+                                                 delivery["receipt_summaries"], ownership, adopt,
+                                                 delivery["review_passes"])
+    merged_observed_data = gzip.compress(jsonl_bytes(merged_observed_document), mtime=0)
+    delivery["observed_sha256"] = sha256(merged_observed_data)
+    validation = validation_markdown(delivery, source, history, observed_controls).encode()
+    artifact_data = {
+        "inventory_core": inventory_paths["core"].read_bytes(),
+        "inventory_floor": inventory_paths["floor"].read_bytes(),
+        "observed": merged_observed_data,
+        "delivery": json.dumps(delivery, sort_keys=True, indent=2).encode() + b"\n",
+        "validation": validation,
+    }
+
+    def validate_merged_generation(staging: Path) -> None:
+        for lane in ("core", "floor"):
+            key = f"inventory_{lane}"
+            actual = summarize_receipt(staging / GENERATION_ARTIFACTS[key], lane)
+            actual["path"] = artifact_path_map[key]
+            reject(actual == delivery["receipt_summaries"][lane], "merged-staged-inventory", lane)
+        staged_observed = parse_jsonl_gzip(staging / GENERATION_ARTIFACTS["observed"])
+        reject(staged_observed == merged_observed_document,
+               "merged-staged-observed", "staged projection differs")
+        staged_delivery = json.loads((staging / GENERATION_ARTIFACTS["delivery"]).read_text())
+        reject(staged_delivery == delivery, "merged-staged-delivery", str(staging))
+
+    publish_generation(
+        artifact_data,
+        generation_id,
+        {"tested_head": delivery["tested_head"], "ci_run_id": str(run["databaseId"])},
+        validator=validate_merged_generation,
+    )
     return {"status": "merged-verified", "pr": pr_number, "tested_head": delivery["tested_head"],
             "merge_commit": merge_commit, "run_id": run["databaseId"],
-            "jobs": {lane: jobs[lane]["conclusion"] for lane in ("core", "floor")}}
+            "jobs": {lane: jobs[lane]["conclusion"] for lane in ("core", "floor")},
+            "generation": artifact_generation, "previous_generation": pointer["generation"]}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -1765,6 +2188,8 @@ def main(argv: list[str] | None = None) -> int:
     history = subparsers.add_parser("verify-history")
     history.add_argument("--negative-controls", action="store_true")
     subparsers.add_parser("self-test-observed")
+    subparsers.add_parser("self-test-publication")
+    subparsers.add_parser("self-test-delivery-verification")
     collect = subparsers.add_parser("collect-ci")
     collect.add_argument("--pr-current", action="store_true", required=True)
     verify_ci_parser = subparsers.add_parser("verify-ci")
@@ -1781,6 +2206,10 @@ def main(argv: list[str] | None = None) -> int:
             report = verify_history(include_negative_controls=args.negative_controls)
         elif args.command == "self-test-observed":
             report = self_test_observed()
+        elif args.command == "self-test-publication":
+            report = self_test_publication()
+        elif args.command == "self-test-delivery-verification":
+            report = self_test_delivery_verification()
         elif args.command == "collect-ci":
             report = collect_ci()
         elif args.command == "verify-ci":

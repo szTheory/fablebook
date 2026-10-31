@@ -3,6 +3,11 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   import ExUnit.Assertions
 
+  alias Fablebook.Credo.BannedCalls
+  alias Fablebook.Test.{BeamWalker, InstalledOtp, SweepEvidence}
+
+  @compile {:no_warn_undefined, Fablebook.Credo.BannedCalls}
+
   @owner "01.1.1.3.1.1"
   @historical_owner "01.1.1.3.1"
   @remainder_owner "01.1.1.3.1.2"
@@ -591,8 +596,8 @@ defmodule Fablebook.Test.DebuggerSettings do
       "lane #{lane} owner=#{@owner} source evidence lane=#{evidence.lane.name} caller-chain=receipt validator remedy=use matching lane source evidence"
     )
 
-    current_receipt = Fablebook.Test.InstalledOtp.verify_receipt_lines!(graph.receipt_lines)
-    supplied_receipt = Fablebook.Test.InstalledOtp.verify_receipt_lines!(receipt_lines)
+    current_receipt = InstalledOtp.verify_receipt_lines!(graph.receipt_lines)
+    supplied_receipt = InstalledOtp.verify_receipt_lines!(receipt_lines)
 
     require_ownership!(
       supplied_receipt.lane == lane and supplied_receipt.sha256 == current_receipt.sha256,
@@ -672,7 +677,7 @@ defmodule Fablebook.Test.DebuggerSettings do
     )
 
     require_ownership!(
-      Enum.count(records, &(&1["t"] == "delegation")) == 0,
+      not Enum.any?(records, &(&1["t"] == "delegation")),
       "effective delegation contains duplicate or misplaced metadata"
     )
 
@@ -720,19 +725,8 @@ defmodule Fablebook.Test.DebuggerSettings do
     validate_complete_delegation!(delegation_records, loaded.records)
     validate_delegation_rows!(delegation_records, delegation_metadata)
 
-    require_ownership!(
-      delegation_metadata == loaded.metadata,
-      "effective delegation metadata differs from the pinned adopted authority"
-    )
-
-    require_ownership!(
-      graph.lane.name == lane,
-      "lane #{lane} owner=#{@owner} graph lane=#{graph.lane.name} caller-chain=installed Xref graph remedy=use matching lane evidence"
-    )
-
-    tier = apply(Fablebook.Credo.BannedCalls, :banned_mfas, [])
-    :ok = assert_audit!(records, graph, tier, evidence, [])
-    receipt = assert_graph_receipt!(graph)
+    receipt =
+      assert_ownership_preconditions!(graph, evidence, records, loaded, delegation_metadata, lane)
 
     lane_rows = Enum.filter(delegation_records, &(&1["lane"] == lane))
 
@@ -783,34 +777,12 @@ defmodule Fablebook.Test.DebuggerSettings do
       |> Enum.map(&{&1.app, Atom.to_string(&1.module_atom)})
       |> MapSet.new()
 
-    for namespace <- ["original", "observed"] do
-      module_set = Map.fetch!(module_sets, namespace)
-
-      require_ownership!(
-        module_set.identities == actual_module_ids,
-        "lane #{lane} namespace=#{namespace} app=debugger owner=#{@remainder_owner} identity=module set differs from inspected BEAMs; missing=#{inspect(Enum.sort(MapSet.to_list(MapSet.difference(actual_module_ids, module_set.identities))))}; extra=#{inspect(Enum.sort(MapSet.to_list(MapSet.difference(module_set.identities, actual_module_ids))))}; caller-chain=installed debugger BEAM inventory remedy=route every added or missing module through its named owner"
-      )
-
-      selected = MapSet.new([{"debugger", Atom.to_string(@settings_module)}])
-
-      for {{app, module}, owner} <- module_set.owners do
-        expected_owner =
-          if MapSet.member?(selected, {app, module}), do: @owner, else: @remainder_owner
-
-        require_ownership!(
-          owner == expected_owner,
-          "lane #{lane} namespace=#{namespace} MFA #{module} owner=#{owner} caller-chain=adopted module task remedy=assign selected settings module to #{@owner} and every broad remainder module to #{@remainder_owner}"
-        )
-      end
-    end
+    assert_module_namespace_ownership!(module_sets, actual_module_ids, lane)
 
     original_roots = Map.fetch!(root_sets, "original")
     observed_roots = Map.fetch!(root_sets, "observed")
 
-    require_ownership!(
-      original_roots.identities == observed_roots.identities,
-      "lane #{lane} owner=#{@remainder_owner} original and observed root identity sets differ; caller-chain=adopted receipt union remedy=preserve both complete root namespaces"
-    )
+    assert_root_namespace_pair!(original_roots, observed_roots, lane)
 
     assert_namespace_history_pair!(module_sets, :module, lane)
     assert_namespace_history_pair!(root_sets, :root, lane)
@@ -832,62 +804,8 @@ defmodule Fablebook.Test.DebuggerSettings do
 
     new_root_observations = observe_new_roots!(new_root_ids, receipt, module_sets, lane)
 
-    selected_root_ids =
-      original_roots.rows
-      |> Enum.filter(&(&1["owner"] == @owner))
-      |> Enum.map(&{&1["app"], &1["module"], &1["function"], &1["arity"]})
-      |> MapSet.new()
-
-    audit_root_ids =
-      MapSet.new(
-        records.roots,
-        &{"debugger", Atom.to_string(elem(&1.mfa, 0)), Atom.to_string(elem(&1.mfa, 1)),
-         elem(&1.mfa, 2)}
-      )
-
-    require_ownership!(
-      selected_root_ids == audit_root_ids and MapSet.size(selected_root_ids) == 3,
-      "lane #{lane} owner=#{@owner} selected canonical root set differs from the three source-reviewed monitor roots; caller-chain=dbg_wx_mon start/load_settings/load_settings2 remedy=retain the exact adopted root set"
-    )
-
-    remainder_module_ids =
-      original_roots.rows
-      |> then(fn _ ->
-        Enum.filter(Map.fetch!(module_sets, "original").rows, &(&1["owner"] == @remainder_owner))
-      end)
-      |> Enum.map(&{&1["app"], &1["module"]})
-      |> MapSet.new()
-
-    actual_pending_module_ids =
-      graph.pending_modules
-      |> Enum.filter(&(&1.app == "debugger"))
-      |> Enum.map(&{&1.app, Atom.to_string(&1.module_atom)})
-      |> MapSet.new()
-
-    require_ownership!(
-      remainder_module_ids == actual_pending_module_ids,
-      "lane #{lane} owner=#{@remainder_owner} remainder modules do not match actual pending debugger modules; missing=#{inspect(Enum.sort(MapSet.to_list(MapSet.difference(remainder_module_ids, actual_pending_module_ids))))}; extra=#{inspect(Enum.sort(MapSet.to_list(MapSet.difference(actual_pending_module_ids, remainder_module_ids))))}; caller-chain=pending module projection remedy=keep all broad debugger modules pending or reconcile the changed identity"
-    )
-
-    active_debugger_modules =
-      graph.active_modules
-      |> Enum.filter(&(Map.get(receipt.module_app, &1) == "debugger"))
-      |> Enum.map(&Atom.to_string/1)
-      |> MapSet.new()
-
-    expected_active_modules =
-      MapSet.new(@debugger_seed_modules ++ [Atom.to_string(@settings_module)])
-
-    require_ownership!(
-      active_debugger_modules == expected_active_modules and
-        MapSet.size(
-          MapSet.intersection(
-            active_debugger_modules,
-            MapSet.new(Enum.map(remainder_module_ids, &elem(&1, 1)))
-          )
-        ) == 0,
-      "lane #{lane} owner=#{@owner} selected settings module is not the sole new active debugger member; actual=#{inspect(Enum.sort(MapSet.to_list(active_debugger_modules)))} expected seeds plus dbg_wx_settings; caller-chain=assert_audit! before active projection remedy=activate only source-proven dbg_wx_settings and retain the prior three-module seed"
-    )
+    selected_root_ids = assert_selected_root_ids!(original_roots, records.roots, lane)
+    remainder_module_ids = assert_live_module_projection!(graph, receipt, module_sets, lane)
 
     root_observations =
       Enum.flat_map(root_sets, fn {namespace, root_set} ->
@@ -897,15 +815,9 @@ defmodule Fablebook.Test.DebuggerSettings do
           canonical_tokens = Enum.map(row["steps"], & &1["token"])
           observed_tokens = actual["caller_chain"]
 
-          canonical_chain_id =
-            if namespace == "observed",
-              do: get_in(row, ["historical", "chain_id"]),
-              else: row["chain_id"]
+          canonical_chain_id = canonical_root_chain_id(namespace, row)
 
-          observed_chain_id =
-            if canonical_tokens == observed_tokens,
-              do: row["chain_id"],
-              else: observed_chain_id!(row, observed_tokens)
+          observed_chain_id = observed_root_chain_id(row, canonical_tokens, observed_tokens)
 
           route_changed = canonical_tokens != observed_tokens
           observed_references = references_for_tokens(observed_tokens, row["owner"])
@@ -997,6 +909,129 @@ defmodule Fablebook.Test.DebuggerSettings do
     }
   end
 
+  defp assert_ownership_preconditions!(
+         graph,
+         evidence,
+         records,
+         loaded,
+         delegation_metadata,
+         lane
+       ) do
+    require_ownership!(
+      delegation_metadata == loaded.metadata,
+      "effective delegation metadata differs from the pinned adopted authority"
+    )
+
+    require_ownership!(
+      graph.lane.name == lane,
+      "lane #{lane} owner=#{@owner} graph lane=#{graph.lane.name} caller-chain=installed Xref graph remedy=use matching lane evidence"
+    )
+
+    tier = BannedCalls.banned_mfas()
+    :ok = assert_audit!(records, graph, tier, evidence, [])
+    assert_graph_receipt!(graph)
+  end
+
+  defp assert_module_namespace_ownership!(module_sets, actual_module_ids, lane) do
+    for namespace <- ["original", "observed"] do
+      module_set = Map.fetch!(module_sets, namespace)
+
+      require_ownership!(
+        module_set.identities == actual_module_ids,
+        "lane #{lane} namespace=#{namespace} app=debugger owner=#{@remainder_owner} identity=module set differs from inspected BEAMs; missing=#{inspect(Enum.sort(MapSet.to_list(MapSet.difference(actual_module_ids, module_set.identities))))}; extra=#{inspect(Enum.sort(MapSet.to_list(MapSet.difference(module_set.identities, actual_module_ids))))}; caller-chain=installed debugger BEAM inventory remedy=route every added or missing module through its named owner"
+      )
+
+      Enum.each(module_set.owners, fn {{app, module}, owner} ->
+        require_ownership!(
+          owner == expected_module_owner(app, module),
+          "lane #{lane} namespace=#{namespace} MFA #{module} owner=#{owner} caller-chain=adopted module task remedy=assign selected settings module to #{@owner} and every broad remainder module to #{@remainder_owner}"
+        )
+      end)
+    end
+  end
+
+  defp expected_module_owner("debugger", "dbg_wx_settings"), do: @owner
+  defp expected_module_owner(_app, _module), do: @remainder_owner
+
+  defp assert_root_namespace_pair!(original_roots, observed_roots, lane) do
+    require_ownership!(
+      original_roots.identities == observed_roots.identities,
+      "lane #{lane} owner=#{@remainder_owner} original and observed root identity sets differ; caller-chain=adopted receipt union remedy=preserve both complete root namespaces"
+    )
+  end
+
+  defp assert_selected_root_ids!(original_roots, audit_roots, lane) do
+    selected_root_ids =
+      original_roots.rows
+      |> Enum.filter(&(&1["owner"] == @owner))
+      |> Enum.map(&{&1["app"], &1["module"], &1["function"], &1["arity"]})
+      |> MapSet.new()
+
+    audit_root_ids =
+      MapSet.new(
+        audit_roots,
+        &{"debugger", Atom.to_string(elem(&1.mfa, 0)), Atom.to_string(elem(&1.mfa, 1)),
+         elem(&1.mfa, 2)}
+      )
+
+    require_ownership!(
+      selected_root_ids == audit_root_ids and MapSet.size(selected_root_ids) == 3,
+      "lane #{lane} owner=#{@owner} selected canonical root set differs from the three source-reviewed monitor roots; caller-chain=dbg_wx_mon start/load_settings/load_settings2 remedy=retain the exact adopted root set"
+    )
+
+    selected_root_ids
+  end
+
+  defp assert_live_module_projection!(graph, receipt, module_sets, lane) do
+    remainder_module_ids =
+      Map.fetch!(module_sets, "original").rows
+      |> Enum.filter(&(&1["owner"] == @remainder_owner))
+      |> Enum.map(&{&1["app"], &1["module"]})
+      |> MapSet.new()
+
+    actual_pending_module_ids =
+      graph.pending_modules
+      |> Enum.filter(&(&1.app == "debugger"))
+      |> Enum.map(&{&1.app, Atom.to_string(&1.module_atom)})
+      |> MapSet.new()
+
+    require_ownership!(
+      remainder_module_ids == actual_pending_module_ids,
+      "lane #{lane} owner=#{@remainder_owner} remainder modules do not match actual pending debugger modules; missing=#{inspect(Enum.sort(MapSet.to_list(MapSet.difference(remainder_module_ids, actual_pending_module_ids))))}; extra=#{inspect(Enum.sort(MapSet.to_list(MapSet.difference(actual_pending_module_ids, remainder_module_ids))))}; caller-chain=pending module projection remedy=keep all broad debugger modules pending or reconcile the changed identity"
+    )
+
+    active_debugger_modules =
+      graph.active_modules
+      |> Enum.filter(&(Map.get(receipt.module_app, &1) == "debugger"))
+      |> Enum.map(&Atom.to_string/1)
+      |> MapSet.new()
+
+    expected_active_modules =
+      MapSet.new(@debugger_seed_modules ++ [Atom.to_string(@settings_module)])
+
+    require_ownership!(
+      active_debugger_modules == expected_active_modules and
+        MapSet.size(
+          MapSet.intersection(
+            active_debugger_modules,
+            MapSet.new(Enum.map(remainder_module_ids, &elem(&1, 1)))
+          )
+        ) == 0,
+      "lane #{lane} owner=#{@owner} selected settings module is not the sole new active debugger member; actual=#{inspect(Enum.sort(MapSet.to_list(active_debugger_modules)))} expected seeds plus dbg_wx_settings; caller-chain=assert_audit! before active projection remedy=activate only source-proven dbg_wx_settings and retain the prior three-module seed"
+    )
+
+    remainder_module_ids
+  end
+
+  defp observed_root_chain_id(row, canonical_tokens, observed_tokens) do
+    if canonical_tokens == observed_tokens,
+      do: row["chain_id"],
+      else: observed_chain_id!(row, observed_tokens)
+  end
+
+  defp canonical_root_chain_id("observed", row), do: get_in(row, ["historical", "chain_id"])
+  defp canonical_root_chain_id(_namespace, row), do: row["chain_id"]
+
   def ownership_controls!(graph, evidence, records) do
     %{metadata: metadata, records: authority} = load_delegation!()
 
@@ -1008,192 +1043,209 @@ defmodule Fablebook.Test.DebuggerSettings do
     :verified = assert_ownership!(graph, evidence, records).status
     lane = evidence.lane.name
 
-    row = fn kind, predicate ->
-      Enum.find(authority, &(&1["t"] == kind and &1["lane"] == lane and predicate.(&1)))
-    end
+    controls =
+      missing_module_controls(graph, base, lane) ++
+        missing_root_controls(graph, base, authority, lane) ++
+        changed_owner_controls(graph, base, authority, lane) ++
+        settings_source_controls(graph, base) ++ graph_projection_controls(graph, base)
 
+    run_ownership_controls!(controls, evidence)
+  end
+
+  defp missing_module_controls(graph, base, lane) do
     selected_module? = &(&1["module"] == "dbg_wx_settings")
     remainder_module? = &(&1["module"] == "dbg_wx_mon")
 
-    selected_root? = fn item ->
-      item["module"] == "dbg_wx_mon" and item["function"] == "start" and item["arity"] == 2
-    end
+    [
+      {"missing-selected-module-original",
+       fn -> {graph, drop_delegation_rows(base, "module", lane, selected_module?)} end,
+       "omitted"},
+      {"missing-selected-module-observed",
+       fn -> {graph, drop_delegation_rows(base, "observed_module", lane, selected_module?)} end,
+       "omitted"},
+      {"missing-remainder-module-original",
+       fn -> {graph, drop_delegation_rows(base, "module", lane, remainder_module?)} end,
+       "omitted"},
+      {"missing-remainder-module-observed",
+       fn -> {graph, drop_delegation_rows(base, "observed_module", lane, remainder_module?)} end,
+       "omitted"}
+    ]
+  end
+
+  defp missing_root_controls(graph, base, authority, lane) do
+    selected_root? =
+      &(&1["module"] == "dbg_wx_mon" and &1["function"] == "start" and &1["arity"] == 2)
 
     remainder_root? = &(&1["owner"] == @remainder_owner)
 
-    drop_rows = fn kind, predicate ->
-      Map.update!(base, :delegation_records, fn rows ->
-        Enum.reject(rows, &(&1["t"] == kind and &1["lane"] == lane and predicate.(&1)))
-      end)
-    end
-
-    edit_row = fn kind, predicate, update ->
-      Map.update!(base, :delegation_records, fn rows ->
-        Enum.map(rows, fn item ->
-          if item["t"] == kind and item["lane"] == lane and predicate.(item),
-            do: update.(item),
-            else: item
-        end)
-      end)
-    end
-
-    add_row = fn kind, item ->
-      Map.update!(base, :delegation_records, &(&1 ++ [Map.put(item, "t", kind)]))
-    end
-
-    controls = [
-      {"missing-selected-module-original",
-       fn -> {graph, drop_rows.("module", selected_module?)} end, "omitted"},
-      {"missing-selected-module-observed",
-       fn -> {graph, drop_rows.("observed_module", selected_module?)} end, "omitted"},
-      {"missing-remainder-module-original",
-       fn -> {graph, drop_rows.("module", remainder_module?)} end, "omitted"},
-      {"missing-remainder-module-observed",
-       fn -> {graph, drop_rows.("observed_module", remainder_module?)} end, "omitted"},
-      {"missing-selected-root-original", fn -> {graph, drop_rows.("root", selected_root?)} end,
-       "omitted"},
+    [
+      {"missing-selected-root-original",
+       fn -> {graph, drop_delegation_rows(base, "root", lane, selected_root?)} end, "omitted"},
       {"missing-selected-root-observed",
-       fn -> {graph, drop_rows.("observed_root", selected_root?)} end, "omitted"},
-      {"missing-remainder-root-original", fn -> {graph, drop_rows.("root", remainder_root?)} end,
+       fn -> {graph, drop_delegation_rows(base, "observed_root", lane, selected_root?)} end,
        "omitted"},
+      {"missing-remainder-root-original",
+       fn -> {graph, drop_delegation_rows(base, "root", lane, remainder_root?)} end, "omitted"},
       {"missing-remainder-root-observed",
-       fn -> {graph, drop_rows.("observed_root", remainder_root?)} end, "omitted"},
+       fn -> {graph, drop_delegation_rows(base, "observed_root", lane, remainder_root?)} end,
+       "omitted"},
       {"duplicate-canonical-root",
-       fn -> {graph, add_row.("root", row.("root", selected_root?))} end, "duplicate"},
+       fn ->
+         selected = find_delegation_row(authority, "root", lane, selected_root?)
+         {graph, append_delegation_row(base, "root", selected)}
+       end, "duplicate"}
+    ]
+  end
+
+  defp changed_owner_controls(graph, base, authority, lane) do
+    selected_module? = &(&1["module"] == "dbg_wx_settings")
+
+    selected_root? =
+      &(&1["module"] == "dbg_wx_mon" and &1["function"] == "start" and &1["arity"] == 2)
+
+    [
       {"wrong-selected-owner",
        fn ->
-         {graph, edit_row.("module", selected_module?, &Map.put(&1, "owner", @remainder_owner))}
+         changed =
+           edit_delegation_rows(
+             base,
+             "module",
+             lane,
+             selected_module?,
+             &Map.put(&1, "owner", @remainder_owner)
+           )
+
+         {graph, changed}
        end, "owner"},
       {"changed-canonical-chain",
        fn ->
-         {graph,
-          edit_row.("root", selected_root?, &Map.put(&1, "chain_id", String.duplicate("0", 64)))}
+         changed =
+           edit_delegation_rows(
+             base,
+             "root",
+             lane,
+             selected_root?,
+             &Map.put(&1, "chain_id", String.duplicate("0", 64))
+           )
+
+         {graph, changed}
        end, "chain"},
       {"changed-current-reference",
        fn ->
-         {graph,
-          edit_row.("root", selected_root?, &Map.put(&1, "references", ["tampered-owner"]))}
+         changed =
+           edit_delegation_rows(
+             base,
+             "root",
+             lane,
+             selected_root?,
+             &Map.put(&1, "references", ["tampered-owner"])
+           )
+
+         {graph, changed}
        end, "references"},
-      {
-        "missing-overlap-occurrence",
-        fn ->
-          [overlap] =
-            Enum.filter(authority, &(&1["t"] == "overlap" and &1["lane"] == lane)) |> Enum.take(1)
+      {"missing-overlap-occurrence",
+       fn ->
+         overlap = Enum.find(authority, &(&1["t"] == "overlap" and &1["lane"] == lane))
 
-          changed = fn rows ->
-            Enum.map(rows, fn item ->
-              if item["t"] == "overlap" and item["lane"] == lane and
-                   item["token"] == overlap["token"],
-                 do: Map.update!(item, "occurrences", &Enum.drop(&1, 1)),
-                 else: item
-            end)
-          end
+         changed =
+           Map.update!(base, :delegation_records, fn rows ->
+             Enum.map(rows, &drop_overlap_occurrence(&1, lane, overlap))
+           end)
 
-          {graph, Map.update!(base, :delegation_records, changed)}
-        end,
-        "overlap"
-      },
-      {"missing-source-branch", fn -> {graph, drop_rows.("source_branch", fn _ -> true end)} end,
-       "source_branch"},
-      {
-        "empty-settings-audit",
-        fn ->
-          empty = Map.merge(base, %{function_sources: [], function_audit: [], exports: []})
-          {graph, empty}
-        end,
-        "all four exact functions"
-      },
+         {graph, changed}
+       end, "overlap"},
+      {"missing-source-branch",
+       fn -> {graph, drop_delegation_rows(base, "source_branch", lane, fn _ -> true end)} end,
+       "source_branch"}
+    ]
+  end
+
+  defp settings_source_controls(graph, base) do
+    [
+      {"empty-settings-audit",
+       fn ->
+         {graph, Map.merge(base, %{function_sources: [], function_audit: [], exports: []})}
+       end, "all four exact functions"},
       {"changed-settings-source-digest",
        fn -> {graph, Map.put(base, :source_sha256, String.duplicate("0", 64))} end,
        "exact settings source SHA"},
-      {
-        "escaping-settings-citation",
-        fn ->
-          escaped =
-            Map.update!(base, :function_sources, fn [source | rest] ->
-              [
-                Map.update!(source, :citation, fn citations ->
-                  [Map.put(hd(citations), :path, "../outside.erl") | tl(citations)]
-                end)
-                | rest
-              ]
-            end)
+      {"escaping-settings-citation",
+       fn ->
+         escaped =
+           Map.update!(base, :function_sources, fn [source | rest] ->
+             [
+               Map.update!(source, :citation, fn citations ->
+                 [Map.put(hd(citations), :path, "../outside.erl") | tl(citations)]
+               end)
+               | rest
+             ]
+           end)
 
-          {graph, escaped}
-        end,
-        "source"
-      },
-      {
-        "graph-new-settings-export",
-        fn ->
-          new_export = {@settings_module, :unreviewed_saved_settings_entry, 0}
-          changed_graph = %{graph | full_exported: MapSet.put(graph.full_exported, new_export)}
-          changed_base = Map.update!(base, :exports, &(&1 ++ [new_export]))
-
-          changed_base =
-            Map.update!(
-              changed_base,
-              :function_sources,
-              &(&1 ++ [%{mfa: new_export, citation: []}])
-            )
-
-          changed_base =
-            Map.update!(changed_base, :function_audit, fn [first | rest] ->
-              [Map.put(first, :mfa, new_export) | rest]
-            end)
-
-          {changed_graph, changed_base}
-        end,
-        "independent installed graph exports"
-      },
-      {
-        "graph-new-debugger-root",
-        fn ->
-          new_root = {:dbg_wx_mon, :unreviewed_saved_settings_root, 0}
-
-          changed_graph = %{
-            graph
-            | full_reached: MapSet.put(graph.full_reached, new_root),
-              pending_mfas: MapSet.put(graph.pending_mfas, new_root)
-          }
-
-          {changed_graph, base}
-        end,
-        "graph/receipt sets differ"
-      },
-      {
-        "graph-omitted-debugger-beam",
-        fn ->
-          changed_graph = %{
-            graph
-            | inspected:
-                Enum.reject(
-                  graph.inspected,
-                  &(&1.app == "debugger" and &1.module_atom == :dbg_wx_mon)
-                )
-          }
-
-          {changed_graph, base}
-        end,
-        "inspected/receipt BEAM sets differ"
-      },
-      {
-        "graph-omitted-debugger-export",
-        fn ->
-          omitted_export = {:dbg_wx_settings, :load, 3}
-          {%{graph | full_exported: MapSet.delete(graph.full_exported, omitted_export)}, base}
-        end,
-        "independent installed graph exports"
-      },
-      {
-        "graph-omitted-active-baseline",
-        fn ->
-          {%{graph | active_modules: MapSet.delete(graph.active_modules, :dbg_idb)}, base}
-        end,
-        "active debugger module graph/receipt sets differ"
-      }
+         {graph, escaped}
+       end, "source"}
     ]
+  end
 
+  defp graph_projection_controls(graph, base) do
+    [
+      {"graph-new-settings-export",
+       fn ->
+         new_export = {@settings_module, :unreviewed_saved_settings_entry, 0}
+         changed_graph = %{graph | full_exported: MapSet.put(graph.full_exported, new_export)}
+         changed_base = Map.update!(base, :exports, &(&1 ++ [new_export]))
+
+         changed_base =
+           Map.update!(
+             changed_base,
+             :function_sources,
+             &(&1 ++ [%{mfa: new_export, citation: []}])
+           )
+
+         changed_base =
+           Map.update!(changed_base, :function_audit, fn [first | rest] ->
+             [Map.put(first, :mfa, new_export) | rest]
+           end)
+
+         {changed_graph, changed_base}
+       end, "independent installed graph exports"},
+      {"graph-new-debugger-root",
+       fn ->
+         new_root = {:dbg_wx_mon, :unreviewed_saved_settings_root, 0}
+
+         changed_graph = %{
+           graph
+           | full_reached: MapSet.put(graph.full_reached, new_root),
+             pending_mfas: MapSet.put(graph.pending_mfas, new_root)
+         }
+
+         {changed_graph, base}
+       end, "graph/receipt sets differ"},
+      {"graph-omitted-debugger-beam",
+       fn ->
+         changed_graph = %{
+           graph
+           | inspected:
+               Enum.reject(
+                 graph.inspected,
+                 &(&1.app == "debugger" and &1.module_atom == :dbg_wx_mon)
+               )
+         }
+
+         {changed_graph, base}
+       end, "inspected/receipt BEAM sets differ"},
+      {"graph-omitted-debugger-export",
+       fn ->
+         omitted_export = {:dbg_wx_settings, :load, 3}
+         {%{graph | full_exported: MapSet.delete(graph.full_exported, omitted_export)}, base}
+       end, "independent installed graph exports"},
+      {"graph-omitted-active-baseline",
+       fn ->
+         {%{graph | active_modules: MapSet.delete(graph.active_modules, :dbg_idb)}, base}
+       end, "active debugger module graph/receipt sets differ"}
+    ]
+  end
+
+  defp run_ownership_controls!(controls, evidence) do
     Enum.map(controls, fn {name, mutate, expected} ->
       rejected =
         try do
@@ -1204,7 +1256,7 @@ defmodule Fablebook.Test.DebuggerSettings do
           error in ExUnit.AssertionError ->
             String.contains?(Exception.message(error), expected)
 
-          error in Fablebook.Test.SweepEvidence.Error ->
+          error in SweepEvidence.Error ->
             String.contains?(Exception.message(error), expected)
         end
 
@@ -1215,6 +1267,38 @@ defmodule Fablebook.Test.DebuggerSettings do
 
       "#{name}:rejected"
     end)
+  end
+
+  defp drop_delegation_rows(base, kind, lane, predicate) do
+    Map.update!(base, :delegation_records, fn rows ->
+      Enum.reject(rows, &(&1["t"] == kind and &1["lane"] == lane and predicate.(&1)))
+    end)
+  end
+
+  defp edit_delegation_rows(base, kind, lane, predicate, update) do
+    Map.update!(base, :delegation_records, fn rows ->
+      Enum.map(rows, &edit_delegation_row(&1, kind, lane, predicate, update))
+    end)
+  end
+
+  defp append_delegation_row(base, kind, item) do
+    Map.update!(base, :delegation_records, &(&1 ++ [Map.put(item, "t", kind)]))
+  end
+
+  defp find_delegation_row(rows, kind, lane, predicate) do
+    Enum.find(rows, &(&1["t"] == kind and &1["lane"] == lane and predicate.(&1)))
+  end
+
+  defp drop_overlap_occurrence(item, lane, overlap) do
+    if item["t"] == "overlap" and item["lane"] == lane and item["token"] == overlap["token"],
+      do: Map.update!(item, "occurrences", &Enum.drop(&1, 1)),
+      else: item
+  end
+
+  defp edit_delegation_row(item, kind, lane, predicate, update) do
+    if item["t"] == kind and item["lane"] == lane and predicate.(item),
+      do: update.(item),
+      else: item
   end
 
   defp validate_delegation_metadata!(metadata, root) do
@@ -1284,6 +1368,14 @@ defmodule Fablebook.Test.DebuggerSettings do
   end
 
   defp validate_delegation_rows!(rows, metadata) when is_list(rows) and is_map(metadata) do
+    validate_delegation_rows_shape!(rows)
+    Enum.each(rows, &validate_delegation_row!/1)
+    validate_delegation_counts!(rows, metadata)
+    validate_overlap_projection!(rows)
+    :ok
+  end
+
+  defp validate_delegation_rows_shape!(rows) do
     allowed = [
       "exact_source",
       "module",
@@ -1339,106 +1431,134 @@ defmodule Fablebook.Test.DebuggerSettings do
       Enum.sort(Enum.map(source_branches, & &1["lane"])) == ["core", "floor"],
       "effective source-branch ledger must retain exactly one pending break_p/4 obligation per lane"
     )
+  end
 
-    for row <- rows do
-      case row["t"] do
-        kind when kind in ["module", "observed_module"] ->
-          expected = if row["module"] == "dbg_wx_settings", do: @owner, else: @remainder_owner
+  defp validate_delegation_row!(%{"t" => kind} = row)
+       when kind in ["module", "observed_module"] do
+    expected = if row["module"] == "dbg_wx_settings", do: @owner, else: @remainder_owner
 
-          require_ownership!(
-            row["app"] == "debugger" and row["owner"] == expected and
-              row["origin_owner"] == @historical_owner and row["pending"] == true and
-              row["completion"] == "pending",
-            "lane #{row["lane"]} module #{row["module"]} owner=#{row["owner"]} caller-chain=adopted module task remedy=restore the effective current owner and pending status"
-          )
+    require_ownership!(
+      row["app"] == "debugger" and row["owner"] == expected and
+        row["origin_owner"] == @historical_owner and row["pending"] == true and
+        row["completion"] == "pending",
+      "lane #{row["lane"]} module #{row["module"]} owner=#{row["owner"]} caller-chain=adopted module task remedy=restore the effective current owner and pending status"
+    )
 
-          if String.starts_with?(kind, "observed_") do
-            identity = row["identity"] || %{}
+    if kind == "observed_module", do: validate_observed_module_identity!(row)
+  end
 
-            require_ownership!(
-              row["namespace"] == "observed" and identity["kind"] == "module" and
-                identity["lane"] == row["lane"] and identity["app"] == row["app"] and
-                identity["module"] == row["module"] and valid_sha256?(row["identity_sha256"]),
-              "observed module #{row["module"]} has a malformed typed identity"
-            )
-          end
+  defp validate_delegation_row!(%{"t" => kind} = row)
+       when kind in ["root", "observed_root"] do
+    expected = if selected_root_row?(row), do: @owner, else: @remainder_owner
 
-        kind when kind in ["root", "observed_root"] ->
-          mfa = {row["module"], row["function"], row["arity"]}
+    require_ownership!(
+      is_binary(row["app"]) and row["owner"] == expected and
+        row["origin_owner"] == @historical_owner and row["completion"] == "pending" and
+        valid_sha256?(row["chain_id"]),
+      "lane #{row["lane"]} MFA #{format_root_text(row)} owner=#{row["owner"]} chain=#{inspect(row["chain_id"])} caller-chain=adopted root remedy=preserve canonical chain and current child owner"
+    )
 
-          selected_root? =
-            row["app"] == "debugger" and
-              mfa in Enum.map(
-                @selected_root_mfas,
-                &{Atom.to_string(elem(&1, 0)), Atom.to_string(elem(&1, 1)), elem(&1, 2)}
-              )
+    validate_root_projection!(row)
+    if kind == "observed_root", do: validate_observed_root_identity!(row)
+  end
 
-          expected = if selected_root?, do: @owner, else: @remainder_owner
+  defp validate_delegation_row!(%{"t" => kind} = row)
+       when kind in ["overlap", "observed_overlap"] do
+    require_ownership!(
+      row["origin_owner"] == nil or row["origin_owner"] == @historical_owner,
+      "overlap #{row["token"]} changed historical provenance"
+    )
+  end
 
-          require_ownership!(
-            is_binary(row["app"]) and row["owner"] == expected and
-              row["origin_owner"] == @historical_owner and row["completion"] == "pending" and
-              valid_sha256?(row["chain_id"]),
-            "lane #{row["lane"]} MFA #{format_root_text(row)} owner=#{row["owner"]} chain=#{inspect(row["chain_id"])} caller-chain=adopted root remedy=preserve canonical chain and current child owner"
-          )
+  defp validate_delegation_row!(%{"t" => "exact_source"} = row) do
+    expected = if row["module"] == "dbg_wx_settings", do: @owner, else: @remainder_owner
 
-          validate_root_projection!(row)
+    require_ownership!(
+      row["owner"] == expected and row["origin_owner"] == @historical_owner and
+        valid_sha256?(row["sha256"]),
+      "lane #{row["lane"]} source #{row["module"]} has a changed owner or source fingerprint"
+    )
+  end
 
-          if String.starts_with?(kind, "observed_") do
-            identity = row["identity"] || %{}
-            historical_chain_id = get_in(row, ["historical", "chain_id"])
+  defp validate_delegation_row!(%{"t" => "source_branch"} = row) do
+    lane = row["lane"]
+    source_sha = Map.fetch!(@lane_data, lane).icmd_sha256
+    source_lines = if lane == "core", do: [88, 126], else: [86, 124]
 
-            require_ownership!(
-              row["namespace"] == "observed" and identity["kind"] == "root" and
-                identity["lane"] == row["lane"] and identity["app"] == row["app"] and
-                identity["module"] == row["module"] and identity["function"] == row["function"] and
-                identity["arity"] == row["arity"] and valid_sha256?(row["identity_sha256"]) and
-                valid_sha256?(historical_chain_id),
-              "observed MFA #{format_root_text(row)} changed its canonical chain or typed identity"
-            )
-          end
+    expected = %{
+      "app" => "debugger",
+      "module" => "dbg_icmd",
+      "function" => "break_p",
+      "arity" => 4,
+      "owner" => @owner,
+      "origin_owner" => @historical_owner,
+      "completion" => "pending",
+      "state" => "source-discovered-unresolved-callback-branch",
+      "source_sha256" => source_sha,
+      "source_path" => "debugger/src/dbg_icmd.erl",
+      "source_lines" => source_lines,
+      "canonical_receipt_root_present" => false,
+      "shared_broad_roots_remain_with" => @remainder_owner
+    }
 
-        kind when kind in ["overlap", "observed_overlap"] ->
-          require_ownership!(
-            row["origin_owner"] == nil or row["origin_owner"] == @historical_owner,
-            "overlap #{row["token"]} changed historical provenance"
-          )
+    require_ownership!(
+      Enum.all?(expected, fn {key, value} -> row[key] == value end),
+      "lane #{lane} MFA dbg_icmd:break_p/4 owner=#{row["owner"]} caller-chain=source-discovered callback branch remedy=preserve the selected pending source branch and broad remainder owner"
+    )
+  end
 
-        "exact_source" ->
-          expected = if row["module"] == "dbg_wx_settings", do: @owner, else: @remainder_owner
+  defp validate_delegation_row!(row),
+    do: ownership_fail!("effective delegation has unknown typed identity #{inspect(row)}")
 
-          require_ownership!(
-            row["owner"] == expected and row["origin_owner"] == @historical_owner and
-              valid_sha256?(row["sha256"]),
-            "lane #{row["lane"]} source #{row["module"]} has a changed owner or source fingerprint"
-          )
+  defp validate_observed_module_identity!(row) do
+    identity = row["identity"] || %{}
 
-        "source_branch" ->
-          lane = row["lane"]
-          source_sha = Map.fetch!(@lane_data, lane).icmd_sha256
-          {first, last} = if lane == "core", do: {88, 126}, else: {86, 124}
+    require_ownership!(
+      row["namespace"] == "observed" and identity["kind"] == "module" and
+        identity["lane"] == row["lane"] and identity["app"] == row["app"] and
+        identity["module"] == row["module"] and valid_sha256?(row["identity_sha256"]),
+      "observed module #{row["module"]} has a malformed typed identity"
+    )
+  end
 
-          valid =
-            row["app"] == "debugger" and row["module"] == "dbg_icmd" and
-              row["function"] == "break_p" and row["arity"] == 4 and row["owner"] == @owner and
-              row["origin_owner"] == @historical_owner and row["completion"] == "pending" and
-              row["state"] == "source-discovered-unresolved-callback-branch" and
-              row["source_sha256"] == source_sha and
-              row["source_path"] == "debugger/src/dbg_icmd.erl" and
-              row["source_lines"] == [first, last] and
-              row["canonical_receipt_root_present"] == false and
-              row["shared_broad_roots_remain_with"] == @remainder_owner
+  defp selected_root_row?(row) do
+    row["app"] == "debugger" and
+      Enum.any?(@selected_root_mfas, fn {module, function, arity} ->
+        row["module"] == Atom.to_string(module) and row["function"] == Atom.to_string(function) and
+          row["arity"] == arity
+      end)
+  end
 
-          require_ownership!(
-            valid,
-            "lane #{lane} MFA dbg_icmd:break_p/4 owner=#{row["owner"]} caller-chain=source-discovered callback branch remedy=preserve the selected pending source branch and broad remainder owner"
-          )
-      end
-    end
+  defp validate_observed_root_identity!(row) do
+    identity = row["identity"] || %{}
+    historical_chain_id = get_in(row, ["historical", "chain_id"])
 
-    validate_delegation_counts!(rows, metadata)
-    validate_overlap_projection!(rows)
-    :ok
+    expected = %{
+      "namespace" => "observed",
+      "identity_kind" => "root",
+      "identity_lane" => row["lane"],
+      "identity_app" => row["app"],
+      "identity_module" => row["module"],
+      "identity_function" => row["function"],
+      "identity_arity" => row["arity"]
+    }
+
+    matches_identity =
+      Enum.all?(expected, fn
+        {"namespace", value} -> row["namespace"] == value
+        {"identity_kind", value} -> identity["kind"] == value
+        {"identity_lane", value} -> identity["lane"] == value
+        {"identity_app", value} -> identity["app"] == value
+        {"identity_module", value} -> identity["module"] == value
+        {"identity_function", value} -> identity["function"] == value
+        {"identity_arity", value} -> identity["arity"] == value
+      end)
+
+    require_ownership!(
+      matches_identity and valid_sha256?(row["identity_sha256"]) and
+        valid_sha256?(historical_chain_id),
+      "observed MFA #{format_root_text(row)} changed its canonical chain or typed identity"
+    )
   end
 
   defp validate_complete_delegation!(actual, expected) do
@@ -1463,29 +1583,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       actual_row = Map.fetch!(actual_by_identity, identity)
 
       if actual_row != expected_row do
-        category =
-          cond do
-            actual_row["owner"] != expected_row["owner"] ->
-              "owner"
-
-            actual_row["chain_id"] != expected_row["chain_id"] ->
-              "canonical chain"
-
-            actual_row["references"] != expected_row["references"] ->
-              "current references"
-
-            actual_row["occurrences"] != expected_row["occurrences"] ->
-              "overlap occurrence"
-
-            actual_row["origin_record_sha256"] != expected_row["origin_record_sha256"] ->
-              "origin fingerprint"
-
-            actual_row["steps"] != expected_row["steps"] ->
-              "caller-chain steps"
-
-            true ->
-              "historical fields"
-          end
+        category = delegation_difference_category(actual_row, expected_row)
 
         ownership_fail!(
           "effective delegation changed #{category} for typed identity #{inspect(identity)}"
@@ -1494,6 +1592,18 @@ defmodule Fablebook.Test.DebuggerSettings do
     end)
 
     :ok
+  end
+
+  defp delegation_difference_category(actual, expected) do
+    cond do
+      actual["owner"] != expected["owner"] -> "owner"
+      actual["chain_id"] != expected["chain_id"] -> "canonical chain"
+      actual["references"] != expected["references"] -> "current references"
+      actual["occurrences"] != expected["occurrences"] -> "overlap occurrence"
+      actual["origin_record_sha256"] != expected["origin_record_sha256"] -> "origin fingerprint"
+      actual["steps"] != expected["steps"] -> "caller-chain steps"
+      true -> "historical fields"
+    end
   end
 
   defp validate_root_projection!(row) do
@@ -1509,13 +1619,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       Enum.map(origin_steps, fn step ->
         expected_owners =
           step["owners"]
-          |> Enum.map(fn owner ->
-            if owner == @historical_owner do
-              owner_for_step!(step["token"])
-            else
-              owner
-            end
-          end)
+          |> Enum.map(&project_delegated_owner(&1, step["token"]))
           |> Enum.uniq()
           |> Enum.sort()
 
@@ -1535,6 +1639,9 @@ defmodule Fablebook.Test.DebuggerSettings do
       "lane #{row["lane"]} MFA #{format_root_text(row)} owner=#{row["owner"]} canonical_chain_id=#{row["chain_id"]} caller-chain=effective delegated steps/references remedy=restore original tokens and explicit current-owner projection"
     )
   end
+
+  defp project_delegated_owner(@historical_owner, token), do: owner_for_step!(token)
+  defp project_delegated_owner(owner, _token), do: owner
 
   defp validate_overlap_projection!(rows) do
     chain_owners =
@@ -1570,7 +1677,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       owners = expected |> Enum.map(&Enum.at(&1, 1)) |> Enum.uniq() |> Enum.sort()
 
       require_ownership!(
-        length(original) > 0 and current == expected and row["owners"] == owners,
+        original != [] and current == expected and row["owners"] == owners,
         "lane #{row["lane"]} overlap #{row["token"]} lost a canonical chain occurrence or current owner; owner=#{inspect(row["owners"])} caller-chain=overlap occurrence projection remedy=restore every chain and position"
       )
     end)
@@ -1602,25 +1709,47 @@ defmodule Fablebook.Test.DebuggerSettings do
     end
   end
 
-  defp typed_delegation_identity!(row) do
-    lane = row["lane"]
-    kind = row["t"]
+  defp typed_delegation_identity!(%{"t" => "exact_source", "lane" => lane, "module" => module}),
+    do: {"exact_source", lane, module}
 
-    case kind do
-      "exact_source" -> {kind, lane, row["module"]}
-      "module" -> {kind, lane, row["app"], row["module"]}
-      "observed_module" -> {kind, lane, row["app"], row["module"]}
-      "root" -> {kind, lane, row["app"], row["module"], row["function"], row["arity"]}
-      "observed_root" -> {kind, lane, row["app"], row["module"], row["function"], row["arity"]}
-      "overlap" -> {kind, lane, row["token"]}
-      "observed_overlap" -> {kind, lane, row["token"]}
-      "source_branch" -> {kind, lane, row["module"], row["function"], row["arity"]}
-      _ -> ownership_fail!("effective delegation has unknown typed identity #{inspect(row)}")
-    end
-  end
+  defp typed_delegation_identity!(%{
+         "t" => kind,
+         "lane" => lane,
+         "app" => app,
+         "module" => module
+       })
+       when kind in ["module", "observed_module"],
+       do: {kind, lane, app, module}
+
+  defp typed_delegation_identity!(%{
+         "t" => kind,
+         "lane" => lane,
+         "app" => app,
+         "module" => module,
+         "function" => function,
+         "arity" => arity
+       })
+       when kind in ["root", "observed_root"],
+       do: {kind, lane, app, module, function, arity}
+
+  defp typed_delegation_identity!(%{"t" => kind, "lane" => lane, "token" => token})
+       when kind in ["overlap", "observed_overlap"],
+       do: {kind, lane, token}
+
+  defp typed_delegation_identity!(%{
+         "t" => "source_branch",
+         "lane" => lane,
+         "module" => module,
+         "function" => function,
+         "arity" => arity
+       }),
+       do: {"source_branch", lane, module, function, arity}
+
+  defp typed_delegation_identity!(row),
+    do: ownership_fail!("effective delegation has unknown typed identity #{inspect(row)}")
 
   defp assert_graph_receipt!(graph) do
-    verified = Fablebook.Test.InstalledOtp.verify_receipt_lines!(graph.receipt_lines)
+    verified = InstalledOtp.verify_receipt_lines!(graph.receipt_lines)
     lane = graph.lane.name
 
     require_ownership!(
@@ -1921,15 +2050,7 @@ defmodule Fablebook.Test.DebuggerSettings do
 
       references =
         tokens
-        |> Enum.flat_map(fn token ->
-          case Regex.run(~r/^(.+)\.([^\.\/]+)\/([0-9]+)$/, token) do
-            [_, token_module, token_function, token_arity] ->
-              [owner_for_step!("#{token_module}.#{token_function}/#{token_arity}")]
-
-            _ ->
-              []
-          end
-        end)
+        |> Enum.flat_map(&owner_reference_for_token/1)
         |> Enum.uniq()
         |> Enum.reject(&(&1 == module_owner))
         |> Enum.sort()
@@ -1964,6 +2085,16 @@ defmodule Fablebook.Test.DebuggerSettings do
         }
       }
     end)
+  end
+
+  defp owner_reference_for_token(token) do
+    case Regex.run(~r/^(.+)\.([^\.\/]+)\/([0-9]+)$/, token) do
+      [_, token_module, token_function, token_arity] ->
+        [owner_for_step!("#{token_module}.#{token_function}/#{token_arity}")]
+
+      _ ->
+        []
+    end
   end
 
   defp read_regular_file!(path, label) do
@@ -2058,7 +2189,7 @@ defmodule Fablebook.Test.DebuggerSettings do
     assert inspection != nil,
            "lane #{lane} MFA dbg_wx_settings:load/3 owner=#{@owner} caller-chain=installed debugger BEAM remedy=inspect the assigned settings module"
 
-    assert {:ok, scan} = Fablebook.Test.BeamWalker.scan(inspection.path),
+    assert {:ok, scan} = BeamWalker.scan(inspection.path),
            "lane #{lane} MFA dbg_wx_settings:default_settings_dir/1 owner=#{@owner} caller-chain=installed BEAM inventory remedy=restore debug-info function scan"
 
     actual_functions =
@@ -2163,26 +2294,25 @@ defmodule Fablebook.Test.DebuggerSettings do
     universe = Enum.to_list(universe)
 
     exclusions
-    |> Enum.flat_map(fn exclusion ->
-      matches = Enum.filter(universe, &matches_exclusion?(&1, exclusion))
+    |> Enum.flat_map(&exclusion_match_rows(&1, universe))
+  end
 
-      if matches == [] do
-        []
-      else
-        matcher = elem(exclusion, 0)
-        reason = elem(exclusion, 1)
-        citations = if tuple_size(exclusion) > 2, do: elem(exclusion, 2), else: []
+  defp exclusion_match_rows(exclusion, universe) do
+    matches = Enum.filter(universe, &matches_exclusion?(&1, exclusion))
+    citations = if tuple_size(exclusion) > 2, do: elem(exclusion, 2), else: []
 
-        [
-          %{
-            original_identity: exclusion,
-            cited_triple: {matcher, reason, citations},
-            matched_mfas: Enum.sort(matches),
-            universe: Enum.sort(universe)
-          }
-        ]
-      end
-    end)
+    if matches == [] do
+      []
+    else
+      [
+        %{
+          original_identity: exclusion,
+          cited_triple: {elem(exclusion, 0), elem(exclusion, 1), citations},
+          matched_mfas: Enum.sort(matches),
+          universe: Enum.sort(universe)
+        }
+      ]
+    end
   end
 
   def assert_exclusion_witnesses!(matches, graph, tier, names, exclusions) do
@@ -2272,7 +2402,7 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   defp branch_citations(lane_name) do
     Enum.into(@all_branch_specs, %{}, fn {id, _mfa, _predicate, source, lines} ->
-      {line, expected_text} = Map.fetch!(lines, String.to_atom(lane_name))
+      {line, expected_text} = Map.fetch!(lines, String.to_existing_atom(lane_name))
       {id, [citation(lane_name, source, line, expected_text)]}
     end)
   end
@@ -2429,7 +2559,7 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   defp assert_citation!(evidence, lane, record, citation) do
     resolved =
-      Fablebook.Test.SweepEvidence.resolve!(evidence, "#{citation.path}:#{citation.line}")
+      SweepEvidence.resolve!(evidence, "#{citation.path}:#{citation.line}")
 
     assert resolved.sha256 == citation.sha256,
            "lane #{lane} MFA dbg_wx_settings:default_settings_dir/1 owner=#{record.owner} caller-chain=source citation #{citation.path}:#{citation.line} remedy=restore exact lane SHA"
@@ -2506,23 +2636,32 @@ defmodule Fablebook.Test.DebuggerSettings do
       end)
 
     lane_row = Map.fetch!(@lane_data, lane)
-    {first, last} = if lane == "core", do: {88, 126}, else: {86, 124}
+    source_lines = Map.fetch!(%{"core" => [88, 126], "floor" => [86, 124]}, lane)
 
     assert length(rows) == 1,
            "lane #{lane} MFA dbg_icmd:break_p/4 owner=#{@owner} caller-chain=effective source-branch ledger remedy=retain one adopted callback source branch"
 
     [row] = rows
 
-    assert row["owner"] == @owner and row["completion"] == "pending" and
-             row["state"] == "source-discovered-unresolved-callback-branch" and
-             row["caller"] == "dbg_icmd.cmd/4" and
-             row["sensitive_expression"] == "try CM:CN(Bs) of" and
-             row["source_path"] == "debugger/src/dbg_icmd.erl" and
-             row["source_sha256"] == lane_row.icmd_sha256 and
-             row["source_lines"] == [first, last] and
-             row["canonical_receipt_root_present"] == false and
-             row["shared_broad_roots_remain_with"] == "01.1.1.3.1.2",
+    assert source_branch_row_valid?(row, lane_row.icmd_sha256, source_lines),
            "lane #{lane} MFA dbg_icmd:break_p/4 owner=#{@owner} caller-chain=effective source-branch ledger remedy=retain the adopted source obligation without promoting it to a canonical root"
+  end
+
+  defp source_branch_row_valid?(row, source_sha, source_lines) do
+    expected = %{
+      "owner" => @owner,
+      "completion" => "pending",
+      "state" => "source-discovered-unresolved-callback-branch",
+      "caller" => "dbg_icmd.cmd/4",
+      "sensitive_expression" => "try CM:CN(Bs) of",
+      "source_path" => "debugger/src/dbg_icmd.erl",
+      "source_sha256" => source_sha,
+      "source_lines" => source_lines,
+      "canonical_receipt_root_present" => false,
+      "shared_broad_roots_remain_with" => @remainder_owner
+    }
+
+    Enum.all?(expected, fn {key, value} -> row[key] == value end)
   end
 
   defp graph_candidates(graph) do
@@ -2563,11 +2702,9 @@ defmodule Fablebook.Test.DebuggerSettings do
 
     reached
     |> Enum.filter(&MapSet.member?(graph.exported, &1))
-    |> Enum.reject(fn {module, function, _arity} ->
-      module in [:erlang, :erl_eval, :erl_ddll] or function == :module_info
-    end)
-    |> Enum.reject(fn mfa ->
-      covered?(mfa, tier, names) or Enum.any?(exclusions, &matches_exclusion?(mfa, &1))
+    |> Enum.reject(fn {module, function, _arity} = mfa ->
+      module in [:erlang, :erl_eval, :erl_ddll] or function == :module_info or
+        covered?(mfa, tier, names) or Enum.any?(exclusions, &matches_exclusion?(mfa, &1))
     end)
   end
 
@@ -2584,23 +2721,29 @@ defmodule Fablebook.Test.DebuggerSettings do
         visited
 
       {{:value, mfa}, rest} when is_map_key(reverse, mfa) ->
-        if MapSet.member?(visited, mfa) do
-          walk_callers(rest, reverse, visited)
-        else
-          callers = Map.get(reverse, mfa, MapSet.new())
-          callers = if is_struct(callers, MapSet), do: MapSet.to_list(callers), else: callers
-
-          walk_callers(
-            Enum.reduce(callers, rest, &:queue.in/2),
-            reverse,
-            MapSet.put(visited, mfa)
-          )
-        end
+        walk_caller_step(mfa, rest, reverse, visited)
 
       {{:value, mfa}, rest} ->
         walk_callers(rest, reverse, MapSet.put(visited, mfa))
     end
   end
+
+  defp walk_caller_step(mfa, rest, reverse, visited) do
+    if MapSet.member?(visited, mfa) do
+      walk_callers(rest, reverse, visited)
+    else
+      callers = reverse |> Map.fetch!(mfa) |> caller_list()
+
+      walk_callers(
+        Enum.reduce(callers, rest, &:queue.in/2),
+        reverse,
+        MapSet.put(visited, mfa)
+      )
+    end
+  end
+
+  defp caller_list(callers) when is_struct(callers, MapSet), do: MapSet.to_list(callers)
+  defp caller_list(callers), do: callers
 
   defp matcher_mfa({:mfa, mfa}), do: mfa
   defp matcher_mfa(mfa), do: mfa
