@@ -7,27 +7,23 @@ defmodule Fablebook.Test.DebuggerPendingOwnership do
     :dbg_iload,
     :dbg_ieval
   ]
-  @expected_owner "01.1.1.3.1"
-  @owners %{
-    dbg_wx_mon: "01.1.1.3.1",
-    dbg_wx_mon_win: "01.1.1.3.1",
-    dbg_wx_filedialog_win: "01.1.1.3.1",
-    dbg_wx_win: "01.1.1.3.1",
-    dbg_iload: "01.1.1.3.1",
-    dbg_ieval: "01.1.1.3.1"
-  }
 
   def baseline_modules, do: @baseline_modules
-  def owners, do: @owners
+
+  def owners do
+    current = Fablebook.Test.DebuggerSettings.pending_owners()
+    Map.new(@baseline_modules, &{&1, Map.fetch!(current, Atom.to_string(&1))})
+  end
 
   def validation_error(owners) when is_map(owners) do
     expected = MapSet.new(@baseline_modules)
     assigned = MapSet.new(Map.keys(owners))
     missing = MapSet.difference(expected, assigned)
     unexpected = MapSet.difference(assigned, expected)
+    current_owners = owners()
 
     wrong_owner =
-      Enum.filter(@baseline_modules, &(Map.get(owners, &1) != @expected_owner))
+      Enum.filter(@baseline_modules, &(Map.get(owners, &1) != Map.get(current_owners, &1)))
 
     if MapSet.size(missing) == 0 and MapSet.size(unexpected) == 0 and wrong_owner == [] do
       nil
@@ -53,7 +49,8 @@ defmodule Fablebook.Test.DebuggerPendingOwnership do
     modules
     |> Enum.sort()
     |> Enum.map_join("; ", fn module ->
-      "#{module} expected=#{@expected_owner} actual=#{Map.get(owners, module, "<missing>")}"
+      expected = Map.fetch!(owners(), module)
+      "#{module} expected=#{expected} actual=#{Map.get(owners, module, "<missing>")}"
     end)
   end
 end
@@ -64,6 +61,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   alias Fablebook.Credo.BannedCalls
   alias Fablebook.Test.BeamWalker
   alias Fablebook.Test.DebuggerPendingOwnership
+  alias Fablebook.Test.DebuggerSettings
   alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.SweepEvidence
   @compile {:no_warn_undefined, :xref}
@@ -3674,7 +3672,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert {:dbg_wx_mon, :start, 2} in BannedCalls.banned_mfas()
     refute {:dbg_wx_mon, :init, 3} in BannedCalls.banned_mfas()
     assert :dbg_wx_mon in DebuggerPendingOwnership.baseline_modules()
-    assert DebuggerPendingOwnership.owners()[:dbg_wx_mon] == "01.1.1.3.1"
+    assert DebuggerPendingOwnership.owners()[:dbg_wx_mon] == "01.1.1.3.1.2"
   end
 
   @tag :tmp_dir
@@ -4010,11 +4008,87 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :saved_settings_ownership
-  test "saved-settings pending module owners resolve through the adopted delegation" do
+  test "saved-settings ownership resolves selected and remainder identities from the live lane",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    record = DebuggerSettings.records(ctx.graph.lane.name)
+    ownership = DebuggerSettings.assert_ownership!(ctx.graph, evidence, record)
+
+    if audit_path = System.get_env("FABLEBOOK_SETTINGS_AUDIT_OUT") do
+      File.write!(
+        audit_path,
+        JSON.encode!(%{
+          "lane" => ctx.graph.lane.name,
+          "receipt_sha256" => ownership.receipt_sha256,
+          "pending_observed_delta_count" => ownership.pending_observed_delta_count,
+          "observations" => ownership.observations
+        }) <> "\n"
+      )
+    end
+
     owners = DebuggerPendingOwnership.owners()
 
     assert MapSet.new(Map.values(owners)) == MapSet.new(["01.1.1.3.1.2"]),
            "pending debugger modules must resolve to current remainder owner 01.1.1.3.1.2"
+
+    assert :ok = DebuggerPendingOwnership.assert_valid!(owners)
+    assert ownership.status == :verified
+    assert ownership.selected_module == :dbg_wx_settings
+    assert length(ownership.selected_roots) == 3
+    assert ownership.remainder_module_count == 20
+    assert ownership.remainder_root_count == if(ctx.graph.lane.name == "core", do: 233, else: 224)
+
+    module_app = Map.new(ctx.graph.ingested, &{&1.module_atom, &1.app})
+
+    active_debugger_modules =
+      ctx.graph.active_modules
+      |> Enum.filter(&(Map.get(module_app, &1) == "debugger"))
+      |> MapSet.new()
+
+    assert active_debugger_modules ==
+             MapSet.new(@debugger_baseline_active_modules ++ [:dbg_wx_settings]),
+           "the audited settings module must be the sole addition to the earlier three-module debugger seed"
+
+    pending_debugger_modules =
+      ctx.graph.pending_modules
+      |> Enum.filter(&(&1.app == "debugger"))
+      |> MapSet.new(& &1.module_atom)
+
+    assert MapSet.subset?(
+             MapSet.new([:dbg_wx_mon, :dbg_iserver, :dbg_icmd, :debugger]),
+             pending_debugger_modules
+           ),
+           "broad monitor, server, command, and debugger modules remain pending with 01.1.1.3.1.2"
+
+    selected_root_observations =
+      Enum.filter(ownership.observations, fn row ->
+        identity = row["identity"]
+
+        identity["module"] == "dbg_wx_mon" and
+          identity["function"] in ["start", "load_settings", "load_settings2"]
+      end)
+
+    assert length(selected_root_observations) == 6
+    assert ownership.pending_observed_delta_count > 0
+
+    new_root_observations =
+      Enum.filter(ownership.observations, fn row ->
+        row["identity"]["kind"] == "root" and is_nil(row["origin_record_sha256"])
+      end)
+
+    assert new_root_observations != []
+
+    assert Enum.all?(
+             new_root_observations,
+             &(&1["owner"] == "01.1.1.3.1.2" and &1["completion"] == "pending")
+           )
+
+    assert Enum.count(
+             ownership.observations,
+             &(&1["completion"] == "selected_settings_functions_exports_and_source_verified")
+           ) == 2
   end
 
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do
@@ -5118,6 +5192,35 @@ defmodule Fablebook.Contract.TierSweepTest do
     historical_exported = MapSet.new(xref_graph.historical_exports)
     full_exported = MapSet.new(xref_graph.full_exports)
     module_app = Map.new(xref_graph.ingested, &{&1.module_atom, &1.app})
+    no_debug = no_debug_otp ++ no_debug_other
+
+    historical_reached_graph = %{
+      reverse: reverse(historical_edges),
+      exported: historical_exported
+    }
+
+    full_reached_graph = %{reverse: full_reverse, exported: full_exported}
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    {historical_reached, _historical_parent} = reach(historical_reached_graph, tier, names)
+    {full_reached, full_parent} = reach(full_reached_graph, tier, names)
+
+    settings_audit_graph = %{
+      lane: evidence.lane,
+      inspected: inspected,
+      full_edges: full_edges,
+      full_exported: full_exported,
+      full_reached: full_reached
+    }
+
+    :ok =
+      DebuggerSettings.assert_audit!(
+        DebuggerSettings.records(evidence.lane.name),
+        settings_audit_graph,
+        tier,
+        evidence,
+        @exclusions
+      )
 
     active_modules =
       Enum.reduce(
@@ -5125,6 +5228,7 @@ defmodule Fablebook.Contract.TierSweepTest do
         MapSet.put(historical_modules, :ct_make),
         &MapSet.put(&2, &1)
       )
+      |> MapSet.put(:dbg_wx_settings)
 
     active_ingested =
       Enum.filter(xref_graph.ingested, &MapSet.member?(active_modules, &1.module_atom))
@@ -5142,20 +5246,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     active_reverse = reverse(active_edges)
     active_forward = forward(active_edges)
     active_exported = MapSet.new(active_exported)
-    no_debug = no_debug_otp ++ no_debug_other
-
-    historical_reached_graph = %{
-      reverse: reverse(historical_edges),
-      exported: historical_exported
-    }
-
-    full_reached_graph = %{reverse: full_reverse, exported: full_exported}
     active_reached_graph = %{reverse: active_reverse, exported: active_exported}
-    tier = BannedCalls.banned_mfas()
-    names = BannedCalls.banned_names()
-    {historical_reached, _historical_parent} = reach(historical_reached_graph, tier, names)
     {active_reached, _active_parent} = reach(active_reached_graph, tier, names)
-    {full_reached, full_parent} = reach(full_reached_graph, tier, names)
 
     assert_active_sets_preserved!(
       %{reached: historical_reached, exported: historical_exported, edges: historical_edges},
@@ -5314,6 +5406,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       full_reached: full_reached,
       pending_mfas: pending_mfas,
       pending_modules: pending_modules,
+      boundary_records: boundary_records,
       active_expansion_failures: active_expansion_failures,
       receipt_lines: receipt_lines,
       lane: evidence.lane,
@@ -7189,16 +7282,16 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     assert :ok = DebuggerPendingOwnership.assert_valid!(owners)
 
     assert_raise ExUnit.AssertionError,
-                 ~r/dbg_ieval expected=01\.1\.1\.3\.1 actual=<missing>/,
+                 ~r/dbg_ieval expected=01\.1\.1\.3\.1\.2 actual=<missing>/,
                  fn ->
                    DebuggerPendingOwnership.assert_valid!(Map.delete(owners, :dbg_ieval))
                  end
 
     assert_raise ExUnit.AssertionError,
-                 ~r/dbg_ieval expected=01\.1\.1\.3\.1 actual=01\.1\.1\.3\.2/,
+                 ~r/dbg_ieval expected=01\.1\.1\.3\.1\.2 actual=01\.1\.1\.3\.1\.1/,
                  fn ->
                    DebuggerPendingOwnership.assert_valid!(
-                     Map.put(owners, :dbg_ieval, "01.1.1.3.2")
+                     Map.put(owners, :dbg_ieval, "01.1.1.3.1.1")
                    )
                  end
   end
