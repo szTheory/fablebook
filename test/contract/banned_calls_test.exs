@@ -280,6 +280,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:dbg_iserver, :safe_call, :_},
     {:dbg_iserver, :handle_call, :_},
     {:dbg_iload, :load_mod, :_},
+    {:dbg_wx_interpret, :start, 4},
     {:dbg_debugged, :eval, :_},
     {Mix.Tasks.Format, :formatter_for_file, :_},
     {Mix.Tasks.Help, :run, :_},
@@ -1174,7 +1175,12 @@ defmodule Fablebook.Contract.BannedCallsTest do
     [beam] = compile!([source_path], dir, true)
 
     assert {:ok, scan} = BeamWalker.scan(beam)
-    assert {:mfa, {:dbg_wx_interpret, :start, 4}} in hits(scan)
+    mfa = {:dbg_wx_interpret, :start, 4}
+    assert {:mfa, mfa} in hits(scan)
+
+    refute {:mfa, mfa} in hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+           "the uncalled positive probe must depend on its individual MFA tier"
+
     assert credo_issues(source_path) != []
   end
 
@@ -1342,16 +1348,16 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
   end
 
-  defp hits(%{atoms: atoms, mfas: mfas, pairs: pairs, literals: literals}) do
+  defp hits(%{atoms: atoms, mfas: mfas, pairs: pairs, literals: literals}, mfa_tier \\ @mfa_tier) do
     atom_hits = for atom <- @atom_tier, atom in atoms, do: {:atom, atom}
-    mfa_hits = for mfa <- mfas, Enum.any?(@mfa_tier, &mfa_match?(&1, mfa)), do: {:mfa, mfa}
+    mfa_hits = for mfa <- mfas, Enum.any?(mfa_tier, &mfa_match?(&1, mfa)), do: {:mfa, mfa}
 
     pair_hits =
       for {m, f} <- pairs,
-          Enum.any?(@mfa_tier, fn {pm, pf, _} -> pm == m and pf in [:_, f] end),
+          Enum.any?(mfa_tier, fn {pm, pf, _} -> pm == m and pf in [:_, f] end),
           do: {:mfa, {m, f, :_}}
 
-    literal_hits = for m <- literals, {m, :_, :_} in @mfa_tier, do: {:mfa, {m, :_, :_}}
+    literal_hits = for m <- literals, {m, :_, :_} in mfa_tier, do: {:mfa, {m, :_, :_}}
     atom_hits ++ mfa_hits ++ pair_hits ++ literal_hits
   end
 

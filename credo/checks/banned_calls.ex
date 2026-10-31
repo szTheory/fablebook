@@ -288,6 +288,7 @@ defmodule Fablebook.Credo.BannedCalls do
           {:dbg_iserver, :safe_call, :_},
           {:dbg_iserver, :handle_call, :_},
           {:dbg_iload, :load_mod, :_},
+          {:dbg_wx_interpret, :start, 4},
           {:dbg_debugged, :eval, :_},
           {Mix.Tasks.Format, :formatter_for_file, :_},
           {Mix.Tasks.Help, :run, :_},
