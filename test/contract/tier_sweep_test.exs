@@ -555,7 +555,8 @@ defmodule Fablebook.Contract.TierSweepTest do
   @debugger_explicit_roots [
     {:dbg_wx_interpret, :start, 4},
     {:dbg_wx_interpret, :filter_files, 2},
-    {:dbg_wx_interpret, :interpret_all, 5}
+    {:dbg_wx_interpret, :interpret_all, 5},
+    {:dbg_istk, :from_external, 1}
   ]
   @debugger_expected_exports [
     {:dbg_idb, :insert, 3},
@@ -614,6 +615,8 @@ defmodule Fablebook.Contract.TierSweepTest do
         "3505ba8ce32c8ca147a1195a183cc78a841b28de479c29b5e92822afefea3593",
       "debugger/src/dbg_istk.erl" =>
         "a71cef371ac1875a22e851d44e4e47b5a1b87309709fca32073e78d51825e01c",
+      "debugger/src/dbg_ieval.erl" =>
+        "60362d2aa47470b70a9264c5a4f7c5e60e8362f844e3ec4171cc3733d2ff31d1",
       "debugger/src/dbg_wx_filedialog_win.erl" =>
         "d9a2e6bffb2f673d830c1c76585076c8510681a356a57c31547f838eaa9d858e",
       "debugger/src/dbg_wx_interpret.erl" =>
@@ -772,6 +775,26 @@ defmodule Fablebook.Contract.TierSweepTest do
       {"debugger/src/dbg_idb.erl:40", "lookup(DbRef, Key) ->"},
       {"debugger/src/dbg_idb.erl:52", "match_object(DbRef, Key) ->"},
       {"debugger/src/dbg_istk.erl:49", "delayed_to_external() ->"}
+    ],
+    decoder_citations: [
+      {"debugger/src/dbg_istk.erl:27", "-export([init/0,delayed_to_external/0,from_external/1,"},
+      {"debugger/src/dbg_istk.erl:53", "from_external({stack,Stk}) ->"},
+      {"debugger/src/dbg_istk.erl:54", "put(?STACK, binary_to_term(Stk))."}
+    ],
+    decoder_provenance_citations: [
+      {"debugger/src/dbg_ieval.erl:68", "exit_info(Int, AttPid, OrigPid, Reason, ExitInfo) ->"},
+      {"debugger/src/dbg_ieval.erl:76", "{{Mod,Line},Bs,S} ->"},
+      {"debugger/src/dbg_ieval.erl:77", "dbg_istk:from_external(S),"},
+      {"debugger/src/dbg_istk.erl:49", "delayed_to_external() ->"},
+      {"debugger/src/dbg_istk.erl:51", "fun() -> {stack,term_to_binary(Stack)} end."},
+      {"debugger/src/dbg_ieval.erl:149", "StackExternal = (dbg_istk:delayed_to_external())(),"},
+      {"debugger/src/dbg_ieval.erl:150", "{{Mod, Li}, Bs, StackExternal};"},
+      {"debugger/src/dbg_ieval.erl:188",
+       "do_exception(Class, Reason, Stacktrace, Bs, #ieval{module=M, line=Line}) ->"},
+      {"debugger/src/dbg_ieval.erl:189", "StackFun = dbg_istk:delayed_to_external(),"},
+      {"debugger/src/dbg_ieval.erl:190", "ExitInfo = fun() ->"},
+      {"debugger/src/dbg_ieval.erl:191", "{{M,Line},Bs,StackFun()}"},
+      {"debugger/src/dbg_ieval.erl:193", "put(exit_info, ExitInfo),"}
     ]
   }
 
@@ -794,6 +817,8 @@ defmodule Fablebook.Contract.TierSweepTest do
                                "990726cde6815d7616b01d13adf4f8cacc7540b702507ba0fea8ca349bbbe2c5",
                              "debugger/src/dbg_istk.erl" =>
                                "4f68bca517244f361bb915000fe299259242d6a8d733b064ed47d2f8872b8f66",
+                             "debugger/src/dbg_ieval.erl" =>
+                               "393085c1fc6324687bc12b5184b5a501491f07c8f55dc293ee07774ea96d0b6a",
                              "debugger/src/dbg_wx_filedialog_win.erl" =>
                                "4c4f8d9af1f3f326a952c1b4e181d1533c692f08b8954fd884233f7b2500ab2a",
                              "debugger/src/dbg_wx_interpret.erl" =>
@@ -819,7 +844,12 @@ defmodule Fablebook.Contract.TierSweepTest do
                                                                                    citations} ->
                                  {group, Enum.map(citations, shift)}
                                end),
-                             seed_citations: Enum.map(@debugger_core_source.seed_citations, shift)
+                             seed_citations:
+                               Enum.map(@debugger_core_source.seed_citations, shift),
+                             decoder_citations:
+                               Enum.map(@debugger_core_source.decoder_citations, shift),
+                             decoder_provenance_citations:
+                               Enum.map(@debugger_core_source.decoder_provenance_citations, shift)
                            })
                          )
 
@@ -865,6 +895,24 @@ defmodule Fablebook.Contract.TierSweepTest do
                        ],
                        citations: source.citations,
                        seed_citations: source.seed_citations,
+                       decoder_mfa: {:dbg_istk, :from_external, 1},
+                       decoder_caller_input: :arbitrary_exported_stack_binary,
+                       decoder_options: :binary_to_term_without_safe_option,
+                       decoder_trace: [
+                         {:dbg_ieval, :exit_info, 5},
+                         {:dbg_istk, :from_external, 1},
+                         {:erlang, :binary_to_term, 1},
+                         :process_dictionary_stack_write
+                       ],
+                       decoder_verdict: :caller_binary_is_unconstrained_at_export,
+                       decoder_citations: source.decoder_citations,
+                       decoder_provenance_citations: source.decoder_provenance_citations,
+                       internal_provenance: %{
+                         producer: {:dbg_istk, :delayed_to_external, 0},
+                         encoder: {:erlang, :term_to_binary, 1},
+                         observed_consumer: {:dbg_ieval, :exit_info, 5},
+                         verdict: :observed_internal_round_trip_does_not_constrain_public_input
+                       },
                        export_citations: source.export_citations,
                        family_function_sources: source.family_function_sources,
                        branch_citations: source.branch_citations,
@@ -4779,6 +4827,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert MapSet.member?(graph.full_reached, mfa)
 
+    decoder_mfa = {:dbg_istk, :from_external, 1}
+    assert MapSet.member?(graph.full_exported, decoder_mfa)
+    assert decoder_mfa in @debugger_explicit_roots
+
     active_exports =
       graph.exported
       |> Enum.filter(&(elem(&1, 0) in @debugger_family_modules))
@@ -4838,6 +4890,28 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert record.family_function_sources == lane_source.family_function_sources
     assert record.branch_citations == lane_source.branch_citations
     assert record.empty_selection == :source_disposed_without_invocation
+    assert record.decoder_mfa == decoder_mfa
+    assert record.decoder_caller_input == :arbitrary_exported_stack_binary
+    assert record.decoder_options == :binary_to_term_without_safe_option
+
+    assert record.decoder_trace == [
+             {:dbg_ieval, :exit_info, 5},
+             {:dbg_istk, :from_external, 1},
+             {:erlang, :binary_to_term, 1},
+             :process_dictionary_stack_write
+           ]
+
+    assert record.decoder_verdict == :caller_binary_is_unconstrained_at_export
+
+    assert record.internal_provenance == %{
+             producer: {:dbg_istk, :delayed_to_external, 0},
+             encoder: {:erlang, :term_to_binary, 1},
+             observed_consumer: {:dbg_ieval, :exit_info, 5},
+             verdict: :observed_internal_round_trip_does_not_constrain_public_input
+           }
+
+    assert record.decoder_citations == lane_source.decoder_citations
+    assert record.decoder_provenance_citations == lane_source.decoder_provenance_citations
 
     assert record.limitations == [
              :no_runtime_filename_decoding_claim,
@@ -4872,13 +4946,18 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert row["sha256"] == expected_sha
     end
 
-    assert map_size(lane_source.sha256) == 6
+    assert map_size(lane_source.sha256) == 7
 
     branch_citations = record.branch_citations |> Map.values() |> List.flatten()
     family_citations = Enum.map(record.family_function_sources, &elem(&1, 1))
 
     all_source_citations =
-      record.citations ++ record.export_citations ++ family_citations ++ branch_citations
+      record.citations ++
+        record.export_citations ++
+        family_citations ++
+        branch_citations ++
+        record.decoder_citations ++
+        record.decoder_provenance_citations
 
     for {citation, expected_source} <- all_source_citations do
       [relative_file, _line] = String.split(citation, ":", parts: 2)
@@ -4892,6 +4971,12 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert covered?(mfa, tier, BannedCalls.banned_names())
     assert exact_mfa_exclusion_reason(mfa, exclusions) == nil
     assert exclusion_reason(elem(mfa, 0), elem(mfa, 1), exclusions) == nil
+
+    assert covered?(decoder_mfa, tier, BannedCalls.banned_names())
+    assert {:dbg_istk, :from_external, 1} in BannedCalls.banned_mfas()
+    assert :binary_to_term in BannedCalls.banned_names()
+    assert exact_mfa_exclusion_reason(decoder_mfa, exclusions) == nil
+    assert exclusion_reason(elem(decoder_mfa, 0), elem(decoder_mfa, 1), exclusions) == nil
   end
 
   defp assert_ct_make_audit!(records, graph, tier, evidence, exclusions \\ @exclusions) do
