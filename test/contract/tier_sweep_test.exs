@@ -2550,7 +2550,8 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> MapSet.new()
 
     expected_active_apps =
-      graph.historical_active_otp_apps ++ Enum.map(@elixir_apps, &Atom.to_string/1) ++ graph.closure
+      graph.historical_active_otp_apps ++
+        Enum.map(@elixir_apps, &Atom.to_string/1) ++ graph.closure
 
     assert active_apps == MapSet.new(expected_active_apps)
 
@@ -2701,6 +2702,10 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
 
     assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
+      SweepEvidence.resolve!(evidence, "common_test/src/ct_make.erl:999999")
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
       assert_ct_make_audit!(
         List.replace_at(records, record_index, missing_source),
         ctx.graph,
