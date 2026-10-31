@@ -1243,6 +1243,76 @@ defmodule Fablebook.Contract.BannedCallsTest do
     refute {:mfa, {:dbg_wx_interpret, :start, 4}} in hits(scan)
   end
 
+  @tag :tmp_dir
+  test "exported stack decoder caller binary hits both guards without invocation", %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    mfa = {:dbg_istk, :from_external, 1}
+
+    for {form, body} <- [
+          {:direct, "def probe(bytes), do: :dbg_istk.from_external({:stack, bytes})"},
+          {:capture, "def probe, do: &:dbg_istk.from_external/1"},
+          {:apply,
+           "def probe(bytes), do: apply(:dbg_istk, :from_external, [{:stack, bytes}])"}
+        ] do
+      source = """
+      defmodule Fablebook.GuardFixture.DebuggerStackDecoder#{Macro.camelize(to_string(form))} do
+        #{body}
+      end
+      """
+
+      source_path = Path.join(dir, "debugger_stack_decoder_#{form}.ex")
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+
+      assert {:ok, scan} = BeamWalker.scan(beam)
+      assert {:mfa, mfa} in hits(scan), "#{form} probe missed the exported decoder"
+
+      refute {:mfa, mfa} in hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+             "#{form} probe must depend on the individual decoder tier"
+
+      assert credo_issues(source_path) != [], "Credo missed the #{form} decoder probe"
+    end
+
+    source = """
+    defmodule Fablebook.GuardFixture.DebuggerStackDecoderSourceOnly do
+      def quoted(bytes) do
+        quote do
+          :dbg_istk.from_external({:stack, unquote(bytes)})
+        end
+      end
+
+      defmacro uninvoked(bytes) do
+        quote do
+          :dbg_istk.from_external({:stack, unquote(bytes)})
+        end
+      end
+    end
+    """
+
+    source_path = Path.join(dir, "debugger_stack_decoder_source_only.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+
+    assert credo_issues(source_path) != []
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    refute {:mfa, mfa} in hits(scan)
+
+    benign = """
+    defmodule Fablebook.GuardFixture.DebuggerStackEncoder do
+      def encode(stack), do: :erlang.term_to_binary(stack)
+    end
+    """
+
+    assert credo_issues(benign, "debugger_stack_encoder.ex") == []
+    source_path = Path.join(dir, "debugger_stack_encoder.ex")
+    File.write!(source_path, benign)
+    [beam] = compile!([source_path], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    refute {:mfa, {:erlang, :term_to_binary, 1}} in hits(scan)
+  end
+
   test "the Credo check bans the same names and flags the source-level fixtures" do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
