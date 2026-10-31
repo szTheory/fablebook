@@ -611,6 +611,8 @@ defmodule Fablebook.Contract.TierSweepTest do
                   end)
 
   @debugger_family_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
+  @saved_settings_changed_modules [:dbg_wx_settings, :dbg_wx_mon, :dbg_iserver, :int, :dbg_icmd]
+  @saved_settings_expected_exclusion_matches []
   @debugger_active_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
   @debugger_baseline_active_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
   @debugger_source_only_seed_mfas [
@@ -3682,10 +3684,12 @@ defmodule Fablebook.Contract.TierSweepTest do
   } do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
     assert SweepEvidence.archive_sha256() ==
              "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894"
 
     lane = evidence.lane.name
+
     expected_paths =
       for module <- ~w(dbg_icmd dbg_iserver dbg_wx_settings debugger),
           do: "#{lane}/debugger/src/#{module}.erl"
@@ -3750,6 +3754,13 @@ defmodule Fablebook.Contract.TierSweepTest do
            "the settings audit must provide source-backed records for the complete dialog and replay path"
 
     record = apply(audit_module, :records, [evidence.lane.name])
+    changed_universe = saved_settings_changed_family_universe(ctx.graph, record)
+    exclusion_matches = apply(audit_module, :exclusion_matches, [changed_universe, @exclusions])
+
+    assert exclusion_matches == @saved_settings_expected_exclusion_matches,
+           "changed saved-settings exclusions differ from the measured exact set: #{inspect(exclusion_matches)}"
+
+    record = %{record | exclusion_matches: exclusion_matches}
 
     apply(audit_module, :assert_audit!, [
       record,
@@ -3759,19 +3770,99 @@ defmodule Fablebook.Contract.TierSweepTest do
       @exclusions
     ])
 
-    assert MapSet.new(apply(audit_module, :branch_ids, [])) == MapSet.new(Map.keys(record.branch_citations))
+    assert :ok ==
+             apply(audit_module, :assert_exclusion_witnesses!, [
+               exclusion_matches,
+               ctx.graph,
+               BannedCalls.banned_mfas(),
+               BannedCalls.banned_names(),
+               @exclusions
+             ])
+
+    monitor_front = {:dbg_wx_mon, :start, 2}
+
+    monitor_front_citation =
+      record.roots
+      |> Enum.find(&(&1.mfa == monitor_front))
+      |> Map.fetch!(:citations)
+      |> hd()
+
+    source_disposition = ["#{monitor_front_citation.path}:#{monitor_front_citation.line}"]
+
+    exact_overlap =
+      {{:mfa, monitor_front}, :redundant_tier_overlap, source_disposition}
+
+    overlap_matches =
+      apply(audit_module, :exclusion_matches, [changed_universe, @exclusions ++ [exact_overlap]])
+
+    [overlap_match] = overlap_matches
+    assert overlap_match.matched_mfas == [monitor_front]
+
+    assert_raise ExUnit.AssertionError, ~r/no individual active removal witness/, fn ->
+      apply(audit_module, :assert_exclusion_witnesses!, [
+        overlap_matches,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        @exclusions ++ [exact_overlap]
+      ])
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/incomplete matches/, fn ->
+      apply(audit_module, :assert_exclusion_witnesses!, [
+        [%{overlap_match | matched_mfas: []}],
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        @exclusions ++ [exact_overlap]
+      ])
+    end
+
+    blanket_overlap = {{:dbg_wx_mon, :_}, :blanket_overlap, source_disposition}
+
+    blanket_matches =
+      apply(audit_module, :exclusion_matches, [changed_universe, [blanket_overlap]])
+
+    assert_raise ExUnit.AssertionError, ~r/blanket or non-exact/, fn ->
+      apply(audit_module, :assert_exclusion_witnesses!, [
+        blanket_matches,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        [blanket_overlap]
+      ])
+    end
+
+    assert MapSet.new(apply(audit_module, :branch_ids, [])) ==
+             MapSet.new(Map.keys(record.branch_citations))
 
     assert_raise ExUnit.AssertionError, ~r/required audit fields/, fn ->
-      apply(audit_module, :assert_audit!, [%{}, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+      apply(audit_module, :assert_audit!, [
+        %{},
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      ])
     end
 
     branchless = %{record | branch_citations: %{}, source_branches: []}
 
     assert_raise ExUnit.AssertionError, ~r/complete settings and replay branch map/, fn ->
-      apply(audit_module, :assert_audit!, [branchless, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+      apply(audit_module, :assert_audit!, [
+        branchless,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      ])
     end
 
-    for omitted_branch <- [:default_path, :settings_read_error] do
+    for omitted_branch <- [
+          :default_path,
+          :settings_read_error,
+          :conditional_callback_clause
+        ] do
       incomplete_branches = %{
         record
         | branch_citations: Map.delete(record.branch_citations, omitted_branch),
@@ -3779,7 +3870,13 @@ defmodule Fablebook.Contract.TierSweepTest do
       }
 
       assert_raise ExUnit.AssertionError, ~r/complete settings and replay branch map/, fn ->
-        apply(audit_module, :assert_audit!, [incomplete_branches, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+        apply(audit_module, :assert_audit!, [
+          incomplete_branches,
+          ctx.graph,
+          BannedCalls.banned_mfas(),
+          evidence,
+          @exclusions
+        ])
       end
     end
 
@@ -3791,7 +3888,13 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     omitted_function_error =
       assert_raise ExUnit.AssertionError, ~r/missing_source=/, fn ->
-        apply(audit_module, :assert_audit!, [incomplete_functions, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+        apply(audit_module, :assert_audit!, [
+          incomplete_functions,
+          ctx.graph,
+          BannedCalls.banned_mfas(),
+          evidence,
+          @exclusions
+        ])
       end
 
     assert omitted_function_error.message =~ "lane #{evidence.lane.name}"
@@ -3804,7 +3907,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, wrong_lane)}
 
     assert_raise ExUnit.AssertionError, ~r/graph lane/, fn ->
-      apply(audit_module, :assert_audit!, [record, ctx.graph, BannedCalls.banned_mfas(), wrong_lane_evidence, @exclusions])
+      apply(audit_module, :assert_audit!, [
+        record,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        wrong_lane_evidence,
+        @exclusions
+      ])
     end
 
     first_source = hd(record.function_sources)
@@ -3813,25 +3922,45 @@ defmodule Fablebook.Contract.TierSweepTest do
     wrong_source_record = %{
       record
       | function_sources: [
-          %{first_source | citation: [%{first_citation | expected_text: "not the source line"} | rest_citations]}
+          %{
+            first_source
+            | citation: [
+                %{first_citation | expected_text: "not the source line"} | rest_citations
+              ]
+          }
           | tl(record.function_sources)
         ]
     }
 
     assert_raise ExUnit.AssertionError, ~r/restore matching branch text/, fn ->
-      apply(audit_module, :assert_audit!, [wrong_source_record, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+      apply(audit_module, :assert_audit!, [
+        wrong_source_record,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      ])
     end
 
     wrong_hash_record = %{
       record
       | function_sources: [
-          %{first_source | citation: [%{first_citation | sha256: String.duplicate("0", 64)} | rest_citations]}
+          %{
+            first_source
+            | citation: [%{first_citation | sha256: String.duplicate("0", 64)} | rest_citations]
+          }
           | tl(record.function_sources)
         ]
     }
 
     assert_raise ExUnit.AssertionError, ~r/restore exact lane SHA/, fn ->
-      apply(audit_module, :assert_audit!, [wrong_hash_record, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+      apply(audit_module, :assert_audit!, [
+        wrong_hash_record,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      ])
     end
 
     wrong_line_record = %{
@@ -3843,7 +3972,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
 
     assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
-      apply(audit_module, :assert_audit!, [wrong_line_record, ctx.graph, BannedCalls.banned_mfas(), evidence, @exclusions])
+      apply(audit_module, :assert_audit!, [
+        wrong_line_record,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      ])
     end
   end
 
@@ -5744,6 +5879,39 @@ defmodule Fablebook.Contract.TierSweepTest do
     |> MapSet.union(MapSet.new(@debugger_explicit_roots))
     |> MapSet.union(tier_roots)
     |> MapSet.union(exclusion_roots)
+  end
+
+  defp saved_settings_changed_family_universe(graph, record) do
+    inspections =
+      Enum.filter(graph.inspected, &(&1.module_atom in @saved_settings_changed_modules))
+
+    inspected_modules = MapSet.new(inspections, & &1.module_atom)
+
+    assert inspected_modules == MapSet.new(@saved_settings_changed_modules),
+           "lane #{graph.lane.name} must inspect every source module in the saved-settings callback family"
+
+    scanned_functions =
+      Enum.reduce(inspections, MapSet.new(), fn inspection, functions ->
+        assert {:ok, scan} = BeamWalker.scan(inspection.path)
+        assert scan.module == inspection.module_atom
+        MapSet.union(functions, MapSet.new(scan.function_mfas))
+      end)
+
+    graph_candidates =
+      graph
+      |> debugger_graph_candidates()
+      |> Enum.filter(fn {module, _function, _arity} ->
+        module in @saved_settings_changed_modules
+      end)
+      |> MapSet.new()
+
+    source_only_obligations = MapSet.new(record.source_branches, & &1.mfa)
+
+    scanned_functions
+    |> MapSet.union(graph_candidates)
+    |> MapSet.union(source_only_obligations)
+    |> MapSet.to_list()
+    |> Enum.sort()
   end
 
   defp debugger_family_mfa?({module, _function, _arity}),

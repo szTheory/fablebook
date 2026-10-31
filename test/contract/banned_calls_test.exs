@@ -1228,7 +1228,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     for form <- [:direct, :default, :capture, :apply_local, :apply_global, :utf8] do
       source = debugger_settings_probe_source(form)
       filename = "debugger_settings_#{form}.ex"
-      source_path = Path.join(tmp_dir, filename)
+      source_path = Path.join(dir, filename)
       File.write!(source_path, source)
       [beam] = compile!([source_path], dir, true)
 
@@ -1255,11 +1255,12 @@ defmodule Fablebook.Contract.BannedCallsTest do
     for form <- [:discarded_quote, :uninvoked_macro] do
       source = debugger_settings_probe_source(form)
       filename = "debugger_settings_#{form}.ex"
-      source_path = Path.join(tmp_dir, filename)
+      source_path = Path.join(dir, filename)
       File.write!(source_path, source)
       [beam] = compile!([source_path], dir, true)
 
       assert {:ok, scan} = BeamWalker.scan(beam)
+
       refute Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
              "#{form} must remain source-only, not become a called MFA"
 
@@ -1269,11 +1270,12 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     stop_source = debugger_settings_probe_source(:stop)
     stop_filename = "debugger_settings_stop.ex"
-    stop_path = Path.join(tmp_dir, stop_filename)
+    stop_path = Path.join(dir, stop_filename)
     File.write!(stop_path, stop_source)
     [stop_beam] = compile!([stop_path], dir, true)
     assert {:ok, stop_scan} = BeamWalker.scan(stop_beam)
     refute Enum.any?(hits(stop_scan), &mfa_hit?(&1, mfa))
+
     assert credo_issues(stop_source, stop_filename) == [],
            "dbg_wx_mon.stop/0 is a benign control"
 
@@ -1285,12 +1287,16 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert {:ok, wrapper_scan} = BeamWalker.scan(wrapper_beam)
 
     wrapper_mfa = {:debugger, :start, 1}
+
     assert Enum.any?(hits(wrapper_scan), &mfa_hit?(&1, wrapper_mfa)),
            "the forwarded debugger wrapper must remain covered by its existing wildcard"
 
     refute Enum.any?(hits(wrapper_scan, Enum.reject(@mfa_tier, &(&1 == mfa))), &mfa_hit?(&1, mfa))
 
-    assert Enum.any?(hits(wrapper_scan, Enum.reject(@mfa_tier, &(&1 == mfa))), &mfa_hit?(&1, wrapper_mfa)),
+    assert Enum.any?(
+             hits(wrapper_scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+             &mfa_hit?(&1, wrapper_mfa)
+           ),
            "removing only the monitor-front tier must not remove the forwarded wrapper finding"
 
     assert credo_issues(wrapper_source, wrapper_filename) != []
