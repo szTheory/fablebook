@@ -1,8 +1,69 @@
+defmodule Fablebook.Test.DebuggerPendingOwnership do
+  @baseline_modules [
+    :dbg_wx_mon,
+    :dbg_wx_mon_win,
+    :dbg_wx_filedialog_win,
+    :dbg_wx_win,
+    :dbg_iload,
+    :dbg_ieval
+  ]
+  @expected_owner "01.1.1.3.1"
+  @owners %{
+    dbg_wx_mon: "01.1.1.3.1",
+    dbg_wx_mon_win: "01.1.1.3.1",
+    dbg_wx_filedialog_win: "01.1.1.3.1",
+    dbg_wx_win: "01.1.1.3.1",
+    dbg_iload: "01.1.1.3.1",
+    dbg_ieval: "01.1.1.3.1"
+  }
+
+  def baseline_modules, do: @baseline_modules
+  def owners, do: @owners
+
+  def validation_error(owners) when is_map(owners) do
+    expected = MapSet.new(@baseline_modules)
+    assigned = MapSet.new(Map.keys(owners))
+    missing = MapSet.difference(expected, assigned)
+    unexpected = MapSet.difference(assigned, expected)
+
+    wrong_owner =
+      Enum.filter(@baseline_modules, &(Map.get(owners, &1) != @expected_owner))
+
+    if MapSet.size(missing) == 0 and MapSet.size(unexpected) == 0 and wrong_owner == [] do
+      nil
+    else
+      "missing owner entries=#{format_owners(missing, owners)}; " <>
+        "unexpected owner entries=#{format_owners(unexpected, owners)}; " <>
+        "wrong owner entries=#{format_owners(wrong_owner, owners)}"
+    end
+  end
+
+  def assert_valid!(owners) do
+    case validation_error(owners) do
+      nil ->
+        :ok
+
+      message ->
+        raise ExUnit.AssertionError,
+          message: "pending debugger ownership map differs; " <> message
+    end
+  end
+
+  defp format_owners(modules, owners) do
+    modules
+    |> Enum.sort()
+    |> Enum.map_join("; ", fn module ->
+      "#{module} expected=#{@expected_owner} actual=#{Map.get(owners, module, "<missing>")}"
+    end)
+  end
+end
+
 defmodule Fablebook.Contract.TierSweepTest do
   use ExUnit.Case, async: false
 
   alias Fablebook.Credo.BannedCalls
   alias Fablebook.Test.BeamWalker
+  alias Fablebook.Test.DebuggerPendingOwnership
   alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.SweepEvidence
   @compile {:no_warn_undefined, :xref}
@@ -551,6 +612,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @debugger_family_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
   @debugger_active_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
+  @debugger_baseline_active_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
   @debugger_source_only_seed_mfas [
     {:dbg_idb, :insert, 3},
     {:dbg_idb, :lookup, 2},
@@ -560,6 +622,12 @@ defmodule Fablebook.Contract.TierSweepTest do
   @debugger_expected_exclusion_matches []
   @debugger_selected_file_mfa {:dbg_wx_interpret, :start, 4}
   @debugger_explicit_roots [
+    {:dbg_wx_interpret, :start, 4},
+    {:dbg_wx_interpret, :filter_files, 2},
+    {:dbg_wx_interpret, :interpret_all, 5},
+    {:dbg_istk, :from_external, 1}
+  ]
+  @debugger_baseline_roots [
     {:dbg_wx_interpret, :start, 4},
     {:dbg_wx_interpret, :filter_files, 2},
     {:dbg_wx_interpret, :interpret_all, 5},
@@ -3603,7 +3671,7 @@ defmodule Fablebook.Contract.TierSweepTest do
            "the selected-file audit must cover local/global, cancel, empty/error and parser-filter branches"
 
     actual_family_universe = debugger_family_universe(ctx.graph, tier, @exclusions)
-    omitted_mfa = {:dbg_istk, :normalize, 1}
+    omitted_mfa = {:dbg_istk, :from_external, 1}
 
     source_rows_without_mfa =
       lane_record.family_function_sources
@@ -3615,18 +3683,48 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> Enum.reject(&(&1.mfa == omitted_mfa))
       |> Enum.map(& &1.mfa)
 
+    expected_rows_without_mfa = Enum.reject(@debugger_expected_family_mfas, &(&1 == omitted_mfa))
+
     omission_error =
-      assert_raise ExUnit.AssertionError, ~r/actual installed family universe differs/, fn ->
+      assert_raise ExUnit.AssertionError, ~r/assigned function inventory differs/, fn ->
         assert_debugger_function_inventory!(
           actual_family_universe,
           source_rows_without_mfa,
           review_rows_without_mfa,
+          expected_rows_without_mfa,
           evidence.lane.name
         )
       end
 
     assert omission_error.message =~ "owner=plan_02"
-    assert omission_error.message =~ "chain="
+    assert omission_error.message =~ "caller-chain="
+
+    graph_candidates = debugger_graph_candidates(ctx.graph)
+    omitted_roots = Enum.reject(@debugger_explicit_roots, &(&1 == omitted_mfa))
+
+    root_omission_error =
+      assert_raise ExUnit.AssertionError, ~r/assigned root inventory differs/, fn ->
+        assert_debugger_root_inventory!(graph_candidates, omitted_roots, evidence.lane.name)
+      end
+
+    assert root_omission_error.message =~ "owner=plan_02"
+    assert root_omission_error.message =~ "caller-chain="
+
+    assert_raise ExUnit.AssertionError, ~r/active debugger slice omitted baseline modules/, fn ->
+      assert_debugger_active_scope!(
+        ctx.graph,
+        List.delete(@debugger_active_modules, :dbg_istk),
+        evidence.lane.name
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/pending debugger modules are active/, fn ->
+      assert_debugger_active_scope!(
+        %{ctx.graph | active_modules: MapSet.put(ctx.graph.active_modules, :dbg_ieval)},
+        @debugger_active_modules,
+        evidence.lane.name
+      )
+    end
 
     new_name_export = {:dbg_istk, :unreviewed_family_entry, 0}
 
@@ -3635,16 +3733,18 @@ defmodule Fablebook.Contract.TierSweepTest do
       | full_exported: MapSet.put(ctx.graph.full_exported, new_name_export)
     }
 
-    assert_raise ExUnit.AssertionError, ~r/actual installed family universe differs/, fn ->
+    assert_raise ExUnit.AssertionError, ~r/independent installed universe/, fn ->
       assert_debugger_function_inventory!(
         debugger_family_universe(graph_with_new_name_export, tier, @exclusions),
         Enum.map(lane_record.family_function_sources, &elem(&1, 0)),
         Enum.map(lane_record.family_function_audit, & &1.mfa),
+        @debugger_expected_family_mfas,
         evidence.lane.name
       )
     end
 
-    wrong_lane = %{evidence | lane: Map.put(evidence.lane, :name, "floor")}
+    wrong_lane_name = if evidence.lane.name == "core", do: "floor", else: "core"
+    wrong_lane = %{evidence | lane: Map.put(evidence.lane, :name, wrong_lane_name)}
 
     assert_raise ExUnit.AssertionError, ~r/does not match inspected graph lane/, fn ->
       assert_debugger_audit!(records, ctx.graph, tier, wrong_lane, @exclusions)
@@ -5394,10 +5494,8 @@ defmodule Fablebook.Contract.TierSweepTest do
       end)
 
     graph_candidates =
-      graph.full_edges
-      |> Enum.flat_map(fn {caller, callee} -> [caller, callee] end)
-      |> Enum.concat(graph.full_reached)
-      |> Enum.concat(graph.full_exported)
+      graph
+      |> debugger_graph_candidates()
       |> Enum.filter(&debugger_family_mfa?/1)
       |> MapSet.new()
 
@@ -5427,6 +5525,15 @@ defmodule Fablebook.Contract.TierSweepTest do
     do: module in @debugger_family_modules
 
   defp debugger_family_mfa?(_candidate), do: false
+
+  defp debugger_graph_candidates(graph) do
+    graph.full_edges
+    |> Enum.flat_map(fn {caller, callee} -> [caller, callee] end)
+    |> Kernel.++(MapSet.to_list(graph.full_reached))
+    |> Kernel.++(MapSet.to_list(graph.full_exported))
+    |> Enum.filter(&match?({_, _, _}, &1))
+    |> MapSet.new()
+  end
 
   defp debugger_exclusion_matches(universe, exclusions) do
     Enum.flat_map(exclusions, &debugger_exclusion_match(universe, &1))
@@ -5473,9 +5580,16 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
-  defp assert_debugger_function_inventory!(actual_universe, source_mfas, review_mfas, lane) do
+  defp assert_debugger_function_inventory!(
+         actual_universe,
+         source_mfas,
+         review_mfas,
+         expected_mfas,
+         lane
+       ) do
     source_set = MapSet.new(source_mfas)
     review_set = MapSet.new(review_mfas)
+    expected_set = MapSet.new(expected_mfas)
 
     assert length(source_mfas) == MapSet.size(source_set),
            "lane #{lane} app debugger source inventory contains duplicate functions"
@@ -5483,12 +5597,91 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert length(review_mfas) == MapSet.size(review_set),
            "lane #{lane} app debugger semantic inventory contains duplicate functions"
 
-    assert source_set == review_set,
-           "lane #{lane} app debugger source and semantic function inventories differ"
+    assert length(expected_mfas) == MapSet.size(expected_set),
+           "lane #{lane} app debugger expected function specification contains duplicates"
 
-    assert actual_universe == source_set,
-           "lane #{lane} app debugger actual installed family universe differs from reviewed " <>
-             "source records; actual=#{inspect(actual_universe)} source=#{inspect(source_set)}"
+    missing_source = MapSet.difference(actual_universe, source_set)
+    missing_review = MapSet.difference(actual_universe, review_set)
+    missing_expected = MapSet.difference(actual_universe, expected_set)
+    not_installed = MapSet.difference(MapSet.union(source_set, review_set), actual_universe)
+
+    assert source_set == review_set and source_set == expected_set and
+             actual_universe == source_set,
+           "lane #{lane} app debugger assigned function inventory differs from the independent " <>
+             "installed universe; missing source=#{debugger_function_diagnostics(missing_source)}; " <>
+             "missing semantic review=#{debugger_function_diagnostics(missing_review)}; " <>
+             "missing expected spec=#{debugger_function_diagnostics(missing_expected)}; " <>
+             "not installed=#{debugger_function_diagnostics(not_installed)}"
+  end
+
+  defp assert_debugger_root_inventory!(graph_candidates, assigned_roots, lane) do
+    baseline = MapSet.new(@debugger_baseline_roots)
+    assigned = MapSet.new(assigned_roots)
+    missing_assignment = MapSet.difference(baseline, assigned)
+    missing_graph = MapSet.difference(assigned, graph_candidates)
+
+    assert MapSet.size(missing_assignment) == 0 and MapSet.size(missing_graph) == 0,
+           "lane #{lane} app debugger assigned root inventory differs from the pinned baseline " <>
+             "or independent graph; omitted assigned roots=#{debugger_function_diagnostics(missing_assignment)}; " <>
+             "roots absent from graph=#{debugger_function_diagnostics(missing_graph)}"
+  end
+
+  defp assert_debugger_active_scope!(graph, assigned_modules, lane) do
+    assigned = MapSet.new(assigned_modules)
+    baseline = MapSet.new(@debugger_baseline_active_modules)
+    active = graph.active_modules
+    pending = MapSet.new(DebuggerPendingOwnership.baseline_modules())
+    pending_rows = MapSet.new(graph.pending_modules, & &1.module_atom)
+
+    pending_owner_error =
+      DebuggerPendingOwnership.validation_error(DebuggerPendingOwnership.owners())
+
+    omitted_baseline = MapSet.difference(baseline, assigned)
+    inactive_assigned = MapSet.difference(assigned, active)
+    active_pending = MapSet.intersection(active, pending)
+    missing_pending_rows = MapSet.difference(pending, pending_rows)
+
+    assert MapSet.size(omitted_baseline) == 0 and MapSet.size(inactive_assigned) == 0 and
+             MapSet.size(active_pending) == 0 and MapSet.size(missing_pending_rows) == 0 and
+             is_nil(pending_owner_error),
+           "lane #{lane} app debugger active/pending ownership differs; " <>
+             "active debugger slice omitted baseline modules=#{inspect(Enum.sort(omitted_baseline))}; " <>
+             "assigned modules absent from active view=#{inspect(Enum.sort(inactive_assigned))}; " <>
+             "pending debugger modules are active=#{debugger_pending_diagnostics(active_pending)}; " <>
+             "pending modules absent from pending rows=#{debugger_pending_diagnostics(missing_pending_rows)}; " <>
+             "pending debugger ownership map differs=#{pending_owner_error || "none"}"
+  end
+
+  defp debugger_function_diagnostics(mfas) do
+    mfas
+    |> Enum.sort()
+    |> Enum.map_join("; ", &debugger_function_diagnostic/1)
+  end
+
+  defp debugger_function_diagnostic({module, function, arity} = mfa) do
+    case Map.get(@debugger_function_reviews, mfa) do
+      %{owner: owner, trace: trace} ->
+        "#{module}:#{function}/#{arity} owner=#{Atom.to_string(owner)} " <>
+          "caller-chain=#{debugger_trace_diagnostic(trace)}"
+
+      _ ->
+        "#{module}:#{function}/#{arity} owner=unassigned caller-chain=unrecorded"
+    end
+  end
+
+  defp debugger_trace_diagnostic(trace) do
+    Enum.map_join(trace, " -> ", fn
+      {module, function, arity} -> "#{module}:#{function}/#{arity}"
+      other -> inspect(other)
+    end)
+  end
+
+  defp debugger_pending_diagnostics(modules) do
+    modules
+    |> Enum.sort()
+    |> Enum.map_join("; ", fn module ->
+      "#{module} owner=#{Map.get(DebuggerPendingOwnership.owners(), module, "unassigned")}"
+    end)
   end
 
   defp assert_debugger_audit!(records, graph, tier, evidence, exclusions) do
@@ -5521,16 +5714,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert actual_exports == expected_exports,
            "the complete exact-lane debugger family export set differs from reviewed sources"
 
-    graph_candidates =
-      graph.full_edges
-      |> Enum.flat_map(fn {caller, callee} -> [caller, callee] end)
-      |> Enum.filter(&(elem(&1, 0) in @debugger_family_modules))
-      |> Kernel.++(Enum.filter(graph.full_reached, &(elem(&1, 0) in @debugger_family_modules)))
-      |> Kernel.++(Enum.filter(graph.full_exported, &(elem(&1, 0) in @debugger_family_modules)))
-      |> MapSet.new()
-
-    assert MapSet.subset?(MapSet.new(@debugger_explicit_roots), graph_candidates),
-           "the checked full graph omitted an independently reviewed debugger root"
+    graph_candidates = debugger_graph_candidates(graph)
+    assert_debugger_root_inventory!(graph_candidates, @debugger_explicit_roots, lane)
 
     assert MapSet.member?(graph.full_reached, mfa)
 
@@ -5546,20 +5731,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert active_exports == expected_exports,
            "lane #{lane} active debugger exports do not preserve the exact assigned family"
 
-    assert MapSet.subset?(MapSet.new(@debugger_active_modules), graph.active_modules),
-           "lane #{lane} active projection omitted a completed assigned debugger module"
-
-    for pending_module <- [
-          :dbg_wx_mon,
-          :dbg_wx_mon_win,
-          :dbg_wx_filedialog_win,
-          :dbg_wx_win,
-          :dbg_iload,
-          :dbg_ieval
-        ] do
-      refute MapSet.member?(graph.active_modules, pending_module)
-      assert Enum.any?(graph.pending_modules, &(&1.module_atom == pending_module))
-    end
+    assert_debugger_active_scope!(graph, @debugger_active_modules, lane)
 
     record = hd(lane_records)
     assert record.original_id == "NEW-DEBUGGER-#{String.upcase(lane)}-dbg_wx_interpret-start-4"
@@ -5668,6 +5840,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       actual_function_mfas,
       source_function_mfas,
       reviewed_function_mfas,
+      @debugger_expected_family_mfas,
       lane
     )
 
@@ -6603,11 +6776,51 @@ end
 
 defmodule Fablebook.Test.InstalledOtpReceiptTest do
   use ExUnit.Case, async: false
-  alias Fablebook.Test.{BeamWalker, InstalledOtp, SweepEvidence}
+  alias Fablebook.Test.{BeamWalker, DebuggerPendingOwnership, InstalledOtp, SweepEvidence}
 
   @moduletag :inventory_support
   @marker "FABLEBOOK_OTP_INVENTORY_V2 "
   @probe_app_atoms %{"probe" => :probe, "probe_one" => :probe_one, "probe_two" => :probe_two}
+
+  test "pending debugger ownership controls pin modules and owner assignments" do
+    owners = DebuggerPendingOwnership.owners()
+
+    assert :ok = DebuggerPendingOwnership.assert_valid!(owners)
+
+    assert_raise ExUnit.AssertionError,
+                 ~r/dbg_ieval expected=01\.1\.1\.3\.1 actual=<missing>/,
+                 fn ->
+                   DebuggerPendingOwnership.assert_valid!(Map.delete(owners, :dbg_ieval))
+                 end
+
+    assert_raise ExUnit.AssertionError,
+                 ~r/dbg_ieval expected=01\.1\.1\.3\.1 actual=01\.1\.1\.3\.2/,
+                 fn ->
+                   DebuggerPendingOwnership.assert_valid!(
+                     Map.put(owners, :dbg_ieval, "01.1.1.3.2")
+                   )
+                 end
+  end
+
+  test "concurrent source evidence extraction uses isolated roots" do
+    tasks = for _ <- 1..2, do: Task.async(fn -> SweepEvidence.source_roots!() end)
+    evidences = Task.await_many(tasks, 30_000)
+    roots = Enum.map(evidences, & &1.archive_root)
+    on_exit(fn -> Enum.each(roots, &File.rm_rf!/1) end)
+
+    assert MapSet.size(MapSet.new(roots)) == 2
+
+    for {root, index} <- Enum.with_index(roots) do
+      marker = "concurrent-probe-#{index}"
+      path = Path.join(root, marker)
+      File.write!(path, Integer.to_string(index))
+      assert File.read!(path) == Integer.to_string(index)
+
+      for other_root <- List.delete(roots, root) do
+        refute File.exists?(Path.join(other_root, marker))
+      end
+    end
+  end
 
   test "extracts a receipt from CI lines with job and timestamp prefixes" do
     lines = receipt_lines("core")
