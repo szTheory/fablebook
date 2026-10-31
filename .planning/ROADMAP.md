@@ -246,11 +246,11 @@ Plans:
   1. Every assigned root and seed path has exact-lane source-backed dispositions; unsafe exported fronts have mirrored Credo/BEAM tiers, uncalled direct/capture/apply/source-only probes, independent discovery, benign controls and individual removal witnesses. New exports/roots and omitted assignments fail closed.
   2. Offline citations pass provenance, digest, containment and line checks; changed exclusions retain full match/original identity truth and individual nonvacuous removal witnesses against complete active dispositions. Supporting sources keep their distinct owners.
   3. Existing active coverage cannot shrink; installation semantics remain pending with exact owners. A slice pass cannot satisfy final .3.13 acceptance. A scoped guard PR merges green on the exact tested head within the ordinary review cap; collision/source/policy stops remain.
-**Plans:** 4 plans
+**Plans:** 1/4 plans executed
 
 Plans:
 **Wave 1**
-- [ ] 01.1.1.3-01-PLAN.md — Approve exact source extension, then guard the selected-file interpreter path and branches
+- [x] 01.1.1.3-01-PLAN.md — Approve exact source extension, then guard the selected-file interpreter path and branches
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01.1.1.3-02-PLAN.md — Guard the public stack decoder and finish assigned seed/source dispositions

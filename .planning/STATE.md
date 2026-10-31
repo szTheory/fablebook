@@ -2,17 +2,17 @@
 gsd_state_version: "1.0"
 current_phase: 01.1.1.3
 current_phase_name: Debugger selected-file interpreter and seed provenance
-status: Ready to execute Phase 01.1.1.3; source-fixture approval required before archive mutation; parent verification debt remains open
-stopped_at: Phase 01.1.1.3 planning complete; four checked plans, thirteen research-only remainder owners; waiting for owner to choose execution; source-extension approval required before archive mutation; no implementation started
-last_updated: "2026-10-31T02:34:31.427Z"
+status: executing
+stopped_at: Completed 01.1.1.3-01-PLAN.md
+last_updated: "2026-10-31T04:50:41.551Z"
 last_activity: 2026-10-31
-last_activity_desc: Phase 01.1.1.3 research, calibrated partition and four-plan independent verification complete; no implementation started
-state_head: 7a0549a6453c7b19f4f5f396e55cc6f3ab112e70
+last_activity_desc: Phase 01.1.1.3 execution started
+state_head: 3e5d99b031a5d0ba363ec451761aa23512af383b
 progress:
   total_phases: 55
   completed_phases: 1
   total_plans: 23
-  completed_plans: 19
+  completed_plans: 20
   percent: 2
 ---
 
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.3 planning complete: four checked sequential plans for the selected debugger family; thirteen named research-only reservations retain all remaining ownership. Execution is owner-chosen and begins with a concrete source-fixture approval checkpoint; parent debt and later safety gates remain open.
+**Current focus:** Phase 01.1.1.3 — Debugger selected-file interpreter and seed provenance
 
 ## Current Position
 
-Phase: 01.1.1.3 (Debugger selected-file interpreter and seed provenance) — READY TO EXECUTE
-Plan: 0 of 4 (planning complete; execution not started)
-Status: Ready to execute Phase 01.1.1.3; source-fixture approval required before archive mutation; parent verification debt remains open
-Last activity: 2026-10-30 — Phase 01.1.1.3 research, calibrated partition and four-plan independent verification complete; no implementation started
+Phase: 01.1.1.3 (Debugger selected-file interpreter and seed provenance) — EXECUTING
+Plan: 2 of 4
+Status: Executing Phase 01.1.1.3
+Last activity: 2026-10-31 — Plan 01 completed; Plan 02 is next
 
 Progress: [░░░░░░░░░░] 2%
 
@@ -77,6 +77,7 @@ Progress: [░░░░░░░░░░] 2%
 | Phase 01.1.1.1 P07 | 48 min | 2 tasks | 5 files |
 | Phase 01.1.1.2 P01 | 264min | 3 tasks | 11 files |
 | Phase 01.1.1.2 P02 | 102min | 3 tasks | 18 files |
+| Phase 01.1.1.3 P01 | 120min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -135,6 +136,9 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.2]: SEC-01 remains Pending for Phase 5; static coverage does not claim runtime or mutation proof
 - [Phase 01.1.1.3]: Discussion complete under INT-20261030-06: connected caller-chain families, independently checked exact ownership, debugger calibration first, and unconditional final installed-scope acceptance. Source review and roadmap child materialization precede executable plans. This session supersedes the older .2 receipt next-command text; no auto-advance, policy exception or budget renewal.
 - [Phase 01.1.1.3]: Research/partition/planning complete: four independently checked sequential plans guard selected-file interpretation and exported stack decoding; thirteen exact-owned reservations preserve the remainder and final unconditional installed gate. Source fixture extension is prepared but approval remains pending; SEC-01 and parent debt remain open.
+- [Phase 01.1.1.3]: Owner approved only the 22 enumerated exact-version debugger source entries under the recorded compressed-storage caps.
+- [Phase 01.1.1.3]: Only dbg_wx_interpret is active for this selected-file slice; the other debugger and wx modules remain with their pending owners.
+- [Phase 01.1.1.3]: SEC-01 remains Pending for Phase 5; this plan adds static evidence without claiming runtime or mutation proof.
 
 ### Pending Todos
 
@@ -170,10 +174,10 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-31T02:33:33.916Z
-Stopped at: Phase 01.1.1.3 planning complete; four checked plans, thirteen research-only remainder owners; waiting for owner to choose execution; source-extension approval required before archive mutation; no implementation started
-Next independent command: $gsd-execute-phase 01.1.1.3 — execute the four checked plans after the owner chooses the execution boundary; first present the enumerated source-fixture extension decision.
-Resume file: .planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-01-PLAN.md
+Last session: 2026-10-31T04:50:41.362Z
+Stopped at: Completed 01.1.1.3-01-PLAN.md
+Next independent command: $gsd-execute-phase 01.1.1.3 — continue with Plan 02; Plan 01 and its source-extension approval are complete.
+Resume file: None
 
 ## Completed phase receipt
 
