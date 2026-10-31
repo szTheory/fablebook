@@ -3615,14 +3615,18 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> Enum.reject(&(&1.mfa == omitted_mfa))
       |> Enum.map(& &1.mfa)
 
-    assert_raise ExUnit.AssertionError, ~r/actual installed family universe differs/, fn ->
-      assert_debugger_function_inventory!(
-        actual_family_universe,
-        source_rows_without_mfa,
-        review_rows_without_mfa,
-        evidence.lane.name
-      )
-    end
+    omission_error =
+      assert_raise ExUnit.AssertionError, ~r/actual installed family universe differs/, fn ->
+        assert_debugger_function_inventory!(
+          actual_family_universe,
+          source_rows_without_mfa,
+          review_rows_without_mfa,
+          evidence.lane.name
+        )
+      end
+
+    assert omission_error.message =~ "owner=plan_02"
+    assert omission_error.message =~ "chain="
 
     new_name_export = {:dbg_istk, :unreviewed_family_entry, 0}
 
