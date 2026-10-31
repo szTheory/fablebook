@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import stat
+import subprocess
 import tarfile
 import tempfile
 
@@ -48,6 +49,66 @@ IDENTITY_KINDS = (
 SOURCE_DECODER_PATTERN = re.compile(
     rb"from_external\(\{stack,Stk\}\)\s*->\s*put\(\?STACK,\s*binary_to_term\(Stk\)\)"
 )
+EXACT_SOURCE_HISTORY = {
+    "core": {"count": 24, "sha256": "d6f42721090511a37dcd8fb151731bcb548a66fde7cd66b29797edcabd7d2ba7"},
+    "floor": {"count": 24, "sha256": "2fcc7ed5d63f439e1193b3fa647e2d8969f687095dd2fdcd7565b41f66b17bfe"},
+}
+EXACT_SOURCE_HASHES = {
+    "core": {
+        "dbg_debugged": "f0ea4b069cacf931380bf814eba15457a5e1823bdd49e38966b59e689e157bda",
+        "dbg_icmd": "5630b07823f0531d11b5415977c273b83a0176b18b985101c95afdc107d8431a",
+        "dbg_idb": "3505ba8ce32c8ca147a1195a183cc78a841b28de479c29b5e92822afefea3593",
+        "dbg_ieval": "60362d2aa47470b70a9264c5a4f7c5e60e8362f844e3ec4171cc3733d2ff31d1",
+        "dbg_iload": "a2dd4ad09550a866e5cc16834c0f006a146a21c3abc983f72d8ed44dd1a4b250",
+        "dbg_iserver": "3dde037e86dc9ba93d6bb8438f4fd38e062dfbf76aea6ef4d440c2162493728f",
+        "dbg_istk": "a71cef371ac1875a22e851d44e4e47b5a1b87309709fca32073e78d51825e01c",
+        "dbg_wx_break": "95da1f4a5b007c98eff65428234e5ccf5d65ee25f9f74f99e207840019f9d79d",
+        "dbg_wx_break_win": "4266c20ba0aac3e168d5ae31237b8713c403f1dce8b5e4b3a2cfba5741c82484",
+        "dbg_wx_code": "77802d7fad0df30f8bc79543463e16f670f01115e6691e32e83538119853e2a8",
+        "dbg_wx_filedialog_win": "d9a2e6bffb2f673d830c1c76585076c8510681a356a57c31547f838eaa9d858e",
+        "dbg_wx_interpret": "0731379c05425123893f08dab6d149f2e42f095f9245ff18d098691ab87520bb",
+        "dbg_wx_mon": "c47574e6f066df305154bbd893762011cf04ecb8315d8263cab415befbab22ff",
+        "dbg_wx_mon_win": "914439f252dc785d467980e163f001969a484cda8ae485b5833a3fcb65cbea30",
+        "dbg_wx_settings": "0b92d64a6b071d7859ba23213b5e32110aa8ca3b68388c181a2be02f2f146f8e",
+        "dbg_wx_src_view": "c6c0332f648612a5146d85c612951c45a4a02140c40019d4f393f845540e28bd",
+        "dbg_wx_trace": "bcbe7897bb63ab726e714776d4f362480d7e7d9c50b43ac474176a8f64c1ff90",
+        "dbg_wx_trace_win": "ca1c0f7e5fff5bdcb988a3c32ef0629222442e047d656e3a3ffa45ae2c9dc970",
+        "dbg_wx_view": "e9b0bb3a9107c97870268558caa5c916c84db3c4c5acb3001eb819fd39932351",
+        "dbg_wx_win": "109bffa861fa1e6d71310a8ca91d57f2b2aa941d7220dfd440a79ad4bc286599",
+        "dbg_wx_winman": "904130aad59810fc3fcf4f2a1f0c58edd97624c354ad728b7c0851089ed3d52f",
+        "debugger": "be7a485f6ae1edd43b7e5783804a5d8629a2ff4d9ae9f64a761df0b1cd036e26",
+        "i": "1cc52b78f0416ecbe6584b0f920924a4b271321607dca3fd6f104bdaf397e2ba",
+        "int": "14b667aa97d23b3ead643eae3bf2acabbc804919935f978a04846b353cac7a39",
+    },
+    "floor": {
+        "dbg_debugged": "6612e504e8180b783660fc6c5eb1f6a72b5bc3a1b75b27f0129e71c9cc8f00f2",
+        "dbg_icmd": "cd6d034c796c98ed3b3ce71048bef83aea8b25b612e227a02c2af6301a0d326e",
+        "dbg_idb": "990726cde6815d7616b01d13adf4f8cacc7540b702507ba0fea8ca349bbbe2c5",
+        "dbg_ieval": "393085c1fc6324687bc12b5184b5a501491f07c8f55dc293ee07774ea96d0b6a",
+        "dbg_iload": "530955c6525821e0382d53375ce5750cb4fd290ce4c323dd38521538452dae03",
+        "dbg_iserver": "04a9268e631c8a53fcb9a48821a44cddce07072016550eecaf43ef0734ec3a02",
+        "dbg_istk": "4f68bca517244f361bb915000fe299259242d6a8d733b064ed47d2f8872b8f66",
+        "dbg_wx_break": "0fe0af5cb1b32a0b0de107afe8c71d3b46cb2cd83e3f31b83cf64a9fd0432ab6",
+        "dbg_wx_break_win": "59153e3b491218f80c46216e92087f046312e61ddf908f5b79270e3544793874",
+        "dbg_wx_code": "5fb2a21d3a0be4c8238f78c3c0114cd3fd6fc8e19128688401641bef1a438533",
+        "dbg_wx_filedialog_win": "4c4f8d9af1f3f326a952c1b4e181d1533c692f08b8954fd884233f7b2500ab2a",
+        "dbg_wx_interpret": "d41c9d6225a8817bd792abb202916020782d72b59e439a891b0ebc4864e38098",
+        "dbg_wx_mon": "8beded69315466f8b941d4395e4047453667c31404226a8e53ab229b47a6a05e",
+        "dbg_wx_mon_win": "971779c05b5d7c08317c04d33d7354a24a701ed35c2f96c9eef67d77d5a4cb25",
+        "dbg_wx_settings": "1dc9b23f3056a060fdd505d42412550332db052bfdfdfc0005cf82662dcaff3b",
+        "dbg_wx_src_view": "ab4af77b4af26c063d4571079f5e79a0479b0963425dc361c83845fbc4f2e07d",
+        "dbg_wx_trace": "5f32e88b935551c841e5bd37482ac92f73a31fccfa5e4671a1a74d83b3db9b4d",
+        "dbg_wx_trace_win": "24af102669938d46a63af00ec1f3d9deceb81cd5dcb4ba9a1b68af2559e384a7",
+        "dbg_wx_view": "46def58da500babbda2a8b7d278a596085c356bf55f29555ba33ded328e32490",
+        "dbg_wx_win": "31b4f35b2f1c871404ce5d261aff965d630f6347edcfc9b084e1f8dc90ad061e",
+        "dbg_wx_winman": "ae844ac3c93e746109e8ee0ba25703040fc357c4aa7145c3baa5ef720eb3b185",
+        "debugger": "d2c7afca169c6756ce88a528e3d2a466c3a4bf850b006937e0470a6720b30123",
+        "i": "b224f283e91d9ff0183c619893461e7699b4821f6b6f5725e96db992392d9e5f",
+        "int": "913d32eaf82c21b9c9902e023f46dc88317ff729d66cc91078469d7c3b9b043c",
+    },
+}
+REQUIRED_CI_CHECKS = {"core", "floor", "dialyzer", "security", "ci-gate"}
+ALLOWED_CI_SKIPS = {"nightly", "ci-health"}
 ROUTES = [
     ("1", "Debugger remaining settings, trace, breakpoint and monitor routes", ["debugger"]),
     ("2", "Common Test remaining runner, specification and source-input routes", ["common_test"]),
@@ -75,6 +136,120 @@ def canon(value):
 
 def digest(value):
     return hashlib.sha256(value).hexdigest()
+
+
+def assert_exact_source_history(records):
+    expected_hashes = EXACT_SOURCE_HASHES
+    for lane, expected in EXACT_SOURCE_HISTORY.items():
+        lane_records = [row for row in records
+                        if row.get("t") == "exact_source" and row.get("lane") == lane]
+        actual_hashes = {row.get("module"): row.get("sha256") for row in lane_records}
+        if len(actual_hashes) != len(lane_records) or actual_hashes != expected_hashes[lane]:
+            missing = sorted(expected_hashes[lane].keys() - actual_hashes.keys())
+            unexpected = sorted(actual_hashes.keys() - expected_hashes[lane].keys())
+            changed = sorted(module for module in expected_hashes[lane].keys() & actual_hashes.keys()
+                             if expected_hashes[lane][module] != actual_hashes[module])
+            raise ValueError(
+                f"{lane}: immutable exact-source digest map changed: "
+                f"missing={missing} unexpected={unexpected} changed={changed}"
+            )
+        canonical = sorted(canon(row) for row in lane_records)
+        actual_hash = digest("\n".join(canonical).encode())
+        if len(canonical) != expected["count"] or actual_hash != expected["sha256"]:
+            raise ValueError(
+                f"{lane}: immutable exact-source history fingerprint changed: "
+                f"count={len(canonical)} sha256={actual_hash}"
+            )
+
+
+def assert_source_fingerprint(lane, module, data):
+    expected = EXACT_SOURCE_HASHES.get(lane, {}).get(module)
+    actual = digest(data)
+    if expected is None or actual != expected:
+        raise ValueError(
+            f"{lane}: exact debugger source fingerprint differs for {module}: "
+            f"expected={expected or 'unowned'} actual={actual}"
+        )
+    return actual
+
+
+def same_length_source_mutation_control():
+    data = source_material()[("core", "dbg_idb")]
+    mutated = bytes([data[0] ^ 1]) + data[1:]
+    if len(mutated) != len(data):
+        raise ValueError("same-length source mutation control changed source size")
+    try:
+        assert_source_fingerprint("core", "dbg_idb", mutated)
+    except ValueError as error:
+        if "exact debugger source fingerprint differs" not in str(error):
+            raise ValueError(f"same-length source mutation produced the wrong diagnostic: {error}") from error
+        return "same-length-source-mutation"
+    raise ValueError("negative control falsely passed: same-length-source-mutation")
+
+
+def gh_json(arguments):
+    command = ["gh", *arguments]
+    try:
+        result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=45)
+    except (FileNotFoundError, subprocess.TimeoutExpired) as error:
+        raise ValueError(f"read-only CI provenance query failed: {' '.join(command)}: {error}") from error
+    if result.returncode:
+        detail = result.stderr.strip() or result.stdout.strip()
+        raise ValueError(f"read-only CI provenance query failed: {' '.join(command)}: {detail}")
+    try:
+        return json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        raise ValueError(f"read-only CI provenance query returned invalid JSON: {' '.join(command)}") from error
+
+
+def assert_ci_snapshot(snapshot, pr_number, tested_head, ci_run_id):
+    pr = snapshot["pr"]
+    run = snapshot["run"]
+    checks = snapshot["checks"]
+    if pr.get("number") != pr_number or pr.get("state") not in ("OPEN", "MERGED"):
+        raise ValueError(f"PR #{pr_number}: GitHub reports an unexpected PR identity or state: {pr}")
+    if pr.get("headRefOid") != tested_head:
+        raise ValueError(
+            f"PR #{pr_number}: current head differs from the recorded tested head: "
+            f"current={pr.get('headRefOid')} recorded={tested_head}"
+        )
+    if (run.get("databaseId") != int(ci_run_id) or run.get("headSha") != tested_head
+            or run.get("headBranch") != pr.get("headRefName") or run.get("event") != "pull_request"
+            or run.get("workflowName") != "ci" or run.get("status") != "completed"
+            or run.get("conclusion") != "success"):
+        raise ValueError(
+            f"PR #{pr_number}: cited CI run does not prove a successful exact-head check: "
+            f"run={run} tested_head={tested_head}"
+        )
+    names = {check.get("name") for check in checks}
+    missing = sorted(REQUIRED_CI_CHECKS - names)
+    nonpassing = sorted(
+        (check.get("name"), check.get("bucket")) for check in checks
+        if check.get("bucket") != "pass"
+        and not (check.get("name") in ALLOWED_CI_SKIPS and check.get("bucket") == "skipping")
+    )
+    if missing or nonpassing:
+        raise ValueError(
+            f"PR #{pr_number}: required exact-head checks are incomplete: "
+            f"missing={missing} nonpassing={nonpassing}"
+        )
+
+
+def verify_ci_provenance(pr_number, tested_head, ci_run_id):
+    if not isinstance(pr_number, int) or pr_number < 1:
+        raise ValueError("CI provenance requires a positive PR number")
+    if not re.fullmatch(r"[0-9a-fA-F]{40}", tested_head or ""):
+        raise ValueError("CI provenance requires the full tested code-head SHA")
+    if not re.fullmatch(r"[0-9]+", str(ci_run_id or "")):
+        raise ValueError("CI provenance requires the exact passing CI run id")
+    snapshot = {
+        "pr": gh_json(["pr", "view", str(pr_number), "--json", "number,state,headRefOid,headRefName"]),
+        "run": gh_json(["run", "view", str(ci_run_id), "--json",
+                         "databaseId,headSha,headBranch,status,conclusion,event,workflowName"]),
+        "checks": gh_json(["pr", "checks", str(pr_number), "--json", "name,bucket"]),
+    }
+    assert_ci_snapshot(snapshot, pr_number, tested_head.lower(), str(ci_run_id))
+    return snapshot
 
 
 def multiset(values):
@@ -178,6 +353,7 @@ def source_material(source_dir=None):
                 data = stream.read()
                 if digest(data) != expected_hash:
                     raise ValueError(f"approved source fingerprint differs for {lane}:{module}")
+                assert_source_fingerprint(lane, module, data)
                 sources[(lane, module)] = data
     for lane in SOURCE_VERSIONS:
         data = sources[(lane, "dbg_istk")]
@@ -553,13 +729,15 @@ def completion_records(lane, original_records, observed_records, original_rows, 
     return output
 
 
-def manifest(source_dir=None, observed_receipt_dir=None, tested_head=None, ci_run_id=None):
+def manifest(source_dir=None, observed_receipt_dir=None, tested_head=None, ci_run_id=None, pr_number=None):
     sources = source_material(source_dir)
     if observed_receipt_dir:
         if not tested_head or not re.fullmatch(r"[0-9a-fA-F]{40}", tested_head):
             raise ValueError("observed receipts require the full tested code-head SHA")
         if not ci_run_id or not re.fullmatch(r"[0-9]+", str(ci_run_id)):
             raise ValueError("observed receipts require the exact passing CI run id")
+        if not isinstance(pr_number, int) or pr_number < 1:
+            raise ValueError("observed receipts require the exact PR number")
         tested_head = tested_head.lower()
         ci_run_id = str(ci_run_id)
     children = [{"id": PHASE, "title": "Debugger selected-file interpreter and seed provenance",
@@ -595,6 +773,7 @@ def manifest(source_dir=None, observed_receipt_dir=None, tested_head=None, ci_ru
                 "source_archive_sha256": SOURCE_ARCHIVE_SHA256,
                 "family_source_fingerprints": FAMILY_SOURCE_HASHES,
                 "observed_receipts": [],
+                "pr_number": pr_number,
                 "tested_code_head": tested_head,
                 "ci_run_id": ci_run_id,
                 "ci_run_url": f"https://github.com/szTheory/fablebook/actions/runs/{ci_run_id}" if ci_run_id else None}
@@ -658,6 +837,9 @@ def manifest(source_dir=None, observed_receipt_dir=None, tested_head=None, ci_ru
                 "path": str(observed_path.relative_to(ROOT)),
                 "file_sha256": observed_file_hash,
                 "body_sha256": observed_body_hash,
+                "pr_number": pr_number,
+                "tested_code_head": tested_head,
+                "ci_run_id": ci_run_id,
             })
     if source_dir:
         for lane, version in SOURCE_VERSIONS.items():
@@ -673,10 +855,11 @@ def manifest(source_dir=None, observed_receipt_dir=None, tested_head=None, ci_ru
                 data = path.read_bytes()
                 if len(data) != expected_modules[module]["source"]["source_bytes"]:
                     raise ValueError(f"{lane}: exact source size differs from receipt: {module}")
+                source_hash = assert_source_fingerprint(lane, module, data)
                 if module == "dbg_istk" and not SOURCE_DECODER_PATTERN.search(data):
                     raise ValueError(f"{lane}: source-discovered decoder route changed; review the caller domain")
                 records.append({"t": "exact_source", "lane": lane, "app": "debugger", "module": module,
-                                "owner": owner("debugger", module), "bytes": len(data), "sha256": digest(data),
+                                "owner": owner("debugger", module), "bytes": len(data), "sha256": source_hash,
                                 "source_path": f"debugger/src/{path.name}",
                                 "url": f"https://raw.githubusercontent.com/erlang/otp/OTP-{version}/lib/debugger/src/{path.name}",
                                 "evidence_reference_owners": [PHASE] if module in SUPPORT else []})
@@ -775,7 +958,7 @@ def atomic_interruption_control():
     return "atomic-interruption-preserves-prior"
 
 
-def controls(expected, actual=None):
+def controls(expected, actual=None, ci_snapshot=None, pr_number=None, tested_head=None, ci_run_id=None):
     actual = expected if actual is None else actual
     reports = []
 
@@ -872,6 +1055,51 @@ def controls(expected, actual=None):
     reject("unexpected-observed-source-root", expected, actual + [new_source_root],
            ["unexpected=", "unregistered_source_root"])
 
+    exact_sources = [row for row in expected if row.get("t") == "exact_source"]
+    if not exact_sources:
+        raise ValueError("canonical exact-source history is missing from the verification manifest")
+    changed_sources = copy.deepcopy(exact_sources)
+    changed_sources[0]["sha256"] = "0" * 64
+    try:
+        assert_exact_source_history(changed_sources)
+    except ValueError as error:
+        if "immutable exact-source digest map changed" not in str(error):
+            raise ValueError(f"exact-source mutation produced the wrong diagnostic: {error}") from error
+        reports.append("changed-exact-source-fingerprint")
+    else:
+        raise ValueError("negative control falsely passed: changed-exact-source-fingerprint")
+    reports.append(same_length_source_mutation_control())
+
+    changed_provenance = copy.deepcopy(actual)
+    metadata = next(row for row in changed_provenance if row.get("t") == "meta")
+    metadata["tested_code_head"] = "0" * 40
+    metadata["ci_run_id"] = "1"
+    metadata["pr_number"] = pr_number + 1
+    reject("fabricated-ci-provenance", expected, changed_provenance,
+           ["changed ownership/evidence", "type=meta"])
+    if ci_snapshot is None:
+        raise ValueError("CI provenance mutation controls require the live read-only verification result")
+    changed_snapshot = copy.deepcopy(ci_snapshot)
+    changed_snapshot["run"]["headSha"] = "0" * 40
+    try:
+        assert_ci_snapshot(changed_snapshot, pr_number, tested_head, ci_run_id)
+    except ValueError as error:
+        if "exact-head check" not in str(error):
+            raise ValueError(f"CI head mutation produced the wrong diagnostic: {error}") from error
+        reports.append("ci-run-head-mismatch")
+    else:
+        raise ValueError("negative control falsely passed: ci-run-head-mismatch")
+    changed_checks = copy.deepcopy(ci_snapshot)
+    changed_checks["checks"] = [check for check in changed_checks["checks"] if check.get("name") != "floor"]
+    try:
+        assert_ci_snapshot(changed_checks, pr_number, tested_head, ci_run_id)
+    except ValueError as error:
+        if "required exact-head checks are incomplete" not in str(error):
+            raise ValueError(f"required-check mutation produced the wrong diagnostic: {error}") from error
+        reports.append("missing-required-ci-check")
+    else:
+        raise ValueError("negative control falsely passed: missing-required-ci-check")
+
     original_path, _, original_rows = receipt("core")
     observed_path, _, _, observed_rows = observed_receipt("core", HERE)
     if original_path == observed_path:
@@ -961,17 +1189,23 @@ def main():
     parser.add_argument("--observed-receipt-dir", type=Path)
     parser.add_argument("--tested-head")
     parser.add_argument("--ci-run-id")
+    parser.add_argument("--pr-number", type=int)
     parser.add_argument("--negative-controls", action="store_true")
     args = parser.parse_args()
+
+    if not args.pr_number:
+        parser.error("generate and verify require --pr-number for live PR/CI provenance verification")
+    if not args.tested_head or not args.ci_run_id:
+        parser.error("generate and verify require --tested-head and --ci-run-id from the cited passing run")
+    ci_snapshot = verify_ci_provenance(args.pr_number, args.tested_head, args.ci_run_id)
 
     if args.command == "generate":
         if not args.source_dir:
             parser.error("generate requires --source-dir for exact research fingerprints")
         if not args.observed_receipt_dir:
             parser.error("generate requires --observed-receipt-dir for fresh lane receipts")
-        if not args.tested_head or not args.ci_run_id:
-            parser.error("generate requires --tested-head and --ci-run-id for exact-head provenance")
-        expected = manifest(args.source_dir, args.observed_receipt_dir, args.tested_head, args.ci_run_id)
+        expected = manifest(args.source_dir, args.observed_receipt_dir, args.tested_head, args.ci_run_id, args.pr_number)
+        assert_exact_source_history(expected)
         atomic_write(OUTPUT, lambda stream: write_ledger(stream, expected),
                      lambda path: validate_ledger_file(path, expected))
         actual = load_ledger()
@@ -982,11 +1216,12 @@ def main():
         if meta is None:
             raise ValueError("ownership ledger is missing its metadata record")
         observed_dir = args.observed_receipt_dir or observed_dir_from_metadata(meta)
-        tested_head = args.tested_head or meta.get("tested_code_head")
-        ci_run_id = args.ci_run_id or meta.get("ci_run_id")
-        expected = manifest(args.source_dir, observed_dir, tested_head, ci_run_id)
+        if observed_dir is None:
+            raise ValueError("ownership ledger does not name the fresh observed-receipt paths")
+        expected = manifest(args.source_dir, observed_dir, args.tested_head, args.ci_run_id, args.pr_number)
         if not args.source_dir:
             saved = [row for row in actual if row.get("t") == "exact_source"]
+            assert_exact_source_history(saved)
             source_keys = {
                 (row["lane"], row["module"]) for row in expected
                 if row.get("t") == "module" and row.get("app") == "debugger" and row.get("pending")
@@ -994,9 +1229,12 @@ def main():
             if {(row["lane"], row["module"]) for row in saved} != source_keys or len(saved) != len(source_keys):
                 raise ValueError("exact debugger research source identities incomplete")
             expected += saved
+        else:
+            assert_exact_source_history(expected)
         assert_equal(expected, actual)
 
-    negative_results = controls(expected, actual) if args.negative_controls else []
+    negative_results = controls(expected, actual, ci_snapshot, args.pr_number,
+                                args.tested_head.lower(), str(args.ci_run_id)) if args.negative_controls else []
     summary = {
         "manifest_bytes": OUTPUT.stat().st_size,
         "canonical_records": len(actual),

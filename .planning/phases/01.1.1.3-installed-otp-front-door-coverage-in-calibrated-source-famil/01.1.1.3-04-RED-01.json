@@ -6,5 +6,11 @@
   "targetFile": ".planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/ownership.py",
   "expected": "The actual ownership assertion rejects a missing observed assignment and its diagnostic includes lane, typed identity, and owner.",
   "actual": "The actual fresh core receipt identity was retained, but the current diagnostic omitted the required lane/type/identity/owner fields.",
-  "semanticAssessment": "The target Python unittest ran and failed on the planned assertion because assert_equal currently reports only an opaque key. Fresh receipt parsing and test setup succeeded."
+  "semanticAssessment": "The target Python unittest ran before implementation and failed on the planned assertion because assert_equal reported only an opaque key. Fresh receipt parsing and test setup succeeded.",
+  "baselineReplay": {
+    "command": "python3 -",
+    "source": "Loaded ownership.py from pre-implementation commit 1827c3a, pointed it at the same fresh core receipt, and reran the target unittest.",
+    "exitCode": 1,
+    "output": "F\n======================================================================\nFAIL: test_missing_observed_assignment_reports_owner (__main__.OwnershipControls.test_missing_observed_assignment_reports_owner)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<stdin>\", line 15, in test_missing_observed_assignment_reports_owner\nAssertionError: False is not true\n\n----------------------------------------------------------------------\nRan 1 test in 0.528s\n\nFAILED (failures=1)\n"
+  }
 }
