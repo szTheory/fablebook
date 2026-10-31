@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "440acba715d62b116d9fba7baa495ec51e6a556c9cb88f4212a6bfdae2b0fe73"
+  @archive_sha "31b6289b8258b6979fc70255f478020d370aaf4af3d3736a11eb0d771c4509b5"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],

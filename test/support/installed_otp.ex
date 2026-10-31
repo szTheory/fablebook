@@ -255,10 +255,13 @@ defmodule Fablebook.Test.InstalledOtp do
   def export_inventory!(directories, opts \\ []) when is_list(directories) do
     lane = Keyword.get(opts, :lane, lane_name())
     beam_chunks = Keyword.get(opts, :beam_chunks, &:beam_lib.chunks/2)
+    used_predefined_exports = predefined_export_targets!(Keyword.get(opts, :edges, []), lane)
 
     exports =
       directories
-      |> Enum.flat_map(&export_inventory_directory!(&1, lane, beam_chunks))
+      |> Enum.flat_map(
+        &export_inventory_directory!(&1, lane, beam_chunks, used_predefined_exports)
+      )
 
     duplicate = exports |> Enum.frequencies() |> Enum.filter(fn {_row, count} -> count > 1 end)
     if duplicate != [], do: fail!(:export_inventory_duplicate, %{lane: lane, exports: duplicate})
@@ -274,15 +277,17 @@ defmodule Fablebook.Test.InstalledOtp do
       })
   end
 
-  defp export_inventory_directory!(directory, lane, beam_chunks) do
+  defp export_inventory_directory!(directory, lane, beam_chunks, used_predefined_exports) do
     directory
     |> File.ls!()
     |> Enum.sort()
     |> Enum.filter(&String.ends_with?(&1, ".beam"))
-    |> Enum.flat_map(&export_inventory_beam!(directory, &1, lane, beam_chunks))
+    |> Enum.flat_map(
+      &export_inventory_beam!(directory, &1, lane, beam_chunks, used_predefined_exports)
+    )
   end
 
-  defp export_inventory_beam!(directory, filename, lane, beam_chunks) do
+  defp export_inventory_beam!(directory, filename, lane, beam_chunks, used_predefined_exports) do
     path = Path.join(directory, filename)
     expected_module = String.replace_suffix(filename, ".beam", "")
 
@@ -297,7 +302,10 @@ defmodule Fablebook.Test.InstalledOtp do
           })
         end
 
-        Enum.map(rows, &export_inventory_row!(&1, directory, filename, lane, module))
+        Enum.flat_map(
+          rows,
+          &xref_export_row!(&1, path, directory, filename, lane, module, used_predefined_exports)
+        )
 
       result ->
         fail!(:export_inventory_read, %{
@@ -306,6 +314,75 @@ defmodule Fablebook.Test.InstalledOtp do
           result: inspect(result)
         })
     end
+  end
+
+  defp xref_export_row!({:module_info, arity}, _path, directory, filename, lane, module, used)
+       when arity in [0, 1] do
+    mfa = {module, :module_info, arity}
+
+    if MapSet.member?(used, mfa),
+      do: [export_inventory_row!({:module_info, arity}, directory, filename, lane, module)],
+      else: []
+  end
+
+  defp xref_export_row!({:behaviour_info, 1}, path, directory, filename, lane, module, used) do
+    if MapSet.member?(used, {module, :behaviour_info, 1}) or
+         explicit_behaviour_info?(path, module, lane),
+       do: [export_inventory_row!({:behaviour_info, 1}, directory, filename, lane, module)],
+       else: []
+  end
+
+  defp xref_export_row!(row, _path, directory, filename, lane, module, _used),
+    do: [export_inventory_row!(row, directory, filename, lane, module)]
+
+  defp predefined_export_targets!(edges, lane) when is_list(edges) do
+    Enum.reduce(edges, MapSet.new(), fn
+      {_caller, {module, function, arity}}, used
+      when is_atom(module) and function in [:module_info, :behaviour_info] and is_integer(arity) ->
+        MapSet.put(used, {module, function, arity})
+
+      {_caller, _callee}, used ->
+        used
+
+      row, _used ->
+        fail!(:export_inventory_edge, %{lane: lane, row: inspect(row)})
+    end)
+  end
+
+  defp explicit_behaviour_info?(path, module, lane) do
+    case :beam_lib.chunks(String.to_charlist(path), [:debug_info]) do
+      {:ok, {^module, [debug_info: {:debug_info_v1, _backend, :none}]}} ->
+        false
+
+      {:ok, {^module, [debug_info: {:debug_info_v1, backend, data}]}} ->
+        backend.debug_info(:erlang_v1, module, data, [])
+        |> explicit_behaviour_info_forms!(path, lane)
+
+      {:error, :beam_lib, {:missing_chunk, _, _}} ->
+        false
+
+      result ->
+        fail!(:export_inventory_debug_info, %{
+          lane: lane,
+          path: Path.basename(path),
+          result: inspect(result)
+        })
+    end
+  end
+
+  defp explicit_behaviour_info_forms!({:ok, forms}, _path, _lane) do
+    Enum.any?(forms, fn
+      {:function, anno, :behaviour_info, 1, _clauses} -> :erl_anno.location(anno) != 0
+      _form -> false
+    end)
+  end
+
+  defp explicit_behaviour_info_forms!(result, path, lane) do
+    fail!(:export_inventory_debug_info, %{
+      lane: lane,
+      path: Path.basename(path),
+      result: inspect(result)
+    })
   end
 
   defp export_inventory_row!({function, arity}, _directory, _filename, _lane, module)
@@ -329,7 +406,7 @@ defmodule Fablebook.Test.InstalledOtp do
         actual = MapSet.new(normalized)
 
         duplicate_rows =
-          normalized
+          rows
           |> Enum.frequencies()
           |> Enum.filter(fn {_row, count} -> count > 1 end)
           |> Enum.map(&elem(&1, 0))
@@ -773,14 +850,10 @@ defmodule Fablebook.Test.InstalledOtp do
     source_root = Path.join(app.root, "src")
     {source_dir_status, files} = source_tree!(source_root, app, lane, reader)
 
-    beams =
-      Enum.map(inspected, fn beam ->
+    {beams, files} =
+      Enum.map_reduce(inspected, files, fn beam, files ->
         relative_source = source_mapping!(app, beam, lane)
-
-        status =
-          if is_nil(relative_source),
-            do: "unavailable",
-            else: source_status(files, relative_source)
+        {status, bytes, files} = source_mapping_status!(app, relative_source, files, lane, reader)
 
         if MapSet.member?(required_modules, beam.module) and status != "present" do
           fail!(:required_source_missing, %{
@@ -792,12 +865,7 @@ defmodule Fablebook.Test.InstalledOtp do
           })
         end
 
-        %{
-          module: beam.module,
-          source: relative_source,
-          status: status,
-          bytes: if(status == "present", do: Map.fetch!(files, relative_source), else: nil)
-        }
+        {%{module: beam.module, source: relative_source, status: status, bytes: bytes}, files}
       end)
 
     %{
@@ -938,7 +1006,7 @@ defmodule Fablebook.Test.InstalledOtp do
 
   defp source_mapping!(app, beam, lane) do
     case safe_source(app.app, app.relative, beam.source) do
-      nil when is_nil(beam.source) ->
+      nil when beam.source in [nil, ""] ->
         nil
 
       nil ->
@@ -954,8 +1022,61 @@ defmodule Fablebook.Test.InstalledOtp do
     end
   end
 
-  defp source_status(files, path),
-    do: if(Map.has_key?(files, path), do: "present", else: "missing")
+  defp source_mapping_status!(_app, nil, files, _lane, _reader),
+    do: {"unavailable", nil, files}
+
+  defp source_mapping_status!(app, relative_source, files, lane, reader) do
+    cond do
+      Map.has_key?(files, relative_source) ->
+        {"present", Map.fetch!(files, relative_source), files}
+
+      String.starts_with?(relative_source, "src/") ->
+        {"missing", nil, files}
+
+      true ->
+        source_file_status!(app, relative_source, files, lane, reader)
+    end
+  end
+
+  defp source_file_status!(app, relative_source, files, lane, reader) do
+    path = Path.expand(relative_source, app.root)
+
+    unless path_within?(app.root, path) do
+      fail!(:source_escape, %{
+        lane: lane,
+        app: app.app,
+        source: relative_source
+      })
+    end
+
+    case File.lstat(path) do
+      {:ok, %{type: :regular}} ->
+        bytes = source_file_size!(path, app, lane, reader)
+        {"present", bytes, Map.put(files, relative_source, bytes)}
+
+      {:ok, %{type: :symlink}} ->
+        validate_source_link!(app.root, path, app, lane)
+
+      {:ok, stat} ->
+        fail!(:source_file_type, %{
+          lane: lane,
+          app: app.app,
+          path: relative_source,
+          type: stat.type
+        })
+
+      {:error, :enoent} ->
+        {"missing", nil, files}
+
+      {:error, reason} ->
+        fail!(:source_file_unreadable, %{
+          lane: lane,
+          app: app.app,
+          path: relative_source,
+          reason: reason
+        })
+    end
+  end
 
   defp path_within?(root, path) do
     root = Path.expand(root)
@@ -1119,7 +1240,6 @@ defmodule Fablebook.Test.InstalledOtp do
     invalid =
       Enum.reject(rows, fn row ->
         is_binary(apps[row["app"]]) and safe_receipt_path?(row["path"]) and
-          String.starts_with?(row["path"], "src/") and
           valid_byte_count?(row["bytes"])
       end)
 
@@ -1585,23 +1705,33 @@ defmodule Fablebook.Test.InstalledOtp do
 
     case Enum.find_index(parts, &(&1 == app_root or &1 == app)) do
       nil ->
-        if Path.type(source) == :relative and not String.contains?(source, ["..", "\\"]),
-          do: source,
-          else: nil
+        if Path.type(source) == :relative, do: normalize_source_parts(parts), else: nil
 
       index ->
-        Enum.drop(parts, index + 1) |> Path.join() |> safe_relative()
+        Enum.drop(parts, index + 1) |> normalize_source_parts()
     end
   end
 
   defp safe_source(_app, _app_root, _source), do: nil
 
-  defp safe_relative(path),
-    do:
-      if(path != "" and Path.type(path) == :relative and not String.contains?(path, ["..", "\\"]),
-        do: path,
-        else: nil
-      )
+  defp normalize_source_parts(parts) do
+    case Enum.reduce_while(parts, [], fn
+           ".", stack -> {:cont, stack}
+           "..", [] -> {:halt, :escape}
+           "..", [_discarded | rest] -> {:cont, rest}
+           part, stack -> {:cont, [part | stack]}
+         end) do
+      :escape ->
+        nil
+
+      [] ->
+        nil
+
+      reversed ->
+        path = reversed |> Enum.reverse() |> Path.join()
+        if path != "" and Path.type(path) == :relative, do: path, else: nil
+    end
+  end
 
   defp version_string(value) when is_binary(value) and value != "", do: value
   defp version_string(value) when is_list(value) and value != [], do: List.to_string(value)
@@ -1661,6 +1791,7 @@ defmodule Fablebook.Test.InstalledOtp do
           function_count: scan.function_count,
           function_bytes: scan.function_bytes,
           edges: scan.edges,
+          xref_edges: Map.get(scan, :xref_edges, []),
           imports: scan.mfas,
           pairs: scan.pairs,
           literals: scan.literals
