@@ -1619,39 +1619,23 @@ defmodule Fablebook.Contract.BannedCallsTest do
     """
   end
 
+  @debugger_settings_probe_bodies %{
+    direct: "def probe(mode, path), do: :dbg_wx_mon.start(mode, path)",
+    default: "def probe, do: :dbg_wx_mon.start(:local, :default)",
+    capture: "def probe, do: &:dbg_wx_mon.start/2",
+    apply_local: "def probe(path), do: apply(:dbg_wx_mon, :start, [:local, path])",
+    apply_global: "def probe(path), do: apply(:dbg_wx_mon, :start, [:global, path])",
+    utf8: "def probe, do: :dbg_wx_mon.start(:local, \"café.state\")",
+    discarded_quote:
+      "def probe do\n  quote do\n    :dbg_wx_mon.start(:local, \"café.state\")\n  end\nend",
+    uninvoked_macro:
+      "defmacro never_called(path) do\n  quote do\n    :dbg_wx_mon.start(:local, unquote(path))\n  end\nend",
+    stop: "def probe, do: :dbg_wx_mon.stop()",
+    wrapper: "def probe(mode), do: :debugger.start(mode)"
+  }
+
   defp debugger_settings_probe_source(form) do
-    body =
-      case form do
-        :direct ->
-          "def probe(mode, path), do: :dbg_wx_mon.start(mode, path)"
-
-        :default ->
-          "def probe, do: :dbg_wx_mon.start(:local, :default)"
-
-        :capture ->
-          "def probe, do: &:dbg_wx_mon.start/2"
-
-        :apply_local ->
-          "def probe(path), do: apply(:dbg_wx_mon, :start, [:local, path])"
-
-        :apply_global ->
-          "def probe(path), do: apply(:dbg_wx_mon, :start, [:global, path])"
-
-        :utf8 ->
-          "def probe, do: :dbg_wx_mon.start(:local, \"café.state\")"
-
-        :discarded_quote ->
-          "def probe do\n  quote do\n    :dbg_wx_mon.start(:local, \"café.state\")\n  end\nend"
-
-        :uninvoked_macro ->
-          "defmacro never_called(path) do\n  quote do\n    :dbg_wx_mon.start(:local, unquote(path))\n  end\nend"
-
-        :stop ->
-          "def probe, do: :dbg_wx_mon.stop()"
-
-        :wrapper ->
-          "def probe(mode), do: :debugger.start(mode)"
-      end
+    body = Map.fetch!(@debugger_settings_probe_bodies, form)
 
     """
     defmodule Fablebook.GuardFixture.DebuggerSettings#{Macro.camelize(to_string(form))} do
