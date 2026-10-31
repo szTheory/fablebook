@@ -1,4 +1,6 @@
 defmodule Fablebook.Test.DebuggerPendingOwnership do
+  alias Fablebook.Test.DebuggerSettings
+
   @baseline_modules [
     :dbg_wx_mon,
     :dbg_wx_mon_win,
@@ -7,27 +9,23 @@ defmodule Fablebook.Test.DebuggerPendingOwnership do
     :dbg_iload,
     :dbg_ieval
   ]
-  @expected_owner "01.1.1.3.1"
-  @owners %{
-    dbg_wx_mon: "01.1.1.3.1",
-    dbg_wx_mon_win: "01.1.1.3.1",
-    dbg_wx_filedialog_win: "01.1.1.3.1",
-    dbg_wx_win: "01.1.1.3.1",
-    dbg_iload: "01.1.1.3.1",
-    dbg_ieval: "01.1.1.3.1"
-  }
 
   def baseline_modules, do: @baseline_modules
-  def owners, do: @owners
+
+  def owners do
+    current = DebuggerSettings.pending_owners()
+    Map.new(@baseline_modules, &{&1, Map.fetch!(current, Atom.to_string(&1))})
+  end
 
   def validation_error(owners) when is_map(owners) do
     expected = MapSet.new(@baseline_modules)
     assigned = MapSet.new(Map.keys(owners))
     missing = MapSet.difference(expected, assigned)
     unexpected = MapSet.difference(assigned, expected)
+    current_owners = owners()
 
     wrong_owner =
-      Enum.filter(@baseline_modules, &(Map.get(owners, &1) != @expected_owner))
+      Enum.filter(@baseline_modules, &(Map.get(owners, &1) != Map.get(current_owners, &1)))
 
     if MapSet.size(missing) == 0 and MapSet.size(unexpected) == 0 and wrong_owner == [] do
       nil
@@ -53,7 +51,8 @@ defmodule Fablebook.Test.DebuggerPendingOwnership do
     modules
     |> Enum.sort()
     |> Enum.map_join("; ", fn module ->
-      "#{module} expected=#{@expected_owner} actual=#{Map.get(owners, module, "<missing>")}"
+      expected = Map.fetch!(owners(), module)
+      "#{module} expected=#{expected} actual=#{Map.get(owners, module, "<missing>")}"
     end)
   end
 end
@@ -64,6 +63,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   alias Fablebook.Credo.BannedCalls
   alias Fablebook.Test.BeamWalker
   alias Fablebook.Test.DebuggerPendingOwnership
+  alias Fablebook.Test.DebuggerSettings
   alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.SweepEvidence
   @compile {:no_warn_undefined, :xref}
@@ -611,6 +611,8 @@ defmodule Fablebook.Contract.TierSweepTest do
                   end)
 
   @debugger_family_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
+  @saved_settings_changed_modules [:dbg_wx_settings, :dbg_wx_mon, :dbg_iserver, :int, :dbg_icmd]
+  @saved_settings_expected_exclusion_matches []
   @debugger_active_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
   @debugger_baseline_active_modules [:dbg_idb, :dbg_istk, :dbg_wx_interpret]
   @debugger_source_only_seed_mfas [
@@ -3652,6 +3654,554 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  test "saved-settings monitor source retains a private replay initializer and pending ownership" do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    {export_line, init_line, read_line, decode_line} =
+      if evidence.lane.name == "core",
+        do: {33, 115, 676, 678},
+        else: {29, 111, 672, 674}
+
+    resolve = fn line ->
+      SweepEvidence.resolve!(evidence, "debugger/src/dbg_wx_mon.erl:#{line}")
+    end
+
+    assert resolve.(export_line).text == "-export([start/2, stop/0])."
+    assert resolve.(init_line).text == "init(CallingPid, Mode, SFile) ->"
+    assert resolve.(read_line).text =~ "file:read_file(SFile)"
+    assert resolve.(decode_line).text =~ "binary_to_term(Binary)"
+    assert {:dbg_wx_mon, :start, 2} in BannedCalls.banned_mfas()
+    refute {:dbg_wx_mon, :init, 3} in BannedCalls.banned_mfas()
+    assert :dbg_wx_mon in DebuggerPendingOwnership.baseline_modules()
+    assert DebuggerPendingOwnership.owners()[:dbg_wx_mon] == "01.1.1.3.1.2"
+  end
+
+  @tag :tmp_dir
+  @tag :saved_settings_source
+  test "installed successor rows resolve and source corruption controls reject", %{
+    tmp_dir: tmp_dir
+  } do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    assert SweepEvidence.archive_sha256() ==
+             "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894"
+
+    lane = evidence.lane.name
+
+    expected_paths =
+      for module <- ~w(dbg_icmd dbg_iserver dbg_wx_settings debugger),
+          do: "#{lane}/debugger/src/#{module}.erl"
+
+    rows = Enum.filter(evidence.manifest["files"], &(&1["path"] in expected_paths))
+    assert Enum.map(rows, & &1["path"]) |> Enum.sort() == Enum.sort(expected_paths)
+
+    archive_evidence = %{
+      evidence
+      | installed:
+          Map.put(
+            evidence.installed,
+            "debugger",
+            Path.join(evidence.archive_root, "missing-debugger")
+          )
+    }
+
+    for row <- rows do
+      citation = row["source_path"] <> ":1"
+      assert SweepEvidence.resolve!(archive_evidence, citation).sha256 == row["sha256"]
+    end
+
+    settings_row = Enum.find(rows, &(&1["source_path"] == "debugger/src/dbg_wx_settings.erl"))
+    settings_citation = settings_row["source_path"] <> ":1"
+
+    assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
+      SweepEvidence.resolve!(archive_evidence, settings_row["source_path"] <> ":999999")
+    end
+
+    outside_source = Path.join(tmp_dir, "outside-settings.erl")
+    File.write!(outside_source, "outside source")
+    installed_root = Path.join(tmp_dir, "untrusted-debugger")
+    symlink_path = Path.join(installed_root, "src/dbg_wx_settings.erl")
+    File.mkdir_p!(Path.dirname(symlink_path))
+    assert :ok = File.ln_s(outside_source, symlink_path)
+
+    escaped_evidence = %{
+      evidence
+      | installed: Map.put(evidence.installed, "debugger", installed_root)
+    }
+
+    assert_raise SweepEvidence.Error, ~r/source_escape/, fn ->
+      SweepEvidence.resolve!(escaped_evidence, settings_citation)
+    end
+
+    archive_source = Path.join(evidence.archive_root, settings_row["path"])
+    File.write!(archive_source, "corrupt source bytes")
+
+    assert_raise SweepEvidence.Error, ~r/source_digest/, fn ->
+      SweepEvidence.resolve!(archive_evidence, settings_citation)
+    end
+  end
+
+  @tag :saved_settings_audit
+  test "saved-settings dialog and replay have exact lane source and branch coverage", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    assert Code.ensure_loaded?(DebuggerSettings),
+           "the settings audit must provide source-backed records for the complete dialog and replay path"
+
+    record = DebuggerSettings.records(evidence.lane.name)
+    changed_universe = saved_settings_changed_family_universe(ctx.graph, record)
+    exclusion_matches = DebuggerSettings.exclusion_matches(changed_universe, @exclusions)
+
+    assert exclusion_matches == @saved_settings_expected_exclusion_matches,
+           "changed saved-settings exclusions differ from the measured exact set: #{inspect(exclusion_matches)}"
+
+    record = %{record | exclusion_matches: exclusion_matches}
+
+    DebuggerSettings.assert_audit!(
+      record,
+      ctx.graph,
+      BannedCalls.banned_mfas(),
+      evidence,
+      @exclusions
+    )
+
+    assert :ok ==
+             DebuggerSettings.assert_exclusion_witnesses!(
+               exclusion_matches,
+               ctx.graph,
+               BannedCalls.banned_mfas(),
+               BannedCalls.banned_names(),
+               @exclusions
+             )
+
+    monitor_front = {:dbg_wx_mon, :start, 2}
+
+    monitor_front_citation =
+      record.roots
+      |> Enum.find(&(&1.mfa == monitor_front))
+      |> Map.fetch!(:citations)
+      |> hd()
+
+    source_disposition = ["#{monitor_front_citation.path}:#{monitor_front_citation.line}"]
+
+    exact_overlap =
+      {{:mfa, monitor_front}, :redundant_tier_overlap, source_disposition}
+
+    overlap_matches =
+      DebuggerSettings.exclusion_matches(changed_universe, @exclusions ++ [exact_overlap])
+
+    [overlap_match] = overlap_matches
+    assert overlap_match.matched_mfas == [monitor_front]
+
+    assert_raise ExUnit.AssertionError, ~r/no individual active removal witness/, fn ->
+      DebuggerSettings.assert_exclusion_witnesses!(
+        overlap_matches,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        @exclusions ++ [exact_overlap]
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/incomplete matches/, fn ->
+      DebuggerSettings.assert_exclusion_witnesses!(
+        [%{overlap_match | matched_mfas: []}],
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        @exclusions ++ [exact_overlap]
+      )
+    end
+
+    blanket_overlap = {{:dbg_wx_mon, :_}, :blanket_overlap, source_disposition}
+
+    blanket_matches =
+      DebuggerSettings.exclusion_matches(changed_universe, [blanket_overlap])
+
+    assert_raise ExUnit.AssertionError, ~r/blanket or non-exact/, fn ->
+      DebuggerSettings.assert_exclusion_witnesses!(
+        blanket_matches,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        BannedCalls.banned_names(),
+        [blanket_overlap]
+      )
+    end
+
+    assert MapSet.new(DebuggerSettings.branch_ids()) ==
+             MapSet.new(Map.keys(record.branch_citations))
+
+    assert_invalid_audit = Function.capture(DebuggerSettings, :assert_audit!, 5)
+
+    assert_raise ExUnit.AssertionError, ~r/required audit fields/, fn ->
+      assert_invalid_audit.(
+        Map.new(),
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      )
+    end
+
+    branchless = %{record | branch_citations: %{}, source_branches: []}
+
+    assert_raise ExUnit.AssertionError, ~r/complete settings and replay branch map/, fn ->
+      DebuggerSettings.assert_audit!(
+        branchless,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      )
+    end
+
+    for omitted_branch <- [
+          :default_path,
+          :settings_read_error,
+          :conditional_callback_clause
+        ] do
+      incomplete_branches = %{
+        record
+        | branch_citations: Map.delete(record.branch_citations, omitted_branch),
+          source_branches: Enum.reject(record.source_branches, &(&1.id == omitted_branch))
+      }
+
+      assert_raise ExUnit.AssertionError, ~r/complete settings and replay branch map/, fn ->
+        DebuggerSettings.assert_audit!(
+          incomplete_branches,
+          ctx.graph,
+          BannedCalls.banned_mfas(),
+          evidence,
+          @exclusions
+        )
+      end
+    end
+
+    incomplete_functions = %{
+      record
+      | function_sources: tl(record.function_sources),
+        function_audit: tl(record.function_audit)
+    }
+
+    omitted_function_error =
+      assert_raise ExUnit.AssertionError, ~r/missing_source=/, fn ->
+        DebuggerSettings.assert_audit!(
+          incomplete_functions,
+          ctx.graph,
+          BannedCalls.banned_mfas(),
+          evidence,
+          @exclusions
+        )
+      end
+
+    assert omitted_function_error.message =~ "lane #{evidence.lane.name}"
+    assert omitted_function_error.message =~ "dbg_wx_settings:default_settings_dir/1"
+    assert omitted_function_error.message =~ "owner=01.1.1.3.1.1"
+    assert omitted_function_error.message =~ "caller-chain="
+    assert omitted_function_error.message =~ "remedy="
+
+    wrong_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+    wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, wrong_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph lane/, fn ->
+      DebuggerSettings.assert_audit!(
+        record,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        wrong_lane_evidence,
+        @exclusions
+      )
+    end
+
+    first_source = hd(record.function_sources)
+    [first_citation | rest_citations] = first_source.citation
+
+    wrong_source_record = %{
+      record
+      | function_sources: [
+          %{
+            first_source
+            | citation: [
+                %{first_citation | expected_text: "not the source line"} | rest_citations
+              ]
+          }
+          | tl(record.function_sources)
+        ]
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/restore matching branch text/, fn ->
+      DebuggerSettings.assert_audit!(
+        wrong_source_record,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      )
+    end
+
+    wrong_hash_record = %{
+      record
+      | function_sources: [
+          %{
+            first_source
+            | citation: [%{first_citation | sha256: String.duplicate("0", 64)} | rest_citations]
+          }
+          | tl(record.function_sources)
+        ]
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/restore exact lane SHA/, fn ->
+      DebuggerSettings.assert_audit!(
+        wrong_hash_record,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      )
+    end
+
+    wrong_line_record = %{
+      record
+      | function_sources: [
+          %{first_source | citation: [%{first_citation | line: 999_999} | rest_citations]}
+          | tl(record.function_sources)
+        ]
+    }
+
+    assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
+      DebuggerSettings.assert_audit!(
+        wrong_line_record,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence,
+        @exclusions
+      )
+    end
+  end
+
+  @tag :saved_settings_audit
+  test "deferred callback routes have distinct source branch identities" do
+    assert Code.ensure_loaded?(DebuggerSettings)
+    branch_ids = DebuggerSettings.branch_ids() |> MapSet.new()
+
+    required =
+      MapSet.new([
+        :auto_attach_init_event,
+        :auto_attach_break_event,
+        :auto_attach_exit_event,
+        :auto_attach_event_match_spawn,
+        :auto_attach_event_nonmatch_ignore,
+        :auto_attach_already_attached_ignore,
+        :conditional_callback_clause,
+        :condition_user_eval_suppressed,
+        :condition_null_true,
+        :condition_tuple_callback,
+        :condition_callback_exception_false,
+        :condition_action_disable,
+        :condition_action_delete
+      ])
+
+    assert MapSet.subset?(required, branch_ids),
+           "deferred callback source disposition is missing #{inspect(MapSet.to_list(MapSet.difference(required, branch_ids)))}"
+  end
+
+  @tag :saved_settings_ownership
+  test "saved-settings ownership resolves selected and remainder identities from the live lane",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    record = DebuggerSettings.records(ctx.graph.lane.name)
+    ownership = DebuggerSettings.assert_ownership!(ctx.graph, evidence, record)
+    control_names = DebuggerSettings.ownership_controls!(ctx.graph, evidence, record)
+
+    expected_controls = [
+      "missing-selected-module-original:rejected",
+      "missing-selected-module-observed:rejected",
+      "missing-remainder-module-original:rejected",
+      "missing-remainder-module-observed:rejected",
+      "missing-selected-root-original:rejected",
+      "missing-selected-root-observed:rejected",
+      "missing-remainder-root-original:rejected",
+      "missing-remainder-root-observed:rejected",
+      "duplicate-canonical-root:rejected",
+      "wrong-selected-owner:rejected",
+      "changed-canonical-chain:rejected",
+      "changed-current-reference:rejected",
+      "missing-overlap-occurrence:rejected",
+      "missing-source-branch:rejected",
+      "empty-settings-audit:rejected",
+      "changed-settings-source-digest:rejected",
+      "escaping-settings-citation:rejected",
+      "graph-new-settings-export:rejected",
+      "graph-new-debugger-root:rejected",
+      "graph-omitted-debugger-beam:rejected",
+      "graph-omitted-debugger-export:rejected",
+      "graph-omitted-active-baseline:rejected"
+    ]
+
+    assert Enum.sort(control_names) == Enum.sort(expected_controls)
+
+    if audit_path = System.get_env("FABLEBOOK_SETTINGS_AUDIT_OUT") do
+      File.write!(
+        audit_path,
+        JSON.encode!(%{
+          "lane" => ctx.graph.lane.name,
+          "receipt_sha256" => ownership.receipt_sha256,
+          "pending_observed_delta_count" => ownership.pending_observed_delta_count,
+          "observations" => ownership.observations
+        }) <> "\n"
+      )
+    end
+
+    owners = DebuggerPendingOwnership.owners()
+
+    assert MapSet.new(Map.values(owners)) == MapSet.new(["01.1.1.3.1.2"]),
+           "pending debugger modules must resolve to current remainder owner 01.1.1.3.1.2"
+
+    assert :ok = DebuggerPendingOwnership.assert_valid!(owners)
+    assert ownership.status == :verified
+    assert ownership.selected_module == :dbg_wx_settings
+    assert length(ownership.selected_roots) == 3
+    assert ownership.remainder_module_count == 20
+    assert ownership.remainder_root_count == if(ctx.graph.lane.name == "core", do: 233, else: 224)
+
+    module_app = Map.new(ctx.graph.ingested, &{&1.module_atom, &1.app})
+
+    active_debugger_modules =
+      ctx.graph.active_modules
+      |> Enum.filter(&(Map.get(module_app, &1) == "debugger"))
+      |> MapSet.new()
+
+    assert active_debugger_modules ==
+             MapSet.new(@debugger_baseline_active_modules ++ [:dbg_wx_settings]),
+           "the audited settings module must be the sole addition to the earlier three-module debugger seed"
+
+    pending_debugger_modules =
+      ctx.graph.pending_modules
+      |> Enum.filter(&(&1.app == "debugger"))
+      |> MapSet.new(& &1.module_atom)
+
+    assert MapSet.subset?(
+             MapSet.new([:dbg_wx_mon, :dbg_iserver, :dbg_icmd, :debugger]),
+             pending_debugger_modules
+           ),
+           "broad monitor, server, command, and debugger modules remain pending with 01.1.1.3.1.2"
+
+    selected_root_observations =
+      Enum.filter(ownership.observations, fn row ->
+        identity = row["identity"]
+
+        identity["module"] == "dbg_wx_mon" and
+          identity["function"] in ["start", "load_settings", "load_settings2"]
+      end)
+
+    assert length(selected_root_observations) == 6
+    assert ownership.pending_observed_delta_count > 0
+
+    new_root_observations =
+      Enum.filter(ownership.observations, fn row ->
+        row["identity"]["kind"] == "root" and is_nil(row["origin_record_sha256"])
+      end)
+
+    assert new_root_observations != []
+
+    assert Enum.all?(
+             new_root_observations,
+             &(&1["owner"] == "01.1.1.3.1.2" and &1["completion"] == "pending")
+           )
+
+    assert Enum.count(
+             ownership.observations,
+             &(&1["completion"] == "selected_settings_functions_exports_and_source_verified")
+           ) == 2
+  end
+
+  @tag :saved_settings_receipt
+  test "saved-settings receipt acceptance binds the live graph to current source and ownership",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    records = DebuggerSettings.records(ctx.graph.lane.name)
+    receipt_lines = ctx.graph.receipt_lines
+
+    assert function_exported?(DebuggerSettings, :assert_receipt!, 4),
+           "expected a public validator for the current lane's installed receipt"
+
+    ownership =
+      DebuggerSettings.assert_receipt!(ctx.graph, evidence, records, receipt_lines)
+
+    assert ownership.status == :verified
+    assert ownership.lane == ctx.graph.lane.name
+
+    assert ownership.receipt_sha256 ==
+             InstalledOtp.verify_receipt_lines!(receipt_lines).sha256
+
+    assert ownership.selected_module == :dbg_wx_settings
+    assert ownership.remainder_module_count == 20
+
+    assert_raise InstalledOtp.Error, fn ->
+      DebuggerSettings.assert_receipt!(ctx.graph, evidence, records, [])
+    end
+
+    other_lane = if ctx.graph.lane.name == "core", do: "floor", else: "core"
+
+    wrong_lane =
+      rewrite_settings_receipt(receipt_lines, fn [meta | rest] ->
+        [Map.put(meta, "lane", other_lane) | rest]
+      end)
+
+    assert_raise InstalledOtp.Error, fn ->
+      DebuggerSettings.assert_receipt!(ctx.graph, evidence, records, wrong_lane)
+    end
+
+    wrong_lock =
+      rewrite_settings_receipt(receipt_lines, fn [meta | rest] ->
+        [Map.put(meta, "lock_sha256", String.duplicate("0", 64)) | rest]
+      end)
+
+    assert_raise InstalledOtp.Error, fn ->
+      DebuggerSettings.assert_receipt!(ctx.graph, evidence, records, wrong_lock)
+    end
+
+    wrong_source_records = Map.put(records, :source_sha256, String.duplicate("0", 64))
+
+    assert_raise ExUnit.AssertionError, fn ->
+      DebuggerSettings.assert_receipt!(
+        ctx.graph,
+        evidence,
+        wrong_source_records,
+        receipt_lines
+      )
+    end
+  end
+
+  defp rewrite_settings_receipt(lines, transform) do
+    marker = "FABLEBOOK_OTP_INVENTORY_V2 "
+
+    body =
+      lines
+      |> Enum.drop(-1)
+      |> Enum.map(fn line ->
+        {:ok, row} = JSON.decode(String.replace_prefix(line, marker, ""))
+        row
+      end)
+      |> transform.()
+
+    encoded = Enum.map(body, &(marker <> JSON.encode!(&1)))
+
+    digest =
+      :crypto.hash(:sha256, Enum.join(encoded, "\n") <> "\n") |> Base.encode16(case: :lower)
+
+    {:ok, footer} = JSON.decode(String.replace_prefix(List.last(lines), marker, ""))
+
+    encoded ++ [marker <> JSON.encode!(Map.put(footer, "sha256", digest))]
+  end
+
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
@@ -3782,7 +4332,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     corrupt_evidence =
       SweepEvidence.load_archive!(
         Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__),
-        "a31f1d1b19e1c8df543f4844af9d47b7ca7a79985b42bd78186f56c04da06342"
+        SweepEvidence.archive_sha256()
       )
       |> Map.merge(%{lane: evidence.lane, lock_sha256: evidence.lock_sha256})
 
@@ -4753,6 +5303,35 @@ defmodule Fablebook.Contract.TierSweepTest do
     historical_exported = MapSet.new(xref_graph.historical_exports)
     full_exported = MapSet.new(xref_graph.full_exports)
     module_app = Map.new(xref_graph.ingested, &{&1.module_atom, &1.app})
+    no_debug = no_debug_otp ++ no_debug_other
+
+    historical_reached_graph = %{
+      reverse: reverse(historical_edges),
+      exported: historical_exported
+    }
+
+    full_reached_graph = %{reverse: full_reverse, exported: full_exported}
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    {historical_reached, _historical_parent} = reach(historical_reached_graph, tier, names)
+    {full_reached, full_parent} = reach(full_reached_graph, tier, names)
+
+    settings_audit_graph = %{
+      lane: evidence.lane,
+      inspected: inspected,
+      full_edges: full_edges,
+      full_exported: full_exported,
+      full_reached: full_reached
+    }
+
+    :ok =
+      DebuggerSettings.assert_audit!(
+        DebuggerSettings.records(evidence.lane.name),
+        settings_audit_graph,
+        tier,
+        evidence,
+        @exclusions
+      )
 
     active_modules =
       Enum.reduce(
@@ -4760,6 +5339,7 @@ defmodule Fablebook.Contract.TierSweepTest do
         MapSet.put(historical_modules, :ct_make),
         &MapSet.put(&2, &1)
       )
+      |> MapSet.put(:dbg_wx_settings)
 
     active_ingested =
       Enum.filter(xref_graph.ingested, &MapSet.member?(active_modules, &1.module_atom))
@@ -4777,20 +5357,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     active_reverse = reverse(active_edges)
     active_forward = forward(active_edges)
     active_exported = MapSet.new(active_exported)
-    no_debug = no_debug_otp ++ no_debug_other
-
-    historical_reached_graph = %{
-      reverse: reverse(historical_edges),
-      exported: historical_exported
-    }
-
-    full_reached_graph = %{reverse: full_reverse, exported: full_exported}
     active_reached_graph = %{reverse: active_reverse, exported: active_exported}
-    tier = BannedCalls.banned_mfas()
-    names = BannedCalls.banned_names()
-    {historical_reached, _historical_parent} = reach(historical_reached_graph, tier, names)
     {active_reached, _active_parent} = reach(active_reached_graph, tier, names)
-    {full_reached, full_parent} = reach(full_reached_graph, tier, names)
 
     assert_active_sets_preserved!(
       %{reached: historical_reached, exported: historical_exported, edges: historical_edges},
@@ -4949,6 +5517,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       full_reached: full_reached,
       pending_mfas: pending_mfas,
       pending_modules: pending_modules,
+      boundary_records: boundary_records,
       active_expansion_failures: active_expansion_failures,
       receipt_lines: receipt_lines,
       lane: evidence.lane,
@@ -5522,6 +6091,39 @@ defmodule Fablebook.Contract.TierSweepTest do
     |> MapSet.union(MapSet.new(@debugger_explicit_roots))
     |> MapSet.union(tier_roots)
     |> MapSet.union(exclusion_roots)
+  end
+
+  defp saved_settings_changed_family_universe(graph, record) do
+    inspections =
+      Enum.filter(graph.inspected, &(&1.module_atom in @saved_settings_changed_modules))
+
+    inspected_modules = MapSet.new(inspections, & &1.module_atom)
+
+    assert inspected_modules == MapSet.new(@saved_settings_changed_modules),
+           "lane #{graph.lane.name} must inspect every source module in the saved-settings callback family"
+
+    scanned_functions =
+      Enum.reduce(inspections, MapSet.new(), fn inspection, functions ->
+        assert {:ok, scan} = BeamWalker.scan(inspection.path)
+        assert scan.module == inspection.module_atom
+        MapSet.union(functions, MapSet.new(scan.function_mfas))
+      end)
+
+    graph_candidates =
+      graph
+      |> debugger_graph_candidates()
+      |> Enum.filter(fn {module, _function, _arity} ->
+        module in @saved_settings_changed_modules
+      end)
+      |> MapSet.new()
+
+    source_only_obligations = MapSet.new(record.source_branches, & &1.mfa)
+
+    scanned_functions
+    |> MapSet.union(graph_candidates)
+    |> MapSet.union(source_only_obligations)
+    |> MapSet.to_list()
+    |> Enum.sort()
   end
 
   defp debugger_family_mfa?({module, _function, _arity}),
@@ -6791,16 +7393,16 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     assert :ok = DebuggerPendingOwnership.assert_valid!(owners)
 
     assert_raise ExUnit.AssertionError,
-                 ~r/dbg_ieval expected=01\.1\.1\.3\.1 actual=<missing>/,
+                 ~r/dbg_ieval expected=01\.1\.1\.3\.1\.2 actual=<missing>/,
                  fn ->
                    DebuggerPendingOwnership.assert_valid!(Map.delete(owners, :dbg_ieval))
                  end
 
     assert_raise ExUnit.AssertionError,
-                 ~r/dbg_ieval expected=01\.1\.1\.3\.1 actual=01\.1\.1\.3\.2/,
+                 ~r/dbg_ieval expected=01\.1\.1\.3\.1\.2 actual=01\.1\.1\.3\.1\.1/,
                  fn ->
                    DebuggerPendingOwnership.assert_valid!(
-                     Map.put(owners, :dbg_ieval, "01.1.1.3.2")
+                     Map.put(owners, :dbg_ieval, "01.1.1.3.1.1")
                    )
                  end
   end
