@@ -4009,6 +4009,14 @@ defmodule Fablebook.Contract.TierSweepTest do
            "deferred callback source disposition is missing #{inspect(MapSet.to_list(MapSet.difference(required, branch_ids)))}"
   end
 
+  @tag :saved_settings_ownership
+  test "saved-settings pending module owners resolve through the adopted delegation" do
+    owners = DebuggerPendingOwnership.owners()
+
+    assert MapSet.new(Map.values(owners)) == MapSet.new(["01.1.1.3.1.2"]),
+           "pending debugger modules must resolve to current remainder owner 01.1.1.3.1.2"
+  end
+
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
