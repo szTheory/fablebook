@@ -3675,6 +3675,70 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert DebuggerPendingOwnership.owners()[:dbg_wx_mon] == "01.1.1.3.1"
   end
 
+  @tag :tmp_dir
+  @tag :saved_settings_source
+  test "installed successor rows resolve and source corruption controls reject", %{
+    tmp_dir: tmp_dir
+  } do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    assert SweepEvidence.archive_sha256() ==
+             "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894"
+
+    lane = evidence.lane.name
+    expected_paths =
+      for module <- ~w(dbg_icmd dbg_iserver dbg_wx_settings debugger),
+          do: "#{lane}/debugger/src/#{module}.erl"
+
+    rows = Enum.filter(evidence.manifest["files"], &(&1["path"] in expected_paths))
+    assert Enum.map(rows, & &1["path"]) |> Enum.sort() == Enum.sort(expected_paths)
+
+    archive_evidence = %{
+      evidence
+      | installed:
+          Map.put(
+            evidence.installed,
+            "debugger",
+            Path.join(evidence.archive_root, "missing-debugger")
+          )
+    }
+
+    for row <- rows do
+      citation = row["source_path"] <> ":1"
+      assert SweepEvidence.resolve!(archive_evidence, citation).sha256 == row["sha256"]
+    end
+
+    settings_row = Enum.find(rows, &(&1["source_path"] == "debugger/src/dbg_wx_settings.erl"))
+    settings_citation = settings_row["source_path"] <> ":1"
+
+    assert_raise SweepEvidence.Error, ~r/source_line/, fn ->
+      SweepEvidence.resolve!(archive_evidence, settings_row["source_path"] <> ":999999")
+    end
+
+    outside_source = Path.join(tmp_dir, "outside-settings.erl")
+    File.write!(outside_source, "outside source")
+    installed_root = Path.join(tmp_dir, "untrusted-debugger")
+    symlink_path = Path.join(installed_root, "src/dbg_wx_settings.erl")
+    File.mkdir_p!(Path.dirname(symlink_path))
+    assert :ok = File.ln_s(outside_source, symlink_path)
+
+    escaped_evidence = %{
+      evidence
+      | installed: Map.put(evidence.installed, "debugger", installed_root)
+    }
+
+    assert_raise SweepEvidence.Error, ~r/source_escape/, fn ->
+      SweepEvidence.resolve!(escaped_evidence, settings_citation)
+    end
+
+    archive_source = Path.join(evidence.archive_root, settings_row["path"])
+    File.write!(archive_source, "corrupt source bytes")
+
+    assert_raise SweepEvidence.Error, ~r/source_digest/, fn ->
+      SweepEvidence.resolve!(archive_evidence, settings_citation)
+    end
+  end
+
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
