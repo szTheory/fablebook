@@ -4119,6 +4119,78 @@ defmodule Fablebook.Contract.TierSweepTest do
            ) == 2
   end
 
+  @tag :saved_settings_receipt
+  test "saved-settings receipt acceptance binds the live graph to current source and ownership",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    records = DebuggerSettings.records(ctx.graph.lane.name)
+    receipt_lines = ctx.graph.receipt_lines
+
+    assert function_exported?(DebuggerSettings, :assert_receipt!, 4),
+           "expected a public validator for the current lane's installed receipt"
+
+    ownership =
+      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, records, receipt_lines])
+
+    assert ownership.status == :verified
+    assert ownership.lane == ctx.graph.lane.name
+    assert ownership.receipt_sha256 ==
+             InstalledOtp.verify_receipt_lines!(receipt_lines).sha256
+    assert ownership.selected_module == :dbg_wx_settings
+    assert ownership.remainder_module_count == 20
+
+    assert_raise InstalledOtp.Error, fn ->
+      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, records, []])
+    end
+
+    other_lane = if ctx.graph.lane.name == "core", do: "floor", else: "core"
+
+    wrong_lane =
+      rewrite_settings_receipt(receipt_lines, fn [meta | rest] ->
+        [Map.put(meta, "lane", other_lane) | rest]
+      end)
+
+    assert_raise InstalledOtp.Error, fn ->
+      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, records, wrong_lane])
+    end
+
+    wrong_lock =
+      rewrite_settings_receipt(receipt_lines, fn [meta | rest] ->
+        [Map.put(meta, "lock_sha256", String.duplicate("0", 64)) | rest]
+      end)
+
+    assert_raise InstalledOtp.Error, fn ->
+      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, records, wrong_lock])
+    end
+
+    wrong_source_records = Map.put(records, :source_sha256, String.duplicate("0", 64))
+
+    assert_raise ExUnit.AssertionError, fn ->
+      apply(DebuggerSettings, :assert_receipt!, [ctx.graph, evidence, wrong_source_records, receipt_lines])
+    end
+  end
+
+  defp rewrite_settings_receipt(lines, transform) do
+    marker = "FABLEBOOK_OTP_INVENTORY_V2 "
+
+    body =
+      lines
+      |> Enum.drop(-1)
+      |> Enum.map(fn line ->
+        {:ok, row} = JSON.decode(String.replace_prefix(line, marker, ""))
+        row
+      end)
+      |> transform.()
+
+    encoded = Enum.map(body, &(marker <> JSON.encode!(&1)))
+    digest = :crypto.hash(:sha256, Enum.join(encoded, "\n") <> "\n") |> Base.encode16(case: :lower)
+    {:ok, footer} = JSON.decode(String.replace_prefix(List.last(lines), marker, ""))
+
+    encoded ++ [marker <> JSON.encode!(Map.put(footer, "sha256", digest))]
+  end
+
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
