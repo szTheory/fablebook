@@ -348,13 +348,23 @@ defmodule Fablebook.Contract.TierSweepTest do
     %{
       mfa: {:ct_make, :all, 0},
       source_group: :all0,
-      source_groups: [:all0, :emake_read, :options, :noload, :process, :compile, :recompile],
+      source_groups: [
+        :all0,
+        :all1,
+        :emake_read,
+        :options,
+        :noload,
+        :process,
+        :compile,
+        :recompile
+      ],
       caller_input: :current_directory_emakefile_and_erl_sources,
       defaults: :fixed_empty_options,
       option_paths: [:noload],
       trace: [
         {:ct_make, :all, 0},
         {:ct_make, :all, 1},
+        {:ct_make, :sort_options, 3},
         {:ct_make, :read_emakefile, 2},
         {:file, :consult, 1},
         {:ct_make, :transform, 4},
@@ -371,6 +381,11 @@ defmodule Fablebook.Contract.TierSweepTest do
         {:ct_make, :do_recompile, 4},
         {:compile, :file, 2},
         {:ct_make, :maybe_load, 3}
+      ],
+      trace_call_sites: [
+        {{:ct_make, :all, 1}, "all([])."},
+        {{:ct_make, :all, 1}, "all(Options) ->"},
+        {{:ct_make, :sort_options, 3}, "sort_options(Options,[],[])"}
       ],
       verdict: :default_compiles_current_directory_sources_without_loading,
       fixtures: [:direct, :capture, :apply, :generated_mfa_probe]
@@ -428,6 +443,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       trace: [
         {:ct_make, :files, 1},
         {:ct_make, :files, 2},
+        {:ct_make, :sort_options, 3},
         {:ct_make, :get_opts_from_emakefile, 3},
         {:file, :consult, 1},
         {:ct_make, :transform, 4},
@@ -445,6 +461,11 @@ defmodule Fablebook.Contract.TierSweepTest do
         {:ct_make, :do_recompile, 4},
         {:compile, :file, 2},
         {:ct_make, :maybe_load, 3}
+      ],
+      trace_call_sites: [
+        {{:ct_make, :files, 2}, "files(Fs, [])."},
+        {{:ct_make, :files, 2}, "files(Fs0, Options) ->"},
+        {{:ct_make, :sort_options, 3}, "sort_options(Options,[],[])"}
       ],
       verdict: :default_compiles_caller_file_list_without_loading,
       fixtures: [:direct, :capture, :apply, :generated_mfa_probe]
@@ -4330,6 +4351,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
       expected_citations = Enum.flat_map(spec.source_groups, &Map.fetch!(lane_source.groups, &1))
       assert record.citations == expected_citations
+      assert_ct_make_trace_call_sites!(spec, record, mfa)
 
       for {citation, expected_source} <- record.citations do
         resolved = SweepEvidence.resolve!(evidence, citation)
@@ -4342,6 +4364,18 @@ defmodule Fablebook.Contract.TierSweepTest do
 
       assert mfa in undisposed(graph, tier_without_front, BannedCalls.banned_names(), exclusions),
              "removing only #{inspect(mfa)} must expose that previously covered front"
+    end
+  end
+
+  defp assert_ct_make_trace_call_sites!(spec, record, mfa) do
+    for {target_mfa, expected_callsite} <- Map.get(spec, :trace_call_sites, []) do
+      assert target_mfa in record.trace,
+             "#{inspect(target_mfa)} is missing from the trace for #{inspect(mfa)}"
+
+      assert Enum.any?(record.citations, fn {_citation, source_line} ->
+               String.contains?(source_line, expected_callsite)
+             end),
+             "#{inspect(mfa)} lacks an exact source citation for #{inspect(target_mfa)}"
     end
   end
 
