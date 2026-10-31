@@ -1,0 +1,87 @@
+{
+  "base_bytes": 2481736,
+  "base_sha256": "a31f1d1b19e1c8df543f4844af9d47b7ca7a79985b42bd78186f56c04da06342",
+  "candidate_bytes": 2502649,
+  "candidate_sha256": "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894",
+  "compressed_delta_bytes": 20913,
+  "ledger_sha256": "bd0796639c7ed76a2e312153e7f4a7e9224c4a8ecec7326475aecc55c275521d",
+  "mappings": [
+    {
+      "bytes": 15808,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_icmd.erl",
+      "sha256": "5630b07823f0531d11b5415977c273b83a0176b18b985101c95afdc107d8431a",
+      "source_path": "debugger/src/dbg_icmd.erl",
+      "status": "present",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_icmd.erl"
+    },
+    {
+      "bytes": 18482,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_iserver.erl",
+      "sha256": "3dde037e86dc9ba93d6bb8438f4fd38e062dfbf76aea6ef4d440c2162493728f",
+      "source_path": "debugger/src/dbg_iserver.erl",
+      "status": "present",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_iserver.erl"
+    },
+    {
+      "bytes": 4283,
+      "lane": "core",
+      "path": "core/debugger/src/dbg_wx_settings.erl",
+      "sha256": "0b92d64a6b071d7859ba23213b5e32110aa8ca3b68388c181a2be02f2f146f8e",
+      "source_path": "debugger/src/dbg_wx_settings.erl",
+      "status": "present",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/dbg_wx_settings.erl"
+    },
+    {
+      "bytes": 4577,
+      "lane": "core",
+      "path": "core/debugger/src/debugger.erl",
+      "sha256": "be7a485f6ae1edd43b7e5783804a5d8629a2ff4d9ae9f64a761df0b1cd036e26",
+      "source_path": "debugger/src/debugger.erl",
+      "status": "present",
+      "url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/debugger/src/debugger.erl"
+    },
+    {
+      "bytes": 15769,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_icmd.erl",
+      "sha256": "cd6d034c796c98ed3b3ce71048bef83aea8b25b612e227a02c2af6301a0d326e",
+      "source_path": "debugger/src/dbg_icmd.erl",
+      "status": "present",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_icmd.erl"
+    },
+    {
+      "bytes": 18443,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_iserver.erl",
+      "sha256": "04a9268e631c8a53fcb9a48821a44cddce07072016550eecaf43ef0734ec3a02",
+      "source_path": "debugger/src/dbg_iserver.erl",
+      "status": "present",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_iserver.erl"
+    },
+    {
+      "bytes": 4244,
+      "lane": "floor",
+      "path": "floor/debugger/src/dbg_wx_settings.erl",
+      "sha256": "1dc9b23f3056a060fdd505d42412550332db052bfdfdfc0005cf82662dcaff3b",
+      "source_path": "debugger/src/dbg_wx_settings.erl",
+      "status": "present",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/dbg_wx_settings.erl"
+    },
+    {
+      "bytes": 4538,
+      "lane": "floor",
+      "path": "floor/debugger/src/debugger.erl",
+      "sha256": "d2c7afca169c6756ce88a528e3d2a466c3a4bf850b006937e0470a6720b30123",
+      "source_path": "debugger/src/debugger.erl",
+      "status": "present",
+      "url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/debugger/src/debugger.erl"
+    }
+  ],
+  "new_raw_source_bytes": 86144,
+  "no_downloads": true,
+  "status": "prepared-awaiting-owner-source-decision",
+  "unchanged_file_members": 248,
+  "unchanged_source_rows": 251
+}
