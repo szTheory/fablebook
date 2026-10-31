@@ -1002,7 +1002,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       {"missing-source-branch",
        fn rows ->
          Enum.reject(rows, &(&1["t"] == "source_branch" and &1["lane"] == evidence.lane.name))
-       end, "source_branch"}
+       end, "source-branch"}
     ]
 
     Enum.map(controls, fn {name, mutate, expected} ->

@@ -4015,6 +4015,34 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     record = DebuggerSettings.records(ctx.graph.lane.name)
     ownership = DebuggerSettings.assert_ownership!(ctx.graph, evidence, record)
+    control_names = DebuggerSettings.ownership_controls!(ctx.graph, evidence, record)
+
+    expected_controls = [
+      "missing-selected-module-original:rejected",
+      "missing-selected-module-observed:rejected",
+      "missing-remainder-module-original:rejected",
+      "missing-remainder-module-observed:rejected",
+      "missing-selected-root-original:rejected",
+      "missing-selected-root-observed:rejected",
+      "missing-remainder-root-original:rejected",
+      "missing-remainder-root-observed:rejected",
+      "duplicate-canonical-root:rejected",
+      "wrong-selected-owner:rejected",
+      "changed-canonical-chain:rejected",
+      "changed-current-reference:rejected",
+      "missing-overlap-occurrence:rejected",
+      "missing-source-branch:rejected",
+      "empty-settings-audit:rejected",
+      "changed-settings-source-digest:rejected",
+      "escaping-settings-citation:rejected",
+      "graph-new-settings-export:rejected",
+      "graph-new-debugger-root:rejected",
+      "graph-omitted-debugger-beam:rejected",
+      "graph-omitted-debugger-export:rejected",
+      "graph-omitted-active-baseline:rejected"
+    ]
+
+    assert Enum.sort(control_names) == Enum.sort(expected_controls)
 
     if audit_path = System.get_env("FABLEBOOK_SETTINGS_AUDIT_OUT") do
       File.write!(
