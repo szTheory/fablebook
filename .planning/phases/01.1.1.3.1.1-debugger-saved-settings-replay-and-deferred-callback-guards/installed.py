@@ -87,11 +87,12 @@ SELECTED_ROOTS = {
 }
 SELECTED_MODULE = "dbg_wx_settings"
 OBSERVED_REQUIRED_CONTROLS = (
-    "incomplete-receipt", "wrong-head", "wrong-run", "wrong-runtime",
+    "incomplete-receipt", "missing-required-check", "wrong-head", "wrong-run", "wrong-runtime",
     "wrong-lock", "wrong-source", "missing-original-assignment",
     "missing-observed-assignment", "missing-completion-history", "changed-chain",
     "active-subset-loss", "wrong-owner", "new-unowned-identity",
     "historical-input-is-not-current-ci", "parent-owner-preserved",
+    "unrelated-adopted-app-excluded", "missing-adopted-debugger-assignment",
 )
 EXPECTED_MAPPING_PATHS = {
     f"{lane}/debugger/src/{module}.erl"
@@ -1389,6 +1390,16 @@ def identity_key(row: dict) -> tuple:
             row.get("function"), row.get("arity"))
 
 
+def assert_adopted_debugger_assignments(adopted: list[dict], lane: str, by_key: dict[tuple, dict]) -> None:
+    for prior in adopted:
+        if (prior.get("lane") != lane or prior.get("t") not in {"module", "root"}
+                or prior.get("app") != "debugger"
+                or prior.get("owner") not in {SELECTED_OWNER, REMAINDER_OWNER}):
+            continue
+        key = identity_key(prior)
+        reject(key in by_key, "missing-current-assignment", {"lane": lane, "identity": key})
+
+
 def source_for_settings(lane: str, ownership) -> tuple[bytes, str]:
     files = archive_files(read_bytes(ARCHIVE, "successor-unavailable"), "selected-settings-source")
     name = f"{lane}/debugger/src/{SELECTED_MODULE}.erl"
@@ -1466,13 +1477,7 @@ def fresh_namespace(ownership, adopt, receipt_paths: dict[str, Path], receipt_su
             current_assignments.append(child)
 
         by_key = {identity_key(row["record"]): row for row in current_assignments}
-        for prior in adopted:
-            if prior.get("lane") != lane or prior.get("t") not in {"module", "root"}:
-                continue
-            if prior.get("owner") not in {SELECTED_OWNER, REMAINDER_OWNER}:
-                continue
-            key = identity_key(prior)
-            reject(key in by_key, "missing-current-assignment", {"lane": lane, "identity": key})
+        assert_adopted_debugger_assignments(adopted, lane, by_key)
 
         selected_modules = [row for row in current_assignments
                             if row["identity"].get("kind") == "module" and row["identity"].get("module") == SELECTED_MODULE]
@@ -1527,7 +1532,7 @@ def observed_meta(pr: dict, run: dict, jobs: dict, receipt_summaries: dict,
                          "url": jobs[lane].get("url") or run["url"].rstrip("/") + "/job/" + str(jobs[lane]["databaseId"]),
                          "conclusion": jobs[lane]["conclusion"]}
                  for lane in ("core", "floor")},
-        "checks": sorted(REQUIRED_CI_CHECKS),
+        "checks": sorted(ownership.REQUIRED_CI_CHECKS),
         "runtimes": SUPPORTED_RUNTIMES, "locks": lock_digests_from_archive(),
         "source_archive_sha256": SUCCESSOR_SHA256,
         "authority_sha256": sha256(adoption_bytes), "historical_sha256": sha256(parent_bytes),
@@ -1550,13 +1555,15 @@ def history_projection_local(record: dict | None) -> dict | None:
     return {field: copy.deepcopy(record[field]) for field in fields if field in record}
 
 
-def validate_observed_records(rows: list[dict], expected_history: list[dict], expected_head: str = "a" * 40,
-                              expected_run: str = "12345") -> None:
+def validate_observed_records(rows: list[dict], expected_history: list[dict], required_checks: set[str],
+                              expected_head: str = "a" * 40, expected_run: str = "12345") -> None:
     reject(len(rows) > len(expected_history) and rows[0].get("t") == "fresh_meta",
            "observed-format", "missing metadata or namespace")
     meta = rows[0]
     reject(meta.get("schema") == OBSERVED_SCHEMA and meta.get("current_ci_provenance") is True,
            "observed-meta", meta)
+    reject(isinstance(meta.get("checks"), list) and meta["checks"] == sorted(required_checks),
+           "observed-required-checks", meta.get("checks"))
     reject(meta.get("artifact_head") is None and "workspace-evidence-for-tested-code-head" in meta.get("artifact_relationship", ""),
            "observed-artifact-relationship", meta.get("artifact_relationship"))
     reject(meta.get("tested_head") == expected_head and GIT_SHA_RE.fullmatch(meta.get("tested_head", "")) is not None,
@@ -1639,11 +1646,14 @@ def self_test_observed() -> dict:
     parent_rows = parent_unadopted_rows(ownership, adopt)
     history = parent_rows + adopted
     head, run_id = "a" * 40, "12345"
-    rows = [{"t": "fresh_meta", "schema": OBSERVED_SCHEMA, "current_ci_provenance": True,
-             "tested_head": head, "ci_run_id": run_id, "source_archive_sha256": SUCCESSOR_SHA256,
-             "locks": lock_digests_from_archive(), "runtimes": SUPPORTED_RUNTIMES,
-             "review_passes": 1, "artifact_head": None,
-             "artifact_relationship": "workspace-evidence-for-tested-code-head; committing these bytes changes the certified SHA"}]
+    pr = {"number": 31, "url": "https://github.com/szTheory/fablebook/pull/31", "tested_head": head}
+    run = {"databaseId": int(run_id), "url": "https://github.com/szTheory/fablebook/actions/runs/12345"}
+    jobs = {lane: {"name": lane, "databaseId": index, "conclusion": "success"}
+            for lane, index in (("core", 101), ("floor", 102))}
+    meta = observed_meta(pr, run, jobs, {"core": {}, "floor": {}}, ownership, adopt, 1)
+    reject(meta["checks"] == sorted(ownership.REQUIRED_CI_CHECKS),
+           "observed-required-check-fixture", meta["checks"])
+    rows = [meta]
     rows.extend(copy.deepcopy(history))
     for lane in ("core", "floor"):
         rows.append({"t": "fresh_lane_receipt", "lane": lane, "footer_present": True,
@@ -1674,20 +1684,38 @@ def self_test_observed() -> dict:
                      "identity": {"kind": "module_completion", "lane": lane, "app": "debugger", "module": SELECTED_MODULE},
                      "owner": SELECTED_OWNER, "completion": "selected-family-source-and-guard-proved",
                      "source_sha256": source_sha})
-    validate_observed_records(rows, history, head, run_id)
+    validate_observed_records(rows, history, ownership.REQUIRED_CI_CHECKS, head, run_id)
 
     controls = {}
     def must_reject(name: str, mutate) -> None:
         altered = copy.deepcopy(rows)
         mutate(altered)
         try:
-            validate_observed_records(altered, history, head, run_id)
+            validate_observed_records(altered, history, ownership.REQUIRED_CI_CHECKS, head, run_id)
         except VerificationError:
             controls[name] = "rejected"
         else:
             raise VerificationError("observed-negative-control-accepted", name)
 
+    assignment_fixture = [
+        {"t": "root", "lane": "core", "app": "stdlib", "module": "escript",
+         "function": "debug", "arity": 3, "owner": REMAINDER_OWNER},
+        {"t": "module", "lane": "core", "app": "debugger", "module": SELECTED_MODULE,
+         "owner": SELECTED_OWNER},
+    ]
+    debugger_fixture_key = identity_key(assignment_fixture[1])
+    assert_adopted_debugger_assignments(assignment_fixture, "core", {debugger_fixture_key: {}})
+    controls["unrelated-adopted-app-excluded"] = "passed"
+    try:
+        assert_adopted_debugger_assignments(assignment_fixture, "core", {})
+    except VerificationError as error:
+        reject(error.reason == "missing-current-assignment", "observed-assignment-fixture", error.reason)
+        controls["missing-adopted-debugger-assignment"] = "rejected"
+    else:
+        raise VerificationError("observed-negative-control-accepted", "missing-adopted-debugger-assignment")
+
     current_start = 1 + len(history)
+    must_reject("missing-required-check", lambda r: r[0].update(checks=r[0]["checks"][:-1]))
     must_reject("wrong-head", lambda r: r[0].update(tested_head="b" * 40))
     must_reject("wrong-run", lambda r: r[0].update(ci_run_id="0"))
     must_reject("wrong-runtime", lambda r: r[0]["runtimes"].update(core={"elixir": "0", "otp": "0"}))
@@ -1775,7 +1803,8 @@ def observed_document(pr: dict, run: dict, jobs: dict, receipt_paths: dict[str, 
                                      pr["tested_head"], str(run["databaseId"]), pr["number"])
     history = parent_unadopted_rows(ownership, adopt) + adopt.materialize()
     document = [meta] + history + current
-    validate_observed_records(document, history, pr["tested_head"], str(run["databaseId"]))
+    validate_observed_records(document, history, ownership.REQUIRED_CI_CHECKS,
+                              pr["tested_head"], str(run["databaseId"]))
     return document
 
 
@@ -2077,7 +2106,7 @@ def collect_ci(red_capture_archive_path: str | None = None) -> dict:
         staged_observed = staging / GENERATION_ARTIFACTS["observed"]
         staged_document = parse_jsonl_gzip(staged_observed)
         expected_history = parent_unadopted_rows(ownership, adopt) + adopt.materialize()
-        validate_observed_records(staged_document, expected_history,
+        validate_observed_records(staged_document, expected_history, ownership.REQUIRED_CI_CHECKS,
                                   pr["tested_head"], str(run["databaseId"]))
         staged_delivery = json.loads((staging / GENERATION_ARTIFACTS["delivery"]).read_text())
         reject(staged_delivery == delivery, "staged-delivery-mismatch", str(staging))
