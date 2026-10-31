@@ -1254,8 +1254,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     for {form, body} <- [
           {:direct, "def probe(bytes), do: :dbg_istk.from_external({:stack, bytes})"},
           {:capture, "def probe, do: &:dbg_istk.from_external/1"},
-          {:apply,
-           "def probe(bytes), do: apply(:dbg_istk, :from_external, [{:stack, bytes}])"}
+          {:apply, "def probe(bytes), do: apply(:dbg_istk, :from_external, [{:stack, bytes}])"}
         ] do
       source = """
       defmodule Fablebook.GuardFixture.DebuggerStackDecoder#{Macro.camelize(to_string(form))} do
@@ -1268,6 +1267,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       [beam] = compile!([source_path], dir, true)
 
       assert {:ok, scan} = BeamWalker.scan(beam)
+
       assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
              "#{form} probe missed the exported decoder: #{inspect(hits(scan))}"
 
