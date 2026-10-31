@@ -1157,6 +1157,27 @@ defmodule Fablebook.Contract.BannedCallsTest do
     assert uncaught == [], "MFA-tier entries without a generated-probe hit: #{inspect(uncaught)}"
   end
 
+  @tag :tmp_dir
+  test "selected-file debugger front is caught by both guards without invocation", %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    source = """
+    defmodule Fablebook.GuardFixture.DebuggerSelectedFile do
+      def probe(server, window, options, state),
+        do: :dbg_wx_interpret.start(server, window, options, state)
+    end
+    """
+
+    source_path = Path.join(dir, "debugger_selected_file.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    assert {:mfa, {:dbg_wx_interpret, :start, 4}} in hits(scan)
+    assert credo_issues(source_path) != []
+  end
+
   test "the Credo check bans the same names and flags the source-level fixtures" do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
