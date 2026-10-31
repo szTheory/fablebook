@@ -281,6 +281,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:dbg_iserver, :handle_call, :_},
     {:dbg_iload, :load_mod, :_},
     {:dbg_wx_interpret, :start, 4},
+    {:dbg_istk, :from_external, 1},
     {:dbg_debugged, :eval, :_},
     {Mix.Tasks.Format, :formatter_for_file, :_},
     {Mix.Tasks.Help, :run, :_},
@@ -1267,9 +1268,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
       [beam] = compile!([source_path], dir, true)
 
       assert {:ok, scan} = BeamWalker.scan(beam)
-      assert {:mfa, mfa} in hits(scan), "#{form} probe missed the exported decoder"
+      assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "#{form} probe missed the exported decoder: #{inspect(hits(scan))}"
 
-      refute {:mfa, mfa} in hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+      refute Enum.any?(hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))), &mfa_hit?(&1, mfa)),
              "#{form} probe must depend on the individual decoder tier"
 
       assert credo_issues(source_path) != [], "Credo missed the #{form} decoder probe"
@@ -1297,7 +1299,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     assert credo_issues(source_path) != []
     assert {:ok, scan} = BeamWalker.scan(beam)
-    refute {:mfa, mfa} in hits(scan)
+    refute Enum.any?(hits(scan), &mfa_hit?(&1, mfa))
 
     benign = """
     defmodule Fablebook.GuardFixture.DebuggerStackEncoder do
