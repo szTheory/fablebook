@@ -63,6 +63,27 @@ defmodule Fablebook.Test.DebuggerSettings do
                                  :condition_process_dictionary_updated,
                                  :condition_break_p_called
                                ]
+  @interpreter_route_branch_ids [
+    :interpreter_eval_reentry,
+    :interpreter_eval_spawn_meta,
+    :interpreter_meta_initial_eval,
+    :interpreter_uninterpreted_top_apply,
+    :interpreter_uninterpreted_nested_apply,
+    :interpreter_external_function_lookup,
+    :interpreter_remote_call,
+    :interpreter_apply_fun,
+    :interpreter_apply_three,
+    :interpreter_safe_bif_dispatch,
+    :interpreter_debugged_ready_apply,
+    :interpreter_debugged_command_dispatch,
+    :interpreter_debugged_reply_apply,
+    :interpreter_debugged_reply_eval,
+    :interpreter_loader_worker,
+    :interpreter_loader_envelope_decode,
+    :interpreter_loader_abstract_decode,
+    :interpreter_load_package,
+    :interpreter_server_loader_call
+  ]
   @settings_module :dbg_wx_settings
   @monitor_module :dbg_wx_mon
   @settings_mfas [
@@ -87,6 +108,9 @@ defmodule Fablebook.Test.DebuggerSettings do
       iserver_sha256: "3dde037e86dc9ba93d6bb8438f4fd38e062dfbf76aea6ef4d440c2162493728f",
       int_sha256: "14b667aa97d23b3ead643eae3bf2acabbc804919935f978a04846b353cac7a39",
       icmd_sha256: "5630b07823f0531d11b5415977c273b83a0176b18b985101c95afdc107d8431a",
+      ieval_sha256: "60362d2aa47470b70a9264c5a4f7c5e60e8362f844e3ec4171cc3733d2ff31d1",
+      iload_sha256: "a2dd4ad09550a866e5cc16834c0f006a146a21c3abc983f72d8ed44dd1a4b250",
+      debugged_sha256: "f0ea4b069cacf931380bf814eba15457a5e1823bdd49e38966b59e689e157bda",
       settings_lines: %{load: 41, save: 45, open_win: 54, default_settings_dir: 79},
       monitor_lines: %{
         start: 76,
@@ -111,6 +135,9 @@ defmodule Fablebook.Test.DebuggerSettings do
       iserver_sha256: "04a9268e631c8a53fcb9a48821a44cddce07072016550eecaf43ef0734ec3a02",
       int_sha256: "913d32eaf82c21b9c9902e023f46dc88317ff729d66cc91078469d7c3b9b043c",
       icmd_sha256: "cd6d034c796c98ed3b3ce71048bef83aea8b25b612e227a02c2af6301a0d326e",
+      ieval_sha256: "393085c1fc6324687bc12b5184b5a501491f07c8f55dc293ee07774ea96d0b6a",
+      iload_sha256: "530955c6525821e0382d53375ce5750cb4fd290ce4c323dd38521538452dae03",
+      debugged_sha256: "6612e504e8180b783660fc6c5eb1f6a72b5bc3a1b75b27f0129e71c9cc8f00f2",
       settings_lines: %{load: 39, save: 43, open_win: 52, default_settings_dir: 77},
       monitor_lines: %{
         start: 72,
@@ -566,7 +593,83 @@ defmodule Fablebook.Test.DebuggerSettings do
      %{core: {124, "_Other ->"}, floor: {122, "_Other ->"}}}
   ]
 
-  @all_branch_specs @settings_branch_specs ++ @callback_branch_specs
+  @interpreter_branch_specs [
+    {:interpreter_eval_reentry, {:dbg_ieval, :eval, 3}, :existing_meta_reentry, :ieval,
+     %{core: {52, "re_entry, Debugged"}, floor: {50, "re_entry, Debugged"}}},
+    {:interpreter_eval_spawn_meta, {:dbg_ieval, :eval, 3}, :new_meta_for_uninterpreted_process,
+     :ieval, %{core: {55, "spawn(fun() ->"}, floor: {53, "spawn(fun() ->"}}},
+    {:interpreter_meta_initial_eval, {:dbg_ieval, :meta, 5}, :initial_mfa_evaluated, :ieval,
+     %{
+       core: {240, "eval_mfa(Debugged,M,F,As,Ieval)"},
+       floor: {238, "eval_mfa(Debugged,M,F,As,Ieval)"}
+     }},
+    {:interpreter_uninterpreted_top_apply, {:dbg_ieval, :do_eval_function, 6},
+     :top_level_uninterpreted_mfa_returned_for_apply, :ieval,
+     %{core: {477, "not_interpreted when Top"}, floor: {475, "not_interpreted when Top"}}},
+    {:interpreter_uninterpreted_nested_apply, {:dbg_ieval, :do_eval_function, 6},
+     :nested_uninterpreted_mfa_sent_to_debugged_process, :ieval,
+     %{core: {479, "not_interpreted ->"}, floor: {477, "not_interpreted ->"}}},
+    {:interpreter_external_function_lookup, {:dbg_ieval, :get_function, 4},
+     :external_export_lookup_or_not_interpreted, :ieval,
+     %{
+       core: {554, "dbg_idb:lookup(DbRef, {Mod,Name,Arity,true})"},
+       floor: {552, "dbg_idb:lookup(DbRef, {Mod,Name,Arity,true})"}
+     }},
+    {:interpreter_remote_call, {:dbg_ieval, :expr, 3}, :remote_module_function_dispatch, :ieval,
+     %{
+       core: {1064, "expr({call_remote,Line,M,F,As0,Lc}"},
+       floor: {945, "expr({call_remote,Line,M,F,As0,Lc}"}
+     }},
+    {:interpreter_apply_fun, {:dbg_ieval, :expr, 3}, :apply_fun_value_dispatch, :ieval,
+     %{
+       core: {1146, "expr({apply_fun,Line,Fun0,As0,Lc}"},
+       floor: {1027, "expr({apply_fun,Line,Fun0,As0,Lc}"}
+     }},
+    {:interpreter_apply_three, {:dbg_ieval, :expr, 3}, :apply_module_function_arguments, :ieval,
+     %{core: {1167, "expr({apply,Line,As0,Lc}"}, floor: {1048, "expr({apply,Line,As0,Lc}"}}},
+    {:interpreter_safe_bif_dispatch, {:dbg_ieval, :safe_bif, 5}, :safe_bif_module_function_apply,
+     :ieval, %{core: {1692, "try apply(M, F, As) of"}, floor: {1252, "try apply(M, F, As) of"}}},
+    {:interpreter_debugged_ready_apply, {:dbg_debugged, :msg_loop, 2}, :ready_dbg_apply_dispatch,
+     :debugged, %{core: {53, "apply(M, F, A)"}, floor: {51, "apply(M, F, A)"}}},
+    {:interpreter_debugged_command_dispatch, {:dbg_debugged, :msg_loop, 2},
+     :meta_command_reply_dispatch, :debugged,
+     %{
+       core: {76, "{sys, Meta, {command,Command}}"},
+       floor: {74, "{sys, Meta, {command,Command}}"}
+     }},
+    {:interpreter_debugged_reply_apply, {:dbg_debugged, :reply, 1}, :command_apply_dispatch,
+     :debugged, %{core: {94, "reply({apply,M,F,As})"}, floor: {92, "reply({apply,M,F,As})"}}},
+    {:interpreter_debugged_reply_eval, {:dbg_debugged, :reply, 1}, :command_expression_evaluation,
+     :debugged, %{core: {96, "reply({eval,Expr,Bs})"}, floor: {94, "reply({eval,Expr,Bs})"}}},
+    {:interpreter_loader_worker, {:dbg_iload, :load_mod, 4}, :linked_loader_worker, :iload,
+     %{
+       core: {52, "spawn_link(load_mod1(Mod, File, Binary, Db))"},
+       floor: {47, "spawn_link(load_mod1(Mod, File, Binary, Db))"}
+     }},
+    {:interpreter_loader_envelope_decode, {:dbg_iload, :store_module, 4},
+     :caller_envelope_term_decoded, :iload,
+     %{core: {73, "binary_to_term(Binary)"}, floor: {68, "binary_to_term(Binary)"}}},
+    {:interpreter_loader_abstract_decode, {:dbg_iload, :abstr, 1},
+     :binary_abstract_code_decoded_or_term_passthrough, :iload,
+     %{
+       core: {145, "abstr(Bin) when is_binary(Bin) -> binary_to_term(Bin)"},
+       floor: {128, "abstr(Bin) when is_binary(Bin) -> binary_to_term(Bin)"}
+     }},
+    {:interpreter_load_package, {:int, :load, 2}, :compiled_envelope_constructed_from_load_inputs,
+     :int,
+     %{
+       core: {872, "load({Mod, Src, Beam, BeamBin, Exp, Abst}, Dist)"},
+       floor: {868, "load({Mod, Src, Beam, BeamBin, Exp, Abst}, Dist)"}
+     }},
+    {:interpreter_server_loader_call, {:dbg_iserver, :handle_call, 3},
+     :server_calls_interpreter_loader, :iserver,
+     %{
+       core: {231, "dbg_iload:load_mod(Mod, Src, Bin, ModDb)"},
+       floor: {229, "dbg_iload:load_mod(Mod, Src, Bin, ModDb)"}
+     }}
+  ]
+
+  @all_branch_specs @settings_branch_specs ++ @callback_branch_specs ++ @interpreter_branch_specs
 
   def records(lane_name) when lane_name in ["core", "floor"] do
     lane = Map.fetch!(@lane_data, lane_name)
@@ -600,6 +703,30 @@ defmodule Fablebook.Test.DebuggerSettings do
           {:dbg_icmd, :cmd, 4},
           {:dbg_icmd, :break_p, 4},
           :source_only_dynamic_condition
+        ],
+        interpreter_eval: [
+          {:int, :eval, 3},
+          {:dbg_debugged, :eval, 3},
+          {:dbg_ieval, :eval, 3},
+          :existing_meta_reentry_or_new_meta_worker,
+          {:dbg_ieval, :meta, 5},
+          {:dbg_ieval, :eval_mfa, 5},
+          {:dbg_ieval, :do_eval_function, 6},
+          {:dbg_ieval, :get_function, 4}
+        ],
+        interpreter_commands: [
+          {:dbg_ieval, :debugged_cmd, 3},
+          {:dbg_debugged, :msg_loop, 2},
+          {:dbg_debugged, :handle_command, 1},
+          {:dbg_debugged, :reply, 1},
+          :dynamic_apply_or_expression_evaluation
+        ],
+        interpreter_load: [
+          {:int, :load, 2},
+          {:dbg_iserver, :handle_call, 3},
+          {:dbg_iload, :load_mod, 4},
+          {:dbg_iload, :store_module, 4},
+          {:dbg_iload, :abstr, 1}
         ]
       },
       auto_attach_trace: %{
@@ -1404,6 +1531,15 @@ defmodule Fablebook.Test.DebuggerSettings do
               |> Enum.map(&format_edge/1)
               |> Enum.sort()
 
+            incoming_edges =
+              graph.full_edges
+              |> Enum.filter(fn
+                {_caller, ^mfa} -> true
+                _unresolved_export_edge -> false
+              end)
+              |> Enum.map(&format_edge/1)
+              |> Enum.sort()
+
             relevant_chains =
               root_links
               |> Enum.filter(fn link ->
@@ -1436,6 +1572,7 @@ defmodule Fablebook.Test.DebuggerSettings do
                   "Exact clause patterns above preserve accepted inputs, defaults and terminal branches.",
               caller_input_origin: route_note.caller_input_origin,
               branch_trace: outgoing_edges,
+              incoming_edges: incoming_edges,
               branch_ids:
                 records.source_branches
                 |> Enum.filter(&(&1.mfa == mfa))
@@ -1457,7 +1594,7 @@ defmodule Fablebook.Test.DebuggerSettings do
               zero_hit_reason:
                 if(zero_hit,
                   do:
-                    "Installed source clauses above are retained despite no graph hit; absence from the graph is not treated as a benign disposition.",
+                    zero_hit_source_reason(mfa_name, clause_citations, incoming_edges, sink_facts),
                   else: nil
                 )
             }
@@ -1505,7 +1642,13 @@ defmodule Fablebook.Test.DebuggerSettings do
         "lane #{lane} MFA #{if(branch, do: format_mfa(branch.mfa), else: "unknown")} owner=#{if(branch, do: branch.owner, else: "missing")} caller-chain=#{if(branch, do: branch.trace, else: "source branch ledger")} branch=#{branch_id} remedy=restore the exact current-owner callback/control branch"
       )
 
-      Enum.each(citations, &assert_citation!(evidence, lane, records, &1))
+      Enum.each(citations, fn citation ->
+        if group == :interpreter do
+          assert_adopted_source_citation!(evidence, lane, inventory, records, citation)
+        else
+          assert_citation!(evidence, lane, records, citation)
+        end
+      end)
     end)
 
     source_branches =
@@ -3253,7 +3396,10 @@ defmodule Fablebook.Test.DebuggerSettings do
     citations =
       Enum.flat_map(record.function_sources, &List.wrap(&1.citation)) ++
         Enum.flat_map(record.function_audit, &List.wrap(&1.citations)) ++
-        Enum.flat_map(Map.values(record.branch_citations), &List.wrap/1) ++
+        (record.branch_citations
+         |> Map.drop(@interpreter_route_branch_ids)
+         |> Map.values()
+         |> Enum.flat_map(&List.wrap/1)) ++
         Enum.flat_map(root_records, &List.wrap(&1.citations))
 
     Enum.each(citations, &assert_citation!(evidence, lane, record, &1))
@@ -3449,6 +3595,39 @@ defmodule Fablebook.Test.DebuggerSettings do
     }
   end
 
+  defp citation(lane_name, :ieval, line, expected_text) do
+    lane = Map.fetch!(@lane_data, lane_name)
+
+    %{
+      path: "debugger/src/dbg_ieval.erl",
+      line: line,
+      sha256: lane.ieval_sha256,
+      expected_text: expected_text
+    }
+  end
+
+  defp citation(lane_name, :iload, line, expected_text) do
+    lane = Map.fetch!(@lane_data, lane_name)
+
+    %{
+      path: "debugger/src/dbg_iload.erl",
+      line: line,
+      sha256: lane.iload_sha256,
+      expected_text: expected_text
+    }
+  end
+
+  defp citation(lane_name, :debugged, line, expected_text) do
+    lane = Map.fetch!(@lane_data, lane_name)
+
+    %{
+      path: "debugger/src/dbg_debugged.erl",
+      line: line,
+      sha256: lane.debugged_sha256,
+      expected_text: expected_text
+    }
+  end
+
   defp branch_owner(:settings, _mfa), do: @owner
 
   defp branch_owner(:monitor, {:dbg_wx_mon, function, _arity})
@@ -3496,7 +3675,8 @@ defmodule Fablebook.Test.DebuggerSettings do
     do: "int:auto_attach/2 -> check_flags/1 -> allowed init|break|exit flags"
 
   defp branch_trace({:dbg_iserver, :handle_call, 3}),
-    do: "dbg_iserver new_process -> auto_attach(init) -> running|break result"
+    do:
+      "dbg_iserver new_process -> auto_attach(init) -> running|break result; load request -> dbg_iload:load_mod/4"
 
   defp branch_trace({:dbg_iserver, :handle_cast, 2}),
     do:
@@ -3519,6 +3699,58 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   defp branch_trace({:dbg_icmd, :break_p, 4}),
     do: "dbg_icmd:cmd/4 -> adopted break_p/4 source obligation -> CM:CN(Bs)"
+
+  defp branch_trace({:dbg_ieval, :eval, 3}),
+    do:
+      "int:eval/3 -> dbg_debugged:eval/3 -> dbg_ieval:eval/3 -> existing Meta re_entry or spawned meta/5"
+
+  defp branch_trace({:dbg_ieval, :meta, 5}),
+    do:
+      "dbg_ieval:eval/3 -> meta/5 -> dbg_iserver:new_process -> eval_mfa/5 -> interpreted result"
+
+  defp branch_trace({:dbg_ieval, :do_eval_function, 6}),
+    do:
+      "eval_mfa/5 or eval_function/7 -> do_eval_function/6 -> interpreted clauses or not_interpreted apply route"
+
+  defp branch_trace({:dbg_ieval, :get_function, 4}),
+    do:
+      "do_eval_function/6 -> get_function/4 -> interpreted database export lookup or not_interpreted fallback"
+
+  defp branch_trace({:dbg_ieval, :expr, 3}),
+    do: "eval_mfa/5 -> expr/3 remote-call, apply-fun, apply/3 and safe-BIF AST cases -> dispatch"
+
+  defp branch_trace({:dbg_ieval, :safe_bif, 5}),
+    do: "expr/3 safe_bif tag -> safe_bif/5 -> apply(M,F,As)"
+
+  defp branch_trace({:dbg_ieval, :catch_clauses, 4}),
+    do: "interpreted catch clauses exhausted -> erlang:Class(Reason) exception dispatch"
+
+  defp branch_trace({:dbg_ieval, :do_exception, 5}),
+    do: "exception/4,5 -> do_exception/5 -> erlang:Class(Reason) exception dispatch"
+
+  defp branch_trace({:dbg_ieval, :meta_loop, 3}),
+    do: "meta/5 -> meta_loop/3 receives debugged-process exception -> erlang:Class(Reason)"
+
+  defp branch_trace({:dbg_debugged, :msg_loop, 2}),
+    do:
+      "error_handler -> dbg_debugged:eval/3 -> selected Meta messages -> ready dbg_apply or command reply"
+
+  defp branch_trace({:dbg_debugged, :reply, 1}),
+    do: "msg_loop/2 -> handle_command/1 -> reply/1 -> apply or erl_eval:expr/2"
+
+  defp branch_trace({:dbg_iload, :load_mod, 4}),
+    do: "int:load/2 -> dbg_iserver:handle_call(load) -> dbg_iload:load_mod/4 -> linked worker"
+
+  defp branch_trace({:dbg_iload, :store_module, 4}),
+    do:
+      "int:load/2 envelope -> dbg_iserver load request -> store_module/4 -> binary term decoding"
+
+  defp branch_trace({:dbg_iload, :abstr, 1}),
+    do: "store_module/4 -> abstr/1 -> binary abstract-code decoding or already-decoded term"
+
+  defp branch_trace({:int, :load, 2}),
+    do:
+      "caller-selected load tuple -> int:load/2 -> beam/source envelope -> dbg_iserver load request"
 
   defp branch_trace(record, branch_id) do
     record.source_branches
@@ -3544,6 +3776,22 @@ defmodule Fablebook.Test.DebuggerSettings do
       record.citations != []
   end
 
+  defp zero_hit_source_reason(mfa, clauses, incoming_edges, sink_facts) do
+    source_heads = Enum.map(clauses, &"#{&1.path}:#{&1.line} #{&1.expected_text}")
+
+    case {incoming_edges, sink_facts} do
+      {[], []} ->
+        "This MFA has no static caller edge and no direct recognized sink. Its exact installed clause heads remain cited (#{Enum.join(source_heads, "; ")}); graph absence is not treated as a benign disposition."
+
+      {[], facts} ->
+        "This MFA has no static caller edge, but its exact source contains direct sink facts #{inspect(facts)}. Its installed clause heads remain cited (#{Enum.join(source_heads, "; ")}) and the route stays unresolved until a caller constraint is proved."
+
+      {callers, facts} ->
+        "This MFA is not reached by the selected assigned roots. Exact source callers are #{Enum.join(callers, "; ")}; direct sink facts are #{inspect(facts)}; cited clause heads are #{Enum.join(source_heads, "; ")}. It remains source-disposed rather than presumed benign."
+    end
+    |> then(fn reason -> "#{mfa}: #{reason}" end)
+  end
+
   defp assert_citation!(evidence, lane, record, citation) do
     resolved =
       SweepEvidence.resolve!(evidence, "#{citation.path}:#{citation.line}")
@@ -3555,12 +3803,31 @@ defmodule Fablebook.Test.DebuggerSettings do
            "lane #{lane} MFA dbg_wx_settings:default_settings_dir/1 owner=#{record.owner} caller-chain=source citation #{citation.path}:#{citation.line} remedy=restore matching branch text"
   end
 
+  defp assert_adopted_source_citation!(evidence, lane, inventory, record, citation) do
+    module_name = Path.basename(citation.path, ".erl")
+    inventory_module = Enum.find(inventory.modules, &(&1.module == module_name))
+
+    require_ownership!(
+      not is_nil(inventory_module),
+      "lane #{lane} owner=#{record.owner} caller-chain=#{citation.path}:#{citation.line} remedy=resolve the citation to its adopted exact_source inventory row"
+    )
+
+    source_row = inventory_module.source_assignment
+
+    require_ownership!(
+      source_row["sha256"] == citation.sha256,
+      "lane #{lane} app debugger module #{module_name} owner=#{record.owner} caller-chain=#{citation.path}:#{citation.line} remedy=use the adopted exact_source hash"
+    )
+
+    assert_remainder_source!(evidence, source_row, citation)
+  end
+
   defp disposition_group!(:callbacks) do
     {["int", "i", "debugger", "dbg_iserver", "dbg_icmd"], @callback_route_branch_ids}
   end
 
   defp disposition_group!(:interpreter) do
-    {["dbg_ieval", "dbg_iload", "dbg_debugged"], []}
+    {["dbg_ieval", "dbg_iload", "dbg_debugged"], @interpreter_route_branch_ids}
   end
 
   defp parse_source_forms!(path, lane, module) do
@@ -3792,6 +4059,193 @@ defmodule Fablebook.Test.DebuggerSettings do
         "The implementation purges and loads the supplied binary, then extracts source metadata; exact lane clauses determine distribution and error handling.",
       guard_remedy:
         "Keep the exact int:load/2 code-loading entry guarded; any later relaxation needs a narrow allow-list for module identity, source origin, and the loaded beam rather than a debugger-module exemption."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :eval, 3}) do
+    %{
+      caller_input_origin:
+        "The error-handler route reaches int:eval/3, which delegates to dbg_debugged:eval/3; the module, function, and argument list remain caller-selected interpreter inputs. An existing Meta receives re_entry, while an uninterpreted process starts meta/5.",
+      defaults_and_options:
+        "There is no target default: the same MFA tuple enters the existing Meta or the spawned evaluator according to dbg_iserver:get_meta/1.",
+      guard_remedy:
+        "Retain the narrow int:eval/3 interpreter entry guard and the existing command-eval guard. Before relaxing either, constrain the target MFA and all downstream dynamic apply routes; do not exempt the debugger module family."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :meta, 5}) do
+    %{
+      caller_input_origin:
+        "meta/5 receives Int, Debugged, M, F, and As from dbg_ieval:eval/3's not_interpreted branch; it sends the initial eval_mfa/5 result to the debugged process and starts the Meta loop.",
+      defaults_and_options:
+        "The supplied module/function/arguments are retained, with a display-only rewrite for interpreted fun entry points; the Meta initializes status and per-process interpreter state before evaluation.",
+      guard_remedy:
+        "Keep the int:eval/3 entry under its exact static guard; constrain any change at the entry and when an uninterpreted target is returned for application."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :do_eval_function, 6}) do
+    %{
+      caller_input_origin:
+        "eval_mfa/5 and nested eval_function/7 pass module/function/arguments, or an interpreted fun and its arguments; get_function/4 distinguishes interpreted definitions from not_interpreted targets.",
+      defaults_and_options:
+        "Top-level not_interpreted calls are returned as dbg_apply; nested calls send an apply command to the debugged process. Interpreted clauses stay in fnk_clauses/4, and missing functions take the explicit undef path.",
+      guard_remedy:
+        "Keep the exact evaluator entry guarded and restrict not_interpreted targets at this dispatch boundary before returning dbg_apply or sending apply to the debugged process."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :get_function, 4}) do
+    %{
+      caller_input_origin:
+        "do_eval_function/6 supplies module, function, arguments and local/extern mode. The database stores interpreted clauses and export state; a missing module yields not_interpreted, while an interpreted module with no matching export yields undef.",
+      defaults_and_options:
+        "Local lookup uses match_object/2; external lookup requires the stored export flag true; cache hits preserve the recorded export bit.",
+      guard_remedy:
+        "Retain the current exact evaluator-entry guard. Before permitting external fallback, validate module, function, arity, and export status at the not_interpreted dispatch boundary."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :expr, 3}) do
+    %{
+      caller_input_origin:
+        "Expression forms originate in interpreted abstract code or the command expression supplied through dbg_icmd:eval/2. Remote-call, apply-fun, apply/3, safe-BIF, and operator clauses evaluate their embedded module/function/value inputs.",
+      defaults_and_options:
+        "The AST tags select distinct local, remote, fun, module/function, safe-BIF, and debugged-process dispatch paths; bad fun and invalid arity branches raise interpreter exceptions.",
+      guard_remedy:
+        "Retain the exact int:eval/3 and command-eval guards. Before relaxing them, apply a narrow MFA policy to remote/apply dispatch and an explicit safe-BIF allow-list at the safe_bif and guard_expr apply sites."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :safe_bif, 5}) do
+    %{
+      caller_input_origin:
+        "expr/3 supplies module, function, evaluated arguments, bindings and interpreter state from a safe_bif AST node; the helper dynamically applies that module/function tuple.",
+      defaults_and_options:
+        "Successful calls return the value with existing bindings; exceptions are captured and routed through the interpreter exception formatter.",
+      guard_remedy:
+        "Keep the exact evaluator entry guard and require the AST producer's safe-BIF classification to match a narrow allowed MFA set before apply/3; the helper itself does not revalidate the target."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :catch_clauses, 4}) do
+    %{
+      caller_input_origin:
+        "When all interpreted catch clauses fail to match, catch_clauses/4 receives Class and Reason from the exception produced by the interpreted path and calls erlang:Class(Reason) using a variable function name.",
+      defaults_and_options:
+        "Matching catch clauses take the ordinary interpreted sequence path; only the exhausted catch list reaches this dynamic exception dispatch.",
+      guard_remedy:
+        "Keep the exact interpreter-entry guard. If this helper is ever relaxed, constrain Class to the documented error, exit, or throw exception kinds before the dynamic erlang call."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :do_exception, 5}) do
+    %{
+      caller_input_origin:
+        "exception/4,5 and the catch/evaluator branches supply Class and Reason from an interpreted exception; do_exception/5 installs the deferred stack and exit-info state before calling erlang:Class(Reason).",
+      defaults_and_options:
+        "The caller selects whether the deferred stack includes arguments; both variants converge on the same dynamic exception-class call.",
+      guard_remedy:
+        "Keep the exact interpreter-entry guard. If this path is relaxed, constrain Class to error, exit, or throw before the variable erlang function call."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :meta_loop, 3}) do
+    %{
+      caller_input_origin:
+        "meta_loop/3 receives protocol messages whose sender field must match its Debugged pid; an exception tuple supplies Class, Reason, and stack data. When exit_info shows a re-entry, the loop calls erlang:Class(Reason).",
+      defaults_and_options:
+        "An exception outside interpreted re-entry passes through do_exception/5; an in-reentry exception takes the direct dynamic class call branch.",
+      guard_remedy:
+        "Keep the exact interpreter entry guard and constrain exception Class to error, exit, or throw before dispatch; the Meta pid match alone does not validate that function atom."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :guard_expr, 2}) do
+    %{
+      caller_input_origin:
+        "guard_expr/2 receives transformed guard AST from the interpreted expression evaluator; the general safe_bif guard clause applies its embedded module/function and evaluated arguments.",
+      defaults_and_options:
+        "The special erlang:not clause is separate; the general safe_bif clause returns its applied value to guard evaluation.",
+      guard_remedy:
+        "Keep the evaluator entry guard and preserve a narrow safe-BIF allow-list at the loader/compiler classification boundary and this apply site."
+    }
+  end
+
+  defp callback_route_note({:dbg_debugged, :msg_loop, 2}) do
+    %{
+      caller_input_origin:
+        "dbg_debugged:eval/3 monitors the Meta pid returned by dbg_ieval:eval/3 and msg_loop/2 matches protocol messages from that selected Meta; ready values may carry a dbg_apply tuple and command messages dispatch through handle_command/1.",
+      defaults_and_options:
+        "A ready value is returned directly unless it is dbg_apply; exception and DOWN replies terminate the loop, while receive and command messages recurse after acknowledgement/reply.",
+      guard_remedy:
+        "Retain the exact interpreter-entry guards. Before relaxing them, validate the target in dbg_apply values at this process bridge and keep command evaluation restricted to Meta-generated protocol messages."
+    }
+  end
+
+  defp callback_route_note({:dbg_debugged, :handle_command, 1}) do
+    %{
+      caller_input_origin:
+        "msg_loop/2 forwards the command field from a matching {sys, Meta, {command, Command}} protocol message.",
+      defaults_and_options:
+        "reply/1 exceptions are caught and converted to a structured exception reply with the debugged-process stacktrace tail removed.",
+      guard_remedy:
+        "Keep command construction on the exact interpreter route; do not treat this wrapper as a parser-only path because reply/1 applies commands and calls erl_eval:expr/2."
+    }
+  end
+
+  defp callback_route_note({:dbg_debugged, :reply, 1}) do
+    %{
+      caller_input_origin:
+        "handle_command/1 receives apply or eval commands from dbg_ieval's debugged_cmd protocol; the apply tuple names module/function/arguments and the eval tuple carries an expression plus bindings.",
+      defaults_and_options:
+        "The apply form calls erlang:apply/3; the eval form calls erl_eval:expr/2 with sorted bindings.",
+      guard_remedy:
+        "Retain exact interpreter-entry guards and require a narrow target policy before accepting apply commands; keep the eval form limited to the reviewed command path."
+    }
+  end
+
+  defp callback_route_note({:dbg_iload, :load_mod, 4}) do
+    %{
+      caller_input_origin:
+        "dbg_iserver:handle_call({load,...}) supplies module, source path, serialized envelope, and the module database after int:load/2 constructs the package.",
+      defaults_and_options:
+        "The loader starts a linked worker closure, waits for that worker's exit message, restores trap_exit, and returns its result synchronously.",
+      guard_remedy:
+        "Keep the exact int:load/2 caller path guarded and validate source/beam/module correspondence and package provenance before the serialized envelope reaches this loader."
+    }
+  end
+
+  defp callback_route_note({:dbg_iload, :store_module, 4}) do
+    %{
+      caller_input_origin:
+        "int:load/2 builds {interpreter_module, Exp, Abst, SrcBin, MD5} from caller-selected source/BEAM inputs, then dbg_iserver:handle_call/3 forwards the envelope to dbg_iload:load_mod/4.",
+      defaults_and_options:
+        "binary_to_term/1 decodes the envelope and abstr/1 decodes binary abstract code; the floor lane also rejects two older abstract-code tags before storing forms.",
+      guard_remedy:
+        "Retain the exact int:load/2 guard and validate caller provenance, module identity, source/beam pairing, envelope shape, and abstract-code version before either term decode; do not infer safety from the tuple tag."
+    }
+  end
+
+  defp callback_route_note({:dbg_iload, :abstr, 1}) do
+    %{
+      caller_input_origin:
+        "store_module/4 passes the abstract-code field from the int:load/2 package; this helper calls binary_to_term/1 for binary input and passes through an already-decoded term.",
+      defaults_and_options:
+        "Binary and term inputs take separate clauses; the floor lane's caller then handles legacy abstract-code tags as too_old_beam_file.",
+      guard_remedy:
+        "Keep the exact package-origin guard before this helper and validate abstract-code provenance and accepted version at the package boundary."
+    }
+  end
+
+  defp callback_route_note({:dbg_iserver, :handle_call, 3}) do
+    %{
+      caller_input_origin:
+        "The load request is sent by int:load/2 after it has prepared module, source path, and the interpreter envelope; handle_call/3 creates the module database and forwards those values to dbg_iload:load_mod/4.",
+      defaults_and_options:
+        "The server waits for the synchronous loader result before broadcasting that the module is interpreted.",
+      guard_remedy:
+        "Keep the exact int:load/2 source/beam policy at this caller route and preserve envelope validation at dbg_iload:store_module/4."
     }
   end
 

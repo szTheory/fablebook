@@ -9,5 +9,8 @@
   "consoleOutputPath": "/private/tmp/fablebook-plan02-02-red-core.target.console",
   "consoleOutputBytes": 60436699,
   "consoleOutputSha256": "ee043ca4a4c91a26ef30892b2fa2ffeb23c41e53c627170daf88bfd5be5d6398",
-  "semanticAssessment": "The intended tagged test executed and failed on its planned assertion: the interpreter branch-record set is empty before implementation, versus the 19 source routes asserted by the test. The complete ExUnit-to-TAP report contains 47 events (46 passed and this target failed), including events outside the target selector; the selector result is therefore recorded with this full report and is not represented as an isolated one-test run. Compilation and setup completed. The test only parses installed source and checks records; it does not invoke debugger, callback, evaluator, or fixture bodies."
+  "semanticAssessment": "The exact --only selector selected and executed the tagged target, which failed on the planned empty interpreter branch-record assertion. The reporter emitted 47 test_finished events; its catch-all maps non-failed events to TAP ok and therefore does not distinguish ExUnit-excluded tests from passed tests. The complete unmodified 47-event formatter output is retained at rawTapOutputPath and pinned by byte count and SHA-256; the complete raw console output is retained at consoleOutputPath and pinned separately. Only the named target failure is used as RED evidence. Its source-only assertions do not invoke debugger, callback, evaluator, or fixture bodies.",
+  "rawTapOutputPath": "/private/tmp/fablebook-plan02-02-red-core.target.raw.tap",
+  "rawTapOutputBytes": 6360,
+  "rawTapOutputSha256": "25b4b82367047f892b23af3160c3f8981cac18aeb2f2834b70ce26cdeb705f05"
 }

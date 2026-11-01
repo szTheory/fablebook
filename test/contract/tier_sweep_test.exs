@@ -4207,8 +4207,15 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert Enum.any?(find_function.("dbg_ieval:expr/3").sink_facts, &(&1.kind == :dynamic_apply))
 
-    assert Enum.any?(find_function.("dbg_iload:store_module/4").sink_facts, &(&1.kind == :term_decoder))
-    assert Enum.any?(find_function.("dbg_debugged:reply/1").sink_facts, &(&1.kind == :dynamic_apply))
+    assert Enum.any?(
+             find_function.("dbg_iload:store_module/4").sink_facts,
+             &(&1.kind == :term_decoder)
+           )
+
+    assert Enum.any?(
+             find_function.("dbg_debugged:reply/1").sink_facts,
+             &(&1.kind == :dynamic_apply)
+           )
 
     assert find_function.("dbg_ieval:eval/3").caller_input_origin =~ "int:eval/3"
     assert find_function.("dbg_iload:store_module/4").caller_input_origin =~ "int:load/2"
