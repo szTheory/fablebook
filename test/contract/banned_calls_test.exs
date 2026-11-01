@@ -1187,6 +1187,26 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
+  @tag :debugger_remainder_tracer
+  test "auto-attach setter probe is caught by the exact BEAM guard tier", %{tmp_dir: dir} do
+    source = """
+    defmodule Fablebook.GuardFixture.AutoAttachTracer do
+      def probe(module, function), do: :int.auto_attach([:init], {module, function})
+    end
+    """
+
+    source_path = Path.join(dir, "auto_attach_tracer.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    mfa = {:int, :auto_attach, 2}
+
+    assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+           "the uncalled setter probe must be caught by the exact auto-attach guard tier"
+  end
+
+  @tag :tmp_dir
   @tag :saved_settings_tracer
   test "saved-settings monitor front is caught by both guards without invocation", %{
     tmp_dir: dir
