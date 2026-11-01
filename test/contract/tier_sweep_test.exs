@@ -4096,6 +4096,47 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :debugger_remainder_callbacks
+  test "callback and breakpoint function dispositions reconcile exact lane sources and ownership",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    record = DebuggerSettings.records(evidence.lane.name)
+
+    assert function_exported?(DebuggerSettings, :assert_function_dispositions!, 4),
+           "callback and breakpoint routes need complete exact-lane function dispositions"
+
+    inventory = DebuggerSettings.assert_remainder_inventory!(ctx.graph, evidence, record)
+
+    dispositions =
+      apply(DebuggerSettings, :assert_function_dispositions!, [
+        ctx.graph,
+        evidence,
+        record,
+        :callbacks
+      ])
+
+    assert dispositions.status == :verified
+    assert dispositions.group == :callbacks
+    assert dispositions.lane == evidence.lane.name
+    assert dispositions.module_names ==
+             Enum.sort(["int", "i", "debugger", "dbg_iserver", "dbg_icmd"])
+
+    assert Enum.all?(dispositions.modules, fn module ->
+             inventory_module = Enum.find(inventory.modules, &(&1.name == module.name))
+
+             module.owner == "01.1.1.3.1.2" and module.functions == inventory_module.functions and
+               module.exports == inventory_module.exports and
+               module.dispositions |> Enum.map(& &1.mfa) |> Enum.sort() ==
+                 Enum.sort(inventory_module.functions)
+           end)
+
+    assert dispositions.source_branches != []
+    assert dispositions.cross_owner == [{{:dbg_icmd, :break_p, 4}, "01.1.1.3.1.1", :pending}]
+    assert dispositions.unresolved_dynamic != []
+  end
+
   @tag :debugger_remainder_inventory
   test "assigned remainder universe has a fail-closed exact-lane reconciliation contract" do
     assert Code.ensure_loaded?(DebuggerSettings)
