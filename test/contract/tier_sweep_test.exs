@@ -5200,9 +5200,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     other_lane = if ctx.graph.lane.name == "core", do: "floor", else: "core"
 
     wrong_lane =
-      rewrite_settings_receipt(receipt_lines, fn [meta | rest] ->
-        [Map.put(meta, "lane", other_lane) | rest]
-      end)
+      rewrite_settings_meta_receipt(receipt_lines, &Map.put(&1, "lane", other_lane))
 
     assert_raise InstalledOtp.Error, fn ->
       DebuggerSettings.assert_receipt!(ctx.graph, evidence, records, wrong_lane)
@@ -5231,9 +5229,96 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :debugger_remainder_receipt
   test "remainder receipt acceptance binds the fresh graph to complete current dispositions",
-       _ctx do
+       ctx do
+    test_started = System.monotonic_time(:millisecond)
+
     assert function_exported?(DebuggerSettings, :assert_remainder_receipt!, 4),
            "expected a remainder validator that starts from the fresh graph receipt"
+
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    records = DebuggerSettings.records(ctx.graph.lane.name)
+    receipt_lines = ctx.graph.receipt_lines
+
+    result =
+      DebuggerSettings.assert_remainder_receipt!(ctx.graph, evidence, records, receipt_lines)
+
+    assert result.status == :verified
+    assert result.lane == ctx.graph.lane.name
+    assert result.owner == "01.1.1.3.1.2"
+    assert result.selected_module == :dbg_wx_settings
+    assert result.remainder_module_count == 20
+    assert map_size(result.source_sha256) == result.remainder_module_count
+    assert result.original_root_count >= 3
+    assert result.observed_root_count == result.original_root_count
+    assert result.receipt_sha256 == InstalledOtp.verify_receipt_lines!(receipt_lines).sha256
+
+    assert result.inherited_pending == %{
+             callback_body: "dbg_icmd:break_p/4",
+             selected_roots: [
+               "dbg_wx_mon:load_settings/2",
+               "dbg_wx_mon:load_settings2/2",
+               "dbg_wx_mon:start/2"
+             ]
+           }
+
+    assert_raise InstalledOtp.Error, fn ->
+      DebuggerSettings.assert_remainder_receipt!(ctx.graph, evidence, records, [])
+    end
+
+    other_lane = if ctx.graph.lane.name == "core", do: "floor", else: "core"
+
+    wrong_lane =
+      rewrite_settings_receipt(receipt_lines, fn [meta | rest] ->
+        [Map.put(meta, "lane", other_lane) | rest]
+      end)
+
+    assert_raise InstalledOtp.Error, fn ->
+      DebuggerSettings.assert_remainder_receipt!(ctx.graph, evidence, records, wrong_lane)
+    end
+
+    wrong_runtime =
+      rewrite_settings_meta_receipt(receipt_lines, &Map.put(&1, "elixir", "0.0.0"))
+
+    assert_raise InstalledOtp.Error, fn ->
+      DebuggerSettings.assert_remainder_receipt!(ctx.graph, evidence, records, wrong_runtime)
+    end
+
+    wrong_lock =
+      rewrite_settings_meta_receipt(
+        receipt_lines,
+        &Map.put(&1, "lock_sha256", String.duplicate("0", 64))
+      )
+
+    assert_raise InstalledOtp.Error, fn ->
+      DebuggerSettings.assert_remainder_receipt!(ctx.graph, evidence, records, wrong_lock)
+    end
+
+    wrong_source_records = Map.put(records, :source_sha256, String.duplicate("0", 64))
+
+    assert_raise ExUnit.AssertionError, fn ->
+      DebuggerSettings.assert_remainder_receipt!(
+        ctx.graph,
+        evidence,
+        wrong_source_records,
+        receipt_lines
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      DebuggerSettings.assert_remainder_receipt!(
+        ctx.graph,
+        evidence,
+        Map.put(records, :delegation_records, []),
+        receipt_lines
+      )
+    end
+
+    if System.get_env("FABLEBOOK_MEASURE_REMAINDER_RECEIPT") == "1" do
+      elapsed_ms = System.monotonic_time(:millisecond) - test_started
+      IO.puts("FABLEBOOK_REMAINDER_RECEIPT_TEST_MS=#{elapsed_ms}")
+    end
   end
 
   defp rewrite_settings_receipt(lines, transform) do
@@ -5256,6 +5341,27 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:ok, footer} = JSON.decode(String.replace_prefix(List.last(lines), marker, ""))
 
     encoded ++ [marker <> JSON.encode!(Map.put(footer, "sha256", digest))]
+  end
+
+  defp rewrite_settings_meta_receipt(lines, transform) do
+    marker = "FABLEBOOK_OTP_INVENTORY_V2 "
+    {body, [footer_line]} = Enum.split(lines, -1)
+    [meta_line | records] = body
+    {:ok, meta} = JSON.decode(String.replace_prefix(meta_line, marker, ""))
+    encoded_body = [marker <> JSON.encode!(transform.(meta)) | records]
+
+    digest =
+      encoded_body
+      |> Enum.reduce(:crypto.hash_init(:sha256), fn line, context ->
+        context
+        |> :crypto.hash_update(line)
+        |> :crypto.hash_update("\n")
+      end)
+      |> :crypto.hash_final()
+      |> Base.encode16(case: :lower)
+
+    {:ok, footer} = JSON.decode(String.replace_prefix(footer_line, marker, ""))
+    encoded_body ++ [marker <> JSON.encode!(Map.put(footer, "sha256", digest))]
   end
 
   test "debugger selected-file audit resolves its exact source, export and tier witness", ctx do

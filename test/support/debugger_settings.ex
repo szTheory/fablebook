@@ -1284,6 +1284,76 @@ defmodule Fablebook.Test.DebuggerSettings do
     ownership_fail!("current installed receipt must be a complete list of tagged lines")
   end
 
+  def assert_remainder_receipt!(graph, evidence, records, receipt_lines)
+      when is_list(receipt_lines) do
+    lane = graph.lane.name
+
+    require_ownership!(
+      evidence.lane.name == lane,
+      "lane #{lane} owner=#{@remainder_owner} source evidence lane=#{evidence.lane.name} caller-chain=remainder receipt validator remedy=use matching exact-lane source evidence"
+    )
+
+    current_receipt = InstalledOtp.verify_receipt_lines!(graph.receipt_lines)
+    supplied_receipt = InstalledOtp.verify_receipt_lines!(receipt_lines)
+
+    require_ownership!(
+      supplied_receipt.lane == lane and supplied_receipt.sha256 == current_receipt.sha256,
+      "lane #{lane} owner=#{@remainder_owner} supplied receipt differs from the fresh installed graph; caller-chain=graph receipt_lines remedy=use the complete current-lane receipt"
+    )
+
+    current_graph = Map.put(graph, :receipt_lines, receipt_lines)
+    inventory = assert_remainder_inventory!(current_graph, evidence, records)
+
+    selected_mfas = MapSet.new(inventory.selected_roots)
+
+    expected_selected_mfas =
+      MapSet.new([
+        {"debugger", "dbg_wx_mon", "start", 2},
+        {"debugger", "dbg_wx_mon", "load_settings", 2},
+        {"debugger", "dbg_wx_mon", "load_settings2", 2}
+      ])
+
+    [prior_break_branch] = inventory.source_branches
+
+    require_ownership!(
+      selected_mfas == expected_selected_mfas and
+        prior_break_branch["module"] == "dbg_icmd" and
+        prior_break_branch["function"] == "break_p" and
+        prior_break_branch["arity"] == 4 and prior_break_branch["owner"] == @owner and
+        prior_break_branch["completion"] == "pending",
+      "lane #{lane} owner=#{@owner} inherited pending routes differ from adopted ownership; caller-chain=selected monitor roots and conditional callback body remedy=preserve the prior-owner obligations"
+    )
+
+    require_ownership!(
+      inventory.status == :verified and inventory.owner == @remainder_owner and
+        length(inventory.modules) == length(required_source_modules()),
+      "lane #{lane} owner=#{@remainder_owner} current remainder source or disposition set is incomplete; caller-chain=exact receipt -> adopted source -> branch groups remedy=restore every assigned current-lane disposition"
+    )
+
+    %{
+      status: :verified,
+      lane: lane,
+      owner: inventory.owner,
+      selected_module: @settings_module,
+      receipt_sha256: supplied_receipt.sha256,
+      remainder_module_count: length(inventory.modules),
+      original_root_count: length(inventory.original_roots),
+      observed_root_count: length(inventory.observed_roots),
+      source_sha256: Map.new(inventory.modules, &{&1.module, &1.source.sha256}),
+      inherited_pending: %{
+        callback_body: "dbg_icmd:break_p/4",
+        selected_roots:
+          expected_selected_mfas
+          |> Enum.map(fn {_app, module, function, arity} -> "#{module}:#{function}/#{arity}" end)
+          |> Enum.sort()
+      }
+    }
+  end
+
+  def assert_remainder_receipt!(_graph, _evidence, _records, _receipt_lines) do
+    ownership_fail!("current remainder receipt must be a complete list of tagged lines")
+  end
+
   def load_delegation! do
     root = File.cwd!()
     delegation_path = Path.join([root, @delegation_dir, @delegation_file])
@@ -3235,16 +3305,33 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   defp delegation_difference_category(actual, expected) do
     cond do
-      actual["owner"] != expected["owner"] -> "owner"
-      actual["chain_id"] != expected["chain_id"] -> "canonical chain"
+      actual["owner"] != expected["owner"] ->
+        "owner"
+
+      actual["chain_id"] != expected["chain_id"] ->
+        "canonical chain"
+
       get_in(actual, ["historical", "chain_id"]) !=
-          get_in(expected, ["historical", "chain_id"]) -> "observed canonical chain"
-      actual["references"] != expected["references"] -> "current references"
-      actual["completion"] != expected["completion"] -> "completion"
-      actual["occurrences"] != expected["occurrences"] -> "overlap occurrence"
-      actual["origin_record_sha256"] != expected["origin_record_sha256"] -> "origin fingerprint"
-      actual["steps"] != expected["steps"] -> "caller-chain steps"
-      true -> "historical fields"
+          get_in(expected, ["historical", "chain_id"]) ->
+        "observed canonical chain"
+
+      actual["references"] != expected["references"] ->
+        "current references"
+
+      actual["completion"] != expected["completion"] ->
+        "completion"
+
+      actual["occurrences"] != expected["occurrences"] ->
+        "overlap occurrence"
+
+      actual["origin_record_sha256"] != expected["origin_record_sha256"] ->
+        "origin fingerprint"
+
+      actual["steps"] != expected["steps"] ->
+        "caller-chain steps"
+
+      true ->
+        "historical fields"
     end
   end
 

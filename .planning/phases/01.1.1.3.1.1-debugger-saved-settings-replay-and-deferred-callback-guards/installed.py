@@ -25,12 +25,22 @@ import tempfile
 import time
 import uuid
 from collections import Counter
+from contextlib import contextmanager
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[3]
 PHASE_DIR = ROOT / ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou"
 CHILD_DIR = ROOT / ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards"
+REMAINDER_PHASE_DIR = ROOT / ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder"
+REMAINDER_EVIDENCE_DIR = REMAINDER_PHASE_DIR / "01.1.1.3.1.2-evidence"
+REMAINDER_GENERATION_ROOT = REMAINDER_EVIDENCE_DIR / "GENERATION"
+REMAINDER_DELIVERY_PATH = REMAINDER_PHASE_DIR / "01.1.1.3.1.2-DELIVERY.json"
+REMAINDER_REVIEW_PATH = REMAINDER_PHASE_DIR / "01.1.1.3.1.2-REVIEW.md"
+REMAINDER_VALIDATION_PATH = REMAINDER_PHASE_DIR / "01.1.1.3.1.2-VALIDATION.md"
+REMAINDER_AUDIT_PATH = REMAINDER_PHASE_DIR / "01.1.1.3.1.2-REMAINDER-AUDIT.md"
+REMAINDER_SOURCE_AUDIT_PATH = REMAINDER_PHASE_DIR / "01.1.1.3.1.2-SOURCE-AUDIT.md"
+REMAINDER_SECURITY_PATH = REMAINDER_PHASE_DIR / "01.1.1.3.1.2-SECURITY.md"
 ARCHIVE = ROOT / "test/fixtures/guards/exact_sources.tar.gz"
 CANDIDATE = PHASE_DIR / "01.1.1.3.1-SOURCE-CANDIDATE.json"
 DECISION = PHASE_DIR / "01.1.1.3.1-SOURCE-DECISION.md"
@@ -66,6 +76,9 @@ GENERATION_ROOT = CHILD_DIR / f"{OWNER}-evidence"
 DELIVERY_PATH = CHILD_DIR / f"{OWNER}-DELIVERY.json"
 REVIEW_PATH = CHILD_DIR / f"{OWNER}-REVIEW.md"
 GENERATION_POINTER_SCHEMA = "fablebook.debugger-saved-settings-generation-pointer.v1"
+DELIVERY_SCHEMA = "fablebook.debugger-saved-settings-delivery.v1"
+OBSERVED_SCHEMA = "fablebook.debugger-saved-settings-observed.v1"
+ACTIVE_SCOPE = "selected-settings"
 GENERATION_ARTIFACTS = {
     "inventory_core": f"{OWNER}-INVENTORY-core.jsonl",
     "inventory_floor": f"{OWNER}-INVENTORY-floor.jsonl",
@@ -75,7 +88,33 @@ GENERATION_ARTIFACTS = {
 }
 RECEIPT_PREFIX = b"FABLEBOOK_OTP_INVENTORY_V2 "
 MAX_CI_JOB_LOG_BYTES = 128 * 1024 * 1024
-OBSERVED_SCHEMA = "fablebook.debugger-saved-settings-observed.v1"
+REMAINDER_SCOPE_CONTRACT = {
+    "scope": "debugger-remainder",
+    "owner": "01.1.1.3.1.2",
+    "selected_owner": "01.1.1.3.1.1",
+    "receipt_test": "debugger_remainder_receipt",
+    "disposition_groups": ["callback", "interpreter", "monitor", "trace"],
+    "inherited_pending": {
+        "callback_body": "dbg_icmd:break_p/4",
+        "selected_roots": [
+            "dbg_wx_mon:load_settings/2",
+            "dbg_wx_mon:load_settings2/2",
+            "dbg_wx_mon:start/2",
+        ],
+    },
+    "limits": {
+        "runtime_safety": "not-established",
+        "installed_wide_acceptance": "pending-for-01.1.1.3.1.3",
+        "sec_01": "pending-for-phase-5",
+    },
+}
+REMAINDER_GENERATION_ARTIFACTS = {
+    "inventory_core": "01.1.1.3.1.2-INVENTORY-core.jsonl",
+    "inventory_floor": "01.1.1.3.1.2-INVENTORY-floor.jsonl",
+    "observed": "01.1.1.3.1.2-OBSERVED.jsonl.gz",
+    "delivery": "01.1.1.3.1.2-DELIVERY.json",
+}
+SCOPE_OPTIONS = ("selected-settings", "debugger-remainder")
 SUPPORTED_RUNTIMES = {
     "core": {"elixir": "1.20.4", "otp": "29.1.2"},
     "floor": {"elixir": "1.18.5", "otp": "27.3.4.9"},
@@ -113,6 +152,34 @@ class VerificationError(ValueError):
 def reject(condition: bool, reason: str, detail: object) -> None:
     if not condition:
         raise VerificationError(reason, detail)
+
+
+@contextmanager
+def scoped_delivery(scope: str):
+    """Select one fixed delivery layout while keeping the historical default intact."""
+    reject(scope in SCOPE_OPTIONS, "unknown-scope", scope)
+    if scope == "selected-settings":
+        yield
+        return
+
+    replacements = {
+        "ACTIVE_SCOPE": "debugger-remainder",
+        "OWNER": "01.1.1.3.1.2",
+        "CHILD_DIR": REMAINDER_PHASE_DIR,
+        "GENERATION_ROOT": REMAINDER_GENERATION_ROOT,
+        "DELIVERY_PATH": REMAINDER_DELIVERY_PATH,
+        "REVIEW_PATH": REMAINDER_REVIEW_PATH,
+        "GENERATION_POINTER_SCHEMA": "fablebook.debugger-remainder-generation-pointer.v1",
+        "DELIVERY_SCHEMA": "fablebook.debugger-remainder-delivery.v1",
+        "OBSERVED_SCHEMA": "fablebook.debugger-remainder-observed.v1",
+        "GENERATION_ARTIFACTS": REMAINDER_GENERATION_ARTIFACTS,
+    }
+    previous = {key: globals()[key] for key in replacements}
+    globals().update(replacements)
+    try:
+        yield
+    finally:
+        globals().update(previous)
 
 
 def sha256(data: bytes) -> str:
@@ -969,7 +1036,8 @@ def artifact_directory_target(path: Path, create: bool = False) -> Path:
     return path
 
 
-def generation_artifact_paths(generation_id: str, generation_root: Path = GENERATION_ROOT) -> dict[str, Path]:
+def generation_artifact_paths(generation_id: str, generation_root: Path | None = None) -> dict[str, Path]:
+    generation_root = generation_root or GENERATION_ROOT
     reject(re.fullmatch(r"[a-f0-9]{12}-[0-9]+-[a-f0-9]{32}", generation_id) is not None,
            "artifact-generation-id", generation_id)
     return {
@@ -978,7 +1046,8 @@ def generation_artifact_paths(generation_id: str, generation_root: Path = GENERA
     }
 
 
-def generation_artifact_path_map(generation_id: str, generation_root: Path = GENERATION_ROOT) -> dict[str, str]:
+def generation_artifact_path_map(generation_id: str, generation_root: Path | None = None) -> dict[str, str]:
+    generation_root = generation_root or GENERATION_ROOT
     return {
         key: str(path.relative_to(ROOT))
         for key, path in generation_artifact_paths(generation_id, generation_root).items()
@@ -1028,8 +1097,10 @@ def validate_generation_pointer_data(data: bytes, generation_root: Path) -> tupl
     return pointer, paths
 
 
-def load_generation_pointer(pointer_path: Path = DELIVERY_PATH,
-                            generation_root: Path = GENERATION_ROOT) -> tuple[dict, dict[str, Path]]:
+def load_generation_pointer(pointer_path: Path | None = None,
+                            generation_root: Path | None = None) -> tuple[dict, dict[str, Path]]:
+    pointer_path = pointer_path or DELIVERY_PATH
+    generation_root = generation_root or GENERATION_ROOT
     artifact_target(pointer_path)
     return validate_generation_pointer_data(read_bytes(pointer_path, "delivery-pointer-unavailable"), generation_root)
 
@@ -1044,7 +1115,7 @@ def load_current_delivery() -> tuple[dict, dict[str, Path], dict]:
     reject(isinstance(delivery, dict), "generation-delivery-format", type(delivery).__name__)
     expected_paths = {key: record["path"] for key, record in pointer["artifacts"].items()}
     ci_run = delivery.get("ci_run")
-    reject(delivery.get("schema") == "fablebook.debugger-saved-settings-delivery.v1"
+    reject(delivery.get("schema") == DELIVERY_SCHEMA
            and delivery.get("artifact_generation") == pointer.get("generation")
            and delivery.get("artifact_paths") == expected_paths
            and delivery.get("tested_head") == pointer.get("tested_head")
@@ -1067,9 +1138,11 @@ def load_previous_delivery() -> dict:
 
 
 def publish_generation(artifact_data: dict[str, bytes], generation_id: str,
-                       metadata: dict, generation_root: Path = GENERATION_ROOT,
-                       pointer_path: Path = DELIVERY_PATH, before_activate=None,
+                       metadata: dict, generation_root: Path | None = None,
+                       pointer_path: Path | None = None, before_activate=None,
                        validator=None) -> dict:
+    generation_root = generation_root or GENERATION_ROOT
+    pointer_path = pointer_path or DELIVERY_PATH
     reject(set(artifact_data) == set(GENERATION_ARTIFACTS), "generation-artifact-set", sorted(artifact_data))
     generation_root = artifact_directory_target(generation_root, create=True)
     generation_artifact_paths(generation_id, generation_root)
@@ -1522,7 +1595,7 @@ def observed_meta(pr: dict, run: dict, jobs: dict, receipt_summaries: dict,
     adoption_bytes = read_bytes(ADOPTION_LEDGER, "adopted-delegation-unavailable")
     parent_bytes = read_bytes(ownership.OUTPUT, "historical-ledger-unavailable")
     partition_bytes = read_bytes(ADOPTION_PARTITION, "adoption-partition-unavailable")
-    return {
+    meta = {
         "t": "fresh_meta", "schema": OBSERVED_SCHEMA, "status": "prepared-before-merge",
         "repository": "szTheory/fablebook", "pr_number": pr["number"], "pr_url": pr["url"],
         "tested_head": pr["tested_head"], "artifact_head": None,
@@ -1545,6 +1618,10 @@ def observed_meta(pr: dict, run: dict, jobs: dict, receipt_summaries: dict,
         "adopted_rows": len(adopt.materialize()),
         "current_ci_provenance": True,
     }
+    if ACTIVE_SCOPE == "debugger-remainder":
+        meta["scope_contract"] = copy.deepcopy(REMAINDER_SCOPE_CONTRACT)
+        meta["scope_contract_sha256"] = sha256(canon_bytes(REMAINDER_SCOPE_CONTRACT))
+    return meta
 
 
 def history_projection_local(record: dict | None) -> dict | None:
@@ -1635,6 +1712,71 @@ def validate_observed_records(rows: list[dict], expected_history: list[dict], re
     reject(len(identities) == len(set(identities)), "observed-duplicate-identity", "fresh identity repeated")
 
 
+def validate_remainder_observed_records(rows: list[dict], expected_history: list[dict],
+                                        expected_head: str, expected_run: str) -> None:
+    meta = rows[0]
+    reject(meta.get("scope_contract") == REMAINDER_SCOPE_CONTRACT
+           and meta.get("scope_contract_sha256") == sha256(canon_bytes(REMAINDER_SCOPE_CONTRACT)),
+           "remainder-scope-contract", meta.get("scope_contract"))
+    reject(meta.get("ownership_boundary") == {
+        "selected": SELECTED_OWNER, "remainder": REMAINDER_OWNER,
+        "sec_01": "pending-for-phase-5",
+    }, "remainder-ownership-boundary", meta.get("ownership_boundary"))
+
+    adopted_debugger = [row for row in expected_history
+                        if row.get("t") in {"module", "root"} and row.get("app") == "debugger"
+                        and row.get("owner") in {SELECTED_OWNER, REMAINDER_OWNER}]
+    current = rows[1 + len(expected_history):]
+    for lane in ("core", "floor"):
+        receipts = [row for row in current if row.get("t") == "fresh_lane_receipt" and row.get("lane") == lane]
+        reject(len(receipts) == 1 and receipts[0].get("tested_head") == expected_head
+               and receipts[0].get("ci_run_id") == expected_run
+               and receipts[0].get("active_subset_preserved") is True
+               and receipts[0].get("footer_present") is True,
+               "remainder-current-lane-receipt", {"lane": lane, "receipts": receipts})
+
+        lane_current = [row for row in current if row.get("lane") == lane
+                        and row.get("t") in {"fresh_observed_module", "fresh_observed_root"}]
+        by_origin = {}
+        for row in lane_current:
+            origin = row.get("origin_record_sha256")
+            if origin is not None:
+                by_origin.setdefault(origin, []).append(row)
+            reject(row.get("tested_head") == expected_head and row.get("ci_run_id") == expected_run
+                   and isinstance(row.get("owner"), str) and bool(row["owner"]),
+                   "remainder-current-assignment-provenance", {"lane": lane, "identity": row.get("identity")})
+
+        required = [row for row in adopted_debugger if row.get("lane") == lane]
+        for prior in required:
+            origin = prior.get("origin_record_sha256") or sha256(canon_bytes(prior))
+            matches = by_origin.get(origin, [])
+            reject(len(matches) == 1 and matches[0].get("owner") == prior.get("owner")
+                   and matches[0].get("historical") == history_projection_local(prior),
+                   "remainder-adopted-assignment", {"lane": lane, "identity": identity_key(prior), "matches": len(matches)})
+
+        selected_roots = [row for row in lane_current if row.get("t") == "fresh_observed_root"
+                          and row.get("identity", {}).get("module") == "dbg_wx_mon"
+                          and row.get("identity", {}).get("function") in {"start", "load_settings", "load_settings2"}
+                          and row.get("identity", {}).get("arity") == 2]
+        reject(len(selected_roots) == 3 and all(row.get("owner") == SELECTED_OWNER
+               and SHA256_RE.fullmatch(row.get("chain_id", "")) is not None for row in selected_roots),
+               "remainder-selected-roots", {"lane": lane, "roots": selected_roots})
+
+        pending_callback = [row for row in expected_history if row.get("t") == "source_branch"
+                            and row.get("lane") == lane and row.get("module") == "dbg_icmd"
+                            and row.get("function") == "break_p" and row.get("arity") == 4]
+        reject(len(pending_callback) == 1 and pending_callback[0].get("owner") == SELECTED_OWNER
+               and pending_callback[0].get("completion") == "pending",
+               "remainder-pending-callback-body", {"lane": lane, "records": pending_callback})
+
+
+def validate_observed_for_scope(rows: list[dict], expected_history: list[dict], required_checks: set[str],
+                                expected_head: str = "a" * 40, expected_run: str = "12345") -> None:
+    validate_observed_records(rows, expected_history, required_checks, expected_head, expected_run)
+    if ACTIVE_SCOPE == "debugger-remainder":
+        validate_remainder_observed_records(rows, expected_history, expected_head, expected_run)
+
+
 def ownership_source_sha(lane: str) -> str:
     files = archive_files(read_bytes(ARCHIVE, "successor-unavailable"), "selected-settings-source")
     return sha256(files[f"{lane}/debugger/src/{SELECTED_MODULE}.erl"])
@@ -1658,13 +1800,16 @@ def self_test_observed() -> dict:
     for lane in ("core", "floor"):
         rows.append({"t": "fresh_lane_receipt", "lane": lane, "footer_present": True,
                      "tested_head": head, "ci_run_id": run_id, "active_subset_preserved": True})
-        selected_prior = [row for row in adopted if row.get("lane") == lane and row.get("owner") == SELECTED_OWNER
-                          and row.get("t") in {"module", "root"}]
-        for prior in selected_prior:
+        scoped_owners = ({SELECTED_OWNER, REMAINDER_OWNER}
+                         if ACTIVE_SCOPE == "debugger-remainder" else {SELECTED_OWNER})
+        scoped_prior = [row for row in adopted if row.get("lane") == lane
+                        and row.get("owner") in scoped_owners
+                        and row.get("app") == "debugger" and row.get("t") in {"module", "root"}]
+        for prior in scoped_prior:
             kind = prior["t"]
             identity = ownership.typed_identity(kind, prior)
             row = {"t": "fresh_observed_" + kind, "lane": lane, "identity": identity,
-                   "owner": SELECTED_OWNER, "tested_head": head, "ci_run_id": run_id,
+                   "owner": prior.get("owner"), "tested_head": head, "ci_run_id": run_id,
                    "chain_id": prior.get("chain_id"), "origin_chain_id": prior.get("chain_id"),
                    "origin_record_sha256": prior.get("origin_record_sha256"),
                    "historical": ownership.history_projection(prior)}
@@ -1684,14 +1829,14 @@ def self_test_observed() -> dict:
                      "identity": {"kind": "module_completion", "lane": lane, "app": "debugger", "module": SELECTED_MODULE},
                      "owner": SELECTED_OWNER, "completion": "selected-family-source-and-guard-proved",
                      "source_sha256": source_sha})
-    validate_observed_records(rows, history, ownership.REQUIRED_CI_CHECKS, head, run_id)
+    validate_observed_for_scope(rows, history, ownership.REQUIRED_CI_CHECKS, head, run_id)
 
     controls = {}
     def must_reject(name: str, mutate) -> None:
         altered = copy.deepcopy(rows)
         mutate(altered)
         try:
-            validate_observed_records(altered, history, ownership.REQUIRED_CI_CHECKS, head, run_id)
+            validate_observed_for_scope(altered, history, ownership.REQUIRED_CI_CHECKS, head, run_id)
         except VerificationError:
             controls[name] = "rejected"
         else:
@@ -1724,12 +1869,24 @@ def self_test_observed() -> dict:
     must_reject("missing-original-assignment", lambda r: r.pop(1 + len(parent_rows) + next(i for i,x in enumerate(adopted) if x.get("t") == "module" and x.get("owner") == SELECTED_OWNER)))
     must_reject("missing-observed-assignment", lambda r: r.pop(next(i for i,x in enumerate(r) if i >= current_start and x.get("t") == "fresh_observed_module")))
     must_reject("missing-completion-history", lambda r: r.pop(next(i for i,x in enumerate(r) if x.get("t") == "fresh_observed_completion")))
-    must_reject("changed-chain", lambda r: next(x for x in r[current_start:] if x.get("t") == "fresh_observed_root").update(origin_chain_id="0" * 64))
+    must_reject("changed-chain", lambda r: next(x for x in r[current_start:] if x.get("t") == "fresh_observed_root"
+        and (x.get("identity", {}).get("module"), x.get("identity", {}).get("function"),
+             x.get("identity", {}).get("arity")) in SELECTED_ROOTS).update(origin_chain_id="0" * 64))
     must_reject("active-subset-loss", lambda r: next(x for x in r[current_start:] if x.get("t") == "fresh_lane_receipt").update(active_subset_preserved=False))
-    must_reject("wrong-owner", lambda r: next(x for x in r[current_start:] if x.get("t") == "fresh_observed_root").update(owner=REMAINDER_OWNER))
+    must_reject("wrong-owner", lambda r: next(x for x in r[current_start:] if x.get("t") == "fresh_observed_root"
+        and (x.get("identity", {}).get("module"), x.get("identity", {}).get("function"),
+             x.get("identity", {}).get("arity")) in SELECTED_ROOTS).update(owner=REMAINDER_OWNER))
     must_reject("parent-owner-preserved", lambda r: next(x for x in r[current_start:] if x.get("t") == "fresh_observed_module" and x.get("origin_record_sha256") in {sha256(canon_bytes(y)) for y in parent_rows if y.get("t") == "module"}).update(owner=REMAINDER_OWNER))
     must_reject("new-unowned-identity", lambda r: r.append({"t": "fresh_observed_module", "lane": "core", "identity": {"kind": "module", "module": "new"}, "owner": None}))
     must_reject("historical-input-is-not-current-ci", lambda r: r[0].update(current_ci_provenance=False))
+    if ACTIVE_SCOPE == "debugger-remainder":
+        must_reject("missing-remainder-assignment", lambda r: r.pop(next(i for i, x in enumerate(r)
+            if i >= current_start and x.get("owner") == REMAINDER_OWNER
+            and x.get("t") in {"fresh_observed_module", "fresh_observed_root"})))
+        must_reject("wrong-scope-contract", lambda r: r[0].update(scope_contract_sha256="0" * 64))
+        must_reject("missing-inherited-pending-callback", lambda r: r.pop(next(i for i, x in enumerate(r)
+            if x.get("t") == "source_branch" and x.get("lane") == "core"
+            and x.get("module") == "dbg_icmd" and x.get("function") == "break_p")))
     fd, malformed_name = tempfile.mkstemp(prefix="receipt-negative-", suffix=".jsonl", dir="/private/tmp")
     malformed_path = Path(malformed_name)
     try:
@@ -1746,8 +1903,82 @@ def self_test_observed() -> dict:
     controls["incomplete-receipt"] = "rejected"
     missing = sorted(set(OBSERVED_REQUIRED_CONTROLS) - set(controls))
     reject(not missing, "observed-negative-controls", missing)
+    scoped_controls = ("missing-remainder-assignment", "wrong-scope-contract",
+                       "missing-inherited-pending-callback") if ACTIVE_SCOPE == "debugger-remainder" else ()
+    missing = sorted(set(scoped_controls) - set(controls))
+    reject(not missing, "observed-remainder-negative-controls", missing)
     return {"status": "passed", "historical_rows_fixture_only": True,
-            "controls": {name: controls[name] for name in OBSERVED_REQUIRED_CONTROLS}}
+            "controls": {name: controls[name] for name in (*OBSERVED_REQUIRED_CONTROLS, *scoped_controls)}}
+
+
+def self_test_remainder_artifact_controls() -> dict:
+    """Exercise contained four-artifact reads without publishing a delivery pointer."""
+    if DELIVERY_PATH.exists():
+        artifact_target(DELIVERY_PATH)
+    pointer_before = read_bytes(DELIVERY_PATH, "delivery-pointer-unavailable") if DELIVERY_PATH.exists() else None
+    controls = {}
+    with tempfile.TemporaryDirectory(prefix="remainder-scope-self-test-", dir=CHILD_DIR) as temporary:
+        root = Path(temporary)
+        generation_root = root / "GENERATION"
+        generation_root.mkdir()
+        generation_id = new_generation_id("a" * 40, "12345")
+        generation_path = generation_root / generation_id
+        generation_path.mkdir()
+        artifact_records = {}
+        for key, filename in GENERATION_ARTIFACTS.items():
+            payload = f"mock-external-artifact:{key}".encode()
+            artifact_path = generation_path / filename
+            artifact_path.write_bytes(payload)
+            artifact_records[key] = {
+                "path": str(artifact_path.relative_to(ROOT)),
+                "sha256": sha256(payload),
+            }
+        pointer = {
+            "schema": GENERATION_POINTER_SCHEMA,
+            "generation": str(generation_path.relative_to(ROOT)),
+            "tested_head": "a" * 40,
+            "ci_run_id": "12345",
+            "artifacts": artifact_records,
+        }
+        _checked, paths = validate_generation_pointer_data(
+            json.dumps(pointer, sort_keys=True).encode(), generation_root
+        )
+        reject(set(paths) == set(REMAINDER_GENERATION_ARTIFACTS)
+               and {path.name for path in paths.values()} == set(GENERATION_ARTIFACTS.values()),
+               "remainder-artifact-set", paths)
+        controls["four-artifact-contained-pointer"] = "passed"
+
+        mixed = copy.deepcopy(pointer)
+        mixed["artifacts"]["observed"]["sha256"] = "0" * 64
+        try:
+            validate_generation_pointer_data(json.dumps(mixed, sort_keys=True).encode(), generation_root)
+        except VerificationError:
+            controls["mixed-generation-digest"] = "rejected"
+        else:
+            raise VerificationError("remainder-artifact-control-accepted", "mixed-generation-digest")
+
+        escaped = copy.deepcopy(pointer)
+        escaped["generation"] = str((generation_root / ".." / "outside").relative_to(ROOT))
+        try:
+            validate_generation_pointer_data(json.dumps(escaped, sort_keys=True).encode(), generation_root)
+        except (VerificationError, ValueError):
+            controls["escaped-generation-path"] = "rejected"
+        else:
+            raise VerificationError("remainder-artifact-control-accepted", "escaped-generation-path")
+
+    pointer_after = read_bytes(DELIVERY_PATH, "delivery-pointer-unavailable") if DELIVERY_PATH.exists() else None
+    reject(pointer_after == pointer_before, "self-test-published-delivery", str(DELIVERY_PATH))
+    controls["self-test-did-not-publish"] = "passed"
+    return {"status": "passed", "controls": controls}
+
+
+def self_test_observed_for_scope(scope: str) -> dict:
+    with scoped_delivery(scope):
+        report = self_test_observed()
+        if scope == "debugger-remainder":
+            report["artifact_controls"] = self_test_remainder_artifact_controls()
+            report["scope"] = scope
+        return report
 
 
 def read_review_passes() -> int:
@@ -1803,8 +2034,8 @@ def observed_document(pr: dict, run: dict, jobs: dict, receipt_paths: dict[str, 
                                      pr["tested_head"], str(run["databaseId"]), pr["number"])
     history = parent_unadopted_rows(ownership, adopt) + adopt.materialize()
     document = [meta] + history + current
-    validate_observed_records(document, history, ownership.REQUIRED_CI_CHECKS,
-                              pr["tested_head"], str(run["databaseId"]))
+    validate_observed_for_scope(document, history, ownership.REQUIRED_CI_CHECKS,
+                                pr["tested_head"], str(run["databaseId"]))
     return document
 
 
@@ -2062,7 +2293,7 @@ def collect_ci(red_capture_archive_path: str | None = None) -> dict:
         staged_inventory_bytes = {lane: staged_paths[lane].read_bytes() for lane in ("core", "floor")}
     meta = document[0]
     delivery = {
-        "schema": "fablebook.debugger-saved-settings-delivery.v1", "status": "prepared-before-merge",
+        "schema": DELIVERY_SCHEMA, "status": "prepared-before-merge",
         "repository": "szTheory/fablebook", "pr": {k: pr.get(k) for k in ("number", "url", "state", "headRefName", "baseRefName")},
         "tested_head": pr["tested_head"], "artifact_head": None,
         "artifact_relationship": "local-evidence-for-exact-tested-code-head; not committed to avoid invalidating receipt provenance",
@@ -2084,6 +2315,8 @@ def collect_ci(red_capture_archive_path: str | None = None) -> dict:
                               "final_installed_scope": PARENT_PHASE + ".13", "later": ["01.1.1.3.1.4", "01.1.1.3.1.5"],
                               "sec_01": "pending-for-phase-5"},
     }
+    if ACTIVE_SCOPE == "debugger-remainder":
+        delivery["scope"] = ACTIVE_SCOPE
     validation = validation_markdown(delivery, source, history, observed_controls).encode()
     artifact_data = {
         "inventory_core": staged_inventory_bytes["core"],
@@ -2092,6 +2325,7 @@ def collect_ci(red_capture_archive_path: str | None = None) -> dict:
         "delivery": json.dumps(delivery, sort_keys=True, indent=2).encode() + b"\n",
         "validation": validation,
     }
+    artifact_data = {key: data for key, data in artifact_data.items() if key in GENERATION_ARTIFACTS}
 
     def validate_staged_generation(staging: Path) -> None:
         staged_inventory_paths = {}
@@ -2106,8 +2340,8 @@ def collect_ci(red_capture_archive_path: str | None = None) -> dict:
         staged_observed = staging / GENERATION_ARTIFACTS["observed"]
         staged_document = parse_jsonl_gzip(staged_observed)
         expected_history = parent_unadopted_rows(ownership, adopt) + adopt.materialize()
-        validate_observed_records(staged_document, expected_history, ownership.REQUIRED_CI_CHECKS,
-                                  pr["tested_head"], str(run["databaseId"]))
+        validate_observed_for_scope(staged_document, expected_history, ownership.REQUIRED_CI_CHECKS,
+                                    pr["tested_head"], str(run["databaseId"]))
         staged_delivery = json.loads((staging / GENERATION_ARTIFACTS["delivery"]).read_text())
         reject(staged_delivery == delivery, "staged-delivery-mismatch", str(staging))
 
@@ -2137,8 +2371,10 @@ def verify_ci(negative_controls: bool = False) -> dict:
     check_artifact_paths()
     ownership, adopt = load_ownership_context()
     delivery, artifact_paths, pointer = load_current_delivery()
-    reject(delivery.get("schema") == "fablebook.debugger-saved-settings-delivery.v1"
+    reject(delivery.get("schema") == DELIVERY_SCHEMA
            and delivery.get("status") in {"prepared-before-merge", "merged"}, "delivery-format", delivery.get("schema"))
+    if ACTIVE_SCOPE == "debugger-remainder":
+        reject(delivery.get("scope") == ACTIVE_SCOPE, "delivery-scope", delivery.get("scope"))
     inventory_paths = {lane: artifact_paths[f"inventory_{lane}"] for lane in ("core", "floor")}
     observed_path = artifact_paths["observed"]
     tested_head = delivery.get("tested_head")
@@ -2183,6 +2419,8 @@ def verify_merged() -> dict:
     check_artifact_paths()
     ownership, adopt = load_ownership_context()
     delivery, artifact_paths, pointer = load_current_delivery()
+    if ACTIVE_SCOPE == "debugger-remainder":
+        reject(delivery.get("scope") == ACTIVE_SCOPE, "merged-delivery-scope", delivery.get("scope"))
     inventory_paths = {lane: artifact_paths[f"inventory_{lane}"] for lane in ("core", "floor")}
     observed_path = artifact_paths["observed"]
     pr_number = delivery.get("pr", {}).get("number")
@@ -2246,6 +2484,7 @@ def verify_merged() -> dict:
         "delivery": json.dumps(delivery, sort_keys=True, indent=2).encode() + b"\n",
         "validation": validation,
     }
+    artifact_data = {key: data for key, data in artifact_data.items() if key in GENERATION_ARTIFACTS}
 
     def validate_merged_generation(staging: Path) -> None:
         for lane in ("core", "floor"):
@@ -2271,6 +2510,167 @@ def verify_merged() -> dict:
             "generation": artifact_generation, "previous_generation": pointer["generation"]}
 
 
+def remainder_scope_descriptor(ownership, adopt) -> dict:
+    rows = adopt.materialize()
+    remainder_modules = {}
+    selected_modules = {}
+    selected_roots = {}
+    pending_branches = {}
+    for lane in ("core", "floor"):
+        remainder_modules[lane] = sorted([
+            ownership.typed_identity("module", row) for row in rows
+            if row.get("t") == "module" and row.get("lane") == lane and row.get("app") == "debugger"
+            and row.get("owner") == REMAINDER_OWNER
+        ], key=canon_bytes)
+        selected_modules[lane] = sorted([
+            ownership.typed_identity("module", row) for row in rows
+            if row.get("t") == "module" and row.get("lane") == lane and row.get("app") == "debugger"
+            and row.get("owner") == SELECTED_OWNER
+        ], key=canon_bytes)
+        selected_roots[lane] = sorted([
+            ownership.typed_identity("root", row) for row in rows
+            if row.get("t") == "root" and row.get("lane") == lane and row.get("app") == "debugger"
+            and row.get("owner") == SELECTED_OWNER
+        ], key=canon_bytes)
+        pending_branches[lane] = [
+            {key: row.get(key) for key in ("t", "lane", "module", "function", "arity", "owner", "completion")}
+            for row in rows if row.get("t") == "source_branch" and row.get("lane") == lane
+            and row.get("module") == "dbg_icmd" and row.get("function") == "break_p"
+            and row.get("arity") == 4
+        ]
+
+    for lane in ("core", "floor"):
+        reject(len(remainder_modules[lane]) == 20 and len(selected_modules[lane]) == 1
+               and len(selected_roots[lane]) == 3,
+               "remainder-scope-owner-counts", {"lane": lane,
+                   "remainder_modules": len(remainder_modules[lane]),
+                   "selected_modules": len(selected_modules[lane]),
+                   "selected_roots": len(selected_roots[lane])})
+        reject(selected_modules[lane][0].get("module") == SELECTED_MODULE
+               and {row.get("function") for row in selected_roots[lane]}
+               == {"start", "load_settings", "load_settings2"},
+               "remainder-scope-selected-identities", lane)
+        reject(len(pending_branches[lane]) == 1
+               and pending_branches[lane][0].get("owner") == SELECTED_OWNER
+               and pending_branches[lane][0].get("completion") == "pending",
+               "remainder-scope-pending-branch", {"lane": lane, "rows": pending_branches[lane]})
+
+    report_files = {
+        "source_audit": REMAINDER_SOURCE_AUDIT_PATH,
+        "audit": REMAINDER_AUDIT_PATH,
+        "review": REVIEW_PATH,
+        "security": REMAINDER_SECURITY_PATH,
+    }
+    report_hashes = {}
+    for name, path in report_files.items():
+        artifact_target(path)
+        report_hashes[name] = sha256(read_bytes(path, "remainder-report-unavailable"))
+
+    authority = read_bytes(ADOPTION_LEDGER, "adopted-delegation-unavailable")
+    historical = read_bytes(ownership.OUTPUT, "historical-ledger-unavailable")
+    partition = read_bytes(ADOPTION_PARTITION, "adoption-partition-unavailable")
+    return {
+        "scope": "debugger-remainder",
+        "contract": REMAINDER_SCOPE_CONTRACT,
+        "source_archive_sha256": SUCCESSOR_SHA256,
+        "historical_sha256": sha256(historical),
+        "authority_sha256": sha256(authority),
+        "partition_sha256": sha256(partition),
+        "report_sha256": report_hashes,
+        "review_passes": read_review_passes(),
+        "required_lanes": SUPPORTED_RUNTIMES,
+        "current_owner_counts": {
+            lane: {
+                "remainder_modules": len(remainder_modules[lane]),
+                "remainder_module_identities_sha256": sha256(canon_bytes(remainder_modules[lane])),
+                "selected_modules": len(selected_modules[lane]),
+                "selected_module_identities_sha256": sha256(canon_bytes(selected_modules[lane])),
+                "selected_roots": len(selected_roots[lane]),
+                "selected_root_identities_sha256": sha256(canon_bytes(selected_roots[lane])),
+                "inherited_pending_source_branches": pending_branches[lane],
+            }
+            for lane in ("core", "floor")
+        },
+        "receipt_contract": {
+            "test": "debugger_remainder_receipt",
+            "helper": "DebuggerSettings.assert_remainder_receipt!/4",
+            "graph_input": "ctx.graph.receipt_lines",
+        },
+    }
+
+
+def verify_scope(scope: str) -> dict:
+    reject(scope == "debugger-remainder", "verify-scope-unsupported", scope)
+    with scoped_delivery(scope):
+        for path in (REMAINDER_SOURCE_AUDIT_PATH, REMAINDER_AUDIT_PATH,
+                     REMAINDER_REVIEW_PATH, REMAINDER_SECURITY_PATH, REMAINDER_VALIDATION_PATH):
+            artifact_target(path)
+        ownership, adopt = load_ownership_context()
+        source = verify_source(include_negative_controls=True)
+        history = verify_history(include_negative_controls=True)
+        support = read_bytes(ROOT / "test/support/debugger_settings.ex", "remainder-helper-unavailable").decode()
+        contract = read_bytes(ROOT / "test/contract/tier_sweep_test.exs", "remainder-test-unavailable").decode()
+        reject("def assert_remainder_receipt!" in support and "assert_remainder_inventory!" in support,
+               "remainder-helper-contract", "receipt helper does not call the full inventory assertion")
+        reject("ctx.graph.receipt_lines" in contract and "debugger_remainder_receipt" in contract,
+               "remainder-test-contract", "real current graph receipt selector is missing")
+
+        documents = {
+            "source_audit": read_bytes(REMAINDER_SOURCE_AUDIT_PATH, "source-audit-unavailable").decode(),
+            "audit": read_bytes(REMAINDER_AUDIT_PATH, "remainder-audit-unavailable").decode(),
+            "review": read_bytes(REMAINDER_REVIEW_PATH, "review-record-unavailable").decode(),
+            "security": read_bytes(REMAINDER_SECURITY_PATH, "security-record-unavailable").decode(),
+            "validation": read_bytes(REMAINDER_VALIDATION_PATH, "validation-record-unavailable").decode(),
+        }
+        private_path = re.compile(r"(?:/Users/|/home/)[^\s`]*")
+        email = re.compile(r"\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b")
+        for name, content in documents.items():
+            reject(private_path.search(content) is None and email.search(content) is None,
+                   "remainder-report-privacy", name)
+        for token in ("dbg_icmd:break_p/4", "dbg_wx_mon:start/2",
+                      "dbg_wx_mon:load_settings/2", "dbg_wx_mon:load_settings2/2",
+                      "callback", "interpreter", "monitor", "trace", "static", "SEC-01"):
+            reject(token.casefold() in documents["audit"].casefold(),
+                   "remainder-audit-claim", token)
+        for threat in ("T-01.1.1.3.1.2-13", "T-01.1.1.3.1.2-14", "T-01.1.1.3.1.2-15",
+                       "T-01.1.1.3.1.2-16", "T-01.1.1.3.1.2-SC"):
+            reject(threat in documents["security"], "remainder-security-threat", threat)
+        reject("mitigated" in documents["security"].casefold()
+               and "unmitigated high findings: 0" in documents["security"].casefold(),
+               "remainder-security-status", "high threat dispositions are incomplete")
+        reject("Review passes used:" in documents["review"], "remainder-review-accounting", "missing review cap")
+
+        marker_start = "<!-- remainder-scope-descriptor:start -->"
+        marker_end = "<!-- remainder-scope-descriptor:end -->"
+        matched = re.search(re.escape(marker_start) + r"\s*```json\s*(.*?)\s*```\s*"
+                            + re.escape(marker_end), documents["validation"], re.S)
+        reject(matched is not None, "remainder-scope-descriptor", "VALIDATION.md must carry the machine-checked JSON descriptor")
+        try:
+            actual_descriptor = json.loads(matched.group(1))
+        except (json.JSONDecodeError, AttributeError) as error:
+            raise VerificationError("remainder-scope-descriptor", str(error)) from error
+        expected_descriptor = remainder_scope_descriptor(ownership, adopt)
+        reject(actual_descriptor == expected_descriptor, "remainder-scope-descriptor-mismatch",
+               {"expected": expected_descriptor, "actual": actual_descriptor})
+
+        delivery_status = "not-collected"
+        if DELIVERY_PATH.exists():
+            delivery, paths, pointer = load_current_delivery()
+            reject(delivery.get("scope") == scope and delivery.get("schema") == DELIVERY_SCHEMA,
+                   "remainder-delivery-scope", delivery.get("scope"))
+            reject(set(paths) == set(REMAINDER_GENERATION_ARTIFACTS),
+                   "remainder-delivery-artifact-set", sorted(paths))
+            delivery_status = delivery.get("status", "unknown")
+        return {
+            "status": "verified", "scope": scope,
+            "source": source["status"], "history": history["status"],
+            "descriptor_sha256": sha256(canon_bytes(expected_descriptor)),
+            "current_owner_counts": expected_descriptor["current_owner_counts"],
+            "delivery": delivery_status,
+            "reports": {key: sha256(value.encode()) for key, value in documents.items()},
+        }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Verify the approved installed exact-source successor without network access."
@@ -2280,17 +2680,24 @@ def main(argv: list[str] | None = None) -> int:
     verify.add_argument("--negative-controls", action="store_true")
     history = subparsers.add_parser("verify-history")
     history.add_argument("--negative-controls", action="store_true")
-    subparsers.add_parser("self-test-observed")
-    subparsers.add_parser("self-test-publication")
+    observed_test = subparsers.add_parser("self-test-observed")
+    observed_test.add_argument("--scope", choices=SCOPE_OPTIONS, default="selected-settings")
+    publication_test = subparsers.add_parser("self-test-publication")
+    publication_test.add_argument("--scope", choices=SCOPE_OPTIONS, default="selected-settings")
     subparsers.add_parser("self-test-delivery-verification")
     collect = subparsers.add_parser("collect-ci")
     collect.add_argument("--pr-current", action="store_true", required=True)
     collect.add_argument("--red-capture-archive")
+    collect.add_argument("--scope", choices=SCOPE_OPTIONS, default="selected-settings")
     verify_ci_parser = subparsers.add_parser("verify-ci")
     verify_ci_parser.add_argument("--pr-current", action="store_true", required=True)
     verify_ci_parser.add_argument("--negative-controls", action="store_true")
+    verify_ci_parser.add_argument("--scope", choices=SCOPE_OPTIONS, default="selected-settings")
     merged = subparsers.add_parser("verify-merged")
     merged.add_argument("--pr-current", action="store_true", required=True)
+    merged.add_argument("--scope", choices=SCOPE_OPTIONS, default="selected-settings")
+    scope_parser = subparsers.add_parser("verify-scope")
+    scope_parser.add_argument("--scope", choices=("debugger-remainder",), required=True)
     args = parser.parse_args(argv)
 
     try:
@@ -2299,17 +2706,23 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "verify-history":
             report = verify_history(include_negative_controls=args.negative_controls)
         elif args.command == "self-test-observed":
-            report = self_test_observed()
+            report = self_test_observed_for_scope(args.scope)
         elif args.command == "self-test-publication":
-            report = self_test_publication()
+            with scoped_delivery(args.scope):
+                report = self_test_publication()
         elif args.command == "self-test-delivery-verification":
             report = self_test_delivery_verification()
         elif args.command == "collect-ci":
-            report = collect_ci(args.red_capture_archive)
+            with scoped_delivery(args.scope):
+                report = collect_ci(args.red_capture_archive)
         elif args.command == "verify-ci":
-            report = verify_ci(negative_controls=args.negative_controls)
+            with scoped_delivery(args.scope):
+                report = verify_ci(negative_controls=args.negative_controls)
+        elif args.command == "verify-scope":
+            report = verify_scope(args.scope)
         else:
-            report = verify_merged()
+            with scoped_delivery(args.scope):
+                report = verify_merged()
     except (VerificationError, ValueError, OSError, KeyError, IndexError) as error:
         print(
             json.dumps(
