@@ -1,18 +1,18 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.1
-current_phase_name: "Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons"
-status: halted
-stopped_at: Plan 01 task 01-02 measured audit budget requires split; source tracer independently green, final receipts in PR 23
-last_updated: "2026-10-30T12:56:12Z"
-last_activity: 2026-10-30 — Source tracer implemented; expanded audit measured; split required
-last_activity_desc: Plan 01 halted at documented source/context budget; 221 original exclusions expand to 2395 core and 2307 floor functions; no dependent plan dispatched
-state_head: 21bfbc00f6765bc4c20f801289713387a34425c8
+current_phase: 01.1.1.3.1.2
+current_phase_name: Debugger trace breakpoint monitor and interpreter remainder research
+status: planning
+stopped_at: Phase 01.1.1.3.1.2 context gathered
+last_updated: "2026-11-01T01:09:48.452Z"
+last_activity: 2026-11-01
+last_activity_desc: Automated UAT and scope audit passed; corrected nested phase pointer without starting 01.1.1.3.1.2
+state_head: 7436428064a0decde7637bfdfae78cbfa3d123ba
 progress:
-  total_phases: 38
+  total_phases: 40
   completed_phases: 1
-  total_plans: 20
-  completed_plans: 15
+  total_plans: 24
+  completed_plans: 20
   percent: 3
 ---
 
@@ -23,21 +23,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.1 Plan 01 is halted after the source/PathConsult tracer. Source archive approved (INT-20261030-01), exact-lane source integrity and static detection implemented in PR #23. The original exclusion scope expands to about 11.0 MB/core and 10.2 MB/floor of source; split/re-plan before bulk audit. Macro caller-AST policy remains unresolved; SEC-01 stays pending Phase 5.
+**Current focus:** Phase 01.1.1.3.1.1 is merged in PR #31 and its automated verification passed. The next child, 01.1.1.3.1.2, is ready to plan but has not started. The final installed-scope acceptance, parent verification debt, and SEC-01 remain pending with their existing owners. Auto-advance is disabled.
 
 ## Current Position
 
-Phase: 01.1.1.1 (Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons) — HALTED FOR RE-PLANNING
-Plan: 01 halted after task 01-01; task 01-02 partial, task 01-03 pending; 0/5 plans complete
-Status: Designed stop at the explicit audit-size gate; Plans 02–05 blocked by halted Plan 01
-Last activity: 2026-10-30 — Exact local source tracer passes 100 focused tests per lane; original audit counts corrected and both-lane source budget recorded
+Phase: 01.1.1.3.1.2 — Debugger trace breakpoint monitor and interpreter remainder research
+Plan: Not started
+Status: Ready to plan; phase work has not started
+Last activity: 2026-11-01 — Phase 01.1.1.3.1.1 automated verification passed
 
-Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 plans complete; current phase has one halted partial plan and four blocked plans
+Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 roadmap plans complete; the selected nested phase passed locally without changing parent roll-up counts
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 9
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -46,6 +46,7 @@ Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 plan
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01.1.1 | 5 | 316 min | 63.2 min |
+| 01.1.1.3.1.1 | 4 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -148,7 +149,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T12:56:12Z
-Stopped at: Plan 01 task 01-02 documented size gate; source/PathConsult tracer independently green in PR 23; no phase completion
-Next command: $gsd-plan-phase 01.1.1.1 — split/re-plan the remaining audit using measured source-based partitions and preserved WIP
-Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.continue-here.md
+Last session: 2026-11-01T01:09:47.891Z
+Stopped at: Phase 01.1.1.3.1.2 context gathered
+Next command: $gsd-discuss-phase 01.1.1.3.1.2
+Resume file: .planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-CONTEXT.md
