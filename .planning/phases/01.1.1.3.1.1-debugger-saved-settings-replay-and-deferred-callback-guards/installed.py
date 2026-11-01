@@ -1977,6 +1977,8 @@ def self_test_observed_for_scope(scope: str) -> dict:
         report = self_test_observed()
         if scope == "debugger-remainder":
             report["artifact_controls"] = self_test_remainder_artifact_controls()
+            report["validation_controls"] = self_test_validation_limits()
+            report["delivery_claim_controls"] = self_test_delivery_claim_block()
             report["scope"] = scope
         return report
 
@@ -2510,6 +2512,132 @@ def verify_merged() -> dict:
             "generation": artifact_generation, "previous_generation": pointer["generation"]}
 
 
+def validate_validation_limits(validation: str) -> dict:
+    required = (
+        "- Runtime safety: not established; source, BEAM and receipt evidence is static only.",
+        "- Installed-wide acceptance: pending for Plan 01.1.1.3.1.3.",
+        "- SEC-01: pending for Phase 5.",
+    )
+    for statement in required:
+        reject(statement in validation, "remainder-validation-limit", statement)
+    allowed = set(required)
+    protected = re.compile(
+        r"\bsec[\s_-]*0?1\b|\binstalled[\s-]*wide\b|"
+        r"\bsafety\b|\bsafe\b|"
+        r"\bruntime\b[^\n]{0,80}\b(?:complete|completed|pass|passed|verify|verified|"
+        r"accept|accepted|close|closed|prove|proved|proven|establish|established|"
+        r"fulfill|fulfilled|confirm|confirmed|finish|finished|done|achieve|achieved|"
+        r"clear|cleared|satisfy|satisfied|meet|met|succeed|succeeded|approve|approved|"
+        r"green|successful|assure|assured|resolve|resolved)\b|"
+        r"\b(?:complete|completed|pass|passed|verify|verified|accept|accepted|close|closed|"
+        r"prove|proved|proven|establish|established|fulfill|fulfilled|confirm|confirmed|"
+        r"finish|finished|done|achieve|achieved|clear|cleared|satisfy|satisfied|meet|met|"
+        r"succeed|succeeded|approve|approved|green|successful|assure|assured|resolve|resolved)\b"
+        r"[^\n]{0,80}\bruntime\b", re.I
+    )
+    for line_number, line in enumerate(validation.splitlines(), 1):
+        if protected.search(line):
+            reject(line in allowed,
+                   "remainder-validation-claim-line",
+                   {"line": line_number, "text": line.strip()})
+    return {"status": "passed", "required_limits": len(required), "false_completion_claims": 0}
+
+
+def self_test_validation_limits() -> dict:
+    limits = (
+        "- Runtime safety: not established; source, BEAM and receipt evidence is static only.\n"
+        "- Installed-wide acceptance: pending for Plan 01.1.1.3.1.3.\n"
+        "- SEC-01: pending for Phase 5.\n"
+    )
+    validate_validation_limits(limits)
+    controls = {"explicit-pending-limits": "passed"}
+    for name, claim in (
+        ("sec01-complete", "SEC-01 complete"),
+        ("sec01-validated", "SEC 01 has been validated"),
+        ("sec01-fulfilled", "SEC_01 is fulfilled"),
+        ("installed-wide-accepted", "Installed-wide acceptance passed"),
+        ("installed-wide-approved", "Installed wide acceptance is approved"),
+        ("runtime-safety-established", "Runtime safety verified"),
+        ("runtime-safety-confirmed", "Runtime safety is confirmed"),
+        ("runtime-safety-assured", "Runtime safety is assured"),
+        ("runtime-safe", "Runtime is safe"),
+        ("safe-runtime", "The runtime is safe"),
+        ("installed-wide-done", "Installed-wide acceptance is done"),
+        ("sec01-satisfied", "SEC-01 is satisfied"),
+        ("sec01-complete-with-no-blockers", "SEC-01 has no outstanding blockers and is complete"),
+        ("sec01-complete-next-line", "SEC-01\ncomplete"),
+        ("installed-wide-accepted-next-line", "Installed-wide acceptance\npassed"),
+        ("runtime-safety-verified-next-line", "Runtime safety\nverified"),
+    ):
+        try:
+            validate_validation_limits(limits + "\n" + claim + "\n")
+        except VerificationError as error:
+            reject(error.reason == "remainder-validation-claim-line",
+                   "remainder-overclaim-control", {"name": name, "reason": error.reason})
+            controls[name] = "rejected"
+        else:
+            raise VerificationError("remainder-overclaim-control-accepted", name)
+    validate_validation_limits(limits + "\n- Static-only evidence does not establish execution behavior.\n")
+    controls["unrelated-static-only-wording"] = "passed"
+    return {"status": "passed", "controls": controls}
+
+
+def validation_delivery_claims(delivery: dict | None = None, pointer: dict | None = None) -> dict:
+    if delivery is None or pointer is None:
+        return {"status": "pending"}
+    return {
+        "status": delivery.get("status"),
+        "scope": delivery.get("scope"),
+        "pr": {key: delivery.get("pr", {}).get(key)
+               for key in ("number", "url", "state", "headRefName", "baseRefName")},
+        "tested_head": delivery.get("tested_head"),
+        "ci_run": {key: delivery.get("ci_run", {}).get(key)
+                   for key in ("databaseId", "headSha", "url", "status", "conclusion")},
+        "jobs": delivery.get("jobs"),
+        "check_results": delivery.get("check_results"),
+        "merge_commit": delivery.get("merge_commit"),
+        "generation": pointer.get("generation"),
+        "delivery_pointer": str(DELIVERY_PATH.relative_to(ROOT)),
+        "delivery_pointer_sha256": sha256(read_bytes(DELIVERY_PATH, "delivery-pointer-unavailable")),
+        "artifacts": {key: record.get("path") for key, record in pointer.get("artifacts", {}).items()},
+    }
+
+
+def validate_delivery_claim_block(validation: str, expected: dict) -> None:
+    marker_start = "<!-- remainder-delivery-claims:start -->"
+    marker_end = "<!-- remainder-delivery-claims:end -->"
+    reject(validation.count(marker_start) == 1 and validation.count(marker_end) == 1,
+           "remainder-delivery-claim-block-count", "exactly one delivery claims block is allowed")
+    matched = re.search(re.escape(marker_start) + r"\s*```json\s*(.*?)\s*```\s*"
+                        + re.escape(marker_end), validation, re.S)
+    reject(matched is not None, "remainder-delivery-claims", "VALIDATION.md must carry the machine-checked delivery claims block")
+    try:
+        actual = json.loads(matched.group(1))
+    except (json.JSONDecodeError, AttributeError) as error:
+        raise VerificationError("remainder-delivery-claims", str(error)) from error
+    reject(actual == expected, "remainder-delivery-claim-mismatch",
+           {"expected": expected, "actual": actual})
+
+
+def self_test_delivery_claim_block() -> dict:
+    marker_start = "<!-- remainder-delivery-claims:start -->"
+    marker_end = "<!-- remainder-delivery-claims:end -->"
+    block = f"{marker_start}\n```json\n{{\"status\":\"pending\"}}\n```\n{marker_end}"
+    validate_delivery_claim_block(block, {"status": "pending"})
+    controls = {"current-delivery-claims-match": "passed"}
+    for name, altered in (
+        ("duplicate-delivery-claim-block", block + "\n" + block),
+        ("unsupported-delivery-claim", block.replace("pending", "merged")),
+    ):
+        try:
+            validate_delivery_claim_block(altered, {"status": "pending"})
+        except VerificationError:
+            controls[name] = "rejected"
+        else:
+            raise VerificationError("remainder-delivery-control-accepted", name)
+    return {"status": "passed", "controls": controls}
+
+
 def remainder_scope_descriptor(ownership, adopt) -> dict:
     rows = adopt.materialize()
     remainder_modules = {}
@@ -2569,6 +2697,9 @@ def remainder_scope_descriptor(ownership, adopt) -> dict:
     authority = read_bytes(ADOPTION_LEDGER, "adopted-delegation-unavailable")
     historical = read_bytes(ownership.OUTPUT, "historical-ledger-unavailable")
     partition = read_bytes(ADOPTION_PARTITION, "adoption-partition-unavailable")
+    verifier = read_bytes(Path(__file__), "scoped-verifier-unavailable")
+    helper = read_bytes(ROOT / "test/support/debugger_settings.ex", "remainder-helper-unavailable")
+    contract_test = read_bytes(ROOT / "test/contract/tier_sweep_test.exs", "remainder-test-unavailable")
     return {
         "scope": "debugger-remainder",
         "contract": REMAINDER_SCOPE_CONTRACT,
@@ -2577,6 +2708,9 @@ def remainder_scope_descriptor(ownership, adopt) -> dict:
         "authority_sha256": sha256(authority),
         "partition_sha256": sha256(partition),
         "report_sha256": report_hashes,
+        "verifier_sha256": sha256(verifier),
+        "helper_sha256": sha256(helper),
+        "contract_test_sha256": sha256(contract_test),
         "review_passes": read_review_passes(),
         "required_lanes": SUPPORTED_RUNTIMES,
         "current_owner_counts": {
@@ -2622,6 +2756,8 @@ def verify_scope(scope: str) -> dict:
             "security": read_bytes(REMAINDER_SECURITY_PATH, "security-record-unavailable").decode(),
             "validation": read_bytes(REMAINDER_VALIDATION_PATH, "validation-record-unavailable").decode(),
         }
+        validation_limits = validate_validation_limits(documents["validation"])
+        validation_controls = self_test_validation_limits()
         private_path = re.compile(r"(?:/Users/|/home/)[^\s`]*")
         email = re.compile(r"\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b")
         for name, content in documents.items():
@@ -2632,16 +2768,28 @@ def verify_scope(scope: str) -> dict:
                       "callback", "interpreter", "monitor", "trace", "static", "SEC-01"):
             reject(token.casefold() in documents["audit"].casefold(),
                    "remainder-audit-claim", token)
-        for threat in ("T-01.1.1.3.1.2-13", "T-01.1.1.3.1.2-14", "T-01.1.1.3.1.2-15",
-                       "T-01.1.1.3.1.2-16", "T-01.1.1.3.1.2-SC"):
-            reject(threat in documents["security"], "remainder-security-threat", threat)
+        threat_rows = {
+            threat: next((line for line in documents["security"].splitlines() if threat in line), "")
+            for threat in ("T-01.1.1.3.1.2-13", "T-01.1.1.3.1.2-14", "T-01.1.1.3.1.2-15",
+                           "T-01.1.1.3.1.2-16", "T-01.1.1.3.1.2-SC")
+        }
+        for threat, line in threat_rows.items():
+            reject("mitigated" in line.casefold(), "remainder-security-threat", {"threat": threat, "row": line})
         reject("mitigated" in documents["security"].casefold()
                and "unmitigated high findings: 0" in documents["security"].casefold(),
                "remainder-security-status", "high threat dispositions are incomplete")
         reject("Review passes used:" in documents["review"], "remainder-review-accounting", "missing review cap")
+        reject(read_review_passes() <= 2, "remainder-review-cap", read_review_passes())
+        for document in ("audit", "security"):
+            content = documents[document].casefold()
+            for limit in ("runtime safety", "installed-wide", "sec-01"):
+                reject(limit in content, "remainder-scope-limits", {"document": document, "limit": limit})
 
         marker_start = "<!-- remainder-scope-descriptor:start -->"
         marker_end = "<!-- remainder-scope-descriptor:end -->"
+        reject(documents["validation"].count(marker_start) == 1
+               and documents["validation"].count(marker_end) == 1,
+               "remainder-scope-descriptor-count", "exactly one scope descriptor is allowed")
         matched = re.search(re.escape(marker_start) + r"\s*```json\s*(.*?)\s*```\s*"
                             + re.escape(marker_end), documents["validation"], re.S)
         reject(matched is not None, "remainder-scope-descriptor", "VALIDATION.md must carry the machine-checked JSON descriptor")
@@ -2652,8 +2800,12 @@ def verify_scope(scope: str) -> dict:
         expected_descriptor = remainder_scope_descriptor(ownership, adopt)
         reject(actual_descriptor == expected_descriptor, "remainder-scope-descriptor-mismatch",
                {"expected": expected_descriptor, "actual": actual_descriptor})
+        review_claims = [int(value) for value in re.findall(r"Review passes used:\s*(\d+)\s*/\s*2", documents["validation"])]
+        reject(review_claims and all(value == expected_descriptor["review_passes"] for value in review_claims),
+               "remainder-validation-review-claim", review_claims)
 
         delivery_status = "not-collected"
+        expected_delivery_claims = {"status": "pending"}
         if DELIVERY_PATH.exists():
             delivery, paths, pointer = load_current_delivery()
             reject(delivery.get("scope") == scope and delivery.get("schema") == DELIVERY_SCHEMA,
@@ -2661,12 +2813,16 @@ def verify_scope(scope: str) -> dict:
             reject(set(paths) == set(REMAINDER_GENERATION_ARTIFACTS),
                    "remainder-delivery-artifact-set", sorted(paths))
             delivery_status = delivery.get("status", "unknown")
+            expected_delivery_claims = validation_delivery_claims(delivery, pointer)
+        validate_delivery_claim_block(documents["validation"], expected_delivery_claims)
         return {
             "status": "verified", "scope": scope,
             "source": source["status"], "history": history["status"],
             "descriptor_sha256": sha256(canon_bytes(expected_descriptor)),
             "current_owner_counts": expected_descriptor["current_owner_counts"],
             "delivery": delivery_status,
+            "validation_limits": validation_limits,
+            "validation_controls": validation_controls,
             "reports": {key: sha256(value.encode()) for key, value in documents.items()},
         }
 

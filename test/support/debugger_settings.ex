@@ -1293,11 +1293,8 @@ defmodule Fablebook.Test.DebuggerSettings do
       "lane #{lane} owner=#{@remainder_owner} source evidence lane=#{evidence.lane.name} caller-chain=remainder receipt validator remedy=use matching exact-lane source evidence"
     )
 
-    current_receipt = InstalledOtp.verify_receipt_lines!(graph.receipt_lines)
-    supplied_receipt = InstalledOtp.verify_receipt_lines!(receipt_lines)
-
     require_ownership!(
-      supplied_receipt.lane == lane and supplied_receipt.sha256 == current_receipt.sha256,
+      receipt_lines == graph.receipt_lines,
       "lane #{lane} owner=#{@remainder_owner} supplied receipt differs from the fresh installed graph; caller-chain=graph receipt_lines remedy=use the complete current-lane receipt"
     )
 
@@ -1335,7 +1332,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       lane: lane,
       owner: inventory.owner,
       selected_module: @settings_module,
-      receipt_sha256: supplied_receipt.sha256,
+      receipt_sha256: inventory.receipt_sha256,
       remainder_module_count: length(inventory.modules),
       original_root_count: length(inventory.original_roots),
       observed_root_count: length(inventory.observed_roots),
@@ -1817,6 +1814,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       status: :verified,
       lane: lane,
       owner: @remainder_owner,
+      receipt_sha256: ownership.receipt_sha256,
       modules: module_inventory,
       module_names: Enum.sort(MapSet.to_list(module_names)),
       original_roots: original_roots,

@@ -5252,7 +5252,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert map_size(result.source_sha256) == result.remainder_module_count
     assert result.original_root_count >= 3
     assert result.observed_root_count == result.original_root_count
-    assert result.receipt_sha256 == InstalledOtp.verify_receipt_lines!(receipt_lines).sha256
+    assert result.receipt_sha256 == receipt_footer_sha256!(receipt_lines)
 
     assert result.inherited_pending == %{
              callback_body: "dbg_icmd:break_p/4",
@@ -5263,25 +5263,22 @@ defmodule Fablebook.Contract.TierSweepTest do
              ]
            }
 
-    assert_raise InstalledOtp.Error, fn ->
+    assert_raise ExUnit.AssertionError, fn ->
       DebuggerSettings.assert_remainder_receipt!(ctx.graph, evidence, records, [])
     end
 
     other_lane = if ctx.graph.lane.name == "core", do: "floor", else: "core"
 
-    wrong_lane =
-      rewrite_settings_receipt(receipt_lines, fn [meta | rest] ->
-        [Map.put(meta, "lane", other_lane) | rest]
-      end)
+    wrong_lane = rewrite_settings_meta_receipt(receipt_lines, &Map.put(&1, "lane", other_lane))
 
-    assert_raise InstalledOtp.Error, fn ->
+    assert_raise ExUnit.AssertionError, fn ->
       DebuggerSettings.assert_remainder_receipt!(ctx.graph, evidence, records, wrong_lane)
     end
 
     wrong_runtime =
       rewrite_settings_meta_receipt(receipt_lines, &Map.put(&1, "elixir", "0.0.0"))
 
-    assert_raise InstalledOtp.Error, fn ->
+    assert_raise ExUnit.AssertionError, fn ->
       DebuggerSettings.assert_remainder_receipt!(ctx.graph, evidence, records, wrong_runtime)
     end
 
@@ -5291,7 +5288,7 @@ defmodule Fablebook.Contract.TierSweepTest do
         &Map.put(&1, "lock_sha256", String.duplicate("0", 64))
       )
 
-    assert_raise InstalledOtp.Error, fn ->
+    assert_raise ExUnit.AssertionError, fn ->
       DebuggerSettings.assert_remainder_receipt!(ctx.graph, evidence, records, wrong_lock)
     end
 
@@ -5319,6 +5316,12 @@ defmodule Fablebook.Contract.TierSweepTest do
       elapsed_ms = System.monotonic_time(:millisecond) - test_started
       IO.puts("FABLEBOOK_REMAINDER_RECEIPT_TEST_MS=#{elapsed_ms}")
     end
+  end
+
+  defp receipt_footer_sha256!(lines) do
+    marker = "FABLEBOOK_OTP_INVENTORY_V2 "
+    {:ok, footer} = JSON.decode(String.replace_prefix(List.last(lines), marker, ""))
+    footer["sha256"]
   end
 
   defp rewrite_settings_receipt(lines, transform) do
