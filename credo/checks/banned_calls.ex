@@ -284,6 +284,7 @@ defmodule Fablebook.Credo.BannedCalls do
           {:dbg_icmd, :handle_msg, :_},
           {:dbg_ieval, :eval, :_},
           {:dbg_ieval, :eval_expr, :_},
+          {:int, :auto_attach, 2},
           {:dbg_iserver, :call, :_},
           {:dbg_iserver, :safe_call, :_},
           {:dbg_iserver, :handle_call, :_},

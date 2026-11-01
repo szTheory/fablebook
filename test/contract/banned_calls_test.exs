@@ -276,6 +276,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:dbg_icmd, :handle_msg, :_},
     {:dbg_ieval, :eval, :_},
     {:dbg_ieval, :eval_expr, :_},
+    {:int, :auto_attach, 2},
     {:dbg_iserver, :call, :_},
     {:dbg_iserver, :safe_call, :_},
     {:dbg_iserver, :handle_call, :_},
@@ -1188,7 +1189,16 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
   @tag :tmp_dir
   @tag :debugger_remainder_tracer
-  test "auto-attach setter probe is caught by the exact BEAM guard tier", %{tmp_dir: dir} do
+  test "auto-attach setter is guarded while source-only and wrapper controls stay distinct", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    mfa = {:int, :auto_attach, 2}
+    assert mfa in @mfa_tier
+    assert mfa in BannedCalls.banned_mfas()
+
     source = """
     defmodule Fablebook.GuardFixture.AutoAttachTracer do
       def probe(module, function), do: :int.auto_attach([:init], {module, function})
@@ -1198,12 +1208,69 @@ defmodule Fablebook.Contract.BannedCallsTest do
     source_path = Path.join(dir, "auto_attach_tracer.ex")
     File.write!(source_path, source)
     [beam] = compile!([source_path], dir, true)
-
     assert {:ok, scan} = BeamWalker.scan(beam)
-    mfa = {:int, :auto_attach, 2}
 
     assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
            "the uncalled setter probe must be caught by the exact auto-attach guard tier"
+
+    refute Enum.any?(hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))), &mfa_hit?(&1, mfa)),
+           "removing only int.auto_attach/2 must remove its direct BEAM hit"
+
+    assert credo_issues(source, "auto_attach_tracer.ex") != [],
+           "Credo must catch the same direct auto-attach source probe"
+
+    for {form, body} <- [
+          {:discarded_quote,
+           "def probe do\n  quote do\n    :int.auto_attach([:init], {Fablebook.GuardFixture.Callback, :run})\n  end\nend"},
+          {:uninvoked_macro,
+           "defmacro never_called do\n  quote do\n    :int.auto_attach([:init], {Fablebook.GuardFixture.Callback, :run})\n  end\nend"}
+        ] do
+      source = """
+      defmodule Fablebook.GuardFixture.AutoAttach#{Macro.camelize(to_string(form))} do
+        #{body}
+      end
+      """
+
+      source_path = Path.join(dir, "auto_attach_#{form}.ex")
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      refute Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "#{form} must remain source-only rather than a called auto-attach MFA"
+
+      assert credo_issues(source, "auto_attach_#{form}.ex") != [],
+             "Credo must retain the #{form} source-only finding"
+    end
+
+    benign =
+      "defmodule Fablebook.GuardFixture.AutoAttachStop do\n  def probe, do: :dbg_wx_mon.stop()\nend"
+
+    benign_path = Path.join(dir, "auto_attach_stop.ex")
+    File.write!(benign_path, benign)
+    [benign_beam] = compile!([benign_path], dir, true)
+    assert {:ok, benign_scan} = BeamWalker.scan(benign_beam)
+    refute Enum.any?(hits(benign_scan), &mfa_hit?(&1, mfa))
+    assert credo_issues(benign, "auto_attach_stop.ex") == []
+
+    wrapper =
+      "defmodule Fablebook.GuardFixture.AutoAttachWrapper do\n  def probe(mode), do: :debugger.start(mode)\nend"
+
+    wrapper_path = Path.join(dir, "auto_attach_wrapper.ex")
+    File.write!(wrapper_path, wrapper)
+    [wrapper_beam] = compile!([wrapper_path], dir, true)
+    assert {:ok, wrapper_scan} = BeamWalker.scan(wrapper_beam)
+    wrapper_mfa = {:debugger, :start, 1}
+
+    assert Enum.any?(hits(wrapper_scan), &mfa_hit?(&1, wrapper_mfa))
+
+    assert Enum.any?(
+             hits(wrapper_scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+             &mfa_hit?(&1, wrapper_mfa)
+           ),
+           "removing int.auto_attach/2 must retain the unrelated debugger wrapper wildcard"
+
+    assert credo_issues(wrapper, "auto_attach_wrapper.ex") != []
   end
 
   @tag :tmp_dir

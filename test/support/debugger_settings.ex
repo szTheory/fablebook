@@ -26,6 +26,26 @@ defmodule Fablebook.Test.DebuggerSettings do
     {:dbg_wx_mon, :load_settings2, 2}
   ]
   @debugger_seed_modules ["dbg_idb", "dbg_istk", "dbg_wx_interpret"]
+  @auto_attach_route_branch_ids [
+    :auto_attach_empty_flags,
+    :auto_attach_two_tuple,
+    :auto_attach_valid_tuple,
+    :auto_attach_safe_cast,
+    :auto_attach_false_store,
+    :auto_attach_false_broadcast,
+    :auto_attach_tuple_store,
+    :auto_attach_init_event,
+    :auto_attach_init_result_break,
+    :auto_attach_init_result_running,
+    :auto_attach_break_event,
+    :auto_attach_exit_event,
+    :auto_attach_process_unattached,
+    :auto_attach_already_attached_ignore,
+    :auto_attach_false_ignore,
+    :auto_attach_event_membership,
+    :auto_attach_event_match_spawn,
+    :auto_attach_event_nonmatch_ignore
+  ]
   @settings_module :dbg_wx_settings
   @monitor_module :dbg_wx_mon
   @settings_mfas [
@@ -565,6 +585,25 @@ defmodule Fablebook.Test.DebuggerSettings do
           :source_only_dynamic_condition
         ]
       },
+      auto_attach_trace: %{
+        input_origin: :caller_supplied_auto_attach_flags_and_function_tuple,
+        accepted_forms: [
+          :empty_flags_disable,
+          {:flags, {:module, :function}, :implicit_empty_args},
+          {:flags, {:module, :function, :args}, :validated_args}
+        ],
+        stored_value: {:flags, {:module, :function, :args}},
+        event_gate: %{mfa: {:dbg_iserver, :auto_attach, 3}, events: [:init, :break, :exit]},
+        gate_predicate: :lists_member_event_in_flags,
+        dispatch: %{
+          mfa: {:dbg_iserver, :auto_attach, 3},
+          expression: "spawn(Mod, Func, [Pid | Args])",
+          target: :unresolved_dynamic_module_function
+        },
+        ignored_branches: [:false_setting, :already_attached_process, :event_not_in_flags],
+        owner: @remainder_owner,
+        citation_ids: @auto_attach_route_branch_ids
+      },
       defaults: %{
         settings_file: :caller_selected_or_default,
         strings: :legacy_keep,
@@ -587,6 +626,128 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   def records(lane_name),
     do: raise(ArgumentError, "unsupported debugger settings lane: #{inspect(lane_name)}")
+
+  def assert_auto_attach_trace!(record, graph, tier, evidence) do
+    lane = evidence.lane.name
+    trace = Map.get(record, :auto_attach_trace)
+
+    assert is_map(trace),
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=setter -> stored state -> event gate -> spawn remedy=restore the complete auto-attach trace"
+
+    required_trace_fields = [
+      :input_origin,
+      :accepted_forms,
+      :stored_value,
+      :event_gate,
+      :gate_predicate,
+      :dispatch,
+      :ignored_branches,
+      :owner,
+      :citation_ids
+    ]
+
+    missing_trace_fields = Enum.reject(required_trace_fields, &Map.has_key?(trace, &1))
+
+    assert missing_trace_fields == [],
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=setter -> stored state -> event gate -> spawn missing=#{inspect(missing_trace_fields)} remedy=restore stored tuple, gate, dispatch, ignored branches and owner"
+
+    expected_trace = %{
+      input_origin: :caller_supplied_auto_attach_flags_and_function_tuple,
+      accepted_forms: [
+        :empty_flags_disable,
+        {:flags, {:module, :function}, :implicit_empty_args},
+        {:flags, {:module, :function, :args}, :validated_args}
+      ],
+      stored_value: {:flags, {:module, :function, :args}},
+      event_gate: %{mfa: {:dbg_iserver, :auto_attach, 3}, events: [:init, :break, :exit]},
+      gate_predicate: :lists_member_event_in_flags,
+      dispatch: %{
+        mfa: {:dbg_iserver, :auto_attach, 3},
+        expression: "spawn(Mod, Func, [Pid | Args])",
+        target: :unresolved_dynamic_module_function
+      },
+      ignored_branches: [:false_setting, :already_attached_process, :event_not_in_flags],
+      owner: @remainder_owner,
+      citation_ids: @auto_attach_route_branch_ids
+    }
+
+    Enum.each(expected_trace, fn {field, expected} ->
+      assert Map.get(trace, field) == expected,
+             "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=setter -> stored state -> event gate -> spawn field=#{field} actual=#{inspect(Map.get(trace, field))} remedy=restore source-backed route evidence"
+    end)
+
+    assert graph.lane.name == lane,
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=installed graph remedy=use the matching exact lane"
+
+    assert {:int, :auto_attach, 2} in tier,
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=static guard tier remedy=retain the exact setter entry"
+
+    owners = pending_owners()
+
+    Enum.each(["int", "dbg_iserver"], fn module ->
+      assert Map.get(owners, module) == @remainder_owner,
+             "lane #{lane} module=#{module} owner=#{inspect(Map.get(owners, module))} caller-chain=adopted pending owner ledger remedy=restore current remainder ownership"
+    end)
+
+    assert trace.owner == Map.fetch!(owners, "int") and
+             trace.owner == Map.fetch!(owners, "dbg_iserver"),
+           "lane #{lane} owner=#{trace.owner} MFA int:auto_attach/2 caller-chain=adopted pending owner ledger remedy=bind the route to both current owners"
+
+    source_branches = Map.get(record, :source_branches, [])
+    source_branch_map = Map.new(source_branches, &{&1.id, &1})
+    actual_branch_ids = MapSet.new(Map.keys(source_branch_map))
+    required_branch_ids = MapSet.new(@auto_attach_route_branch_ids)
+    missing_branch_ids = MapSet.difference(required_branch_ids, actual_branch_ids)
+
+    assert MapSet.size(missing_branch_ids) == 0,
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=setter -> server state -> event gate -> spawn missing source branches=#{inspect(MapSet.to_list(missing_branch_ids))} remedy=restore each route branch"
+
+    branch_citations = Map.get(record, :branch_citations, %{})
+
+    Enum.each(@auto_attach_route_branch_ids, fn branch_id ->
+      branch = Map.fetch!(source_branch_map, branch_id)
+      source_module = elem(branch.mfa, 0)
+      citations = Map.get(branch_citations, branch_id, [])
+
+      assert branch.owner == @remainder_owner and
+               source_module in [:int, :dbg_iserver],
+             "lane #{lane} MFA #{format_mfa(branch.mfa)} owner=#{branch.owner} caller-chain=#{branch.trace} remedy=retain the adopted remainder owner for setter, storage, gate and dispatch"
+
+      assert citations != [],
+             "lane #{lane} MFA #{format_mfa(branch.mfa)} owner=#{@remainder_owner} caller-chain=#{branch.trace} remedy=restore its exact source citation"
+
+      Enum.each(citations, &assert_citation!(evidence, lane, record, &1))
+    end)
+
+    assert MapSet.member?(graph.full_exported, {:int, :auto_attach, 2}),
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=installed full graph remedy=retain the setter in the exact-lane exported universe"
+
+    for {module, required_mfas} <- [
+          {:int, [{:int, :auto_attach, 2}]},
+          {:dbg_iserver,
+           [
+             {:dbg_iserver, :handle_cast, 2},
+             {:dbg_iserver, :handle_call, 3},
+             {:dbg_iserver, :auto_attach, 3}
+           ]}
+        ] do
+      inspection = Enum.find(graph.inspected, &(&1.module_atom == module))
+
+      assert inspection != nil,
+             "lane #{lane} owner=#{@remainder_owner} module=#{module} caller-chain=installed debugger BEAM remedy=retain source and BEAM evidence for the assigned module"
+
+      assert {:ok, scan} = BeamWalker.scan(inspection.path),
+             "lane #{lane} owner=#{@remainder_owner} module=#{module} caller-chain=debug-info BEAM scan remedy=restore exact-lane function evidence"
+
+      actual_functions = MapSet.new(scan.function_mfas)
+      missing_functions = Enum.reject(required_mfas, &MapSet.member?(actual_functions, &1))
+
+      assert missing_functions == [],
+             "lane #{lane} owner=#{@remainder_owner} module=#{module} missing BEAM functions=#{inspect(missing_functions)} caller-chain=setter -> stored state -> event gate -> spawn remedy=restore exact installed functions"
+    end
+
+    :ok
+  end
 
   def assert_receipt!(graph, evidence, records, receipt_lines) when is_list(receipt_lines) do
     lane = graph.lane.name
@@ -2138,6 +2299,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       :source_branches,
       :branch_citations,
       :trace,
+      :auto_attach_trace,
       :defaults,
       :option_paths,
       :verdict,
@@ -2272,6 +2434,8 @@ defmodule Fablebook.Test.DebuggerSettings do
         Enum.flat_map(root_records, &List.wrap(&1.citations))
 
     Enum.each(citations, &assert_citation!(evidence, lane, record, &1))
+
+    :ok = assert_auto_attach_trace!(record, graph, tier, evidence)
 
     expected_roots
     |> MapSet.to_list()

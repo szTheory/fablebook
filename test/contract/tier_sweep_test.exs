@@ -3982,6 +3982,120 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :debugger_remainder_tracer
+  test "auto-attach setter route binds exact source, installed BEAM and adopted owners", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    record = DebuggerSettings.records(evidence.lane.name)
+
+    assert :ok ==
+             DebuggerSettings.assert_auto_attach_trace!(
+               record,
+               ctx.graph,
+               BannedCalls.banned_mfas(),
+               evidence
+             )
+
+    missing_store = %{
+      record
+      | auto_attach_trace: Map.delete(record.auto_attach_trace, :stored_value)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/stored tuple/, fn ->
+      DebuggerSettings.assert_auto_attach_trace!(
+        missing_store,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence
+      )
+    end
+
+    missing_gate = %{
+      record
+      | auto_attach_trace: Map.delete(record.auto_attach_trace, :event_gate)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/event gate/, fn ->
+      DebuggerSettings.assert_auto_attach_trace!(
+        missing_gate,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence
+      )
+    end
+
+    missing_tuple = %{
+      record
+      | source_branches: Enum.reject(record.source_branches, &(&1.id == :auto_attach_two_tuple)),
+        branch_citations: Map.delete(record.branch_citations, :auto_attach_two_tuple)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/missing source branches/, fn ->
+      DebuggerSettings.assert_auto_attach_trace!(
+        missing_tuple,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence
+      )
+    end
+
+    missing_dispatch = %{
+      record
+      | source_branches:
+          Enum.reject(record.source_branches, &(&1.id == :auto_attach_event_match_spawn)),
+        branch_citations: Map.delete(record.branch_citations, :auto_attach_event_match_spawn)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/missing source branches/, fn ->
+      DebuggerSettings.assert_auto_attach_trace!(
+        missing_dispatch,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence
+      )
+    end
+
+    wrong_owner = %{
+      record
+      | source_branches:
+          Enum.map(record.source_branches, fn branch ->
+            if branch.id == :auto_attach_tuple_store,
+              do: %{branch | owner: "01.1.1.3.1.1"},
+              else: branch
+          end)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/retain the adopted remainder owner/, fn ->
+      DebuggerSettings.assert_auto_attach_trace!(
+        wrong_owner,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence
+      )
+    end
+
+    [store_citation | remaining_store_citations] =
+      record.branch_citations.auto_attach_tuple_store
+
+    wrong_hash = %{
+      record
+      | branch_citations:
+          Map.put(record.branch_citations, :auto_attach_tuple_store, [
+            %{store_citation | sha256: String.duplicate("0", 64)} | remaining_store_citations
+          ])
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/restore exact lane SHA/, fn ->
+      DebuggerSettings.assert_auto_attach_trace!(
+        wrong_hash,
+        ctx.graph,
+        BannedCalls.banned_mfas(),
+        evidence
+      )
+    end
+  end
+
   @tag :saved_settings_audit
   test "deferred callback routes have distinct source branch identities" do
     assert Code.ensure_loaded?(DebuggerSettings)
