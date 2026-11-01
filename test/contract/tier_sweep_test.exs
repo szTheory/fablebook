@@ -622,6 +622,22 @@ defmodule Fablebook.Contract.TierSweepTest do
     {:dbg_istk, :delayed_to_external, 0}
   ]
   @debugger_expected_exclusion_matches []
+  @debugger_remainder_guard_mfas [
+    {:int, :test_at_break, 3},
+    {:dbg_wx_win, :entry, 4},
+    {:dbg_wx_mon_win, :create_win, 3},
+    {:dbg_wx_mon_win, :handle_event, 2},
+    {:dbg_wx_break, :start, 3},
+    {:dbg_wx_break, :start, 4},
+    {:dbg_wx_break, :start, 5},
+    {:dbg_wx_break_win, :create_win, 5},
+    {:dbg_wx_break_win, :handle_event, 2},
+    {:dbg_wx_trace, :start, 1},
+    {:dbg_wx_trace, :start, 3},
+    {:dbg_wx_trace, :start, 4},
+    {:dbg_wx_trace_win, :create_win, 4},
+    {:dbg_wx_trace_win, :handle_event, 2}
+  ]
   @debugger_selected_file_mfa {:dbg_wx_interpret, :start, 4}
   @debugger_explicit_roots [
     {:dbg_wx_interpret, :start, 4},
@@ -4096,6 +4112,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :debugger_remainder_ownership
   @tag :debugger_remainder_monitor
   test "monitor and file-window source branches include exact defaults and routes", ctx do
     evidence = SweepEvidence.source_roots!()
@@ -4222,6 +4239,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert String.contains?(verify_note.defaults_and_options, "extended_parse_term")
   end
 
+  @tag :debugger_remainder_ownership
   @tag :debugger_remainder_trace
   test "trace and breakpoint routes reconcile exact sources and current owner links", ctx do
     required_branch_ids = [
@@ -4408,6 +4426,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert String.contains?(break_route.guard_remedy, "membership")
   end
 
+  @tag :debugger_remainder_ownership
   @tag :debugger_remainder_callbacks
   test "callback and breakpoint function dispositions reconcile exact lane sources and ownership",
        ctx do
@@ -4450,6 +4469,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert dispositions.unresolved_dynamic != []
   end
 
+  @tag :debugger_remainder_ownership
   @tag :debugger_remainder_interpreter
   test "interpreter evaluator, loader and debugged-process dispositions reconcile exact lane sources and ownership",
        ctx do
@@ -4534,6 +4554,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert Enum.all?(dispositions.unresolved_dynamic, &(&1.status == :unresolved_static_target))
   end
 
+  @tag :debugger_remainder_ownership
   @tag :debugger_remainder_inventory
   test "assigned remainder universe has a fail-closed exact-lane reconciliation contract" do
     assert Code.ensure_loaded?(DebuggerSettings)
@@ -4542,6 +4563,7 @@ defmodule Fablebook.Contract.TierSweepTest do
            "the current remainder universe needs an exact-lane source, function, export, root, and owner reconciliation contract"
   end
 
+  @tag :debugger_remainder_ownership
   @tag :debugger_remainder_inventory
   test "remainder inventory retains exact sources, private functions, graph sets and both owner namespaces",
        ctx do
@@ -4608,6 +4630,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert String.length(inventory.graph.full_exports_sha256) == 64
   end
 
+  @tag :debugger_remainder_ownership
   @tag :debugger_remainder_inventory
   test "installed remainder source citations reject lane, path, digest, file, line and text drift" do
     evidence = SweepEvidence.source_roots!()
@@ -4684,6 +4707,7 @@ defmodule Fablebook.Contract.TierSweepTest do
                  end
   end
 
+  @tag :debugger_remainder_ownership
   @tag :debugger_remainder_inventory
   test "remainder inventory rejects omitted functions, exports, roots and duplicate identities",
        ctx do
@@ -4786,6 +4810,220 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :debugger_remainder_ownership
+  @tag timeout: 180_000
+  test "current remainder functions, roots, branches, guards and exclusions reconcile", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    lane = evidence.lane.name
+    record = DebuggerSettings.records(lane)
+
+    group_results =
+      Enum.map([:callbacks, :interpreter, :monitor, :trace], fn group ->
+        result =
+          DebuggerSettings.assert_function_dispositions!(
+            ctx.graph,
+            evidence,
+            record,
+            group
+          )
+
+        assert result.status == :verified
+        {group, result}
+      end)
+
+    inventory = hd(group_results) |> elem(1) |> Map.fetch!(:inventory)
+
+    function_dispositions =
+      Enum.flat_map(group_results, fn {_group, result} ->
+        Enum.flat_map(result.modules, & &1.dispositions)
+      end)
+
+    expected_function_names =
+      inventory.modules
+      |> Enum.flat_map(& &1.functions)
+      |> MapSet.new()
+
+    actual_function_names = MapSet.new(function_dispositions, & &1.mfa)
+
+    assert length(function_dispositions) == MapSet.size(actual_function_names)
+    assert actual_function_names == expected_function_names
+
+    pending_function_names =
+      MapSet.new([
+        "dbg_icmd:break_p/4",
+        "dbg_wx_mon:start/2",
+        "dbg_wx_mon:load_settings/2",
+        "dbg_wx_mon:load_settings2/2"
+      ])
+
+    actual_pending_function_names =
+      function_dispositions
+      |> Enum.filter(&(&1.completion == :pending_cross_owner))
+      |> Enum.map(& &1.mfa)
+      |> MapSet.new()
+
+    assert actual_pending_function_names == pending_function_names
+
+    assert Enum.all?(function_dispositions, fn disposition ->
+             if disposition.mfa in pending_function_names do
+               disposition.owner == "01.1.1.3.1.1" and
+                 disposition.completion == :pending_cross_owner
+             else
+               disposition.owner == "01.1.1.3.1.2" and
+                 disposition.completion == :source_disposed_static
+             end
+           end)
+
+    tier = BannedCalls.banned_mfas()
+    assert MapSet.subset?(MapSet.new(@debugger_remainder_guard_mfas), MapSet.new(tier))
+
+    guarded_modules = MapSet.new(@debugger_remainder_guard_mfas, &elem(&1, 0))
+
+    refute Enum.any?(tier, fn {module, function, arity} ->
+             module in guarded_modules and function == :_ and arity == :_
+           end),
+           "the remainder routes must stay function-scoped rather than module-wide"
+
+    debugger_roots =
+      (inventory.original_roots ++ inventory.observed_roots)
+      |> Enum.filter(&(&1["app"] == "debugger"))
+
+    root_names =
+      MapSet.new(debugger_roots, fn root ->
+        {root["module"], root["function"], root["arity"]}
+      end)
+
+    graph_root_names =
+      ctx.graph.pending_mfas
+      |> Enum.filter(fn {module, function, arity} ->
+        MapSet.member?(root_names, {Atom.to_string(module), Atom.to_string(function), arity})
+      end)
+      |> MapSet.new(fn {module, function, arity} ->
+        {Atom.to_string(module), Atom.to_string(function), arity}
+      end)
+
+    assert graph_root_names == root_names
+
+    function_mfas =
+      ctx.graph.inspected
+      |> Enum.filter(&(&1.app == "debugger" and &1.module in inventory.module_names))
+      |> Enum.flat_map(& &1.function_mfas)
+      |> MapSet.new()
+
+    root_mfas =
+      Enum.filter(ctx.graph.pending_mfas, fn {module, function, arity} ->
+        MapSet.member?(root_names, {Atom.to_string(module), Atom.to_string(function), arity})
+      end)
+
+    branch_mfas = MapSet.new(record.source_branches, & &1.mfa)
+    exclusion_universe = MapSet.new() |> MapSet.union(function_mfas)
+    exclusion_universe = MapSet.union(exclusion_universe, MapSet.new(root_mfas))
+    exclusion_universe = MapSet.union(exclusion_universe, branch_mfas)
+    exclusion_universe_list = MapSet.to_list(exclusion_universe) |> Enum.sort()
+
+    exclusion_matches = DebuggerSettings.exclusion_matches(exclusion_universe_list, @exclusions)
+
+    assert :ok ==
+             DebuggerSettings.assert_exclusion_witnesses!(
+               exclusion_matches,
+               ctx.graph,
+               tier,
+               BannedCalls.banned_names(),
+               @exclusions
+             )
+
+    exact_injected =
+      {{:mfa, {:dbg_wx_mon, :start, 2}}, :injected_exact_control,
+       ["synthetic exact-exclusion control"]}
+
+    [exact_match] = DebuggerSettings.exclusion_matches(exclusion_universe_list, [exact_injected])
+    assert exact_match.matched_mfas == [{:dbg_wx_mon, :start, 2}]
+
+    assert_raise ExUnit.AssertionError, ~r/no individual active removal witness/, fn ->
+      DebuggerSettings.assert_exclusion_witnesses!(
+        [exact_match],
+        ctx.graph,
+        tier,
+        BannedCalls.banned_names(),
+        [exact_injected]
+      )
+    end
+
+    broad_injected = {{:dbg_wx_mon, :_}, :injected_broad_control, ["synthetic broad control"]}
+
+    [broad_match | _] =
+      DebuggerSettings.exclusion_matches(exclusion_universe_list, [broad_injected])
+
+    assert_raise ExUnit.AssertionError, ~r/blanket or non-exact/, fn ->
+      DebuggerSettings.assert_exclusion_witnesses!(
+        [broad_match],
+        ctx.graph,
+        tier,
+        BannedCalls.banned_names(),
+        [broad_injected]
+      )
+    end
+
+    incomplete_match = %{broad_match | matched_mfas: []}
+
+    assert_raise ExUnit.AssertionError, ~r/incomplete matches/, fn ->
+      DebuggerSettings.assert_exclusion_witnesses!(
+        [incomplete_match],
+        ctx.graph,
+        tier,
+        BannedCalls.banned_names(),
+        [broad_injected]
+      )
+    end
+
+    assert inventory.status == :verified
+    assert inventory.module_names == Enum.sort(DebuggerSettings.required_source_modules())
+
+    selected_root_ids =
+      MapSet.new(record.roots, fn %{mfa: {module, function, arity}} ->
+        {"debugger", Atom.to_string(module), Atom.to_string(function), arity}
+      end)
+
+    assert MapSet.new(inventory.selected_roots) == selected_root_ids
+
+    if audit_path = System.get_env("FABLEBOOK_REMAINDER_AUDIT_OUT") do
+      summary = %{
+        lane: lane,
+        module_count: length(inventory.modules),
+        function_count: MapSet.size(expected_function_names),
+        export_count: Enum.sum(Enum.map(inventory.modules, & &1.export_count)),
+        original_root_count: length(inventory.original_roots),
+        observed_root_count: length(inventory.observed_roots),
+        newly_owned_observation_count: length(inventory.new_owned_observations),
+        interpreter_root_observation_count: length(inventory.interpreter_root_observations),
+        overlap_count: length(inventory.overlaps),
+        overlap_occurrence_count: inventory.overlap_occurrence_count,
+        source_branch_count: length(record.source_branches),
+        function_completion_pending_count: MapSet.size(pending_function_names),
+        function_completion_static_count:
+          Enum.count(function_dispositions, &(&1.completion == :source_disposed_static)),
+        unresolved_dynamic_counts:
+          Map.new(group_results, fn {group, result} ->
+            {Atom.to_string(group), length(result.unresolved_dynamic)}
+          end),
+        guard_entry_count: length(@debugger_remainder_guard_mfas),
+        exclusion_universe_count: length(exclusion_universe_list),
+        exclusion_match_count: length(exclusion_matches),
+        exclusion_matches:
+          Enum.map(exclusion_matches, fn match ->
+            %{
+              matcher: inspect(match.original_identity),
+              matched_mfas: Enum.map(match.matched_mfas, &inspect/1)
+            }
+          end)
+      }
+
+      File.write!(audit_path, JSON.encode!(summary))
+    end
+  end
+
   @tag :saved_settings_audit
   test "deferred callback routes have distinct source branch identities" do
     assert Code.ensure_loaded?(DebuggerSettings)
@@ -4812,6 +5050,7 @@ defmodule Fablebook.Contract.TierSweepTest do
            "deferred callback source disposition is missing #{inspect(MapSet.to_list(MapSet.difference(required, branch_ids)))}"
   end
 
+  @tag :debugger_remainder_ownership
   @tag :saved_settings_ownership
   test "saved-settings ownership resolves selected and remainder identities from the live lane",
        ctx do
@@ -4833,10 +5072,16 @@ defmodule Fablebook.Contract.TierSweepTest do
       "missing-remainder-root-observed:rejected",
       "duplicate-canonical-root:rejected",
       "wrong-selected-owner:rejected",
+      "wrong-remainder-owner:rejected",
+      "wrong-observed-remainder-owner:rejected",
+      "wrong-remainder-root-owner:rejected",
       "changed-canonical-chain:rejected",
+      "changed-observed-canonical-chain:rejected",
       "changed-current-reference:rejected",
       "missing-overlap-occurrence:rejected",
       "missing-source-branch:rejected",
+      "forged-source-branch-completion:rejected",
+      "missing-observed-root-delta:rejected",
       "empty-settings-audit:rejected",
       "changed-settings-source-digest:rejected",
       "escaping-settings-citation:rejected",

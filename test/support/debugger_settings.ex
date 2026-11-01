@@ -2600,6 +2600,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       missing_module_controls(graph, base, lane) ++
         missing_root_controls(graph, base, authority, lane) ++
         changed_owner_controls(graph, base, authority, lane) ++
+        changed_source_branch_controls(graph, base, lane) ++
         settings_source_controls(graph, base) ++ graph_projection_controls(graph, base)
 
     run_ownership_controls!(controls, evidence)
@@ -2652,9 +2653,19 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   defp changed_owner_controls(graph, base, authority, lane) do
     selected_module? = &(&1["module"] == "dbg_wx_settings")
+    remainder_module? = &(&1["module"] == "dbg_wx_mon")
 
     selected_root? =
       &(&1["module"] == "dbg_wx_mon" and &1["function"] == "start" and &1["arity"] == 2)
+
+    remainder_root? = &(&1["owner"] == @remainder_owner)
+
+    observed_root = find_delegation_row(authority, "observed_root", lane, selected_root?)
+
+    require_ownership!(
+      not is_nil(observed_root),
+      "ownership controls require the selected observed root to exist in the pinned authority"
+    )
 
     [
       {"wrong-selected-owner",
@@ -2666,6 +2677,45 @@ defmodule Fablebook.Test.DebuggerSettings do
              lane,
              selected_module?,
              &Map.put(&1, "owner", @remainder_owner)
+           )
+
+         {graph, changed}
+       end, "owner"},
+      {"wrong-remainder-owner",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "module",
+             lane,
+             remainder_module?,
+             &Map.put(&1, "owner", @owner)
+           )
+
+         {graph, changed}
+       end, "owner"},
+      {"wrong-observed-remainder-owner",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "observed_module",
+             lane,
+             remainder_module?,
+             &Map.put(&1, "owner", @owner)
+           )
+
+         {graph, changed}
+       end, "owner"},
+      {"wrong-remainder-root-owner",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "root",
+             lane,
+             remainder_root?,
+             &Map.put(&1, "owner", @owner)
            )
 
          {graph, changed}
@@ -2683,6 +2733,21 @@ defmodule Fablebook.Test.DebuggerSettings do
 
          {graph, changed}
        end, "chain"},
+      {"changed-observed-canonical-chain",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "observed_root",
+             lane,
+             selected_root?,
+             &Map.update!(&1, "historical", fn historical ->
+               Map.put(historical, "chain_id", String.duplicate("1", 64))
+             end)
+           )
+
+         {graph, changed}
+       end, "observed canonical chain"},
       {"changed-current-reference",
        fn ->
          changed =
@@ -2709,7 +2774,28 @@ defmodule Fablebook.Test.DebuggerSettings do
        end, "overlap"},
       {"missing-source-branch",
        fn -> {graph, drop_delegation_rows(base, "source_branch", lane, fn _ -> true end)} end,
-       "source_branch"}
+       "source_branch"},
+      {"missing-observed-root-delta",
+       fn -> {graph, drop_delegation_rows(base, "observed_root", lane, selected_root?)} end,
+       "omitted"}
+    ]
+  end
+
+  defp changed_source_branch_controls(graph, base, lane) do
+    [
+      {"forged-source-branch-completion",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "source_branch",
+             lane,
+             &(&1["module"] == "dbg_icmd" and &1["function"] == "break_p"),
+             &Map.put(&1, "completion", "source_disposed_static")
+           )
+
+         {graph, changed}
+       end, "completion"}
     ]
   end
 
@@ -3151,7 +3237,10 @@ defmodule Fablebook.Test.DebuggerSettings do
     cond do
       actual["owner"] != expected["owner"] -> "owner"
       actual["chain_id"] != expected["chain_id"] -> "canonical chain"
+      get_in(actual, ["historical", "chain_id"]) !=
+          get_in(expected, ["historical", "chain_id"]) -> "observed canonical chain"
       actual["references"] != expected["references"] -> "current references"
+      actual["completion"] != expected["completion"] -> "completion"
       actual["occurrences"] != expected["occurrences"] -> "overlap occurrence"
       actual["origin_record_sha256"] != expected["origin_record_sha256"] -> "origin fingerprint"
       actual["steps"] != expected["steps"] -> "caller-chain steps"
