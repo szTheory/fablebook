@@ -1,7 +1,7 @@
 defmodule Fablebook.Test.MixCmd do
   @moduledoc false
 
-  @scrubbed ~w(MIX_EXS MIX_LOCKFILE MIX_BUILD_PATH MIX_BUILD_ROOT MIX_DEPS_PATH MIX_TARGET FABLEBOOK_UNGUARDED)
+  @scrubbed ~w(MIX_EXS MIX_LOCKFILE MIX_BUILD_PATH MIX_BUILD_ROOT MIX_TARGET FABLEBOOK_UNGUARDED)
 
   def run(dir, mix_env, args, extra_env \\ []) do
     scrub = Enum.map(@scrubbed, &{&1, nil})

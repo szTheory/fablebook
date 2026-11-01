@@ -18,7 +18,11 @@ defmodule Fablebook.MixProject do
       test_ignore_filters: [&String.starts_with?(&1, "test/fixtures/")],
       dialyzer: [plt_local_path: "priv/plts", plt_core_path: "priv/plts", plt_add_apps: [:mix]],
       package: package(),
-      docs: [main: "readme", source_ref: "v#{@version}", extras: ["README.md", "CHANGELOG.md"]],
+      docs: [
+        main: "readme",
+        source_ref: "v#{@version}",
+        extras: ["README.md", "CHANGELOG.md", "CONTRIBUTING.md"]
+      ],
       source_url: @source_url
     ]
   end
