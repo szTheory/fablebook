@@ -285,6 +285,20 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:dbg_wx_mon, :start, 2},
     {:dbg_istk, :from_external, 1},
     {:dbg_debugged, :eval, :_},
+    {:int, :test_at_break, 3},
+    {:dbg_wx_win, :entry, 4},
+    {:dbg_wx_mon_win, :create_win, 3},
+    {:dbg_wx_mon_win, :handle_event, 2},
+    {:dbg_wx_break, :start, 3},
+    {:dbg_wx_break, :start, 4},
+    {:dbg_wx_break, :start, 5},
+    {:dbg_wx_break_win, :create_win, 5},
+    {:dbg_wx_break_win, :handle_event, 2},
+    {:dbg_wx_trace, :start, 1},
+    {:dbg_wx_trace, :start, 3},
+    {:dbg_wx_trace, :start, 4},
+    {:dbg_wx_trace_win, :create_win, 4},
+    {:dbg_wx_trace_win, :handle_event, 2},
     {Mix.Tasks.Format, :formatter_for_file, :_},
     {Mix.Tasks.Help, :run, :_},
     {Mix.Compilers.Erlang, :ensure_application!, 2},
@@ -1226,8 +1240,20 @@ defmodule Fablebook.Contract.BannedCallsTest do
       assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
              "#{form} probe missed #{inspect(mfa)}"
 
-      refute Enum.any?(hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))), &mfa_hit?(&1, mfa)),
-             "#{form} probe did not depend on the individual exact tier entry #{inspect(mfa)}"
+      if form == :direct do
+        refute exact_mfa_tier_hit?(scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+               "#{form} probe did not depend on the individual exact tier entry #{inspect(mfa)}"
+      else
+        {module, function, _arity} = mfa
+
+        without_same_function =
+          Enum.reject(@mfa_tier, fn {candidate_module, candidate_function, _candidate_arity} ->
+            candidate_module == module and candidate_function == function
+          end)
+
+        refute Enum.any?(hits(scan, without_same_function), &mfa_hit?(&1, mfa)),
+               "#{form} probe remained after removing the exact function tier entries for #{inspect(mfa)}"
+      end
 
       assert credo_issues(source, filename) != [], "Credo missed #{form} for #{inspect(mfa)}"
     end
@@ -1295,6 +1321,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
   end
 
+  @tag :tmp_dir
   @tag :debugger_remainder_tracer
   test "auto-attach setter is guarded while source-only and wrapper controls stay distinct", %{
     tmp_dir: dir
@@ -1864,7 +1891,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       end
 
     """
-    defmodule Fablebook.GuardFixture.DebuggerRemainder#{index} do
+    defmodule Fablebook.GuardFixture.DebuggerRemainder#{index}#{Macro.camelize(to_string(form))} do
       #{body}
     end
     """
@@ -1938,6 +1965,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     literal_hits = for m <- literals, {m, :_, :_} in mfa_tier, do: {:mfa, {m, :_, :_}}
     atom_hits ++ mfa_hits ++ pair_hits ++ literal_hits
+  end
+
+  defp exact_mfa_tier_hit?(%{mfas: imports}, mfa_tier) do
+    Enum.any?(imports, fn imported -> Enum.any?(mfa_tier, &mfa_match?(&1, imported)) end)
   end
 
   defp mfa_match?(pattern, mfa) do
