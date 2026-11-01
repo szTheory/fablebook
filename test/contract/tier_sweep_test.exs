@@ -4096,6 +4096,14 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :debugger_remainder_inventory
+  test "assigned remainder universe has a fail-closed exact-lane reconciliation contract" do
+    assert Code.ensure_loaded?(DebuggerSettings)
+
+    assert function_exported?(DebuggerSettings, :assert_remainder_inventory!, 3),
+           "the current remainder universe needs an exact-lane source, function, export, root, and owner reconciliation contract"
+  end
+
   @tag :saved_settings_audit
   test "deferred callback routes have distinct source branch identities" do
     assert Code.ensure_loaded?(DebuggerSettings)
