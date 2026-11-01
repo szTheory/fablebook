@@ -1851,44 +1851,11 @@ defmodule Fablebook.Contract.BannedCallsTest do
     module_name = Atom.to_string(module)
     function_name = Atom.to_string(function)
     args = probe_args(arity)
-    arguments = if arity == 0, do: [], else: Enum.map(0..(arity - 1), &"arg#{&1}")
-    source_args = Enum.join(arguments, ", ")
-
-    body =
-      case form do
-        :direct ->
-          ":#{module_name}.#{function_name}(#{source_args})"
-
-        :capture ->
-          "&:#{module_name}.#{function_name}/#{arity}"
-
-        :apply_local ->
-          "apply(:#{module_name}, :#{function_name}, [#{source_args}])"
-
-        :apply_global ->
-          ":erlang.apply(:#{module_name}, :#{function_name}, [#{source_args}])"
-
-        :utf8 ->
-          "#{remainder_utf8_call({module, function, arity})}"
-
-        :discarded_quote ->
-          "quote do\n    :#{module_name}.#{function_name}(#{unquoted_args(arity)})\n  end"
-
-        :uninvoked_macro ->
-          "quote do\n    :#{module_name}.#{function_name}(#{unquoted_args(arity)})\n  end"
-      end
-
-    body =
-      cond do
-        form == :uninvoked_macro ->
-          "defmacro never_called(#{args}) do\n  #{body}\nend"
-
-        form in [:capture, :utf8] ->
-          "def probe do\n  #{body}\nend"
-
-        true ->
-          "def probe(#{args}) do\n  #{body}\nend"
-      end
+    source_args = probe_args(arity)
+    call_mfa = {module_name, function_name, arity}
+    call_mfa = if form == :utf8, do: {module, function, arity}, else: call_mfa
+    call = remainder_probe_call(call_mfa, form, source_args)
+    body = remainder_probe_definition(form, args, call)
 
     """
     defmodule Fablebook.GuardFixture.DebuggerRemainder#{index}#{Macro.camelize(to_string(form))} do
@@ -1896,6 +1863,33 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
     """
   end
+
+  defp remainder_probe_call({module, function, _arity}, :direct, source_args),
+    do: ":#{module}.#{function}(#{source_args})"
+
+  defp remainder_probe_call({module, function, arity}, :capture, _source_args),
+    do: "&:#{module}.#{function}/#{arity}"
+
+  defp remainder_probe_call({module, function, _arity}, :apply_local, source_args),
+    do: "apply(:#{module}, :#{function}, [#{source_args}])"
+
+  defp remainder_probe_call({module, function, _arity}, :apply_global, source_args),
+    do: ":erlang.apply(:#{module}, :#{function}, [#{source_args}])"
+
+  defp remainder_probe_call(mfa, :utf8, _source_args), do: remainder_utf8_call(mfa)
+
+  defp remainder_probe_call({module, function, arity}, form, _source_args)
+       when form in [:discarded_quote, :uninvoked_macro],
+       do: "quote do\n    :#{module}.#{function}(#{unquoted_args(arity)})\n  end"
+
+  defp remainder_probe_definition(:uninvoked_macro, args, call),
+    do: "defmacro never_called(#{args}) do\n  #{call}\nend"
+
+  defp remainder_probe_definition(form, _args, call) when form in [:capture, :utf8],
+    do: "def probe do\n  #{call}\nend"
+
+  defp remainder_probe_definition(_form, args, call),
+    do: "def probe(#{args}) do\n  #{call}\nend"
 
   defp probe_args(0), do: ""
   defp probe_args(arity), do: Enum.map_join(0..(arity - 1), ", ", &"arg#{&1}")

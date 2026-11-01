@@ -4441,12 +4441,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     inventory = DebuggerSettings.assert_remainder_inventory!(ctx.graph, evidence, record)
 
     dispositions =
-      apply(DebuggerSettings, :assert_function_dispositions!, [
-        ctx.graph,
-        evidence,
-        record,
-        :callbacks
-      ])
+      DebuggerSettings.assert_function_dispositions!(ctx.graph, evidence, record, :callbacks)
 
     assert dispositions.status == :verified
     assert dispositions.group == :callbacks
@@ -4480,12 +4475,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     inventory = DebuggerSettings.assert_remainder_inventory!(ctx.graph, evidence, record)
 
     dispositions =
-      apply(DebuggerSettings, :assert_function_dispositions!, [
-        ctx.graph,
-        evidence,
-        record,
-        :interpreter
-      ])
+      DebuggerSettings.assert_function_dispositions!(ctx.graph, evidence, record, :interpreter)
 
     assert dispositions.status == :verified
     assert dispositions.group == :interpreter
