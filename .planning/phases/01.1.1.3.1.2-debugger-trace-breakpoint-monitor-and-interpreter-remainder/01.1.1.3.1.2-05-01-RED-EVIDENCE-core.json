@@ -1,0 +1,10 @@
+{
+  "command": "ASDF_DATA_DIR=/private/tmp/fablebook-asdf bin/lane core test --formatter Fablebook.Test.Plan05TapFormatter --warnings-as-errors test/contract/tier_sweep_test.exs --only debugger_remainder_receipt",
+  "exitCode": 2,
+  "output": "TAP version 13\nnot ok 1 - test remainder receipt acceptance binds the fresh graph to complete current dispositions\n1..1\n",
+  "targetTest": "test remainder receipt acceptance binds the fresh graph to complete current dispositions",
+  "targetFile": "tier_sweep_test.exs",
+  "expected": "The fresh current graph receipt validates all current remainder dispositions and adopted ownership.",
+  "actual": "The target failed at the planned API-presence assertion because assert_remainder_receipt!/4 is not implemented yet.",
+  "semanticAssessment": "ExUnit setup completed the fresh current-lane graph; the distinct target assertion failed for the intended missing validator, with no build, collection, load, or fixture failure."
+}

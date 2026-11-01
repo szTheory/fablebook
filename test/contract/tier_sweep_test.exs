@@ -5229,6 +5229,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :debugger_remainder_receipt
+  test "remainder receipt acceptance binds the fresh graph to complete current dispositions",
+       _ctx do
+    assert function_exported?(DebuggerSettings, :assert_remainder_receipt!, 4),
+           "expected a remainder validator that starts from the fresh graph receipt"
+  end
+
   defp rewrite_settings_receipt(lines, transform) do
     marker = "FABLEBOOK_OTP_INVENTORY_V2 "
 
