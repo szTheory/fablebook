@@ -4141,7 +4141,10 @@ defmodule Fablebook.Contract.TierSweepTest do
       :monitor_window_checkbox_atoms,
       :monitor_window_strings_checkbox_atom,
       :monitor_process_pid_parse,
-      :monitor_backtrace_term_parser
+      :monitor_backtrace_integer_scanner,
+      :monitor_backtrace_integer_token_match,
+      :monitor_edit_variable_term_scanner,
+      :monitor_edit_variable_term_parser
     ]
 
     assert Enum.map(result.source_branches, & &1.id) == Enum.sort(required_branch_ids)
@@ -4200,25 +4203,48 @@ defmodule Fablebook.Contract.TierSweepTest do
              &(&1.kind == :dynamic_fun_call)
            )
 
+    verify_note = source_functions["dbg_wx_win:verify/2"]
+    expected_verify_scanner_line = if ctx.graph.lane.name == "core", do: 279, else: 277
+    expected_verify_parser_line = if ctx.graph.lane.name == "core", do: 281, else: 279
+
     assert Enum.any?(
-             source_functions["dbg_wx_win:verify/2"].sink_facts,
-             &(&1.kind == :term_parser)
+             verify_note.sink_facts,
+             &(&1.kind == :token_scanner and &1.line == expected_verify_scanner_line)
            )
+
+    assert Enum.any?(
+             verify_note.sink_facts,
+             &(&1.kind == :term_parser and &1.line == expected_verify_parser_line)
+           )
+
+    assert String.contains?(verify_note.guard_remedy, "cannot intern")
+    assert String.contains?(verify_note.defaults_and_options, "non-term clause")
+    assert String.contains?(verify_note.defaults_and_options, "extended_parse_term")
   end
 
   @tag :debugger_remainder_trace
-  test "trace and breakpoint route identifiers are required before dispositions", _ctx do
+  test "trace and breakpoint routes reconcile exact sources and current owner links", ctx do
     required_branch_ids = [
       :trace_breakpoint_menu_dispatch,
       :trace_edit_variable_term_entry,
       :trace_edit_variable_assignment,
       :trace_user_command_eval_dispatch,
-      :trace_term_parser_scanner,
+      :trace_backtrace_integer_entry,
       :break_dialog_module_atom_live_edit,
-      :break_dialog_module_atom_submit,
+      :break_dialog_module_atom_function_submit,
+      :break_dialog_module_atom_line_submit,
+      :break_dialog_atom_input_types,
+      :break_dialog_module_list_lookup,
+      :break_dialog_typed_input_wrapper,
       :break_dialog_typed_input_scanner,
       :break_dialog_conditional_callback_tuple,
       :trace_shortcut_atom,
+      :trace_resize_fixed_closure_calls,
+      :trace_resize_code_fixed_changeh_closure,
+      :trace_resize_trace_fixed_changeh_closure,
+      :trace_code_area_fixed_style_closure,
+      :trace_source_view_fixed_style_closure,
+      :trace_output_fixed_callback_invocation,
       :trace_eval_entry_user_command,
       :trace_view_module_source_lookup,
       :trace_trace_module_source_lookup,
@@ -4232,6 +4258,154 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert MapSet.size(missing_branch_ids) == 0,
            "trace and breakpoint source routes are incomplete: #{inspect(MapSet.to_list(missing_branch_ids))}"
+
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    record = DebuggerSettings.records(evidence.lane.name)
+
+    result =
+      DebuggerSettings.assert_function_dispositions!(ctx.graph, evidence, record, :trace)
+
+    assert result.status == :verified
+    assert result.group == :trace
+
+    assert result.module_names == [
+             "dbg_wx_break",
+             "dbg_wx_break_win",
+             "dbg_wx_code",
+             "dbg_wx_src_view",
+             "dbg_wx_trace",
+             "dbg_wx_trace_win",
+             "dbg_wx_view",
+             "dbg_wx_winman"
+           ]
+
+    assert Enum.map(result.source_branches, & &1.id) == Enum.sort(required_branch_ids)
+
+    refute Enum.any?(result.modules, fn module ->
+             Enum.any?(module.dispositions, &(&1.mfa == "dbg_wx_win:verify/2"))
+           end)
+
+    assert result.cross_owner.prior_owner_break_branch == %{
+             id: :conditional_callback_clause,
+             mfa: "dbg_icmd:break_p/4",
+             owner: "01.1.1.3.1.1"
+           }
+
+    assert result.cross_owner.remainder_break_dispatch_branch == %{
+             id: :condition_break_p_called,
+             mfa: "dbg_icmd:cmd/4",
+             owner: "01.1.1.3.1.2"
+           }
+
+    assert result.cross_owner.current_callback_branch == %{
+             id: :break_dialog_conditional_callback_tuple,
+             mfa: "dbg_wx_break:gui_cmd/2",
+             owner: "01.1.1.3.1.2"
+           }
+
+    assert Enum.map(result.cross_owner.interpreter_roots, & &1.mfa) == [
+             "dbg_wx_interpret:filter_files/2",
+             "dbg_wx_interpret:interpret_all/5",
+             "dbg_wx_interpret:start/4"
+           ]
+
+    assert Enum.all?(result.cross_owner.interpreter_roots, &(&1.owner == "01.1.1.3.1.2"))
+    refute "dbg_wx_interpret" in result.module_names
+
+    source_functions =
+      result.modules
+      |> Enum.flat_map(& &1.dispositions)
+      |> Map.new(&{&1.mfa, &1})
+
+    expected_break_atom_lines =
+      if ctx.graph.lane.name == "core", do: [192, 215, 224], else: [188, 211, 220]
+
+    actual_break_atom_lines =
+      source_functions["dbg_wx_break_win:handle_event/2"].sink_facts
+      |> Enum.filter(&(&1.kind == :atom_construction))
+      |> Enum.map(& &1.line)
+      |> Enum.sort()
+
+    assert actual_break_atom_lines == expected_break_atom_lines
+
+    expected_shortcut_atom_line = if ctx.graph.lane.name == "core", do: 799, else: 795
+
+    assert Enum.any?(
+             source_functions["dbg_wx_trace_win:handle_event/2"].sink_facts,
+             &(&1.kind == :atom_construction and &1.line == expected_shortcut_atom_line)
+           )
+
+    assert Enum.any?(
+             source_functions["dbg_wx_break_win:check_input/2"].sink_facts,
+             &(&1.kind == :token_scanner)
+           )
+
+    edit_route = source_functions["dbg_wx_trace:gui_cmd/2"]
+    break_input = source_functions["dbg_wx_break_win:check_input/2"]
+    break_wrapper = source_functions["dbg_wx_break_win:check_input/1"]
+    break_route = source_functions["dbg_wx_break:gui_cmd/2"]
+    trace_output = source_functions["dbg_wx_trace:meta_cmd/2"]
+    code_style = source_functions["dbg_wx_code:code_area/1"]
+    source_style = source_functions["dbg_wx_src_view:code_area/2"]
+    trace_window = source_functions["dbg_wx_trace_win:handle_event/2"]
+
+    assert String.contains?(trace_output.caller_input_origin, "dbg_ieval:trace/3")
+    assert String.contains?(trace_output.caller_input_origin, "dbg_icmd:tell_attached/1")
+    assert String.contains?(trace_output.guard_remedy, "resolved cross-owner fixed callback")
+    assert String.contains?(code_style.guard_remedy, "resolved benign local capability")
+    assert String.contains?(source_style.guard_remedy, "resolved benign local capability")
+    assert String.contains?(trace_window.guard_remedy, "resolved benign local capability")
+
+    resolved_fun_sites =
+      result.resolved_dynamic
+      |> Enum.filter(&(&1.kind == :dynamic_fun_call))
+      |> Enum.map(&{&1.mfa, &1.line, &1.status})
+      |> Enum.sort()
+
+    expected_resolved_fun_sites =
+      if ctx.graph.lane.name == "core" do
+        [
+          {"dbg_wx_code:code_area/1", 98, :resolved_fixed_local_closure},
+          {"dbg_wx_src_view:code_area/2", 59, :resolved_fixed_local_closure},
+          {"dbg_wx_trace:meta_cmd/2", 711, :resolved_cross_owner_fixed_callback},
+          {"dbg_wx_trace_win:handle_event/2", 706, :resolved_fixed_local_closure},
+          {"dbg_wx_trace_win:handle_event/2", 734, :resolved_fixed_local_closure},
+          {"dbg_wx_trace_win:handle_event/2", 735, :resolved_fixed_local_closure},
+          {"dbg_wx_trace_win:handle_event/2", 736, :resolved_fixed_local_closure},
+          {"dbg_wx_trace_win:handle_event/2", 767, :resolved_fixed_local_closure}
+        ]
+      else
+        [
+          {"dbg_wx_code:code_area/1", 96, :resolved_fixed_local_closure},
+          {"dbg_wx_src_view:code_area/2", 57, :resolved_fixed_local_closure},
+          {"dbg_wx_trace:meta_cmd/2", 709, :resolved_cross_owner_fixed_callback},
+          {"dbg_wx_trace_win:handle_event/2", 702, :resolved_fixed_local_closure},
+          {"dbg_wx_trace_win:handle_event/2", 730, :resolved_fixed_local_closure},
+          {"dbg_wx_trace_win:handle_event/2", 731, :resolved_fixed_local_closure},
+          {"dbg_wx_trace_win:handle_event/2", 732, :resolved_fixed_local_closure},
+          {"dbg_wx_trace_win:handle_event/2", 763, :resolved_fixed_local_closure}
+        ]
+      end
+
+    assert resolved_fun_sites == Enum.sort(expected_resolved_fun_sites)
+
+    refute Enum.any?(result.unresolved_dynamic, &(&1.kind == :dynamic_fun_call))
+    break_inputs = source_functions["dbg_wx_break_win:create_win/5"]
+    assert String.contains?(break_inputs.defaults_and_options, "integer")
+    assert String.contains?(break_inputs.defaults_and_options, "C-Module")
+    assert String.contains?(break_inputs.defaults_and_options, "C-Function")
+    assert String.contains?(break_inputs.defaults_and_options, "before matching")
+    assert String.contains?(edit_route.caller_input_origin, "Edit Variable")
+    assert String.contains?(edit_route.guard_remedy, "int:meta")
+    assert String.contains?(break_input.guard_remedy, "tokenization")
+    assert String.contains?(break_input.guard_remedy, "existing-atom")
+    assert String.contains?(break_input.guard_remedy, "whitelist")
+    assert String.contains?(break_input.defaults_and_options, "before matching")
+    assert String.contains?(break_wrapper.caller_input_origin, "check_input/2")
+    assert String.contains?(break_route.caller_input_origin, "int:functions/1")
+    assert String.contains?(break_route.guard_remedy, "membership")
   end
 
   @tag :debugger_remainder_callbacks
