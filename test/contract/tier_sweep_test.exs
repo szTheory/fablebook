@@ -4104,6 +4104,220 @@ defmodule Fablebook.Contract.TierSweepTest do
            "the current remainder universe needs an exact-lane source, function, export, root, and owner reconciliation contract"
   end
 
+  @tag :debugger_remainder_inventory
+  test "remainder inventory retains exact sources, private functions, graph sets and both owner namespaces",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    record = DebuggerSettings.records(evidence.lane.name)
+    inventory = DebuggerSettings.assert_remainder_inventory!(ctx.graph, evidence, record)
+
+    assert inventory.status == :verified
+    assert inventory.lane == evidence.lane.name
+    assert inventory.owner == "01.1.1.3.1.2"
+    assert inventory.module_names == Enum.sort(DebuggerSettings.required_source_modules())
+    assert inventory.modules != []
+
+    assert Enum.all?(inventory.modules, fn module ->
+             module.owner == "01.1.1.3.1.2" and module.source.origin == :installed and
+               module.source.sha256 == module.source_assignment["sha256"] and
+               module.function_count == length(module.functions) and
+               module.export_count == length(module.exports) and
+               Enum.all?(module.zero_hit_functions, &(&1 in module.functions)) and
+               Enum.all?(module.private_functions, &(&1 in module.functions))
+           end)
+
+    original_root_ids =
+      MapSet.new(
+        inventory.original_roots,
+        &{&1["app"], &1["module"], &1["function"], &1["arity"]}
+      )
+
+    observed_root_ids =
+      MapSet.new(
+        inventory.observed_roots,
+        &{&1["app"], &1["module"], &1["function"], &1["arity"]}
+      )
+
+    assert original_root_ids == observed_root_ids
+    assert inventory.interpreter_root_observations != []
+    assert Enum.all?(inventory.interpreter_root_observations, &(&1["owner"] == "01.1.1.3.1.2"))
+    assert inventory.overlaps != []
+
+    assert inventory.overlap_occurrence_count ==
+             Enum.sum(Enum.map(inventory.overlaps, &length(&1["occurrences"] || [])))
+
+    assert MapSet.new(inventory.selected_roots) ==
+             MapSet.new([
+               {"debugger", "dbg_wx_mon", "start", 2},
+               {"debugger", "dbg_wx_mon", "load_settings", 2},
+               {"debugger", "dbg_wx_mon", "load_settings2", 2}
+             ])
+
+    [break_p] = inventory.source_branches
+    assert break_p["owner"] == "01.1.1.3.1.1"
+    assert break_p["completion"] == "pending"
+
+    assert inventory.graph.full_edge_count == length(ctx.graph.full_edges)
+    assert inventory.graph.full_reached_count == MapSet.size(ctx.graph.full_reached)
+    assert inventory.graph.full_export_count == MapSet.size(ctx.graph.full_exported)
+    assert inventory.graph.assigned_edge_count == length(inventory.graph.assigned_edges)
+    assert inventory.graph.assigned_reached_count == length(inventory.graph.assigned_reached)
+    assert inventory.graph.assigned_export_count == length(inventory.graph.assigned_exports)
+    assert String.length(inventory.graph.full_edges_sha256) == 64
+    assert String.length(inventory.graph.full_reached_sha256) == 64
+    assert String.length(inventory.graph.full_exports_sha256) == 64
+  end
+
+  @tag :debugger_remainder_inventory
+  test "installed remainder source citations reject lane, path, digest, file, line and text drift" do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    %{records: rows} = DebuggerSettings.load_delegation!()
+
+    source =
+      Enum.find(
+        rows,
+        &(&1["t"] == "exact_source" and &1["lane"] == evidence.lane.name and
+            &1["owner"] == "01.1.1.3.1.2")
+      )
+
+    module = source["module"]
+
+    declaration =
+      String.split(
+        File.read!(
+          Path.join(
+            evidence.installed["debugger"],
+            String.replace_prefix(source["source_path"], "debugger/", "")
+          )
+        ),
+        "\n",
+        trim: false
+      )
+      |> Enum.find_index(&String.contains?(&1, "-module(#{module}"))
+
+    citation = %{line: declaration + 1, expected_text: "-module(#{module}"}
+
+    assert DebuggerSettings.assert_remainder_source!(evidence, source, citation).origin ==
+             :installed
+
+    wrong_lane =
+      Map.put(source, "lane", if(evidence.lane.name == "core", do: "floor", else: "core"))
+
+    assert_raise ExUnit.AssertionError, ~r/exact_source row/, fn ->
+      DebuggerSettings.assert_remainder_source!(evidence, wrong_lane, citation)
+    end
+
+    escaped_path = Map.put(source, "source_path", "debugger/src/../outside.erl")
+
+    assert_raise ExUnit.AssertionError, ~r/installed source path/, fn ->
+      DebuggerSettings.assert_remainder_source!(evidence, escaped_path, citation)
+    end
+
+    wrong_digest = Map.put(source, "sha256", String.duplicate("0", 64))
+
+    assert_raise ExUnit.AssertionError, ~r/exact_source digest/, fn ->
+      DebuggerSettings.assert_remainder_source!(evidence, wrong_digest, citation)
+    end
+
+    missing_source =
+      source
+      |> Map.put("module", "fablebook_missing_probe")
+      |> Map.put("source_path", "debugger/src/fablebook_missing_probe.erl")
+
+    assert_raise ExUnit.AssertionError, ~r/installed source read=enoent/, fn ->
+      DebuggerSettings.assert_remainder_source!(evidence, missing_source, citation)
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/source citation remedy=use an existing line/, fn ->
+      DebuggerSettings.assert_remainder_source!(evidence, source, %{citation | line: 999_999})
+    end
+
+    assert_raise ExUnit.AssertionError,
+                 ~r/source citation remedy=restore expected source text/,
+                 fn ->
+                   DebuggerSettings.assert_remainder_source!(evidence, source, %{
+                     citation
+                     | expected_text: "missing text"
+                   })
+                 end
+  end
+
+  @tag :debugger_remainder_inventory
+  test "remainder inventory rejects omitted functions, exports, roots and duplicate identities",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    record = DebuggerSettings.records(evidence.lane.name)
+    inventory = DebuggerSettings.assert_remainder_inventory!(ctx.graph, evidence, record)
+    first_module = hd(inventory.modules).module
+    inspection = Enum.find(ctx.graph.inspected, &(&1.module == first_module))
+    [omitted_function | _] = inspection.function_mfas
+
+    incomplete_inspection = %{
+      ctx.graph
+      | inspected:
+          Enum.map(ctx.graph.inspected, fn current ->
+            if current.module == first_module,
+              do: %{current | function_mfas: List.delete(current.function_mfas, omitted_function)},
+              else: current
+          end)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/function universe/, fn ->
+      DebuggerSettings.assert_remainder_inventory!(incomplete_inspection, evidence, record)
+    end
+
+    [omitted_export | _] =
+      Enum.filter(
+        ctx.graph.full_exported,
+        &(Atom.to_string(elem(&1, 0)) in inventory.module_names)
+      )
+
+    incomplete_exports = %{
+      ctx.graph
+      | full_exported: MapSet.delete(ctx.graph.full_exported, omitted_export)
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      DebuggerSettings.assert_remainder_inventory!(incomplete_exports, evidence, record)
+    end
+
+    loaded = DebuggerSettings.load_delegation!()
+
+    omitted_root_rows =
+      Enum.reject(loaded.records, fn row ->
+        row["t"] == "root" and row["lane"] == evidence.lane.name and
+          row["owner"] == "01.1.1.3.1.2"
+      end)
+
+    omitted_root_record =
+      Map.merge(record, %{
+        delegation_metadata: loaded.metadata,
+        delegation_records: omitted_root_rows
+      })
+
+    assert_raise ExUnit.AssertionError, fn ->
+      DebuggerSettings.assert_remainder_inventory!(ctx.graph, evidence, omitted_root_record)
+    end
+
+    [first_row | _] = loaded.records
+
+    duplicated_record =
+      Map.merge(record, %{
+        delegation_metadata: loaded.metadata,
+        delegation_records: loaded.records ++ [first_row]
+      })
+
+    assert_raise ExUnit.AssertionError, ~r/duplicate typed identities/, fn ->
+      DebuggerSettings.assert_remainder_inventory!(ctx.graph, evidence, duplicated_record)
+    end
+  end
+
   @tag :saved_settings_audit
   test "deferred callback routes have distinct source branch identities" do
     assert Code.ensure_loaded?(DebuggerSettings)
@@ -5337,7 +5551,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     sources =
       InstalledOtp.source_inventory!(discovered, inspected,
         lane: evidence.lane.name,
-        required_modules: ~w(file io erl_scan yecc)
+        required_modules:
+          Enum.uniq(~w(file io erl_scan yecc) ++ DebuggerSettings.required_source_modules())
       )
 
     source_scan_ms = elapsed_ms(source_scan_started)
