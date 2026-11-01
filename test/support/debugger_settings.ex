@@ -3935,6 +3935,8 @@ defmodule Fablebook.Test.DebuggerSettings do
     assert actual_branch_ids == expected_branch_ids and source_branch_ids == expected_branch_ids,
            "lane #{lane} MFA dbg_wx_settings:default_settings_dir/1 owner=#{@owner} caller-chain=complete settings and replay branch map missing=#{inspect(MapSet.to_list(MapSet.difference(expected_branch_ids, actual_branch_ids)))} remedy=restore every exact default/error/cancel/replay branch"
 
+    assert_branch_record_completeness!(record.source_branches, record.branch_citations, lane)
+
     expected_owners =
       Map.new(@all_branch_specs, fn {id, mfa, _predicate, source, _lines} ->
         {id, branch_owner(source, mfa)}
@@ -3981,6 +3983,45 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   def branch_ids do
     Enum.map(@all_branch_specs, &elem(&1, 0))
+  end
+
+  defp assert_branch_record_completeness!(branches, citations, lane) do
+    expected_specs =
+      Map.new(@all_branch_specs, fn {id, mfa, predicate, source, _lines} ->
+        {id, %{mfa: mfa, predicate: predicate, source: source}}
+      end)
+
+    actual_ids = Enum.map(branches, &Map.get(&1, :id))
+    actual_id_set = MapSet.new(actual_ids)
+    expected_id_set = MapSet.new(Map.keys(expected_specs))
+
+    require_ownership!(
+      length(actual_ids) == MapSet.size(actual_id_set),
+      "lane #{lane} owner=#{@remainder_owner} caller-chain=source branch record contains a duplicate identity remedy=retain one current branch row per declared branch"
+    )
+
+    require_ownership!(
+      actual_id_set == expected_id_set,
+      "lane #{lane} owner=#{@remainder_owner} caller-chain=complete source branch record set missing=#{inspect(MapSet.to_list(MapSet.difference(expected_id_set, actual_id_set)))} extra=#{inspect(MapSet.to_list(MapSet.difference(actual_id_set, expected_id_set)))} remedy=restore every declared source branch"
+    )
+
+    require_ownership!(
+      MapSet.new(Map.keys(citations)) == expected_id_set and
+        Enum.all?(expected_id_set, &(Map.get(citations, &1, []) != [])),
+      "lane #{lane} owner=#{@remainder_owner} caller-chain=source branch citation set missing or empty remedy=retain one exact citation set for each source branch"
+    )
+
+    Enum.each(branches, fn branch ->
+      expected = Map.fetch!(expected_specs, branch.id)
+      expected_owner = branch_owner(expected.source, expected.mfa)
+      expected_trace = branch_trace(expected.mfa)
+
+      require_ownership!(
+        branch.mfa == expected.mfa and branch.predicate == expected.predicate and
+          branch.owner == expected_owner and branch.trace == expected_trace,
+        "lane #{lane} owner=#{inspect(branch.owner)} caller-chain=source branch route trace #{branch.id} or MFA/predicate/owner differs from its declared source record; remedy=restore the cited branch identity, predicate, owner and route trace"
+      )
+    end)
   end
 
   def exclusion_matches(universe, exclusions) do
