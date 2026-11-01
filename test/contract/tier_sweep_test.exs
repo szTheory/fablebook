@@ -4096,6 +4096,17 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :debugger_remainder_monitor
+  test "monitor and file-window source branches include exact defaults and routes", ctx do
+    record = DebuggerSettings.records(ctx.graph.lane.name)
+
+    assert :monitor_dialog_filter_default in DebuggerSettings.branch_ids(),
+           "monitor and file-dialog dispositions need an exact source branch for the filter default"
+
+    assert MapSet.member?(MapSet.new(Enum.map(record.source_branches, & &1.id)),
+                          :monitor_dialog_filter_default)
+  end
+
   @tag :debugger_remainder_callbacks
   test "callback and breakpoint function dispositions reconcile exact lane sources and ownership",
        ctx do
