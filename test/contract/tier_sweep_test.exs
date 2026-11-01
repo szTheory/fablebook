@@ -4120,11 +4120,12 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert dispositions.status == :verified
     assert dispositions.group == :callbacks
     assert dispositions.lane == evidence.lane.name
+
     assert dispositions.module_names ==
              Enum.sort(["int", "i", "debugger", "dbg_iserver", "dbg_icmd"])
 
     assert Enum.all?(dispositions.modules, fn module ->
-             inventory_module = Enum.find(inventory.modules, &(&1.name == module.name))
+             inventory_module = Enum.find(inventory.modules, &(&1.module == module.module))
 
              module.owner == "01.1.1.3.1.2" and module.functions == inventory_module.functions and
                module.exports == inventory_module.exports and
