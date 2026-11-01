@@ -2,17 +2,17 @@
 gsd_state_version: "1.0"
 current_phase: 01.1.1.3.1.2
 current_phase_name: Debugger trace breakpoint monitor and interpreter remainder research
-status: planning
-stopped_at: Phase 01.1.1.3.1.2 context gathered
-last_updated: "2026-11-01T01:09:48.452Z"
+status: executing
+stopped_at: Completed 01.1.1.3.1.2-02-PLAN.md
+last_updated: "2026-11-01T12:42:02.871Z"
 last_activity: 2026-11-01
-last_activity_desc: Automated UAT and scope audit passed; corrected nested phase pointer without starting 01.1.1.3.1.2
-state_head: 7436428064a0decde7637bfdfae78cbfa3d123ba
+last_activity_desc: Phase 01.1.1.3.1.2 execution started
+state_head: 269b2e56d73582b8d4a207012beb822ada360f56
 progress:
   total_phases: 40
   completed_phases: 1
-  total_plans: 24
-  completed_plans: 20
+  total_plans: 29
+  completed_plans: 22
   percent: 3
 ---
 
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.3.1.1 is merged in PR #31 and its automated verification passed. The next child, 01.1.1.3.1.2, is ready to plan but has not started. The final installed-scope acceptance, parent verification debt, and SEC-01 remain pending with their existing owners. Auto-advance is disabled.
+**Current focus:** Phase 01.1.1.3.1.2 — Debugger trace breakpoint monitor and interpreter remainder research
 
 ## Current Position
 
-Phase: 01.1.1.3.1.2 — Debugger trace breakpoint monitor and interpreter remainder research
-Plan: Not started
-Status: Ready to plan; phase work has not started
-Last activity: 2026-11-01 — Phase 01.1.1.3.1.1 automated verification passed
+Phase: 01.1.1.3.1.2 (Debugger trace breakpoint monitor and interpreter remainder research) — EXECUTING
+Plan: 3 of 5
+Status: Ready to execute
+Last activity: 2026-11-01 — Phase 01.1.1.3.1.2 execution started
 
 Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 roadmap plans complete; the selected nested phase passed locally without changing parent roll-up counts
 
@@ -72,6 +72,8 @@ Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 road
 | Phase 01.1.1 P03 | 73min | 3 tasks | 18 files |
 | Phase 01.1.1 P04 | 167min | 3 tasks | 3 files |
 | Phase 01.1.1 P05 | 28min | 4 tasks | 13 files |
+| Phase 01.1.1.3.1.2 P01 | 512min | 2 tasks | 7 files |
+| Phase 01.1.1.3.1.2 P02 | 96min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -116,6 +118,9 @@ Recent decisions affecting current work:
 - [Phase 01.1.1]: The cited INT-20261029-06 source was added verbatim so the existing phase-summary citation and intent-corpus CI checks resolve.
 - [Phase 01.1.1]: The live boundary contract shares sweep barriers and base sinks and derives delegates from the forward call graph on each supported lane.
 - [Phase 01.1.1]: New loader and evaluator fronts are mirrored in the contract tier and Credo; safe sweep rows use cited function-scoped dispositions, and SEC-01 stays Pending for Phase 5.
+- [Phase 01.1.1.3.1.2]: The adopted ledger remains the ownership authority; exact-lane acceptance derives current sets instead of freezing historical totals.
+- [Phase 01.1.1.3.1.2]: Installed source is accepted only when current lane bytes match the adopted exact-source row and pass path, type, containment, and citation checks.
+- [Phase 01.1.1.3.1.2]: Resolve installed debugger source through its adopted exact_source row and retain regular-file and realpath containment checks without expanding the archive.
 
 ### Pending Todos
 
@@ -138,6 +143,7 @@ None yet.
 
 - Phase 01.1 inserted after Phase 1: Close phase 1 guard gaps (atom-ban bypass, code loading, hex-publish hardening); split per INT-20261029-01 to keep the 5-plan cap (URGENT)
 - Phase 01.1.1.1 inserted after Phase 01.1.1: Finish the ban list: open items transferred from 01.1.1 at planning (INT-20261029-02) (URGENT)
+- Numbering from here: keep existing dotted IDs stable because ownership and evidence artifacts reference them; finish the already-assigned debugger descendant 01.1.1.3.1.3, then resume the existing top-level roadmap sequence from Phase 2. Do not add further dotted descendants; express ordering with explicit dependencies.
 
 ## Deferred Items
 
@@ -149,7 +155,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-01T01:09:47.891Z
-Stopped at: Phase 01.1.1.3.1.2 context gathered
-Next command: $gsd-discuss-phase 01.1.1.3.1.2
-Resume file: .planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-CONTEXT.md
+Last session: 2026-11-01T12:42:02.600Z
+Stopped at: Completed 01.1.1.3.1.2-02-PLAN.md
+Next command: $gsd-execute-phase 01.1.1.3.1.2
+Resume file: None
