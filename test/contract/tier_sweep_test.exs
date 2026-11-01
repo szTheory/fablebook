@@ -4206,6 +4206,34 @@ defmodule Fablebook.Contract.TierSweepTest do
            )
   end
 
+  @tag :debugger_remainder_trace
+  test "trace and breakpoint route identifiers are required before dispositions", _ctx do
+    required_branch_ids = [
+      :trace_breakpoint_menu_dispatch,
+      :trace_edit_variable_term_entry,
+      :trace_edit_variable_assignment,
+      :trace_user_command_eval_dispatch,
+      :trace_term_parser_scanner,
+      :break_dialog_module_atom_live_edit,
+      :break_dialog_module_atom_submit,
+      :break_dialog_typed_input_scanner,
+      :break_dialog_conditional_callback_tuple,
+      :trace_shortcut_atom,
+      :trace_eval_entry_user_command,
+      :trace_view_module_source_lookup,
+      :trace_trace_module_source_lookup,
+      :view_breakpoint_action_dispatch,
+      :break_process_fixed_worker,
+      :view_process_fixed_worker
+    ]
+
+    actual_branch_ids = MapSet.new(DebuggerSettings.branch_ids())
+    missing_branch_ids = MapSet.difference(MapSet.new(required_branch_ids), actual_branch_ids)
+
+    assert MapSet.size(missing_branch_ids) == 0,
+           "trace and breakpoint source routes are incomplete: #{inspect(MapSet.to_list(missing_branch_ids))}"
+  end
+
   @tag :debugger_remainder_callbacks
   test "callback and breakpoint function dispositions reconcile exact lane sources and ownership",
        ctx do
