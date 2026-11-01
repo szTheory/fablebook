@@ -2520,6 +2520,24 @@ def validate_validation_limits(validation: str) -> dict:
     )
     for statement in required:
         reject(statement in validation, "remainder-validation-limit", statement)
+
+    descriptor_start = "<!-- remainder-scope-descriptor:start -->"
+    descriptor_end = "<!-- remainder-scope-descriptor:end -->"
+    descriptor_block = ""
+    if descriptor_start in validation or descriptor_end in validation:
+        reject(validation.count(descriptor_start) == 1 and validation.count(descriptor_end) == 1,
+               "remainder-validation-descriptor-count", "exactly one scope descriptor is allowed")
+        matched = re.search(re.escape(descriptor_start) + r"\s*```json\s*(.*?)\s*```\s*"
+                            + re.escape(descriptor_end), validation, re.S)
+        reject(matched is not None, "remainder-validation-descriptor", "scope descriptor JSON is required")
+        try:
+            descriptor = json.loads(matched.group(1))
+        except (json.JSONDecodeError, AttributeError) as error:
+            raise VerificationError("remainder-validation-descriptor", str(error)) from error
+        reject(descriptor.get("contract", {}).get("limits") == REMAINDER_SCOPE_CONTRACT["limits"],
+               "remainder-validation-descriptor-limits", descriptor.get("contract", {}).get("limits"))
+        descriptor_block = matched.group(0)
+
     allowed = set(required)
     protected = re.compile(
         r"\bsec[\s_-]*0?1\b|\binstalled[\s-]*wide\b|"
@@ -2535,7 +2553,8 @@ def validate_validation_limits(validation: str) -> dict:
         r"succeed|succeeded|approve|approved|green|successful|assure|assured|resolve|resolved)\b"
         r"[^\n]{0,80}\bruntime\b", re.I
     )
-    for line_number, line in enumerate(validation.splitlines(), 1):
+    claim_text = validation.replace(descriptor_block, "") if descriptor_block else validation
+    for line_number, line in enumerate(claim_text.splitlines(), 1):
         if protected.search(line):
             reject(line in allowed,
                    "remainder-validation-claim-line",
@@ -2551,6 +2570,21 @@ def self_test_validation_limits() -> dict:
     )
     validate_validation_limits(limits)
     controls = {"explicit-pending-limits": "passed"}
+    descriptor = {"contract": {"limits": REMAINDER_SCOPE_CONTRACT["limits"]}}
+    marker_start = "<!-- remainder-scope-descriptor:start -->"
+    marker_end = "<!-- remainder-scope-descriptor:end -->"
+    descriptor_block = f"{marker_start}\n```json\n{json.dumps(descriptor)}\n```\n{marker_end}"
+    validate_validation_limits(limits + descriptor_block)
+    controls["exact-scope-descriptor-limits"] = "passed"
+    changed_descriptor = descriptor_block.replace("not-established", "established")
+    try:
+        validate_validation_limits(limits + changed_descriptor)
+    except VerificationError as error:
+        reject(error.reason == "remainder-validation-descriptor-limits",
+               "remainder-descriptor-limit-control", error.reason)
+        controls["changed-scope-descriptor-limit"] = "rejected"
+    else:
+        raise VerificationError("remainder-descriptor-limit-accepted", "runtime_safety")
     for name, claim in (
         ("sec01-complete", "SEC-01 complete"),
         ("sec01-validated", "SEC 01 has been validated"),
@@ -2733,6 +2767,57 @@ def remainder_scope_descriptor(ownership, adopt) -> dict:
     }
 
 
+def validate_report_scope_claims(document: str) -> dict:
+    subject = r"(?:runtime[\s-]+safety|runtime[\s-]+safe|installed[\s-]+wide(?:\s+acceptance)?|sec[\s_-]*0?1)"
+    outcome = r"(?:established|verified|completed|complete|accepted|passed|closed|fulfilled|confirmed|finished|done|achieved|cleared|satisfied|met|succeeded|approved|green|successful|assured|resolved|proven)"
+    bridge = r"(?:\s+[\w'-]+){0,5}\s+"
+    patterns = (
+        re.compile(r"\b(" + subject + r")\b" + bridge + r"\b(" + outcome + r")\b", re.I),
+        re.compile(r"\b(" + outcome + r")\b" + bridge + r"\b(" + subject + r")\b", re.I),
+    )
+    for line_number, line in enumerate(document.splitlines(), 1):
+        for clause in re.split(r"[.;!?]", line):
+            for pattern_index, pattern in enumerate(patterns):
+                match = pattern.search(clause)
+                if match is None:
+                    continue
+                if pattern_index == 0:
+                    prefix = clause[max(0, match.start(1) - 40):match.start(1)]
+                    between = clause[match.start(1):match.start(2)]
+                    negated = re.search(r"\b(?:not|never|pending|unresolved)\b", prefix + between, re.I)
+                    explicit_no = re.search(r"\bno\s+$", prefix, re.I)
+                else:
+                    prefix = clause[max(0, match.start(1) - 80):match.start(1)]
+                    negated = re.search(r"\b(?:no|not|never|pending|unresolved)\b", prefix, re.I)
+                    explicit_no = None
+                if negated or explicit_no:
+                    continue
+                reject(False, "remainder-report-scope-claim", {"line": line_number, "text": line.strip()})
+    return {"status": "passed", "affirmative_out_of_scope_claims": 0}
+
+
+def self_test_report_scope_claims() -> dict:
+    ordinary = (
+        "Static callback, trace, interpreter, and monitor evidence mentions SEC-01 as pending."
+    )
+    validate_report_scope_claims(ordinary)
+    controls = {"ordinary-audit-domain-terms": "passed"}
+    examples = (
+        "Runtime safety has been fulfilled.",
+        "Installed-wide acceptance is confirmed.",
+        "SEC-01 is satisfied.",
+        "Completed SEC-01 with no blockers.",
+    )
+    for index, example in enumerate(examples, 1):
+        try:
+            validate_report_scope_claims(example)
+        except VerificationError:
+            controls[f"unsupported-outcome-{index}"] = "rejected"
+        else:
+            raise VerificationError("remainder-report-scope-control-accepted", example)
+    return {"status": "passed", "controls": controls}
+
+
 def verify_scope(scope: str) -> dict:
     reject(scope == "debugger-remainder", "verify-scope-unsupported", scope)
     with scoped_delivery(scope):
@@ -2758,16 +2843,14 @@ def verify_scope(scope: str) -> dict:
         }
         validation_limits = validate_validation_limits(documents["validation"])
         validation_controls = self_test_validation_limits()
+        report_claim_controls = self_test_report_scope_claims()
         private_path = re.compile(r"(?:/Users/|/home/)[^\s`]*")
         email = re.compile(r"\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b")
         for name, content in documents.items():
             reject(private_path.search(content) is None and email.search(content) is None,
                    "remainder-report-privacy", name)
-        for token in ("dbg_icmd:break_p/4", "dbg_wx_mon:start/2",
-                      "dbg_wx_mon:load_settings/2", "dbg_wx_mon:load_settings2/2",
-                      "callback", "interpreter", "monitor", "trace", "static", "SEC-01"):
-            reject(token.casefold() in documents["audit"].casefold(),
-                   "remainder-audit-claim", token)
+        for document in ("audit", "review", "security"):
+            validate_report_scope_claims(documents[document])
         threat_rows = {
             threat: next((line for line in documents["security"].splitlines() if threat in line), "")
             for threat in ("T-01.1.1.3.1.2-13", "T-01.1.1.3.1.2-14", "T-01.1.1.3.1.2-15",
@@ -2780,11 +2863,6 @@ def verify_scope(scope: str) -> dict:
                "remainder-security-status", "high threat dispositions are incomplete")
         reject("Review passes used:" in documents["review"], "remainder-review-accounting", "missing review cap")
         reject(read_review_passes() <= 2, "remainder-review-cap", read_review_passes())
-        for document in ("audit", "security"):
-            content = documents[document].casefold()
-            for limit in ("runtime safety", "installed-wide", "sec-01"):
-                reject(limit in content, "remainder-scope-limits", {"document": document, "limit": limit})
-
         marker_start = "<!-- remainder-scope-descriptor:start -->"
         marker_end = "<!-- remainder-scope-descriptor:end -->"
         reject(documents["validation"].count(marker_start) == 1
@@ -2823,6 +2901,7 @@ def verify_scope(scope: str) -> dict:
             "delivery": delivery_status,
             "validation_limits": validation_limits,
             "validation_controls": validation_controls,
+            "report_claim_controls": report_claim_controls,
             "reports": {key: sha256(value.encode()) for key, value in documents.items()},
         }
 
