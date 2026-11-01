@@ -27,3 +27,9 @@ References: [ExUnit concurrency model](https://ex-unit.hexdocs.pm/1.18.4/ExUnit.
 ## Next work
 
 Merge PR #22 after its final head is green. The Monday timing observation stays pending under the existing scheduled job; it is not a wait condition for starting independent planning. Phase 01.1.1 is verified, so its explicitly assigned successor is ready for `$gsd-plan-phase 01.1.1.1`. Parent Phase 1/01.1 canonical reports still need reconciliation before those parents are declared complete; do not create duplicate fixes for already resolved findings.
+
+## Local exact-lane assessment: phase 01.1.1.3.1.2
+
+The required local core `mix ci` run in `MIX_ENV=test` completed with 318 passing tests; ExUnit took 520.2s and the captured full log was 60,436,908 bytes. Its installed-runtime metrics reported `graph_ms=158290`, `xref_ms=18095`, `inspection_ms=3051`, and `source_scan_ms=395`. The required floor prod_guard-inclusive run completed with 318 tests, 0 failures and 4 excluded; ExUnit took 549.9s and the captured log was 54,876,794 bytes. Its metrics reported `graph_ms=148566`, `xref_ms=5323`, `inspection_ms=3067`, and `source_scan_ms=420`.
+
+Focused core receipt and ownership selectors took 269.8s (1 pass) and 399.4s (11 passes), respectively; both include exact graph setup, so these totals should not be added to the full CI runs as recurring job time. The local results confirm that graph construction and large inventory output are material costs. No graph or log optimization was made in this phase; the standing follow-up to profile the graph and assess contained inventory output remains open. These local measurements do not update the remote seven-day timing budget or establish a trend.

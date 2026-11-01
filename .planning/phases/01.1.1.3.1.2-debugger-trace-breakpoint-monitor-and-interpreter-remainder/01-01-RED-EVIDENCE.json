@@ -1,0 +1,10 @@
+{
+  "command": "mix test --no-compile --warnings-as-errors test/contract/banned_calls_test.exs test/contract/tier_sweep_test.exs --only debugger_remainder_tracer --formatter Fablebook.Test.TapFormatter",
+  "exitCode": 2,
+  "output": "TAP version 13\nnot ok 1 - test auto-attach setter probe is caught by the exact BEAM guard tier\n# target failed in ExUnit\n1..1\n",
+  "targetTest": "test auto-attach setter probe is caught by the exact BEAM guard tier",
+  "targetFile": "test/contract/banned_calls_test.exs",
+  "expected": "the uncalled setter probe must be caught by the exact auto-attach guard tier",
+  "actual": "the exact int:auto_attach/2 probe produced no BeamWalker MFA hit",
+  "semanticAssessment": "The tagged target test was discovered and executed. The TAP report contains exactly one failing target assertion. ExUnit previously reported the failure at the planned BeamWalker hit assertion; test collection, fixture compilation, and setup succeeded."
+}

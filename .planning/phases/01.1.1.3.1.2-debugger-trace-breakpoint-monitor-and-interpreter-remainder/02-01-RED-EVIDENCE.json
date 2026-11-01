@@ -1,0 +1,13 @@
+{
+  "command": "PATH=/private/tmp/fablebook-asdf/installs/elixir/1.20.4-otp-29/bin:/private/tmp/fablebook-asdf/installs/erlang/29.1.2/bin:$PATH mix test --warnings-as-errors test/contract/tier_sweep_test.exs --only debugger_remainder_callbacks",
+  "exitCode": 2,
+  "output": "TAP version 13\nnot ok 1 - test callback and breakpoint function dispositions reconcile exact lane sources and ownership\n1..1\n",
+  "targetTest": "test callback and breakpoint function dispositions reconcile exact lane sources and ownership",
+  "targetFile": "test/contract/tier_sweep_test.exs",
+  "expected": "The selected callback and breakpoint routes have complete exact-lane function, export, source-branch, and ownership dispositions.",
+  "actual": "The selected test failed because DebuggerSettings.assert_function_dispositions!/4 is not exported yet.",
+  "consoleOutputPath": "/private/tmp/fablebook-plan02-callback-red-core.log",
+  "consoleOutputBytes": 60437420,
+  "consoleOutputSha256": "dd6cce84e4f50f20e87c7179baeed160698c8454f437a5ee802bc9d7a96b58c6",
+  "semanticAssessment": "The tagged target was discovered and executed. The complete raw ExUnit console report records exactly one selected failing test and 45 excluded tests; the failure is the planned function_exported? assertion for the absent disposition contract. Test collection, compilation, and setup completed. The report was normalized through the same ExUnit-to-TAP evidence adapter used by Plan 01; the unmodified console output is retained at consoleOutputPath and pinned by byte count and SHA-256."
+}

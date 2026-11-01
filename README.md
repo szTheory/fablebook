@@ -25,3 +25,7 @@ end
 Your router mounts Fablebook somewhere a `MIX_ENV=prod` build can reach, so the build fails. Move the `fablebook` call inside the `if Application.compile_env(:my_app, :dev_routes)` block, as shown in [Mounting](#mounting). The error message names your app and shows the exact block to use.
 
 The guard runs when the router compiles. A deploy built with `MIX_ENV=dev` cannot be caught at compile time, the same as with LiveDashboard. Build releases with `MIX_ENV=prod`.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the pinned Elixir lanes and local test commands.

@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+# Run Mix against one explicitly pinned Fablebook toolchain and isolated paths.
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage:
+  bin/lane <core|floor> doctor
+  bin/lane <core|floor> setup
+  bin/lane <core|floor> test [mix test arguments...]
+  bin/lane <core|floor> mix <mix task and arguments...>
+
+`setup` is the only command that fetches dependencies. It uses the selected
+lane's lockfile with `mix deps.get --check-locked` before compiling deps.
+EOF
+}
+
+fail() {
+  printf 'lane: %s\n' "$*" >&2
+  exit 1
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" || $# -eq 0 ]]; then
+  usage
+  exit 0
+fi
+
+lane="$1"
+shift
+if [[ $# -eq 0 ]]; then
+  usage >&2
+  exit 2
+fi
+action="$1"
+shift
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+repo_root="$(cd -- "$script_dir/.." && pwd -P)"
+cd "$repo_root"
+
+case "$lane" in
+  core)
+    versions_file='.tool-versions'
+    lockfile='mix.lock'
+    unset FABLEBOOK_FLOOR
+    ;;
+  floor)
+    versions_file='.tool-versions.floor'
+    lockfile='mix.floor.lock'
+    export FABLEBOOK_FLOOR=1
+    ;;
+  *)
+    usage >&2
+    fail "unknown lane '$lane' (expected core or floor)"
+    ;;
+esac
+
+[[ -f "$versions_file" ]] || fail "missing toolchain pins: $versions_file"
+[[ -f "$lockfile" ]] || fail "missing selected lockfile: $lockfile"
+
+version_for() {
+  local tool="$1"
+  awk -v tool="$tool" '$1 == tool { print $2; found = 1; exit } END { if (!found) exit 1 }' "$versions_file"
+}
+
+expected_elixir="$(version_for elixir)" || fail "$versions_file must pin elixir"
+expected_otp="$(version_for erlang)" || fail "$versions_file must pin erlang"
+
+case "$action" in
+  doctor|setup|test|mix) ;;
+  *)
+    usage >&2
+    fail "unknown action '$action'"
+    ;;
+esac
+
+if [[ "$action" == 'test' || "$action" == 'setup' ]]; then
+  mix_env="${MIX_ENV:-test}"
+else
+  mix_env="${MIX_ENV:-dev}"
+fi
+
+lane_root="$repo_root/_build/lanes/$lane"
+deps_path="$lane_root/deps"
+build_root="$lane_root/build"
+target_prefix=''
+if [[ -n "${MIX_TARGET:-}" ]]; then
+  target_prefix="${MIX_TARGET}_"
+fi
+build_path="$build_root/${target_prefix}${mix_env}"
+
+# The repository selects its lockfile with FABLEBOOK_FLOOR. Keep unrelated
+# caller overrides from redirecting Mix to another project or build tree.
+export MIX_ENV="$mix_env"
+export MIX_DEPS_PATH="$deps_path"
+export MIX_BUILD_ROOT="$build_root"
+unset MIX_BUILD_PATH MIX_EXS MIX_LOCKFILE
+
+runtime_error=''
+if ! command -v asdf >/dev/null 2>&1; then
+  runtime_error="asdf was not found; install the versions pinned in $versions_file explicitly, then retry"
+else
+  elixir_home="$(asdf where elixir "$expected_elixir" 2>/dev/null || true)"
+  otp_home="$(asdf where erlang "$expected_otp" 2>/dev/null || true)"
+  if [[ ! -x "$elixir_home/bin/elixir" || ! -x "$otp_home/bin/erl" || ! -x "$elixir_home/bin/mix" ]]; then
+    runtime_error="the exact Elixir $expected_elixir / OTP $expected_otp installation from $versions_file is missing or incomplete; install it explicitly with asdf, then retry"
+  else
+    export PATH="$otp_home/bin:$elixir_home/bin:$PATH"
+    actual_elixir="$("$elixir_home/bin/elixir" -e 'IO.write(System.version())' 2>/dev/null || true)"
+    actual_otp="$("$otp_home/bin/erl" -noshell -eval 'io:put_chars(erlang:system_info(otp_release)), halt().' 2>/dev/null || true)"
+    actual_otp_home="$("$otp_home/bin/erl" -noshell -eval 'io:put_chars(code:root_dir()), halt().' 2>/dev/null || true)"
+    expected_otp_home="$(cd -- "$otp_home" && pwd -P)"
+    if [[ -d "$actual_otp_home" ]]; then
+      actual_otp_home="$(cd -- "$actual_otp_home" && pwd -P)"
+    fi
+    expected_otp_major="${expected_otp%%.*}"
+    if [[ "$actual_elixir" != "${expected_elixir%%-*}" || "$actual_otp" != "$expected_otp_major" || "$actual_otp_home" != "$expected_otp_home" ]]; then
+      runtime_error="runtime binaries do not match $versions_file (found Elixir ${actual_elixir:-unavailable} / OTP ${actual_otp:-unavailable})"
+    fi
+  fi
+fi
+
+if [[ "$action" == 'doctor' ]]; then
+  printf 'Lane:             %s\n' "$lane"
+  printf 'Toolchain pins:   %s (Elixir %s / OTP %s)\n' "$versions_file" "$expected_elixir" "$expected_otp"
+  printf 'Lockfile:         %s\n' "$lockfile"
+  printf 'Mix environment:  %s\n' "$MIX_ENV"
+  printf 'Mix deps path:    %s (%s)\n' "$MIX_DEPS_PATH" "$([[ -d "$MIX_DEPS_PATH" ]] && printf present || printf missing)"
+  printf 'Mix build path:   %s (%s)\n' "$build_path" "$([[ -d "$build_path" ]] && printf present || printf missing)"
+  if [[ -n "$runtime_error" ]]; then
+    printf 'Runtime:          mismatch\n' >&2
+    fail "$runtime_error"
+  fi
+  printf 'Runtime:          Elixir %s / OTP %s (verified)\n' "$actual_elixir" "$expected_otp"
+  if [[ ! -d "$deps_path" ]]; then
+    printf 'Next:             bin/lane %s setup\n' "$lane"
+  fi
+  exit 0
+fi
+
+[[ -z "$runtime_error" ]] || fail "$runtime_error"
+
+case "$action" in
+  setup)
+    # Keep Hex's mutable cache/config in the ignored project build tree. This
+    # avoids writing to a read-only or inaccessible global ~/.hex directory.
+    export HEX_HOME="${FABLEBOOK_HEX_HOME:-$repo_root/_build/hex-home}"
+    mix deps.get --check-locked
+    mix deps.compile
+    ;;
+  test)
+    exec mix test "$@"
+    ;;
+  mix)
+    [[ $# -gt 0 ]] || fail "mix requires a Mix task (for example: bin/lane $lane mix ci)"
+    exec mix "$@"
+    ;;
+esac

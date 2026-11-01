@@ -276,6 +276,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:dbg_icmd, :handle_msg, :_},
     {:dbg_ieval, :eval, :_},
     {:dbg_ieval, :eval_expr, :_},
+    {:int, :auto_attach, 2},
     {:dbg_iserver, :call, :_},
     {:dbg_iserver, :safe_call, :_},
     {:dbg_iserver, :handle_call, :_},
@@ -284,6 +285,20 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:dbg_wx_mon, :start, 2},
     {:dbg_istk, :from_external, 1},
     {:dbg_debugged, :eval, :_},
+    {:int, :test_at_break, 3},
+    {:dbg_wx_win, :entry, 4},
+    {:dbg_wx_mon_win, :create_win, 3},
+    {:dbg_wx_mon_win, :handle_event, 2},
+    {:dbg_wx_break, :start, 3},
+    {:dbg_wx_break, :start, 4},
+    {:dbg_wx_break, :start, 5},
+    {:dbg_wx_break_win, :create_win, 5},
+    {:dbg_wx_break_win, :handle_event, 2},
+    {:dbg_wx_trace, :start, 1},
+    {:dbg_wx_trace, :start, 3},
+    {:dbg_wx_trace, :start, 4},
+    {:dbg_wx_trace_win, :create_win, 4},
+    {:dbg_wx_trace_win, :handle_event, 2},
     {Mix.Tasks.Format, :formatter_for_file, :_},
     {Mix.Tasks.Help, :run, :_},
     {Mix.Compilers.Erlang, :ensure_application!, 2},
@@ -1187,6 +1202,212 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
+  @debugger_remainder_mfas [
+    {:int, :test_at_break, 3},
+    {:dbg_wx_win, :entry, 4},
+    {:dbg_wx_mon_win, :create_win, 3},
+    {:dbg_wx_mon_win, :handle_event, 2},
+    {:dbg_wx_break, :start, 3},
+    {:dbg_wx_break, :start, 4},
+    {:dbg_wx_break, :start, 5},
+    {:dbg_wx_break_win, :create_win, 5},
+    {:dbg_wx_break_win, :handle_event, 2},
+    {:dbg_wx_trace, :start, 1},
+    {:dbg_wx_trace, :start, 3},
+    {:dbg_wx_trace, :start, 4},
+    {:dbg_wx_trace_win, :create_win, 4},
+    {:dbg_wx_trace_win, :handle_event, 2}
+  ]
+
+  @tag :tmp_dir
+  @tag :debugger_remainder_probes
+  test "reviewed debugger remainder routes have narrow source and BEAM entries", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    for {mfa, index} <- Enum.with_index(@debugger_remainder_mfas),
+        form <- [:direct, :capture, :apply_local, :apply_global] ++ utf8_probe_forms(mfa) do
+      source = debugger_remainder_probe_source(mfa, form, index)
+      filename = "debugger_remainder_#{index}_#{form}.ex"
+      source_path = Path.join(dir, filename)
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "#{form} probe missed #{inspect(mfa)}"
+
+      if form == :direct do
+        refute exact_mfa_tier_hit?(scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+               "#{form} probe did not depend on the individual exact tier entry #{inspect(mfa)}"
+      else
+        {module, function, _arity} = mfa
+
+        without_same_function =
+          Enum.reject(@mfa_tier, fn {candidate_module, candidate_function, _candidate_arity} ->
+            candidate_module == module and candidate_function == function
+          end)
+
+        refute Enum.any?(hits(scan, without_same_function), &mfa_hit?(&1, mfa)),
+               "#{form} probe remained after removing the exact function tier entries for #{inspect(mfa)}"
+      end
+
+      assert credo_issues(source, filename) != [], "Credo missed #{form} for #{inspect(mfa)}"
+    end
+
+    for {mfa, index} <- Enum.with_index(@debugger_remainder_mfas) do
+      for form <- [:discarded_quote, :uninvoked_macro] do
+        source = debugger_remainder_probe_source(mfa, form, index)
+        filename = "debugger_remainder_#{index}_#{form}.ex"
+        source_path = Path.join(dir, filename)
+        File.write!(source_path, source)
+        [beam] = compile!([source_path], dir, true)
+
+        assert {:ok, scan} = BeamWalker.scan(beam)
+
+        refute Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+               "#{form} must remain source-only for #{inspect(mfa)}"
+
+        assert credo_issues(source_path) != [],
+               "Credo must retain the #{form} source-only finding for #{inspect(mfa)}"
+      end
+    end
+
+    wrapper_source = """
+    defmodule Fablebook.GuardFixture.DebuggerRemainderWrapper do
+      def probe(mode), do: :debugger.start(mode)
+    end
+    """
+
+    wrapper_path = Path.join(dir, "debugger_remainder_wrapper.ex")
+    File.write!(wrapper_path, wrapper_source)
+    [wrapper_beam] = compile!([wrapper_path], dir, true)
+    assert {:ok, wrapper_scan} = BeamWalker.scan(wrapper_beam)
+    wrapper_mfa = {:debugger, :start, 1}
+
+    assert Enum.any?(hits(wrapper_scan), &mfa_hit?(&1, wrapper_mfa))
+    assert credo_issues(wrapper_path) != []
+
+    for mfa <- @debugger_remainder_mfas do
+      refute Enum.any?(
+               hits(wrapper_scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+               &mfa_hit?(&1, mfa)
+             )
+
+      assert Enum.any?(
+               hits(wrapper_scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+               &mfa_hit?(&1, wrapper_mfa)
+             ),
+             "removing #{inspect(mfa)} must retain the independent debugger wrapper finding"
+    end
+
+    for {mfa, index} <- Enum.with_index(debugger_remainder_benign_mfas()) do
+      source = debugger_remainder_probe_source(mfa, :direct, 100 + index)
+      filename = "debugger_remainder_benign_#{index}.ex"
+      source_path = Path.join(dir, filename)
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      refute Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "benign neighbor #{inspect(mfa)} was over-caught"
+
+      assert credo_issues(source_path) == [],
+             "Credo over-caught benign neighbor #{inspect(mfa)}"
+    end
+  end
+
+  @tag :tmp_dir
+  @tag :debugger_remainder_tracer
+  test "auto-attach setter is guarded while source-only and wrapper controls stay distinct", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    mfa = {:int, :auto_attach, 2}
+    assert mfa in @mfa_tier
+    assert mfa in BannedCalls.banned_mfas()
+
+    source = """
+    defmodule Fablebook.GuardFixture.AutoAttachTracer do
+      def probe(module, function), do: :int.auto_attach([:init], {module, function})
+    end
+    """
+
+    source_path = Path.join(dir, "auto_attach_tracer.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+
+    assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+           "the uncalled setter probe must be caught by the exact auto-attach guard tier"
+
+    refute Enum.any?(hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))), &mfa_hit?(&1, mfa)),
+           "removing only int.auto_attach/2 must remove its direct BEAM hit"
+
+    assert credo_issues(source, "auto_attach_tracer.ex") != [],
+           "Credo must catch the same direct auto-attach source probe"
+
+    for {form, body} <- [
+          {:discarded_quote,
+           "def probe do\n  quote do\n    :int.auto_attach([:init], {Fablebook.GuardFixture.Callback, :run})\n  end\nend"},
+          {:uninvoked_macro,
+           "defmacro never_called do\n  quote do\n    :int.auto_attach([:init], {Fablebook.GuardFixture.Callback, :run})\n  end\nend"}
+        ] do
+      source = """
+      defmodule Fablebook.GuardFixture.AutoAttach#{Macro.camelize(to_string(form))} do
+        #{body}
+      end
+      """
+
+      source_path = Path.join(dir, "auto_attach_#{form}.ex")
+      File.write!(source_path, source)
+      [beam] = compile!([source_path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      refute Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "#{form} must remain source-only rather than a called auto-attach MFA"
+
+      assert credo_issues(source, "auto_attach_#{form}.ex") != [],
+             "Credo must retain the #{form} source-only finding"
+    end
+
+    benign =
+      "defmodule Fablebook.GuardFixture.AutoAttachStop do\n  def probe, do: :dbg_wx_mon.stop()\nend"
+
+    benign_path = Path.join(dir, "auto_attach_stop.ex")
+    File.write!(benign_path, benign)
+    [benign_beam] = compile!([benign_path], dir, true)
+    assert {:ok, benign_scan} = BeamWalker.scan(benign_beam)
+    refute Enum.any?(hits(benign_scan), &mfa_hit?(&1, mfa))
+    assert credo_issues(benign, "auto_attach_stop.ex") == []
+
+    wrapper =
+      "defmodule Fablebook.GuardFixture.AutoAttachWrapper do\n  def probe(mode), do: :debugger.start(mode)\nend"
+
+    wrapper_path = Path.join(dir, "auto_attach_wrapper.ex")
+    File.write!(wrapper_path, wrapper)
+    [wrapper_beam] = compile!([wrapper_path], dir, true)
+    assert {:ok, wrapper_scan} = BeamWalker.scan(wrapper_beam)
+    wrapper_mfa = {:debugger, :start, 1}
+
+    assert Enum.any?(hits(wrapper_scan), &mfa_hit?(&1, wrapper_mfa))
+
+    assert Enum.any?(
+             hits(wrapper_scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+             &mfa_hit?(&1, wrapper_mfa)
+           ),
+           "removing int.auto_attach/2 must retain the unrelated debugger wrapper wildcard"
+
+    assert credo_issues(wrapper, "auto_attach_wrapper.ex") != []
+  end
+
+  @tag :tmp_dir
   @tag :saved_settings_tracer
   test "saved-settings monitor front is caught by both guards without invocation", %{
     tmp_dir: dir
@@ -1619,6 +1840,89 @@ defmodule Fablebook.Contract.BannedCallsTest do
     """
   end
 
+  defp utf8_probe_forms({:dbg_wx_win, :entry, 4}), do: [:utf8]
+  defp utf8_probe_forms({:dbg_wx_mon_win, :handle_event, 2}), do: [:utf8]
+  defp utf8_probe_forms({:dbg_wx_break_win, :create_win, 5}), do: [:utf8]
+  defp utf8_probe_forms({:dbg_wx_break_win, :handle_event, 2}), do: [:utf8]
+  defp utf8_probe_forms({:dbg_wx_trace_win, :handle_event, 2}), do: [:utf8]
+  defp utf8_probe_forms(_mfa), do: []
+
+  defp debugger_remainder_probe_source({module, function, arity}, form, index) do
+    module_name = Atom.to_string(module)
+    function_name = Atom.to_string(function)
+    args = probe_args(arity)
+    source_args = probe_args(arity)
+    call_mfa = {module_name, function_name, arity}
+    call_mfa = if form == :utf8, do: {module, function, arity}, else: call_mfa
+    call = remainder_probe_call(call_mfa, form, source_args)
+    body = remainder_probe_definition(form, args, call)
+
+    """
+    defmodule Fablebook.GuardFixture.DebuggerRemainder#{index}#{Macro.camelize(to_string(form))} do
+      #{body}
+    end
+    """
+  end
+
+  defp remainder_probe_call({module, function, _arity}, :direct, source_args),
+    do: ":#{module}.#{function}(#{source_args})"
+
+  defp remainder_probe_call({module, function, arity}, :capture, _source_args),
+    do: "&:#{module}.#{function}/#{arity}"
+
+  defp remainder_probe_call({module, function, _arity}, :apply_local, source_args),
+    do: "apply(:#{module}, :#{function}, [#{source_args}])"
+
+  defp remainder_probe_call({module, function, _arity}, :apply_global, source_args),
+    do: ":erlang.apply(:#{module}, :#{function}, [#{source_args}])"
+
+  defp remainder_probe_call(mfa, :utf8, _source_args), do: remainder_utf8_call(mfa)
+
+  defp remainder_probe_call({module, function, arity}, form, _source_args)
+       when form in [:discarded_quote, :uninvoked_macro],
+       do: "quote do\n    :#{module}.#{function}(#{unquoted_args(arity)})\n  end"
+
+  defp remainder_probe_definition(:uninvoked_macro, args, call),
+    do: "defmacro never_called(#{args}) do\n  #{call}\nend"
+
+  defp remainder_probe_definition(form, _args, call) when form in [:capture, :utf8],
+    do: "def probe do\n  #{call}\nend"
+
+  defp remainder_probe_definition(_form, args, call),
+    do: "def probe(#{args}) do\n  #{call}\nend"
+
+  defp probe_args(0), do: ""
+  defp probe_args(arity), do: Enum.map_join(0..(arity - 1), ", ", &"arg#{&1}")
+
+  defp unquoted_args(0), do: ""
+  defp unquoted_args(arity), do: Enum.map_join(0..(arity - 1), ", ", &"unquote(arg#{&1})")
+
+  defp remainder_utf8_call({:dbg_wx_win, :entry, 4}),
+    do: ":dbg_wx_win.entry(:parent, \"Prompt café\", \"Module\", {:term, \"café\"})"
+
+  defp remainder_utf8_call({:dbg_wx_mon_win, :handle_event, 2}),
+    do: ":dbg_wx_mon_win.handle_event(\"café\", :window)"
+
+  defp remainder_utf8_call({:dbg_wx_break_win, :create_win, 5}),
+    do: ":dbg_wx_break_win.create_win(:parent, {0, 0}, :function, \"café.erl\", \"line\")"
+
+  defp remainder_utf8_call({:dbg_wx_break_win, :handle_event, 2}),
+    do: ":dbg_wx_break_win.handle_event(\"café\", :window)"
+
+  defp remainder_utf8_call({:dbg_wx_trace_win, :handle_event, 2}),
+    do: ":dbg_wx_trace_win.handle_event(\"café\", :window)"
+
+  defp debugger_remainder_benign_mfas do
+    [
+      {:int, :interpreted, 0},
+      {:dbg_wx_win, :to_string, 1},
+      {:dbg_wx_mon_win, :get_window, 1},
+      {:dbg_wx_break_win, :update_functions, 2},
+      {:dbg_wx_trace, :title, 1},
+      {:dbg_wx_trace_win, :get_window, 1}
+    ]
+  end
+
   @debugger_settings_probe_bodies %{
     direct: "def probe(mode, path), do: :dbg_wx_mon.start(mode, path)",
     default: "def probe, do: :dbg_wx_mon.start(:local, :default)",
@@ -1655,6 +1959,10 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
     literal_hits = for m <- literals, {m, :_, :_} in mfa_tier, do: {:mfa, {m, :_, :_}}
     atom_hits ++ mfa_hits ++ pair_hits ++ literal_hits
+  end
+
+  defp exact_mfa_tier_hit?(%{mfas: imports}, mfa_tier) do
+    Enum.any?(imports, fn imported -> Enum.any?(mfa_tier, &mfa_match?(&1, imported)) end)
   end
 
   defp mfa_match?(pattern, mfa) do

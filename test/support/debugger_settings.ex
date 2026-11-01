@@ -25,7 +25,158 @@ defmodule Fablebook.Test.DebuggerSettings do
     {:dbg_wx_mon, :load_settings, 2},
     {:dbg_wx_mon, :load_settings2, 2}
   ]
+  @monitor_group_modules [
+    "dbg_wx_mon",
+    "dbg_wx_mon_win",
+    "dbg_wx_filedialog_win",
+    "dbg_wx_win"
+  ]
+  @trace_group_modules [
+    "dbg_wx_break",
+    "dbg_wx_break_win",
+    "dbg_wx_code",
+    "dbg_wx_src_view",
+    "dbg_wx_trace",
+    "dbg_wx_trace_win",
+    "dbg_wx_view",
+    "dbg_wx_winman"
+  ]
+  @monitor_route_branch_ids [
+    :monitor_start_error,
+    :monitor_start_already_started,
+    :startup_graphics_error,
+    :startup_graphics_ready,
+    :startup_init2_stop,
+    :startup_init2_error,
+    :startup_default_no_replay,
+    :startup_default_loop,
+    :startup_selected_replay,
+    :load_menu_cancel,
+    :load_menu_selected,
+    :trace_windows_selected,
+    :trace_windows_unselected,
+    :monitor_dialog_default_path,
+    :monitor_dialog_filter_default,
+    :monitor_dialog_sort_default,
+    :monitor_dialog_cancel,
+    :monitor_dialog_selected,
+    :monitor_dialog_filter_dispatch,
+    :monitor_window_shortcut_atom,
+    :monitor_window_module_atom,
+    :monitor_window_reload_module_atom,
+    :monitor_window_checkbox_atoms,
+    :monitor_window_strings_checkbox_atom,
+    :monitor_process_pid_parse,
+    :monitor_backtrace_integer_scanner,
+    :monitor_backtrace_integer_token_match,
+    :monitor_edit_variable_term_scanner,
+    :monitor_edit_variable_term_parser
+  ]
+  @remainder_source_branch_ids [
+    :monitor_dialog_default_path,
+    :monitor_dialog_filter_default,
+    :monitor_dialog_sort_default,
+    :monitor_dialog_cancel,
+    :monitor_dialog_selected,
+    :monitor_dialog_filter_dispatch,
+    :monitor_window_shortcut_atom,
+    :monitor_window_module_atom,
+    :monitor_window_reload_module_atom,
+    :monitor_window_checkbox_atoms,
+    :monitor_window_strings_checkbox_atom,
+    :monitor_process_pid_parse,
+    :monitor_backtrace_integer_scanner,
+    :monitor_backtrace_integer_token_match,
+    :monitor_edit_variable_term_scanner,
+    :monitor_edit_variable_term_parser
+  ]
+  @trace_route_branch_ids [
+    :trace_breakpoint_menu_dispatch,
+    :trace_edit_variable_term_entry,
+    :trace_edit_variable_assignment,
+    :trace_user_command_eval_dispatch,
+    :trace_backtrace_integer_entry,
+    :break_dialog_module_atom_live_edit,
+    :break_dialog_module_atom_function_submit,
+    :break_dialog_module_atom_line_submit,
+    :break_dialog_atom_input_types,
+    :break_dialog_module_list_lookup,
+    :break_dialog_typed_input_wrapper,
+    :break_dialog_typed_input_scanner,
+    :break_dialog_conditional_callback_tuple,
+    :trace_shortcut_atom,
+    :trace_resize_code_fixed_changeh_closure,
+    :trace_resize_trace_fixed_changeh_closure,
+    :trace_code_area_fixed_style_closure,
+    :trace_source_view_fixed_style_closure,
+    :trace_resize_fixed_closure_calls,
+    :trace_output_fixed_callback_invocation,
+    :trace_eval_entry_user_command,
+    :trace_view_module_source_lookup,
+    :trace_trace_module_source_lookup,
+    :view_breakpoint_action_dispatch,
+    :break_process_fixed_worker,
+    :view_process_fixed_worker
+  ]
   @debugger_seed_modules ["dbg_idb", "dbg_istk", "dbg_wx_interpret"]
+  @auto_attach_route_branch_ids [
+    :auto_attach_empty_flags,
+    :auto_attach_two_tuple,
+    :auto_attach_valid_tuple,
+    :auto_attach_safe_cast,
+    :auto_attach_false_store,
+    :auto_attach_false_broadcast,
+    :auto_attach_tuple_store,
+    :auto_attach_init_event,
+    :auto_attach_init_result_break,
+    :auto_attach_init_result_running,
+    :auto_attach_break_event,
+    :auto_attach_exit_event,
+    :auto_attach_process_unattached,
+    :auto_attach_already_attached_ignore,
+    :auto_attach_false_ignore,
+    :auto_attach_event_membership,
+    :auto_attach_event_match_spawn,
+    :auto_attach_event_nonmatch_ignore
+  ]
+  @callback_route_branch_ids @auto_attach_route_branch_ids ++
+                               [
+                                 :auto_attach_flag_init,
+                                 :auto_attach_flag_break,
+                                 :auto_attach_flag_exit,
+                                 :auto_attach_flags_complete,
+                                 :condition_setter_input,
+                                 :condition_setter_function_checked,
+                                 :condition_setter_broadcast,
+                                 :condition_server_key_found,
+                                 :condition_option_slot,
+                                 :condition_options_broadcast,
+                                 :condition_server_missing_break,
+                                 :condition_message_received,
+                                 :condition_process_dictionary_updated,
+                                 :condition_break_p_called
+                               ]
+  @interpreter_route_branch_ids [
+    :interpreter_eval_reentry,
+    :interpreter_eval_spawn_meta,
+    :interpreter_meta_initial_eval,
+    :interpreter_uninterpreted_top_apply,
+    :interpreter_uninterpreted_nested_apply,
+    :interpreter_external_function_lookup,
+    :interpreter_remote_call,
+    :interpreter_apply_fun,
+    :interpreter_apply_three,
+    :interpreter_safe_bif_dispatch,
+    :interpreter_debugged_ready_apply,
+    :interpreter_debugged_command_dispatch,
+    :interpreter_debugged_reply_apply,
+    :interpreter_debugged_reply_eval,
+    :interpreter_loader_worker,
+    :interpreter_loader_envelope_decode,
+    :interpreter_loader_abstract_decode,
+    :interpreter_load_package,
+    :interpreter_server_loader_call
+  ]
   @settings_module :dbg_wx_settings
   @monitor_module :dbg_wx_mon
   @settings_mfas [
@@ -38,6 +189,27 @@ defmodule Fablebook.Test.DebuggerSettings do
     {:dbg_wx_settings, :load, 3},
     {:dbg_wx_settings, :save, 3}
   ]
+  @local_call_fact_kinds %{
+    {:apply, 2} => :dynamic_apply,
+    {:apply, 3} => :dynamic_apply,
+    {:spawn, 3} => :dynamic_spawn,
+    {:spawn_link, 3} => :dynamic_spawn,
+    {:list_to_atom, 1} => :atom_construction,
+    {:list_to_pid, 1} => :pid_parser,
+    {:binary_to_term, 1} => :term_decoder,
+    {:binary_to_term, 2} => :term_decoder
+  }
+  @remote_call_fact_kinds %{
+    {:erl_scan, :string} => :token_scanner,
+    {:code, :load_binary} => :code_loader,
+    {:code, :purge} => :code_purge,
+    {:erts_debug, :breakpoint} => :runtime_breakpoint_control,
+    {:erl_eval, :extended_parse_term} => :term_parser,
+    {:erlang, :list_to_atom} => :atom_construction,
+    {:erlang, :list_to_pid} => :pid_parser,
+    {:erlang, :apply} => :dynamic_apply,
+    {:erlang, :trace} => :process_trace_control
+  }
   @monitor_exports [
     {:dbg_wx_mon, :start, 2},
     {:dbg_wx_mon, :stop, 0}
@@ -50,6 +222,9 @@ defmodule Fablebook.Test.DebuggerSettings do
       iserver_sha256: "3dde037e86dc9ba93d6bb8438f4fd38e062dfbf76aea6ef4d440c2162493728f",
       int_sha256: "14b667aa97d23b3ead643eae3bf2acabbc804919935f978a04846b353cac7a39",
       icmd_sha256: "5630b07823f0531d11b5415977c273b83a0176b18b985101c95afdc107d8431a",
+      ieval_sha256: "60362d2aa47470b70a9264c5a4f7c5e60e8362f844e3ec4171cc3733d2ff31d1",
+      iload_sha256: "a2dd4ad09550a866e5cc16834c0f006a146a21c3abc983f72d8ed44dd1a4b250",
+      debugged_sha256: "f0ea4b069cacf931380bf814eba15457a5e1823bdd49e38966b59e689e157bda",
       settings_lines: %{load: 41, save: 45, open_win: 54, default_settings_dir: 79},
       monitor_lines: %{
         start: 76,
@@ -74,6 +249,9 @@ defmodule Fablebook.Test.DebuggerSettings do
       iserver_sha256: "04a9268e631c8a53fcb9a48821a44cddce07072016550eecaf43ef0734ec3a02",
       int_sha256: "913d32eaf82c21b9c9902e023f46dc88317ff729d66cc91078469d7c3b9b043c",
       icmd_sha256: "cd6d034c796c98ed3b3ce71048bef83aea8b25b612e227a02c2af6301a0d326e",
+      ieval_sha256: "393085c1fc6324687bc12b5184b5a501491f07c8f55dc293ee07774ea96d0b6a",
+      iload_sha256: "530955c6525821e0382d53375ce5750cb4fd290ce4c323dd38521538452dae03",
+      debugged_sha256: "6612e504e8180b783660fc6c5eb1f6a72b5bc3a1b75b27f0129e71c9cc8f00f2",
       settings_lines: %{load: 39, save: 43, open_win: 52, default_settings_dir: 77},
       monitor_lines: %{
         start: 72,
@@ -529,7 +707,348 @@ defmodule Fablebook.Test.DebuggerSettings do
      %{core: {124, "_Other ->"}, floor: {122, "_Other ->"}}}
   ]
 
-  @all_branch_specs @settings_branch_specs ++ @callback_branch_specs
+  @interpreter_branch_specs [
+    {:interpreter_eval_reentry, {:dbg_ieval, :eval, 3}, :existing_meta_reentry, :ieval,
+     %{core: {52, "re_entry, Debugged"}, floor: {50, "re_entry, Debugged"}}},
+    {:interpreter_eval_spawn_meta, {:dbg_ieval, :eval, 3}, :new_meta_for_uninterpreted_process,
+     :ieval, %{core: {55, "spawn(fun() ->"}, floor: {53, "spawn(fun() ->"}}},
+    {:interpreter_meta_initial_eval, {:dbg_ieval, :meta, 5}, :initial_mfa_evaluated, :ieval,
+     %{
+       core: {240, "eval_mfa(Debugged,M,F,As,Ieval)"},
+       floor: {238, "eval_mfa(Debugged,M,F,As,Ieval)"}
+     }},
+    {:interpreter_uninterpreted_top_apply, {:dbg_ieval, :do_eval_function, 6},
+     :top_level_uninterpreted_mfa_returned_for_apply, :ieval,
+     %{core: {477, "not_interpreted when Top"}, floor: {475, "not_interpreted when Top"}}},
+    {:interpreter_uninterpreted_nested_apply, {:dbg_ieval, :do_eval_function, 6},
+     :nested_uninterpreted_mfa_sent_to_debugged_process, :ieval,
+     %{core: {479, "not_interpreted ->"}, floor: {477, "not_interpreted ->"}}},
+    {:interpreter_external_function_lookup, {:dbg_ieval, :get_function, 4},
+     :external_export_lookup_or_not_interpreted, :ieval,
+     %{
+       core: {554, "dbg_idb:lookup(DbRef, {Mod,Name,Arity,true})"},
+       floor: {552, "dbg_idb:lookup(DbRef, {Mod,Name,Arity,true})"}
+     }},
+    {:interpreter_remote_call, {:dbg_ieval, :expr, 3}, :remote_module_function_dispatch, :ieval,
+     %{
+       core: {1064, "expr({call_remote,Line,M,F,As0,Lc}"},
+       floor: {945, "expr({call_remote,Line,M,F,As0,Lc}"}
+     }},
+    {:interpreter_apply_fun, {:dbg_ieval, :expr, 3}, :apply_fun_value_dispatch, :ieval,
+     %{
+       core: {1146, "expr({apply_fun,Line,Fun0,As0,Lc}"},
+       floor: {1027, "expr({apply_fun,Line,Fun0,As0,Lc}"}
+     }},
+    {:interpreter_apply_three, {:dbg_ieval, :expr, 3}, :apply_module_function_arguments, :ieval,
+     %{core: {1167, "expr({apply,Line,As0,Lc}"}, floor: {1048, "expr({apply,Line,As0,Lc}"}}},
+    {:interpreter_safe_bif_dispatch, {:dbg_ieval, :safe_bif, 5}, :safe_bif_module_function_apply,
+     :ieval, %{core: {1692, "try apply(M, F, As) of"}, floor: {1252, "try apply(M, F, As) of"}}},
+    {:interpreter_debugged_ready_apply, {:dbg_debugged, :msg_loop, 2}, :ready_dbg_apply_dispatch,
+     :debugged, %{core: {53, "apply(M, F, A)"}, floor: {51, "apply(M, F, A)"}}},
+    {:interpreter_debugged_command_dispatch, {:dbg_debugged, :msg_loop, 2},
+     :meta_command_reply_dispatch, :debugged,
+     %{
+       core: {76, "{sys, Meta, {command,Command}}"},
+       floor: {74, "{sys, Meta, {command,Command}}"}
+     }},
+    {:interpreter_debugged_reply_apply, {:dbg_debugged, :reply, 1}, :command_apply_dispatch,
+     :debugged, %{core: {94, "reply({apply,M,F,As})"}, floor: {92, "reply({apply,M,F,As})"}}},
+    {:interpreter_debugged_reply_eval, {:dbg_debugged, :reply, 1}, :command_expression_evaluation,
+     :debugged, %{core: {96, "reply({eval,Expr,Bs})"}, floor: {94, "reply({eval,Expr,Bs})"}}},
+    {:interpreter_loader_worker, {:dbg_iload, :load_mod, 4}, :linked_loader_worker, :iload,
+     %{
+       core: {52, "spawn_link(load_mod1(Mod, File, Binary, Db))"},
+       floor: {47, "spawn_link(load_mod1(Mod, File, Binary, Db))"}
+     }},
+    {:interpreter_loader_envelope_decode, {:dbg_iload, :store_module, 4},
+     :caller_envelope_term_decoded, :iload,
+     %{core: {73, "binary_to_term(Binary)"}, floor: {68, "binary_to_term(Binary)"}}},
+    {:interpreter_loader_abstract_decode, {:dbg_iload, :abstr, 1},
+     :binary_abstract_code_decoded_or_term_passthrough, :iload,
+     %{
+       core: {145, "abstr(Bin) when is_binary(Bin) -> binary_to_term(Bin)"},
+       floor: {128, "abstr(Bin) when is_binary(Bin) -> binary_to_term(Bin)"}
+     }},
+    {:interpreter_load_package, {:int, :load, 2}, :compiled_envelope_constructed_from_load_inputs,
+     :int,
+     %{
+       core: {872, "load({Mod, Src, Beam, BeamBin, Exp, Abst}, Dist)"},
+       floor: {868, "load({Mod, Src, Beam, BeamBin, Exp, Abst}, Dist)"}
+     }},
+    {:interpreter_server_loader_call, {:dbg_iserver, :handle_call, 3},
+     :server_calls_interpreter_loader, :iserver,
+     %{
+       core: {231, "dbg_iload:load_mod(Mod, Src, Bin, ModDb)"},
+       floor: {229, "dbg_iload:load_mod(Mod, Src, Bin, ModDb)"}
+     }}
+  ]
+
+  @monitor_remainder_branch_specs [
+    {:monitor_dialog_default_path, {:dbg_wx_filedialog_win, :init, 1},
+     :current_directory_fallback_when_default_dir_absent, {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {93, "Path = proplists:get_value(defaultDir, Options0, DefPath)"},
+       floor: {91, "Path = proplists:get_value(defaultDir, Options0, DefPath)"}
+     }},
+    {:monitor_dialog_filter_default, {:dbg_wx_filedialog_win, :init, 1},
+     :fixed_file_type_filter_is_default, {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {95, "Filter = proplists:get_value(filter, Options0, fun file_type_and_icon/2)"},
+       floor: {93, "Filter = proplists:get_value(filter, Options0, fun file_type_and_icon/2)"}
+     }},
+    {:monitor_dialog_sort_default, {:dbg_wx_filedialog_win, :init, 1}, :name_sort_is_default,
+     {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {96, "SortCol = sort_col(proplists:get_value(sort, Options0, name))"},
+       floor: {94, "SortCol = sort_col(proplists:get_value(sort, Options0, name))"}
+     }},
+    {:monitor_dialog_cancel, {:dbg_wx_filedialog_win, :handle_event, 2},
+     :cancel_returns_without_selection, {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {216, "handle_event(#wx{id=Id=?wxID_CANCEL}"},
+       floor: {214, "handle_event(#wx{id=Id=?wxID_CANCEL}"}
+     }},
+    {:monitor_dialog_selected, {:dbg_wx_filedialog_win, :handle_event, 2},
+     :ok_returns_selected_path, {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {220, "handle_event(#wx{id=Id=?wxID_OK}"},
+       floor: {218, "handle_event(#wx{id=Id=?wxID_OK}"}
+     }},
+    {:monitor_dialog_filter_dispatch, {:dbg_wx_filedialog_win, :get_file_info, 5},
+     :filter_callback_receives_current_directory_and_entry_name,
+     {:remainder, "dbg_wx_filedialog_win"},
+     %{core: {511, "case Filter(Dir,Name) of"}, floor: {509, "case Filter(Dir,Name) of"}}},
+    {:monitor_window_shortcut_atom, {:dbg_wx_mon_win, :handle_event, 2},
+     :key_code_is_converted_to_shortcut_atom, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {534, "{shortcut, list_to_atom([Key+($a-$A)])}"},
+       floor: {530, "{shortcut, list_to_atom([Key+($a-$A)])}"}
+     }},
+    {:monitor_window_module_atom, {:dbg_wx_mon_win, :handle_event, 2},
+     :displayed_module_name_becomes_atom, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {557, "{module, list_to_atom(ModS), view};"},
+       floor: {553, "{module, list_to_atom(ModS), view};"}
+     }},
+    {:monitor_window_reload_module_atom, {:dbg_wx_mon_win, :handle_event, 2},
+     :displayed_module_name_is_loaded_for_reload, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {565, "int:i(list_to_atom(ModS))"},
+       floor: {561, "int:i(list_to_atom(ModS))"}
+     }},
+    {:monitor_window_checkbox_atoms, {:dbg_wx_mon_win, :handle_event, 2},
+     :displayed_checkbox_labels_become_atoms, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {577, "[list_to_atom(Name)|NamesAcc];"},
+       floor: {573, "[list_to_atom(Name)|NamesAcc];"}
+     }},
+    {:monitor_window_strings_checkbox_atom, {:dbg_wx_mon_win, :handle_event, 2},
+     :strings_checkbox_label_becomes_atom, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {596, "[list_to_atom(Name)|NamesAcc];"},
+       floor: {592, "[list_to_atom(Name)|NamesAcc];"}
+     }},
+    {:monitor_process_pid_parse, {:dbg_wx_mon_win, :clear_processes, 2},
+     :displayed_process_identifier_is_parsed_for_cleanup, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {411, "Pid = list_to_pid(wxListItem:getText(Item))"},
+       floor: {407, "Pid = list_to_pid(wxListItem:getText(Item))"}
+     }},
+    {:monitor_backtrace_integer_scanner, {:dbg_wx_win, :verify, 2},
+     :backtrace_integer_input_scanned_before_token_type_match, {:remainder, "dbg_wx_win"},
+     %{
+       core: {279, "case erl_scan:string(Str, 1, [text]) of"},
+       floor: {277, "case erl_scan:string(Str, 1, [text]) of"}
+     }},
+    {:monitor_backtrace_integer_token_match, {:dbg_wx_win, :verify, 2},
+     :backtrace_size_requires_one_integer_token_after_scanning, {:remainder, "dbg_wx_win"},
+     %{
+       core: {286, "{ok, [{Type, _Line, Value}], _EndLine} when Type/=term ->"},
+       floor: {284, "{ok, [{Type, _Line, Value}], _EndLine} when Type/=term ->"}
+     }},
+    {:monitor_edit_variable_term_scanner, {:dbg_wx_win, :verify, 2},
+     :edit_variable_term_input_scanned_before_term_parse, {:remainder, "dbg_wx_win"},
+     %{
+       core: {279, "case erl_scan:string(Str, 1, [text]) of"},
+       floor: {277, "case erl_scan:string(Str, 1, [text]) of"}
+     }},
+    {:monitor_edit_variable_term_parser, {:dbg_wx_win, :verify, 2},
+     :edit_variable_value_uses_extended_parse_term_without_expression_evaluation,
+     {:remainder, "dbg_wx_win"},
+     %{
+       core: {281, "case erl_eval:extended_parse_term(Tokens++[{dot, erl_anno:new(1)}]) of"},
+       floor: {279, "case erl_eval:extended_parse_term(Tokens++[{dot, erl_anno:new(1)}]) of"}
+     }}
+  ]
+
+  @trace_remainder_branch_specs [
+    {:trace_breakpoint_menu_dispatch, {:dbg_wx_trace, :gui_cmd, 2},
+     :break_menu_action_routes_to_interpreter_break_control, {:remainder, "dbg_wx_trace"},
+     %{
+       core: {447, "gui_cmd({break, {Mod, Line}, What}, State) ->"},
+       floor: {445, "gui_cmd({break, {Mod, Line}, What}, State) ->"}
+     }},
+    {:trace_edit_variable_term_entry, {:dbg_wx_trace, :gui_cmd, 2},
+     :edit_variable_uses_term_entry, {:remainder, "dbg_wx_trace"},
+     %{
+       core: {524, "case dbg_wx_win:entry(Window, \"Edit variable\", Var, {term, Val}) of"},
+       floor: {522, "case dbg_wx_win:entry(Window, \"Edit variable\", Var, {term, Val}) of"}
+     }},
+    {:trace_edit_variable_assignment, {:dbg_wx_trace, :gui_cmd, 2},
+     :parsed_value_is_formatted_as_existing_variable_assignment, {:remainder, "dbg_wx_trace"},
+     %{
+       core: {530, "gui_cmd({user_command, lists:flatten(Cmd)}, State)"},
+       floor: {528, "gui_cmd({user_command, lists:flatten(Cmd)}, State)"}
+     }},
+    {:trace_user_command_eval_dispatch, {:dbg_wx_trace, :gui_cmd, 2},
+     :status_gated_command_reaches_debugger_meta_evaluator, {:remainder, "dbg_wx_trace"},
+     %{
+       core: {511, "int:meta(State#state.meta, eval, Arg);"},
+       floor: {509, "int:meta(State#state.meta, eval, Arg);"}
+     }},
+    {:trace_backtrace_integer_entry, {:dbg_wx_trace, :gui_cmd, 2},
+     :backtrace_size_caller_supplies_integer_type, {:remainder, "dbg_wx_trace"},
+     %{
+       core: {481, "case dbg_wx_win:entry(Win, \"Backtrace\",'Backtrace:', {integer, Val}) of"},
+       floor: {479, "case dbg_wx_win:entry(Win, \"Backtrace\",'Backtrace:', {integer, Val}) of"}
+     }},
+    {:break_dialog_module_atom_live_edit, {:dbg_wx_break_win, :handle_event, 2},
+     :edited_module_text_is_converted_to_atom, {:remainder, "dbg_wx_break_win"},
+     %{
+       core: {192, "{module, list_to_atom(Module)};"},
+       floor: {188, "{module, list_to_atom(Module)};"}
+     }},
+    {:break_dialog_module_atom_function_submit, {:dbg_wx_break_win, :handle_event, 2},
+     :function_break_selection_converts_module_text_to_atom, {:remainder, "dbg_wx_break_win"},
+     %{
+       core:
+         {215, "Breaks = [[list_to_atom(Mod)|lists:nth(Index+1, Funcs)] || Index <- IndexL],"},
+       floor:
+         {211, "Breaks = [[list_to_atom(Mod)|lists:nth(Index+1, Funcs)] || Index <- IndexL],"}
+     }},
+    {:break_dialog_module_atom_line_submit, {:dbg_wx_break_win, :handle_event, 2},
+     :line_break_submission_converts_module_text_to_atom, {:remainder, "dbg_wx_break_win"},
+     %{
+       core: {224, "{break, [[list_to_atom(Mod)|Data]], Triggered};"},
+       floor: {220, "{break, [[list_to_atom(Mod)|Data]], Triggered};"}
+     }},
+    {:break_dialog_atom_input_types, {:dbg_wx_break_win, :create_win, 5},
+     :line_uses_integer_field_and_conditional_break_adds_atom_fields,
+     {:remainder, "dbg_wx_break_win"},
+     %{
+       core: {125, "Inputs = case Type of"},
+       floor: {121, "Inputs = case Type of"}
+     }},
+    {:break_dialog_typed_input_wrapper, {:dbg_wx_break_win, :check_input, 1},
+     :typed_dialog_input_wrapper_initializes_accumulator, {:remainder, "dbg_wx_break_win"},
+     %{
+       core: {231, "check_input(Entries, [])"},
+       floor: {227, "check_input(Entries, [])"}
+     }},
+    {:break_dialog_typed_input_scanner, {:dbg_wx_break_win, :check_input, 2},
+     :typed_dialog_text_is_scanned_before_type_match, {:remainder, "dbg_wx_break_win"},
+     %{
+       core: {234, "case erl_scan:string(Str) of"},
+       floor: {230, "case erl_scan:string(Str) of"}
+     }},
+    {:break_dialog_conditional_callback_tuple, {:dbg_wx_break, :gui_cmd, 2},
+     :conditional_callback_tuple_is_forwarded_to_prior_owner_setter, {:remainder, "dbg_wx_break"},
+     %{
+       core: {99, "int:test_at_break(Mod, Line, {CMod, CFunc}),"},
+       floor: {97, "int:test_at_break(Mod, Line, {CMod, CFunc}),"}
+     }},
+    {:break_dialog_module_list_lookup, {:dbg_wx_break, :gui_cmd, 2},
+     :module_text_route_looks_up_functions_without_membership_validation,
+     {:remainder, "dbg_wx_break"},
+     %{
+       core: {88, "Funcs = int:functions(Mod),"},
+       floor: {86, "Funcs = int:functions(Mod),"}
+     }},
+    {:trace_shortcut_atom, {:dbg_wx_trace_win, :handle_event, 2},
+     :control_key_is_converted_to_shortcut_atom, {:remainder, "dbg_wx_trace_win"},
+     %{
+       core: {799, "{shortcut, list_to_atom([Key+($a-$A)])}"},
+       floor: {795, "{shortcut, list_to_atom([Key+($a-$A)])}"}
+     }},
+    {:trace_resize_fixed_closure_calls, {:dbg_wx_trace_win, :handle_event, 2},
+     :sash_resize_calls_a_fixed_local_change_closure, {:remainder, "dbg_wx_trace_win"},
+     %{
+       core: {729, "Change = fun(Szr, Width) ->"},
+       floor: {725, "Change = fun(Szr, Width) ->"}
+     }},
+    {:trace_resize_code_fixed_changeh_closure, {:dbg_wx_trace_win, :handle_event, 2},
+     :code_sash_uses_a_fixed_local_changeh_closure, {:remainder, "dbg_wx_trace_win"},
+     %{
+       core: {700, "ChangeH = fun(Item) ->"},
+       floor: {696, "ChangeH = fun(Item) ->"}
+     }},
+    {:trace_resize_trace_fixed_changeh_closure, {:dbg_wx_trace_win, :handle_event, 2},
+     :trace_sash_uses_a_fixed_local_changeh_closure, {:remainder, "dbg_wx_trace_win"},
+     %{
+       core: {762, "ChangeH = fun(Item) ->"},
+       floor: {758, "ChangeH = fun(Item) ->"}
+     }},
+    {:trace_code_area_fixed_style_closure, {:dbg_wx_code, :code_area, 1},
+     :code_area_applies_styles_through_a_fixed_local_closure, {:remainder, "dbg_wx_code"},
+     %{
+       core: {94, "SetStyle = fun({Style, Color}) ->"},
+       floor: {92, "SetStyle = fun({Style, Color}) ->"}
+     }},
+    {:trace_source_view_fixed_style_closure, {:dbg_wx_src_view, :code_area, 2},
+     :source_view_applies_styles_through_a_fixed_local_closure, {:remainder, "dbg_wx_src_view"},
+     %{
+       core: {55, "SetStyle = fun({Style, Color}) ->"},
+       floor: {53, "SetStyle = fun({Style, Color}) ->"}
+     }},
+    {:trace_output_fixed_callback_invocation, {:dbg_wx_trace, :meta_cmd, 2},
+     :trace_output_invokes_the_fixed_prior_owner_formatter_closure, {:remainder, "dbg_wx_trace"},
+     %{
+       core: {711, "dbg_wx_trace_win:trace_output(State#state.win, StrFun(P)),"},
+       floor: {709, "dbg_wx_trace_win:trace_output(State#state.win, StrFun(P)),"}
+     }},
+    {:trace_eval_entry_user_command, {:dbg_wx_trace_win, :handle_event, 2},
+     :typed_evaluator_text_is_returned_as_user_command, {:remainder, "dbg_wx_trace_win"},
+     %{
+       core: {920, "{user_command, Cmd}"},
+       floor: {916, "{user_command, Cmd}"}
+     }},
+    {:trace_view_module_source_lookup, {:dbg_wx_view, :gui_load_module, 2},
+     :module_view_reads_debugger_raw_contents_for_display, {:remainder, "dbg_wx_view"},
+     %{
+       core: {270, "case dbg_iserver:call({raw_contents, Mod, any}) of"},
+       floor: {268, "case dbg_iserver:call({raw_contents, Mod, any}) of"}
+     }},
+    {:trace_trace_module_source_lookup, {:dbg_wx_trace, :gui_load_module, 3},
+     :trace_window_reads_debugger_raw_contents_for_display, {:remainder, "dbg_wx_trace"},
+     %{
+       core: {827, "case dbg_iserver:call({raw_contents, Mod, any}) of"},
+       floor: {825, "case dbg_iserver:call({raw_contents, Mod, any}) of"}
+     }},
+    {:view_breakpoint_action_dispatch, {:dbg_wx_view, :gui_cmd, 2},
+     :module_view_breakpoint_action_routes_to_interpreter_control, {:remainder, "dbg_wx_view"},
+     %{
+       core: {195, "gui_cmd({break, {Mod, Line}, What}, State) ->"},
+       floor: {193, "gui_cmd({break, {Mod, Line}, What}, State) ->"}
+     }},
+    {:break_process_fixed_worker, {:dbg_wx_break, :start, 5},
+     :break_dialog_uses_fixed_local_linked_worker, {:remainder, "dbg_wx_break"},
+     %{
+       core: {53, "spawn_link(?MODULE, init, [Wx, Env, Pos, Type, Mod, Line])."},
+       floor: {51, "spawn_link(?MODULE, init, [Wx, Env, Pos, Type, Mod, Line])."}
+     }},
+    {:view_process_fixed_worker, {:dbg_wx_view, :start, 2},
+     :module_view_uses_fixed_local_linked_worker, {:remainder, "dbg_wx_view"},
+     %{
+       core: {50, "spawn_link(fun () -> init(GS, Env, Mod, Title) end)"},
+       floor: {48, "spawn_link(fun () -> init(GS, Env, Mod, Title) end)"}
+     }}
+  ]
+
+  @all_branch_specs @settings_branch_specs ++
+                      @callback_branch_specs ++
+                      @interpreter_branch_specs ++
+                      @monitor_remainder_branch_specs ++
+                      @trace_remainder_branch_specs
 
   def records(lane_name) when lane_name in ["core", "floor"] do
     lane = Map.fetch!(@lane_data, lane_name)
@@ -563,7 +1082,50 @@ defmodule Fablebook.Test.DebuggerSettings do
           {:dbg_icmd, :cmd, 4},
           {:dbg_icmd, :break_p, 4},
           :source_only_dynamic_condition
+        ],
+        interpreter_eval: [
+          {:int, :eval, 3},
+          {:dbg_debugged, :eval, 3},
+          {:dbg_ieval, :eval, 3},
+          :existing_meta_reentry_or_new_meta_worker,
+          {:dbg_ieval, :meta, 5},
+          {:dbg_ieval, :eval_mfa, 5},
+          {:dbg_ieval, :do_eval_function, 6},
+          {:dbg_ieval, :get_function, 4}
+        ],
+        interpreter_commands: [
+          {:dbg_ieval, :debugged_cmd, 3},
+          {:dbg_debugged, :msg_loop, 2},
+          {:dbg_debugged, :handle_command, 1},
+          {:dbg_debugged, :reply, 1},
+          :dynamic_apply_or_expression_evaluation
+        ],
+        interpreter_load: [
+          {:int, :load, 2},
+          {:dbg_iserver, :handle_call, 3},
+          {:dbg_iload, :load_mod, 4},
+          {:dbg_iload, :store_module, 4},
+          {:dbg_iload, :abstr, 1}
         ]
+      },
+      auto_attach_trace: %{
+        input_origin: :caller_supplied_auto_attach_flags_and_function_tuple,
+        accepted_forms: [
+          :empty_flags_disable,
+          {:flags, {:module, :function}, :implicit_empty_args},
+          {:flags, {:module, :function, :args}, :validated_args}
+        ],
+        stored_value: {:flags, {:module, :function, :args}},
+        event_gate: %{mfa: {:dbg_iserver, :auto_attach, 3}, events: [:init, :break, :exit]},
+        gate_predicate: :lists_member_event_in_flags,
+        dispatch: %{
+          mfa: {:dbg_iserver, :auto_attach, 3},
+          expression: "spawn(Mod, Func, [Pid | Args])",
+          target: :unresolved_dynamic_module_function
+        },
+        ignored_branches: [:false_setting, :already_attached_process, :event_not_in_flags],
+        owner: @remainder_owner,
+        citation_ids: @auto_attach_route_branch_ids
       },
       defaults: %{
         settings_file: :caller_selected_or_default,
@@ -587,6 +1149,128 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   def records(lane_name),
     do: raise(ArgumentError, "unsupported debugger settings lane: #{inspect(lane_name)}")
+
+  def assert_auto_attach_trace!(record, graph, tier, evidence) do
+    lane = evidence.lane.name
+    trace = Map.get(record, :auto_attach_trace)
+
+    assert is_map(trace),
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=setter -> stored state -> event gate -> spawn remedy=restore the complete auto-attach trace"
+
+    required_trace_fields = [
+      :input_origin,
+      :accepted_forms,
+      :stored_value,
+      :event_gate,
+      :gate_predicate,
+      :dispatch,
+      :ignored_branches,
+      :owner,
+      :citation_ids
+    ]
+
+    missing_trace_fields = Enum.reject(required_trace_fields, &Map.has_key?(trace, &1))
+
+    assert missing_trace_fields == [],
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=setter -> stored state -> event gate -> spawn missing=#{inspect(missing_trace_fields)} remedy=restore stored tuple, gate, dispatch, ignored branches and owner"
+
+    expected_trace = %{
+      input_origin: :caller_supplied_auto_attach_flags_and_function_tuple,
+      accepted_forms: [
+        :empty_flags_disable,
+        {:flags, {:module, :function}, :implicit_empty_args},
+        {:flags, {:module, :function, :args}, :validated_args}
+      ],
+      stored_value: {:flags, {:module, :function, :args}},
+      event_gate: %{mfa: {:dbg_iserver, :auto_attach, 3}, events: [:init, :break, :exit]},
+      gate_predicate: :lists_member_event_in_flags,
+      dispatch: %{
+        mfa: {:dbg_iserver, :auto_attach, 3},
+        expression: "spawn(Mod, Func, [Pid | Args])",
+        target: :unresolved_dynamic_module_function
+      },
+      ignored_branches: [:false_setting, :already_attached_process, :event_not_in_flags],
+      owner: @remainder_owner,
+      citation_ids: @auto_attach_route_branch_ids
+    }
+
+    Enum.each(expected_trace, fn {field, expected} ->
+      assert Map.get(trace, field) == expected,
+             "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=setter -> stored state -> event gate -> spawn field=#{field} actual=#{inspect(Map.get(trace, field))} remedy=restore source-backed route evidence"
+    end)
+
+    assert graph.lane.name == lane,
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=installed graph remedy=use the matching exact lane"
+
+    assert {:int, :auto_attach, 2} in tier,
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=static guard tier remedy=retain the exact setter entry"
+
+    owners = pending_owners()
+
+    Enum.each(["int", "dbg_iserver"], fn module ->
+      assert Map.get(owners, module) == @remainder_owner,
+             "lane #{lane} module=#{module} owner=#{inspect(Map.get(owners, module))} caller-chain=adopted pending owner ledger remedy=restore current remainder ownership"
+    end)
+
+    assert trace.owner == Map.fetch!(owners, "int") and
+             trace.owner == Map.fetch!(owners, "dbg_iserver"),
+           "lane #{lane} owner=#{trace.owner} MFA int:auto_attach/2 caller-chain=adopted pending owner ledger remedy=bind the route to both current owners"
+
+    source_branches = Map.get(record, :source_branches, [])
+    source_branch_map = Map.new(source_branches, &{&1.id, &1})
+    actual_branch_ids = MapSet.new(Map.keys(source_branch_map))
+    required_branch_ids = MapSet.new(@auto_attach_route_branch_ids)
+    missing_branch_ids = MapSet.difference(required_branch_ids, actual_branch_ids)
+
+    assert MapSet.size(missing_branch_ids) == 0,
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=setter -> server state -> event gate -> spawn missing source branches=#{inspect(MapSet.to_list(missing_branch_ids))} remedy=restore each route branch"
+
+    branch_citations = Map.get(record, :branch_citations, %{})
+
+    Enum.each(@auto_attach_route_branch_ids, fn branch_id ->
+      branch = Map.fetch!(source_branch_map, branch_id)
+      source_module = elem(branch.mfa, 0)
+      citations = Map.get(branch_citations, branch_id, [])
+
+      assert branch.owner == @remainder_owner and
+               source_module in [:int, :dbg_iserver],
+             "lane #{lane} MFA #{format_mfa(branch.mfa)} owner=#{branch.owner} caller-chain=#{branch.trace} remedy=retain the adopted remainder owner for setter, storage, gate and dispatch"
+
+      assert citations != [],
+             "lane #{lane} MFA #{format_mfa(branch.mfa)} owner=#{@remainder_owner} caller-chain=#{branch.trace} remedy=restore its exact source citation"
+
+      Enum.each(citations, &assert_citation!(evidence, lane, record, &1))
+    end)
+
+    assert MapSet.member?(graph.full_exported, {:int, :auto_attach, 2}),
+           "lane #{lane} owner=#{@remainder_owner} MFA int:auto_attach/2 caller-chain=installed full graph remedy=retain the setter in the exact-lane exported universe"
+
+    for {module, required_mfas} <- [
+          {:int, [{:int, :auto_attach, 2}]},
+          {:dbg_iserver,
+           [
+             {:dbg_iserver, :handle_cast, 2},
+             {:dbg_iserver, :handle_call, 3},
+             {:dbg_iserver, :auto_attach, 3}
+           ]}
+        ] do
+      inspection = Enum.find(graph.inspected, &(&1.module_atom == module))
+
+      assert inspection != nil,
+             "lane #{lane} owner=#{@remainder_owner} module=#{module} caller-chain=installed debugger BEAM remedy=retain source and BEAM evidence for the assigned module"
+
+      assert {:ok, scan} = BeamWalker.scan(inspection.path),
+             "lane #{lane} owner=#{@remainder_owner} module=#{module} caller-chain=debug-info BEAM scan remedy=restore exact-lane function evidence"
+
+      actual_functions = MapSet.new(scan.function_mfas)
+      missing_functions = Enum.reject(required_mfas, &MapSet.member?(actual_functions, &1))
+
+      assert missing_functions == [],
+             "lane #{lane} owner=#{@remainder_owner} module=#{module} missing BEAM functions=#{inspect(missing_functions)} caller-chain=setter -> stored state -> event gate -> spawn remedy=restore exact installed functions"
+    end
+
+    :ok
+  end
 
   def assert_receipt!(graph, evidence, records, receipt_lines) when is_list(receipt_lines) do
     lane = graph.lane.name
@@ -619,6 +1303,73 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   def assert_receipt!(_graph, _evidence, _records, _receipt_lines) do
     ownership_fail!("current installed receipt must be a complete list of tagged lines")
+  end
+
+  def assert_remainder_receipt!(graph, evidence, records, receipt_lines)
+      when is_list(receipt_lines) do
+    lane = graph.lane.name
+
+    require_ownership!(
+      evidence.lane.name == lane,
+      "lane #{lane} owner=#{@remainder_owner} source evidence lane=#{evidence.lane.name} caller-chain=remainder receipt validator remedy=use matching exact-lane source evidence"
+    )
+
+    require_ownership!(
+      receipt_lines == graph.receipt_lines,
+      "lane #{lane} owner=#{@remainder_owner} supplied receipt differs from the fresh installed graph; caller-chain=graph receipt_lines remedy=use the complete current-lane receipt"
+    )
+
+    current_graph = Map.put(graph, :receipt_lines, receipt_lines)
+    inventory = assert_remainder_inventory!(current_graph, evidence, records)
+
+    selected_mfas = MapSet.new(inventory.selected_roots)
+
+    expected_selected_mfas =
+      MapSet.new([
+        {"debugger", "dbg_wx_mon", "start", 2},
+        {"debugger", "dbg_wx_mon", "load_settings", 2},
+        {"debugger", "dbg_wx_mon", "load_settings2", 2}
+      ])
+
+    [prior_break_branch] = inventory.source_branches
+
+    require_ownership!(
+      selected_mfas == expected_selected_mfas and
+        prior_break_branch["module"] == "dbg_icmd" and
+        prior_break_branch["function"] == "break_p" and
+        prior_break_branch["arity"] == 4 and prior_break_branch["owner"] == @owner and
+        prior_break_branch["completion"] == "pending",
+      "lane #{lane} owner=#{@owner} inherited pending routes differ from adopted ownership; caller-chain=selected monitor roots and conditional callback body remedy=preserve the prior-owner obligations"
+    )
+
+    require_ownership!(
+      inventory.status == :verified and inventory.owner == @remainder_owner and
+        length(inventory.modules) == length(required_source_modules()),
+      "lane #{lane} owner=#{@remainder_owner} current remainder source or disposition set is incomplete; caller-chain=exact receipt -> adopted source -> branch groups remedy=restore every assigned current-lane disposition"
+    )
+
+    %{
+      status: :verified,
+      lane: lane,
+      owner: inventory.owner,
+      selected_module: @settings_module,
+      receipt_sha256: inventory.receipt_sha256,
+      remainder_module_count: length(inventory.modules),
+      original_root_count: length(inventory.original_roots),
+      observed_root_count: length(inventory.observed_roots),
+      source_sha256: Map.new(inventory.modules, &{&1.module, &1.source.sha256}),
+      inherited_pending: %{
+        callback_body: "dbg_icmd:break_p/4",
+        selected_roots:
+          expected_selected_mfas
+          |> Enum.map(fn {_app, module, function, arity} -> "#{module}:#{function}/#{arity}" end)
+          |> Enum.sort()
+      }
+    }
+  end
+
+  def assert_remainder_receipt!(_graph, _evidence, _records, _receipt_lines) do
+    ownership_fail!("current remainder receipt must be a complete list of tagged lines")
   end
 
   def load_delegation! do
@@ -715,6 +1466,1205 @@ defmodule Fablebook.Test.DebuggerSettings do
       Map.put(owners, module, @remainder_owner)
     end)
   end
+
+  def required_source_modules do
+    %{metadata: metadata, records: records} = load_delegation!()
+    validate_delegation_rows!(records, metadata)
+
+    core_sources = remainder_source_rows!(records, "core")
+    floor_sources = remainder_source_rows!(records, "floor")
+
+    require_ownership!(
+      MapSet.new(core_sources, & &1["module"]) == MapSet.new(floor_sources, & &1["module"]),
+      "lane core/floor app debugger owner=#{@remainder_owner} caller-chain=adopted exact_source assignments differ by lane remedy=preserve the same current module assignment universe"
+    )
+
+    Enum.map(core_sources, & &1["module"])
+  end
+
+  def assert_remainder_source!(evidence, source_row, citation) do
+    lane = evidence.lane.name
+    module = Map.get(source_row, "module")
+    relative = Map.get(source_row, "source_path")
+
+    validate_remainder_source_row!(source_row, lane, module)
+    validate_remainder_source_path!(relative, module, lane)
+    validate_remainder_source_citation!(citation, module, lane)
+
+    debugger_root = exact_debugger_root!(evidence, module, lane)
+    installed_path = installed_source_path!(debugger_root, relative)
+
+    {_canonical_root, canonical_path} =
+      contained_source_paths!(debugger_root, installed_path, relative, lane, module)
+
+    bytes = read_exact_source!(canonical_path, source_row, lane, module, relative)
+
+    lines = String.split(bytes, "\n", trim: false)
+    citation = resolve_citation!(citation, module, lines, lane, relative)
+    text = exact_citation_line!(citation, lines, lane, module, relative)
+
+    %{
+      path: canonical_path,
+      line: citation.line,
+      text: text,
+      bytes: byte_size(bytes),
+      sha256: source_row["sha256"],
+      origin: :installed
+    }
+  end
+
+  defp validate_remainder_source_row!(row, lane, module) do
+    provenance_matches =
+      Map.get(row, "t") == "exact_source" and Map.get(row, "lane") == lane and
+        Map.get(row, "app") == "debugger" and Map.get(row, "owner") == @remainder_owner and
+        Map.get(row, "origin_owner") == @historical_owner
+
+    shape_matches = is_binary(module) and is_integer(Map.get(row, "bytes")) and row["bytes"] > 0
+    digest_matches = valid_sha256?(Map.get(row, "sha256"))
+
+    require_ownership!(
+      provenance_matches and shape_matches and digest_matches,
+      "lane #{lane} app debugger module #{inspect(module)} owner=#{@remainder_owner} caller-chain=adopted exact_source row remedy=restore exact lane/app/path/bytes/hash provenance"
+    )
+  end
+
+  defp validate_remainder_source_path!(relative, module, lane) do
+    expected_path = "debugger/src/#{module}.erl"
+
+    require_ownership!(
+      relative == expected_path and safe_relative_source_path?(relative),
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source=#{inspect(relative)} caller-chain=installed source path remedy=use its contained debugger/src module path"
+    )
+  end
+
+  defp validate_remainder_source_citation!(:module, _module, _lane), do: :ok
+
+  defp validate_remainder_source_citation!(citation, module, lane) do
+    valid_shape = is_map(citation) and is_integer(Map.get(citation, :line)) and citation.line > 0
+    valid_text = is_binary(Map.get(citation, :expected_text)) and citation.expected_text != ""
+
+    require_ownership!(
+      valid_shape and valid_text,
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=source citation remedy=provide a positive line and expected text"
+    )
+  end
+
+  defp exact_debugger_root!(evidence, module, lane) do
+    debugger_root = Map.get(evidence.installed, "debugger")
+
+    require_ownership!(
+      is_binary(debugger_root) and debugger_root != "",
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=SweepEvidence installed debugger root remedy=use the current exact lane root"
+    )
+
+    debugger_root
+  end
+
+  defp installed_source_path!(debugger_root, relative) do
+    Path.join(debugger_root, String.replace_prefix(relative, "debugger/", ""))
+  end
+
+  defp contained_source_paths!(debugger_root, installed_path, relative, lane, module) do
+    verify_regular_source_file!(installed_path, lane, module, relative)
+    canonical_root = realpath!(debugger_root, lane, "debugger source root")
+    canonical_path = realpath!(installed_path, lane, relative)
+
+    require_ownership!(
+      String.starts_with?(canonical_path, canonical_root <> "/"),
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source=#{relative} caller-chain=installed realpath containment remedy=keep the resolved source below the installed debugger root"
+    )
+
+    {canonical_root, canonical_path}
+  end
+
+  defp verify_regular_source_file!(installed_path, lane, module, relative) do
+    case File.lstat(installed_path) do
+      {:ok, %{type: :regular}} ->
+        :ok
+
+      {:ok, stat} ->
+        ownership_fail!(
+          "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source=#{relative} caller-chain=installed source type=#{stat.type} remedy=require a regular installed source file"
+        )
+
+      {:error, reason} ->
+        ownership_fail!(
+          "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source=#{relative} caller-chain=installed source read=#{reason} remedy=restore the current lane source"
+        )
+    end
+  end
+
+  defp read_exact_source!(canonical_path, row, lane, module, relative) do
+    bytes = File.read!(canonical_path)
+
+    require_ownership!(
+      byte_size(bytes) == row["bytes"] and sha256(bytes) == row["sha256"],
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source=#{relative} caller-chain=installed exact_source digest remedy=restore the adopted byte count and SHA-256"
+    )
+
+    bytes
+  end
+
+  defp exact_citation_line!(citation, lines, lane, module, relative) do
+    require_ownership!(
+      citation.line <= length(lines),
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source=#{relative}:#{citation.line} caller-chain=installed source citation remedy=use an existing line"
+    )
+
+    text = Enum.at(lines, citation.line - 1)
+
+    require_ownership!(
+      String.contains?(text, citation.expected_text),
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source=#{relative}:#{citation.line} caller-chain=installed source citation remedy=restore expected source text"
+    )
+
+    text
+  end
+
+  def assert_remainder_inventory!(graph, evidence, records) do
+    lane = evidence.lane.name
+    {delegation_records, source_rows} = validated_delegation_sources!(records, lane)
+    assert_graph_lane!(graph, lane)
+    ownership = assert_ownership!(graph, evidence, records)
+
+    {module_names, module_inventory} =
+      remainder_modules!(graph, evidence, delegation_records, source_rows, lane)
+
+    roots = remainder_root_data!(delegation_records, ownership, lane)
+    graph_inventory = remainder_graph_projection!(graph, module_names, roots.all_root_rows)
+
+    Map.merge(
+      %{
+        status: :verified,
+        lane: lane,
+        owner: @remainder_owner,
+        receipt_sha256: ownership.receipt_sha256,
+        modules: module_inventory,
+        module_names: Enum.sort(MapSet.to_list(module_names)),
+        original_roots: roots.original_roots,
+        observed_roots: roots.observed_roots,
+        interpreter_root_observations: roots.interpreter_root_observations,
+        ownership_observations: ownership.observations,
+        changed_routes:
+          Enum.filter(ownership.observations, &get_in(&1, ["evidence", "route_changed"])),
+        new_owned_observations:
+          Enum.filter(
+            ownership.observations,
+            &get_in(&1, ["evidence", "new_pending_graph_identity"])
+          ),
+        overlaps: roots.overlap_rows,
+        overlap_occurrence_count:
+          Enum.sum(Enum.map(roots.overlap_rows, &length(&1["occurrences"] || []))),
+        selected_roots: ownership.selected_roots,
+        source_branches: roots.source_branches
+      },
+      graph_inventory
+    )
+  end
+
+  defp validated_delegation_sources!(records, lane) do
+    loaded = load_delegation!()
+    delegation_records = Map.get(records, :delegation_records, loaded.records)
+    metadata = Map.get(records, :delegation_metadata, loaded.metadata)
+    validate_delegation_rows!(delegation_records, metadata)
+    {delegation_records, remainder_source_rows!(delegation_records, lane)}
+  end
+
+  defp assert_graph_lane!(graph, lane) do
+    require_ownership!(
+      graph.lane.name == lane,
+      "lane #{lane} app debugger owner=#{@remainder_owner} caller-chain=installed graph remedy=use matching exact lane evidence"
+    )
+  end
+
+  defp remainder_root_data!(delegation_records, ownership, lane) do
+    all_root_rows = current_debugger_root_rows(delegation_records, lane)
+    original_roots = Enum.filter(all_root_rows, &(&1["t"] == "root"))
+    observed_roots = Enum.filter(all_root_rows, &(&1["t"] == "observed_root"))
+    interpreter_roots = current_interpreter_root_observations(ownership.observations)
+    assert_interpreter_root_ownership!(interpreter_roots, lane)
+    source_branches = pending_break_source_branches!(delegation_records, lane)
+    overlaps = current_overlap_rows(delegation_records, lane)
+
+    %{
+      all_root_rows: all_root_rows,
+      original_roots: original_roots,
+      observed_roots: observed_roots,
+      interpreter_root_observations: interpreter_roots,
+      source_branches: source_branches,
+      overlap_rows: overlaps
+    }
+  end
+
+  defp current_debugger_root_rows(records, lane) do
+    Enum.filter(
+      records,
+      &(&1["lane"] == lane and &1["app"] == "debugger" and &1["t"] in ["root", "observed_root"])
+    )
+  end
+
+  defp current_interpreter_root_observations(observations) do
+    Enum.filter(observations, fn observation ->
+      get_in(observation, ["identity", "module"]) == "dbg_wx_interpret" and
+        get_in(observation, ["evidence", "new_pending_graph_identity"]) == true
+    end)
+  end
+
+  defp assert_interpreter_root_ownership!(observations, lane) do
+    require_ownership!(
+      observations != [] and Enum.all?(observations, &(&1["owner"] == @remainder_owner)),
+      "lane #{lane} app debugger module dbg_wx_interpret owner=#{@remainder_owner} caller-chain=observed root namespace remedy=retain the existing interpreter roots while its module remains active"
+    )
+  end
+
+  defp pending_break_source_branches!(records, lane) do
+    branches =
+      Enum.filter(records, fn row ->
+        row["lane"] == lane and row["t"] == "source_branch" and row["module"] == "dbg_icmd" and
+          row["function"] == "break_p" and row["arity"] == 4
+      end)
+
+    branch = List.first(branches)
+
+    valid_branch =
+      length(branches) == 1 and branch["owner"] == @owner and branch["completion"] == "pending"
+
+    require_ownership!(
+      valid_branch,
+      "lane #{lane} app debugger MFA dbg_icmd:break_p/4 owner=#{@owner} caller-chain=adopted source branch remedy=preserve the pending cross-owner source obligation"
+    )
+
+    branches
+  end
+
+  defp current_overlap_rows(records, lane) do
+    Enum.filter(records, &(&1["lane"] == lane and &1["t"] in ["overlap", "observed_overlap"]))
+  end
+
+  defp remainder_graph_projection!(graph, module_names, all_root_rows) do
+    assigned_modules = MapSet.union(module_names, MapSet.new(all_root_rows, & &1["module"]))
+    assigned_edges = assigned_graph_edges(graph.full_edges, assigned_modules)
+
+    assigned_reached =
+      assigned_graph_functions(graph.full_reached, assigned_modules, &format_mfa/1)
+
+    assigned_exports =
+      assigned_graph_functions(graph.full_exported, assigned_modules, &format_mfa/1)
+
+    full_edge_names = Enum.map(graph.full_edges, &format_edge/1) |> Enum.sort()
+    full_reached_names = Enum.map(graph.full_reached, &format_mfa/1) |> Enum.sort()
+    full_export_names = Enum.map(graph.full_exported, &format_mfa/1) |> Enum.sort()
+
+    %{
+      graph: %{
+        full_edge_count: length(graph.full_edges),
+        full_edges_sha256: stable_set_sha256(full_edge_names),
+        full_reached_count: length(full_reached_names),
+        full_reached_sha256: stable_set_sha256(full_reached_names),
+        full_export_count: length(full_export_names),
+        full_exports_sha256: stable_set_sha256(full_export_names),
+        assigned_edge_count: length(assigned_edges),
+        assigned_edges_sha256: stable_set_sha256(assigned_edges),
+        assigned_reached_count: length(assigned_reached),
+        assigned_reached_sha256: stable_set_sha256(assigned_reached),
+        assigned_export_count: length(assigned_exports),
+        assigned_exports_sha256: stable_set_sha256(assigned_exports),
+        assigned_edges: assigned_edges,
+        assigned_reached: assigned_reached,
+        assigned_exports: assigned_exports
+      }
+    }
+  end
+
+  defp assigned_graph_edges(full_edges, assigned_modules) do
+    full_edges
+    |> Enum.filter(fn {caller, callee} ->
+      MapSet.member?(assigned_modules, Atom.to_string(elem(caller, 0))) or
+        MapSet.member?(assigned_modules, Atom.to_string(elem(callee, 0)))
+    end)
+    |> Enum.map(&format_edge/1)
+    |> Enum.sort()
+  end
+
+  defp assigned_graph_functions(functions, assigned_modules, formatter) do
+    functions
+    |> Enum.filter(&MapSet.member?(assigned_modules, Atom.to_string(elem(&1, 0))))
+    |> Enum.map(formatter)
+    |> Enum.sort()
+  end
+
+  defp remainder_modules!(graph, evidence, delegation_records, source_rows, lane) do
+    module_names = assigned_remainder_module_names(delegation_records, lane)
+    inspections = remainder_inspections!(graph, module_names, lane)
+    debugger_root = Map.fetch!(evidence.installed, "debugger")
+
+    independent_exports =
+      InstalledOtp.export_inventory!([Path.join(debugger_root, "ebin")],
+        lane: lane,
+        edges: graph.full_edges
+      )
+      |> MapSet.new()
+
+    full_graph_edges = MapSet.new(graph.full_edges)
+
+    module_inventory =
+      module_names
+      |> Enum.sort()
+      |> Enum.map(fn module ->
+        inspection = Map.fetch!(inspections, module)
+        source_row = Enum.find(source_rows, &(&1["module"] == module))
+
+        remainder_module_row!(
+          graph,
+          evidence,
+          inspection,
+          source_row,
+          independent_exports,
+          full_graph_edges,
+          lane
+        )
+      end)
+
+    {module_names, module_inventory}
+  end
+
+  defp assigned_remainder_module_names(delegation_records, lane) do
+    delegation_records
+    |> Enum.filter(
+      &(&1["t"] == "module" and &1["lane"] == lane and &1["app"] == "debugger" and
+          &1["owner"] == @remainder_owner)
+    )
+    |> Enum.map(& &1["module"])
+    |> MapSet.new()
+  end
+
+  defp remainder_inspections!(graph, module_names, lane) do
+    inspections =
+      graph.inspected
+      |> Enum.filter(&(&1.app == "debugger" and MapSet.member?(module_names, &1.module)))
+      |> Map.new(&{&1.module, &1})
+
+    inspection_names = MapSet.new(Map.keys(inspections))
+
+    missing =
+      module_names |> MapSet.difference(inspection_names) |> MapSet.to_list() |> Enum.sort()
+
+    extra = inspection_names |> MapSet.difference(module_names) |> MapSet.to_list() |> Enum.sort()
+
+    require_ownership!(
+      inspection_names == module_names,
+      "lane #{lane} app debugger owner=#{@remainder_owner} caller-chain=installed BEAM module set missing=#{inspect(missing)} extra=#{inspect(extra)} remedy=restore every adopted module inspection"
+    )
+
+    inspections
+  end
+
+  defp remainder_module_row!(
+         graph,
+         evidence,
+         inspection,
+         source_row,
+         independent_exports,
+         full_graph_edges,
+         lane
+       ) do
+    module = Atom.to_string(inspection.module_atom)
+    scan = exact_remainder_beam_scan!(inspection, lane, module)
+    beam_functions = validate_remainder_beam_functions!(scan, inspection, lane, module)
+    beam_edges = validate_remainder_beam_edges!(scan, full_graph_edges, lane, module)
+
+    expected_exports =
+      validate_remainder_exports!(
+        graph,
+        independent_exports,
+        inspection.module_atom,
+        lane,
+        module
+      )
+
+    graph_candidates =
+      validate_remainder_graph_functions!(
+        graph,
+        inspection.module_atom,
+        beam_functions,
+        lane,
+        module
+      )
+
+    resolved_source = assert_remainder_source!(evidence, source_row, :module)
+    function_names = Enum.sort(Enum.map(beam_functions, &format_mfa/1))
+    export_names = Enum.sort(Enum.map(expected_exports, &format_mfa/1))
+    graph_functions = Enum.sort(Enum.map(graph_candidates, &format_mfa/1))
+    zero_hit = MapSet.difference(beam_functions, graph_candidates)
+    private_functions = MapSet.difference(beam_functions, expected_exports)
+
+    %{
+      module: module,
+      owner: @remainder_owner,
+      source_assignment: source_row,
+      source: resolved_source,
+      functions: function_names,
+      function_count: MapSet.size(beam_functions),
+      function_sha256: stable_set_sha256(function_names),
+      exports: export_names,
+      export_count: MapSet.size(expected_exports),
+      export_sha256: stable_set_sha256(export_names),
+      graph_functions: graph_functions,
+      graph_function_sha256: stable_set_sha256(graph_functions),
+      zero_hit_functions: Enum.sort(Enum.map(zero_hit, &format_mfa/1)),
+      private_functions: Enum.sort(Enum.map(private_functions, &format_mfa/1)),
+      edges: scan.edges,
+      edge_count: MapSet.size(beam_edges),
+      edge_sha256: stable_set_sha256(Enum.map(beam_edges, &format_edge/1))
+    }
+  end
+
+  defp exact_remainder_beam_scan!(inspection, lane, module) do
+    case BeamWalker.scan(inspection.path) do
+      {:ok, scan} ->
+        require_ownership!(
+          scan.module == inspection.module_atom,
+          "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=independent BEAM scan actual=#{inspect(scan.module)} remedy=use the exact inspected module"
+        )
+
+        scan
+
+      {:error, reason} ->
+        ownership_fail!(
+          "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=independent installed BEAM scan error=#{inspect(reason)} remedy=restore debug info for the exact installed BEAM"
+        )
+    end
+  end
+
+  defp validate_remainder_beam_functions!(scan, inspection, lane, module) do
+    beam_functions = MapSet.new(scan.function_mfas)
+    inspected_functions = MapSet.new(inspection.function_mfas)
+
+    missing =
+      beam_functions |> MapSet.difference(inspected_functions) |> MapSet.to_list() |> Enum.sort()
+
+    extra =
+      inspected_functions |> MapSet.difference(beam_functions) |> MapSet.to_list() |> Enum.sort()
+
+    require_ownership!(
+      beam_functions == inspected_functions and
+        length(scan.function_mfas) == MapSet.size(beam_functions),
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=independent BEAM function universe missing=#{inspect(missing)} extra=#{inspect(extra)} remedy=restore every private and zero-hit function"
+    )
+
+    beam_functions
+  end
+
+  defp validate_remainder_beam_edges!(scan, full_graph_edges, lane, module) do
+    beam_edges = MapSet.new(scan.edges)
+    missing = MapSet.difference(beam_edges, full_graph_edges)
+
+    require_ownership!(
+      MapSet.size(missing) == 0,
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=independent BEAM call edges missing=#{inspect(Enum.take(Enum.sort(MapSet.to_list(missing)), 12))} remedy=restore full graph edges"
+    )
+
+    beam_edges
+  end
+
+  defp validate_remainder_exports!(graph, independent_exports, module_atom, lane, module) do
+    graph_exports =
+      graph.full_exported |> Enum.filter(&(elem(&1, 0) == module_atom)) |> MapSet.new()
+
+    expected_exports =
+      independent_exports |> Enum.filter(&(elem(&1, 0) == module_atom)) |> MapSet.new()
+
+    missing =
+      expected_exports |> MapSet.difference(graph_exports) |> MapSet.to_list() |> Enum.sort()
+
+    extra =
+      graph_exports |> MapSet.difference(expected_exports) |> MapSet.to_list() |> Enum.sort()
+
+    require_ownership!(
+      graph_exports == expected_exports,
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=independent BEAM export universe missing=#{inspect(missing)} extra=#{inspect(extra)} remedy=restore every current graph export"
+    )
+
+    expected_exports
+  end
+
+  defp validate_remainder_graph_functions!(graph, module_atom, beam_functions, lane, module) do
+    graph_candidates =
+      graph.full_edges
+      |> Enum.map(&elem(&1, 0))
+      |> Kernel.++(MapSet.to_list(graph.full_reached))
+      |> Kernel.++(MapSet.to_list(graph.full_exported))
+      |> Enum.filter(&(elem(&1, 0) == module_atom))
+      |> Enum.reject(fn {_mod, function, _arity} ->
+        function in [:module_info, :behaviour_info]
+      end)
+      |> MapSet.new()
+
+    omitted = MapSet.difference(graph_candidates, beam_functions)
+
+    require_ownership!(
+      MapSet.size(omitted) == 0,
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=full graph function refs missing from installed BEAM=#{inspect(Enum.sort(MapSet.to_list(omitted)))} remedy=restore exact-lane graph and BEAM parity"
+    )
+
+    graph_candidates
+  end
+
+  def assert_function_dispositions!(graph, evidence, records, group)
+      when group in [:callbacks, :interpreter, :monitor, :trace] do
+    inventory = assert_remainder_inventory!(graph, evidence, records)
+    {module_names, required_branches} = disposition_group!(group)
+    lane = evidence.lane.name
+
+    group_inventory_modules = assigned_group_modules!(inventory, module_names, lane, group)
+    assert_assigned_module_universe!(inventory, group, lane)
+    {root_links, reachable_by_root} = group_root_reachability(inventory, graph, lane)
+
+    dispositions =
+      build_group_dispositions!(
+        group_inventory_modules,
+        graph,
+        records,
+        root_links,
+        reachable_by_root,
+        lane
+      )
+
+    branch_map = Map.new(records.source_branches, &{&1.id, &1})
+    branch_citations = records.branch_citations
+
+    source_branches =
+      validate_required_source_branches!(
+        required_branches,
+        branch_map,
+        branch_citations,
+        evidence,
+        inventory,
+        records,
+        group,
+        lane
+      )
+
+    assert_group_disposition_contract!(group, dispositions, lane)
+
+    cross_owner =
+      group_cross_owner_disposition!(
+        group,
+        %{
+          dispositions: dispositions,
+          source_branches: source_branches,
+          branch_map: branch_map,
+          branch_citations: branch_citations,
+          inventory: inventory,
+          evidence: evidence,
+          records: records,
+          lane: lane
+        }
+      )
+
+    {resolved_dynamic, unresolved_dynamic} =
+      dynamic_route_dispositions!(dispositions, group, lane)
+
+    %{
+      status: :verified,
+      lane: lane,
+      group: group,
+      module_names: Enum.sort(module_names),
+      modules: dispositions,
+      source_branches: source_branches,
+      cross_owner: cross_owner,
+      resolved_dynamic: resolved_dynamic,
+      unresolved_dynamic: unresolved_dynamic,
+      inventory: inventory
+    }
+  end
+
+  defp assigned_group_modules!(inventory, module_names, lane, group) do
+    group_modules = Enum.filter(inventory.modules, &(&1.module in module_names))
+    actual_names = Enum.map(group_modules, & &1.module) |> Enum.sort()
+
+    require_ownership!(
+      actual_names == Enum.sort(module_names),
+      "lane #{lane} owner=#{@remainder_owner} group=#{group} caller-chain=adopted module assignment missing=#{inspect(Enum.sort(module_names -- actual_names))} extra=#{inspect(Enum.sort(actual_names -- module_names))} remedy=restore the exact assigned module set"
+    )
+
+    group_modules
+  end
+
+  defp assert_group_disposition_contract!(:monitor, dispositions, lane),
+    do: assert_monitor_dispositions!(dispositions, lane)
+
+  defp assert_group_disposition_contract!(:trace, dispositions, lane),
+    do: assert_trace_dispositions!(dispositions, lane)
+
+  defp assert_group_disposition_contract!(_group, _dispositions, _lane), do: :ok
+
+  defp assert_assigned_module_universe!(inventory, :trace, lane) do
+    expected =
+      [:callbacks, :interpreter, :monitor, :trace]
+      |> Enum.flat_map(fn group -> elem(disposition_group!(group), 0) end)
+      |> MapSet.new()
+
+    actual = MapSet.new(inventory.module_names)
+
+    require_ownership!(
+      expected == actual,
+      "lane #{lane} owner=#{@remainder_owner} caller-chain=Plans02/03 module groups versus fresh exact assigned universe missing=#{inspect(MapSet.to_list(MapSet.difference(actual, expected)))} extra=#{inspect(MapSet.to_list(MapSet.difference(expected, actual)))} remedy=cover every current assigned module exactly once"
+    )
+  end
+
+  defp assert_assigned_module_universe!(_inventory, _group, _lane), do: :ok
+
+  defp group_root_reachability(inventory, graph, lane) do
+    root_links =
+      Enum.filter(inventory.ownership_observations, &(get_in(&1, ["identity", "kind"]) == "root"))
+
+    adjacency =
+      graph.full_edges
+      |> Enum.flat_map(fn
+        {{_caller_module, _caller_function, _caller_arity} = caller,
+         {_callee_module, _callee_function, _callee_arity} = callee} ->
+          [{format_mfa(caller), format_mfa(callee)}]
+
+        _unresolved_export_edge ->
+          []
+      end)
+      |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
+
+    reachable =
+      Map.new(root_links, fn link ->
+        root_mfa = identity_mfa!(link, lane)
+        {root_mfa, reachable_mfas(root_mfa, adjacency)}
+      end)
+
+    {root_links, reachable}
+  end
+
+  defp validate_required_source_branches!(
+         required_branches,
+         branch_map,
+         citations,
+         evidence,
+         inventory,
+         records,
+         group,
+         lane
+       ) do
+    Enum.each(required_branches, fn branch_id ->
+      branch = Map.get(branch_map, branch_id)
+      branch_citations = Map.get(citations, branch_id, [])
+      assert_required_source_branch!(branch, branch_id, branch_citations, lane)
+
+      assert_source_branch_citations!(
+        branch_id,
+        branch_citations,
+        evidence,
+        inventory,
+        records,
+        group,
+        lane
+      )
+    end)
+
+    Enum.map(required_branches, &Map.fetch!(branch_map, &1))
+    |> Enum.sort_by(& &1.id)
+  end
+
+  defp assert_required_source_branch!(branch, branch_id, citations, lane) do
+    expected_owner =
+      if is_nil(branch), do: nil, else: branch_owner(branch_source(branch_id), branch.mfa)
+
+    require_ownership!(
+      not is_nil(branch) and branch.owner == expected_owner and citations != [],
+      "lane #{lane} MFA #{if(branch, do: format_mfa(branch.mfa), else: "unknown")} owner=#{if(branch, do: branch.owner, else: "missing")} caller-chain=#{if(branch, do: branch.trace, else: "source branch ledger")} branch=#{branch_id} remedy=restore the exact current-owner callback/control branch"
+    )
+  end
+
+  defp assert_source_branch_citations!(
+         branch_id,
+         citations,
+         evidence,
+         inventory,
+         records,
+         group,
+         lane
+       ) do
+    adopted_source =
+      group == :interpreter or match?({:remainder, _module}, branch_source(branch_id))
+
+    Enum.each(citations, fn citation ->
+      assert_branch_citation!(adopted_source, evidence, inventory, records, citation, lane)
+    end)
+  end
+
+  defp assert_branch_citation!(true, evidence, inventory, records, citation, lane),
+    do: assert_adopted_source_citation!(evidence, lane, inventory, records, citation)
+
+  defp assert_branch_citation!(false, evidence, _inventory, records, citation, lane),
+    do: assert_citation!(evidence, lane, records, citation)
+
+  defp build_group_dispositions!(
+         group_inventory_modules,
+         graph,
+         records,
+         root_links,
+         reachable_by_root,
+         lane
+       ) do
+    Enum.map(group_inventory_modules, fn inventory_module ->
+      module_name = inventory_module.module
+
+      module_atom =
+        graph.inspected
+        |> Enum.find(&(Atom.to_string(&1.module_atom) == inventory_module.module))
+        |> Map.fetch!(:module_atom)
+
+      source = inventory_module.source
+      source_row = inventory_module.source_assignment
+      forms = parse_source_forms!(source.path, lane, module_name)
+      function_forms = Enum.filter(forms, &match?({:function, _, _, _, _}, &1))
+
+      source_functions =
+        Enum.map(function_forms, fn {:function, _anno, function, arity, _clauses} ->
+          format_mfa({module_name, Atom.to_string(function), arity})
+        end)
+        |> Enum.sort()
+
+      require_ownership!(
+        source_functions == inventory_module.functions,
+        "lane #{lane} app debugger module #{module_name} owner=#{@remainder_owner} source_path=#{source.path} parsed_function_count=#{length(source_functions)} caller-chain=exact installed source versus independent BEAM functions missing=#{inspect(inventory_module.functions -- source_functions)} extra=#{inspect(source_functions -- inventory_module.functions)} parsed=#{inspect(source_functions)} remedy=restore every private and zero-hit MFA from this lane"
+      )
+
+      export_forms =
+        Enum.filter(forms, &match?({:attribute, _, :export, _}, &1))
+
+      source_exports = source_export_names(export_forms, module_name)
+
+      require_ownership!(
+        source_exports == inventory_module.exports,
+        "lane #{lane} app debugger module #{module_name} owner=#{@remainder_owner} caller-chain=exact installed source versus independent BEAM exports missing=#{inspect(inventory_module.exports -- source_exports)} extra=#{inspect(source_exports -- inventory_module.exports)} remedy=restore every export declaration from this lane"
+      )
+
+      source_text = File.read!(source.path)
+      source_lines = String.split(source_text, "\n")
+
+      function_dispositions =
+        function_dispositions!(function_forms, %{
+          inventory_module: inventory_module,
+          module_atom: module_atom,
+          graph_edges: graph.full_edges,
+          records: records,
+          root_links: root_links,
+          reachable_by_root: reachable_by_root,
+          source_lines: source_lines,
+          lane: lane
+        })
+
+      %{
+        module: module_name,
+        owner: inventory_module.owner,
+        origin_owner: source_row["owner"],
+        source: %{
+          path: source_row["source_path"],
+          sha256: source_row["sha256"],
+          bytes: source_row["bytes"]
+        },
+        function_count: length(function_dispositions),
+        export_count: length(source_exports),
+        functions: source_functions,
+        exports: source_exports,
+        private_functions: inventory_module.private_functions,
+        zero_hit_functions: inventory_module.zero_hit_functions,
+        export_citations:
+          Enum.map(export_forms, fn {:attribute, anno, :export, _exports} ->
+            source_citation!(
+              source_row,
+              source_lines,
+              :erl_anno.line(anno),
+              lane,
+              "#{module_name} exports"
+            )
+          end),
+        dispositions: Enum.sort_by(function_dispositions, & &1.mfa)
+      }
+    end)
+    |> Enum.sort_by(& &1.module)
+  end
+
+  defp source_export_names(export_forms, module_name) do
+    Enum.flat_map(export_forms, fn {:attribute, _anno, :export, exports} ->
+      Enum.map(exports, fn {function, arity} ->
+        format_mfa({module_name, Atom.to_string(function), arity})
+      end)
+    end)
+    |> Enum.sort()
+  end
+
+  defp function_dispositions!(function_forms, context) do
+    inventory_module = context.inventory_module
+    module_name = inventory_module.module
+    source_row = inventory_module.source_assignment
+    module_atom = context.module_atom
+    records = context.records
+    root_links = context.root_links
+    reachable_by_root = context.reachable_by_root
+    source_lines = context.source_lines
+    lane = context.lane
+
+    Enum.map(function_forms, fn {:function, anno, function, arity, clauses} = form ->
+      mfa = {module_atom, function, arity}
+      mfa_name = format_mfa({module_name, Atom.to_string(function), arity})
+      head_line = :erl_anno.line(anno)
+      head_citation = source_citation!(source_row, source_lines, head_line, lane, mfa_name)
+
+      clause_citations =
+        Enum.map(clauses, fn {:clause, clause_anno, _args, _guards, _body} ->
+          clause_line = :erl_anno.line(clause_anno)
+          source_citation!(source_row, source_lines, clause_line, lane, mfa_name)
+        end)
+        |> Enum.uniq_by(& &1.line)
+
+      sink_facts = source_call_facts(form, []) |> Enum.uniq()
+
+      outgoing_edges =
+        inventory_module.edges
+        |> Enum.filter(&(elem(&1, 0) == mfa))
+        |> Enum.map(&format_edge/1)
+        |> Enum.sort()
+
+      incoming_edges =
+        context.graph_edges
+        |> Enum.filter(fn
+          {_caller, ^mfa} -> true
+          _unresolved_export_edge -> false
+        end)
+        |> Enum.map(&format_edge/1)
+        |> Enum.sort()
+
+      relevant_chains =
+        relevant_function_chains(root_links, reachable_by_root, mfa_name, lane)
+
+      function_owner = disposition_owner(mfa, source_row)
+      route_note = callback_route_note(mfa)
+      zero_hit = mfa_name in inventory_module.zero_hit_functions
+
+      %{
+        mfa: mfa_name,
+        exported: mfa_name in inventory_module.exports,
+        source: %{
+          path: source_row["source_path"],
+          sha256: source_row["sha256"],
+          head: head_citation,
+          clauses: clause_citations
+        },
+        caller_inputs:
+          Enum.map(clause_citations, &%{line: &1.line, source_head: &1.expected_text}),
+        defaults_and_options:
+          route_note.defaults_and_options ||
+            "Exact clause patterns above preserve accepted inputs, defaults and terminal branches.",
+        caller_input_origin: route_note.caller_input_origin,
+        branch_trace: outgoing_edges,
+        incoming_edges: incoming_edges,
+        branch_ids:
+          records.source_branches
+          |> Enum.filter(&(&1.mfa == mfa))
+          |> Enum.map(& &1.id)
+          |> Enum.sort(),
+        sink_facts: sink_facts,
+        sink_disposition:
+          if(sink_facts == [],
+            do:
+              "No direct dynamic dispatch, evaluator, code-loader, atom-construction, or term-decoding sink occurs in this source form; transitively relevant callees are listed in branch_trace.",
+            else: callback_sink_disposition(mfa, sink_facts, route_note.guard_remedy)
+          ),
+        guard_remedy: route_note.guard_remedy,
+        owner: function_owner.owner,
+        origin_owner: function_owner.origin_owner,
+        completion: function_owner.completion,
+        canonical_observed_chains: relevant_chains,
+        zero_hit: zero_hit,
+        zero_hit_reason:
+          if(zero_hit,
+            do: zero_hit_source_reason(mfa_name, clause_citations, incoming_edges, sink_facts),
+            else: nil
+          )
+      }
+    end)
+  end
+
+  defp relevant_function_chains(root_links, reachable_by_root, mfa_name, lane) do
+    root_links
+    |> Enum.filter(fn link ->
+      root_mfa = identity_mfa!(link, lane)
+
+      root_mfa == mfa_name or
+        (Map.has_key?(reachable_by_root, root_mfa) and
+           MapSet.member?(Map.fetch!(reachable_by_root, root_mfa), mfa_name))
+    end)
+    |> Enum.map(&chain_link_record/1)
+    |> Enum.sort_by(&{&1.namespace, &1.canonical_chain_id || "", &1.identity})
+  end
+
+  defp group_cross_owner_disposition!(:callbacks, context) do
+    dispositions = context.dispositions
+    lane = context.lane
+
+    require_ownership!(
+      function_owner!(dispositions, "dbg_icmd:break_p/4") == @owner,
+      "lane #{lane} MFA dbg_icmd:break_p/4 owner=#{@owner} caller-chain=prior child source branch remedy=preserve the earlier callback-body and outcome owner"
+    )
+
+    require_ownership!(
+      Enum.any?(context.source_branches, &(&1.id == :condition_break_p_called)),
+      "lane #{lane} MFA dbg_icmd:cmd/4 owner=#{@remainder_owner} caller-chain=command -> conditional breakpoint remedy=retain only the current-owner dispatch into the prior-owner break_p/4 body"
+    )
+
+    [{{:dbg_icmd, :break_p, 4}, @owner, :pending}]
+  end
+
+  defp group_cross_owner_disposition!(:monitor, context) do
+    selected_roots =
+      selected_root_dispositions!(context.dispositions, context.inventory, context.lane)
+
+    selected_branches = selected_owner_branches(context.source_branches)
+    assert_selected_monitor_roots!(selected_roots, selected_branches, context.lane)
+    %{selected_roots: selected_roots, selected_branches: selected_branches}
+  end
+
+  defp group_cross_owner_disposition!(:trace, context) do
+    trace_cross_owner_disposition!(context)
+  end
+
+  defp group_cross_owner_disposition!(_group, _context), do: []
+
+  defp assert_selected_monitor_roots!(selected_roots, selected_branches, lane) do
+    require_ownership!(
+      Enum.any?(selected_roots, &(&1.mfa == "dbg_wx_mon:start/2" and &1.changed_route)),
+      "lane #{lane} MFA dbg_wx_mon:start/2 owner=#{@owner} caller-chain=changed selected root route remedy=preserve its pending changed-route observation"
+    )
+
+    require_ownership!(
+      Enum.all?([:trace_windows_selected, :trace_windows_unselected], fn id ->
+        Enum.any?(selected_branches, &(&1.id == id and &1.owner == @owner))
+      end),
+      "lane #{lane} MFA dbg_wx_mon:load_settings2/2 owner=#{@owner} caller-chain=selected trace-window branches remedy=preserve both prior-owner branch identities"
+    )
+  end
+
+  defp selected_root_dispositions!(dispositions, inventory, lane) do
+    Enum.map(@selected_root_mfas, fn {module, function, arity} = mfa ->
+      name = format_mfa(mfa)
+      disposition = find_function_disposition!(dispositions, name, lane)
+
+      require_ownership!(
+        disposition.owner == @owner and disposition.completion == :pending_cross_owner,
+        "lane #{lane} MFA #{name} owner=#{disposition.owner} caller-chain=selected saved-settings root remedy=preserve prior-owner route responsibility and pending status"
+      )
+
+      %{
+        mfa: name,
+        owner: disposition.owner,
+        completion: disposition.completion,
+        changed_route:
+          Enum.any?(
+            inventory.changed_routes,
+            &changed_route_for?(&1, module, function, arity, lane)
+          )
+      }
+    end)
+  end
+
+  defp selected_owner_branches(source_branches) do
+    source_branches
+    |> Enum.filter(&(&1.owner == @owner))
+    |> Enum.map(&%{id: &1.id, mfa: format_mfa(&1.mfa), owner: &1.owner})
+  end
+
+  defp trace_cross_owner_disposition!(context) do
+    branch_map = context.branch_map
+    prior_owner_branch = Map.fetch!(branch_map, :conditional_callback_clause)
+    remainder_break_dispatch_branch = Map.fetch!(branch_map, :condition_break_p_called)
+    current_callback_branch = Map.fetch!(branch_map, :break_dialog_conditional_callback_tuple)
+
+    validate_trace_cross_owner_citations!(
+      branch_map,
+      context.branch_citations,
+      context.evidence,
+      context.records,
+      context.lane
+    )
+
+    validate_trace_branch_owners!(
+      prior_owner_branch,
+      remainder_break_dispatch_branch,
+      current_callback_branch,
+      context.lane
+    )
+
+    interpreter_roots = validate_trace_interpreter_roots!(context.inventory, context.lane)
+
+    %{
+      prior_owner_break_branch: branch_record(prior_owner_branch),
+      remainder_break_dispatch_branch: branch_record(remainder_break_dispatch_branch),
+      current_callback_branch: branch_record(current_callback_branch),
+      interpreter_roots:
+        Enum.map(interpreter_roots, fn root ->
+          %{mfa: identity_mfa!(root, context.lane), owner: root["owner"], chains: root["steps"]}
+        end)
+        |> Enum.sort_by(& &1.mfa)
+    }
+  end
+
+  defp validate_trace_cross_owner_citations!(
+         branch_map,
+         branch_citations,
+         evidence,
+         records,
+         lane
+       ) do
+    [:conditional_callback_clause, :condition_break_p_called]
+    |> Enum.each(fn branch_id ->
+      branch = Map.fetch!(branch_map, branch_id)
+      citations = Map.get(branch_citations, branch_id, [])
+      validate_trace_branch_citations!(branch, branch_id, citations, evidence, records, lane)
+    end)
+  end
+
+  defp validate_trace_branch_citations!(branch, branch_id, citations, evidence, records, lane) do
+    require_ownership!(
+      citations != [],
+      "lane #{lane} MFA #{format_mfa(branch.mfa)} owner=#{branch.owner} caller-chain=cross-owner conditional-break route branch=#{branch_id} remedy=retain exact source evidence for the prior callback body and current caller dispatch"
+    )
+
+    Enum.each(citations, &assert_citation!(evidence, lane, records, &1))
+  end
+
+  defp validate_trace_branch_owners!(
+         prior_owner_branch,
+         remainder_break_dispatch_branch,
+         current_callback_branch,
+         lane
+       ) do
+    require_ownership!(
+      prior_owner_branch.owner == @owner and
+        prior_owner_branch.mfa == {:dbg_icmd, :break_p, 4} and
+        remainder_break_dispatch_branch.owner == @remainder_owner and
+        remainder_break_dispatch_branch.mfa == {:dbg_icmd, :cmd, 4} and
+        current_callback_branch.owner == @remainder_owner and
+        current_callback_branch.mfa == {:dbg_wx_break, :gui_cmd, 2},
+      "lane #{lane} owner=#{@remainder_owner} caller-chain=break dialog -> int:test_at_break/3 -> dbg_icmd:cmd/4 -> prior-owner dbg_icmd:break_p/4 branch prior=#{prior_owner_branch.owner} dispatch=#{remainder_break_dispatch_branch.owner} callback=#{current_callback_branch.owner} remedy=keep the callback tuple and cmd/4 call route with this remainder while preserving break_p/4 body/outcomes with the earlier owner"
+    )
+  end
+
+  defp validate_trace_interpreter_roots!(inventory, lane) do
+    roots = inventory.interpreter_root_observations
+    root_mfas = MapSet.new(Enum.map(roots, &identity_mfa!(&1, lane)))
+
+    expected =
+      MapSet.new([
+        "dbg_wx_interpret:filter_files/2",
+        "dbg_wx_interpret:interpret_all/5",
+        "dbg_wx_interpret:start/4"
+      ])
+
+    require_ownership!(
+      root_mfas == expected and
+        Enum.all?(roots, &(&1["owner"] == @remainder_owner)) and
+        "dbg_wx_interpret" not in inventory.module_names,
+      "lane #{lane} app debugger module dbg_wx_interpret owner=#{@remainder_owner} caller-chain=current observed roots=#{inspect(Enum.sort(MapSet.to_list(root_mfas)))} remedy=disposition each currently assigned observed root without reopening the active module"
+    )
+
+    roots
+  end
+
+  defp branch_record(branch),
+    do: %{id: branch.id, mfa: format_mfa(branch.mfa), owner: branch.owner}
+
+  defp dynamic_route_dispositions!(dispositions, group, lane) do
+    all_function_dispositions = Enum.flat_map(dispositions, & &1.dispositions)
+
+    dynamic_facts =
+      Enum.flat_map(all_function_dispositions, fn function ->
+        Enum.filter(function.sink_facts, fn fact ->
+          fact.kind in [
+            :dynamic_remote_dispatch,
+            :dynamic_spawn,
+            :dynamic_apply,
+            :dynamic_fun_call
+          ]
+        end)
+        |> Enum.map(fn fact ->
+          %{
+            mfa: function.mfa,
+            source: function.source,
+            line: fact.line,
+            expression: fact.expression,
+            kind: fact.kind,
+            owner: function.owner,
+            guard_remedy: function.guard_remedy
+          }
+        end)
+      end)
+
+    resolved_dynamic =
+      Enum.flat_map(dynamic_facts, fn fact ->
+        case fixed_dynamic_route_status(fact, lane) do
+          nil -> []
+          status -> [Map.put(fact, :status, status)]
+        end
+      end)
+
+    unresolved_dynamic =
+      Enum.reject(dynamic_facts, &(not is_nil(fixed_dynamic_route_status(&1, lane))))
+      |> Enum.map(&Map.put(&1, :status, :unresolved_static_target))
+
+    require_ownership!(
+      length(resolved_dynamic) + length(unresolved_dynamic) == length(dynamic_facts) and
+        Enum.all?(unresolved_dynamic, &(&1.status == :unresolved_static_target)),
+      "lane #{lane} group=#{group} owner=#{@remainder_owner} caller-chain=source AST remedy=classify every dynamic source capability as fixed/resolved or honestly unresolved"
+    )
+
+    {resolved_dynamic, unresolved_dynamic}
+  end
+
+  defp fixed_dynamic_route_status(%{mfa: mfa, line: line, kind: kind}, lane) do
+    routes =
+      if lane == "core" do
+        %{
+          {"dbg_wx_code:code_area/1", 98} => :resolved_fixed_local_closure,
+          {"dbg_wx_src_view:code_area/2", 59} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace:meta_cmd/2", 711} => :resolved_cross_owner_fixed_callback,
+          {"dbg_wx_trace_win:handle_event/2", 706} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace_win:handle_event/2", 734} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace_win:handle_event/2", 735} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace_win:handle_event/2", 736} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace_win:handle_event/2", 767} => :resolved_fixed_local_closure,
+          {"dbg_wx_break:start/5", 53} => :resolved_fixed_local_worker,
+          {"dbg_wx_view:start/2", 50} => :resolved_fixed_local_worker
+        }
+      else
+        %{
+          {"dbg_wx_code:code_area/1", 96} => :resolved_fixed_local_closure,
+          {"dbg_wx_src_view:code_area/2", 57} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace:meta_cmd/2", 709} => :resolved_cross_owner_fixed_callback,
+          {"dbg_wx_trace_win:handle_event/2", 702} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace_win:handle_event/2", 730} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace_win:handle_event/2", 731} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace_win:handle_event/2", 732} => :resolved_fixed_local_closure,
+          {"dbg_wx_trace_win:handle_event/2", 763} => :resolved_fixed_local_closure,
+          {"dbg_wx_break:start/5", 51} => :resolved_fixed_local_worker,
+          {"dbg_wx_view:start/2", 48} => :resolved_fixed_local_worker
+        }
+      end
+
+    case {kind, mfa, line} do
+      {:dynamic_fun_call, _, _} -> Map.get(routes, {mfa, line})
+      {:dynamic_spawn, _, _} -> Map.get(routes, {mfa, line})
+      _ -> nil
+    end
+  end
+
+  defp fixed_dynamic_route_status(_fact, _lane), do: nil
 
   def assert_ownership!(graph, evidence, records) do
     loaded = load_delegation!()
@@ -1047,6 +2997,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       missing_module_controls(graph, base, lane) ++
         missing_root_controls(graph, base, authority, lane) ++
         changed_owner_controls(graph, base, authority, lane) ++
+        changed_source_branch_controls(graph, base, lane) ++
         settings_source_controls(graph, base) ++ graph_projection_controls(graph, base)
 
     run_ownership_controls!(controls, evidence)
@@ -1099,9 +3050,19 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   defp changed_owner_controls(graph, base, authority, lane) do
     selected_module? = &(&1["module"] == "dbg_wx_settings")
+    remainder_module? = &(&1["module"] == "dbg_wx_mon")
 
     selected_root? =
       &(&1["module"] == "dbg_wx_mon" and &1["function"] == "start" and &1["arity"] == 2)
+
+    remainder_root? = &(&1["owner"] == @remainder_owner)
+
+    observed_root = find_delegation_row(authority, "observed_root", lane, selected_root?)
+
+    require_ownership!(
+      not is_nil(observed_root),
+      "ownership controls require the selected observed root to exist in the pinned authority"
+    )
 
     [
       {"wrong-selected-owner",
@@ -1113,6 +3074,45 @@ defmodule Fablebook.Test.DebuggerSettings do
              lane,
              selected_module?,
              &Map.put(&1, "owner", @remainder_owner)
+           )
+
+         {graph, changed}
+       end, "owner"},
+      {"wrong-remainder-owner",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "module",
+             lane,
+             remainder_module?,
+             &Map.put(&1, "owner", @owner)
+           )
+
+         {graph, changed}
+       end, "owner"},
+      {"wrong-observed-remainder-owner",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "observed_module",
+             lane,
+             remainder_module?,
+             &Map.put(&1, "owner", @owner)
+           )
+
+         {graph, changed}
+       end, "owner"},
+      {"wrong-remainder-root-owner",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "root",
+             lane,
+             remainder_root?,
+             &Map.put(&1, "owner", @owner)
            )
 
          {graph, changed}
@@ -1130,6 +3130,21 @@ defmodule Fablebook.Test.DebuggerSettings do
 
          {graph, changed}
        end, "chain"},
+      {"changed-observed-canonical-chain",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "observed_root",
+             lane,
+             selected_root?,
+             &Map.update!(&1, "historical", fn historical ->
+               Map.put(historical, "chain_id", String.duplicate("1", 64))
+             end)
+           )
+
+         {graph, changed}
+       end, "observed canonical chain"},
       {"changed-current-reference",
        fn ->
          changed =
@@ -1156,7 +3171,28 @@ defmodule Fablebook.Test.DebuggerSettings do
        end, "overlap"},
       {"missing-source-branch",
        fn -> {graph, drop_delegation_rows(base, "source_branch", lane, fn _ -> true end)} end,
-       "source_branch"}
+       "source_branch"},
+      {"missing-observed-root-delta",
+       fn -> {graph, drop_delegation_rows(base, "observed_root", lane, selected_root?)} end,
+       "omitted"}
+    ]
+  end
+
+  defp changed_source_branch_controls(graph, base, lane) do
+    [
+      {"forged-source-branch-completion",
+       fn ->
+         changed =
+           edit_delegation_rows(
+             base,
+             "source_branch",
+             lane,
+             &(&1["module"] == "dbg_icmd" and &1["function"] == "break_p"),
+             &Map.put(&1, "completion", "source_disposed_static")
+           )
+
+         {graph, changed}
+       end, "completion"}
     ]
   end
 
@@ -1595,14 +3631,46 @@ defmodule Fablebook.Test.DebuggerSettings do
   end
 
   defp delegation_difference_category(actual, expected) do
+    delegation_primary_difference(actual, expected) ||
+      delegation_secondary_difference(actual, expected) || "historical fields"
+  end
+
+  defp delegation_primary_difference(actual, expected) do
     cond do
-      actual["owner"] != expected["owner"] -> "owner"
-      actual["chain_id"] != expected["chain_id"] -> "canonical chain"
-      actual["references"] != expected["references"] -> "current references"
-      actual["occurrences"] != expected["occurrences"] -> "overlap occurrence"
-      actual["origin_record_sha256"] != expected["origin_record_sha256"] -> "origin fingerprint"
-      actual["steps"] != expected["steps"] -> "caller-chain steps"
-      true -> "historical fields"
+      actual["owner"] != expected["owner"] ->
+        "owner"
+
+      actual["chain_id"] != expected["chain_id"] ->
+        "canonical chain"
+
+      get_in(actual, ["historical", "chain_id"]) !=
+          get_in(expected, ["historical", "chain_id"]) ->
+        "observed canonical chain"
+
+      actual["references"] != expected["references"] ->
+        "current references"
+
+      true ->
+        nil
+    end
+  end
+
+  defp delegation_secondary_difference(actual, expected) do
+    cond do
+      actual["completion"] != expected["completion"] ->
+        "completion"
+
+      actual["occurrences"] != expected["occurrences"] ->
+        "overlap occurrence"
+
+      actual["origin_record_sha256"] != expected["origin_record_sha256"] ->
+        "origin fingerprint"
+
+      actual["steps"] != expected["steps"] ->
+        "caller-chain steps"
+
+      true ->
+        nil
     end
   end
 
@@ -1708,6 +3776,134 @@ defmodule Fablebook.Test.DebuggerSettings do
       )
     end
   end
+
+  defp resolve_citation!(:module, module, lines, lane, relative) do
+    expected_text = "-module(#{module}"
+    index = Enum.find_index(lines, &String.contains?(&1, expected_text))
+
+    require_ownership!(
+      index != nil,
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source=#{relative} caller-chain=module declaration remedy=restore the exact adopted source"
+    )
+
+    %{line: index + 1, expected_text: expected_text}
+  end
+
+  defp resolve_citation!(citation, _module, _lines, _lane, _relative), do: citation
+
+  defp remainder_source_rows!(rows, lane) do
+    module_ids = delegation_module_ids(rows, lane, "module")
+    observed_module_ids = delegation_module_ids(rows, lane, "observed_module")
+    source_rows = exact_source_rows(rows, lane)
+
+    source_module_ids = MapSet.new(source_rows, & &1["module"])
+
+    require_ownership!(
+      MapSet.size(module_ids) > 0 and observed_module_ids == module_ids and
+        source_module_ids == module_ids and length(source_rows) == MapSet.size(source_module_ids),
+      "lane #{lane} app debugger owner=#{@remainder_owner} caller-chain=adopted module/exact_source assignments differ; modules=#{inspect(Enum.sort(MapSet.to_list(module_ids)))} observed=#{inspect(Enum.sort(MapSet.to_list(observed_module_ids)))} sources=#{inspect(Enum.sort(MapSet.to_list(source_module_ids)))} remedy=restore one exact source row for each assigned module"
+    )
+
+    Enum.each(source_rows, fn row ->
+      module = row["module"]
+      expected_path = "debugger/src/#{module}.erl"
+
+      require_ownership!(
+        row["origin_owner"] == @historical_owner and row["source_path"] == expected_path and
+          safe_relative_source_path?(row["source_path"]) and
+          is_integer(row["bytes"]) and row["bytes"] > 0 and valid_sha256?(row["sha256"]),
+        "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=adopted exact_source row path/bytes/hash is invalid; remedy=restore the immutable exact-source assignment"
+      )
+    end)
+
+    source_rows
+  end
+
+  defp delegation_module_ids(rows, lane, type) do
+    rows
+    |> Enum.filter(
+      &(&1["t"] == type and &1["lane"] == lane and &1["app"] == "debugger" and
+          &1["owner"] == @remainder_owner)
+    )
+    |> Enum.map(& &1["module"])
+    |> MapSet.new()
+  end
+
+  defp exact_source_rows(rows, lane) do
+    rows
+    |> Enum.filter(
+      &(&1["t"] == "exact_source" and &1["lane"] == lane and
+          &1["app"] == "debugger" and &1["owner"] == @remainder_owner)
+    )
+    |> Enum.sort_by(& &1["module"])
+  end
+
+  defp safe_relative_source_path?(path) when is_binary(path) do
+    parts = Path.split(path)
+
+    Enum.take(parts, 2) == ["debugger", "src"] and
+      Enum.all?(parts, &(&1 not in ["", ".", "..", "/"])) and
+      Path.extname(path) == ".erl" and not String.contains?(path, "\\")
+  end
+
+  defp safe_relative_source_path?(_path), do: false
+
+  defp realpath!(path, lane, description), do: realpath!(path, lane, description, 0)
+
+  defp realpath!(_path, lane, description, depth) when depth > 40 do
+    ownership_fail!(
+      "lane #{lane} source=#{description} caller-chain=installed realpath resolver exceeded symbolic-link limit=#{depth} remedy=use a stable contained filesystem path"
+    )
+  end
+
+  defp realpath!(path, lane, description, depth) do
+    path
+    |> Path.expand()
+    |> Path.split()
+    |> Enum.reject(&(&1 == "/"))
+    |> realpath_components!("/", lane, description, depth)
+  end
+
+  defp realpath_components!([], resolved, _lane, _description, _depth), do: Path.expand(resolved)
+
+  defp realpath_components!([component | rest], resolved, lane, description, depth) do
+    candidate = Path.join(resolved, component)
+
+    case File.lstat(candidate) do
+      {:ok, %{type: :symlink}} ->
+        target =
+          case :file.read_link_all(String.to_charlist(candidate)) do
+            {:ok, link} ->
+              to_string(link)
+
+            {:error, reason} ->
+              ownership_fail!(
+                "lane #{lane} source=#{description} caller-chain=installed realpath symlink read=#{reason} remedy=restore a readable contained path"
+              )
+          end
+
+        target = Path.expand(target, Path.dirname(candidate))
+        next = if rest == [], do: target, else: Path.join(target, Enum.join(rest, "/"))
+        realpath!(next, lane, description, depth + 1)
+
+      {:ok, _stat} ->
+        realpath_components!(rest, candidate, lane, description, depth)
+
+      {:error, reason} ->
+        ownership_fail!(
+          "lane #{lane} source=#{description} caller-chain=installed realpath component=#{candidate} read=#{reason} remedy=restore the current exact-lane path"
+        )
+    end
+  end
+
+  defp stable_set_sha256(values) when is_list(values) do
+    values |> Enum.sort() |> Enum.join("\n") |> sha256()
+  end
+
+  defp format_edge({caller, {module, function}}),
+    do: "#{format_mfa(caller)} -> #{module}:#{function}"
+
+  defp format_edge({caller, callee}), do: "#{format_mfa(caller)} -> #{format_mfa(callee)}"
 
   defp typed_delegation_identity!(%{"t" => "exact_source", "lane" => lane, "module" => module}),
     do: {"exact_source", lane, module}
@@ -2138,6 +4334,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       :source_branches,
       :branch_citations,
       :trace,
+      :auto_attach_trace,
       :defaults,
       :option_paths,
       :verdict,
@@ -2250,6 +4447,8 @@ defmodule Fablebook.Test.DebuggerSettings do
     assert actual_branch_ids == expected_branch_ids and source_branch_ids == expected_branch_ids,
            "lane #{lane} MFA dbg_wx_settings:default_settings_dir/1 owner=#{@owner} caller-chain=complete settings and replay branch map missing=#{inspect(MapSet.to_list(MapSet.difference(expected_branch_ids, actual_branch_ids)))} remedy=restore every exact default/error/cancel/replay branch"
 
+    assert_branch_record_completeness!(record.source_branches, record.branch_citations, lane)
+
     expected_owners =
       Map.new(@all_branch_specs, fn {id, mfa, _predicate, source, _lines} ->
         {id, branch_owner(source, mfa)}
@@ -2268,10 +4467,18 @@ defmodule Fablebook.Test.DebuggerSettings do
     citations =
       Enum.flat_map(record.function_sources, &List.wrap(&1.citation)) ++
         Enum.flat_map(record.function_audit, &List.wrap(&1.citations)) ++
-        Enum.flat_map(Map.values(record.branch_citations), &List.wrap/1) ++
+        (record.branch_citations
+         |> Map.drop(
+           @interpreter_route_branch_ids ++
+             @remainder_source_branch_ids ++ @trace_route_branch_ids
+         )
+         |> Map.values()
+         |> Enum.flat_map(&List.wrap/1)) ++
         Enum.flat_map(root_records, &List.wrap(&1.citations))
 
     Enum.each(citations, &assert_citation!(evidence, lane, record, &1))
+
+    :ok = assert_auto_attach_trace!(record, graph, tier, evidence)
 
     expected_roots
     |> MapSet.to_list()
@@ -2288,6 +4495,45 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   def branch_ids do
     Enum.map(@all_branch_specs, &elem(&1, 0))
+  end
+
+  defp assert_branch_record_completeness!(branches, citations, lane) do
+    expected_specs =
+      Map.new(@all_branch_specs, fn {id, mfa, predicate, source, _lines} ->
+        {id, %{mfa: mfa, predicate: predicate, source: source}}
+      end)
+
+    actual_ids = Enum.map(branches, &Map.get(&1, :id))
+    actual_id_set = MapSet.new(actual_ids)
+    expected_id_set = MapSet.new(Map.keys(expected_specs))
+
+    require_ownership!(
+      length(actual_ids) == MapSet.size(actual_id_set),
+      "lane #{lane} owner=#{@remainder_owner} caller-chain=source branch record contains a duplicate identity remedy=retain one current branch row per declared branch"
+    )
+
+    require_ownership!(
+      actual_id_set == expected_id_set,
+      "lane #{lane} owner=#{@remainder_owner} caller-chain=complete source branch record set missing=#{inspect(MapSet.to_list(MapSet.difference(expected_id_set, actual_id_set)))} extra=#{inspect(MapSet.to_list(MapSet.difference(actual_id_set, expected_id_set)))} remedy=restore every declared source branch"
+    )
+
+    require_ownership!(
+      MapSet.new(Map.keys(citations)) == expected_id_set and
+        Enum.all?(expected_id_set, &(Map.get(citations, &1, []) != [])),
+      "lane #{lane} owner=#{@remainder_owner} caller-chain=source branch citation set missing or empty remedy=retain one exact citation set for each source branch"
+    )
+
+    Enum.each(branches, fn branch ->
+      expected = Map.fetch!(expected_specs, branch.id)
+      expected_owner = branch_owner(expected.source, expected.mfa)
+      expected_trace = branch_trace(expected.mfa)
+
+      require_ownership!(
+        branch.mfa == expected.mfa and branch.predicate == expected.predicate and
+          branch.owner == expected_owner and branch.trace == expected_trace,
+        "lane #{lane} owner=#{inspect(branch.owner)} caller-chain=source branch route trace #{branch.id} or MFA/predicate/owner differs from its declared source record; remedy=restore the cited branch identity, predicate, owner and route trace"
+      )
+    end)
   end
 
   def exclusion_matches(universe, exclusions) do
@@ -2401,10 +4647,43 @@ defmodule Fablebook.Test.DebuggerSettings do
   end
 
   defp branch_citations(lane_name) do
+    loaded = load_delegation!()
+
+    remainder_sources =
+      loaded.records
+      |> remainder_source_rows!(lane_name)
+      |> Map.new(&{&1["module"], &1})
+
     Enum.into(@all_branch_specs, %{}, fn {id, _mfa, _predicate, source, lines} ->
       {line, expected_text} = Map.fetch!(lines, String.to_existing_atom(lane_name))
-      {id, [citation(lane_name, source, line, expected_text)]}
+
+      citation =
+        case source do
+          {:remainder, module} ->
+            source_row = Map.fetch!(remainder_sources, module)
+
+            %{
+              path: source_row["source_path"],
+              line: line,
+              sha256: source_row["sha256"],
+              expected_text: expected_text
+            }
+
+          _ ->
+            citation(lane_name, source, line, expected_text)
+        end
+
+      {id, [citation]}
     end)
+  end
+
+  defp branch_source(branch_id) do
+    @all_branch_specs
+    |> Enum.find(fn {id, _mfa, _predicate, _source, _lines} -> id == branch_id end)
+    |> case do
+      {_id, _mfa, _predicate, source, _lines} -> source
+      nil -> nil
+    end
   end
 
   defp citation(lane_name, :settings, line, expected_text) do
@@ -2462,6 +4741,39 @@ defmodule Fablebook.Test.DebuggerSettings do
     }
   end
 
+  defp citation(lane_name, :ieval, line, expected_text) do
+    lane = Map.fetch!(@lane_data, lane_name)
+
+    %{
+      path: "debugger/src/dbg_ieval.erl",
+      line: line,
+      sha256: lane.ieval_sha256,
+      expected_text: expected_text
+    }
+  end
+
+  defp citation(lane_name, :iload, line, expected_text) do
+    lane = Map.fetch!(@lane_data, lane_name)
+
+    %{
+      path: "debugger/src/dbg_iload.erl",
+      line: line,
+      sha256: lane.iload_sha256,
+      expected_text: expected_text
+    }
+  end
+
+  defp citation(lane_name, :debugged, line, expected_text) do
+    lane = Map.fetch!(@lane_data, lane_name)
+
+    %{
+      path: "debugger/src/dbg_debugged.erl",
+      line: line,
+      sha256: lane.debugged_sha256,
+      expected_text: expected_text
+    }
+  end
+
   defp branch_owner(:settings, _mfa), do: @owner
 
   defp branch_owner(:monitor, {:dbg_wx_mon, function, _arity})
@@ -2490,6 +4802,81 @@ defmodule Fablebook.Test.DebuggerSettings do
   defp branch_trace({:dbg_wx_mon, :gui_cmd, 2}),
     do: "dbg_wx_mon:gui_cmd/2 -> settings dialog -> load_settings/2"
 
+  defp branch_trace({:dbg_wx_mon_win, :handle_event, 2}),
+    do:
+      "wx event -> monitor window menu/list/checkbox route -> dbg_wx_mon command or displayed module/PID conversion"
+
+  defp branch_trace({:dbg_wx_mon_win, :clear_processes, 2}),
+    do:
+      "monitor process rows -> clear_processes/2 -> parse displayed PID -> clear trace window state"
+
+  defp branch_trace({:dbg_wx_filedialog_win, :init, 1}),
+    do:
+      "dbg_wx_filedialog_win:new/3 options -> init/1 -> cwd/defaultDir, fixed filter default and name sort"
+
+  defp branch_trace({:dbg_wx_filedialog_win, :get_file_info, 5}),
+    do: "directory listing -> get_file_info/5 -> filter callback -> file metadata rows or skip"
+
+  defp branch_trace({:dbg_wx_filedialog_win, :handle_event, 2}),
+    do:
+      "file-dialog events -> cancel or selected path; navigation and typing only update displayed path"
+
+  defp branch_trace({:dbg_wx_win, :verify, 2}),
+    do:
+      "Backtrace Size integer entry -> scanner -> one integer token; Edit Variable term entry -> scanner -> extended_parse_term"
+
+  defp branch_trace({:dbg_wx_break, :start, 5}),
+    do: "break menu -> dbg_wx_break:start/5 -> fixed linked local init/6 worker"
+
+  defp branch_trace({:dbg_wx_break_win, :create_win, 5}),
+    do:
+      "break dialog type -> integer Line field, plus atom C-Module and C-Function fields for conditional breakpoints"
+
+  defp branch_trace({:dbg_wx_break, :gui_cmd, 2}),
+    do:
+      "local break dialog module text -> int:functions/1 lookup without explicit membership check; break tuples -> int breakpoint controls or prior-owner condition setter"
+
+  defp branch_trace({:dbg_wx_break_win, :handle_event, 2}),
+    do:
+      "break dialog text and selection events -> module atom conversions and typed input checks -> break command tuple"
+
+  defp branch_trace({:dbg_wx_break_win, :check_input, 1}),
+    do: "typed dialog input wrapper -> check_input/2 with empty accumulator"
+
+  defp branch_trace({:dbg_wx_break_win, :check_input, 2}),
+    do: "local wxTextCtrl text -> erl_scan:string/1 before configured token-type match or error"
+
+  defp branch_trace({:dbg_wx_trace, :gui_cmd, 2}),
+    do:
+      "trace menu, Edit Variable, and user command events -> breakpoint controls or status-gated int:meta eval"
+
+  defp branch_trace({:dbg_wx_trace, :meta_cmd, 2}),
+    do:
+      "interpreter trace event -> prior-owner fixed formatter closure -> attached-process route -> trace_output formatting"
+
+  defp branch_trace({:dbg_wx_code, :code_area, 1}),
+    do: "fixed syntax style list -> local SetStyle closure -> fixed wx styled-text setters"
+
+  defp branch_trace({:dbg_wx_src_view, :code_area, 2}),
+    do: "fixed syntax style list -> local SetStyle closure -> fixed wx styled-text setters"
+
+  defp branch_trace({:dbg_wx_trace, :gui_load_module, 3}),
+    do:
+      "trace-window display -> dbg_iserver raw_contents query -> source display or no-code state"
+
+  defp branch_trace({:dbg_wx_trace_win, :handle_event, 2}),
+    do:
+      "keyboard, menu, search, evaluator and binding events -> fixed shortcut, search, user-command or edit tuples"
+
+  defp branch_trace({:dbg_wx_view, :start, 2}),
+    do: "module-view request -> started-window check -> fixed linked local init/4 worker"
+
+  defp branch_trace({:dbg_wx_view, :gui_cmd, 2}),
+    do: "module-view breakpoint event -> int breakpoint control tuple"
+
+  defp branch_trace({:dbg_wx_view, :gui_load_module, 2}),
+    do: "module-view display -> dbg_iserver raw_contents query -> source display or no-code state"
+
   defp branch_trace({:dbg_wx_mon, :load_settings, 2}),
     do: "dbg_wx_mon:load_settings/2 -> file:read_file/1 -> binary_to_term/1"
 
@@ -2509,7 +4896,8 @@ defmodule Fablebook.Test.DebuggerSettings do
     do: "int:auto_attach/2 -> check_flags/1 -> allowed init|break|exit flags"
 
   defp branch_trace({:dbg_iserver, :handle_call, 3}),
-    do: "dbg_iserver new_process -> auto_attach(init) -> running|break result"
+    do:
+      "dbg_iserver new_process -> auto_attach(init) -> running|break result; load request -> dbg_iload:load_mod/4"
 
   defp branch_trace({:dbg_iserver, :handle_cast, 2}),
     do:
@@ -2532,6 +4920,58 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   defp branch_trace({:dbg_icmd, :break_p, 4}),
     do: "dbg_icmd:cmd/4 -> adopted break_p/4 source obligation -> CM:CN(Bs)"
+
+  defp branch_trace({:dbg_ieval, :eval, 3}),
+    do:
+      "int:eval/3 -> dbg_debugged:eval/3 -> dbg_ieval:eval/3 -> existing Meta re_entry or spawned meta/5"
+
+  defp branch_trace({:dbg_ieval, :meta, 5}),
+    do:
+      "dbg_ieval:eval/3 -> meta/5 -> dbg_iserver:new_process -> eval_mfa/5 -> interpreted result"
+
+  defp branch_trace({:dbg_ieval, :do_eval_function, 6}),
+    do:
+      "eval_mfa/5 or eval_function/7 -> do_eval_function/6 -> interpreted clauses or not_interpreted apply route"
+
+  defp branch_trace({:dbg_ieval, :get_function, 4}),
+    do:
+      "do_eval_function/6 -> get_function/4 -> interpreted database export lookup or not_interpreted fallback"
+
+  defp branch_trace({:dbg_ieval, :expr, 3}),
+    do: "eval_mfa/5 -> expr/3 remote-call, apply-fun, apply/3 and safe-BIF AST cases -> dispatch"
+
+  defp branch_trace({:dbg_ieval, :safe_bif, 5}),
+    do: "expr/3 safe_bif tag -> safe_bif/5 -> apply(M,F,As)"
+
+  defp branch_trace({:dbg_ieval, :catch_clauses, 4}),
+    do: "interpreted catch clauses exhausted -> erlang:Class(Reason) exception dispatch"
+
+  defp branch_trace({:dbg_ieval, :do_exception, 5}),
+    do: "exception/4,5 -> do_exception/5 -> erlang:Class(Reason) exception dispatch"
+
+  defp branch_trace({:dbg_ieval, :meta_loop, 3}),
+    do: "meta/5 -> meta_loop/3 receives debugged-process exception -> erlang:Class(Reason)"
+
+  defp branch_trace({:dbg_debugged, :msg_loop, 2}),
+    do:
+      "error_handler -> dbg_debugged:eval/3 -> selected Meta messages -> ready dbg_apply or command reply"
+
+  defp branch_trace({:dbg_debugged, :reply, 1}),
+    do: "msg_loop/2 -> handle_command/1 -> reply/1 -> apply or erl_eval:expr/2"
+
+  defp branch_trace({:dbg_iload, :load_mod, 4}),
+    do: "int:load/2 -> dbg_iserver:handle_call(load) -> dbg_iload:load_mod/4 -> linked worker"
+
+  defp branch_trace({:dbg_iload, :store_module, 4}),
+    do:
+      "int:load/2 envelope -> dbg_iserver load request -> store_module/4 -> binary term decoding"
+
+  defp branch_trace({:dbg_iload, :abstr, 1}),
+    do: "store_module/4 -> abstr/1 -> binary abstract-code decoding or already-decoded term"
+
+  defp branch_trace({:int, :load, 2}),
+    do:
+      "caller-selected load tuple -> int:load/2 -> beam/source envelope -> dbg_iserver load request"
 
   defp branch_trace(record, branch_id) do
     record.source_branches
@@ -2557,6 +4997,22 @@ defmodule Fablebook.Test.DebuggerSettings do
       record.citations != []
   end
 
+  defp zero_hit_source_reason(mfa, clauses, incoming_edges, sink_facts) do
+    source_heads = Enum.map(clauses, &"#{&1.path}:#{&1.line} #{&1.expected_text}")
+
+    case {incoming_edges, sink_facts} do
+      {[], []} ->
+        "This MFA has no static caller edge and no direct recognized sink. Its exact installed clause heads remain cited (#{Enum.join(source_heads, "; ")}); graph absence is not treated as a benign disposition."
+
+      {[], facts} ->
+        "This MFA has no static caller edge, but its exact source contains direct sink facts #{inspect(facts)}. Its installed clause heads remain cited (#{Enum.join(source_heads, "; ")}) and the route stays unresolved until a caller constraint is proved."
+
+      {callers, facts} ->
+        "This MFA is not reached by the selected assigned roots. Exact source callers are #{Enum.join(callers, "; ")}; direct sink facts are #{inspect(facts)}; cited clause heads are #{Enum.join(source_heads, "; ")}. It remains source-disposed rather than presumed benign."
+    end
+    |> then(fn reason -> "#{mfa}: #{reason}" end)
+  end
+
   defp assert_citation!(evidence, lane, record, citation) do
     resolved =
       SweepEvidence.resolve!(evidence, "#{citation.path}:#{citation.line}")
@@ -2566,6 +5022,1149 @@ defmodule Fablebook.Test.DebuggerSettings do
 
     assert resolved.text =~ citation.expected_text,
            "lane #{lane} MFA dbg_wx_settings:default_settings_dir/1 owner=#{record.owner} caller-chain=source citation #{citation.path}:#{citation.line} remedy=restore matching branch text"
+  end
+
+  defp assert_adopted_source_citation!(evidence, lane, inventory, record, citation) do
+    module_name = Path.basename(citation.path, ".erl")
+    inventory_module = Enum.find(inventory.modules, &(&1.module == module_name))
+
+    require_ownership!(
+      not is_nil(inventory_module),
+      "lane #{lane} owner=#{record.owner} caller-chain=#{citation.path}:#{citation.line} remedy=resolve the citation to its adopted exact_source inventory row"
+    )
+
+    source_row = inventory_module.source_assignment
+
+    require_ownership!(
+      source_row["sha256"] == citation.sha256,
+      "lane #{lane} app debugger module #{module_name} owner=#{record.owner} caller-chain=#{citation.path}:#{citation.line} remedy=use the adopted exact_source hash"
+    )
+
+    assert_remainder_source!(evidence, source_row, citation)
+  end
+
+  defp disposition_group!(:callbacks) do
+    {["int", "i", "debugger", "dbg_iserver", "dbg_icmd"], @callback_route_branch_ids}
+  end
+
+  defp disposition_group!(:interpreter) do
+    {["dbg_ieval", "dbg_iload", "dbg_debugged"], @interpreter_route_branch_ids}
+  end
+
+  defp disposition_group!(:monitor) do
+    {@monitor_group_modules, @monitor_route_branch_ids}
+  end
+
+  defp disposition_group!(:trace) do
+    {@trace_group_modules, @trace_route_branch_ids}
+  end
+
+  defp assert_trace_dispositions!(modules, lane) do
+    source_functions =
+      modules
+      |> Enum.flat_map(& &1.dispositions)
+      |> Map.new(&{&1.mfa, &1})
+
+    assert_trace_required_sinks!(modules, lane)
+    assert_trace_atom_sites!(source_functions, lane)
+    assert_trace_dynamic_sites!(source_functions, lane)
+    assert_trace_typed_inputs!(source_functions, lane)
+    assert_trace_resize_closures!(source_functions, lane)
+    assert_trace_style_and_output!(source_functions, lane)
+    assert_trace_callback_route!(source_functions, lane)
+    :ok
+  end
+
+  defp assert_trace_required_sinks!(modules, lane) do
+    required_sinks = [
+      {"dbg_wx_break_win:handle_event/2", :atom_construction},
+      {"dbg_wx_break_win:check_input/2", :token_scanner},
+      {"dbg_wx_trace_win:handle_event/2", :atom_construction},
+      {"dbg_wx_trace:meta_cmd/2", :dynamic_fun_call}
+    ]
+
+    Enum.each(required_sinks, fn {mfa, kind} ->
+      disposition = find_function_disposition!(modules, mfa, lane)
+
+      require_ownership!(
+        Enum.any?(disposition.sink_facts, &(&1.kind == kind)) and
+          is_binary(disposition.guard_remedy) and disposition.guard_remedy != "",
+        "lane #{lane} MFA #{mfa} owner=#{disposition.owner} caller-chain=exact source sink #{kind} remedy=retain its narrow input and dispatch disposition"
+      )
+    end)
+  end
+
+  defp assert_trace_atom_sites!(source_functions, lane) do
+    break_atom_lines =
+      source_functions["dbg_wx_break_win:handle_event/2"].sink_facts
+      |> Enum.filter(&(&1.kind == :atom_construction))
+      |> Enum.map(& &1.line)
+      |> Enum.sort()
+
+    expected_break_atom_lines = if lane == "core", do: [192, 215, 224], else: [188, 211, 220]
+
+    require_ownership!(
+      break_atom_lines == expected_break_atom_lines,
+      "lane #{lane} MFA dbg_wx_break_win:handle_event/2 owner=#{@remainder_owner} caller-chain=user module text -> list_to_atom/1 expected=#{inspect(expected_break_atom_lines)} actual=#{inspect(break_atom_lines)} remedy=map supported module names to existing atoms before any conversion"
+    )
+
+    shortcut_atom_lines =
+      source_functions["dbg_wx_trace_win:handle_event/2"].sink_facts
+      |> Enum.filter(&(&1.kind == :atom_construction))
+      |> Enum.map(& &1.line)
+      |> Enum.sort()
+
+    expected_shortcut_atom_lines = if lane == "core", do: [799], else: [795]
+
+    require_ownership!(
+      shortcut_atom_lines == expected_shortcut_atom_lines,
+      "lane #{lane} MFA dbg_wx_trace_win:handle_event/2 owner=#{@remainder_owner} caller-chain=keyboard code -> list_to_atom/1 expected=#{inspect(expected_shortcut_atom_lines)} actual=#{inspect(shortcut_atom_lines)} remedy=map supported shortcut keys to fixed atoms"
+    )
+  end
+
+  defp assert_trace_dynamic_sites!(source_functions, lane) do
+    expected_dynamic_fun_sites =
+      if lane == "core" do
+        [
+          {"dbg_wx_code:code_area/1", 98},
+          {"dbg_wx_src_view:code_area/2", 59},
+          {"dbg_wx_trace:meta_cmd/2", 711},
+          {"dbg_wx_trace_win:handle_event/2", 706},
+          {"dbg_wx_trace_win:handle_event/2", 734},
+          {"dbg_wx_trace_win:handle_event/2", 735},
+          {"dbg_wx_trace_win:handle_event/2", 736},
+          {"dbg_wx_trace_win:handle_event/2", 767}
+        ]
+      else
+        [
+          {"dbg_wx_code:code_area/1", 96},
+          {"dbg_wx_src_view:code_area/2", 57},
+          {"dbg_wx_trace:meta_cmd/2", 709},
+          {"dbg_wx_trace_win:handle_event/2", 702},
+          {"dbg_wx_trace_win:handle_event/2", 730},
+          {"dbg_wx_trace_win:handle_event/2", 731},
+          {"dbg_wx_trace_win:handle_event/2", 732},
+          {"dbg_wx_trace_win:handle_event/2", 763}
+        ]
+      end
+
+    actual_dynamic_fun_sites =
+      source_functions
+      |> Enum.flat_map(fn {mfa, disposition} ->
+        disposition.sink_facts
+        |> Enum.filter(&(&1.kind == :dynamic_fun_call))
+        |> Enum.map(&{mfa, &1.line})
+      end)
+      |> Enum.sort()
+
+    require_ownership!(
+      actual_dynamic_fun_sites == Enum.sort(expected_dynamic_fun_sites),
+      "lane #{lane} group=trace owner=#{@remainder_owner} caller-chain=exact function sinks expected=#{inspect(Enum.sort(expected_dynamic_fun_sites))} actual=#{inspect(actual_dynamic_fun_sites)} remedy=disposition every variable-fun call and reject unreviewed dynamic sites"
+    )
+  end
+
+  defp assert_trace_typed_inputs!(source_functions, lane) do
+    break_input = source_functions["dbg_wx_break_win:check_input/2"]
+    break_wrapper = source_functions["dbg_wx_break_win:check_input/1"]
+    break_inputs = source_functions["dbg_wx_break_win:create_win/5"]
+    edit_route = source_functions["dbg_wx_trace:gui_cmd/2"]
+    scanner_verified = trace_scanner_contract?(break_input, lane)
+    wrapper_verified = trace_wrapper_contract?(break_wrapper, break_inputs)
+    edit_route_verified = trace_edit_contract?(edit_route)
+
+    message =
+      "lane #{lane} MFA dbg_wx_break_win:check_input/1,2 and dbg_wx_trace:gui_cmd/2 owner=#{@remainder_owner} caller-chain=local typed fields -> private token scanner; Edit Variable caller -> monitor-owned verifier -> assignment -> status-gated int:meta eval remedy=keep scanner/parser sink ownership with monitor and preserve term-only constrained assignment"
+
+    require_ownership!(scanner_verified, message)
+    require_ownership!(wrapper_verified, message)
+    require_ownership!(edit_route_verified, message)
+  end
+
+  defp trace_scanner_contract?(break_input, lane) do
+    expected_line = if lane == "core", do: 234, else: 230
+
+    Enum.any?(break_input.sink_facts, &(&1.kind == :token_scanner and &1.line == expected_line)) and
+      String.contains?(break_input.guard_remedy, "tokenization") and
+      String.contains?(break_input.guard_remedy, "existing-atom") and
+      String.contains?(break_input.guard_remedy, "whitelist") and
+      String.contains?(break_input.defaults_and_options, "before matching")
+  end
+
+  defp trace_wrapper_contract?(break_wrapper, break_inputs) do
+    String.contains?(break_wrapper.caller_input_origin, "check_input/2") and
+      String.contains?(break_wrapper.caller_input_origin, "empty accumulator") and
+      String.contains?(break_inputs.defaults_and_options, "C-Module") and
+      String.contains?(break_inputs.defaults_and_options, "C-Function") and
+      String.contains?(break_inputs.defaults_and_options, "before matching")
+  end
+
+  defp trace_edit_contract?(edit_route) do
+    String.contains?(edit_route.guard_remedy, "int:meta") and
+      String.contains?(edit_route.caller_input_origin, "Edit Variable") and
+      String.contains?(edit_route.guard_remedy, "term-only") and
+      String.contains?(edit_route.guard_remedy, "scanner boundary")
+  end
+
+  defp assert_trace_resize_closures!(source_functions, lane) do
+    resize_note = source_functions["dbg_wx_trace_win:handle_event/2"]
+    expected_resize_lines = if lane == "core", do: [734, 735, 736], else: [730, 731, 732]
+
+    actual_resize_lines =
+      resize_note.sink_facts
+      |> Enum.filter(&(&1.kind == :dynamic_fun_call and &1.line in expected_resize_lines))
+      |> Enum.map(& &1.line)
+      |> Enum.sort()
+
+    require_ownership!(
+      actual_resize_lines == expected_resize_lines and
+        String.contains?(
+          resize_note.caller_input_origin,
+          "fixed local Change and ChangeH closures"
+        ) and
+        String.contains?(resize_note.guard_remedy, "resolved benign local capability"),
+      "lane #{lane} MFA dbg_wx_trace_win:handle_event/2 owner=#{@remainder_owner} caller-chain=local fixed Change closure definition -> three eval-sizer calls lines=#{inspect(actual_resize_lines)} remedy=classify Change and ChangeH calls as resolved benign local closures, not caller-selected dispatch"
+    )
+  end
+
+  defp assert_trace_style_and_output!(source_functions, lane) do
+    code_style_note = source_functions["dbg_wx_code:code_area/1"]
+    source_style_note = source_functions["dbg_wx_src_view:code_area/2"]
+    trace_output_note = source_functions["dbg_wx_trace:meta_cmd/2"]
+
+    local_styles_verified =
+      String.contains?(code_style_note.guard_remedy, "resolved benign local capability") and
+        String.contains?(source_style_note.guard_remedy, "resolved benign local capability")
+
+    trace_output_verified =
+      String.contains?(trace_output_note.caller_input_origin, "dbg_ieval:trace/3") and
+        String.contains?(trace_output_note.caller_input_origin, "dbg_icmd:tell_attached/1") and
+        String.contains?(trace_output_note.guard_remedy, "resolved cross-owner fixed callback")
+
+    message =
+      "lane #{lane} owner=#{@remainder_owner} caller-chain=local SetStyle closures or prior-owner dbg_ieval:trace/3 -> dbg_icmd:tell_attached/1 -> dbg_wx_trace:meta_cmd/2 StrFun(P) remedy=retain exact closure origin and classify only the cited fixed functions as resolved capabilities"
+
+    require_ownership!(local_styles_verified, message)
+    require_ownership!(trace_output_verified, message)
+  end
+
+  defp assert_trace_callback_route!(source_functions, lane) do
+    callback_route = source_functions["dbg_wx_break:gui_cmd/2"]
+
+    require_ownership!(
+      String.contains?(callback_route.caller_input_origin, "conditional callback tuple") and
+        String.contains?(callback_route.guard_remedy, "prior-owner") and
+        String.contains?(callback_route.guard_remedy, "arity") and
+        String.contains?(callback_route.guard_remedy, "membership"),
+      "lane #{lane} MFA dbg_wx_break:gui_cmd/2 owner=#{@remainder_owner} caller-chain=local wx module text -> int:functions/1 or conditional callback tuple -> prior-owner break_p/4 remedy=check interpreted-module membership before atom construction/lookup and preserve prior-owner callback outcomes"
+    )
+  end
+
+  defp assert_monitor_dispositions!(modules, lane) do
+    required_sinks = [
+      {"dbg_wx_mon_win:handle_event/2", :atom_construction},
+      {"dbg_wx_mon_win:clear_processes/2", :pid_parser},
+      {"dbg_wx_filedialog_win:get_file_info/5", :dynamic_fun_call},
+      {"dbg_wx_win:verify/2", :token_scanner},
+      {"dbg_wx_win:verify/2", :term_parser}
+    ]
+
+    Enum.each(required_sinks, fn {mfa, kind} ->
+      disposition = find_function_disposition!(modules, mfa, lane)
+
+      require_ownership!(
+        Enum.any?(disposition.sink_facts, &(&1.kind == kind)) and
+          is_binary(disposition.guard_remedy) and disposition.guard_remedy != "",
+        "lane #{lane} MFA #{mfa} owner=#{disposition.owner} caller-chain=exact source sink #{kind} remedy=retain its narrow input and dispatch disposition"
+      )
+    end)
+
+    filter_note =
+      find_function_disposition!(modules, "dbg_wx_filedialog_win:get_file_info/5", lane)
+
+    parser_note = find_function_disposition!(modules, "dbg_wx_win:verify/2", lane)
+    expected_scanner_line = if lane == "core", do: 279, else: 277
+    expected_parser_line = if lane == "core", do: 281, else: 279
+
+    scanner_lines =
+      parser_note.sink_facts
+      |> Enum.filter(&(&1.kind == :token_scanner))
+      |> Enum.map(& &1.line)
+      |> Enum.sort()
+
+    parser_lines =
+      parser_note.sink_facts
+      |> Enum.filter(&(&1.kind == :term_parser))
+      |> Enum.map(& &1.line)
+      |> Enum.sort()
+
+    require_ownership!(
+      String.contains?(filter_note.guard_remedy, "whitelist the filter callback") and
+        String.contains?(parser_note.guard_remedy, "parse-only") and
+        scanner_lines == [expected_scanner_line] and
+        parser_lines == [expected_parser_line],
+      "lane #{lane} MFA dbg_wx_win:verify/2 owner=#{parser_note.owner} caller-chain=monitor-owned shared entry verifier has scanner line=#{inspect(scanner_lines)} parser line=#{inspect(parser_lines)} remedy=preserve monitor ownership and parse-only term grammar while preventing scanner atom creation before parsing"
+    )
+
+    :ok
+  end
+
+  defp parse_source_forms!(path, lane, module) do
+    source = File.read!(path)
+    wx_ebin = wx_ebin_for_source(source, path, lane, module)
+
+    with_temporary_wx_path(wx_ebin, lane, module, fn -> parse_source_file!(path, lane, module) end)
+  end
+
+  defp wx_ebin_for_source(source, path, lane, module) do
+    if String.contains?(source, "-include_lib(\"wx/include/") do
+      exact_wx_ebin!(path, lane, module)
+    end
+  end
+
+  defp with_temporary_wx_path(nil, _lane, _module, parse), do: parse.()
+
+  defp with_temporary_wx_path(wx_ebin, lane, module, parse) do
+    wx_ebin_charlist = String.to_charlist(wx_ebin)
+    already_on_path = wx_ebin_charlist in :code.get_path()
+
+    unless already_on_path do
+      require_ownership!(
+        :code.add_patha(wx_ebin_charlist) == true,
+        "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=exact wx include resolver remedy=add only the exact installed lane wx ebin path while parsing"
+      )
+    end
+
+    try do
+      parse.()
+    after
+      unless already_on_path, do: :code.del_path(wx_ebin_charlist)
+    end
+  end
+
+  defp parse_source_file!(path, lane, module) do
+    case :epp.parse_file(String.to_charlist(path), []) do
+      {:ok, forms} ->
+        errors = Enum.filter(forms, &match?({:error, _}, &1))
+
+        require_ownership!(
+          errors == [],
+          "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source_path=#{path} caller-chain=EPP include or macro errors=#{inspect(errors)} remedy=resolve exact installed include files and reject partial source parses"
+        )
+
+        forms
+
+      {:error, reason} ->
+        ownership_fail!(
+          "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=installed exact source parse=#{inspect(reason)} remedy=restore a parseable source file from the adopted lane"
+        )
+    end
+  end
+
+  defp exact_wx_ebin!(source_path, lane, module) do
+    lib_root = source_path |> Path.dirname() |> Path.dirname() |> Path.dirname()
+    candidates = Path.wildcard(Path.join([lib_root, "wx-*", "ebin"])) |> Enum.filter(&File.dir?/1)
+
+    require_ownership!(
+      length(candidates) == 1,
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=exact sibling wx installation candidates=#{inspect(candidates)} remedy=resolve the single wx app belonging to this installed OTP lane"
+    )
+
+    Path.expand(hd(candidates))
+  end
+
+  defp source_citation!(source_row, lines, line, lane, mfa) do
+    source_line = Enum.at(lines, line - 1)
+
+    require_ownership!(
+      line > 0 and is_binary(source_line) and String.trim(source_line) != "",
+      "lane #{lane} MFA #{mfa} owner=#{@remainder_owner} caller-chain=installed source line #{source_row["source_path"]}:#{inspect(line)} remedy=restore the exact source clause or export line"
+    )
+
+    %{
+      path: source_row["source_path"],
+      line: line,
+      expected_text: String.trim(source_line),
+      sha256: source_row["sha256"]
+    }
+  end
+
+  defp source_call_facts({:call, anno, {:atom, _fun_anno, function}, args} = form, acc) do
+    fact = source_local_call_fact(function, args, :erl_anno.line(anno), form)
+    acc = if fact, do: [fact | acc], else: acc
+    Enum.reduce(args, acc, &source_call_facts/2)
+  end
+
+  defp source_call_facts({:call, anno, {:var, _fun_anno, _function} = callee, args}, acc) do
+    fact = %{
+      line: :erl_anno.line(anno),
+      kind: :dynamic_fun_call,
+      arity: length(args),
+      expression: inspect({:call, anno, callee, args}, limit: 12, printable_limit: 240)
+    }
+
+    [fact | Enum.reduce([callee | args], acc, &source_call_facts/2)]
+  end
+
+  defp source_call_facts(
+         {:call, anno, {:remote, _remote_anno, module_expr, function_expr}, args} = form,
+         acc
+       ) do
+    fact = source_remote_call_fact(module_expr, function_expr, args, :erl_anno.line(anno), form)
+    acc = if fact, do: [fact | acc], else: acc
+
+    Enum.reduce([module_expr, function_expr | args], acc, &source_call_facts/2)
+  end
+
+  defp source_call_facts(term, acc) when is_list(term),
+    do: Enum.reduce(term, acc, &source_call_facts/2)
+
+  defp source_call_facts(term, acc) when is_tuple(term),
+    do: term |> Tuple.to_list() |> Enum.reduce(acc, &source_call_facts/2)
+
+  defp source_call_facts(_term, acc), do: acc
+
+  defp source_local_call_fact(function, args, line, form) do
+    case Map.get(@local_call_fact_kinds, {function, length(args)}) do
+      nil ->
+        nil
+
+      kind ->
+        %{line: line, kind: kind, expression: inspect(form, limit: 12, printable_limit: 240)}
+    end
+  end
+
+  defp source_remote_call_fact({:atom, _, module}, {:atom, _, function}, args, line, form) do
+    build_remote_call_fact(module, function, args, line, form)
+  end
+
+  defp source_remote_call_fact(_module_expr, _function_expr, args, line, form) do
+    %{
+      line: line,
+      kind: :dynamic_remote_dispatch,
+      arity: length(args),
+      expression: inspect(form, limit: 12, printable_limit: 240)
+    }
+  end
+
+  defp build_remote_call_fact(module, function, args, line, form) do
+    case remote_call_fact_kind(module, function) do
+      nil ->
+        nil
+
+      kind ->
+        %{
+          line: line,
+          kind: kind,
+          module: Atom.to_string(module),
+          function: Atom.to_string(function),
+          arity: length(args),
+          expression: inspect(form, limit: 12, printable_limit: 240)
+        }
+    end
+  end
+
+  defp remote_call_fact_kind(:erl_eval, :extended_parse_term), do: :term_parser
+  defp remote_call_fact_kind(:erl_eval, _function), do: :expression_parser_or_evaluator
+
+  defp remote_call_fact_kind(module, function),
+    do: Map.get(@remote_call_fact_kinds, {module, function})
+
+  defp reachable_mfas(root_mfa, adjacency) do
+    do_reachable_mfas(:queue.in(root_mfa, :queue.new()), MapSet.new(), adjacency)
+  end
+
+  defp do_reachable_mfas(queue, visited, adjacency) do
+    case :queue.out(queue) do
+      {{:value, mfa}, rest} ->
+        if MapSet.member?(visited, mfa) do
+          do_reachable_mfas(rest, visited, adjacency)
+        else
+          next = Map.get(adjacency, mfa, [])
+          queue = Enum.reduce(next, rest, &:queue.in/2)
+          do_reachable_mfas(queue, MapSet.put(visited, mfa), adjacency)
+        end
+
+      {:empty, _queue} ->
+        visited
+    end
+  end
+
+  defp identity_mfa!(link, lane) do
+    identity = link["identity"]
+
+    require_ownership!(
+      is_map(identity) and is_binary(identity["module"]) and is_binary(identity["function"]) and
+        is_integer(identity["arity"]),
+      "lane #{lane} owner=#{link["owner"]} caller-chain=canonical/observed root identity is incomplete remedy=restore the exact root MFA"
+    )
+
+    identity_text(identity)
+  end
+
+  defp chain_link_record(link) do
+    %{
+      namespace: link["namespace"],
+      identity: identity_text(link["identity"]),
+      owner: link["owner"],
+      origin_owner: link["origin_owner"],
+      canonical_chain_id: link["canonical_chain_id"],
+      observed_chain_id: link["observed_chain_id"],
+      completion: link["completion"],
+      route_changed: get_in(link, ["evidence", "route_changed"]) == true
+    }
+  end
+
+  defp identity_text(identity),
+    do: "#{identity["module"]}:#{identity["function"]}/#{identity["arity"]}"
+
+  defp disposition_owner({:dbg_wx_mon, function, 2}, source_row)
+       when function in [:start, :load_settings, :load_settings2] do
+    %{
+      owner: @owner,
+      origin_owner: source_row["owner"],
+      completion: :pending_cross_owner
+    }
+  end
+
+  defp disposition_owner({:dbg_icmd, :break_p, 4}, source_row) do
+    %{
+      owner: @owner,
+      origin_owner: source_row["owner"],
+      completion: :pending_cross_owner
+    }
+  end
+
+  defp disposition_owner(_mfa, source_row) do
+    %{
+      owner: @remainder_owner,
+      origin_owner: source_row["owner"],
+      completion: :source_disposed_static
+    }
+  end
+
+  defp callback_route_note({:int, :auto_attach, 2}) do
+    %{
+      caller_input_origin:
+        "The public setter accepts false, an empty flag list, a two-element callback tuple, or a three-element callback tuple; Plan01's saved-settings loader is a separate earlier-owner caller.",
+      defaults_and_options:
+        "Two-element callback tuple supplies []; three-element tuple requires atom module/function and list args; accepted flags are init, break, and exit; an empty list disables the stored callback.",
+      guard_remedy:
+        "The setter validates callback atom/list shape and flags but not target export or arity. Keep this exact setter under the narrow static guard and validate a stored target before dynamic dispatch if callback attachment is permitted."
+    }
+  end
+
+  defp callback_route_note({:dbg_iserver, :auto_attach, 3}) do
+    %{
+      caller_input_origin:
+        "The function reads the callback tuple from server state and receives the current event plus process identity from init, break, or exit handling.",
+      defaults_and_options:
+        "false disables dispatch; already-attached PIDs and non-matching event flags are ignored; matching events pass [Pid | Args] to spawn/3.",
+      guard_remedy:
+        "The exact dynamic spawn target remains unresolved. A narrow follow-up must validate the stored module/function and the resulting argument arity at this dispatch point, or retain the caller's exact int:auto_attach/2 guard."
+    }
+  end
+
+  defp callback_route_note({:int, :test_at_break, 3}) do
+    %{
+      caller_input_origin:
+        "The caller chooses module, line, and a one-argument condition callback tuple; the setter forwards the tuple to dbg_iserver after check_function/1.",
+      defaults_and_options:
+        "Module and line are checked as atom and integer; check_function/1 only checks that callback module and function are atoms.",
+      guard_remedy:
+        "The selected callback target is later invoked dynamically by the prior-owner dbg_icmd:break_p/4 body. Preserve that body owner; if callback setting is allowed, validate target module/function and arity at this setter or guard the exact int:test_at_break/3 entry."
+    }
+  end
+
+  defp callback_route_note({:debugger, :quick, 3}) do
+    %{
+      caller_input_origin:
+        "The caller supplies module, function, and argument list directly to debugger:quick/3.",
+      defaults_and_options:
+        "No target restriction is present in this wrapper; it interprets the module, enables init auto-attach, then applies the supplied MFA.",
+      guard_remedy:
+        "Keep the exact debugger:quick/3 arbitrary-apply entry under a narrow static guard unless a separately reviewed caller policy constrains the target."
+    }
+  end
+
+  defp callback_route_note({:int, :eval, 3}) do
+    %{
+      caller_input_origin:
+        "The caller supplies the interpreted module, function, and arguments to the debugger process evaluator.",
+      defaults_and_options:
+        "This wrapper delegates directly to dbg_debugged:eval/3; it performs no local target validation.",
+      guard_remedy:
+        "Keep the exact int:eval/3 interpreter entry under the narrow static guard until its downstream dbg_debugged evaluator route has an approved constraint."
+    }
+  end
+
+  defp callback_route_note({:int, :load, 2}) do
+    %{
+      caller_input_origin:
+        "The caller supplies compiled module identity, source/beam paths, beam bytes, exports, and abstract code for interpreter loading.",
+      defaults_and_options:
+        "The implementation purges and loads the supplied binary, then extracts source metadata; exact lane clauses determine distribution and error handling.",
+      guard_remedy:
+        "Keep the exact int:load/2 code-loading entry guarded; any later relaxation needs a narrow allow-list for module identity, source origin, and the loaded beam rather than a debugger-module exemption."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :eval, 3}) do
+    %{
+      caller_input_origin:
+        "The error-handler route reaches int:eval/3, which delegates to dbg_debugged:eval/3; the module, function, and argument list remain caller-selected interpreter inputs. An existing Meta receives re_entry, while an uninterpreted process starts meta/5.",
+      defaults_and_options:
+        "There is no target default: the same MFA tuple enters the existing Meta or the spawned evaluator according to dbg_iserver:get_meta/1.",
+      guard_remedy:
+        "Retain the narrow int:eval/3 interpreter entry guard and the existing command-eval guard. Before relaxing either, constrain the target MFA and all downstream dynamic apply routes; do not exempt the debugger module family."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :meta, 5}) do
+    %{
+      caller_input_origin:
+        "meta/5 receives Int, Debugged, M, F, and As from dbg_ieval:eval/3's not_interpreted branch; it sends the initial eval_mfa/5 result to the debugged process and starts the Meta loop.",
+      defaults_and_options:
+        "The supplied module/function/arguments are retained, with a display-only rewrite for interpreted fun entry points; the Meta initializes status and per-process interpreter state before evaluation.",
+      guard_remedy:
+        "Keep the int:eval/3 entry under its exact static guard; constrain any change at the entry and when an uninterpreted target is returned for application."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :do_eval_function, 6}) do
+    %{
+      caller_input_origin:
+        "eval_mfa/5 and nested eval_function/7 pass module/function/arguments, or an interpreted fun and its arguments; get_function/4 distinguishes interpreted definitions from not_interpreted targets.",
+      defaults_and_options:
+        "Top-level not_interpreted calls are returned as dbg_apply; nested calls send an apply command to the debugged process. Interpreted clauses stay in fnk_clauses/4, and missing functions take the explicit undef path.",
+      guard_remedy:
+        "Keep the exact evaluator entry guarded and restrict not_interpreted targets at this dispatch boundary before returning dbg_apply or sending apply to the debugged process."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :get_function, 4}) do
+    %{
+      caller_input_origin:
+        "do_eval_function/6 supplies module, function, arguments and local/extern mode. The database stores interpreted clauses and export state; a missing module yields not_interpreted, while an interpreted module with no matching export yields undef.",
+      defaults_and_options:
+        "Local lookup uses match_object/2; external lookup requires the stored export flag true; cache hits preserve the recorded export bit.",
+      guard_remedy:
+        "Retain the current exact evaluator-entry guard. Before permitting external fallback, validate module, function, arity, and export status at the not_interpreted dispatch boundary."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :expr, 3}) do
+    %{
+      caller_input_origin:
+        "Expression forms originate in interpreted abstract code or the command expression supplied through dbg_icmd:eval/2. Remote-call, apply-fun, apply/3, safe-BIF, and operator clauses evaluate their embedded module/function/value inputs.",
+      defaults_and_options:
+        "The AST tags select distinct local, remote, fun, module/function, safe-BIF, and debugged-process dispatch paths; bad fun and invalid arity branches raise interpreter exceptions.",
+      guard_remedy:
+        "Retain the exact int:eval/3 and command-eval guards. Before relaxing them, apply a narrow MFA policy to remote/apply dispatch and an explicit safe-BIF allow-list at the safe_bif and guard_expr apply sites."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :safe_bif, 5}) do
+    %{
+      caller_input_origin:
+        "expr/3 supplies module, function, evaluated arguments, bindings and interpreter state from a safe_bif AST node; the helper dynamically applies that module/function tuple.",
+      defaults_and_options:
+        "Successful calls return the value with existing bindings; exceptions are captured and routed through the interpreter exception formatter.",
+      guard_remedy:
+        "Keep the exact evaluator entry guard and require the AST producer's safe-BIF classification to match a narrow allowed MFA set before apply/3; the helper itself does not revalidate the target."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :catch_clauses, 4}) do
+    %{
+      caller_input_origin:
+        "When all interpreted catch clauses fail to match, catch_clauses/4 receives Class and Reason from the exception produced by the interpreted path and calls erlang:Class(Reason) using a variable function name.",
+      defaults_and_options:
+        "Matching catch clauses take the ordinary interpreted sequence path; only the exhausted catch list reaches this dynamic exception dispatch.",
+      guard_remedy:
+        "Keep the exact interpreter-entry guard. If this helper is ever relaxed, constrain Class to the documented error, exit, or throw exception kinds before the dynamic erlang call."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :do_exception, 5}) do
+    %{
+      caller_input_origin:
+        "exception/4,5 and the catch/evaluator branches supply Class and Reason from an interpreted exception; do_exception/5 installs the deferred stack and exit-info state before calling erlang:Class(Reason).",
+      defaults_and_options:
+        "The caller selects whether the deferred stack includes arguments; both variants converge on the same dynamic exception-class call.",
+      guard_remedy:
+        "Keep the exact interpreter-entry guard. If this path is relaxed, constrain Class to error, exit, or throw before the variable erlang function call."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :meta_loop, 3}) do
+    %{
+      caller_input_origin:
+        "meta_loop/3 receives protocol messages whose sender field must match its Debugged pid; an exception tuple supplies Class, Reason, and stack data. When exit_info shows a re-entry, the loop calls erlang:Class(Reason).",
+      defaults_and_options:
+        "An exception outside interpreted re-entry passes through do_exception/5; an in-reentry exception takes the direct dynamic class call branch.",
+      guard_remedy:
+        "Keep the exact interpreter entry guard and constrain exception Class to error, exit, or throw before dispatch; the Meta pid match alone does not validate that function atom."
+    }
+  end
+
+  defp callback_route_note({:dbg_ieval, :guard_expr, 2}) do
+    %{
+      caller_input_origin:
+        "guard_expr/2 receives transformed guard AST from the interpreted expression evaluator; the general safe_bif guard clause applies its embedded module/function and evaluated arguments.",
+      defaults_and_options:
+        "The special erlang:not clause is separate; the general safe_bif clause returns its applied value to guard evaluation.",
+      guard_remedy:
+        "Keep the evaluator entry guard and preserve a narrow safe-BIF allow-list at the loader/compiler classification boundary and this apply site."
+    }
+  end
+
+  defp callback_route_note({:dbg_debugged, :msg_loop, 2}) do
+    %{
+      caller_input_origin:
+        "dbg_debugged:eval/3 monitors the Meta pid returned by dbg_ieval:eval/3 and msg_loop/2 matches protocol messages from that selected Meta; ready values may carry a dbg_apply tuple and command messages dispatch through handle_command/1.",
+      defaults_and_options:
+        "A ready value is returned directly unless it is dbg_apply; exception and DOWN replies terminate the loop, while receive and command messages recurse after acknowledgement/reply.",
+      guard_remedy:
+        "Retain the exact interpreter-entry guards. Before relaxing them, validate the target in dbg_apply values at this process bridge and keep command evaluation restricted to Meta-generated protocol messages."
+    }
+  end
+
+  defp callback_route_note({:dbg_debugged, :handle_command, 1}) do
+    %{
+      caller_input_origin:
+        "msg_loop/2 forwards the command field from a matching {sys, Meta, {command, Command}} protocol message.",
+      defaults_and_options:
+        "reply/1 exceptions are caught and converted to a structured exception reply with the debugged-process stacktrace tail removed.",
+      guard_remedy:
+        "Keep command construction on the exact interpreter route; do not treat this wrapper as a parser-only path because reply/1 applies commands and calls erl_eval:expr/2."
+    }
+  end
+
+  defp callback_route_note({:dbg_debugged, :reply, 1}) do
+    %{
+      caller_input_origin:
+        "handle_command/1 receives apply or eval commands from dbg_ieval's debugged_cmd protocol; the apply tuple names module/function/arguments and the eval tuple carries an expression plus bindings.",
+      defaults_and_options:
+        "The apply form calls erlang:apply/3; the eval form calls erl_eval:expr/2 with sorted bindings.",
+      guard_remedy:
+        "Retain exact interpreter-entry guards and require a narrow target policy before accepting apply commands; keep the eval form limited to the reviewed command path."
+    }
+  end
+
+  defp callback_route_note({:dbg_iload, :load_mod, 4}) do
+    %{
+      caller_input_origin:
+        "dbg_iserver:handle_call({load,...}) supplies module, source path, serialized envelope, and the module database after int:load/2 constructs the package.",
+      defaults_and_options:
+        "The loader starts a linked worker closure, waits for that worker's exit message, restores trap_exit, and returns its result synchronously.",
+      guard_remedy:
+        "Keep the exact int:load/2 caller path guarded and validate source/beam/module correspondence and package provenance before the serialized envelope reaches this loader."
+    }
+  end
+
+  defp callback_route_note({:dbg_iload, :store_module, 4}) do
+    %{
+      caller_input_origin:
+        "int:load/2 builds {interpreter_module, Exp, Abst, SrcBin, MD5} from caller-selected source/BEAM inputs, then dbg_iserver:handle_call/3 forwards the envelope to dbg_iload:load_mod/4.",
+      defaults_and_options:
+        "binary_to_term/1 decodes the envelope and abstr/1 decodes binary abstract code; the floor lane also rejects two older abstract-code tags before storing forms.",
+      guard_remedy:
+        "Retain the exact int:load/2 guard and validate caller provenance, module identity, source/beam pairing, envelope shape, and abstract-code version before either term decode; do not infer safety from the tuple tag."
+    }
+  end
+
+  defp callback_route_note({:dbg_iload, :abstr, 1}) do
+    %{
+      caller_input_origin:
+        "store_module/4 passes the abstract-code field from the int:load/2 package; this helper calls binary_to_term/1 for binary input and passes through an already-decoded term.",
+      defaults_and_options:
+        "Binary and term inputs take separate clauses; the floor lane's caller then handles legacy abstract-code tags as too_old_beam_file.",
+      guard_remedy:
+        "Keep the exact package-origin guard before this helper and validate abstract-code provenance and accepted version at the package boundary."
+    }
+  end
+
+  defp callback_route_note({:dbg_iserver, :handle_call, 3}) do
+    %{
+      caller_input_origin:
+        "The load request is sent by int:load/2 after it has prepared module, source path, and the interpreter envelope; handle_call/3 creates the module database and forwards those values to dbg_iload:load_mod/4.",
+      defaults_and_options:
+        "The server waits for the synchronous loader result before broadcasting that the module is interpreted.",
+      guard_remedy:
+        "Keep the exact int:load/2 source/beam policy at this caller route and preserve envelope validation at dbg_iload:store_module/4."
+    }
+  end
+
+  defp callback_route_note({:i, :ipb, 1}) do
+    %{
+      caller_input_origin:
+        "The shell helper accepts either an existing module atom or a caller-provided character list.",
+      defaults_and_options:
+        "Atom input passes through; list input is converted with list_to_atom/1 before breakpoint lookup.",
+      guard_remedy:
+        "Use existing-atom resolution for caller-provided module text, or keep the exact i:ipb/1 route constrained by the shell's approved input policy."
+    }
+  end
+
+  defp callback_route_note({:i, :iv, 0}) do
+    %{
+      caller_input_origin:
+        "The version atom is built from the installed debugger library directory, not from caller text.",
+      defaults_and_options:
+        "string:slice/2 and filename:basename/1 feed list_to_atom/1 from the installed app path.",
+      guard_remedy:
+        "The atom input is path-derived and fixed by the selected installed application; retain exact source provenance and do not treat this as the caller-controlled i:ipb/1 conversion."
+    }
+  end
+
+  defp callback_route_note({:dbg_icmd, :eval, 2}) do
+    %{
+      caller_input_origin:
+        "A command and interpreted module are supplied by the attached-process command path and are forwarded as an eval message.",
+      defaults_and_options:
+        "A two-element command tuple defaults stack-position to nostack; a three-element tuple preserves the supplied stack-position.",
+      guard_remedy:
+        "Keep the exact dbg_icmd:eval/2 expression-evaluation entry guarded; parsing alone is not execution, and the subsequent dbg_ieval path is handled in Plan02-02."
+    }
+  end
+
+  defp callback_route_note({:dbg_icmd, :parse_cmd, 2}) do
+    %{
+      caller_input_origin:
+        "The caller provides command text and a source line to erl_scan and the expression parser.",
+      defaults_and_options:
+        "This function returns parsed forms; it does not itself evaluate them.",
+      guard_remedy:
+        "Keep command parsing connected only to the already guarded eval path; do not claim parse_cmd/2 is a standalone execution sink."
+    }
+  end
+
+  defp callback_route_note({:dbg_icmd, :break_p, 4}) do
+    %{
+      caller_input_origin:
+        "The command path supplies module, line, and stack/binding state to the prior-owner condition-checking body.",
+      defaults_and_options:
+        "The active breakpoint, recursion suppression, condition result, callback exception, and action outcomes remain the earlier child's pending source obligation.",
+      guard_remedy:
+        "Do not claim or reassign this body. Keep 01.1.1.3.1.1 as owner until its exact callback-body and outcome evidence is completed."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon, :start, 2}) do
+    %{
+      caller_input_origin:
+        "The caller supplies monitor mode and either a selected settings path or the default sentinel; this root remains assigned to 01.1.1.3.1.1.",
+      defaults_and_options:
+        "Default startup and selected-file startup converge through init/3; the current route delta is retained as a pending changed-route observation.",
+      guard_remedy:
+        "Preserve the earlier child's exact start/2 route decision and pending guard obligation; this whole-module review does not complete or transfer the selected root."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon, function, 2})
+       when function in [:load_settings, :load_settings2] do
+    %{
+      caller_input_origin:
+        "The selected root is part of the preceding saved-settings slice; its exact caller and canonical/observed chains are retained in this record.",
+      defaults_and_options:
+        "The selected load/replay branches remain owned by 01.1.1.3.1.1, including the cross-owner trace-window selections.",
+      guard_remedy:
+        "Keep this prior-owner body and branch obligation pending under 01.1.1.3.1.1; do not treat the broad module review as completion."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon, :init, 3}) do
+    %{
+      caller_input_origin:
+        "start/2 supplies mode and selected/default settings path; init/3 opens wx and catches the graphics-startup result before constructing the monitor.",
+      defaults_and_options:
+        "The exact startup branches distinguish graphics initialization error, successful wx startup, ignored exit:stop, and reported init2 exceptions.",
+      guard_remedy:
+        "Keep the startup error and stop cases explicit at init/3; do not convert setup failures into a successful monitor state."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon, :init2, 4}) do
+    %{
+      caller_input_origin:
+        "init/3 passes the selected/default settings path, mode and graphics state to init2/4.",
+      defaults_and_options:
+        "The default sentinel skips replay and enters loop/1; a non-default path calls the prior-owner load_settings/2 before entering the loop.",
+      guard_remedy:
+        "Preserve the default-versus-selected-path branch and keep selected replay responsibility with 01.1.1.3.1.1."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon, :gui_cmd, 2}) do
+    %{
+      caller_input_origin:
+        "The monitor event loop supplies the selected menu command and current monitor state.",
+      defaults_and_options:
+        "Load Settings cancel preserves the state; a selected path forwards to the prior-owner load_settings/2 root. Other menu commands retain their exact command clauses.",
+      guard_remedy:
+        "Keep the cancel and selected-path cases distinct, and preserve the earlier owner's selected-root body."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon_win, :handle_event, 2}) do
+    %{
+      caller_input_origin:
+        "wx events provide shortcut key codes, displayed module text, and checkbox labels; module/list values are converted into atoms before monitor commands are emitted.",
+      defaults_and_options:
+        "Shortcut, double-click, right-click, auto-attach and string checkbox branches have separate event shapes; checkbox labels are UI text, not an atom allow-list.",
+      guard_remedy:
+        "Replace list_to_atom on event and displayed module strings with fixed mappings or existing-atom/module-membership resolution; keep the exact event branches guarded until each conversion is constrained."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon_win, :clear_processes, 2}) do
+    %{
+      caller_input_origin:
+        "The monitor's process grid supplies a displayed PID string for rows marked exit; the function parses that text before clearing the matching trace window.",
+      defaults_and_options:
+        "Only exit rows take the PID conversion path; non-exit rows are ignored and missing rows terminate the recursive clear.",
+      guard_remedy:
+        "Use the PID already stored with the row, or validate that the displayed identifier is an exact PID produced by the monitor before list_to_pid/1."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_filedialog_win, :new, 3}) do
+    %{
+      caller_input_origin:
+        "The dialog caller supplies options including an optional filter callback; the current sole caller in dbg_wx_interpret passes its fixed local filter_files/2 callback.",
+      defaults_and_options:
+        "Dialog init defaults directory to file:get_cwd/0, filter to file_type_and_icon/2 and sort to name when options are absent.",
+      guard_remedy:
+        "Keep the exact caller callback identity at this boundary or accept only the fixed supported filter before relaxing the dialog's callback path."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_filedialog_win, :init, 1}) do
+    %{
+      caller_input_origin:
+        "new/3 passes caller options to init/1; defaultDir, filter and sort are read from that option list.",
+      defaults_and_options:
+        "The directory defaults to the current working directory, filter to the fixed file_type_and_icon/2 function, and sort to name.",
+      guard_remedy:
+        "Constrain option producers to the reviewed caller and preserve the fixed filter default; do not infer callback safety merely from the default."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_filedialog_win, :get_file_info, 5}) do
+    %{
+      caller_input_origin:
+        "Directory listing supplies file names and the stored Filter value; Filter(Dir,Name) is a dynamic function call whose current caller supplies a fixed local callback.",
+      defaults_and_options:
+        "Directory entries bypass the file filter, ordinary files accept {Type,Icon,Color}, and skip omits an entry.",
+      guard_remedy:
+        "Validate or whitelist the filter callback at new/3/init/1 and retain the exact current fixed callback identity before permitting any other filter."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_filedialog_win, :handle_event, 2}) do
+    %{
+      caller_input_origin:
+        "The user-facing dialog supplies navigation, typed names and the OK/cancel choice; OK returns the selected path while cancel returns without a path.",
+      defaults_and_options:
+        "Cancel and selected-path outcomes are explicit; navigation and completion events update displayed path state.",
+      guard_remedy:
+        "Treat the selected path as caller-controlled input at its consuming interpreter route; the file picker only proves selection and cancellation behavior."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_win, :verify, 2}) do
+    %{
+      caller_input_origin:
+        "The local debugger Backtrace Size menu supplies an integer-typed value, while the trace window's Edit Variable control supplies a term-typed value; the latter is formatted into Var= Term and forwarded to int:meta(..., eval, Arg) on break, wait_break, or wait_running statuses.",
+      defaults_and_options:
+        "Backtrace Size uses the non-term clause, which accepts one matching integer token; Edit Variable uses erl_scan:string/3 then erl_eval:extended_parse_term/1 and returns a parsed term or ignores syntax errors. verify/2 does not evaluate an arbitrary expression, but erl_scan interns ordinary and quoted atom tokens from local UI text before either type check or term parse.",
+      guard_remedy:
+        "Keep verify/2 parse-only and preserve the term-only grammar and parsed variable-assignment route. Put a tokenizer/parser boundary before term construction that cannot intern arbitrary UI text atoms, or explicitly reject/limit term editing; list_to_existing_atom/1 after erl_scan:string/3 is too late. Apply input-size and token-count limits only as defense-in-depth. This is a local debugger UI input boundary, not a claim of remote reachability."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_trace, :gui_cmd, 2}) do
+    %{
+      caller_input_origin:
+        "The Backtrace Size menu passes {integer,Val} to dbg_wx_win:entry/4. Edit Variable passes {term,Val}, then formats the parsed result as Var= Term. Separately, evaluator command text from the local trace window enters the general user_command route.",
+      defaults_and_options:
+        "The Edit Variable assignment and general typed evaluator command both reach int:meta(..., eval, Arg) only in break, wait_break, or wait_running states; other statuses display Commands not allowed.",
+      guard_remedy:
+        "Keep general command evaluation behind the existing debugger status gate and exact local interactive path into int:meta(..., eval, ...). Preserve the separate term-only Edit Variable grammar and the non-atom-creating scanner boundary described for dbg_wx_win:verify/2; the Backtrace Size path remains integer-token-only after scanning."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_trace, :meta_cmd, 2}) do
+    %{
+      caller_input_origin:
+        "The trace_output message carries StrFun from prior-owner dbg_ieval:trace/3, which constructs it as a fixed fun over What and Args; dbg_icmd:tell_attached/1 transports that message to the attached-process route, and meta_cmd/2 invokes the formatter with the current process pid.",
+      defaults_and_options:
+        "The dynamic call is a fixed cross-owner formatter closure with local debugger-owned input. It formats trace output for display and is not an externally supplied or caller-selected function target.",
+      guard_remedy:
+        "Preserve the prior interpreter owner for closure construction, cite the exact message route into this GUI call, and classify StrFun(P) as a resolved cross-owner fixed callback; do not treat it as arbitrary dynamic dispatch or a runtime safety proof."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_code, :code_area, 1}) do
+    %{
+      caller_input_origin:
+        "code_area/1 builds a fixed syntax-style list and local SetStyle closure over its editor and font handles.",
+      defaults_and_options:
+        "The closure is called only for entries in that fixed local style list and invokes fixed styled-text font/color setters.",
+      guard_remedy:
+        "Classify the SetStyle calls as a resolved benign local capability; do not widen them to caller-selected dynamic dispatch."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_src_view, :code_area, 2}) do
+    %{
+      caller_input_origin:
+        "code_area/1 builds a fixed syntax-style list and local SetStyle closure over its editor and font handles.",
+      defaults_and_options:
+        "The closure is called only for entries in that fixed local style list and invokes fixed styled-text font/color setters.",
+      guard_remedy:
+        "Classify the SetStyle calls as a resolved benign local capability; do not widen them to caller-selected dynamic dispatch."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_break, :gui_cmd, 2}) do
+    %{
+      caller_input_origin:
+        "The local break dialog supplies user-controlled module text, selected function/line data, action, and an optional conditional callback tuple; module selection reaches int:functions/1 without an explicit interpreted-module membership check.",
+      defaults_and_options:
+        "Line breaks add the breakpoint and action; conditional breaks also call int:test_at_break/3 with {CMod,CFunc}; function breaks call int:break_in/3. The called dbg_icmd:break_p/4 body and outcomes remain assigned to the prior owner.",
+      guard_remedy:
+        "Check local module text against the current interpreted-module membership before atom construction or int:functions/1 lookup, then resolve only to an existing atom. Keep the callback body and outcomes with prior-owner dbg_icmd:break_p/4; before relaxing the setter or exact entry guard, validate the callback module/function export and arity at the existing setting boundary."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_break_win, :handle_event, 2}) do
+    %{
+      caller_input_origin:
+        "The local debugger break dialog supplies module text from wxComboBox:getValue/1, function selections, typed fields, and OK/cancel events; user-controlled module text is converted with list_to_atom/1 on edit and submit routes.",
+      defaults_and_options:
+        "Cancel stops the dialog; function selection uses the displayed function list; other accepted values come from check_input/1 token-type matches before a break command tuple is returned.",
+      guard_remedy:
+        "Map displayed module names to existing atoms from the current supported module set before any conversion. Do not create atoms from editable text; preserve the selected function and typed-input constraints."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_break_win, :create_win, 5}) do
+    %{
+      caller_input_origin:
+        "The local debugger creates one editable Line field for line breaks; conditional breakpoints add editable C-Module and C-Function fields.",
+      defaults_and_options:
+        "create_win/5 configures Line as integer and C-Module/C-Function as atom tokens only for conditional breakpoints; check_input/1 delegates to check_input/2, which scans each wxTextCtrl value before matching its configured token type.",
+      guard_remedy:
+        "Preserve the line/conditional field distinction and term grammar, but tokenize wxTextCtrl text without interning atoms before type validation; resolve atom spellings only through an explicit existing module/callback allowlist. Do not claim remote reachability; input and token limits are defense-in-depth."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_break_win, :check_input, 1}) do
+    %{
+      caller_input_origin:
+        "check_input/1 initializes an empty accumulator and delegates the configured dialog fields to check_input/2.",
+      defaults_and_options:
+        "The wrapper adds no parsing or atom conversion of its own; the recursive check_input/2 branch handles each typed field.",
+      guard_remedy:
+        "Keep the wrapper connected only to the reviewed typed-field parser, and preserve its exact field accumulator behavior."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_break_win, :check_input, 2}) do
+    %{
+      caller_input_origin:
+        "check_input/2 reads user-controlled wxTextCtrl text in the local debugger UI and passes each field to erl_scan:string/1 before matching its configured token type.",
+      defaults_and_options:
+        "Only one token of each configured type is accepted; scanner errors or a mismatched token return error, but ordinary and quoted atom tokens can be interned before matching the configured type.",
+      guard_remedy:
+        "Replace atom-creating scanning at this local UI boundary with tokenization that retains atom spellings as text until a strict existing-atom/module/callback whitelist check succeeds. Preserve the current one-token type grammar; length and token-count caps are defense-in-depth."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_trace_win, :handle_event, 2}) do
+    %{
+      caller_input_origin:
+        "The trace-window keyboard handler turns a control key code into a one-character shortcut atom; sash resize clauses construct fixed local Change and ChangeH closures over their sizer geometry and call them at fixed child/sizer sites; other cases handle menu data, search text, evaluator command text, or binding selection.",
+      defaults_and_options:
+        "Invalid shortcut conversion is caught and ignored; Change and ChangeH capture no caller-supplied function and only resize local sizers; evaluator text is returned as a user_command for the trace controller, and binding activation returns the existing binding for Edit Variable.",
+      guard_remedy:
+        "Replace key-code list_to_atom/1 with an explicit mapping from supported shortcut key codes to fixed atoms; classify each Change and ChangeH call as a resolved benign local capability, not caller-selected dispatch; keep evaluator text on the existing status-gated debugger command route."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_view, :gui_load_module, 2}) do
+    %{
+      caller_input_origin:
+        "The module viewer receives its module atom from the existing debugger module/view route and requests raw_contents from dbg_iserver.",
+      defaults_and_options:
+        "A successful raw_contents reply is displayed as source; not_found switches to the no-code display. This is a read/display lookup, not source compilation or module loading.",
+      guard_remedy:
+        "Keep this route a fixed raw_contents read for the selected existing module; do not replace it with a code loader or infer safety for the upstream module-name conversion."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_trace, :gui_load_module, 3}) do
+    %{
+      caller_input_origin:
+        "The trace window's existing module state is used for a fixed raw_contents request to dbg_iserver.",
+      defaults_and_options:
+        "A successful reply is rendered in the source pane and not_found displays the no-code state; this route reads debugger database contents and does not load the selected source.",
+      guard_remedy:
+        "Retain the fixed raw_contents display lookup and keep module-name input constraints at the upstream caller boundary."
+    }
+  end
+
+  defp callback_route_note(_mfa) do
+    %{
+      caller_input_origin:
+        "See the exact source clause heads, current graph callers, and canonical/observed root links for this MFA.",
+      defaults_and_options: nil,
+      guard_remedy:
+        "No function-specific guard conclusion is inferred from graph absence; retain exact source and direct-callee evidence for later tier review."
+    }
+  end
+
+  defp callback_sink_disposition(mfa, sink_facts, guard_remedy) do
+    %{
+      source_static_only: true,
+      operations: Enum.map(sink_facts, & &1.kind) |> Enum.uniq() |> Enum.sort(),
+      caller_control: callback_route_note(mfa).caller_input_origin,
+      narrow_remedy: guard_remedy,
+      execution_performed: false
+    }
+  end
+
+  defp function_owner!(modules, mfa_name) do
+    modules
+    |> Enum.flat_map(& &1.dispositions)
+    |> Enum.find_value(fn disposition ->
+      if disposition.mfa == mfa_name, do: disposition.owner
+    end)
+  end
+
+  defp find_function_disposition!(modules, mfa_name, lane) do
+    Enum.find_value(modules, fn module ->
+      Enum.find(module.dispositions, &(&1.mfa == mfa_name))
+    end)
+    |> case do
+      nil ->
+        ownership_fail!(
+          "lane #{lane} MFA #{mfa_name} owner=#{@owner} caller-chain=selected root source module remedy=retain its exact function disposition"
+        )
+
+      disposition ->
+        disposition
+    end
+  end
+
+  defp changed_route_for?(link, module, function, arity, lane) do
+    identity = link["identity"] || %{}
+
+    identity["lane"] == lane and identity["app"] == "debugger" and
+      identity["module"] == Atom.to_string(module) and
+      identity["function"] == Atom.to_string(function) and identity["arity"] == arity and
+      get_in(link, ["evidence", "route_changed"]) == true
   end
 
   defp assert_root_ledger!(root_records, lane) do

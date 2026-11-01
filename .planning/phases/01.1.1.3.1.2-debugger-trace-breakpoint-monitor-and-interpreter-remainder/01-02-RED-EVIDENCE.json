@@ -1,0 +1,11 @@
+{
+  "command": "PATH=/private/tmp/fablebook-asdf/installs/erlang/29.1.2/bin:/private/tmp/fablebook-asdf/installs/elixir/1.20.4-otp-29/bin:$PATH mix test --no-compile --warnings-as-errors test/contract/tier_sweep_test.exs --only debugger_remainder_inventory --formatter Fablebook.Test.TapFormatter",
+  "exitCode": 2,
+  "output": "TAP version 13\nnot ok 1 - test assigned remainder universe has a fail-closed exact-lane reconciliation contract\n1..1\n",
+  "targetTest": "test assigned remainder universe has a fail-closed exact-lane reconciliation contract",
+  "targetFile": "test/contract/tier_sweep_test.exs",
+  "expected": "The exact-lane remainder inventory contract is exported and reconciles the adopted assignments with current source, BEAM, graph and owner evidence.",
+  "actual": "The tagged test failed because DebuggerSettings.assert_remainder_inventory!/3 is not exported yet.",
+  "consoleOutputPath": "/private/tmp/fablebook-remainder-inventory-red.console",
+  "semanticAssessment": "The TAP report contains exactly one executed selected target and marks it failed; all other tests were excluded. The test source has a passing module-load assertion followed by a single function_exported? assertion for the missing reconciliation contract. This is the intended RED for task 01-02."
+}

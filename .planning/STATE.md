@@ -1,18 +1,18 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.1
-current_phase_name: "Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons"
-status: halted
-stopped_at: Plan 01 task 01-02 measured audit budget requires split; source tracer independently green, final receipts in PR 23
-last_updated: "2026-10-30T12:56:12Z"
-last_activity: 2026-10-30 — Source tracer implemented; expanded audit measured; split required
-last_activity_desc: Plan 01 halted at documented source/context budget; 221 original exclusions expand to 2395 core and 2307 floor functions; no dependent plan dispatched
-state_head: 21bfbc00f6765bc4c20f801289713387a34425c8
+current_phase: 01.1.1.3.1.2
+current_phase_name: Debugger trace breakpoint monitor and interpreter remainder research
+status: executing
+stopped_at: Completed 01.1.1.3.1.2-04-PLAN.md
+last_updated: "2026-11-01T18:51:54.807Z"
+last_activity: 2026-11-01
+last_activity_desc: Phase 01.1.1.3.1.2 execution started
+state_head: b4244d90b0d36138aa095a7d341ab49b4611bfab
 progress:
-  total_phases: 38
+  total_phases: 40
   completed_phases: 1
-  total_plans: 20
-  completed_plans: 15
+  total_plans: 29
+  completed_plans: 24
   percent: 3
 ---
 
@@ -23,21 +23,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.1 Plan 01 is halted after the source/PathConsult tracer. Source archive approved (INT-20261030-01), exact-lane source integrity and static detection implemented in PR #23. The original exclusion scope expands to about 11.0 MB/core and 10.2 MB/floor of source; split/re-plan before bulk audit. Macro caller-AST policy remains unresolved; SEC-01 stays pending Phase 5.
+**Current focus:** Phase 01.1.1.3.1.2 — Debugger trace breakpoint monitor and interpreter remainder research
 
 ## Current Position
 
-Phase: 01.1.1.1 (Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons) — HALTED FOR RE-PLANNING
-Plan: 01 halted after task 01-01; task 01-02 partial, task 01-03 pending; 0/5 plans complete
-Status: Designed stop at the explicit audit-size gate; Plans 02–05 blocked by halted Plan 01
-Last activity: 2026-10-30 — Exact local source tracer passes 100 focused tests per lane; original audit counts corrected and both-lane source budget recorded
+Phase: 01.1.1.3.1.2 (Debugger trace breakpoint monitor and interpreter remainder research) — EXECUTING
+Plan: 5 of 5
+Status: Ready to execute
+Last activity: 2026-11-01 — Phase 01.1.1.3.1.2 execution started
 
-Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 plans complete; current phase has one halted partial plan and four blocked plans
+Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 roadmap plans complete; the selected nested phase passed locally without changing parent roll-up counts
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 9
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -46,6 +46,7 @@ Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 plan
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01.1.1 | 5 | 316 min | 63.2 min |
+| 01.1.1.3.1.1 | 4 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -71,6 +72,10 @@ Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 plan
 | Phase 01.1.1 P03 | 73min | 3 tasks | 18 files |
 | Phase 01.1.1 P04 | 167min | 3 tasks | 3 files |
 | Phase 01.1.1 P05 | 28min | 4 tasks | 13 files |
+| Phase 01.1.1.3.1.2 P01 | 512min | 2 tasks | 7 files |
+| Phase 01.1.1.3.1.2 P02 | 96min | 2 tasks | 4 files |
+| Phase 01.1.1.3.1.2 P03 | 212min | 2 tasks | 6 files |
+| Phase 01.1.1.3.1.2 P04 | 132min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -115,6 +120,16 @@ Recent decisions affecting current work:
 - [Phase 01.1.1]: The cited INT-20261029-06 source was added verbatim so the existing phase-summary citation and intent-corpus CI checks resolve.
 - [Phase 01.1.1]: The live boundary contract shares sweep barriers and base sinks and derives delegates from the forward call graph on each supported lane.
 - [Phase 01.1.1]: New loader and evaluator fronts are mirrored in the contract tier and Credo; safe sweep rows use cited function-scoped dispositions, and SEC-01 stays Pending for Phase 5.
+- [Phase 01.1.1.3.1.2]: The adopted ledger remains the ownership authority; exact-lane acceptance derives current sets instead of freezing historical totals.
+- [Phase 01.1.1.3.1.2]: Installed source is accepted only when current lane bytes match the adopted exact-source row and pass path, type, containment, and citation checks.
+- [Phase 01.1.1.3.1.2]: Resolve installed debugger source through its adopted exact_source row and retain regular-file and realpath containment checks without expanding the archive.
+- [Phase 01.1.1.3.1.2]: Keep dbg_wx_win:verify/2 and its integer scanner, term scanner, and term parser branches in the monitor group; trace records cite callers and cross-link to monitor-owned verifier records.
+- [Phase 01.1.1.3.1.2]: Represent the conditional breakpoint route as three records: current dbg_wx_break:gui_cmd/2 tuple construction, current dbg_icmd:cmd/4 dispatch, and prior-owned dbg_icmd:break_p/4 callback body.
+- [Phase 01.1.1.3.1.2]: Treat erl_scan:string/1,3 as an atom-interning scanner boundary distinct from extended_parse_term/1; Plan04 needs an atom-free tokenizer/parser boundary or an explicit limit on term editing.
+- [Phase 01.1.1.3.1.2]: Classify local SetStyle, Change, ChangeH, and prior-owner StrFun closures as fixed capabilities only where exact construction and invocation sites establish that origin.
+- [Phase 01.1.1.3.1.2]: Keep fourteen new debugger guards function-scoped and mirrored.
+- [Phase 01.1.1.3.1.2]: Record the empty changed-family exclusion intersection without claiming removal witnesses.
+- [Phase 01.1.1.3.1.2]: Preserve the four inherited pending function assignments and adopted ledger.
 
 ### Pending Todos
 
@@ -137,6 +152,7 @@ None yet.
 
 - Phase 01.1 inserted after Phase 1: Close phase 1 guard gaps (atom-ban bypass, code loading, hex-publish hardening); split per INT-20261029-01 to keep the 5-plan cap (URGENT)
 - Phase 01.1.1.1 inserted after Phase 01.1.1: Finish the ban list: open items transferred from 01.1.1 at planning (INT-20261029-02) (URGENT)
+- Numbering from here: keep existing dotted IDs stable because ownership and evidence artifacts reference them; finish the already-assigned debugger descendant 01.1.1.3.1.3, then resume the existing top-level roadmap sequence from Phase 2. Do not add further dotted descendants; express ordering with explicit dependencies.
 
 ## Deferred Items
 
@@ -148,7 +164,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-10-30T12:56:12Z
-Stopped at: Plan 01 task 01-02 documented size gate; source/PathConsult tracer independently green in PR 23; no phase completion
-Next command: $gsd-plan-phase 01.1.1.1 — split/re-plan the remaining audit using measured source-based partitions and preserved WIP
-Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.continue-here.md
+Last session: 2026-11-01T18:51:54.424Z
+Stopped at: Completed 01.1.1.3.1.2-04-PLAN.md
+Next command: $gsd-execute-phase 01.1.1.3.1.2
+Resume file: None

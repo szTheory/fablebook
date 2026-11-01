@@ -769,4 +769,32 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
 
 ### Phase 01.1.1.3.1.1: Debugger saved-settings replay and deferred callback guards
 
+**Execution:** Plans 01–04 executed; substantive PR #31 merged. Tested code head 1180b4da6f7761c77b72439b65f438240a5baba5 passed run 41249965688; merge commit 01f94a4bd49236227707af273160f0753e403e44.
+**Verification:** passed — 15/15 plan truths verified, UAT 12/12 passed, and a one-off 24-assertion scope audit passed. See 01.1.1.3.1.1-VERIFICATION.md.
+**Boundary:** This nested phase is complete. Next child 01.1.1.3.1.2 remains unstarted; auto-advance is disabled. SEC-01 remains Pending for Phase 5, and later debugger and parent verification owners are unchanged.
+
 ### Phase 01.1.1.3.1.2: Debugger trace breakpoint monitor and interpreter remainder research
+
+**Goal**: Reconcile every currently assigned debugger remainder function, export, root and risky source branch on both exact lanes, with static guard proof and inherited ownership preserved. Later installed-wide acceptance remains with 01.1.1.3.1.3.
+**Depends on**: Phase 01.1.1.3.1.1
+**Requirements**: None completed here (SEC-01 advanced; Phase 5 completes it)
+**Success Criteria** (what must be TRUE):
+  1. Both exact lanes have fresh, source-backed inventories that reconcile assigned and observed functions, exports, roots and owners without relying on fixed historical totals.
+  2. Callback, breakpoint, interpreter, monitor and trace routes have explicit branch dispositions; inherited callback body/outcome ownership remains unchanged.
+  3. Risky routes have narrow static source/BEAM guard evidence and omission controls; debugger code and callbacks are never invoked.
+  4. Scoped receipts, review, security and delivery evidence agree on the same exact source, owner and tested head, while later installed-wide acceptance and SEC-01 remain pending with their existing owners.
+**Plans**: 4/5 plans executed across 5 sequential waves
+**Wave 1**
+- [x] 01.1.1.3.1.2-01-PLAN.md — Build the tracer and reconcile fresh exact-lane inventories
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [x] 01.1.1.3.1.2-02-PLAN.md — Disposition callback, breakpoint and interpreter routes
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [x] 01.1.1.3.1.2-03-PLAN.md — Disposition monitor, trace and support routes
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [x] 01.1.1.3.1.2-04-PLAN.md — Prove narrow guards, ownership and omission controls
+
+**Wave 5** *(blocked on Wave 4 completion)*
+- [ ] 01.1.1.3.1.2-05-PLAN.md — Review, validate and deliver the scoped change
