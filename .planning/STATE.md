@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.3.1.2
 current_phase_name: Debugger trace breakpoint monitor and interpreter remainder research
 status: executing
-stopped_at: Completed 01.1.1.3.1.2-02-PLAN.md
-last_updated: "2026-11-01T12:42:02.871Z"
+stopped_at: Completed 01.1.1.3.1.2-03-PLAN.md
+last_updated: "2026-11-01T16:36:58.123Z"
 last_activity: 2026-11-01
 last_activity_desc: Phase 01.1.1.3.1.2 execution started
-state_head: 269b2e56d73582b8d4a207012beb822ada360f56
+state_head: c3caad3613743c3119bdbf63f5d6de3974db7c88
 progress:
   total_phases: 40
   completed_phases: 1
   total_plans: 29
-  completed_plans: 22
+  completed_plans: 23
   percent: 3
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-10-30)
 ## Current Position
 
 Phase: 01.1.1.3.1.2 (Debugger trace breakpoint monitor and interpreter remainder research) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-11-01 — Phase 01.1.1.3.1.2 execution started
 
@@ -74,6 +74,7 @@ Progress: 1/38 phases complete ([░░░░░░░░░░] 3%); 15/20 road
 | Phase 01.1.1 P05 | 28min | 4 tasks | 13 files |
 | Phase 01.1.1.3.1.2 P01 | 512min | 2 tasks | 7 files |
 | Phase 01.1.1.3.1.2 P02 | 96min | 2 tasks | 4 files |
+| Phase 01.1.1.3.1.2 P03 | 212min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -121,6 +122,10 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.3.1.2]: The adopted ledger remains the ownership authority; exact-lane acceptance derives current sets instead of freezing historical totals.
 - [Phase 01.1.1.3.1.2]: Installed source is accepted only when current lane bytes match the adopted exact-source row and pass path, type, containment, and citation checks.
 - [Phase 01.1.1.3.1.2]: Resolve installed debugger source through its adopted exact_source row and retain regular-file and realpath containment checks without expanding the archive.
+- [Phase 01.1.1.3.1.2]: Keep dbg_wx_win:verify/2 and its integer scanner, term scanner, and term parser branches in the monitor group; trace records cite callers and cross-link to monitor-owned verifier records.
+- [Phase 01.1.1.3.1.2]: Represent the conditional breakpoint route as three records: current dbg_wx_break:gui_cmd/2 tuple construction, current dbg_icmd:cmd/4 dispatch, and prior-owned dbg_icmd:break_p/4 callback body.
+- [Phase 01.1.1.3.1.2]: Treat erl_scan:string/1,3 as an atom-interning scanner boundary distinct from extended_parse_term/1; Plan04 needs an atom-free tokenizer/parser boundary or an explicit limit on term editing.
+- [Phase 01.1.1.3.1.2]: Classify local SetStyle, Change, ChangeH, and prior-owner StrFun closures as fixed capabilities only where exact construction and invocation sites establish that origin.
 
 ### Pending Todos
 
@@ -155,7 +160,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-01T12:42:02.600Z
-Stopped at: Completed 01.1.1.3.1.2-02-PLAN.md
+Last session: 2026-11-01T16:36:57.813Z
+Stopped at: Completed 01.1.1.3.1.2-03-PLAN.md
 Next command: $gsd-execute-phase 01.1.1.3.1.2
 Resume file: None

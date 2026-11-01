@@ -783,7 +783,7 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
   2. Callback, breakpoint, interpreter, monitor and trace routes have explicit branch dispositions; inherited callback body/outcome ownership remains unchanged.
   3. Risky routes have narrow static source/BEAM guard evidence and omission controls; debugger code and callbacks are never invoked.
   4. Scoped receipts, review, security and delivery evidence agree on the same exact source, owner and tested head, while later installed-wide acceptance and SEC-01 remain pending with their existing owners.
-**Plans**: 2/5 plans executed across 5 sequential waves
+**Plans**: 3/5 plans executed across 5 sequential waves
 **Wave 1**
 - [x] 01.1.1.3.1.2-01-PLAN.md — Build the tracer and reconcile fresh exact-lane inventories
 
@@ -791,7 +791,7 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
 - [x] 01.1.1.3.1.2-02-PLAN.md — Disposition callback, breakpoint and interpreter routes
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01.1.1.3.1.2-03-PLAN.md — Disposition monitor, trace and support routes
+- [x] 01.1.1.3.1.2-03-PLAN.md — Disposition monitor, trace and support routes
 
 **Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 01.1.1.3.1.2-04-PLAN.md — Prove narrow guards, ownership and omission controls
