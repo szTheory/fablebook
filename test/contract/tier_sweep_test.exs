@@ -4098,13 +4098,112 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :debugger_remainder_monitor
   test "monitor and file-window source branches include exact defaults and routes", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
     record = DebuggerSettings.records(ctx.graph.lane.name)
 
-    assert :monitor_dialog_filter_default in DebuggerSettings.branch_ids(),
-           "monitor and file-dialog dispositions need an exact source branch for the filter default"
+    result =
+      DebuggerSettings.assert_function_dispositions!(ctx.graph, evidence, record, :monitor)
 
-    assert MapSet.member?(MapSet.new(Enum.map(record.source_branches, & &1.id)),
-                          :monitor_dialog_filter_default)
+    assert result.status == :verified
+
+    assert result.module_names == [
+             "dbg_wx_filedialog_win",
+             "dbg_wx_mon",
+             "dbg_wx_mon_win",
+             "dbg_wx_win"
+           ]
+
+    required_branch_ids = [
+      :monitor_start_error,
+      :monitor_start_already_started,
+      :startup_graphics_error,
+      :startup_graphics_ready,
+      :startup_init2_stop,
+      :startup_init2_error,
+      :startup_default_no_replay,
+      :startup_default_loop,
+      :startup_selected_replay,
+      :load_menu_cancel,
+      :load_menu_selected,
+      :trace_windows_selected,
+      :trace_windows_unselected,
+      :monitor_dialog_default_path,
+      :monitor_dialog_filter_default,
+      :monitor_dialog_sort_default,
+      :monitor_dialog_cancel,
+      :monitor_dialog_selected,
+      :monitor_dialog_filter_dispatch,
+      :monitor_window_shortcut_atom,
+      :monitor_window_module_atom,
+      :monitor_window_reload_module_atom,
+      :monitor_window_checkbox_atoms,
+      :monitor_window_strings_checkbox_atom,
+      :monitor_process_pid_parse,
+      :monitor_backtrace_term_parser
+    ]
+
+    assert Enum.map(result.source_branches, & &1.id) == Enum.sort(required_branch_ids)
+
+    prior_root_rows = Map.new(record.roots, &{&1.mfa, &1})
+
+    assert Enum.all?(
+             [
+               {:dbg_wx_mon, :start, 2},
+               {:dbg_wx_mon, :load_settings, 2},
+               {:dbg_wx_mon, :load_settings2, 2}
+             ],
+             fn mfa ->
+               root = Map.fetch!(prior_root_rows, mfa)
+               root.owner == "01.1.1.3.1.1" and root.completion == :pending
+             end
+           )
+
+    assert result.cross_owner.selected_roots
+           |> Enum.any?(&(&1.mfa == "dbg_wx_mon:start/2" and &1.changed_route))
+
+    assert result.cross_owner.selected_branches
+           |> Enum.map(& &1.id)
+           |> Enum.sort() == [
+             :monitor_start_already_started,
+             :monitor_start_error,
+             :trace_windows_selected,
+             :trace_windows_unselected
+           ]
+
+    source_functions =
+      result.modules
+      |> Enum.flat_map(& &1.dispositions)
+      |> Map.new(&{&1.mfa, &1})
+
+    expected_atom_lines =
+      if ctx.graph.lane.name == "core",
+        do: [534, 557, 565, 577, 596],
+        else: [530, 553, 561, 573, 592]
+
+    actual_atom_lines =
+      source_functions["dbg_wx_mon_win:handle_event/2"].sink_facts
+      |> Enum.filter(&(&1.kind == :atom_construction))
+      |> Enum.map(& &1.line)
+      |> Enum.sort()
+
+    assert actual_atom_lines == expected_atom_lines
+
+    assert Enum.any?(
+             source_functions["dbg_wx_mon_win:clear_processes/2"].sink_facts,
+             &(&1.kind == :pid_parser)
+           )
+
+    assert Enum.any?(
+             source_functions["dbg_wx_filedialog_win:get_file_info/5"].sink_facts,
+             &(&1.kind == :dynamic_fun_call)
+           )
+
+    assert Enum.any?(
+             source_functions["dbg_wx_win:verify/2"].sink_facts,
+             &(&1.kind == :term_parser)
+           )
   end
 
   @tag :debugger_remainder_callbacks

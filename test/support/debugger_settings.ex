@@ -25,6 +25,55 @@ defmodule Fablebook.Test.DebuggerSettings do
     {:dbg_wx_mon, :load_settings, 2},
     {:dbg_wx_mon, :load_settings2, 2}
   ]
+  @monitor_group_modules [
+    "dbg_wx_mon",
+    "dbg_wx_mon_win",
+    "dbg_wx_filedialog_win",
+    "dbg_wx_win"
+  ]
+  @monitor_route_branch_ids [
+    :monitor_start_error,
+    :monitor_start_already_started,
+    :startup_graphics_error,
+    :startup_graphics_ready,
+    :startup_init2_stop,
+    :startup_init2_error,
+    :startup_default_no_replay,
+    :startup_default_loop,
+    :startup_selected_replay,
+    :load_menu_cancel,
+    :load_menu_selected,
+    :trace_windows_selected,
+    :trace_windows_unselected,
+    :monitor_dialog_default_path,
+    :monitor_dialog_filter_default,
+    :monitor_dialog_sort_default,
+    :monitor_dialog_cancel,
+    :monitor_dialog_selected,
+    :monitor_dialog_filter_dispatch,
+    :monitor_window_shortcut_atom,
+    :monitor_window_module_atom,
+    :monitor_window_reload_module_atom,
+    :monitor_window_checkbox_atoms,
+    :monitor_window_strings_checkbox_atom,
+    :monitor_process_pid_parse,
+    :monitor_backtrace_term_parser
+  ]
+  @remainder_source_branch_ids [
+    :monitor_dialog_default_path,
+    :monitor_dialog_filter_default,
+    :monitor_dialog_sort_default,
+    :monitor_dialog_cancel,
+    :monitor_dialog_selected,
+    :monitor_dialog_filter_dispatch,
+    :monitor_window_shortcut_atom,
+    :monitor_window_module_atom,
+    :monitor_window_reload_module_atom,
+    :monitor_window_checkbox_atoms,
+    :monitor_window_strings_checkbox_atom,
+    :monitor_process_pid_parse,
+    :monitor_backtrace_term_parser
+  ]
   @debugger_seed_modules ["dbg_idb", "dbg_istk", "dbg_wx_interpret"]
   @auto_attach_route_branch_ids [
     :auto_attach_empty_flags,
@@ -669,7 +718,89 @@ defmodule Fablebook.Test.DebuggerSettings do
      }}
   ]
 
-  @all_branch_specs @settings_branch_specs ++ @callback_branch_specs ++ @interpreter_branch_specs
+  @monitor_remainder_branch_specs [
+    {:monitor_dialog_default_path, {:dbg_wx_filedialog_win, :init, 1},
+     :current_directory_fallback_when_default_dir_absent, {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {93, "Path = proplists:get_value(defaultDir, Options0, DefPath)"},
+       floor: {91, "Path = proplists:get_value(defaultDir, Options0, DefPath)"}
+     }},
+    {:monitor_dialog_filter_default, {:dbg_wx_filedialog_win, :init, 1},
+     :fixed_file_type_filter_is_default, {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {95, "Filter = proplists:get_value(filter, Options0, fun file_type_and_icon/2)"},
+       floor: {93, "Filter = proplists:get_value(filter, Options0, fun file_type_and_icon/2)"}
+     }},
+    {:monitor_dialog_sort_default, {:dbg_wx_filedialog_win, :init, 1}, :name_sort_is_default,
+     {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {96, "SortCol = sort_col(proplists:get_value(sort, Options0, name))"},
+       floor: {94, "SortCol = sort_col(proplists:get_value(sort, Options0, name))"}
+     }},
+    {:monitor_dialog_cancel, {:dbg_wx_filedialog_win, :handle_event, 2},
+     :cancel_returns_without_selection, {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {216, "handle_event(#wx{id=Id=?wxID_CANCEL}"},
+       floor: {214, "handle_event(#wx{id=Id=?wxID_CANCEL}"}
+     }},
+    {:monitor_dialog_selected, {:dbg_wx_filedialog_win, :handle_event, 2},
+     :ok_returns_selected_path, {:remainder, "dbg_wx_filedialog_win"},
+     %{
+       core: {220, "handle_event(#wx{id=Id=?wxID_OK}"},
+       floor: {218, "handle_event(#wx{id=Id=?wxID_OK}"}
+     }},
+    {:monitor_dialog_filter_dispatch, {:dbg_wx_filedialog_win, :get_file_info, 5},
+     :filter_callback_receives_current_directory_and_entry_name,
+     {:remainder, "dbg_wx_filedialog_win"},
+     %{core: {511, "case Filter(Dir,Name) of"}, floor: {509, "case Filter(Dir,Name) of"}}},
+    {:monitor_window_shortcut_atom, {:dbg_wx_mon_win, :handle_event, 2},
+     :key_code_is_converted_to_shortcut_atom, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {534, "{shortcut, list_to_atom([Key+($a-$A)])}"},
+       floor: {530, "{shortcut, list_to_atom([Key+($a-$A)])}"}
+     }},
+    {:monitor_window_module_atom, {:dbg_wx_mon_win, :handle_event, 2},
+     :displayed_module_name_becomes_atom, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {557, "{module, list_to_atom(ModS), view};"},
+       floor: {553, "{module, list_to_atom(ModS), view};"}
+     }},
+    {:monitor_window_reload_module_atom, {:dbg_wx_mon_win, :handle_event, 2},
+     :displayed_module_name_is_loaded_for_reload, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {565, "int:i(list_to_atom(ModS))"},
+       floor: {561, "int:i(list_to_atom(ModS))"}
+     }},
+    {:monitor_window_checkbox_atoms, {:dbg_wx_mon_win, :handle_event, 2},
+     :displayed_checkbox_labels_become_atoms, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {577, "[list_to_atom(Name)|NamesAcc];"},
+       floor: {573, "[list_to_atom(Name)|NamesAcc];"}
+     }},
+    {:monitor_window_strings_checkbox_atom, {:dbg_wx_mon_win, :handle_event, 2},
+     :strings_checkbox_label_becomes_atom, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {596, "[list_to_atom(Name)|NamesAcc];"},
+       floor: {592, "[list_to_atom(Name)|NamesAcc];"}
+     }},
+    {:monitor_process_pid_parse, {:dbg_wx_mon_win, :clear_processes, 2},
+     :displayed_process_identifier_is_parsed_for_cleanup, {:remainder, "dbg_wx_mon_win"},
+     %{
+       core: {411, "Pid = list_to_pid(wxListItem:getText(Item))"},
+       floor: {407, "Pid = list_to_pid(wxListItem:getText(Item))"}
+     }},
+    {:monitor_backtrace_term_parser, {:dbg_wx_win, :verify, 2},
+     :term_option_is_scanned_and_parsed_without_evaluation, {:remainder, "dbg_wx_win"},
+     %{
+       core: {281, "case erl_eval:extended_parse_term(Tokens++[{dot, erl_anno:new(1)}]) of"},
+       floor: {279, "case erl_eval:extended_parse_term(Tokens++[{dot, erl_anno:new(1)}]) of"}
+     }}
+  ]
+
+  @all_branch_specs @settings_branch_specs ++
+                      @callback_branch_specs ++
+                      @interpreter_branch_specs ++
+                      @monitor_remainder_branch_specs
 
   def records(lane_name) when lane_name in ["core", "floor"] do
     lane = Map.fetch!(@lane_data, lane_name)
@@ -1428,7 +1559,7 @@ defmodule Fablebook.Test.DebuggerSettings do
   end
 
   def assert_function_dispositions!(graph, evidence, records, group)
-      when group in [:callbacks, :interpreter] do
+      when group in [:callbacks, :interpreter, :monitor] do
     inventory = assert_remainder_inventory!(graph, evidence, records)
     {module_names, required_branches} = disposition_group!(group)
     lane = evidence.lane.name
@@ -1487,7 +1618,7 @@ defmodule Fablebook.Test.DebuggerSettings do
 
         require_ownership!(
           source_functions == inventory_module.functions,
-          "lane #{lane} app debugger module #{module_name} owner=#{@remainder_owner} caller-chain=exact installed source versus independent BEAM functions missing=#{inspect(inventory_module.functions -- source_functions)} extra=#{inspect(source_functions -- inventory_module.functions)} remedy=restore every private and zero-hit MFA from this lane"
+          "lane #{lane} app debugger module #{module_name} owner=#{@remainder_owner} source_path=#{source.path} parsed_function_count=#{length(source_functions)} caller-chain=exact installed source versus independent BEAM functions missing=#{inspect(inventory_module.functions -- source_functions)} extra=#{inspect(source_functions -- inventory_module.functions)} parsed=#{inspect(source_functions)} remedy=restore every private and zero-hit MFA from this lane"
         )
 
         export_forms =
@@ -1637,13 +1768,16 @@ defmodule Fablebook.Test.DebuggerSettings do
       branch = Map.get(branch_map, branch_id)
       citations = Map.get(branch_citations, branch_id, [])
 
+      expected_owner =
+        if is_nil(branch), do: nil, else: branch_owner(branch_source(branch_id), branch.mfa)
+
       require_ownership!(
-        not is_nil(branch) and branch.owner == @remainder_owner and citations != [],
+        not is_nil(branch) and branch.owner == expected_owner and citations != [],
         "lane #{lane} MFA #{if(branch, do: format_mfa(branch.mfa), else: "unknown")} owner=#{if(branch, do: branch.owner, else: "missing")} caller-chain=#{if(branch, do: branch.trace, else: "source branch ledger")} branch=#{branch_id} remedy=restore the exact current-owner callback/control branch"
       )
 
       Enum.each(citations, fn citation ->
-        if group == :interpreter do
+        if group == :interpreter or match?({:remainder, _module}, branch_source(branch_id)) do
           assert_adopted_source_citation!(evidence, lane, inventory, records, citation)
         else
           assert_citation!(evidence, lane, records, citation)
@@ -1655,31 +1789,82 @@ defmodule Fablebook.Test.DebuggerSettings do
       Enum.map(required_branches, &Map.fetch!(branch_map, &1))
       |> Enum.sort_by(& &1.id)
 
+    if group == :monitor do
+      :ok = assert_monitor_dispositions!(dispositions, lane)
+    end
+
     cross_owner =
-      if group == :callbacks do
-        require_ownership!(
-          function_owner!(dispositions, "dbg_icmd:break_p/4") == @owner,
-          "lane #{lane} MFA dbg_icmd:break_p/4 owner=#{@owner} caller-chain=prior child source branch remedy=preserve the earlier callback-body and outcome owner"
-        )
+      cond do
+        group == :callbacks ->
+          require_ownership!(
+            function_owner!(dispositions, "dbg_icmd:break_p/4") == @owner,
+            "lane #{lane} MFA dbg_icmd:break_p/4 owner=#{@owner} caller-chain=prior child source branch remedy=preserve the earlier callback-body and outcome owner"
+          )
 
-        require_ownership!(
-          Enum.any?(source_branches, &(&1.id == :condition_break_p_called)),
-          "lane #{lane} MFA dbg_icmd:cmd/4 owner=#{@remainder_owner} caller-chain=command -> conditional breakpoint remedy=retain only the current-owner dispatch into the prior-owner break_p/4 body"
-        )
+          require_ownership!(
+            Enum.any?(source_branches, &(&1.id == :condition_break_p_called)),
+            "lane #{lane} MFA dbg_icmd:cmd/4 owner=#{@remainder_owner} caller-chain=command -> conditional breakpoint remedy=retain only the current-owner dispatch into the prior-owner break_p/4 body"
+          )
 
-        [{{:dbg_icmd, :break_p, 4}, @owner, :pending}]
-      else
-        []
+          [{{:dbg_icmd, :break_p, 4}, @owner, :pending}]
+
+        group == :monitor ->
+          selected_roots =
+            Enum.map(@selected_root_mfas, fn {module, function, arity} = mfa ->
+              name = format_mfa(mfa)
+              disposition = find_function_disposition!(dispositions, name, lane)
+
+              require_ownership!(
+                disposition.owner == @owner and disposition.completion == :pending_cross_owner,
+                "lane #{lane} MFA #{name} owner=#{disposition.owner} caller-chain=selected saved-settings root remedy=preserve prior-owner route responsibility and pending status"
+              )
+
+              %{
+                mfa: name,
+                owner: disposition.owner,
+                completion: disposition.completion,
+                changed_route:
+                  Enum.any?(
+                    inventory.changed_routes,
+                    &changed_route_for?(&1, module, function, arity, lane)
+                  )
+              }
+            end)
+
+          selected_branches =
+            Enum.filter(source_branches, &(&1.owner == @owner))
+            |> Enum.map(&%{id: &1.id, mfa: format_mfa(&1.mfa), owner: &1.owner})
+
+          require_ownership!(
+            Enum.any?(selected_roots, &(&1.mfa == "dbg_wx_mon:start/2" and &1.changed_route)),
+            "lane #{lane} MFA dbg_wx_mon:start/2 owner=#{@owner} caller-chain=changed selected root route remedy=preserve its pending changed-route observation"
+          )
+
+          require_ownership!(
+            Enum.all?([:trace_windows_selected, :trace_windows_unselected], fn id ->
+              Enum.any?(selected_branches, &(&1.id == id and &1.owner == @owner))
+            end),
+            "lane #{lane} MFA dbg_wx_mon:load_settings2/2 owner=#{@owner} caller-chain=selected trace-window branches remedy=preserve both prior-owner branch identities"
+          )
+
+          %{selected_roots: selected_roots, selected_branches: selected_branches}
+
+        true ->
+          []
       end
 
     all_function_dispositions = Enum.flat_map(dispositions, & &1.dispositions)
 
     unresolved_dynamic =
       Enum.flat_map(all_function_dispositions, fn function ->
-        Enum.filter(
-          function.sink_facts,
-          &(&1.kind in [:dynamic_remote_dispatch, :dynamic_spawn, :dynamic_apply])
-        )
+        Enum.filter(function.sink_facts, fn fact ->
+          fact.kind in [
+            :dynamic_remote_dispatch,
+            :dynamic_spawn,
+            :dynamic_apply,
+            :dynamic_fun_call
+          ]
+        end)
         |> Enum.map(fn fact ->
           %{
             mfa: function.mfa,
@@ -3397,7 +3582,7 @@ defmodule Fablebook.Test.DebuggerSettings do
       Enum.flat_map(record.function_sources, &List.wrap(&1.citation)) ++
         Enum.flat_map(record.function_audit, &List.wrap(&1.citations)) ++
         (record.branch_citations
-         |> Map.drop(@interpreter_route_branch_ids)
+         |> Map.drop(@interpreter_route_branch_ids ++ @remainder_source_branch_ids)
          |> Map.values()
          |> Enum.flat_map(&List.wrap/1)) ++
         Enum.flat_map(root_records, &List.wrap(&1.citations))
@@ -3534,10 +3719,43 @@ defmodule Fablebook.Test.DebuggerSettings do
   end
 
   defp branch_citations(lane_name) do
+    loaded = load_delegation!()
+
+    remainder_sources =
+      loaded.records
+      |> remainder_source_rows!(lane_name)
+      |> Map.new(&{&1["module"], &1})
+
     Enum.into(@all_branch_specs, %{}, fn {id, _mfa, _predicate, source, lines} ->
       {line, expected_text} = Map.fetch!(lines, String.to_existing_atom(lane_name))
-      {id, [citation(lane_name, source, line, expected_text)]}
+
+      citation =
+        case source do
+          {:remainder, module} ->
+            source_row = Map.fetch!(remainder_sources, module)
+
+            %{
+              path: source_row["source_path"],
+              line: line,
+              sha256: source_row["sha256"],
+              expected_text: expected_text
+            }
+
+          _ ->
+            citation(lane_name, source, line, expected_text)
+        end
+
+      {id, [citation]}
     end)
+  end
+
+  defp branch_source(branch_id) do
+    @all_branch_specs
+    |> Enum.find(fn {id, _mfa, _predicate, _source, _lines} -> id == branch_id end)
+    |> case do
+      {_id, _mfa, _predicate, source, _lines} -> source
+      nil -> nil
+    end
   end
 
   defp citation(lane_name, :settings, line, expected_text) do
@@ -3655,6 +3873,28 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   defp branch_trace({:dbg_wx_mon, :gui_cmd, 2}),
     do: "dbg_wx_mon:gui_cmd/2 -> settings dialog -> load_settings/2"
+
+  defp branch_trace({:dbg_wx_mon_win, :handle_event, 2}),
+    do:
+      "wx event -> monitor window menu/list/checkbox route -> dbg_wx_mon command or displayed module/PID conversion"
+
+  defp branch_trace({:dbg_wx_mon_win, :clear_processes, 2}),
+    do:
+      "monitor process rows -> clear_processes/2 -> parse displayed PID -> clear trace window state"
+
+  defp branch_trace({:dbg_wx_filedialog_win, :init, 1}),
+    do:
+      "dbg_wx_filedialog_win:new/3 options -> init/1 -> cwd/defaultDir, fixed filter default and name sort"
+
+  defp branch_trace({:dbg_wx_filedialog_win, :get_file_info, 5}),
+    do: "directory listing -> get_file_info/5 -> filter callback -> file metadata rows or skip"
+
+  defp branch_trace({:dbg_wx_filedialog_win, :handle_event, 2}),
+    do:
+      "file-dialog events -> cancel or selected path; navigation and typing only update displayed path"
+
+  defp branch_trace({:dbg_wx_win, :verify, 2}),
+    do: "backtrace-size entry -> erl_scan:string/3 -> extended_parse_term/1 -> parsed term result"
 
   defp branch_trace({:dbg_wx_mon, :load_settings, 2}),
     do: "dbg_wx_mon:load_settings/2 -> file:read_file/1 -> binary_to_term/1"
@@ -3830,16 +4070,91 @@ defmodule Fablebook.Test.DebuggerSettings do
     {["dbg_ieval", "dbg_iload", "dbg_debugged"], @interpreter_route_branch_ids}
   end
 
-  defp parse_source_forms!(path, lane, module) do
-    case :epp.parse_file(String.to_charlist(path), []) do
-      {:ok, forms} ->
-        forms
+  defp disposition_group!(:monitor) do
+    {@monitor_group_modules, @monitor_route_branch_ids}
+  end
 
-      {:error, reason} ->
-        ownership_fail!(
-          "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=installed exact source parse=#{inspect(reason)} remedy=restore a parseable source file from the adopted lane"
-        )
+  defp assert_monitor_dispositions!(modules, lane) do
+    required_sinks = [
+      {"dbg_wx_mon_win:handle_event/2", :atom_construction},
+      {"dbg_wx_mon_win:clear_processes/2", :pid_parser},
+      {"dbg_wx_filedialog_win:get_file_info/5", :dynamic_fun_call},
+      {"dbg_wx_win:verify/2", :term_parser}
+    ]
+
+    Enum.each(required_sinks, fn {mfa, kind} ->
+      disposition = find_function_disposition!(modules, mfa, lane)
+
+      require_ownership!(
+        Enum.any?(disposition.sink_facts, &(&1.kind == kind)) and
+          is_binary(disposition.guard_remedy) and disposition.guard_remedy != "",
+        "lane #{lane} MFA #{mfa} owner=#{disposition.owner} caller-chain=exact source sink #{kind} remedy=retain its narrow input and dispatch disposition"
+      )
+    end)
+
+    filter_note =
+      find_function_disposition!(modules, "dbg_wx_filedialog_win:get_file_info/5", lane)
+
+    parser_note = find_function_disposition!(modules, "dbg_wx_win:verify/2", lane)
+
+    require_ownership!(
+      String.contains?(filter_note.guard_remedy, "whitelist the filter callback") and
+        String.contains?(parser_note.guard_remedy, "parse-only"),
+      "lane #{lane} file filter/parser caller-chain=exact source route remedy=preserve fixed callback identity and parse-only behavior"
+    )
+
+    :ok
+  end
+
+  defp parse_source_forms!(path, lane, module) do
+    source = File.read!(path)
+    needs_wx_include = String.contains?(source, "-include_lib(\"wx/include/")
+
+    wx_ebin = if needs_wx_include, do: exact_wx_ebin!(path, lane, module), else: nil
+    wx_ebin_charlist = if wx_ebin, do: String.to_charlist(wx_ebin), else: nil
+    wx_already_on_path = wx_ebin_charlist && wx_ebin_charlist in :code.get_path()
+
+    if wx_ebin && not wx_already_on_path do
+      require_ownership!(
+        :code.add_patha(wx_ebin_charlist) == true,
+        "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=exact wx include resolver remedy=add only the exact installed lane wx ebin path while parsing"
+      )
     end
+
+    try do
+      case :epp.parse_file(String.to_charlist(path), []) do
+        {:ok, forms} ->
+          errors = Enum.filter(forms, &match?({:error, _}, &1))
+
+          require_ownership!(
+            errors == [],
+            "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} source_path=#{path} caller-chain=EPP include or macro errors=#{inspect(errors)} remedy=resolve exact installed include files and reject partial source parses"
+          )
+
+          forms
+
+        {:error, reason} ->
+          ownership_fail!(
+            "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=installed exact source parse=#{inspect(reason)} remedy=restore a parseable source file from the adopted lane"
+          )
+      end
+    after
+      if wx_ebin && not wx_already_on_path do
+        :code.del_path(wx_ebin_charlist)
+      end
+    end
+  end
+
+  defp exact_wx_ebin!(source_path, lane, module) do
+    lib_root = source_path |> Path.dirname() |> Path.dirname() |> Path.dirname()
+    candidates = Path.wildcard(Path.join([lib_root, "wx-*", "ebin"])) |> Enum.filter(&File.dir?/1)
+
+    require_ownership!(
+      length(candidates) == 1,
+      "lane #{lane} app debugger module #{module} owner=#{@remainder_owner} caller-chain=exact sibling wx installation candidates=#{inspect(candidates)} remedy=resolve the single wx app belonging to this installed OTP lane"
+    )
+
+    Path.expand(hd(candidates))
   end
 
   defp source_citation!(source_row, lines, line, lane, mfa) do
@@ -3862,6 +4177,17 @@ defmodule Fablebook.Test.DebuggerSettings do
     fact = source_local_call_fact(function, args, :erl_anno.line(anno), form)
     acc = if fact, do: [fact | acc], else: acc
     Enum.reduce(args, acc, &source_call_facts/2)
+  end
+
+  defp source_call_facts({:call, anno, {:var, _fun_anno, _function} = callee, args}, acc) do
+    fact = %{
+      line: :erl_anno.line(anno),
+      kind: :dynamic_fun_call,
+      arity: length(args),
+      expression: inspect({:call, anno, callee, args}, limit: 12, printable_limit: 240)
+    }
+
+    [fact | Enum.reduce([callee | args], acc, &source_call_facts/2)]
   end
 
   defp source_call_facts(
@@ -3889,6 +4215,7 @@ defmodule Fablebook.Test.DebuggerSettings do
         {:spawn, 3} -> :dynamic_spawn
         {:spawn_link, 3} -> :dynamic_spawn
         {:list_to_atom, 1} -> :atom_construction
+        {:list_to_pid, 1} -> :pid_parser
         {:binary_to_term, 1} -> :term_decoder
         {:binary_to_term, 2} -> :term_decoder
         _ -> nil
@@ -3905,7 +4232,10 @@ defmodule Fablebook.Test.DebuggerSettings do
         {:code, :load_binary} -> :code_loader
         {:code, :purge} -> :code_purge
         {:erts_debug, :breakpoint} -> :runtime_breakpoint_control
+        {:erl_eval, :extended_parse_term} -> :term_parser
         {:erl_eval, _} -> :expression_parser_or_evaluator
+        {:erlang, :list_to_atom} -> :atom_construction
+        {:erlang, :list_to_pid} -> :pid_parser
         {:erlang, :apply} -> :dynamic_apply
         {:erlang, :trace} -> :process_trace_control
         _ -> nil
@@ -3979,6 +4309,15 @@ defmodule Fablebook.Test.DebuggerSettings do
 
   defp identity_text(identity),
     do: "#{identity["module"]}:#{identity["function"]}/#{identity["arity"]}"
+
+  defp disposition_owner({:dbg_wx_mon, function, 2}, source_row)
+       when function in [:start, :load_settings, :load_settings2] do
+    %{
+      owner: @owner,
+      origin_owner: source_row["owner"],
+      completion: :pending_cross_owner
+    }
+  end
 
   defp disposition_owner({:dbg_icmd, :break_p, 4}, source_row) do
     %{
@@ -4304,6 +4643,139 @@ defmodule Fablebook.Test.DebuggerSettings do
     }
   end
 
+  defp callback_route_note({:dbg_wx_mon, :start, 2}) do
+    %{
+      caller_input_origin:
+        "The caller supplies monitor mode and either a selected settings path or the default sentinel; this root remains assigned to 01.1.1.3.1.1.",
+      defaults_and_options:
+        "Default startup and selected-file startup converge through init/3; the current route delta is retained as a pending changed-route observation.",
+      guard_remedy:
+        "Preserve the earlier child's exact start/2 route decision and pending guard obligation; this whole-module review does not complete or transfer the selected root."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon, function, 2})
+       when function in [:load_settings, :load_settings2] do
+    %{
+      caller_input_origin:
+        "The selected root is part of the preceding saved-settings slice; its exact caller and canonical/observed chains are retained in this record.",
+      defaults_and_options:
+        "The selected load/replay branches remain owned by 01.1.1.3.1.1, including the cross-owner trace-window selections.",
+      guard_remedy:
+        "Keep this prior-owner body and branch obligation pending under 01.1.1.3.1.1; do not treat the broad module review as completion."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon, :init, 3}) do
+    %{
+      caller_input_origin:
+        "start/2 supplies mode and selected/default settings path; init/3 opens wx and catches the graphics-startup result before constructing the monitor.",
+      defaults_and_options:
+        "The exact startup branches distinguish graphics initialization error, successful wx startup, ignored exit:stop, and reported init2 exceptions.",
+      guard_remedy:
+        "Keep the startup error and stop cases explicit at init/3; do not convert setup failures into a successful monitor state."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon, :init2, 4}) do
+    %{
+      caller_input_origin:
+        "init/3 passes the selected/default settings path, mode and graphics state to init2/4.",
+      defaults_and_options:
+        "The default sentinel skips replay and enters loop/1; a non-default path calls the prior-owner load_settings/2 before entering the loop.",
+      guard_remedy:
+        "Preserve the default-versus-selected-path branch and keep selected replay responsibility with 01.1.1.3.1.1."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon, :gui_cmd, 2}) do
+    %{
+      caller_input_origin:
+        "The monitor event loop supplies the selected menu command and current monitor state.",
+      defaults_and_options:
+        "Load Settings cancel preserves the state; a selected path forwards to the prior-owner load_settings/2 root. Other menu commands retain their exact command clauses.",
+      guard_remedy:
+        "Keep the cancel and selected-path cases distinct, and preserve the earlier owner's selected-root body."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon_win, :handle_event, 2}) do
+    %{
+      caller_input_origin:
+        "wx events provide shortcut key codes, displayed module text, and checkbox labels; module/list values are converted into atoms before monitor commands are emitted.",
+      defaults_and_options:
+        "Shortcut, double-click, right-click, auto-attach and string checkbox branches have separate event shapes; checkbox labels are UI text, not an atom allow-list.",
+      guard_remedy:
+        "Replace list_to_atom on event and displayed module strings with fixed mappings or existing-atom/module-membership resolution; keep the exact event branches guarded until each conversion is constrained."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_mon_win, :clear_processes, 2}) do
+    %{
+      caller_input_origin:
+        "The monitor's process grid supplies a displayed PID string for rows marked exit; the function parses that text before clearing the matching trace window.",
+      defaults_and_options:
+        "Only exit rows take the PID conversion path; non-exit rows are ignored and missing rows terminate the recursive clear.",
+      guard_remedy:
+        "Use the PID already stored with the row, or validate that the displayed identifier is an exact PID produced by the monitor before list_to_pid/1."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_filedialog_win, :new, 3}) do
+    %{
+      caller_input_origin:
+        "The dialog caller supplies options including an optional filter callback; the current sole caller in dbg_wx_interpret passes its fixed local filter_files/2 callback.",
+      defaults_and_options:
+        "Dialog init defaults directory to file:get_cwd/0, filter to file_type_and_icon/2 and sort to name when options are absent.",
+      guard_remedy:
+        "Keep the exact caller callback identity at this boundary or accept only the fixed supported filter before relaxing the dialog's callback path."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_filedialog_win, :init, 1}) do
+    %{
+      caller_input_origin:
+        "new/3 passes caller options to init/1; defaultDir, filter and sort are read from that option list.",
+      defaults_and_options:
+        "The directory defaults to the current working directory, filter to the fixed file_type_and_icon/2 function, and sort to name.",
+      guard_remedy:
+        "Constrain option producers to the reviewed caller and preserve the fixed filter default; do not infer callback safety merely from the default."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_filedialog_win, :get_file_info, 5}) do
+    %{
+      caller_input_origin:
+        "Directory listing supplies file names and the stored Filter value; Filter(Dir,Name) is a dynamic function call whose current caller supplies a fixed local callback.",
+      defaults_and_options:
+        "Directory entries bypass the file filter, ordinary files accept {Type,Icon,Color}, and skip omits an entry.",
+      guard_remedy:
+        "Validate or whitelist the filter callback at new/3/init/1 and retain the exact current fixed callback identity before permitting any other filter."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_filedialog_win, :handle_event, 2}) do
+    %{
+      caller_input_origin:
+        "The user-facing dialog supplies navigation, typed names and the OK/cancel choice; OK returns the selected path while cancel returns without a path.",
+      defaults_and_options:
+        "Cancel and selected-path outcomes are explicit; navigation and completion events update displayed path state.",
+      guard_remedy:
+        "Treat the selected path as caller-controlled input at its consuming interpreter route; the file picker only proves selection and cancellation behavior."
+    }
+  end
+
+  defp callback_route_note({:dbg_wx_win, :verify, 2}) do
+    %{
+      caller_input_origin:
+        "The backtrace-size option editor supplies text and a term type; its caller uses the integer type, while the term clause scans tokens and invokes extended_parse_term/1.",
+      defaults_and_options:
+        "The term branch returns a parsed value or ignores syntax errors; non-term branches accept one matching token and return its value. No evaluation call occurs here.",
+      guard_remedy:
+        "Keep this branch parse-only and preserve the integer-only caller contract for backtrace size; do not widen the editor to arbitrary expression evaluation."
+    }
+  end
+
   defp callback_route_note(_mfa) do
     %{
       caller_input_origin:
@@ -4330,6 +4802,30 @@ defmodule Fablebook.Test.DebuggerSettings do
     |> Enum.find_value(fn disposition ->
       if disposition.mfa == mfa_name, do: disposition.owner
     end)
+  end
+
+  defp find_function_disposition!(modules, mfa_name, lane) do
+    Enum.find_value(modules, fn module ->
+      Enum.find(module.dispositions, &(&1.mfa == mfa_name))
+    end)
+    |> case do
+      nil ->
+        ownership_fail!(
+          "lane #{lane} MFA #{mfa_name} owner=#{@owner} caller-chain=selected root source module remedy=retain its exact function disposition"
+        )
+
+      disposition ->
+        disposition
+    end
+  end
+
+  defp changed_route_for?(link, module, function, arity, lane) do
+    identity = link["identity"] || %{}
+
+    identity["lane"] == lane and identity["app"] == "debugger" and
+      identity["module"] == Atom.to_string(module) and
+      identity["function"] == Atom.to_string(function) and identity["arity"] == arity and
+      get_in(link, ["evidence", "route_changed"]) == true
   end
 
   defp assert_root_ledger!(root_records, lane) do
