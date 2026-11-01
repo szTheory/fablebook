@@ -4138,6 +4138,83 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert dispositions.unresolved_dynamic != []
   end
 
+  @tag :debugger_remainder_interpreter
+  test "interpreter evaluator, loader and debugged-process dispositions reconcile exact lane sources and ownership",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    record = DebuggerSettings.records(evidence.lane.name)
+    inventory = DebuggerSettings.assert_remainder_inventory!(ctx.graph, evidence, record)
+
+    dispositions =
+      apply(DebuggerSettings, :assert_function_dispositions!, [
+        ctx.graph,
+        evidence,
+        record,
+        :interpreter
+      ])
+
+    assert dispositions.status == :verified
+    assert dispositions.group == :interpreter
+    assert dispositions.lane == evidence.lane.name
+    assert dispositions.module_names == ["dbg_debugged", "dbg_ieval", "dbg_iload"]
+
+    assert Enum.all?(dispositions.modules, fn module ->
+             inventory_module = Enum.find(inventory.modules, &(&1.module == module.module))
+             function_mfas = Enum.map(module.dispositions, & &1.mfa) |> Enum.sort()
+
+             module.owner == "01.1.1.3.1.2" and module.functions == inventory_module.functions and
+               module.exports == inventory_module.exports and
+               function_mfas == Enum.sort(inventory_module.functions) and
+               Enum.all?(module.dispositions, &(&1.owner == "01.1.1.3.1.2"))
+           end)
+
+    assert MapSet.new(Enum.map(dispositions.source_branches, & &1.id)) ==
+             MapSet.new([
+               :interpreter_eval_reentry,
+               :interpreter_eval_spawn_meta,
+               :interpreter_meta_initial_eval,
+               :interpreter_uninterpreted_top_apply,
+               :interpreter_uninterpreted_nested_apply,
+               :interpreter_external_function_lookup,
+               :interpreter_remote_call,
+               :interpreter_apply_fun,
+               :interpreter_apply_three,
+               :interpreter_safe_bif_dispatch,
+               :interpreter_debugged_ready_apply,
+               :interpreter_debugged_command_dispatch,
+               :interpreter_debugged_reply_apply,
+               :interpreter_debugged_reply_eval,
+               :interpreter_loader_worker,
+               :interpreter_loader_envelope_decode,
+               :interpreter_loader_abstract_decode,
+               :interpreter_load_package,
+               :interpreter_server_loader_call
+             ])
+
+    assert Enum.all?(dispositions.source_branches, &(&1.owner == "01.1.1.3.1.2"))
+    assert dispositions.cross_owner == []
+
+    assert Enum.any?(dispositions.unresolved_dynamic, &(&1.kind == :dynamic_apply))
+    assert Enum.any?(dispositions.unresolved_dynamic, &(&1.kind == :dynamic_remote_dispatch))
+
+    find_function = fn mfa ->
+      dispositions.modules
+      |> Enum.flat_map(& &1.dispositions)
+      |> Enum.find(&(&1.mfa == mfa))
+    end
+
+    assert Enum.any?(find_function.("dbg_ieval:expr/3").sink_facts, &(&1.kind == :dynamic_apply))
+
+    assert Enum.any?(find_function.("dbg_iload:store_module/4").sink_facts, &(&1.kind == :term_decoder))
+    assert Enum.any?(find_function.("dbg_debugged:reply/1").sink_facts, &(&1.kind == :dynamic_apply))
+
+    assert find_function.("dbg_ieval:eval/3").caller_input_origin =~ "int:eval/3"
+    assert find_function.("dbg_iload:store_module/4").caller_input_origin =~ "int:load/2"
+    assert Enum.all?(dispositions.unresolved_dynamic, &(&1.status == :unresolved_static_target))
+  end
+
   @tag :debugger_remainder_inventory
   test "assigned remainder universe has a fail-closed exact-lane reconciliation contract" do
     assert Code.ensure_loaded?(DebuggerSettings)
