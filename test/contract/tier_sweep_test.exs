@@ -4756,6 +4756,36 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :debugger_remainder_ownership
+  test "remainder source branch route edits are rejected by the current validator", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    record = DebuggerSettings.records(evidence.lane.name)
+    target_id = :monitor_edit_variable_term_parser
+    original = Enum.find(record.source_branches, &(&1.id == target_id))
+    assert original != nil
+
+    forged = %{
+      record
+      | source_branches:
+          Enum.map(record.source_branches, fn branch ->
+            if branch.id == target_id,
+              do: %{branch | trace: "forged route with no source link"},
+              else: branch
+          end)
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/branch route trace/, fn ->
+      DebuggerSettings.assert_function_dispositions!(
+        ctx.graph,
+        evidence,
+        forged,
+        :monitor
+      )
+    end
+  end
+
   @tag :saved_settings_audit
   test "deferred callback routes have distinct source branch identities" do
     assert Code.ensure_loaded?(DebuggerSettings)
