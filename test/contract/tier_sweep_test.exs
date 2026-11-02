@@ -3436,6 +3436,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :audit_readiness
   test "discovers and traces a compile-only app outside historical active membership", ctx do
     dir =
       Path.join(
@@ -3473,6 +3474,22 @@ defmodule Fablebook.Contract.TierSweepTest do
 
       ingested =
         InstalledOtp.add_directory!(:inventory_probe, discovered, lane: ctx.graph.lane.name)
+
+      missing_source_ref = "src/#{Atom.to_string(module)}.erl"
+
+      [source_app] =
+        InstalledOtp.source_inventory!(
+          [discovered],
+          [%{hd(inspected) | source: missing_source_ref}],
+          lane: ctx.graph.lane.name
+        )
+
+      assert source_app.source_dir_status == "missing"
+      assert source_app.missing_source_beams == 1
+
+      assert [
+               %{source: ^missing_source_ref, status: "missing", bytes: nil}
+             ] = source_app.beams
 
       assert InstalledOtp.assert_parity!(
                [discovered],
@@ -3603,6 +3620,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert resolved.sha256 =~ ~r/^[a-f0-9]{64}$/
   end
 
+  @tag :audit_readiness
   test "source evidence rejects a wrong runtime patch before resolving citations" do
     error =
       assert_raise Fablebook.Test.SweepEvidence.Error, fn ->
@@ -3612,6 +3630,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert error.reason == :runtime_identity
   end
 
+  @tag :audit_readiness
   test "source evidence resolves the caller-file atom trace on the exact running lane" do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
@@ -6719,6 +6738,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :audit_readiness
   @tag :tmp_dir
   test "source citations reject missing, escaped, unreadable and altered evidence", %{
     tmp_dir: dir
@@ -10720,6 +10740,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     assert InstalledOtp.verify_receipt_lines!(lines).lane == "core"
   end
 
+  @tag :audit_readiness
   test "Xref query parity rejects successful empty and truncated results" do
     expected = [{:probe, :run, 0}, {:probe, :stop, 1}]
 
@@ -11064,6 +11085,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
            end)
   end
 
+  @tag :audit_readiness
   test "source inventory fails on unreadable files and required active source gaps" do
     root = temp_dir!() |> Path.join("lib")
     app_root = Path.join(root, "probe-1.0.0")
@@ -11111,6 +11133,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     end
   end
 
+  @tag :audit_readiness
   test "parity rejects omission of a discovered app or BEAM during inspection and Xref intake" do
     root = temp_dir!() |> Path.join("lib")
     app_one = create_probe_app!(root, "probe_one", "1.0.0", :probe_one, true)
@@ -11161,6 +11184,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     end
   end
 
+  @tag :audit_readiness
   test "discovery and ingestion reject duplicate, unreadable, corrupt, missing-debug, and incomplete identities" do
     root = temp_dir!() |> Path.join("lib")
     create_probe_app!(root, "probe_one", "1.0.0", :same_probe, true)
