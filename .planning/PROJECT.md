@@ -301,6 +301,7 @@ Every item below is a v1.0 commitment.
   - ≤5 plans per phase, about ≤3 days each. Every phase ends in a merged, green PR to main. Push on day 1.
   - No proof-only phases. Review loops are capped at 2.
   - A contract test is never edited in the same PR as the implementation it guards.
+  - Restart phase numbering at 1 for the next milestone with `$gsd-new-milestone --reset-phase-numbers` after archiving this milestone. Keep existing IDs stable; avoid nested decimal insertions. (INT-20261101-02)
   - Clearance is a soak checked at the milestone audit, not a phase.
   (ADR 0021, INT-20261028-02, INT-20261028-03)
 - **Honesty**: Report only what a tool or a human actually verified. A check that didn't run is `not-run`, never `pass`. (ADR 0010, INT-20261028-01)
@@ -314,6 +315,8 @@ Every item below is a v1.0 commitment.
 |---|---|---|
 | End GSD flows with the next command; distinguish merge readiness from pending phase observations (INT-20261029-09) | Keep useful work moving and make the next action explicit | Merge green scoped PRs under existing checks; retain scheduled evidence; auto-advance stays off |
 | Automate verification by default; hand off only irreducible checks (INT-20261029-08) | Reduce owner toil and repeated UAT; add CI coverage when it has recurring value | `.planning/VERIFICATION.md`; Phase 1 automation and evidence recorded in `01-UAT.md`; GSD auto-advance stays off |
+| Allow validation-only publication for the named delivery-evidence items (ADR 0026, INT-20261101-01) | PR CI and merge identity cannot be verified before a PR exists or is merged | For Phase 01.1.1.3.1.3 only, publish a draft to collect exact-head CI; merge only after all required checks and markers pass; complete the phase only after independent merge identity verification. Other high findings still block. |
+| Restart numbering at each new milestone (INT-20261101-02) | Deeply nested decimal IDs are difficult to read and manage | After archiving the current milestone, start the next at Phase 1 with `--reset-phase-numbers`; preserve historical IDs and avoid nested decimal insertions. |
 | Stories are compiled `.ex` modules in `storybook/` (ADR 0001) | No eval surface; manifest available in test; colocated hooks work | — Pending |
 | Scenarios are functions; slots are never strings (ADR 0002) | The string round-trip caused the incumbent's root bugs and its CVE | — Pending |
 | Iframe canvas through the host's pipeline and root layout (ADR 0003) | Fidelity is the product; it removes CSS and hook isolation problems | — Pending |
@@ -416,4 +419,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-10-30 after Phase 01.1.1 verification and transition*
+*Last updated: 2026-11-01 after the owner approved staged delivery evidence and sequential phase resets*

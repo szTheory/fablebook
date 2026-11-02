@@ -29,3 +29,4 @@ ADRs rank above REQUIREMENTS and below verbatim intent (`.planning/intent/README
 | [0023](0023-vocabulary-scenario-and-tiers.md) | Vocabulary: "Scenario" and the four tiers |
 | [0024](0024-strict-by-default-with-waivers.md) | Strict by default; Waivers are the only escape hatch |
 | [0025](0025-motion-lane.md) | Motion is a first-class lane |
+| [0026](0026-validation-only-security-evidence.md) | Stage validation evidence without weakening security gates |
