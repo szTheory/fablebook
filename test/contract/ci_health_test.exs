@@ -58,6 +58,36 @@ defmodule Fablebook.Contract.CiHealthTest do
     end
   end
 
+  test "dry run calculates live timing and ruleset evidence without issue access", ctx do
+    history(ctx.tmp_dir, List.duplicate(100, 10))
+    assert {output, 0} = run(ctx, ["--dry-run"])
+
+    assert output =~ "(n=10): p50 100 s, p95 100 s."
+    assert output =~ "Dry run: issue updates were suppressed."
+    assert File.read!(Path.join(ctx.tmp_dir, "summary.md")) =~ "p50 100 s, p95 100 s"
+    assert writes(ctx) == []
+    refute Enum.any?(calls(ctx), &(Enum.take(&1, 2) == ["issue", "list"]))
+  end
+
+  test "dry run suppresses a file-regression write when it precedes the command", ctx do
+    assert {output, 0} =
+             run(ctx, ["--dry-run", "--file-regression", "nightly", "consumer smoke failed"])
+
+    assert output =~ "Dry run: issue updates were suppressed."
+    assert output =~ "Would publish label=quality-regression title=Quality regression"
+    assert output =~ "consumer smoke failed"
+    assert writes(ctx) == []
+    assert calls(ctx) == []
+  end
+
+  test "dry run placed after a command is rejected before any GitHub access", ctx do
+    assert {output, 2} =
+             run(ctx, ["--file-regression", "nightly", "consumer smoke failed", "--dry-run"])
+
+    assert output =~ "--dry-run must be the first argument"
+    assert calls(ctx) == []
+  end
+
   test "ten runs use nearest-rank percentiles and accept exact budgets", ctx do
     history(ctx.tmp_dir, [600, 420, 100, 420, 600, 420, 100, 600, 420, 100])
     assert {output, 0} = run(ctx)
@@ -218,11 +248,17 @@ defmodule Fablebook.Contract.CiHealthTest do
     do: System.cmd("bash", [@script | args], env: ctx.env, stderr_to_stdout: true)
 
   defp calls(ctx) do
-    ctx.tmp_dir
-    |> Path.join("calls.jsonl")
-    |> File.read!()
-    |> String.split("\n", trim: true)
-    |> Enum.map(&JSON.decode!/1)
+    path = Path.join(ctx.tmp_dir, "calls.jsonl")
+
+    case File.read(path) do
+      {:ok, contents} ->
+        contents
+        |> String.split("\n", trim: true)
+        |> Enum.map(&JSON.decode!/1)
+
+      {:error, :enoent} ->
+        []
+    end
   end
 
   defp writes(ctx),
