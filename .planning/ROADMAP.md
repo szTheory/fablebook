@@ -811,7 +811,7 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
   4. Evidence closes only the debugger-specific slice; the all-app installed-scope gate remains with 01.1.1.3.13 and SEC-01 remains with Phase 5.
 **Plans**: 2 across 2 sequential waves
 **Wave 1**
-- [ ] 01.1.1.3.1.3-01-PLAN.md — Add the aggregate current-lane contract, omission/owner controls, and focused evidence
+- [x] 01.1.1.3.1.3-01-PLAN.md — Add the aggregate current-lane contract, omission/owner controls, and focused evidence
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01.1.1.3.1.3-02-PLAN.md — Review, run both full exact lanes, and verify current-head delivery
