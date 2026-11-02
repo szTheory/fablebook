@@ -51,6 +51,10 @@ This confirms that the rolling timing calculation can be checked locally without
 
 ## Local profile: pending caller-chain inventory
 
+### Exact-head current-main baseline
+
+Before the indexed change, PR #35 head `76d1a450c41dab8c5a84fcc39e15f7c982b237cc` passed [CI run 41376744055](https://github.com/szTheory/fablebook/actions/runs/41376744055) and was merged as `1d971c9663f3eb376daa69ab5ebd689d190e4ce0`. The core `mix ci` step took 744 s (765 s total job); the floor prod_guard test step took 577 s (597 s total job). The required security, Dialyzer, and gate checks passed in 31 s, 24 s, and 4 s. Compare the optimized PR's exact-head core and floor step times against these as one baseline sample; runner variance means this is directional evidence, not a stable speedup estimate.
+
 A focused core profile confirmed the expensive part of the installed-OTP graph. With 236,176 call edges and 1,078 pending MFAs, the old `pending_inventory_records/…` path repeatedly scanned the full edge list for each caller hop. One instrumented run attributed 136.7 seconds of a 157.2-second graph build to this step; a repeat attributed 166.0 seconds of a 189.8-second graph build.
 
 A scoped test-only change builds a map from caller/callee function pairs to the lowest caller MFA once, preserving the existing module/function/arity sort rule and missing-edge failure. Across two same-command local core profile pairs, graph time changed from 151.014 s to 19.455 s and from 189.763 s to 25.130 s, roughly 87% less graph time. The indexed full `tier_sweep_test.exs` profile also measured 27.680 s for graph construction. These are local graph-phase timings; they do not establish the end-to-end CI speedup. The isolated change keeps both runtime lanes, receipt checks, and all current CI jobs.
