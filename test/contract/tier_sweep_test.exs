@@ -5887,6 +5887,214 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  test "original exclusion and lane metadata identities remain lossless and owned" do
+    ledger = original_identity_ledger!()
+    assert_original_identity_ledger!(ledger, ledger)
+
+    assert length(ledger.exclusions) == 221
+
+    assert Enum.frequencies_by(ledger.exclusions, & &1.table) == %{
+             "CN" => 6,
+             "EX" => 182,
+             "BD" => 33
+           }
+
+    assert length(ledger.metadata) == 5
+    assert Enum.frequencies_by(ledger.metadata, & &1.table) == %{"CN-LANE" => 1, "BD-LANE" => 4}
+
+    sampled = Enum.filter(ledger.exclusions, &(&1.semantic_status != :pending))
+    assert MapSet.new(Enum.map(sampled, & &1.id)) == MapSet.new(["CN-005", "BD-002", "EX-159"])
+    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 218
+
+    assert Enum.all?(
+             ledger.metadata,
+             &(&1.owner == "01.1.1.4" and &1.semantic_status == :pending)
+           )
+
+    assert Enum.all?(ledger.exclusions, fn row ->
+             row.remaining_semantic_owner == "01.1.1.4" and row.current_replacement_refs != []
+           end)
+
+    assert Enum.all?(ledger.exclusions, fn row ->
+             if row.id in ["CN-005", "BD-002", "EX-159"],
+               do: row.owner == "01.1.1.5",
+               else: row.owner == "01.1.1.4"
+           end)
+
+    omitted = %{ledger | exclusions: List.delete_at(ledger.exclusions, 0)}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_original_identity_ledger!(omitted, ledger)
+    end
+
+    duplicate = %{ledger | exclusions: [hd(ledger.exclusions) | ledger.exclusions]}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_original_identity_ledger!(duplicate, ledger)
+    end
+
+    same_count_substitution =
+      update_in(ledger.exclusions, fn rows ->
+        List.update_at(rows, 4, &%{&1 | id: "CN-999"})
+      end)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_original_identity_ledger!(same_count_substitution, ledger)
+    end
+
+    wrong_owner =
+      update_in(ledger.exclusions, fn rows ->
+        List.update_at(rows, 0, &%{&1 | owner: "01.1.1.5"})
+      end)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_original_identity_ledger!(wrong_owner, ledger)
+    end
+
+    wrong_payload =
+      update_in(ledger.exclusions, fn rows ->
+        List.update_at(rows, 0, &%{&1 | original_reason_raw: ":pure_data"})
+      end)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_original_identity_ledger!(wrong_payload, ledger)
+    end
+
+    metadata_as_exclusion =
+      update_in(ledger.metadata, fn rows ->
+        List.update_at(rows, 0, &%{&1 | identity_class: :exclusion})
+      end)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_original_identity_ledger!(metadata_as_exclusion, ledger)
+    end
+  end
+
+  test "CN-005 and BD-002 audit complete exact-lane matchers with source-backed removal witnesses",
+       ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    records = calibration_records!(ctx.graph, evidence, ledger)
+
+    assert_calibration_records!(records, ctx.graph, evidence, ledger)
+    assert Enum.count(records, &(&1.original_id == "CN-005")) == 1
+    assert Enum.count(records, &(&1.original_id == "BD-002")) == 1
+    assert Enum.all?(records, &(&1.removal_witness != [] and &1.overlap_mfas == []))
+
+    lane_record = Enum.find(records, &(&1.original_id == "CN-005"))
+    omitted_match = %{lane_record | matched_mfas: tl(lane_record.matched_mfas)}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_calibration_records!(
+        List.replace_at(
+          records,
+          Enum.find_index(records, &(&1.original_id == "CN-005")),
+          omitted_match
+        ),
+        ctx.graph,
+        evidence,
+        ledger
+      )
+    end
+
+    omitted_arity =
+      Map.update!(lane_record, :matched_mfas, fn mfas ->
+        Enum.map(mfas, fn
+          "Elixir.Regex:compile/2" -> "Elixir.Regex:compile/1"
+          mfa -> mfa
+        end)
+      end)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_calibration_records!(
+        List.replace_at(
+          records,
+          Enum.find_index(records, &(&1.original_id == "CN-005")),
+          omitted_arity
+        ),
+        ctx.graph,
+        evidence,
+        ledger
+      )
+    end
+
+    wrong_lane = %{lane_record | lane: if(lane_record.lane == "core", do: "floor", else: "core")}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_calibration_records!(
+        List.replace_at(
+          records,
+          Enum.find_index(records, &(&1.original_id == "CN-005")),
+          wrong_lane
+        ),
+        ctx.graph,
+        evidence,
+        ledger
+      )
+    end
+
+    missing_citation = %{lane_record | citations: tl(lane_record.citations)}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_calibration_records!(
+        List.replace_at(
+          records,
+          Enum.find_index(records, &(&1.original_id == "CN-005")),
+          missing_citation
+        ),
+        ctx.graph,
+        evidence,
+        ledger
+      )
+    end
+
+    false_safe = %{lane_record | verdict: "caller-controlled text is safe"}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_calibration_records!(
+        List.replace_at(
+          records,
+          Enum.find_index(records, &(&1.original_id == "CN-005")),
+          false_safe
+        ),
+        ctx.graph,
+        evidence,
+        ledger
+      )
+    end
+
+    vacuous_witness = %{lane_record | removal_witness: []}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_calibration_records!(
+        List.replace_at(
+          records,
+          Enum.find_index(records, &(&1.original_id == "CN-005")),
+          vacuous_witness
+        ),
+        ctx.graph,
+        evidence,
+        ledger
+      )
+    end
+
+    overlap = %{lane_record | overlap_mfas: lane_record.matched_mfas}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_calibration_records!(
+        List.replace_at(
+          records,
+          Enum.find_index(records, &(&1.original_id == "CN-005")),
+          overlap
+        ),
+        ctx.graph,
+        evidence,
+        ledger
+      )
+    end
+  end
+
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
@@ -8867,6 +9075,659 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     File.write!(Path.join(ebin, "#{app}.app"), :io_lib.format("~tp.~n", [app_resource]))
   end
+
+  defp original_identity_ledger! do
+    root = Path.expand("../..", __DIR__)
+
+    snapshot_path =
+      Path.join([
+        root,
+        ".planning",
+        "phases",
+        "01.1.1.5-complete-atom-creator-fronts-and-audit-calibration",
+        "01.1.1.5-ORIGINAL-IDENTITY-SOURCE.txt"
+      ])
+
+    budget_path =
+      Path.join([
+        root,
+        ".planning",
+        "phases",
+        "01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an",
+        "01.1.1.1-AUDIT-BUDGET.json"
+      ])
+
+    snapshot = File.read!(snapshot_path)
+    budget_bytes = File.read!(budget_path)
+
+    snapshot_sha256 =
+      :crypto.hash(:sha256, snapshot) |> Base.encode16(case: :lower)
+
+    budget_sha256 =
+      :crypto.hash(:sha256, budget_bytes) |> Base.encode16(case: :lower)
+
+    assert snapshot_sha256 ==
+             "913068aad01c7034ed9ab1bae9c6a4522dbcd2246264e8d62e3054b05cba5049"
+
+    assert budget_sha256 ==
+             "c25de2e909b972d308a4c28820e99ae7731b78edfdbdcb941c2eb1b77c506aa0"
+
+    assert snapshot =~ "Stash: c1b69b5ebef830cedc38a93860c3f2c61fba0ca5"
+    assert snapshot =~ "Untracked-file tree commit: af583bdc1eb10fa00acade2183d7e1840839fa17"
+    assert snapshot =~ "Source path: test/support/exclusion_audit.ex"
+    assert snapshot =~ "Git blob: ba394b820867576355a32f63ffc11e023c656faa"
+
+    assert snapshot =~
+             "Full source SHA-256: 35dfa00b1f64352cf5c6c134a01d42ec96a63bfd562e880df6b0320d84e1944f"
+
+    excerpt =
+      snapshot
+      |> String.split("--- BEGIN VERBATIM SOURCE EXCERPT ---\n", parts: 2)
+      |> then(fn
+        [_header, tail] -> tail
+        _ -> raise ExUnit.AssertionError, message: "original identity source excerpt is missing"
+      end)
+      |> String.split("\n--- END SOURCE EXCERPT ---", parts: 2)
+      |> hd()
+
+    current_source = File.read!(Path.join(root, "test/contract/tier_sweep_test.exs"))
+
+    original_tables = %{
+      "CN" => source_table_entries!(excerpt, "call_name_exclusions"),
+      "EX" => source_table_entries!(excerpt, "exclusions"),
+      "BD" => source_table_entries!(excerpt, "boundary_exclusions"),
+      "CN-LANE" => source_table_entries!(excerpt, "call_name_lane_specific"),
+      "BD-LANE" => source_table_entries!(excerpt, "boundary_lane_specific")
+    }
+
+    current_tables = %{
+      "CN" => source_table_entries!(current_source, "call_name_exclusions"),
+      "EX" => source_table_entries!(current_source, "exclusions"),
+      "BD" => source_table_entries!(current_source, "boundary_exclusions"),
+      "CN-LANE" => source_table_entries!(current_source, "call_name_lane_specific"),
+      "BD-LANE" => source_table_entries!(current_source, "boundary_lane_specific")
+    }
+
+    current_values = %{
+      "CN" => @call_name_exclusions,
+      "EX" => Enum.take(@exclusions, length(current_tables["EX"])),
+      "BD" => @boundary_exclusions,
+      "CN-LANE" => @call_name_lane_specific,
+      "BD-LANE" => @boundary_lane_specific
+    }
+
+    Enum.each(current_tables, fn {table, rows} ->
+      assert length(current_values[table]) >= length(rows),
+             "compiled #{table} table is shorter than its source identity table"
+    end)
+
+    budget = JSON.decode!(budget_bytes)
+    lane_rows = Map.new(@creator_expected_lanes, &{&1, budget["lanes"][&1]["rows"]})
+
+    expected_exclusion_ids =
+      Enum.flat_map(["CN", "EX", "BD"], fn table ->
+        for index <- 1..length(original_tables[table]),
+            do: table <> "-" <> String.pad_leading(Integer.to_string(index), 3, "0")
+      end)
+
+    Enum.each(@creator_expected_lanes, fn lane ->
+      rows = Map.fetch!(lane_rows, lane)
+
+      assert length(rows) == length(expected_exclusion_ids)
+      assert Enum.map(rows, & &1["id"]) == expected_exclusion_ids
+
+      for table <- ["CN", "EX", "BD"] do
+        table_rows = Enum.filter(rows, &(&1["table"] == table))
+        assert length(table_rows) == length(original_tables[table])
+      end
+    end)
+
+    lane_baselines =
+      Map.new(@creator_expected_lanes, fn lane ->
+        {lane, Map.new(Map.fetch!(lane_rows, lane), &{&1["id"], &1})}
+      end)
+
+    exclusions =
+      Enum.flat_map(["CN", "EX", "BD"], fn table ->
+        originals = Map.fetch!(original_tables, table)
+        current = Map.fetch!(current_tables, table)
+        current_indices = source_row_indices(current)
+
+        Enum.with_index(originals, 1)
+        |> Enum.map(fn {original_entry, index} ->
+          id = table <> "-" <> String.pad_leading(Integer.to_string(index), 3, "0")
+          [original_matcher, original_reason | citations] = source_tuple_parts!(original_entry)
+          direct_indices = Map.get(current_indices, original_entry, [])
+
+          assert length(direct_indices) <= 1,
+                 "duplicate live replacement for original identity #{id}"
+
+          creator_refs =
+            @creator_audit
+            |> Enum.filter(&(&1.original_id == id))
+            |> Enum.map(&"creator:#{id}:#{&1.lane}")
+            |> Enum.sort()
+
+          direct_refs = Enum.map(direct_indices, &"source:#{table}:#{&1}")
+          replacement_refs = direct_refs ++ creator_refs
+
+          assert replacement_refs != [],
+                 "original identity #{id} has no live replacement reference"
+
+          lane_matches =
+            Map.new(@creator_expected_lanes, fn lane ->
+              baseline = Map.fetch!(lane_baselines[lane], id)
+              matches = Enum.map(baseline["matches"], &budget_mfa_string!/1)
+
+              assert length(matches) == MapSet.size(MapSet.new(matches)),
+                     "duplicate baseline matches for #{id}/#{lane}"
+
+              {lane, matches}
+            end)
+
+          sampled_status =
+            case id do
+              "CN-005" -> :calibrated_retained
+              "BD-002" -> :calibrated_retained
+              "EX-159" -> :calibrated_replaced_by_tier
+              _ -> :pending
+            end
+
+          %{
+            id: id,
+            table: table,
+            identity_class: :exclusion,
+            original_entry_raw: original_entry,
+            original_matcher_raw: original_matcher,
+            original_reason_raw: original_reason,
+            original_citations_raw: List.first(citations),
+            lane_matches: lane_matches,
+            current_replacement_refs: replacement_refs,
+            semantic_status: sampled_status,
+            owner: if(sampled_status == :pending, do: "01.1.1.4", else: "01.1.1.5"),
+            remaining_semantic_owner: "01.1.1.4"
+          }
+        end)
+      end)
+
+    missing_live_ids =
+      Enum.filter(exclusions, fn row ->
+        not Enum.any?(row.current_replacement_refs, &String.starts_with?(&1, "source:"))
+      end)
+      |> Enum.map(& &1.id)
+      |> Enum.sort()
+
+    assert missing_live_ids == ["EX-089", "EX-159"]
+
+    original_ex_rows = Map.fetch!(original_tables, "EX") |> MapSet.new()
+
+    added_live_rows =
+      current_tables["EX"]
+      |> Enum.reject(&MapSet.member?(original_ex_rows, &1))
+      |> Enum.map(&%{table: "EX", original_entry_raw: &1})
+
+    assert length(added_live_rows) == 3
+
+    metadata =
+      Enum.flat_map(["CN-LANE", "BD-LANE"], fn table ->
+        originals = Map.fetch!(original_tables, table)
+        current = Map.fetch!(current_tables, table)
+        current_indices = source_row_indices(current)
+
+        assert originals == current,
+               "original #{table} metadata identity order or payload changed"
+
+        Enum.with_index(originals, 1)
+        |> Enum.map(fn {original_entry, index} ->
+          [original_matcher, lane_payload] = source_tuple_parts!(original_entry)
+          id = table <> "-" <> String.pad_leading(Integer.to_string(index), 3, "0")
+          [live_index] = Map.fetch!(current_indices, original_entry)
+          assert Enum.at(current_values[table], live_index - 1) != nil
+
+          %{
+            id: id,
+            table: table,
+            identity_class: :lane_metadata,
+            original_entry_raw: original_entry,
+            original_matcher_raw: original_matcher,
+            lane_payload_raw: lane_payload,
+            current_replacement_refs: ["source:#{table}:#{live_index}"],
+            semantic_status: :pending,
+            owner: "01.1.1.4"
+          }
+        end)
+      end)
+
+    %{
+      schema: "fablebook.original-identity-ledger/1",
+      exclusions: exclusions,
+      metadata: metadata,
+      live_nonoriginal_entries: added_live_rows,
+      provenance: %{
+        snapshot_path:
+          ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-ORIGINAL-IDENTITY-SOURCE.txt",
+        snapshot_sha256: snapshot_sha256,
+        source_path: "test/support/exclusion_audit.ex",
+        source_git_blob: "ba394b820867576355a32f63ffc11e023c656faa",
+        source_sha256: "35dfa00b1f64352cf5c6c134a01d42ec96a63bfd562e880df6b0320d84e1944f",
+        stash: "c1b69b5ebef830cedc38a93860c3f2c61fba0ca5",
+        source_tree: "af583bdc1eb10fa00acade2183d7e1840839fa17",
+        budget_path:
+          ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json",
+        budget_sha256: budget_sha256
+      }
+    }
+  end
+
+  defp assert_original_identity_ledger!(ledger, expected) do
+    assert ledger == expected
+
+    assert MapSet.size(MapSet.new(Enum.map(ledger.exclusions, & &1.id))) ==
+             length(ledger.exclusions)
+
+    assert MapSet.size(MapSet.new(Enum.map(ledger.metadata, & &1.id))) == length(ledger.metadata)
+
+    assert MapSet.disjoint?(
+             MapSet.new(Enum.map(ledger.exclusions, & &1.id)),
+             MapSet.new(Enum.map(ledger.metadata, & &1.id))
+           )
+  end
+
+  defp source_table_entries!(source, attribute) do
+    needle = "@" <> attribute <> " ["
+
+    case :binary.match(source, needle) do
+      {start, length} ->
+        open_index = start + length - 1
+        {entries, _close_index} = split_static_container!(source, open_index)
+        entries
+
+      :nomatch ->
+        raise ExUnit.AssertionError, message: "missing static identity table @#{attribute}"
+    end
+  end
+
+  defp source_tuple_parts!(source) do
+    source = String.trim(source)
+    assert String.starts_with?(source, "{") and String.ends_with?(source, "}")
+    {parts, _close_index} = split_static_container!(source, 0)
+    parts
+  end
+
+  defp split_static_container!(source, open_index) do
+    open = :binary.at(source, open_index)
+    close = static_closer!(open)
+
+    split_static_container!(source, open_index + 1, [close], open_index + 1, [], nil, false)
+  end
+
+  defp split_static_container!(source, index, _stack, _entry_start, _entries, _quote, _escaped)
+       when index >= byte_size(source),
+       do: raise(ExUnit.AssertionError, message: "unterminated static identity table")
+
+  defp split_static_container!(source, index, stack, entry_start, entries, quote, escaped) do
+    byte = :binary.at(source, index)
+
+    cond do
+      quote != nil and escaped ->
+        split_static_container!(source, index + 1, stack, entry_start, entries, quote, false)
+
+      quote != nil and byte == ?\\ ->
+        split_static_container!(source, index + 1, stack, entry_start, entries, quote, true)
+
+      quote != nil and byte == quote ->
+        split_static_container!(source, index + 1, stack, entry_start, entries, nil, false)
+
+      quote != nil ->
+        split_static_container!(source, index + 1, stack, entry_start, entries, quote, false)
+
+      byte in [?\", ?'] ->
+        split_static_container!(source, index + 1, stack, entry_start, entries, byte, false)
+
+      byte in [?[, ?{, ?(] ->
+        split_static_container!(
+          source,
+          index + 1,
+          [static_closer!(byte) | stack],
+          entry_start,
+          entries,
+          nil,
+          false
+        )
+
+      byte == hd(stack) and tl(stack) == [] ->
+        entry = normalize_static_expression(binary_part(source, entry_start, index - entry_start))
+        entries = if entry == "", do: entries, else: [entry | entries]
+        {Enum.reverse(entries), index}
+
+      byte == hd(stack) ->
+        split_static_container!(source, index + 1, tl(stack), entry_start, entries, nil, false)
+
+      byte == ?, and length(stack) == 1 ->
+        entry = normalize_static_expression(binary_part(source, entry_start, index - entry_start))
+
+        split_static_container!(
+          source,
+          index + 1,
+          stack,
+          index + 1,
+          [entry | entries],
+          nil,
+          false
+        )
+
+      true ->
+        split_static_container!(source, index + 1, stack, entry_start, entries, nil, false)
+    end
+  end
+
+  defp static_closer!(40), do: 41
+  defp static_closer!(123), do: 125
+  defp static_closer!(91), do: 93
+
+  defp normalize_static_expression(expression),
+    do: expression |> String.trim() |> String.replace(~r/\s+/u, " ")
+
+  defp source_row_indices(rows) do
+    rows
+    |> Enum.with_index(1)
+    |> Enum.reduce(%{}, fn {row, index}, acc ->
+      Map.update(acc, row, [index], &[index | &1])
+    end)
+    |> Map.new(fn {row, indices} -> {row, Enum.reverse(indices)} end)
+  end
+
+  defp budget_mfa_string!([module, function, arity])
+       when is_binary(module) and is_binary(function) and is_integer(arity) do
+    module <> ":" <> function <> "/" <> Integer.to_string(arity)
+  end
+
+  defp budget_mfa_string!(other),
+    do:
+      raise(ExUnit.AssertionError, message: "invalid original audit-budget MFA #{inspect(other)}")
+
+  defp calibration_records!(graph, evidence, ledger) do
+    Enum.map(["CN-005", "BD-002"], fn id ->
+      row = Enum.find(ledger.exclusions, &(&1.id == id))
+      assert row != nil
+      assert graph.lane == evidence.lane
+
+      {matcher, _reason, current_table} = calibration_entry!(id, row)
+      lane = evidence.lane.name
+
+      matched_mfas =
+        graph.full_exported
+        |> Enum.filter(fn {_module, _function, _arity} = mfa ->
+          calibration_match?(id, matcher, mfa)
+        end)
+        |> Enum.reject(fn {_module, function, _arity} ->
+          function in [:module_info, :__info__]
+        end)
+        |> Enum.sort_by(&mfa_string!/1)
+
+      matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+      baseline_matches = Map.fetch!(row.lane_matches, lane)
+
+      assert MapSet.new(matched_strings) == MapSet.new(baseline_matches),
+             "#{id}/#{lane} live complete matcher differs from the preserved audit-budget set"
+
+      assert length(matched_strings) == MapSet.size(MapSet.new(matched_strings)),
+             "#{id}/#{lane} complete matcher contains duplicate exports"
+
+      citations = calibration_citations!(id, lane)
+
+      removal_witness =
+        calibration_removal_witness!(id, matcher, current_table, graph, matched_mfas)
+
+      overlap_mfas = calibration_overlaps!(id, matcher, matched_mfas, current_table)
+
+      assert removal_witness != [],
+             "#{id}/#{lane} retained exclusion has a vacuous removal witness"
+
+      assert overlap_mfas == [], "#{id}/#{lane} overlaps another retained exclusion"
+
+      %{
+        original_id: id,
+        original_entry_raw: row.original_entry_raw,
+        original_matcher_raw: row.original_matcher_raw,
+        original_reason_raw: row.original_reason_raw,
+        current_replacement_refs: row.current_replacement_refs,
+        lane: lane,
+        elixir: evidence.lane.elixir,
+        otp: evidence.lane.otp,
+        matched_mfas: matched_strings,
+        caller_input_trace: calibration_input_trace!(id),
+        trace: calibration_trace!(id),
+        verdict: calibration_verdict!(id),
+        citations: citations,
+        source_refs:
+          citations
+          |> Enum.map(&elem(&1, 0))
+          |> Enum.map(&(String.split(&1, ":", parts: 2) |> hd()))
+          |> Enum.uniq()
+          |> Enum.sort(),
+        applicability: :each_exact_installed_lane,
+        removal_witness: Enum.map(removal_witness, &mfa_string!/1),
+        overlap_mfas: Enum.map(overlap_mfas, &mfa_string!/1),
+        retained_exclusion: true,
+        semantic_owner: "01.1.1.5",
+        limitations: calibration_limitations!(id)
+      }
+    end)
+  end
+
+  defp assert_calibration_records!(records, graph, evidence, ledger) do
+    expected = calibration_records!(graph, evidence, ledger)
+    assert records == expected
+
+    assert MapSet.new(Enum.map(records, &{&1.original_id, &1.lane})) ==
+             MapSet.new(Enum.map(expected, &{&1.original_id, &1.lane}))
+
+    Enum.each(records, fn record ->
+      assert record.citations != []
+
+      Enum.each(record.citations, fn {citation, expected_source} ->
+        resolved = SweepEvidence.resolve!(evidence, citation)
+        assert resolved.text =~ expected_source, citation
+      end)
+    end)
+  end
+
+  defp calibration_entry!("CN-005", row) do
+    entry = Enum.at(@call_name_exclusions, 4)
+    assert {{Regex, [:compile]}, :not_compile_module, _citations} = entry
+    assert hd(row.current_replacement_refs) == "source:CN:5"
+    {elem(entry, 0), elem(entry, 1), :call_name}
+  end
+
+  defp calibration_entry!("BD-002", row) do
+    entry = Enum.at(@boundary_exclusions, 1)
+    assert {{:code, functions}, :pure_data, _citations} = entry
+
+    assert functions == [
+             :compiler_dir,
+             :get_doc,
+             :get_object_code,
+             :lib_dir,
+             :priv_dir,
+             :root_dir,
+             :where_is_file,
+             :which
+           ]
+
+    assert hd(row.current_replacement_refs) == "source:BD:2"
+    {elem(entry, 0), elem(entry, 1), :boundary}
+  end
+
+  defp calibration_match?("CN-005", matcher, mfa), do: call_name_exclusion_match?(matcher, mfa)
+  defp calibration_match?("BD-002", matcher, mfa), do: boundary_match?(matcher, mfa)
+
+  defp mfa_string!({module, function, arity}) do
+    Atom.to_string(module) <> ":" <> Atom.to_string(function) <> "/" <> Integer.to_string(arity)
+  end
+
+  defp calibration_removal_witness!("CN-005", matcher, :call_name, graph, matched_mfas) do
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    whole_modules = for {module, :_, :_} <- tier, do: module
+
+    uncovered =
+      graph.full_exported
+      |> Enum.filter(&banned_module_named?(&1, whole_modules))
+      |> Enum.reject(fn {_module, function, _arity} ->
+        function in [:__info__, :module_info] or
+          String.starts_with?(Atom.to_string(function), "MACRO-")
+      end)
+      |> Enum.reject(&covered?(&1, tier, names))
+
+    others = Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 4)))
+
+    Enum.filter(uncovered, fn mfa ->
+      mfa in matched_mfas and call_name_exclusion_match?(matcher, mfa) and
+        not Enum.any?(others, fn {other_matcher, _reason, _citations} ->
+          call_name_exclusion_match?(other_matcher, mfa)
+        end)
+    end)
+  end
+
+  defp calibration_removal_witness!("BD-002", matcher, :boundary, graph, matched_mfas) do
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    boundary = boundary_set(graph, tier, names)
+    uncovered = Enum.reject(boundary, &covered?(&1, tier, names))
+    others = Enum.reject(@boundary_exclusions, &(&1 == Enum.at(@boundary_exclusions, 1)))
+
+    Enum.filter(uncovered, fn mfa ->
+      mfa in matched_mfas and boundary_match?(matcher, mfa) and
+        not Enum.any?(others, fn {other_matcher, _reason, _citations} ->
+          boundary_match?(other_matcher, mfa)
+        end)
+    end)
+  end
+
+  defp calibration_overlaps!("CN-005", _matcher, matched_mfas, :call_name) do
+    Enum.filter(matched_mfas, fn mfa ->
+      exclusion_reason(elem(mfa, 0), elem(mfa, 1), @exclusions) != nil or
+        Enum.any?(
+          Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 4))),
+          fn
+            {other_matcher, _reason, _citations} -> call_name_exclusion_match?(other_matcher, mfa)
+          end
+        ) or
+        Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
+    end)
+  end
+
+  defp calibration_overlaps!("BD-002", _matcher, matched_mfas, :boundary) do
+    Enum.filter(matched_mfas, fn mfa ->
+      exclusion_reason(elem(mfa, 0), elem(mfa, 1), @exclusions) != nil or
+        Enum.any?(@call_name_exclusions, fn {other_matcher, _reason, _citations} ->
+          call_name_exclusion_match?(other_matcher, mfa)
+        end) or
+        Enum.any?(Enum.reject(@boundary_exclusions, &(&1 == Enum.at(@boundary_exclusions, 1))), fn
+          {other_matcher, _reason, _citations} -> boundary_match?(other_matcher, mfa)
+        end)
+    end)
+  end
+
+  defp calibration_citations!(id, lane) do
+    Map.fetch!(calibration_citation_map!(), lane)
+    |> Map.fetch!(id)
+  end
+
+  defp calibration_citation_map! do
+    %{
+      "core" => %{
+        "CN-005" => [
+          {"elixir/lib/regex.ex:219", "def compile(source, opts"},
+          {"elixir/lib/regex.ex:223", "defp do_compile(source, opts) when is_binary(opts)"},
+          {"elixir/lib/regex.ex:233", "defp do_compile(source, opts) when is_list(opts)"},
+          {"elixir/lib/regex.ex:234", "case :re.compile(source, opts) do"},
+          {"elixir/lib/regex.ex:1040", "[:unicode, :ucp | acc]"},
+          {"elixir/lib/regex.ex:1063", "{:error, t}"},
+          {"stdlib/src/re.erl:128", "compile(_) ->"},
+          {"stdlib/src/re.erl:288", "compile(_, _) ->"}
+        ],
+        "BD-002" => [
+          {"kernel/src/code.erl:967", "compiler_dir() -> call({dir,compiler_dir})."},
+          {"kernel/src/code.erl:1860", "get_doc(Mod) when is_atom(Mod) ->"},
+          {"kernel/src/code.erl:778", "get_object_code(Mod) when is_atom(Mod) ->"},
+          {"kernel/src/code.erl:885", "lib_dir() -> call({dir,lib_dir})."},
+          {"kernel/src/code.erl:927", "lib_dir(App) when is_atom(App)"},
+          {"kernel/src/code.erl:959", "lib_dir(App, SubDir) when is_atom(App)"},
+          {"kernel/src/code.erl:980", "priv_dir(App) when is_atom(App)"},
+          {"kernel/src/code.erl:871", "root_dir() -> call({dir,root_dir})."},
+          {"kernel/src/code.erl:1807", "where_is_file(File) when is_list(File)"},
+          {"kernel/src/code.erl:1782", "which(Module) when is_atom(Module)"},
+          {"kernel/src/code.erl:1791", "which(Module, Path) when is_atom(Module)"},
+          {"kernel/src/code.erl:1664", "call(Req) ->"},
+          {"kernel/src/code.erl:1903", "binary_to_term(Bin)"},
+          {"kernel/src/code.erl:1916", "binary_to_term(Bin)"}
+        ]
+      },
+      "floor" => %{
+        "CN-005" => [
+          {"elixir/lib/regex.ex:223", "def compile(source, opts"},
+          {"elixir/lib/regex.ex:227", "defp compile(source, opts, version) when is_binary(opts)"},
+          {"elixir/lib/regex.ex:237", "defp compile(source, opts, version) when is_list(opts)"},
+          {"elixir/lib/regex.ex:238", "case :re.compile(source, opts) do"},
+          {"elixir/lib/regex.ex:901", "[:unicode, :ucp | acc]"},
+          {"elixir/lib/regex.ex:914", "{:error, t}"},
+          {"stdlib/src/re.erl:86", "compile(_) ->"},
+          {"stdlib/src/re.erl:236", "compile(_, _) ->"}
+        ],
+        "BD-002" => [
+          {"kernel/src/code.erl:937", "compiler_dir() -> call({dir,compiler_dir})."},
+          {"kernel/src/code.erl:1830", "get_doc(Mod) when is_atom(Mod) ->"},
+          {"kernel/src/code.erl:748", "get_object_code(Mod) when is_atom(Mod) ->"},
+          {"kernel/src/code.erl:855", "lib_dir() -> call({dir,lib_dir})."},
+          {"kernel/src/code.erl:897", "lib_dir(App) when is_atom(App)"},
+          {"kernel/src/code.erl:929", "lib_dir(App, SubDir) when is_atom(App)"},
+          {"kernel/src/code.erl:950", "priv_dir(App) when is_atom(App)"},
+          {"kernel/src/code.erl:841", "root_dir() -> call({dir,root_dir})."},
+          {"kernel/src/code.erl:1776", "where_is_file(File) when is_list(File)"},
+          {"kernel/src/code.erl:1752", "which(Module) when is_atom(Module)"},
+          {"kernel/src/code.erl:1760", "which(Module, Path) when is_atom(Module)"},
+          {"kernel/src/code.erl:1634", "call(Req) ->"},
+          {"kernel/src/code.erl:1866", "binary_to_term(Bin)"},
+          {"kernel/src/code.erl:1879", "binary_to_term(Bin)"}
+        ]
+      }
+    }
+  end
+
+  defp calibration_input_trace!("CN-005"),
+    do:
+      "Caller pattern bytes and fixed/default or explicit option terms reach Regex.compile; modifier bytes map only to fixed option atoms and invalid bytes return an error."
+
+  defp calibration_input_trace!("BD-002"),
+    do:
+      "Caller supplies module/app/name queries to :code getters; get_doc/1 selects the existing module's code-path artifact, not caller-provided bytes."
+
+  defp calibration_trace!("CN-005"),
+    do: ["Regex.compile/1,2", "Regex option translator", ":re.compile/1,2 (regex NIF)"]
+
+  defp calibration_trace!("BD-002"),
+    do: [
+      ":code getter MFA",
+      "code_server:call/1 with a getter-shaped request",
+      "get_doc/1 -> which/1 -> beam_lib:chunks or file:read_file -> binary_to_term/1"
+    ]
+
+  defp calibration_verdict!("CN-005"),
+    do: "Regex pattern compilation only; no source evaluation or caller-derived atom conversion."
+
+  defp calibration_verdict!("BD-002"),
+    do:
+      "Code-path and application metadata queries. get_doc/1 decodes installed BEAM documentation and is safe only under the recorded trusted-artifact boundary."
+
+  defp calibration_limitations!("CN-005"), do: []
+
+  defp calibration_limitations!("BD-002"),
+    do: [
+      "get_doc/1 reaches binary_to_term/1 on Docs or doc/chunks bytes; this review does not claim safety for attacker-writable BEAM/code-path artifacts.",
+      "The approved source archive does not contain kernel/src/code_server.erl; code_server:call/1 handlers are not independently source-reviewed here."
+    ]
 end
 
 defmodule Fablebook.Test.InstalledOtpReceiptTest do
