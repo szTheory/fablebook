@@ -5310,21 +5310,29 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :debugger_installed_wide_acceptance
   test "debugger installed-wide acceptance composes the current lane evidence", ctx do
+    test_started = System.monotonic_time(:millisecond)
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
     baseline_records = @debugger_audit
+    parent_owner_records = debugger_parent_owner_records!()
     settings_records = DebuggerSettings.records(ctx.graph.lane.name)
     receipt_lines = ctx.graph.receipt_lines
+
+    assertion_started = System.monotonic_time(:millisecond)
 
     result =
       assert_debugger_installed_wide_acceptance!(
         ctx.graph,
         evidence,
         baseline_records,
+        parent_owner_records,
         settings_records,
         receipt_lines
       )
+
+    assertion_ms = System.monotonic_time(:millisecond) - assertion_started
+    result = Map.put(result, "assertion_ms", assertion_ms)
 
     current_baseline = Enum.find(baseline_records, &(&1.lane == ctx.graph.lane.name))
     assert current_baseline != nil, "expected the current lane's parent debugger baseline"
@@ -5335,6 +5343,36 @@ defmodule Fablebook.Contract.TierSweepTest do
         ctx.graph,
         evidence,
         omitted_baseline_records,
+        parent_owner_records,
+        settings_records,
+        receipt_lines
+      )
+    end
+
+    current_parent_owner_index =
+      Enum.find_index(parent_owner_records, fn row ->
+        row["t"] == "root" and row["lane"] == ctx.graph.lane.name and
+          row["app"] == "debugger" and row["module"] == "dbg_wx_interpret" and
+          row["function"] == "start" and row["arity"] == 4
+      end)
+
+    assert current_parent_owner_index != nil,
+           "expected the adopted current-lane dbg_wx_interpret:start/4 owner row"
+
+    current_parent_owner = Enum.at(parent_owner_records, current_parent_owner_index)
+    assert current_parent_owner["owner"] == "01.1.1.3"
+
+    drifted_parent_owner_records =
+      List.update_at(parent_owner_records, current_parent_owner_index, fn row ->
+        Map.put(row, "owner", "01.1.1.3.1.2")
+      end)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_debugger_installed_wide_acceptance!(
+        ctx.graph,
+        evidence,
+        baseline_records,
+        drifted_parent_owner_records,
         settings_records,
         receipt_lines
       )
@@ -5372,14 +5410,21 @@ defmodule Fablebook.Contract.TierSweepTest do
         ctx.graph,
         evidence,
         baseline_records,
+        parent_owner_records,
         drifted_settings_records,
         receipt_lines
       )
     end
 
-    IO.puts(
-      "FABLEBOOK_DEBUGGER_INSTALLED_WIDE_ACCEPTANCE=#{JSON.encode!(result)}"
-    )
+    result =
+      result
+      |> Map.put(
+        "control_ms",
+        System.monotonic_time(:millisecond) - assertion_started - assertion_ms
+      )
+      |> Map.put("test_ms", System.monotonic_time(:millisecond) - test_started)
+
+    IO.puts("FABLEBOOK_DEBUGGER_INSTALLED_WIDE_ACCEPTANCE=#{JSON.encode!(result)}")
   end
 
   defp receipt_footer_sha256!(lines) do
@@ -7523,11 +7568,28 @@ defmodule Fablebook.Contract.TierSweepTest do
          graph,
          evidence,
          baseline_records,
+         parent_owner_records,
          settings_records,
          receipt_lines
        ) do
     lane = graph.lane.name
     tier = BannedCalls.banned_mfas()
+
+    baseline_record = Enum.find(baseline_records, &(&1.lane == lane))
+    assert baseline_record != nil, "expected the current lane's parent debugger baseline"
+
+    parent_owner_rows =
+      Enum.filter(parent_owner_records, fn row ->
+        row["t"] == "root" and row["lane"] == lane and row["app"] == "debugger" and
+          row["module"] == "dbg_wx_interpret" and row["function"] == "start" and
+          row["arity"] == 4
+      end)
+
+    assert length(parent_owner_rows) == 1,
+           "expected exactly one adopted parent owner row for #{lane} dbg_wx_interpret:start/4"
+
+    parent_owner_record = hd(parent_owner_rows)
+    assert parent_owner_record["owner"] == "01.1.1.3"
 
     assert_debugger_audit!(baseline_records, graph, tier, evidence, @exclusions)
 
@@ -7540,7 +7602,6 @@ defmodule Fablebook.Contract.TierSweepTest do
       DebuggerSettings.assert_remainder_receipt!(graph, evidence, settings_records, receipt_lines)
 
     installed_receipt = InstalledOtp.verify_receipt_lines!(receipt_lines)
-    baseline_record = Enum.find(baseline_records, &(&1.lane == lane))
 
     assert graph.lane.name == evidence.lane.name
     assert ownership.status == :verified
@@ -7550,7 +7611,6 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert ownership.lane == lane
     assert saved_settings.lane == lane
     assert remainder.lane == lane
-    assert baseline_record != nil
     assert settings_records.lane == lane
     assert settings_records.owner == "01.1.1.3.1.1"
     assert remainder.owner == "01.1.1.3.1.2"
@@ -7597,6 +7657,12 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     %{
       "lane" => lane,
+      "scope" => "debugger_static_source_and_beam_acceptance",
+      "proof_limitations" => [
+        "debugger_entrypoints_callbacks_and_user_supplied_input_not_invoked",
+        "no_runtime_safety_claim",
+        "parent_global_gate_later_debugger_assignments_and_sec_01_not_closed"
+      ],
       "receipt_sha256" => receipt_sha256,
       "source_archive_sha256" => source_archive_sha256,
       "baseline_source_sha256" => baseline_record.source_sha256,
@@ -7604,7 +7670,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       "remainder_source_sha256" => remainder.source_sha256,
       "owners" => [
         %{
-          "owner" => "01.1.1.3",
+          "owner" => parent_owner_record["owner"],
           "status" => "inherited-baseline-validated",
           "identities" => ["dbg_wx_interpret:start/4"]
         },
@@ -7621,6 +7687,34 @@ defmodule Fablebook.Contract.TierSweepTest do
       ],
       "inherited_pending" => remainder.inherited_pending
     }
+  end
+
+  defp debugger_parent_owner_records! do
+    ledger_path =
+      Path.expand(
+        "../../.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz",
+        __DIR__
+      )
+
+    rows =
+      ledger_path
+      |> File.read!()
+      |> :zlib.gunzip()
+      |> String.split("\n", trim: true)
+      |> Enum.map(&JSON.decode!/1)
+      |> Enum.filter(fn row ->
+        row["t"] == "root" and row["app"] == "debugger" and
+          row["module"] == "dbg_wx_interpret" and row["function"] == "start" and
+          row["arity"] == 4
+      end)
+
+    assert MapSet.new(Enum.map(rows, & &1["lane"])) == MapSet.new(["core", "floor"]),
+           "expected one adopted parent owner row for each exact lane"
+
+    assert Enum.all?(rows, &(&1["owner"] == "01.1.1.3")),
+           "expected the adopted parent owner to remain 01.1.1.3"
+
+    rows
   end
 
   defp assert_debugger_audit!(records, graph, tier, evidence, exclusions) do
