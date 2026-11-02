@@ -3556,6 +3556,53 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert MapSet.size(graph.historical_active_modules) > 0
   end
 
+  @tag :audit_readiness
+  test "full installed BEAM identities reject omissions before accepting selected source", ctx do
+    graph = ctx.graph
+
+    discovered_apps = MapSet.new(graph.discovered, & &1.app)
+    app_roots = InstalledOtp.app_roots!(:code.lib_dir() |> to_string(), lane: graph.lane.name)
+    app_root_names = MapSet.new(app_roots, & &1.app)
+
+    discovered_beam_apps =
+      graph.discovered |> Enum.filter(&(&1.beams != [])) |> MapSet.new(& &1.app)
+
+    inspected_apps = MapSet.new(graph.inspected, & &1.app)
+    ingested_apps = MapSet.new(graph.ingested, & &1.app)
+
+    assert discovered_apps == app_root_names
+    assert discovered_beam_apps == inspected_apps
+    assert discovered_beam_apps == ingested_apps
+
+    first = hd(graph.inspected)
+    omitted = Enum.reject(graph.inspected, &(&1.app == first.app and &1.module == first.module))
+
+    error =
+      assert_raise InstalledOtp.Error, fn ->
+        InstalledOtp.assert_parity!(graph.discovered, omitted, graph.ingested, graph.lane.name)
+      end
+
+    assert error.reason == :identity_parity
+    assert error.detail.lane == graph.lane.name
+    assert Exception.message(error) =~ first.module
+
+    assert :ok =
+             InstalledOtp.assert_parity!(
+               graph.discovered,
+               graph.inspected,
+               graph.ingested,
+               graph.lane.name
+             )
+
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    resolved = SweepEvidence.resolve!(evidence, "kernel/src/file.erl:1")
+
+    assert resolved.line == 1
+    assert resolved.origin in [:installed, :archive]
+    assert resolved.sha256 =~ ~r/^[a-f0-9]{64}$/
+  end
+
   test "source evidence rejects a wrong runtime patch before resolving citations" do
     error =
       assert_raise Fablebook.Test.SweepEvidence.Error, fn ->
