@@ -809,9 +809,11 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
   2. Baseline and child outcomes agree on source identity, route disposition, ownership and exact-lane receipts; any stale or unresolved debugger row remains with its existing owner. If referenced parent audit evidence is absent, revalidate or regenerate it through existing tooling instead of treating the missing artifact as available.
   3. Acceptance uses static source/BEAM and compile-only evidence; debugger code, callbacks and runtime behavior are not invoked.
   4. Evidence closes only the debugger-specific slice; the all-app installed-scope gate remains with 01.1.1.3.13 and SEC-01 remains with Phase 5.
-**Plans**: 2 across 2 sequential waves
+**Plans**: 2 across 2 sequential waves — complete
 **Wave 1**
 - [x] 01.1.1.3.1.3-01-PLAN.md — Add the aggregate current-lane contract, omission/owner controls, and focused evidence
 
-**Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01.1.1.3.1.3-02-PLAN.md — Review, run both full exact lanes, and verify current-head delivery
+**Wave 2**
+- [x] 01.1.1.3.1.3-02-PLAN.md — Review, run both full exact lanes, and verify current-head delivery
+
+**Boundary**: Complete after PR #33 passed exact-head core, floor, dialyzer, security, and ci-gate checks, both aggregate markers matched, and the merge was verified in `main`. Parent `.3`, later debugger assignments, the all-app gate, and SEC-01 remain with their existing owners.

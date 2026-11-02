@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.3.1.3
 current_phase_name: Debugger installed-wide acceptance
 status: executing
-stopped_at: Phase 01.1.1.3.1.3 local review and full exact lanes complete; clean phase-only PR, current-head CI, and merged delivery pending
-last_updated: "2026-11-02T00:56:57Z"
+stopped_at: Phase 01.1.1.3.1.3 complete; PR #33 exact-head checks and merged delivery verified; stopped at the selected phase boundary
+last_updated: "2026-11-02T02:03:09Z"
 last_activity: 2026-11-02
-last_activity_desc: Phase 01.1.1.3.1.3 reviewed; full core and floor lanes passed locally
+last_activity_desc: Phase 01.1.1.3.1.3 complete; local lanes, exact-head CI markers, PR merge, and main ancestry verified
 state_head: e301e49186b563a32c6fa0f11f1eb4d71cb9b5d7
 progress:
   total_phases: 41
   completed_phases: 1
   total_plans: 31
-  completed_plans: 25
+  completed_plans: 26
   percent: 2
 ---
 
@@ -27,12 +27,12 @@ See: .planning/PROJECT.md (updated 2026-10-30)
 
 ## Current Position
 
-Phase: 01.1.1.3.1.3 (Debugger installed-wide acceptance) — IN PROGRESS
-Plan: 1/2 complete; Plan 2 local review and lanes complete, remote delivery pending
+Phase: 01.1.1.3.1.3 (Debugger installed-wide acceptance) — COMPLETE
+Plan: 2/2 complete; local review, exact lanes, exact-head CI, and merged delivery verified
 Status: Executing
-Last activity: 2026-11-02 — Full core and floor exact lanes passed locally; current-head PR CI and merge remain
+Last activity: 2026-11-02 — PR #33 is green and merged; exact-head markers and main ancestry verified
 
-Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 25/31 plans complete; nested phase plans do not change parent completion counts
+Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plans complete; nested phase plans do not change parent completion counts
 
 ## Performance Metrics
 
@@ -157,7 +157,7 @@ None yet.
 
 - Phase 01.1 inserted after Phase 1: Close phase 1 guard gaps (atom-ban bypass, code loading, hex-publish hardening); split per INT-20261029-01 to keep the 5-plan cap (URGENT)
 - Phase 01.1.1.1 inserted after Phase 01.1.1: Finish the ban list: open items transferred from 01.1.1 at planning (INT-20261029-02) (URGENT)
-- Numbering from here: keep existing dotted IDs stable because ownership and evidence artifacts reference them; finish the already-assigned debugger descendant 01.1.1.3.1.3, then resume the existing top-level roadmap sequence from Phase 2. Do not add further dotted descendants; express ordering with explicit dependencies.
+- Phase numbering: keep existing dotted IDs stable as historical ownership and evidence references. After archiving the current milestone, start the next milestone at Phase 1 with `$gsd-new-milestone --reset-phase-numbers` (INT-20261101-02). Do not add further nested decimal insertions.
 
 ## Deferred Items
 
@@ -169,7 +169,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-02T00:56:57Z
-Stopped at: Phase 01.1.1.3.1.3 local implementation, review, and exact-lane validation complete; remote delivery pending.
-Next action: Prepare an isolated phase-only delivery head, obtain current-head CI, then independently verify merged delivery. Do not wait for the weekly CI-health publication.
+Last session: 2026-11-02T02:03:09Z
+Stopped at: Phase 01.1.1.3.1.3 complete after PR #33 exact-head CI and merge identity verification. No later phase was started.
+Next action: At the next milestone, archive the current milestone, then restart numbering at Phase 1 with `$gsd-new-milestone --reset-phase-numbers`.
 Resume file: None
