@@ -9214,24 +9214,9 @@ defmodule Fablebook.Contract.TierSweepTest do
           assert replacement_refs != [],
                  "original identity #{id} has no live replacement reference"
 
-          lane_matches =
-            Map.new(@creator_expected_lanes, fn lane ->
-              baseline = Map.fetch!(lane_baselines[lane], id)
-              matches = Enum.map(baseline["matches"], &budget_mfa_string!/1)
+          lane_matches = original_lane_matches!(lane_baselines, id)
 
-              assert length(matches) == MapSet.size(MapSet.new(matches)),
-                     "duplicate baseline matches for #{id}/#{lane}"
-
-              {lane, matches}
-            end)
-
-          sampled_status =
-            case id do
-              "CN-005" -> :calibrated_retained
-              "BD-002" -> :calibrated_retained
-              "EX-159" -> :calibrated_replaced_by_tier
-              _ -> :pending
-            end
+          sampled_status = original_semantic_status(id)
 
           %{
             id: id,
@@ -9244,7 +9229,7 @@ defmodule Fablebook.Contract.TierSweepTest do
             lane_matches: lane_matches,
             current_replacement_refs: replacement_refs,
             semantic_status: sampled_status,
-            owner: if(sampled_status == :pending, do: "01.1.1.4", else: "01.1.1.5"),
+            owner: original_semantic_owner(sampled_status),
             remaining_semantic_owner: "01.1.1.4"
           }
         end)
@@ -9367,58 +9352,72 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp split_static_container!(source, index, stack, entry_start, entries, quote, escaped) do
     byte = :binary.at(source, index)
+    split_static_step!(source, index, stack, entry_start, entries, quote, escaped, byte)
+  end
 
-    cond do
-      quote != nil and escaped ->
-        split_static_container!(source, index + 1, stack, entry_start, entries, quote, false)
+  defp split_static_step!(source, index, stack, entry_start, entries, quote, true, _byte)
+       when not is_nil(quote) do
+    advance_static_container!(source, index, stack, entry_start, entries, quote, false)
+  end
 
-      quote != nil and byte == ?\\ ->
-        split_static_container!(source, index + 1, stack, entry_start, entries, quote, true)
+  defp split_static_step!(source, index, stack, entry_start, entries, quote, false, 92)
+       when not is_nil(quote) do
+    advance_static_container!(source, index, stack, entry_start, entries, quote, true)
+  end
 
-      quote != nil and byte == quote ->
-        split_static_container!(source, index + 1, stack, entry_start, entries, nil, false)
+  defp split_static_step!(source, index, stack, entry_start, entries, quote, false, byte)
+       when not is_nil(quote) and byte == quote do
+    advance_static_container!(source, index, stack, entry_start, entries, nil, false)
+  end
 
-      quote != nil ->
-        split_static_container!(source, index + 1, stack, entry_start, entries, quote, false)
+  defp split_static_step!(source, index, stack, entry_start, entries, quote, _escaped, _byte)
+       when not is_nil(quote) do
+    advance_static_container!(source, index, stack, entry_start, entries, quote, false)
+  end
 
-      byte in [?\", ?'] ->
-        split_static_container!(source, index + 1, stack, entry_start, entries, byte, false)
+  defp split_static_step!(source, index, stack, entry_start, entries, nil, false, byte) do
+    split_static_unquoted!(source, index, stack, entry_start, entries, byte)
+  end
 
-      byte in [?[, ?{, ?(] ->
-        split_static_container!(
+  defp split_static_unquoted!(source, index, stack, entry_start, entries, byte) do
+    case {byte, stack} do
+      {open, _stack} when open in [?[, ?{, ?(] ->
+        advance_static_container!(
           source,
-          index + 1,
-          [static_closer!(byte) | stack],
+          index,
+          [static_closer!(open) | stack],
           entry_start,
           entries,
           nil,
           false
         )
 
-      byte == hd(stack) and tl(stack) == [] ->
+      {quote, _stack} when quote in [34, 39] ->
+        advance_static_container!(source, index, stack, entry_start, entries, quote, false)
+
+      {closer, [closer]} ->
+        close_static_container!(source, index, entry_start, entries)
+
+      {closer, [closer | rest]} ->
+        advance_static_container!(source, index, rest, entry_start, entries, nil, false)
+
+      {44, [_only_closer]} ->
         entry = normalize_static_expression(binary_part(source, entry_start, index - entry_start))
-        entries = if entry == "", do: entries, else: [entry | entries]
-        {Enum.reverse(entries), index}
+        advance_static_container!(source, index, stack, index + 1, [entry | entries], nil, false)
 
-      byte == hd(stack) ->
-        split_static_container!(source, index + 1, tl(stack), entry_start, entries, nil, false)
-
-      byte == ?, and length(stack) == 1 ->
-        entry = normalize_static_expression(binary_part(source, entry_start, index - entry_start))
-
-        split_static_container!(
-          source,
-          index + 1,
-          stack,
-          index + 1,
-          [entry | entries],
-          nil,
-          false
-        )
-
-      true ->
-        split_static_container!(source, index + 1, stack, entry_start, entries, nil, false)
+      _other ->
+        advance_static_container!(source, index, stack, entry_start, entries, nil, false)
     end
+  end
+
+  defp close_static_container!(source, index, entry_start, entries) do
+    entry = normalize_static_expression(binary_part(source, entry_start, index - entry_start))
+    entries = if entry == "", do: entries, else: [entry | entries]
+    {Enum.reverse(entries), index}
+  end
+
+  defp advance_static_container!(source, index, stack, entry_start, entries, quote, escaped) do
+    split_static_container!(source, index + 1, stack, entry_start, entries, quote, escaped)
   end
 
   defp static_closer!(40), do: 41
@@ -9445,6 +9444,26 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp budget_mfa_string!(other),
     do:
       raise(ExUnit.AssertionError, message: "invalid original audit-budget MFA #{inspect(other)}")
+
+  defp original_semantic_status("CN-005"), do: :calibrated_retained
+  defp original_semantic_status("BD-002"), do: :calibrated_retained
+  defp original_semantic_status("EX-159"), do: :calibrated_replaced_by_tier
+  defp original_semantic_status(_id), do: :pending
+
+  defp original_semantic_owner(:pending), do: "01.1.1.4"
+  defp original_semantic_owner(_sampled_status), do: "01.1.1.5"
+
+  defp original_lane_matches!(lane_baselines, id) do
+    Map.new(@creator_expected_lanes, fn lane ->
+      baseline = Map.fetch!(lane_baselines[lane], id)
+      matches = Enum.map(baseline["matches"], &budget_mfa_string!/1)
+
+      assert length(matches) == MapSet.size(MapSet.new(matches)),
+             "duplicate baseline matches for #{id}/#{lane}"
+
+      {lane, matches}
+    end)
+  end
 
   defp calibration_records!(graph, evidence, ledger) do
     Enum.map(["CN-005", "BD-002"], fn id ->
@@ -9574,11 +9593,11 @@ defmodule Fablebook.Contract.TierSweepTest do
     uncovered =
       graph.full_exported
       |> Enum.filter(&banned_module_named?(&1, whole_modules))
-      |> Enum.reject(fn {_module, function, _arity} ->
+      |> Enum.reject(fn {module, function, arity} ->
         function in [:__info__, :module_info] or
-          String.starts_with?(Atom.to_string(function), "MACRO-")
+          String.starts_with?(Atom.to_string(function), "MACRO-") or
+          covered?({module, function, arity}, tier, names)
       end)
-      |> Enum.reject(&covered?(&1, tier, names))
 
     others = Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 4)))
 
