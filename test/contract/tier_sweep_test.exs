@@ -7054,15 +7054,18 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp caller_chain_index(edges) do
-    Enum.reduce(edges, %{}, fn {{module, function, _arity} = caller_mfa, next}, index ->
-      key = {{module, function}, next}
+    Enum.reduce(edges, %{}, &index_caller_edge/2)
+  end
 
-      Map.update(index, key, caller_mfa, fn current ->
-        if caller_mfa_sort_key(caller_mfa) < caller_mfa_sort_key(current),
-          do: caller_mfa,
-          else: current
-      end)
-    end)
+  defp index_caller_edge({{module, function, _arity} = caller_mfa, next}, index) do
+    key = {{module, function}, next}
+    Map.update(index, key, caller_mfa, &lowest_caller_mfa(caller_mfa, &1))
+  end
+
+  defp lowest_caller_mfa(candidate, current) do
+    if caller_mfa_sort_key(candidate) < caller_mfa_sort_key(current),
+      do: candidate,
+      else: current
   end
 
   defp caller_mfa_sort_key({module, function, arity}),
