@@ -24,6 +24,16 @@ Setup runs `mix deps.get --check-locked` and compiles dependencies. It stores Mi
 
 Run any Mix task through the same lane selection, for example `bin/lane core mix ci` or `bin/lane floor mix deps.tree`. The wrapper clears an inherited `MIX_BUILD_PATH`, since that setting overrides the lane-specific build root.
 
+## CI health
+
+To calculate the current seven-day CI timing and main-branch required-check signal locally without posting or updating GitHub issues, run:
+
+```sh
+GITHUB_REPOSITORY=szTheory/fablebook bin/ci_health --dry-run
+```
+
+This needs an authenticated `gh` CLI with read access to Actions and the repository ruleset. The command prints any issue update it would have made; the scheduled workflow remains responsible for publishing the weekly result.
+
 ## Tests and changes
 
 Keep the core and floor lockfiles unchanged unless a dependency update is intentional. Do not run `bin/floor_lock` as part of ordinary setup; it regenerates the floor lockfile.
