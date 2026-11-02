@@ -5308,6 +5308,80 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :debugger_installed_wide_acceptance
+  test "debugger installed-wide acceptance composes the current lane evidence", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    baseline_records = @debugger_audit
+    settings_records = DebuggerSettings.records(ctx.graph.lane.name)
+    receipt_lines = ctx.graph.receipt_lines
+
+    result =
+      assert_debugger_installed_wide_acceptance!(
+        ctx.graph,
+        evidence,
+        baseline_records,
+        settings_records,
+        receipt_lines
+      )
+
+    current_baseline = Enum.find(baseline_records, &(&1.lane == ctx.graph.lane.name))
+    assert current_baseline != nil, "expected the current lane's parent debugger baseline"
+    omitted_baseline_records = List.delete(baseline_records, current_baseline)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_debugger_installed_wide_acceptance!(
+        ctx.graph,
+        evidence,
+        omitted_baseline_records,
+        settings_records,
+        receipt_lines
+      )
+    end
+
+    delegation = DebuggerSettings.load_delegation!()
+
+    selected_start_index =
+      Enum.find_index(delegation.records, fn row ->
+        row["lane"] == ctx.graph.lane.name and row["t"] == "root" and
+          row["app"] == "debugger" and row["module"] == "dbg_wx_mon" and
+          row["function"] == "start" and row["arity"] == 2
+      end)
+
+    assert selected_start_index != nil,
+           "expected the adopted current-lane dbg_wx_mon:start/2 root row"
+
+    selected_start_row = Enum.at(delegation.records, selected_start_index)
+    assert selected_start_row["owner"] == settings_records.owner
+
+    drifted_delegation_records =
+      List.update_at(delegation.records, selected_start_index, fn row ->
+        Map.put(row, "owner", "01.1.1.3.1.2")
+      end)
+
+    drifted_start_row = Enum.at(drifted_delegation_records, selected_start_index)
+    assert drifted_start_row["owner"] == "01.1.1.3.1.2"
+    refute drifted_start_row["owner"] == selected_start_row["owner"]
+
+    drifted_settings_records =
+      Map.put(settings_records, :delegation_records, drifted_delegation_records)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_debugger_installed_wide_acceptance!(
+        ctx.graph,
+        evidence,
+        baseline_records,
+        drifted_settings_records,
+        receipt_lines
+      )
+    end
+
+    IO.puts(
+      "FABLEBOOK_DEBUGGER_INSTALLED_WIDE_ACCEPTANCE=#{JSON.encode!(result)}"
+    )
+  end
+
   defp receipt_footer_sha256!(lines) do
     marker = "FABLEBOOK_OTP_INVENTORY_V2 "
     {:ok, footer} = JSON.decode(String.replace_prefix(List.last(lines), marker, ""))
@@ -7443,6 +7517,110 @@ defmodule Fablebook.Contract.TierSweepTest do
     |> Enum.map_join("; ", fn module ->
       "#{module} owner=#{Map.get(DebuggerPendingOwnership.owners(), module, "unassigned")}"
     end)
+  end
+
+  defp assert_debugger_installed_wide_acceptance!(
+         graph,
+         evidence,
+         baseline_records,
+         settings_records,
+         receipt_lines
+       ) do
+    lane = graph.lane.name
+    tier = BannedCalls.banned_mfas()
+
+    assert_debugger_audit!(baseline_records, graph, tier, evidence, @exclusions)
+
+    ownership = DebuggerSettings.assert_ownership!(graph, evidence, settings_records)
+
+    saved_settings =
+      DebuggerSettings.assert_receipt!(graph, evidence, settings_records, receipt_lines)
+
+    remainder =
+      DebuggerSettings.assert_remainder_receipt!(graph, evidence, settings_records, receipt_lines)
+
+    installed_receipt = InstalledOtp.verify_receipt_lines!(receipt_lines)
+    baseline_record = Enum.find(baseline_records, &(&1.lane == lane))
+
+    assert graph.lane.name == evidence.lane.name
+    assert ownership.status == :verified
+    assert saved_settings.status == :verified
+    assert remainder.status == :verified
+    assert installed_receipt.lane == lane
+    assert ownership.lane == lane
+    assert saved_settings.lane == lane
+    assert remainder.lane == lane
+    assert baseline_record != nil
+    assert settings_records.lane == lane
+    assert settings_records.owner == "01.1.1.3.1.1"
+    assert remainder.owner == "01.1.1.3.1.2"
+
+    assert MapSet.new(ownership.selected_roots) ==
+             MapSet.new([
+               {"debugger", "dbg_wx_mon", "start", 2},
+               {"debugger", "dbg_wx_mon", "load_settings", 2},
+               {"debugger", "dbg_wx_mon", "load_settings2", 2}
+             ])
+
+    assert remainder.inherited_pending == %{
+             callback_body: "dbg_icmd:break_p/4",
+             selected_roots: [
+               "dbg_wx_mon:load_settings/2",
+               "dbg_wx_mon:load_settings2/2",
+               "dbg_wx_mon:start/2"
+             ]
+           }
+
+    receipt_sha256 = InstalledOtp.verify_receipt_lines!(graph.receipt_lines).sha256
+
+    assert ownership.receipt_sha256 == receipt_sha256
+    assert saved_settings.receipt_sha256 == receipt_sha256
+    assert remainder.receipt_sha256 == receipt_sha256
+    assert installed_receipt.sha256 == receipt_sha256
+
+    archive_path = Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
+
+    source_archive_sha256 =
+      archive_path
+      |> File.read!()
+      |> then(fn bytes -> :crypto.hash(:sha256, bytes) end)
+      |> Base.encode16(case: :lower)
+
+    assert source_archive_sha256 == SweepEvidence.archive_sha256()
+
+    selected_roots =
+      ownership.selected_roots
+      |> Enum.map(fn {app, module, function, arity} ->
+        "#{app}:#{module}:#{function}/#{arity}"
+      end)
+      |> Enum.sort()
+
+    %{
+      "lane" => lane,
+      "receipt_sha256" => receipt_sha256,
+      "source_archive_sha256" => source_archive_sha256,
+      "baseline_source_sha256" => baseline_record.source_sha256,
+      "selected_settings_source_sha256" => settings_records.source_sha256,
+      "remainder_source_sha256" => remainder.source_sha256,
+      "owners" => [
+        %{
+          "owner" => "01.1.1.3",
+          "status" => "inherited-baseline-validated",
+          "identities" => ["dbg_wx_interpret:start/4"]
+        },
+        %{
+          "owner" => settings_records.owner,
+          "status" => "verified",
+          "identities" => ["dbg_wx_settings"] ++ selected_roots
+        },
+        %{
+          "owner" => remainder.owner,
+          "status" => "verified",
+          "source_modules" => Enum.sort(Map.keys(remainder.source_sha256))
+        }
+      ],
+      "inherited_pending" => remainder.inherited_pending
+    }
   end
 
   defp assert_debugger_audit!(records, graph, tier, evidence, exclusions) do

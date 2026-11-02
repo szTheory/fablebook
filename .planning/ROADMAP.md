@@ -783,7 +783,7 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
   2. Callback, breakpoint, interpreter, monitor and trace routes have explicit branch dispositions; inherited callback body/outcome ownership remains unchanged.
   3. Risky routes have narrow static source/BEAM guard evidence and omission controls; debugger code and callbacks are never invoked.
   4. Scoped receipts, review, security and delivery evidence agree on the same exact source, owner and tested head, while later installed-wide acceptance and SEC-01 remain pending with their existing owners.
-**Plans**: 4/5 plans executed across 5 sequential waves
+**Plans**: 5/5 plans complete across 5 sequential waves
 **Wave 1**
 - [x] 01.1.1.3.1.2-01-PLAN.md — Build the tracer and reconcile fresh exact-lane inventories
 
@@ -797,4 +797,21 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
 - [x] 01.1.1.3.1.2-04-PLAN.md — Prove narrow guards, ownership and omission controls
 
 **Wave 5** *(blocked on Wave 4 completion)*
-- [ ] 01.1.1.3.1.2-05-PLAN.md — Review, validate and deliver the scoped change
+- [x] 01.1.1.3.1.2-05-PLAN.md — Review, validate and deliver the scoped change
+
+### Phase 01.1.1.3.1.3: Debugger installed-wide acceptance
+
+**Goal**: Close 01.1.1.3.1's debugger-specific installed-wide acceptance by reconciling the parent selected-file baseline (01.1.1.3) and the completed saved-settings/remainder slices (01.1.1.3.1.1 and 01.1.1.3.1.2) across both exact lanes. Parent 01.1.1.3 rows are inherited baseline inputs only: this phase may validate or report them, but does not close or reassign them. Keep the all-app installed-scope gate with 01.1.1.3.13 and SEC-01 with Phase 5.
+**Depends on**: Phase 01.1.1.3.1.1 and Phase 01.1.1.3.1.2
+**Requirements**: None completed here (SEC-01 remains assigned to Phase 5)
+**Success Criteria** (what must be TRUE):
+  1. The parent 01.1.1.3 selected-file baseline and the 01.1.1.3.1.1 / 01.1.1.3.1.2 assignments reconcile against current core and floor evidence without relying on frozen historical totals.
+  2. Baseline and child outcomes agree on source identity, route disposition, ownership and exact-lane receipts; any stale or unresolved debugger row remains with its existing owner. If referenced parent audit evidence is absent, revalidate or regenerate it through existing tooling instead of treating the missing artifact as available.
+  3. Acceptance uses static source/BEAM and compile-only evidence; debugger code, callbacks and runtime behavior are not invoked.
+  4. Evidence closes only the debugger-specific slice; the all-app installed-scope gate remains with 01.1.1.3.13 and SEC-01 remains with Phase 5.
+**Plans**: 2 across 2 sequential waves
+**Wave 1**
+- [ ] 01.1.1.3.1.3-01-PLAN.md — Add the aggregate current-lane contract, omission/owner controls, and focused evidence
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01.1.1.3.1.3-02-PLAN.md — Review, run both full exact lanes, and verify current-head delivery
