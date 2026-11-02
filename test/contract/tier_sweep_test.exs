@@ -3380,6 +3380,62 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @exclusions @exclusions ++ [@escript_debug_exclusion]
 
+  test "caller-chain index preserves duplicate edges and lowest caller arity" do
+    start_mfa = {:fablebook_index_target, :run, 9}
+    caller = {:fablebook_index_middle, :route}
+    sink = {:fablebook_index_sink, :stop}
+
+    parent = %{
+      {:fablebook_index_target, :run} => caller,
+      caller => sink,
+      sink => nil
+    }
+
+    edges = [
+      {{:fablebook_index_middle, :route, 3}, sink},
+      {{:fablebook_index_middle, :route, 1}, sink},
+      {{:fablebook_index_middle, :route, 1}, sink},
+      {{:fablebook_index_middle, :route, 0}, {:fablebook_index_other, :stop}}
+    ]
+
+    expected_index =
+      edges
+      |> Enum.group_by(
+        fn {{module, function, _arity}, next} -> {{module, function}, next} end,
+        fn {caller_mfa, _next} -> caller_mfa end
+      )
+      |> Map.new(fn {key, candidates} ->
+        caller_mfa =
+          candidates
+          |> Enum.uniq()
+          |> Enum.sort_by(fn {module, function, arity} ->
+            {Atom.to_string(module), Atom.to_string(function), arity}
+          end)
+          |> List.first()
+
+        {key, caller_mfa}
+      end)
+
+    assert caller_chain_index(edges) == expected_index
+
+    assert caller_chain(parent, start_mfa, caller_chain_index(edges)) == [
+             start_mfa,
+             {:fablebook_index_middle, :route, 1}
+           ]
+
+    assert caller_chain(
+             %{{:fablebook_index_target, :run} => nil},
+             start_mfa,
+             caller_chain_index([])
+           ) == [
+             start_mfa
+           ]
+
+    assert_raise RuntimeError, ~r/installed OTP inventory caller-chain edge missing/, fn ->
+      caller_chain(parent, start_mfa, caller_chain_index([]))
+    end
+  end
+
   test "discovers and traces a compile-only app outside historical active membership", ctx do
     dir =
       Path.join(
@@ -6942,6 +6998,8 @@ defmodule Fablebook.Contract.TierSweepTest do
          module_app,
          sources_by_module
        ) do
+    caller_index = caller_chain_index(edges)
+
     app_records =
       pending_apps
       |> Enum.sort_by(& &1.app)
@@ -6976,7 +7034,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> Enum.map(fn {module, function, arity} ->
         caller_chain =
           parent
-          |> caller_chain({module, function, arity}, edges)
+          |> caller_chain({module, function, arity}, caller_index)
           |> Enum.map(fn {caller_module, caller_function, caller_arity} ->
             "#{Atom.to_string(caller_module)}.#{Atom.to_string(caller_function)}/#{caller_arity}"
           end)
@@ -6995,7 +7053,22 @@ defmodule Fablebook.Contract.TierSweepTest do
     app_records ++ module_records ++ mfa_records
   end
 
-  defp caller_chain(parent, {module, function, _arity} = start_mfa, edges) do
+  defp caller_chain_index(edges) do
+    Enum.reduce(edges, %{}, fn {{module, function, _arity} = caller_mfa, next}, index ->
+      key = {{module, function}, next}
+
+      Map.update(index, key, caller_mfa, fn current ->
+        if caller_mfa_sort_key(caller_mfa) < caller_mfa_sort_key(current),
+          do: caller_mfa,
+          else: current
+      end)
+    end)
+  end
+
+  defp caller_mfa_sort_key({module, function, arity}),
+    do: {Atom.to_string(module), Atom.to_string(function), arity}
+
+  defp caller_chain(parent, {module, function, _arity} = start_mfa, caller_index) do
     path = witness(parent, {module, function}, []) |> Enum.reverse()
 
     callers =
@@ -7007,26 +7080,12 @@ defmodule Fablebook.Contract.TierSweepTest do
           {start_module, start_function, elem(start_mfa, 2)}
 
         {[caller_pair, next], _index} ->
-          edges
-          |> Enum.flat_map(fn
-            {{caller_module, caller_function, caller_arity}, ^next}
-            when {caller_module, caller_function} == caller_pair ->
-              [{caller_module, caller_function, caller_arity}]
-
-            _edge ->
-              []
-          end)
-          |> Enum.uniq()
-          |> Enum.sort_by(fn {caller_module, caller_function, caller_arity} ->
-            {Atom.to_string(caller_module), Atom.to_string(caller_function), caller_arity}
-          end)
-          |> List.first()
-          |> case do
-            nil ->
-              raise "installed OTP inventory caller-chain edge missing for #{inspect(caller_pair)} -> #{inspect(next)}"
-
-            caller_mfa ->
+          case Map.fetch(caller_index, {caller_pair, next}) do
+            {:ok, caller_mfa} ->
               caller_mfa
+
+            :error ->
+              raise "installed OTP inventory caller-chain edge missing for #{inspect(caller_pair)} -> #{inspect(next)}"
           end
       end)
 
