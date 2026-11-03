@@ -3,11 +3,11 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.6
 current_phase_name: Audit remaining ban-list call-name exclusions (INSERTED)
 status: executing
-stopped_at: Completed 01.1.1.6-01-PLAN.md
-last_updated: "2026-11-03T22:00:47.823Z"
+stopped_at: Completed 01.1.1.6-02-PLAN.md
+last_updated: "2026-11-03T23:20:45.326Z"
 last_activity: 2026-11-03
 last_activity_desc: Phase 01.1.1.6 execution started
-state_head: 529dd2d836e29067685958b7cda50537798143e1
+state_head: 6ae4e9adac6d788c5e8f0d1f34cc959b8d732e41
 progress:
   total_phases: 42
   completed_phases: 1
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-10-30)
 ## Current Position
 
 Phase: 01.1.1.6 (Audit remaining ban-list call-name exclusions (INSERTED)) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-11-03 — Phase 01.1.1.6 execution started
 
@@ -79,6 +79,7 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plan
 | Phase 01.1.1.3.1.2 P04 | 132min | 2 tasks | 5 files |
 | Phase 01.1.1.3.1.2 P05 | 51min | 3 tasks | 13 files |
 | Phase 01.1.1.6 P01 | 59 min | 2 tasks | 2 files |
+| Phase 01.1.1.6 P02 | 76 min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -138,6 +139,9 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.3.1.2]: Installed-wide acceptance, runtime safety, and SEC-01 remain pending under their existing owners.
 - [Phase 01.1.1.6]: Retain CN-002 because Phoenix.Digester.compile/3 digests static assets; the Mix caller project compile remains a separate action.
 - [Phase 01.1.1.6]: Keep the disposition bounded to the cited lane sources and static checks; make no runtime atom-count, never-eval, or general filesystem-safety claim.
+- [Phase 01.1.1.6]: Keep CN-001 open until its exact caller and Protocol delegate sources are bound through approved authority.
+- [Phase 01.1.1.6]: Prove floor target absence from the exact pinned Mix BEAM and export inventories, not source omissions.
+- [Phase 01.1.1.6]: Keep CN-LANE-001 as a separate metadata identity; the CN-001 guard tier is enforcement evidence only.
 
 ### Pending Todos
 
@@ -172,7 +176,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-03T21:58:38.863Z
-Stopped at: Completed 01.1.1.6-01-PLAN.md
+Last session: 2026-11-03T23:20:45.278Z
+Stopped at: Completed 01.1.1.6-02-PLAN.md
 Next action: Run `$gsd-execute-phase 01.1.1.6` from this clean execution checkout.
 Resume file: None
