@@ -374,8 +374,6 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {Phoenix.LiveView.ColocatedAssets, :compile, 0}
   ]
 
-  @legacy_mfa_tier Enum.sort(@mfa_tier -- @call_name_guard_fronts)
-
   @rewritten_calls %{
     {String, :to_atom, 1} => {:erlang, :binary_to_atom, 1},
     {String, :to_existing_atom, 1} => {:erlang, :binary_to_existing_atom, 1},
@@ -1195,10 +1193,9 @@ defmodule Fablebook.Contract.BannedCallsTest do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
 
-    assert_call_name_guard_states!()
     assert_call_name_front_inventory!()
 
-    source_state = call_name_guard_state!(BannedCalls.banned_mfas())
+    assert BannedCalls.banned_mfas() == Enum.sort(@mfa_tier)
 
     protocol_source = """
     defmodule Fablebook.GuardFixture.CallNameProtocol do
@@ -1215,13 +1212,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
     """
 
-    assert_source_probe_state!(source_state, protocol_source, "call_name_protocol.ex")
-
-    assert_source_probe_state!(
-      source_state,
-      colocated_assets_source,
-      "call_name_colocated_assets.ex"
-    )
+    assert credo_issues(protocol_source, "call_name_protocol.ex") != []
+    assert credo_issues(colocated_assets_source, "call_name_colocated_assets.ex") != []
 
     source_path = Path.join(dir, "call_name_fronts.ex")
     File.write!(source_path, protocol_source <> "\n" <> colocated_assets_source)
@@ -1242,12 +1234,6 @@ defmodule Fablebook.Contract.BannedCallsTest do
       assert {:mfa, front} in hits(scan)
 
       refute Enum.any?(hits(scan, Enum.reject(@mfa_tier, &(&1 == front))), &mfa_hit?(&1, front))
-    end
-
-    for scan <- Map.values(scans) do
-      for front <- @call_name_guard_fronts do
-        refute Enum.any?(hits(scan, @legacy_mfa_tier), &mfa_hit?(&1, front))
-      end
     end
   end
 
@@ -1734,7 +1720,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       do: {:ok, _} = Application.ensure_all_started(:credo)
 
     assert BannedCalls.banned_names() == Enum.sort(@atom_tier)
-    assert call_name_guard_state!(BannedCalls.banned_mfas()) in [:legacy, :complete]
+    assert BannedCalls.banned_mfas() == Enum.sort(@mfa_tier)
 
     for path <- Path.wildcard(Path.join(@fixture_dir, "*.ex")),
         Path.basename(path) not in @beam_only_fixtures do
@@ -2046,44 +2032,6 @@ defmodule Fablebook.Contract.BannedCallsTest do
     |> Tuple.to_list()
     |> Enum.zip(Tuple.to_list(mfa))
     |> Enum.all?(fn {expected, actual} -> expected == :_ or expected == actual end)
-  end
-
-  defp call_name_guard_state!(actual_tier) do
-    cond do
-      actual_tier == Enum.sort(@mfa_tier) ->
-        :complete
-
-      actual_tier == @legacy_mfa_tier ->
-        :legacy
-
-      true ->
-        flunk("unexpected BannedCalls MFA tier: #{inspect(actual_tier)}")
-    end
-  end
-
-  defp assert_source_probe_state!(:legacy, source, filename),
-    do: assert(credo_issues(source, filename) == [])
-
-  defp assert_source_probe_state!(:complete, source, filename),
-    do: assert(credo_issues(source, filename) != [])
-
-  defp assert_call_name_guard_states! do
-    complete = Enum.sort(@mfa_tier)
-
-    assert call_name_guard_state!(@legacy_mfa_tier) == :legacy
-    assert call_name_guard_state!(complete) == :complete
-
-    for front <- @call_name_guard_fronts do
-      assert_rejected_call_name_tier!(Enum.reject(complete, &(&1 == front)))
-    end
-
-    assert_rejected_call_name_tier!(Enum.sort([{:Fablebook, :unrelated_front, 0} | complete]))
-    assert_rejected_call_name_tier!(Enum.sort(List.delete(complete, {String, :to_atom, 1})))
-    assert_rejected_call_name_tier!(Enum.sort([hd(complete) | complete]))
-  end
-
-  defp assert_rejected_call_name_tier!(tier) do
-    assert_raise ExUnit.AssertionError, fn -> call_name_guard_state!(tier) end
   end
 
   defp assert_call_name_front_inventory! do
