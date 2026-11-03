@@ -1495,6 +1495,27 @@ defmodule Fablebook.Contract.TierSweepTest do
     "floor" => ["Elixir.Phoenix.Digester:compile/3"]
   }
 
+  @cn001_expected_matches_by_lane %{
+    "core" => ["Elixir.Mix.Compilers.Protocol:compile/4"],
+    "floor" => []
+  }
+
+  @cn001_expected_direct_callers_by_lane %{
+    "core" => [
+      "Elixir.Mix.Compilers.Elixir:maybe_consolidate/4",
+      "Elixir.Mix.Compilers.Protocol:umbrella/2"
+    ],
+    "floor" => []
+  }
+
+  @cn001_source_authority_gaps [
+    {
+      "mix/lib/mix/compilers/elixir.ex",
+      "direct caller Mix.Compilers.Elixir.maybe_consolidate/4"
+    },
+    {"elixir/lib/protocol.ex", "Protocol delegate implementations"}
+  ]
+
   @exclusions [
     {{:fun_prefix, "MACRO-"}, :macro},
     {:erl_tracer, :own_native},
@@ -5976,9 +5997,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     sampled = Enum.filter(ledger.exclusions, &(&1.semantic_status != :pending))
 
     assert MapSet.new(Enum.map(sampled, & &1.id)) ==
-             MapSet.new(["CN-002", "CN-005", "BD-002", "EX-159"])
+             MapSet.new(["CN-001", "CN-002", "CN-005", "BD-002", "EX-159"])
 
-    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 217
+    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 216
 
     assert Enum.all?(
              ledger.metadata,
@@ -5992,7 +6013,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert Enum.all?(ledger.exclusions, fn row ->
              expected_owner =
                case row.id do
-                 "CN-002" -> "01.1.1.6"
+                 id when id in ["CN-001", "CN-002"] -> "01.1.1.6"
                  id when id in ["CN-005", "BD-002", "EX-159"] -> "01.1.1.5"
                  _id -> "01.1.1.4"
                end
@@ -7075,17 +7096,18 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :cn001
-  test "CN-001 stays open until its Protocol delegate source is bound" do
+  test "CN-001 stays open until its Protocol delegate source is bound", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     ledger = original_identity_ledger!()
-    row = Enum.find(ledger.exclusions, &(&1.id == "CN-001"))
+    record = cn001_record!(ctx.graph, evidence, ledger)
 
-    assert row != nil, "original CN-001 identity is missing"
-    assert row.original_matcher_raw == "{Mix.Compilers.Protocol, [:compile]}"
-    assert row.original_reason_raw == ":not_compile_module"
-    assert row.original_citations_raw =~ "mix/lib/mix/compilers/protocol.ex:107"
-    assert row.current_replacement_refs == ["source:CN:1"]
-    assert row.semantic_status == :cn001_source_authority_open
-    assert row.owner == "01.1.1.6"
+    assert_cn001_record!(record, ctx.graph, evidence, ledger)
+    assert record.original_id == "CN-001"
+    assert record.current_replacement_refs == ["source:CN:1"]
+    assert record.semantic_status == :cn001_source_authority_open
+    assert record.verdict == :undetermined_source_authority
+
   end
 
   test "exact guard coverage supersedes a preserved call-name exclusion" do
@@ -9945,6 +9967,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     do:
       raise(ExUnit.AssertionError, message: "invalid original audit-budget MFA #{inspect(other)}")
 
+  defp original_semantic_status("CN-001"), do: :cn001_source_authority_open
   defp original_semantic_status("CN-002"), do: :cn002_retained
   defp original_semantic_status("CN-005"), do: :calibrated_retained
   defp original_semantic_status("BD-002"), do: :calibrated_retained
@@ -9952,6 +9975,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp original_semantic_status(_id), do: :pending
 
   defp original_semantic_owner(:cn002_retained), do: "01.1.1.6"
+  defp original_semantic_owner(:cn001_source_authority_open), do: "01.1.1.6"
   defp original_semantic_owner(:pending), do: "01.1.1.4"
   defp original_semantic_owner(_sampled_status), do: "01.1.1.5"
 
@@ -9966,6 +9990,211 @@ defmodule Fablebook.Contract.TierSweepTest do
       {lane, matches}
     end)
   end
+
+  defp cn001_record!(graph, evidence, ledger) do
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-001"))
+    assert row != nil, "original CN-001 identity is missing"
+    assert graph.lane == evidence.lane, "CN-001 graph and source evidence lanes differ"
+
+    [original_matcher, original_reason | original_citations] =
+      source_tuple_parts!(row.original_entry_raw)
+
+    assert original_matcher == "{Mix.Compilers.Protocol, [:compile]}"
+    assert original_reason == ":not_compile_module"
+    assert List.first(original_citations) =~ "mix/lib/mix/compilers/protocol.ex:107"
+    assert row.original_matcher_raw == original_matcher
+    assert row.original_reason_raw == original_reason
+    assert row.original_citations_raw == List.first(original_citations)
+    assert row.current_replacement_refs == ["source:CN:1"]
+    assert row.semantic_status == :cn001_source_authority_open
+    assert row.owner == "01.1.1.6"
+
+    {{Mix.Compilers.Protocol, [:compile]}, :not_compile_module, _current_citations} =
+      Enum.at(@call_name_exclusions, 0)
+
+    lane = evidence.lane.name
+    mix_root = Map.fetch!(evidence.installed, "mix")
+    mix_ebin = Path.join(mix_root, "ebin")
+    assert Path.expand(mix_root) == :code.lib_dir(:mix) |> to_string() |> Path.expand()
+    mix_beams = File.ls!(mix_ebin) |> MapSet.new()
+
+    inventory_module_exports =
+      InstalledOtp.export_inventory!([mix_ebin], lane: lane)
+      |> Enum.filter(fn {module, _function, _arity} -> module == Mix.Compilers.Protocol end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    graph_module_exports =
+      graph.full_exported
+      |> Enum.filter(fn {module, _function, _arity} -> module == Mix.Compilers.Protocol end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    assert graph_module_exports == inventory_module_exports,
+           "CN-001/#{lane} graph exports differ from the exact installed Mix inventory"
+
+    matched_mfas =
+      graph_module_exports
+      |> Enum.filter(&call_name_exclusion_match?({Mix.Compilers.Protocol, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    inventory_matches =
+      inventory_module_exports
+      |> Enum.filter(&call_name_exclusion_match?({Mix.Compilers.Protocol, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+
+    assert matched_strings == Map.fetch!(@cn001_expected_matches_by_lane, lane),
+           "CN-001/#{lane} live full-export matches changed: #{inspect(matched_strings)}"
+
+    assert Enum.map(inventory_matches, &mfa_string!/1) == matched_strings,
+           "CN-001/#{lane} graph call-name matches differ from the installed Mix inventory"
+
+    callers =
+      graph.full_reverse
+      |> Map.get({Mix.Compilers.Protocol, :compile}, [])
+      |> Enum.uniq()
+      |> Enum.sort_by(&mfa_string!/1)
+
+    caller_strings = Enum.map(callers, &mfa_string!/1)
+
+    assert caller_strings == Map.fetch!(@cn001_expected_direct_callers_by_lane, lane),
+           "CN-001/#{lane} direct caller set changed: #{inspect(caller_strings)}"
+
+    protocol_beam = "Elixir.Mix.Compilers.Protocol.beam"
+
+    if lane == "floor" do
+      refute MapSet.member?(mix_beams, protocol_beam),
+             "CN-001/floor target BEAM unexpectedly exists in the exact Mix inventory"
+
+      assert graph_module_exports == []
+      assert inventory_module_exports == []
+      assert matched_mfas == []
+      assert callers == []
+    else
+      assert lane == "core"
+      assert MapSet.member?(mix_beams, protocol_beam)
+
+      assert {Mix.Compilers.Protocol, :compile, 4} in BannedCalls.banned_mfas(),
+             "CN-001 core front lost its mirrored enforcement tier"
+    end
+
+    citations = cn001_citations!(lane)
+
+    resolved =
+      Enum.map(citations, fn {citation, expected_source} ->
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.text =~ expected_source, citation
+        {citation, source}
+      end)
+
+    source_authority_gaps =
+      if lane == "core", do: cn001_source_authority_gaps!(evidence), else: []
+
+    %{
+      original_id: row.id,
+      original_entry_raw: row.original_entry_raw,
+      original_matcher_raw: row.original_matcher_raw,
+      original_reason_raw: row.original_reason_raw,
+      original_citations_raw: row.original_citations_raw,
+      current_replacement_refs: row.current_replacement_refs,
+      semantic_status: row.semantic_status,
+      semantic_owner: row.owner,
+      lane: lane,
+      elixir: evidence.lane.elixir,
+      otp: evidence.lane.otp,
+      module_exports: Enum.map(graph_module_exports, &mfa_string!/1),
+      matched_mfas: matched_strings,
+      direct_callers: caller_strings,
+      citations: citations,
+      source_sha256s:
+        resolved
+        |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
+        |> Map.new(),
+      source_authority_gaps: source_authority_gaps,
+      source_gap_local_hash_accepted: false,
+      caller_input_trace:
+        "The exact full graph reports Mix.Compilers.Protocol.umbrella/2 and Mix.Compilers.Elixir.maybe_consolidate/4 as direct callers of compile/4. The approved umbrella source shows args parsed into opts and passes force state, old/new protocol snapshots, and opts to compile/4. The maybe_consolidate/4 caller source is not bound by the approved archive.",
+      delegate_trace:
+        "Approved Mix source shows compile/4 extracts protocols or diffs the manifest, consolidates protocols, and prepends the output path through Code.prepend_path/1. The Protocol.extract_protocols/0, extract_impls/2, and consolidate/2 implementations are not bound because elixir/lib/protocol.ex is absent from approved source authority.",
+      enforcement_dependency:
+        if(lane == "core", do: {Mix.Compilers.Protocol, :compile, 4}, else: nil),
+      verdict: :undetermined_source_authority,
+      disposition: :open,
+      retained_exclusion: :undetermined,
+      removal_witness: [],
+      limitations: [
+        "The approved source archive does not bind the Mix.Compilers.Elixir.maybe_consolidate/4 caller.",
+        "The approved source archive does not bind elixir/lib/protocol.ex, so Protocol delegate semantics remain unverified.",
+        "The floor absence claim is based on exact Mix BEAM and export inventories, not missing source text."
+      ]
+    }
+  end
+
+  defp assert_cn001_record!(record, graph, evidence, ledger) do
+    expected = cn001_record!(graph, evidence, ledger)
+    assert record == expected
+    assert record.matched_mfas == Map.fetch!(@cn001_expected_matches_by_lane, evidence.lane.name)
+
+    if evidence.lane.name == "floor" do
+      assert record.module_exports == []
+    else
+      assert "Elixir.Mix.Compilers.Protocol:compile/4" in record.module_exports
+    end
+
+    assert record.current_replacement_refs == ["source:CN:1"]
+    assert record.semantic_status == :cn001_source_authority_open
+    assert record.verdict == :undetermined_source_authority
+    assert record.disposition == :open
+    assert record.removal_witness == []
+
+    Enum.each(record.citations, fn {citation, expected_source} ->
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.text =~ expected_source, citation
+      assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
+    end)
+
+    assert record.source_gap_local_hash_accepted == false
+    :ok
+  end
+
+  defp cn001_source_authority_gaps!(evidence) do
+    Enum.map(@cn001_source_authority_gaps, fn {path, needed_for} ->
+      error =
+        assert_raise SweepEvidence.Error, fn ->
+          SweepEvidence.resolve!(evidence, path <> ":1")
+        end
+
+      assert error.reason == :missing_source
+      %{source_path: path, needed_for: needed_for, authority: :missing_from_approved_archive}
+    end)
+  end
+
+  defp cn001_citations!("core") do
+    [
+      {"mix/lib/mix/compilers/protocol.ex:14", "def umbrella(args, res) do"},
+      {"mix/lib/mix/compilers/protocol.ex:16", "OptionParser.parse(args"},
+      {"mix/lib/mix/compilers/protocol.ex:31", "old_protocols_and_impls} = read_manifest"},
+      {"mix/lib/mix/compilers/protocol.ex:46", "protocols_and_impls_from_paths(deps_paths)"},
+      {"mix/lib/mix/compilers/protocol.ex:48", "case compile(on_or_force == :force"},
+      {"mix/lib/mix/compilers/protocol.ex:107", "def compile(force?"},
+      {"mix/lib/mix/compilers/protocol.ex:116", "Protocol.extract_protocols()"},
+      {"mix/lib/mix/compilers/protocol.ex:117", "consolidate(paths, output, opts)"},
+      {"mix/lib/mix/compilers/protocol.ex:120", "diff_manifest("},
+      {"mix/lib/mix/compilers/protocol.ex:121",
+       "consolidate(consolidation_paths(), output, opts)"},
+      {"mix/lib/mix/compilers/protocol.ex:124", "Code.prepend_path(output)"},
+      {"mix/lib/mix/compilers/protocol.ex:162", "defp consolidate_each(protocol"},
+      {"mix/lib/mix/compilers/protocol.ex:163", "Protocol.extract_impls(protocol, paths)"},
+      {"mix/lib/mix/compilers/protocol.ex:166", "Protocol.consolidate(protocol, impls)"},
+      {"mix/lib/mix/compilers/protocol.ex:168", "File.write!(Path.join(output"},
+      {"elixir/lib/code.ex:448", "def prepend_path(path, opts"},
+      {"elixir/lib/code.ex:449", "apply(:code, :add_patha,"}
+    ]
+  end
+
+  defp cn001_citations!("floor"), do: []
 
   defp cn002_record!(graph, evidence, ledger) do
     row = Enum.find(ledger.exclusions, &(&1.id == "CN-002"))
