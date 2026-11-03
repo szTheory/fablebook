@@ -1,13 +1,13 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.3.1.3
-current_phase_name: Debugger installed-wide acceptance
+current_phase: 01.1.1.6
+current_phase_name: Audit remaining ban-list call-name exclusions (INSERTED)
 status: executing
-stopped_at: Phase 01.1.1.3.1.3 complete; PR #33 exact-head checks and merged delivery verified; stopped at the selected phase boundary
-last_updated: "2026-11-02T02:03:09Z"
-last_activity: 2026-11-02
-last_activity_desc: Phase 01.1.1.3.1.3 complete; local lanes, exact-head CI markers, PR merge, and main ancestry verified
-state_head: e301e49186b563a32c6fa0f11f1eb4d71cb9b5d7
+stopped_at: Phase 01.1.1.6 is ready on a clean branch containing the green Phase 01.1.1.12 merge; exact lane runtimes are available; auto-advance remains disabled
+last_updated: "2026-11-03T20:27:05Z"
+last_activity: 2026-11-03
+last_activity_desc: Prepared clean Phase 01.1.1.6 execution checkout and verified its exact pinned runtimes
+state_head: 716ef4613312badee0a0fff942eab218ebc1b88c
 progress:
   total_phases: 41
   completed_phases: 1
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.3.1.3 — Debugger installed-wide acceptance
+**Current focus:** Phase 01.1.1.6 — Audit remaining ban-list call-name exclusions
 
 ## Current Position
 
-Phase: 01.1.1.3.1.3 (Debugger installed-wide acceptance) — COMPLETE
-Plan: 2/2 complete; local review, exact lanes, exact-head CI, and merged delivery verified
-Status: Executing
-Last activity: 2026-11-02 — PR #33 is green and merged; exact-head markers and main ancestry verified
+Phase: 01.1.1.6 (Audit remaining ban-list call-name exclusions (INSERTED)) — READY TO EXECUTE
+Plan: 5 plans across 5 sequential waves; independent plan review passed; implementation not started
+Status: Ready to execute
+Last activity: 2026-11-03 — clean execution checkout includes the green `.12` merge and exact core/floor runtimes
 
 Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plans complete; nested phase plans do not change parent completion counts
 
@@ -169,7 +169,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-02T02:03:09Z
-Stopped at: Phase 01.1.1.3.1.3 complete after PR #33 exact-head CI and merge identity verification. No later phase was started.
-Next action: At the next milestone, archive the current milestone, then restart numbering at Phase 1 with `$gsd-new-milestone --reset-phase-numbers`.
-Resume file: None
+Last session: 2026-11-03T20:27:05Z
+Stopped at: Phase 01.1.1.6 is ready with five reviewed sequential plans. The `.12` prerequisite is green and its merge is an ancestor of this branch. No `.6` implementation or tests have run.
+Next action: Run `$gsd-execute-phase 01.1.1.6` from this clean execution checkout.
+Resume file: .planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-CONTEXT.md

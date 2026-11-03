@@ -817,3 +817,35 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
 - [x] 01.1.1.3.1.3-02-PLAN.md — Review, run both full exact lanes, and verify current-head delivery
 
 **Boundary**: Complete after PR #33 passed exact-head core, floor, dialyzer, security, and ci-gate checks, both aggregate markers matched, and the merge was verified in `main`. Parent `.3`, later debugger assignments, the all-app gate, and SEC-01 remain with their existing owners.
+
+### Phase 01.1.1.6: Audit remaining ban-list call-name exclusions (INSERTED)
+
+**Goal:** Deliver the bounded first semantic slice for unsampled call-name exclusions CN-001, CN-002, CN-003, CN-004, and CN-006, plus the separate CN-LANE-001 metadata identity. Reuse the approved exact-lane readiness and calibration evidence while preserving each original identity and full current match set.
+**Requirements**: None
+**Depends on:** Phase 01.1.1.5, Phase 01.1.1.12
+**Success Criteria** (what must be TRUE):
+  1. The five named original exclusion identities and CN-LANE-001 remain distinct, with complete current core/floor match sets, source-backed caller-input traces, true dispositions, and exact-lane source or inventory evidence.
+  2. Each retained row has a substantive cited reason and non-vacuous lane witness; narrowed, replaced, or removed entries retain original-to-replacement traceability.
+  3. A complete row is carried end to end as the production-quality tracer before expanding the bounded call-name slice. Any additional matched function or source file remains included; no match is capped.
+  4. No dangerous evaluator, parser, loader, or atom-creation API is invoked. Any newly judged front called from lib/ stops for the existing owner decision.
+  5. Delivery remains contract-test-only, with distinct exact-head core/floor evidence and required green scoped merge/CI receipts. The other original rows remain pending for later deliveries; this phase claims no whole-table closure or Phase 5 proof.
+**Plans:** 5 plans across 5 waves
+
+Plans:
+**Wave 1**
+- [ ] 01.1.1.6-01-PLAN.md — Establish CN-002 as the complete, production-quality tracer row.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01.1.1.6-02-PLAN.md — Complete CN-001 and preserve the separate CN-LANE-001 metadata identity.
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 01.1.1.6-03-PLAN.md — Complete CN-003 and verify its delivered guard mirror.
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 01.1.1.6-04-PLAN.md — Complete CN-004 caller and delegate evidence.
+
+**Wave 5** *(blocked on Wave 4 completion)*
+- [ ] 01.1.1.6-05-PLAN.md — Complete CN-006 and record exact-head delivery evidence.
+
+**Cross-cutting constraints:** <!-- gsd:generated -->
+- Per D-09, execution is sequential without delegated agents, remaining effort is refreshed at the boundary, auto-advance stays off, and work stops at `.6`.
