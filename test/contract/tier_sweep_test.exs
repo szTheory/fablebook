@@ -6960,7 +6960,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     unmatched_exclusions =
       Enum.reject(@call_name_exclusions, fn entry ->
         matched_uncovered(uncovered, [entry]) |> MapSet.size() > 0 or
-          lane_specific_call_name?(entry, named)
+          lane_specific_call_name?(entry, named) or
+          call_name_exclusion_covered_by_exact_tier?(entry, named, tier)
       end)
 
     assert undisposed == [],
@@ -6968,6 +6969,36 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert unmatched_exclusions == [],
            "call-name exclusions matching no uncovered function: #{inspect(unmatched_exclusions)}"
+  end
+
+  test "exact guard coverage supersedes a preserved call-name exclusion" do
+    fronts = [
+      {Mix.Compilers.Protocol, :compile, 4},
+      {Phoenix.LiveView.ColocatedAssets, :compile, 0}
+    ]
+
+    for {module, function, arity} = front <- fronts do
+      exclusion =
+        Enum.find(@call_name_exclusions, fn
+          {{^module, functions}, _reason, _citations} -> function in functions
+          _entry -> false
+        end)
+
+      assert exclusion
+      assert call_name_exclusion_covered_by_exact_tier?(exclusion, [front], [front])
+
+      refute call_name_exclusion_covered_by_exact_tier?(exclusion, [front], [])
+
+      refute call_name_exclusion_covered_by_exact_tier?(exclusion, [front], [
+               {module, function, :_}
+             ])
+
+      refute call_name_exclusion_covered_by_exact_tier?(
+               exclusion,
+               [front, {module, function, arity + 1}],
+               [front]
+             )
+    end
   end
 
   test "every barrier-module and sink-delegate export is covered or excluded with a cited reason",
@@ -9001,6 +9032,18 @@ defmodule Fablebook.Contract.TierSweepTest do
        do: function in functions
 
   defp call_name_exclusion_match?(_matcher, _mfa), do: false
+
+  defp call_name_exclusion_covered_by_exact_tier?({matcher, _reason, _citations}, named, tier) do
+    matching = Enum.filter(named, &call_name_exclusion_match?(matcher, &1))
+
+    matching != [] and Enum.all?(matching, &exact_mfa_in_tier?(&1, tier))
+  end
+
+  defp exact_mfa_in_tier?({module, function, arity}, tier) do
+    Enum.any?(tier, fn {tier_module, tier_function, tier_arity} ->
+      tier_module == module and tier_function == function and tier_arity == arity
+    end)
+  end
 
   defp matched_boundary(uncovered, entries) do
     Enum.reduce(entries, MapSet.new(), fn {matcher, _reason, _citation}, matched ->
