@@ -5970,6 +5970,278 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  test "calibration documents bind complete selected exact-lane evidence and recorded source review",
+       ctx do
+    root = Path.expand("../..", __DIR__)
+
+    phase_dir =
+      Path.join(
+        root,
+        ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration"
+      )
+
+    calibration_path = Path.join(phase_dir, "01.1.1.5-CALIBRATION.md")
+    validation_path = Path.join(phase_dir, "01.1.1.5-VALIDATION.md")
+    summary_path = Path.join(phase_dir, "01.1.1.5-03-SUMMARY.md")
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    assert_original_identity_ledger!(ledger, ledger)
+
+    calibration_text = File.read!(calibration_path)
+    validation_text = File.read!(validation_path)
+    summary_text = File.read!(summary_path)
+    calibration = single_json_comment!(calibration_text, "fablebook.calibration-evidence")
+    validation = single_json_comment!(validation_text, "fablebook.calibration-evidence")
+    review = single_json_comment!(summary_text, "fablebook.review-effort")
+    reviewed_revision = summary_reviewed_revision!(summary_text)
+
+    assert_calibration_artifact_binding!(
+      calibration,
+      validation,
+      review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    lane = evidence.lane.name
+    expected_mfas = expected_sample_matches!(ctx.graph, ledger, lane)
+
+    bad_mfa =
+      update_in(calibration, ["lanes", lane, "matched_mfas", "CN-005"], fn mfas ->
+        ["Elixir.Regex:compile/999" | tl(mfas)]
+      end)
+
+    expect_calibration_rejected!(
+      bad_mfa,
+      bad_mfa,
+      review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    bad_source =
+      update_in(calibration, ["lanes", lane, "sources", Access.at(0)], fn source ->
+        %{source | "path" => "kernel/src/not-the-matched-source.erl"}
+      end)
+
+    expect_calibration_rejected!(
+      bad_source,
+      bad_source,
+      review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    bad_total =
+      put_in(
+        calibration,
+        ["lanes", lane, "source_bytes"],
+        calibration["lanes"][lane]["source_bytes"] + 1
+      )
+
+    expect_calibration_rejected!(
+      bad_total,
+      bad_total,
+      review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    bad_runtime = put_in(calibration, ["lanes", lane, "otp"], "0.0.0")
+
+    expect_calibration_rejected!(
+      bad_runtime,
+      bad_runtime,
+      review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    ref_index =
+      Enum.find_index(
+        calibration["lanes"][lane]["evidence_refs"],
+        &String.starts_with?(&1, "source:")
+      )
+
+    bad_ref =
+      update_in(calibration, ["lanes", lane, "evidence_refs", Access.at(ref_index)], fn _ ->
+        "source:kernel/src/missing.erl:1"
+      end)
+
+    expect_calibration_rejected!(
+      bad_ref,
+      bad_ref,
+      review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    bad_review_ref =
+      update_in(calibration, ["lanes", lane, "evidence_refs"], fn refs ->
+        Enum.map(
+          refs,
+          &String.replace(
+            &1,
+            "01.1.1.5-03-SUMMARY.md#fablebook.review-effort/",
+            "missing.md#fablebook.review-effort/"
+          )
+        )
+      end)
+
+    expect_calibration_rejected!(
+      bad_review_ref,
+      bad_review_ref,
+      review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    assert_raise ExUnit.AssertionError, ~r/exactly one fablebook\.review-effort marker/, fn ->
+      single_json_comment!(
+        String.replace(summary_text, ~r/^<!-- fablebook\.review-effort: .* -->\n?/m, ""),
+        "fablebook.review-effort"
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/valid JSON/, fn ->
+      single_json_comment!(
+        String.replace(
+          summary_text,
+          ~r/(?<=fablebook\.review-effort: ).*(?= -->)/,
+          "{malformed}"
+        ),
+        "fablebook.review-effort"
+      )
+    end
+
+    core_intervals = review["lanes"]["core"]["intervals"]
+
+    overlapped_review =
+      put_in(
+        review,
+        ["lanes", "core", "intervals", Access.at(1), "start_ns"],
+        hd(core_intervals)["end_ns"] - 1
+      )
+
+    expect_calibration_rejected!(
+      calibration,
+      validation,
+      overlapped_review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    incomplete_review =
+      update_in(review, ["lanes", "core", "intervals", Access.at(0), "sample_ids"], fn ids ->
+        List.delete(ids, "EX-159")
+      end)
+
+    expect_calibration_rejected!(
+      calibration,
+      validation,
+      incomplete_review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    bad_archive =
+      put_in(
+        review,
+        ["lanes", lane, "provenance", "source_archive_sha256"],
+        String.duplicate("0", 64)
+      )
+
+    expect_calibration_rejected!(
+      calibration,
+      validation,
+      bad_archive,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    bad_source_digest =
+      put_in(
+        review,
+        ["lanes", lane, "provenance", "source_set_sha256"],
+        String.duplicate("0", 64)
+      )
+
+    expect_calibration_rejected!(
+      calibration,
+      validation,
+      bad_source_digest,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    bad_review_seconds =
+      put_in(
+        calibration,
+        ["lanes", lane, "review_seconds"],
+        calibration["lanes"][lane]["review_seconds"] + 1.0
+      )
+
+    expect_calibration_rejected!(
+      bad_review_seconds,
+      bad_review_seconds,
+      review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    bad_review_method = put_in(calibration, ["lanes", lane, "review_method"], "CI and wait time")
+
+    expect_calibration_rejected!(
+      bad_review_method,
+      bad_review_method,
+      review,
+      reviewed_revision,
+      ctx.graph,
+      evidence,
+      ledger,
+      root
+    )
+
+    assert Map.new(expected_mfas) == calibration["lanes"][lane]["matched_mfas"]
+  end
+
   test "CN-005 and BD-002 audit complete exact-lane matchers with source-backed removal witnesses",
        ctx do
     evidence = SweepEvidence.source_roots!()
@@ -7045,6 +7317,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       discovered: discovered,
       inspected: inspected,
       ingested: receipt.ingested,
+      module_app: module_app,
       full_edges: full_edges,
       full_exported: full_exported,
       full_reverse: full_reverse,
@@ -9534,6 +9807,593 @@ defmodule Fablebook.Contract.TierSweepTest do
       }
     end)
   end
+
+  defp assert_calibration_artifact_binding!(
+         calibration,
+         validation,
+         review,
+         reviewed_revision,
+         graph,
+         evidence,
+         ledger,
+         root
+       ) do
+    assert calibration == validation,
+           "calibration and validation evidence records differ"
+
+    assert_calibration_envelope!(calibration, review, reviewed_revision)
+    budget = calibration_budget!(root)
+    partitions = calibration["partitions"]
+    assert_calibration_partition_sets!(partitions, budget)
+
+    Enum.each(calibration["lanes"], fn {lane, lane_record} ->
+      review_lane = Map.fetch!(review["lanes"], lane)
+
+      assert_calibration_lane_record!(
+        lane_record,
+        review_lane,
+        lane,
+        reviewed_revision,
+        partitions
+      )
+    end)
+
+    assert_calibration_telemetry!(calibration["telemetry"])
+    assert_calibration_live_lane!(calibration, review, graph, evidence, ledger, root)
+    :ok
+  end
+
+  defp assert_calibration_envelope!(calibration, review, reviewed_revision) do
+    assert calibration["schema"] == "fablebook.phase-calibration/1"
+    assert calibration["phase"] == "01.1.1.5"
+
+    assert calibration["owners"] == %{
+             "unsampled" => "01.1.1.4",
+             "macro" => "01.1.1.4",
+             "wording" => "01.1.1.4",
+             "sec01" => "Phase 5",
+             "phase2_dependency" => "01.1.1.4"
+           }
+
+    assert Map.keys(calibration["lanes"]) |> Enum.sort() == ["core", "floor"]
+    assert review["schema"] == "fablebook.phase-review-effort/1"
+    assert review["phase"] == "01.1.1.5"
+    assert review["plan"] == "03"
+    assert Map.keys(review["lanes"]) |> Enum.sort() == ["core", "floor"]
+    assert String.match?(reviewed_revision, ~r/^[0-9a-f]{40}$/)
+  end
+
+  defp calibration_budget!(root) do
+    budget_path =
+      Path.join(
+        root,
+        ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json"
+      )
+
+    budget_path |> File.read!() |> JSON.decode!()
+  end
+
+  defp assert_calibration_partition_sets!(partitions, budget) do
+    assert is_list(partitions) and partitions != []
+    expected_module_functions = expected_partition_matches!(budget)
+    partition_modules = Enum.flat_map(partitions, &Map.keys(&1["module_function_counts"]))
+    assert length(partition_modules) == MapSet.size(MapSet.new(partition_modules))
+
+    expected_modules =
+      expected_module_functions
+      |> Map.values()
+      |> Enum.flat_map(&Map.keys/1)
+      |> MapSet.new()
+
+    assert MapSet.new(partition_modules) == expected_modules
+
+    Enum.each(
+      ["core", "floor"],
+      &assert_partition_counts!(partitions, expected_module_functions, &1)
+    )
+  end
+
+  defp expected_partition_matches!(budget) do
+    expected_module_functions =
+      Map.new(["core", "floor"], fn lane ->
+        matches = Enum.flat_map(budget["lanes"][lane]["rows"], & &1["matches"])
+
+        functions =
+          Enum.reduce(matches, %{}, fn [module, function, arity], acc ->
+            Map.update(
+              acc,
+              module,
+              MapSet.new(["#{function}/#{arity}"]),
+              &MapSet.put(&1, "#{function}/#{arity}")
+            )
+          end)
+
+        {lane,
+         Map.new(functions, fn {module, mfas} -> {module, MapSet.to_list(mfas) |> Enum.sort()} end)}
+      end)
+
+    expected_module_functions
+  end
+
+  defp assert_partition_counts!(partitions, expected_module_functions, lane) do
+    actual_counts =
+      for partition <- partitions,
+          {module, counts} <- partition["module_function_counts"],
+          counts[lane] not in [nil, 0],
+          into: %{},
+          do: {module, counts[lane]}
+
+    expected_counts =
+      Map.new(expected_module_functions[lane], fn {module, mfas} -> {module, length(mfas)} end)
+
+    assert actual_counts == expected_counts,
+           "#{lane} proposed module partitions differ from the complete original MFA sets"
+  end
+
+  defp assert_calibration_lane_record!(
+         lane_record,
+         review_lane,
+         lane,
+         reviewed_revision,
+         partitions
+       ) do
+    assert MapSet.new(lane_record["samples"]) == MapSet.new(["CN-005", "BD-002", "EX-159"])
+
+    assert Map.keys(lane_record["matched_mfas"]) |> Enum.sort() == [
+             "BD-002",
+             "CN-005",
+             "EX-159"
+           ]
+
+    assert is_number(lane_record["graph_seconds"]) and lane_record["graph_seconds"] > 0
+    assert is_number(lane_record["inventory_seconds"]) and lane_record["inventory_seconds"] > 0
+    assert is_integer(lane_record["source_bytes"]) and lane_record["source_bytes"] > 0
+    assert is_number(lane_record["review_seconds"]) and lane_record["review_seconds"] > 0
+    assert nonempty_evidence_string?(lane_record["source_method"])
+    assert nonempty_evidence_string?(lane_record["review_method"])
+    assert nonempty_evidence_string?(lane_record["uncertainty"])
+
+    source_rows = lane_record["sources"]
+    assert_calibration_source_rows!(source_rows, lane_record["source_bytes"])
+    source_paths = Enum.map(source_rows, & &1["path"])
+    assert abs(lane_record["review_seconds"] - review_lane["review_seconds"]) <= 0.000001
+    assert lane_record["review_method"] == review_lane["review_method"]
+
+    assert_review_effort_lane!(review_lane, lane, lane_record, reviewed_revision, source_paths)
+    Enum.each(partitions, &assert_partition_record!(&1, lane))
+  end
+
+  defp assert_calibration_source_rows!(source_rows, source_bytes) do
+    assert is_list(source_rows) and source_rows != []
+    source_paths = Enum.map(source_rows, & &1["path"])
+    assert length(source_paths) == MapSet.size(MapSet.new(source_paths))
+    Enum.each(source_rows, &assert_calibration_source_row!/1)
+    assert source_bytes == Enum.sum(Enum.map(source_rows, & &1["size_bytes"]))
+  end
+
+  defp assert_calibration_source_row!(source) do
+    assert nonempty_evidence_string?(source["path"])
+    assert String.match?(source["sha256"], ~r/^[0-9a-f]{64}$/)
+    assert is_integer(source["size_bytes"]) and source["size_bytes"] > 0
+  end
+
+  defp assert_partition_record!(partition, lane) do
+    assert partition["owner"] == "01.1.1.4"
+
+    assert MapSet.new(partition["source_modules"]) ==
+             MapSet.new(Map.keys(partition["module_function_counts"]))
+
+    assert nonempty_evidence_string?(partition["matched_set_ref"][lane])
+
+    assert partition["matched_set_ref"][lane] =~
+             "01.1.1.1-AUDIT-BUDGET.json#lanes/#{lane}/rows"
+
+    assert nonempty_evidence_string?(partition["review_effort_method"])
+    assert nonempty_evidence_string?(partition["uncertainty"])
+    assert is_list(partition["source_refs"]) and partition["source_refs"] != []
+    assert is_list(partition["shared_source_refs"])
+
+    assert Enum.any?(
+             partition["source_refs"],
+             &String.contains?(&1, "01.1.1.1-AUDIT-BUDGET.json#lanes/#{lane}/sources")
+           )
+  end
+
+  defp assert_calibration_live_lane!(calibration, review, graph, evidence, ledger, root) do
+    lane = evidence.lane.name
+    lane_record = Map.fetch!(calibration["lanes"], lane)
+    versions = SweepEvidence.lane!()
+    assert lane_record["elixir"] == versions.elixir
+    assert lane_record["otp"] == versions.otp
+    assert graph.lane == versions
+
+    expected_mfas = expected_sample_matches!(graph, ledger, lane)
+    assert_calibration_live_matches!(lane_record, expected_mfas, lane)
+
+    {source_rows, citations} = calibration_source_rows!(graph, evidence, ledger, lane)
+
+    assert_calibration_live_sources!(
+      lane_record,
+      review,
+      source_rows,
+      citations,
+      evidence,
+      lane,
+      root
+    )
+  end
+
+  defp assert_calibration_live_matches!(lane_record, expected_mfas, lane) do
+    Enum.each(expected_mfas, fn {id, mfas} ->
+      actual = Map.fetch!(lane_record["matched_mfas"], id)
+
+      assert Enum.sort(actual) == mfas,
+             "#{id}/#{lane} artifact MFA set differs from the complete original matcher"
+
+      assert length(actual) == MapSet.size(MapSet.new(actual)),
+             "#{id}/#{lane} artifact MFA set contains duplicates"
+    end)
+  end
+
+  defp assert_calibration_live_sources!(
+         lane_record,
+         review,
+         source_rows,
+         citations,
+         evidence,
+         lane,
+         root
+       ) do
+    actual_source_rows =
+      Enum.map(lane_record["sources"], &Map.take(&1, ["path", "sha256", "size_bytes"]))
+
+    assert Enum.sort_by(actual_source_rows, & &1["path"]) ==
+             Enum.sort_by(source_rows, & &1["path"]),
+           "#{lane} calibration source tuples differ from graph locations and resolved citations"
+
+    assert lane_record["source_bytes"] == Enum.sum(Enum.map(source_rows, & &1["size_bytes"]))
+
+    assert review["lanes"][lane]["provenance"]["source_set_sha256"] ==
+             canonical_source_set_digest!(source_rows)
+
+    review_path = calibration_review_path!(lane)
+    expected_refs = calibration_evidence_refs!(citations, review_path)
+    actual_refs = lane_record["evidence_refs"]
+    assert actual_refs == Enum.sort(Enum.uniq(actual_refs))
+
+    assert actual_refs == expected_refs,
+           "#{lane} evidence references differ from the selected citations and review marker"
+
+    Enum.each(citations, &assert_resolved_citation!(evidence, &1))
+    assert_review_summary_path!(review_path, root)
+  end
+
+  defp calibration_review_path!(lane) do
+    ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-03-SUMMARY.md#fablebook.review-effort/#{lane}"
+  end
+
+  defp calibration_evidence_refs!(citations, review_path) do
+    (Enum.map(citations, fn {citation, _expected_text} -> "source:#{citation}" end) ++
+       ["review:#{review_path}"])
+    |> Enum.uniq()
+    |> Enum.sort()
+  end
+
+  defp assert_resolved_citation!(evidence, {citation, expected_text}) do
+    resolved = SweepEvidence.resolve!(evidence, citation)
+    assert resolved.text =~ expected_text, citation
+  end
+
+  defp assert_review_summary_path!(review_path, root) do
+    summary_reference = String.split(review_path, "#", parts: 2) |> hd()
+    summary_absolute = Path.expand(summary_reference, root)
+    assert summary_absolute == Path.join(root, summary_reference)
+    assert {:ok, %{type: :regular}} = File.lstat(summary_absolute)
+  end
+
+  defp assert_calibration_telemetry!(telemetry) do
+    assert telemetry["value"] == "unknown"
+    assert telemetry["unit"] == "model_context_tokens"
+    assert telemetry["scope"] == "not_measured"
+    assert telemetry["delegated_coverage"] == "none_by_policy"
+    assert telemetry["status"] == "estimate_only"
+    assert nonempty_evidence_string?(telemetry["source"])
+    assert nonempty_evidence_string?(telemetry["reason"])
+  end
+
+  defp expected_sample_matches!(graph, ledger, lane) do
+    Enum.map(["CN-005", "BD-002", "EX-159"], fn id ->
+      row = Enum.find(ledger.exclusions, &(&1.id == id))
+      assert row != nil
+
+      matcher =
+        case id do
+          id when id in ["CN-005", "BD-002"] ->
+            {matcher, _reason, _table} = calibration_entry!(id, row)
+            matcher
+
+          "EX-159" ->
+            creator = Enum.find(@creator_audit, &(&1.original_id == id and &1.lane == lane))
+            assert creator != nil
+            assert row.original_matcher_raw == inspect(creator.original_matcher)
+            creator.original_matcher
+        end
+
+      matched =
+        graph.full_exported
+        |> Enum.filter(fn mfa -> original_sample_match?(id, matcher, mfa) end)
+        |> Enum.reject(fn {_module, function, _arity} ->
+          function in [:module_info, :__info__]
+        end)
+        |> Enum.map(&mfa_string!/1)
+        |> Enum.sort()
+
+      assert matched != []
+
+      assert MapSet.new(matched) == MapSet.new(row.lane_matches[lane]),
+             "#{id}/#{lane} live full-export matcher differs from the preserved budget set"
+
+      {id, matched}
+    end)
+  end
+
+  defp original_sample_match?(id, matcher, mfa) when id in ["CN-005", "BD-002"],
+    do: calibration_match?(id, matcher, mfa)
+
+  defp original_sample_match?("EX-159", matcher, mfa),
+    do: creator_original_match?(matcher, mfa)
+
+  defp calibration_source_rows!(graph, evidence, ledger, lane) do
+    expected_mfas = expected_sample_matches!(graph, ledger, lane)
+
+    matched_modules =
+      expected_mfas
+      |> Enum.flat_map(fn {_id, mfas} -> mfas end)
+      |> Enum.map(fn mfa ->
+        [module, _rest] = String.split(mfa, ":", parts: 2)
+        module
+      end)
+      |> Enum.uniq()
+
+    graph_paths = Enum.map(matched_modules, &graph_source_path!(graph, evidence, &1))
+    citations = Enum.flat_map(["CN-005", "BD-002", "EX-159"], &sample_citations!(&1, lane))
+
+    citation_paths =
+      Enum.map(citations, fn {citation, _text} -> citation_source_path!(citation) end)
+
+    paths = Enum.uniq(graph_paths ++ citation_paths) |> Enum.sort()
+
+    source_rows =
+      Enum.map(paths, fn path ->
+        resolved = SweepEvidence.resolve!(evidence, path <> ":1")
+        assert {:ok, %{type: :regular, size: size}} = File.lstat(resolved.path)
+        bytes = File.read!(resolved.path)
+        sha256 = :crypto.hash(:sha256, bytes) |> Base.encode16(case: :lower)
+        assert sha256 == resolved.sha256
+        assert byte_size(bytes) == size
+
+        %{"path" => path, "sha256" => sha256, "size_bytes" => size}
+      end)
+
+    {Enum.sort_by(source_rows, & &1["path"]), citations}
+  end
+
+  defp graph_source_path!(graph, evidence, module_name) do
+    module =
+      Enum.find(graph.module_app, fn {module, _app} -> Atom.to_string(module) == module_name end)
+
+    assert module != nil, "full Xref graph has no app identity for #{module_name}"
+    {module_atom, app} = module
+
+    inventory_rows =
+      for source_app <- graph.sources,
+          beam <- source_app.beams,
+          beam.module == module_name,
+          do: {source_app.app, beam}
+
+    case inventory_rows do
+      [{^app, %{source: source, status: "present"}}] ->
+        path = app <> "/" <> source
+        assert SweepEvidence.resolve!(evidence, path <> ":1").path
+        path
+
+      [] ->
+        graph_source_path_from_compile_info!(module_atom, app, evidence)
+
+      other ->
+        raise ExUnit.AssertionError,
+          message:
+            "graph source inventory has ambiguous or unavailable identity for #{module_name}: #{inspect(other)}"
+    end
+  end
+
+  defp graph_source_path_from_compile_info!(module_atom, app, evidence) do
+    beam_path = :code.which(module_atom) |> to_string()
+
+    assert File.regular?(beam_path),
+           "loaded exact-lane BEAM is absent for #{Atom.to_string(module_atom)}"
+
+    {:ok, {^module_atom, chunks}} =
+      :beam_lib.chunks(String.to_charlist(beam_path), [:compile_info])
+
+    compile_info = Keyword.fetch!(chunks, :compile_info)
+    source_path = compile_info |> Keyword.fetch!(:source) |> to_string()
+
+    prefix = app <> "/"
+
+    matching_rows =
+      Enum.filter(evidence.manifest["files"], fn row ->
+        row["lane"] == evidence.lane.name and row["status"] == "present" and
+          String.starts_with?(row["source_path"] || "", prefix) and
+          String.ends_with?(source_path, String.replace_prefix(row["source_path"], prefix, ""))
+      end)
+
+    assert length(matching_rows) == 1,
+           "compiler source location for #{Atom.to_string(module_atom)} does not identify one exact-lane manifest row: #{source_path}"
+
+    path = hd(matching_rows)["source_path"]
+    assert SweepEvidence.resolve!(evidence, path <> ":1").path
+    path
+  end
+
+  defp sample_citations!("CN-005", lane), do: calibration_citations!("CN-005", lane)
+  defp sample_citations!("BD-002", lane), do: calibration_citations!("BD-002", lane)
+
+  defp sample_citations!("EX-159", lane) do
+    creator = Enum.find(@creator_audit, &(&1.original_id == "EX-159" and &1.lane == lane))
+    assert creator != nil
+    creator.citations
+  end
+
+  defp citation_source_path!(citation) do
+    case Regex.run(~r/^([a-z_]+\/(?:src|lib)\/[^:]+):[1-9][0-9]*$/, citation) do
+      [_, path] -> path
+      _ -> raise ExUnit.AssertionError, message: "invalid selected source citation #{citation}"
+    end
+  end
+
+  defp canonical_source_set_digest!(source_rows) do
+    bytes =
+      source_rows
+      |> Enum.map(fn source ->
+        source["path"] <>
+          <<0>> <> source["sha256"] <> <<0>> <> Integer.to_string(source["size_bytes"])
+      end)
+      |> Enum.uniq()
+      |> Enum.sort()
+      |> Enum.join("\n")
+
+    :crypto.hash(:sha256, bytes) |> Base.encode16(case: :lower)
+  end
+
+  defp assert_review_effort_lane!(
+         lane_record,
+         lane,
+         calibration_lane,
+         reviewed_revision,
+         source_paths
+       ) do
+    expected_versions =
+      case lane do
+        "core" -> {"1.20.4", "29.1.2"}
+        "floor" -> {"1.18.5", "27.3.4.9"}
+      end
+
+    assert {lane_record["elixir"], lane_record["otp"]} == expected_versions
+    assert lane_record["sample_ids"] |> MapSet.new() == MapSet.new(["CN-005", "BD-002", "EX-159"])
+    assert nonempty_evidence_string?(lane_record["clock_source"])
+    assert nonempty_evidence_string?(lane_record["clock_context_id"])
+    assert lane_record["clock_unit"] == "nanoseconds"
+    assert nonempty_evidence_string?(lane_record["review_method"])
+    assert nonempty_evidence_string?(lane_record["uncertainty"])
+
+    intervals = lane_record["intervals"]
+    assert is_list(intervals) and intervals != []
+    ids = Enum.map(intervals, & &1["id"])
+    assert length(ids) == MapSet.size(MapSet.new(ids))
+
+    Enum.each(intervals, fn interval ->
+      assert nonempty_evidence_string?(interval["id"])
+      assert interval["clock_context_id"] == lane_record["clock_context_id"]
+      assert is_integer(interval["start_ns"]) and is_integer(interval["end_ns"])
+      assert interval["end_ns"] > interval["start_ns"]
+      assert is_list(interval["sample_ids"]) and interval["sample_ids"] != []
+      assert is_list(interval["source_refs"]) and interval["source_refs"] != []
+
+      assert MapSet.subset?(
+               MapSet.new(interval["sample_ids"]),
+               MapSet.new(lane_record["sample_ids"])
+             )
+
+      assert MapSet.subset?(MapSet.new(interval["source_refs"]), MapSet.new(source_paths))
+    end)
+
+    intervals
+    |> Enum.sort_by(& &1["start_ns"])
+    |> Enum.chunk_every(2, 1, :discard)
+    |> Enum.each(fn [left, right] ->
+      assert left["end_ns"] <= right["start_ns"], "#{lane} review intervals overlap"
+    end)
+
+    sample_coverage = intervals |> Enum.flat_map(& &1["sample_ids"]) |> MapSet.new()
+    source_coverage = intervals |> Enum.flat_map(& &1["source_refs"]) |> MapSet.new()
+    assert sample_coverage == MapSet.new(lane_record["sample_ids"])
+    assert source_coverage == MapSet.new(source_paths)
+
+    elapsed = Enum.sum(Enum.map(intervals, &(&1["end_ns"] - &1["start_ns"])))
+    assert lane_record["review_elapsed_ns"] == elapsed
+    assert abs(lane_record["review_seconds"] - elapsed / 1_000_000_000) <= 0.000001
+    assert abs(calibration_lane["review_seconds"] - lane_record["review_seconds"]) <= 0.000001
+    assert calibration_lane["review_method"] == lane_record["review_method"]
+
+    provenance = lane_record["provenance"]
+    assert nonempty_evidence_string?(provenance["recorded_by"])
+    assert provenance["reviewed_revision"] == reviewed_revision
+    assert String.match?(provenance["reviewed_revision"], ~r/^[0-9a-f]{40}$/)
+    assert provenance["source_archive_sha256"] == SweepEvidence.archive_sha256()
+    assert String.match?(provenance["source_set_sha256"], ~r/^[0-9a-f]{64}$/)
+
+    doc_digest = canonical_source_set_digest!(calibration_lane["sources"])
+    assert provenance["source_set_sha256"] == doc_digest
+    :ok
+  end
+
+  defp single_json_comment!(text, marker) do
+    marker_regex = Regex.compile!("^<!-- " <> Regex.escape(marker) <> ": (.+) -->$", "m")
+    rows = Regex.scan(marker_regex, text, capture: :all_but_first)
+    assert length(rows) == 1, "expected exactly one #{marker} marker"
+
+    try do
+      JSON.decode!(hd(hd(rows)))
+    rescue
+      error ->
+        reraise ExUnit.AssertionError,
+                [
+                  message: "#{marker} marker must contain valid JSON: #{Exception.message(error)}"
+                ],
+                __STACKTRACE__
+    end
+  end
+
+  defp summary_reviewed_revision!(text) do
+    case Regex.run(~r/^reviewed_revision: ([0-9a-f]{40})$/m, text) do
+      [_, revision] ->
+        revision
+
+      _ ->
+        raise ExUnit.AssertionError,
+          message: "Plan 03 SUMMARY frontmatter lacks reviewed_revision"
+    end
+  end
+
+  defp expect_calibration_rejected!(
+         calibration,
+         validation,
+         review,
+         revision,
+         graph,
+         evidence,
+         ledger,
+         root
+       ) do
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_calibration_artifact_binding!(
+        calibration,
+        validation,
+        review,
+        revision,
+        graph,
+        evidence,
+        ledger,
+        root
+      )
+    end
+  end
+
+  defp nonempty_evidence_string?(value),
+    do:
+      is_binary(value) and String.trim(value) != "" and
+        String.downcase(String.trim(value)) != "unknown"
 
   defp assert_calibration_records!(records, graph, evidence, ledger) do
     expected = calibration_records!(graph, evidence, ledger)

@@ -1,0 +1,56 @@
+{
+  "schema": "fablebook.phase-delivery/1",
+  "phase": "01.1.1.5",
+  "receipt_status": "pending_plan04_delivery",
+  "expected_deliveries": [
+    {
+      "id": "plan-01",
+      "plan_ids": ["01"],
+      "disposition": "unchanged_reuse",
+      "evidence": "01.1.1.5-01-SUMMARY.md: existing exact-lane consult and Yecc contracts passed; no source/test change"
+    },
+    {
+      "id": "plan-02",
+      "plan_ids": ["02"],
+      "disposition": "unchanged_reuse",
+      "evidence": "01.1.1.5-02-SUMMARY.md: preserved Logger/ExUnit contracts passed; no contract or guard change"
+    },
+    {
+      "id": "plan-03",
+      "plan_ids": ["03"],
+      "disposition": "delivered",
+      "pr_url": "https://github.com/szTheory/fablebook/pull/38"
+    },
+    {
+      "id": "plan-04",
+      "plan_ids": ["04"],
+      "disposition": "delivered",
+      "pr_url": "PENDING"
+    },
+    {
+      "id": "pr-23",
+      "plan_ids": [],
+      "disposition": "historical_reuse",
+      "pr_url": "https://github.com/szTheory/fablebook/pull/23",
+      "evidence": "PathConsult source resolver and tracer; historical evidence only"
+    }
+  ],
+  "deliveries": [
+    {
+      "id": "plan-03",
+      "expected_id": "plan-03",
+      "plan_ids": ["03"],
+      "pr_url": "https://github.com/szTheory/fablebook/pull/38",
+      "tested_head_sha": "49c7aff73ad071a9f1c9685a063d3be7ded84e09",
+      "base_branch": "main",
+      "merge_sha": "cb1e6c020f74030b70ea92ebf638c06791d716c4",
+      "required_checks": [
+        {"name":"core","run_id":"41542627355","run_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355","head_sha":"49c7aff73ad071a9f1c9685a063d3be7ded84e09","status":"completed","conclusion":"success","job_id":"125611184805","job_name":"core","job_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355/job/125611184805","job_conclusion":"success"},
+        {"name":"floor","run_id":"41542627355","run_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355","head_sha":"49c7aff73ad071a9f1c9685a063d3be7ded84e09","status":"completed","conclusion":"success","job_id":"125611185085","job_name":"floor","job_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355/job/125611185085","job_conclusion":"success"},
+        {"name":"dialyzer","run_id":"41542627355","run_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355","head_sha":"49c7aff73ad071a9f1c9685a063d3be7ded84e09","status":"completed","conclusion":"success","job_id":"125611185135","job_name":"dialyzer","job_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355/job/125611185135","job_conclusion":"success"},
+        {"name":"security","run_id":"41542627355","run_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355","head_sha":"49c7aff73ad071a9f1c9685a063d3be7ded84e09","status":"completed","conclusion":"success","job_id":"125611184970","job_name":"security","job_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355/job/125611184970","job_conclusion":"success"},
+        {"name":"ci-gate","run_id":"41542627355","run_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355","head_sha":"49c7aff73ad071a9f1c9685a063d3be7ded84e09","status":"completed","conclusion":"success","job_id":"125615231364","job_name":"ci-gate","job_url":"https://github.com/szTheory/fablebook/actions/runs/41542627355/job/125615231364","job_conclusion":"success"}
+      ]
+    }
+  ]
+}
