@@ -5,6 +5,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
   alias Credo.Test.CheckRunner
   alias Fablebook.Credo.BannedCalls
   alias Fablebook.Test.BeamWalker
+  alias Fablebook.Test.InstalledOtp
 
   Code.ensure_loaded?(BannedCalls) ||
     Code.require_file(Path.expand("../../credo/checks/banned_calls.ex", __DIR__))
@@ -60,6 +61,11 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {ExUnit, :run, 1},
     {ExUnit, :async_run, 0},
     {ExUnit.Runner, :run, 2}
+  ]
+
+  @call_name_guard_fronts [
+    {Mix.Compilers.Protocol, :compile, 4},
+    {Phoenix.LiveView.ColocatedAssets, :compile, 0}
   ]
 
   @mfa_tier [
@@ -363,8 +369,12 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {Mix.Tasks.Format, :formatter_opts_for_file, 1},
     {Mix.Tasks.Format, :formatter_opts_for_file, 2},
     {Mix.Dep, :in_dependency, 2},
-    {Mix.Dep.Loader, :load, 3}
+    {Mix.Dep.Loader, :load, 3},
+    {Mix.Compilers.Protocol, :compile, 4},
+    {Phoenix.LiveView.ColocatedAssets, :compile, 0}
   ]
+
+  @legacy_mfa_tier Enum.sort(@mfa_tier -- @call_name_guard_fronts)
 
   @rewritten_calls %{
     {String, :to_atom, 1} => {:erlang, :binary_to_atom, 1},
@@ -851,12 +861,15 @@ defmodule Fablebook.Contract.BannedCallsTest do
   test "every MFA matcher names an existing function" do
     load_tier_apps()
 
-    for {mod, name, arity} = entry <- @mfa_tier do
+    for {mod, name, arity} = entry <- @mfa_tier,
+        entry not in @call_name_guard_fronts do
       assert Code.ensure_loaded?(mod), "#{inspect(entry)} names a module that does not load"
 
       assert Enum.any?(mod.module_info(:exports), &mfa_match?({name, arity}, &1)),
              "#{inspect(entry)} matches no exported function"
     end
+
+    assert_call_name_front_inventory!()
   end
 
   test "every guard fixture is listed" do
@@ -1173,6 +1186,69 @@ defmodule Fablebook.Contract.BannedCallsTest do
       |> Enum.reverse()
 
     assert uncaught == [], "MFA-tier entries without a generated-probe hit: #{inspect(uncaught)}"
+  end
+
+  @tag :tmp_dir
+  test "confirmed call-name fronts have static inventory and uncalled source and BEAM probes", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    assert_call_name_guard_states!()
+    assert_call_name_front_inventory!()
+
+    source_state = call_name_guard_state!(BannedCalls.banned_mfas())
+
+    protocol_source = """
+    defmodule Fablebook.GuardFixture.CallNameProtocol do
+      @compile {:no_warn_undefined, Mix.Compilers.Protocol}
+
+      def probe(module, source, options, context),
+        do: Mix.Compilers.Protocol.compile(module, source, options, context)
+    end
+    """
+
+    colocated_assets_source = """
+    defmodule Fablebook.GuardFixture.CallNameColocatedAssets do
+      def probe, do: Phoenix.LiveView.ColocatedAssets.compile()
+    end
+    """
+
+    assert_source_probe_state!(source_state, protocol_source, "call_name_protocol.ex")
+
+    assert_source_probe_state!(
+      source_state,
+      colocated_assets_source,
+      "call_name_colocated_assets.ex"
+    )
+
+    source_path = Path.join(dir, "call_name_fronts.ex")
+    File.write!(source_path, protocol_source <> "\n" <> colocated_assets_source)
+
+    scans =
+      for beam <- compile!([source_path], dir, true), into: %{} do
+        assert {:ok, scan} = BeamWalker.scan(beam)
+        {scan.module, scan}
+      end
+
+    for {front, module} <- [
+          {{Mix.Compilers.Protocol, :compile, 4}, Fablebook.GuardFixture.CallNameProtocol},
+          {{Phoenix.LiveView.ColocatedAssets, :compile, 0},
+           Fablebook.GuardFixture.CallNameColocatedAssets}
+        ] do
+      scan = Map.fetch!(scans, module)
+      assert front in scan.mfas
+      assert {:mfa, front} in hits(scan)
+
+      refute Enum.any?(hits(scan, Enum.reject(@mfa_tier, &(&1 == front))), &mfa_hit?(&1, front))
+    end
+
+    for scan <- Map.values(scans) do
+      for front <- @call_name_guard_fronts do
+        refute Enum.any?(hits(scan, @legacy_mfa_tier), &mfa_hit?(&1, front))
+      end
+    end
   end
 
   @tag :tmp_dir
@@ -1658,7 +1734,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
       do: {:ok, _} = Application.ensure_all_started(:credo)
 
     assert BannedCalls.banned_names() == Enum.sort(@atom_tier)
-    assert BannedCalls.banned_mfas() == Enum.sort(@mfa_tier)
+    assert call_name_guard_state!(BannedCalls.banned_mfas()) in [:legacy, :complete]
 
     for path <- Path.wildcard(Path.join(@fixture_dir, "*.ex")),
         Path.basename(path) not in @beam_only_fixtures do
@@ -1972,6 +2048,72 @@ defmodule Fablebook.Contract.BannedCallsTest do
     |> Enum.all?(fn {expected, actual} -> expected == :_ or expected == actual end)
   end
 
+  defp call_name_guard_state!(actual_tier) do
+    cond do
+      actual_tier == Enum.sort(@mfa_tier) ->
+        :complete
+
+      actual_tier == @legacy_mfa_tier ->
+        :legacy
+
+      true ->
+        flunk("unexpected BannedCalls MFA tier: #{inspect(actual_tier)}")
+    end
+  end
+
+  defp assert_source_probe_state!(:legacy, source, filename),
+    do: assert(credo_issues(source, filename) == [])
+
+  defp assert_source_probe_state!(:complete, source, filename),
+    do: assert(credo_issues(source, filename) != [])
+
+  defp assert_call_name_guard_states! do
+    complete = Enum.sort(@mfa_tier)
+
+    assert call_name_guard_state!(@legacy_mfa_tier) == :legacy
+    assert call_name_guard_state!(complete) == :complete
+
+    for front <- @call_name_guard_fronts do
+      assert_rejected_call_name_tier!(Enum.reject(complete, &(&1 == front)))
+    end
+
+    assert_rejected_call_name_tier!(Enum.sort([{:Fablebook, :unrelated_front, 0} | complete]))
+    assert_rejected_call_name_tier!(Enum.sort(List.delete(complete, {String, :to_atom, 1})))
+    assert_rejected_call_name_tier!(Enum.sort([hd(complete) | complete]))
+  end
+
+  defp assert_rejected_call_name_tier!(tier) do
+    assert_raise ExUnit.AssertionError, fn -> call_name_guard_state!(tier) end
+  end
+
+  defp assert_call_name_front_inventory! do
+    mix_ebin = :code.lib_dir(:mix) |> List.to_string() |> Path.join("ebin")
+    live_view_ebin = :code.lib_dir(:phoenix_live_view) |> List.to_string() |> Path.join("ebin")
+    lane = if System.get_env("FABLEBOOK_FLOOR") in [nil, ""], do: "core", else: "floor"
+
+    exports = InstalledOtp.export_inventory!([mix_ebin, live_view_ebin], lane: lane)
+    mix_beams = MapSet.new(File.ls!(mix_ebin))
+    live_view_beams = MapSet.new(File.ls!(live_view_ebin))
+    protocol_beam = "Elixir.Mix.Compilers.Protocol.beam"
+    colocated_assets_beam = "Elixir.Phoenix.LiveView.ColocatedAssets.beam"
+
+    if lane == "core" do
+      assert System.version() == "1.20.4"
+      assert MapSet.member?(mix_beams, protocol_beam)
+      assert {Mix.Compilers.Protocol, :compile, 4} in exports
+    else
+      assert System.version() == "1.18.5"
+      refute MapSet.member?(mix_beams, protocol_beam)
+
+      refute Enum.any?(exports, fn {module, _function, _arity} ->
+               module == Mix.Compilers.Protocol
+             end)
+    end
+
+    assert MapSet.member?(live_view_beams, colocated_assets_beam)
+    assert {Phoenix.LiveView.ColocatedAssets, :compile, 0} in exports
+  end
+
   defp mfa_hit?({:mfa, pattern}, mfa), do: mfa_match?(pattern, mfa)
   defp mfa_hit?(_hit, _mfa), do: false
 
@@ -2004,6 +2146,15 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   defp generated_probe_module(index, calls) do
+    target_compile =
+      if Enum.any?(calls, fn {module, _function, _arity} ->
+           module == Mix.Compilers.Protocol
+         end) do
+        "@compile {:no_warn_undefined, Mix.Compilers.Protocol}\n"
+      else
+        ""
+      end
+
     functions =
       calls
       |> Enum.with_index()
@@ -2015,7 +2166,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
         "  def run_#{call_index}(#{args_source}), do: #{module_source}.#{function_source}(#{args_source})"
       end)
 
-    "defmodule Fablebook.GuardProbe.P#{index} do\n#{functions}\nend\n"
+    "defmodule Fablebook.GuardProbe.P#{index} do\n#{target_compile}#{functions}\nend\n"
   end
 
   defp caller_formatter_probe_source(kind) do
