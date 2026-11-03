@@ -5979,6 +5979,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :cn001
   test "original exclusion and lane metadata identities remain lossless and owned" do
     ledger = original_identity_ledger!()
     assert_original_identity_ledger!(ledger, ledger)
@@ -6006,6 +6007,18 @@ defmodule Fablebook.Contract.TierSweepTest do
              &(&1.owner == "01.1.1.4" and &1.semantic_status == :pending)
            )
 
+    cn001 = Enum.find(ledger.exclusions, &(&1.id == "CN-001"))
+    cn_lane_001 = Enum.find(ledger.metadata, &(&1.id == "CN-LANE-001"))
+
+    assert cn001.identity_class == :exclusion
+    assert cn_lane_001.identity_class == :lane_metadata
+    assert cn_lane_001.table == "CN-LANE"
+    assert cn_lane_001.original_entry_raw == "{{Mix.Compilers.Protocol, [:compile]}, :latest}"
+    assert cn_lane_001.original_matcher_raw == "{Mix.Compilers.Protocol, [:compile]}"
+    assert cn_lane_001.lane_payload_raw == ":latest"
+    assert cn_lane_001.current_replacement_refs == ["source:CN-LANE:1"]
+    refute cn001.id == cn_lane_001.id
+
     assert Enum.all?(ledger.exclusions, fn row ->
              row.remaining_semantic_owner == "01.1.1.4" and row.current_replacement_refs != []
            end)
@@ -6025,6 +6038,15 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_raise ExUnit.AssertionError, fn ->
       assert_original_identity_ledger!(omitted, ledger)
+    end
+
+    omitted_lane_metadata = %{
+      ledger
+      | metadata: Enum.reject(ledger.metadata, &(&1.id == "CN-LANE-001"))
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_original_identity_ledger!(omitted_lane_metadata, ledger)
     end
 
     duplicate = %{ledger | exclusions: [hd(ledger.exclusions) | ledger.exclusions]}
@@ -7108,6 +7130,39 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert record.semantic_status == :cn001_source_authority_open
     assert record.verdict == :undetermined_source_authority
 
+    if evidence.lane.name == "core" do
+      omitted_core_citation = %{
+        record
+        | citations:
+            Enum.reject(
+              record.citations,
+              &(elem(&1, 0) == "mix/lib/mix/compilers/protocol.ex:107")
+            )
+      }
+
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn001_record!(omitted_core_citation, ctx.graph, evidence, ledger)
+      end
+    else
+      invented_floor_export = %{
+        record
+        | module_exports: ["Elixir.Mix.Compilers.Protocol:compile/4"],
+          matched_mfas: ["Elixir.Mix.Compilers.Protocol:compile/4"]
+      }
+
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn001_record!(invented_floor_export, ctx.graph, evidence, ledger)
+      end
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "CN-001"))
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/original CN-001 identity is missing/, fn ->
+      cn001_record!(ctx.graph, evidence, missing_identity)
+    end
   end
 
   test "exact guard coverage supersedes a preserved call-name exclusion" do
