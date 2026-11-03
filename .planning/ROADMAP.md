@@ -829,11 +829,11 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
   3. A complete row is carried end to end as the production-quality tracer before expanding the bounded call-name slice. Any additional matched function or source file remains included; no match is capped.
   4. No dangerous evaluator, parser, loader, or atom-creation API is invoked. Any newly judged front called from lib/ stops for the existing owner decision.
   5. Delivery remains contract-test-only, with distinct exact-head core/floor evidence and required green scoped merge/CI receipts. The other original rows remain pending for later deliveries; this phase claims no whole-table closure or Phase 5 proof.
-**Plans:** 5 plans across 5 waves
+**Plans:** 1/5 plans executed across 5 waves
 
 Plans:
 **Wave 1**
-- [ ] 01.1.1.6-01-PLAN.md — Establish CN-002 as the complete, production-quality tracer row.
+- [x] 01.1.1.6-01-PLAN.md — Establish CN-002 as the complete, production-quality tracer row.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01.1.1.6-02-PLAN.md — Complete CN-001 and preserve the separate CN-LANE-001 metadata identity.

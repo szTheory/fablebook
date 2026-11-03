@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "$gsd-progress --next",
+    "command": "/gsd-progress --next",
     "label": "Advance to the next step",
-    "reason": "Phase 01.1.1.6 (35 roadmap phases) · 2% · executing"
+    "reason": "Phase 8 of 42 · 2% · executing"
   },
-  "updated_at": "2026-11-03T20:18:42.985Z"
+  "updated_at": "2026-11-03T21:58:38.066Z"
 }

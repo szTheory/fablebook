@@ -3,13 +3,13 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.6
 current_phase_name: Audit remaining ban-list call-name exclusions (INSERTED)
 status: executing
-stopped_at: Phase 01.1.1.6 is ready on a clean branch containing the green Phase 01.1.1.12 merge; exact lane runtimes are available; auto-advance remains disabled
-last_updated: "2026-11-03T20:27:05Z"
+stopped_at: Completed 01.1.1.6-01-PLAN.md
+last_updated: "2026-11-03T22:00:47.823Z"
 last_activity: 2026-11-03
-last_activity_desc: Prepared clean Phase 01.1.1.6 execution checkout and verified its exact pinned runtimes
-state_head: 716ef4613312badee0a0fff942eab218ebc1b88c
+last_activity_desc: Phase 01.1.1.6 execution started
+state_head: 529dd2d836e29067685958b7cda50537798143e1
 progress:
-  total_phases: 41
+  total_phases: 42
   completed_phases: 1
   total_plans: 31
   completed_plans: 26
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.6 — Audit remaining ban-list call-name exclusions
+**Current focus:** Phase 01.1.1.6 — Audit remaining ban-list call-name exclusions (INSERTED)
 
 ## Current Position
 
-Phase: 01.1.1.6 (Audit remaining ban-list call-name exclusions (INSERTED)) — READY TO EXECUTE
-Plan: 5 plans across 5 sequential waves; independent plan review passed; implementation not started
+Phase: 01.1.1.6 (Audit remaining ban-list call-name exclusions (INSERTED)) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-11-03 — clean execution checkout includes the green `.12` merge and exact core/floor runtimes
+Last activity: 2026-11-03 — Phase 01.1.1.6 execution started
 
 Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plans complete; nested phase plans do not change parent completion counts
 
@@ -78,6 +78,7 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plan
 | Phase 01.1.1.3.1.2 P03 | 212min | 2 tasks | 6 files |
 | Phase 01.1.1.3.1.2 P04 | 132min | 2 tasks | 5 files |
 | Phase 01.1.1.3.1.2 P05 | 51min | 3 tasks | 13 files |
+| Phase 01.1.1.6 P01 | 59 min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -135,6 +136,8 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.3.1.2]: Explicit debugger-remainder delivery preserves the selected-settings default and binds evidence to current source, ownership, head, and run.
 - [Phase 01.1.1.3.1.2]: T-15 remains recorded against the undigested pre-fix checker state; the final strict controls pass, but no third review or independent final sign-off is claimed.
 - [Phase 01.1.1.3.1.2]: Installed-wide acceptance, runtime safety, and SEC-01 remain pending under their existing owners.
+- [Phase 01.1.1.6]: Retain CN-002 because Phoenix.Digester.compile/3 digests static assets; the Mix caller project compile remains a separate action.
+- [Phase 01.1.1.6]: Keep the disposition bounded to the cited lane sources and static checks; make no runtime atom-count, never-eval, or general filesystem-safety claim.
 
 ### Pending Todos
 
@@ -169,7 +172,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-03T20:27:05Z
-Stopped at: Phase 01.1.1.6 is ready with five reviewed sequential plans. The `.12` prerequisite is green and its merge is an ancestor of this branch. No `.6` implementation or tests have run.
+Last session: 2026-11-03T21:58:38.863Z
+Stopped at: Completed 01.1.1.6-01-PLAN.md
 Next action: Run `$gsd-execute-phase 01.1.1.6` from this clean execution checkout.
-Resume file: .planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-CONTEXT.md
+Resume file: None
