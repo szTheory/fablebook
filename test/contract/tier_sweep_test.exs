@@ -7000,6 +7000,80 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert record.overlap_mfas == []
   end
 
+  @tag :cn002
+  test "CN-002 rejects omitted row evidence and cross-lane source substitution", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn002_record!(ctx.graph, evidence, ledger)
+    other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+
+    for omitted <- [
+          %{record | matched_mfas: tl(record.matched_mfas)},
+          %{
+            record
+            | citations:
+                Enum.reject(
+                  record.citations,
+                  &(elem(&1, 0) == "phoenix/lib/phoenix/digester.ex:20")
+                )
+          },
+          %{record | removal_witness: []},
+          %{record | lane: other_lane}
+        ] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn002_record!(omitted, ctx.graph, evidence, ledger)
+      end
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "CN-002"))
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/original CN-002 identity is missing/, fn ->
+      cn002_record!(ctx.graph, evidence, missing_identity)
+    end
+
+    wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn002_record!(ctx.graph, wrong_lane_evidence, ledger)
+    end
+
+    wrong_lane_graph = %{ctx.graph | lane: Map.put(ctx.graph.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn002_record!(wrong_lane_graph, evidence, ledger)
+    end
+
+    for lane <- ["core", "floor"] do
+      assert Enum.any?(evidence.manifest["files"], fn row ->
+               row["lane"] == lane and
+                 row["source_path"] == "phoenix/lib/phoenix/digester.ex" and
+                 row["status"] == "present"
+             end),
+             "#{lane} source availability must be proved by its lane record"
+    end
+
+    missing_lane_source_manifest =
+      Map.update!(evidence.manifest, "files", fn rows ->
+        Enum.reject(rows, fn row ->
+          row["lane"] == evidence.lane.name and
+            row["source_path"] == "phoenix/lib/phoenix/digester.ex"
+        end)
+      end)
+
+    missing_lane_source = %{evidence | manifest: missing_lane_source_manifest}
+
+    error =
+      assert_raise SweepEvidence.Error, fn ->
+        SweepEvidence.resolve!(missing_lane_source, "phoenix/lib/phoenix/digester.ex:20")
+      end
+
+    assert error.reason == :missing_source
+  end
+
   test "exact guard coverage supersedes a preserved call-name exclusion" do
     fronts = [
       {Mix.Compilers.Protocol, :compile, 4},
@@ -9882,7 +9956,9 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp cn002_record!(graph, evidence, ledger) do
     row = Enum.find(ledger.exclusions, &(&1.id == "CN-002"))
     assert row != nil, "original CN-002 identity is missing"
-    assert graph.lane == evidence.lane
+
+    assert graph.lane == evidence.lane,
+           "CN-002 graph and source evidence lanes differ"
 
     [original_matcher, original_reason, original_citations] =
       source_tuple_parts!(row.original_entry_raw)
