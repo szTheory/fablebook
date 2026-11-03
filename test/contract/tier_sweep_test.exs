@@ -1508,6 +1508,11 @@ defmodule Fablebook.Contract.TierSweepTest do
     "floor" => []
   }
 
+  @cn003_expected_direct_callers_by_lane %{
+    "core" => ["Elixir.Mix.Tasks.Compile.PhoenixLiveView:compile/0"],
+    "floor" => ["Elixir.Mix.Tasks.Compile.PhoenixLiveView:compile/0"]
+  }
+
   @cn001_source_authority_gaps [
     {
       "mix/lib/mix/compilers/elixir.ex",
@@ -5998,9 +6003,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     sampled = Enum.filter(ledger.exclusions, &(&1.semantic_status != :pending))
 
     assert MapSet.new(Enum.map(sampled, & &1.id)) ==
-             MapSet.new(["CN-001", "CN-002", "CN-005", "BD-002", "EX-159"])
+             MapSet.new(["CN-001", "CN-002", "CN-003", "CN-005", "BD-002", "EX-159"])
 
-    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 216
+    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 215
 
     assert Enum.all?(
              ledger.metadata,
@@ -6026,7 +6031,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert Enum.all?(ledger.exclusions, fn row ->
              expected_owner =
                case row.id do
-                 id when id in ["CN-001", "CN-002"] -> "01.1.1.6"
+                 id when id in ["CN-001", "CN-002", "CN-003"] -> "01.1.1.6"
                  id when id in ["CN-005", "BD-002", "EX-159"] -> "01.1.1.5"
                  _id -> "01.1.1.4"
                end
@@ -7162,6 +7167,76 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_raise ExUnit.AssertionError, ~r/original CN-001 identity is missing/, fn ->
       cn001_record!(ctx.graph, evidence, missing_identity)
+    end
+  end
+
+  @tag :cn003
+  test "CN-003 preserves its identity and traces the complete live lane disposition", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn003_record!(ctx.graph, evidence, ledger)
+
+    assert_cn003_record!(record, ctx.graph, evidence, ledger)
+    assert record.original_id == "CN-003"
+    assert record.current_replacement_refs == ["source:CN:3"]
+    assert record.semantic_status == :cn003_retained
+    assert record.retained_exclusion
+    assert record.matched_mfas != []
+    assert record.removal_witness != []
+    assert record.overlap_mfas == []
+  end
+
+  @tag :cn003
+  test "CN-003 rejects omitted row evidence, new matches and cross-lane substitutions", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn003_record!(ctx.graph, evidence, ledger)
+    other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+
+    for omitted <- [
+          %{record | matched_mfas: tl(record.matched_mfas)},
+          %{record | citations: List.delete_at(record.citations, 0)},
+          %{record | direct_callers: []},
+          %{record | removal_witness: []},
+          %{record | lane: other_lane}
+        ] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn003_record!(omitted, ctx.graph, evidence, ledger)
+      end
+    end
+
+    unexpected_match = {Phoenix.LiveView.ColocatedAssets, :compile, 99}
+
+    graph_with_new_match = %{
+      ctx.graph
+      | full_exported: MapSet.put(ctx.graph.full_exported, unexpected_match)
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      cn003_record!(graph_with_new_match, evidence, ledger)
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "CN-003"))
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/original CN-003 identity is missing/, fn ->
+      cn003_record!(ctx.graph, evidence, missing_identity)
+    end
+
+    wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn003_record!(ctx.graph, wrong_lane_evidence, ledger)
+    end
+
+    wrong_lane_graph = %{ctx.graph | lane: Map.put(ctx.graph.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn003_record!(wrong_lane_graph, evidence, ledger)
     end
   end
 
@@ -10024,6 +10099,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp original_semantic_status("CN-001"), do: :cn001_source_authority_open
   defp original_semantic_status("CN-002"), do: :cn002_retained
+  defp original_semantic_status("CN-003"), do: :cn003_retained
   defp original_semantic_status("CN-005"), do: :calibrated_retained
   defp original_semantic_status("BD-002"), do: :calibrated_retained
   defp original_semantic_status("EX-159"), do: :calibrated_replaced_by_tier
@@ -10031,6 +10107,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp original_semantic_owner(:cn002_retained), do: "01.1.1.6"
   defp original_semantic_owner(:cn001_source_authority_open), do: "01.1.1.6"
+  defp original_semantic_owner(:cn003_retained), do: "01.1.1.6"
   defp original_semantic_owner(:pending), do: "01.1.1.4"
   defp original_semantic_owner(_sampled_status), do: "01.1.1.5"
 
@@ -10379,6 +10456,282 @@ defmodule Fablebook.Contract.TierSweepTest do
     end)
 
     :ok
+  end
+
+  defp cn003_record!(graph, evidence, ledger) do
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-003"))
+    assert row != nil, "original CN-003 identity is missing"
+    assert graph.lane == evidence.lane, "CN-003 graph and source evidence lanes differ"
+
+    [original_matcher, original_reason, original_citations] =
+      source_tuple_parts!(row.original_entry_raw)
+
+    assert original_matcher == "{Phoenix.LiveView.ColocatedAssets, [:compile]}"
+    assert original_reason == ":not_compile_module"
+    assert original_citations =~ "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:48"
+    assert row.original_matcher_raw == original_matcher
+    assert row.original_reason_raw == original_reason
+    assert row.original_citations_raw == original_citations
+    assert row.current_replacement_refs == ["source:CN:3"]
+    assert row.semantic_status == :cn003_retained
+    assert row.owner == "01.1.1.6"
+
+    {{Phoenix.LiveView.ColocatedAssets, [:compile]}, :not_compile_module, _current_citations} =
+      Enum.at(@call_name_exclusions, 2)
+
+    lane = evidence.lane.name
+    live_view_ebin = :code.lib_dir(:phoenix_live_view) |> to_string() |> Path.join("ebin")
+
+    inventory_module_exports =
+      InstalledOtp.export_inventory!([live_view_ebin], lane: lane)
+      |> Enum.filter(fn {module, _function, _arity} ->
+        module == Phoenix.LiveView.ColocatedAssets
+      end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    graph_module_exports =
+      graph.full_exported
+      |> Enum.filter(fn {module, _function, _arity} ->
+        module == Phoenix.LiveView.ColocatedAssets
+      end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    assert graph_module_exports == inventory_module_exports,
+           "CN-003/#{lane} graph exports differ from the exact installed LiveView inventory"
+
+    matched_mfas =
+      graph_module_exports
+      |> Enum.filter(
+        &call_name_exclusion_match?({Phoenix.LiveView.ColocatedAssets, [:compile]}, &1)
+      )
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+
+    assert matched_strings != [], "CN-003/#{lane} has no live full-export match"
+
+    callers =
+      graph.full_reverse
+      |> Map.get({Phoenix.LiveView.ColocatedAssets, :compile}, [])
+      |> Enum.uniq()
+      |> Enum.sort_by(&mfa_string!/1)
+
+    caller_strings = Enum.map(callers, &mfa_string!/1)
+
+    assert caller_strings == Map.fetch!(@cn003_expected_direct_callers_by_lane, lane),
+           "CN-003/#{lane} direct caller set changed: #{inspect(caller_strings)}"
+
+    front = {Phoenix.LiveView.ColocatedAssets, :compile, 0}
+    assert front in BannedCalls.banned_mfas(), "CN-003/#{lane} exact guard front disappeared"
+
+    citations = cn003_citations!(lane)
+
+    resolved =
+      Enum.map(citations, fn {citation, expected_source} ->
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.text =~ expected_source, citation
+        {citation, source}
+      end)
+
+    source_authority_gaps = cn003_source_authority_gaps!(evidence)
+    removal_witness = cn003_removal_witness!(graph, matched_mfas)
+    overlap_mfas = cn003_overlaps!(matched_mfas)
+
+    assert removal_witness != [], "CN-003/#{lane} retained row has no tier-removal consequence"
+    assert overlap_mfas == [], "CN-003/#{lane} overlaps another retained exclusion"
+
+    %{
+      original_id: row.id,
+      original_entry_raw: row.original_entry_raw,
+      original_matcher_raw: row.original_matcher_raw,
+      original_reason_raw: row.original_reason_raw,
+      original_citations_raw: row.original_citations_raw,
+      current_replacement_refs: row.current_replacement_refs,
+      semantic_status: row.semantic_status,
+      semantic_owner: row.owner,
+      lane: lane,
+      elixir: evidence.lane.elixir,
+      otp: evidence.lane.otp,
+      module_exports: Enum.map(graph_module_exports, &mfa_string!/1),
+      matched_mfas: matched_strings,
+      mfa_dispositions: Map.new(matched_strings, &{&1, :cn003_retained}),
+      mfa_citations:
+        Map.new(
+          matched_strings,
+          &{&1, ["phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:48"]}
+        ),
+      direct_callers: caller_strings,
+      caller_input_trace:
+        "The exact full graph reports Mix.Tasks.Compile.PhoenixLiveView.compile/0 as the only direct caller in each lane. compile/0 has no caller-supplied arguments; the module lookup root comes from :phoenix_live_view Application configuration, Mix.Project.config()[:app], and Mix.Project.build_path(). The approved source doc says the LiveView compiler invokes compile/0, but the caller task source file is not present in the approved archive.",
+      delegate_trace: [
+        "Phoenix.LiveView.ColocatedAssets.extract/5 writes transformed component data under target_dir()/inspect(module).",
+        "compile/0 enumerates target subdirectories, takes each Path.basename/1, and calls Module.concat/1 to derive a module name.",
+        "process_module/2 requires Code.ensure_loaded?/1 and delegates metadata discovery to Phoenix.Component.MacroComponent.get_data/1.",
+        "get_data/1 calls __phoenix_macro_components__/0 only when the discovered module exports it; compile/0 then uses that metadata to clean outdated files and write callback manifests."
+      ],
+      verdict:
+        "Build-time colocated-asset manifest processing, not module compilation. Retain CN-003 to document the compile-name collision and the directory-basename module lookup; the exact guard front remains an independent enforcement dependency.",
+      citations: citations,
+      source_sha256s:
+        resolved
+        |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
+        |> Map.new(),
+      source_authority_gaps: source_authority_gaps,
+      removal_witness: Enum.map(removal_witness, &mfa_string!/1),
+      overlap_mfas: Enum.map(overlap_mfas, &mfa_string!/1),
+      retained_exclusion: true,
+      applicability: :each_exact_installed_lane,
+      limitations: [
+        "The approved source archive omits the direct Mix compiler task source, so its exact call-site body is not asserted; the full graph still proves the complete direct-caller set.",
+        "Application and Mix configuration values and target-directory contents are not evaluated by this static trace.",
+        "This contract does not claim runtime atom-count, path-safety, or general file-system safety."
+      ]
+    }
+  end
+
+  defp assert_cn003_record!(record, graph, evidence, ledger) do
+    expected = cn003_record!(graph, evidence, ledger)
+    assert record == expected
+    assert record.matched_mfas != []
+    assert record.removal_witness != []
+    assert record.overlap_mfas == []
+    assert record.retained_exclusion
+
+    Enum.each(record.citations, fn {citation, expected_source} ->
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.text =~ expected_source, citation
+      assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
+    end)
+
+    Enum.each(record.mfa_citations, fn {_mfa, citations} ->
+      assert citations != []
+
+      assert Enum.all?(citations, fn citation ->
+               Enum.any?(record.citations, fn {record_citation, _expected} ->
+                 record_citation == citation
+               end)
+             end)
+    end)
+
+    :ok
+  end
+
+  defp cn003_citations!("core") do
+    [
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:24", "The flow is:"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:29",
+       "LiveView compiler invokes ColocatedAssets.compile/0."},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:35",
+       "def extract(callback_module, module, filename, text, data) do"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:39",
+       "|> Path.join(inspect(module))"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:48", "def compile do"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:89",
+       "modules = subdirectories(target_dir)"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:93",
+       "module = Module.concat([Path.basename(module_folder)])"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:100",
+       "with true <- Code.ensure_loaded?(module),"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:101",
+       "data when data != %{} <- Phoenix.Component.MacroComponent.get_data(module),"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:217", "Application.get_env("},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:234", "defp target_dir do"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:235",
+       "app = to_string(Mix.Project.config()[:app])"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:236",
+       "default = Path.join(Mix.Project.build_path(), \"phoenix-colocated\")"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:239",
+       "|> Keyword.get(:target_directory, default)"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:243",
+       "defp subdirectories(path) do"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:244",
+       "Path.wildcard(Path.join(path, \"*\")) |> Enum.filter(&File.dir?(&1))"},
+      {"phoenix_live_view/lib/phoenix_component/macro_component.ex:203",
+       "@spec get_data(module()) :: map()"},
+      {"phoenix_live_view/lib/phoenix_component/macro_component.ex:205",
+       "if Code.ensure_loaded?(component_module) and"},
+      {"phoenix_live_view/lib/phoenix_component/macro_component.ex:206",
+       "function_exported?(component_module, :__phoenix_macro_components__, 0) do"},
+      {"phoenix_live_view/lib/phoenix_component/macro_component.ex:207",
+       "component_module.__phoenix_macro_components__()"}
+    ]
+  end
+
+  defp cn003_citations!("floor") do
+    Enum.map(cn003_citations!("core"), fn {citation, expected} ->
+      citation =
+        citation
+        |> String.replace("colocated_assets.ex:217", "colocated_assets.ex:190")
+        |> String.replace("colocated_assets.ex:234", "colocated_assets.ex:207")
+        |> String.replace("colocated_assets.ex:235", "colocated_assets.ex:208")
+        |> String.replace("colocated_assets.ex:236", "colocated_assets.ex:209")
+        |> String.replace("colocated_assets.ex:239", "colocated_assets.ex:212")
+        |> String.replace("colocated_assets.ex:243", "colocated_assets.ex:216")
+        |> String.replace("colocated_assets.ex:244", "colocated_assets.ex:217")
+
+      {citation, expected}
+    end)
+  end
+
+  defp cn003_source_authority_gaps!(evidence) do
+    path = "phoenix_live_view/lib/mix/tasks/compile/phoenix_live_view.ex"
+
+    error =
+      assert_raise SweepEvidence.Error, fn ->
+        SweepEvidence.resolve!(evidence, path <> ":1")
+      end
+
+    assert error.reason == :missing_source
+
+    [
+      %{
+        source_path: path,
+        needed_for: "direct caller Mix.Tasks.Compile.PhoenixLiveView.compile/0 call-site body",
+        authority: :missing_from_approved_archive
+      }
+    ]
+  end
+
+  defp cn003_removal_witness!(graph, matched_mfas) do
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    exact_front = {Phoenix.LiveView.ColocatedAssets, :compile, 0}
+    assert exact_front in tier
+    tier_without_front = List.delete(tier, exact_front)
+    whole_modules = for {module, :_, :_} <- tier_without_front, do: module
+    cn003_entry = Enum.at(@call_name_exclusions, 2)
+    other_rows = Enum.reject(@call_name_exclusions, &(&1 == cn003_entry))
+
+    uncovered =
+      graph.full_exported
+      |> Enum.filter(&banned_module_named?(&1, whole_modules))
+      |> Enum.reject(fn {module, function, arity} ->
+        function in [:module_info, :__info__] or
+          String.starts_with?(Atom.to_string(function), "MACRO-") or
+          covered?({module, function, arity}, tier_without_front, names)
+      end)
+
+    Enum.filter(uncovered, fn mfa ->
+      mfa in matched_mfas and
+        call_name_exclusion_match?({Phoenix.LiveView.ColocatedAssets, [:compile]}, mfa) and
+        not Enum.any?(other_rows, fn {other_matcher, _reason, _citations} ->
+          call_name_exclusion_match?(other_matcher, mfa)
+        end)
+    end)
+  end
+
+  defp cn003_overlaps!(matched_mfas) do
+    other_call_name_rows =
+      Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 2)))
+
+    Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
+      exclusion_reason(module, function, @exclusions) != nil or
+        Enum.any?(other_call_name_rows, fn {matcher, _reason, _citations} ->
+          call_name_exclusion_match?(matcher, mfa)
+        end) or
+        Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
+    end)
   end
 
   defp cn002_removal_witness!(graph, matched_mfas) do
