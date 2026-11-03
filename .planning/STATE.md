@@ -3,11 +3,11 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.6
 current_phase_name: Audit remaining ban-list call-name exclusions (INSERTED)
 status: executing
-stopped_at: Completed 01.1.1.6-02-PLAN.md
-last_updated: "2026-11-03T23:20:45.326Z"
+stopped_at: Completed 01.1.1.6-03-PLAN.md
+last_updated: "2026-11-03T23:55:51.640Z"
 last_activity: 2026-11-03
 last_activity_desc: Phase 01.1.1.6 execution started
-state_head: 6ae4e9adac6d788c5e8f0d1f34cc959b8d732e41
+state_head: 680fa7a79d06847c99fea9ffecda5d018132d036
 progress:
   total_phases: 42
   completed_phases: 1
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-10-30)
 ## Current Position
 
 Phase: 01.1.1.6 (Audit remaining ban-list call-name exclusions (INSERTED)) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-11-03 — Phase 01.1.1.6 execution started
 
@@ -80,6 +80,7 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plan
 | Phase 01.1.1.3.1.2 P05 | 51min | 3 tasks | 13 files |
 | Phase 01.1.1.6 P01 | 59 min | 2 tasks | 2 files |
 | Phase 01.1.1.6 P02 | 76 min | 2 tasks | 1 files |
+| Phase 01.1.1.6 P03 | 30 min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -142,6 +143,8 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.6]: Keep CN-001 open until its exact caller and Protocol delegate sources are bound through approved authority.
 - [Phase 01.1.1.6]: Prove floor target absence from the exact pinned Mix BEAM and export inventories, not source omissions.
 - [Phase 01.1.1.6]: Keep CN-LANE-001 as a separate metadata identity; the CN-001 guard tier is enforcement evidence only.
+- [Phase 01.1.1.6]: Retain CN-003 as a narrow build-time colocated-asset compile-name row; keep the exact guard front as a separate enforcement dependency. — Core and floor source/BEAM evidence agree, and a tier-removal witness shows the row catches the current match if the exact guard entry is removed. The project lib scan is clean.
+- [Phase 01.1.1.6]: Record the missing direct Mix compiler task source as an explicit CN-003 authority gap. — The full graph proves the sole direct caller in both lanes and compile/0 accepts no caller arguments, while the approved archive omits the caller task source; internal path/module inputs are traced from Application/Mix config and output subdirectories.
 
 ### Pending Todos
 
@@ -176,7 +179,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-03T23:20:45.278Z
-Stopped at: Completed 01.1.1.6-02-PLAN.md
+Last session: 2026-11-03T23:55:38.488Z
+Stopped at: Completed 01.1.1.6-03-PLAN.md
 Next action: Run `$gsd-execute-phase 01.1.1.6` from this clean execution checkout.
 Resume file: None
