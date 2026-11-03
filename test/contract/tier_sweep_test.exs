@@ -7074,6 +7074,20 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert error.reason == :missing_source
   end
 
+  @tag :cn001
+  test "CN-001 stays open until its Protocol delegate source is bound" do
+    ledger = original_identity_ledger!()
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-001"))
+
+    assert row != nil, "original CN-001 identity is missing"
+    assert row.original_matcher_raw == "{Mix.Compilers.Protocol, [:compile]}"
+    assert row.original_reason_raw == ":not_compile_module"
+    assert row.original_citations_raw =~ "mix/lib/mix/compilers/protocol.ex:107"
+    assert row.current_replacement_refs == ["source:CN:1"]
+    assert row.semantic_status == :cn001_source_authority_open
+    assert row.owner == "01.1.1.6"
+  end
+
   test "exact guard coverage supersedes a preserved call-name exclusion" do
     fronts = [
       {Mix.Compilers.Protocol, :compile, 4},

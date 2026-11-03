@@ -1,0 +1,10 @@
+{
+  "command": "FABLEBOOK_TAP_REPORT=/private/tmp/fablebook-01.1.1.6-02-red-core.tap MIX_ENV=test bin/lane core test --warnings-as-errors --formatter FablebookTapFormatter test/contract/tier_sweep_test.exs --only cn001",
+  "exitCode": 2,
+  "output": "TAP version 13\nnot ok 1 - test CN-001 stays open until its Protocol delegate source is bound\n1..1\n",
+  "targetTest": "test CN-001 stays open until its Protocol delegate source is bound",
+  "targetFile": "test/contract/tier_sweep_test.exs",
+  "expected": "CN-001 is explicitly marked authority-open until its approved Protocol source is bound.",
+  "actual": "The original row is still marked :pending; the target assertion failed on row.semantic_status.",
+  "semanticAssessment": "RED is intentional: the target test executed and failed at the planned status assertion. A same-revision default ExUnit diagnostic run reports left :pending and right :cn001_source_authority_open. It was not a compile, setup, collection, or unrelated failure."
+}
