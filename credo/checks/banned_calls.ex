@@ -371,7 +371,9 @@ defmodule Fablebook.Credo.BannedCalls do
           {Mix.Tasks.Format, :formatter_opts_for_file, 1},
           {Mix.Tasks.Format, :formatter_opts_for_file, 2},
           {Mix.Dep, :in_dependency, 2},
-          {Mix.Dep.Loader, :load, 3}
+          {Mix.Dep.Loader, :load, 3},
+          {Mix.Compilers.Protocol, :compile, 4},
+          {Phoenix.LiveView.ColocatedAssets, :compile, 0}
         ])
 
   @aliases for name <- @names, match?("Elixir." <> _, Atom.to_string(name)), do: inspect(name)
