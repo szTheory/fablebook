@@ -1490,6 +1490,8 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @call_name_lane_specific [{{Mix.Compilers.Protocol, [:compile]}, :latest}]
 
+  @cn002_expected_matches_by_lane %{"core" => [], "floor" => []}
+
   @exclusions [
     {{:fun_prefix, "MACRO-"}, :macro},
     {:erl_tracer, :own_native},
@@ -6969,6 +6971,24 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert unmatched_exclusions == [],
            "call-name exclusions matching no uncovered function: #{inspect(unmatched_exclusions)}"
+  end
+
+  @tag :cn002
+  test "CN-002 matches the complete live exact-lane export set", ctx do
+    {{Phoenix.Digester, [:compile]}, :not_compile_module, _citations} =
+      Enum.at(@call_name_exclusions, 1)
+
+    actual =
+      ctx.graph.full_exported
+      |> Enum.filter(&call_name_exclusion_match?({Phoenix.Digester, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} ->
+        function in [:module_info, :__info__]
+      end)
+      |> Enum.map(&mfa_string!/1)
+      |> Enum.sort()
+
+    assert actual == Map.fetch!(@cn002_expected_matches_by_lane, ctx.graph.lane.name),
+           "CN-002/#{ctx.graph.lane.name} live full-export matches changed: #{inspect(actual)}"
   end
 
   test "exact guard coverage supersedes a preserved call-name exclusion" do
