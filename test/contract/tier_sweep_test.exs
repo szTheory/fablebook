@@ -1490,7 +1490,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @call_name_lane_specific [{{Mix.Compilers.Protocol, [:compile]}, :latest}]
 
-  @cn002_expected_matches_by_lane %{"core" => [], "floor" => []}
+  @cn002_expected_matches_by_lane %{
+    "core" => ["Elixir.Phoenix.Digester:compile/3"],
+    "floor" => ["Elixir.Phoenix.Digester:compile/3"]
+  }
 
   @exclusions [
     {{:fun_prefix, "MACRO-"}, :macro},
@@ -5971,8 +5974,11 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert Enum.frequencies_by(ledger.metadata, & &1.table) == %{"CN-LANE" => 1, "BD-LANE" => 4}
 
     sampled = Enum.filter(ledger.exclusions, &(&1.semantic_status != :pending))
-    assert MapSet.new(Enum.map(sampled, & &1.id)) == MapSet.new(["CN-005", "BD-002", "EX-159"])
-    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 218
+
+    assert MapSet.new(Enum.map(sampled, & &1.id)) ==
+             MapSet.new(["CN-002", "CN-005", "BD-002", "EX-159"])
+
+    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 217
 
     assert Enum.all?(
              ledger.metadata,
@@ -5984,9 +5990,14 @@ defmodule Fablebook.Contract.TierSweepTest do
            end)
 
     assert Enum.all?(ledger.exclusions, fn row ->
-             if row.id in ["CN-005", "BD-002", "EX-159"],
-               do: row.owner == "01.1.1.5",
-               else: row.owner == "01.1.1.4"
+             expected_owner =
+               case row.id do
+                 "CN-002" -> "01.1.1.6"
+                 id when id in ["CN-005", "BD-002", "EX-159"] -> "01.1.1.5"
+                 _id -> "01.1.1.4"
+               end
+
+             row.owner == expected_owner
            end)
 
     omitted = %{ledger | exclusions: List.delete_at(ledger.exclusions, 0)}
@@ -6974,21 +6985,19 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :cn002
-  test "CN-002 matches the complete live exact-lane export set", ctx do
-    {{Phoenix.Digester, [:compile]}, :not_compile_module, _citations} =
-      Enum.at(@call_name_exclusions, 1)
+  test "CN-002 preserves its identity and traces the complete live lane disposition", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn002_record!(ctx.graph, evidence, ledger)
 
-    actual =
-      ctx.graph.full_exported
-      |> Enum.filter(&call_name_exclusion_match?({Phoenix.Digester, [:compile]}, &1))
-      |> Enum.reject(fn {_module, function, _arity} ->
-        function in [:module_info, :__info__]
-      end)
-      |> Enum.map(&mfa_string!/1)
-      |> Enum.sort()
-
-    assert actual == Map.fetch!(@cn002_expected_matches_by_lane, ctx.graph.lane.name),
-           "CN-002/#{ctx.graph.lane.name} live full-export matches changed: #{inspect(actual)}"
+    assert_cn002_record!(record, ctx.graph, evidence, ledger)
+    assert record.original_id == "CN-002"
+    assert record.current_replacement_refs == ["source:CN:2"]
+    assert record.retained_exclusion
+    assert record.matched_mfas != []
+    assert record.removal_witness != []
+    assert record.overlap_mfas == []
   end
 
   test "exact guard coverage supersedes a preserved call-name exclusion" do
@@ -9848,11 +9857,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     do:
       raise(ExUnit.AssertionError, message: "invalid original audit-budget MFA #{inspect(other)}")
 
+  defp original_semantic_status("CN-002"), do: :cn002_retained
   defp original_semantic_status("CN-005"), do: :calibrated_retained
   defp original_semantic_status("BD-002"), do: :calibrated_retained
   defp original_semantic_status("EX-159"), do: :calibrated_replaced_by_tier
   defp original_semantic_status(_id), do: :pending
 
+  defp original_semantic_owner(:cn002_retained), do: "01.1.1.6"
   defp original_semantic_owner(:pending), do: "01.1.1.4"
   defp original_semantic_owner(_sampled_status), do: "01.1.1.5"
 
@@ -9865,6 +9876,172 @@ defmodule Fablebook.Contract.TierSweepTest do
              "duplicate baseline matches for #{id}/#{lane}"
 
       {lane, matches}
+    end)
+  end
+
+  defp cn002_record!(graph, evidence, ledger) do
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-002"))
+    assert row != nil, "original CN-002 identity is missing"
+    assert graph.lane == evidence.lane
+
+    [original_matcher, original_reason, original_citations] =
+      source_tuple_parts!(row.original_entry_raw)
+
+    assert original_matcher == "{Phoenix.Digester, [:compile]}"
+    assert original_reason == ":not_compile_module"
+    assert original_citations =~ "phoenix/lib/phoenix/digester.ex:20"
+    assert row.original_matcher_raw == original_matcher
+    assert row.original_reason_raw == original_reason
+    assert row.original_citations_raw == original_citations
+    assert row.current_replacement_refs == ["source:CN:2"]
+    assert row.semantic_status == :cn002_retained
+    assert row.owner == "01.1.1.6"
+
+    {{Phoenix.Digester, [:compile]}, :not_compile_module, _current_citations} =
+      Enum.at(@call_name_exclusions, 1)
+
+    lane = evidence.lane.name
+
+    matched_mfas =
+      graph.full_exported
+      |> Enum.filter(&call_name_exclusion_match?({Phoenix.Digester, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} ->
+        function in [:module_info, :__info__]
+      end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+
+    assert matched_strings == Map.fetch!(@cn002_expected_matches_by_lane, lane),
+           "CN-002/#{lane} live full-export matches changed: #{inspect(matched_strings)}"
+
+    assert length(matched_strings) == MapSet.size(MapSet.new(matched_strings)),
+           "CN-002/#{lane} full export contains duplicate matches"
+
+    callers =
+      graph.full_reverse
+      |> Map.get({Phoenix.Digester, :compile}, [])
+      |> Enum.uniq()
+      |> Enum.sort_by(&mfa_string!/1)
+
+    assert callers == [{Mix.Tasks.Phx.Digest, :run, 1}],
+           "CN-002/#{lane} direct caller set changed: #{inspect(callers)}"
+
+    citations = cn002_citations!(lane)
+
+    resolved =
+      Enum.map(citations, fn {citation, expected_source} ->
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.text =~ expected_source, citation
+        {citation, source}
+      end)
+
+    removal_witness = cn002_removal_witness!(graph, matched_mfas)
+    overlap_mfas = cn002_overlaps!(matched_mfas)
+
+    assert removal_witness != [], "CN-002/#{lane} retained row has no removal consequence"
+    assert overlap_mfas == [], "CN-002/#{lane} overlaps another retained exclusion"
+
+    %{
+      original_id: row.id,
+      original_entry_raw: row.original_entry_raw,
+      original_matcher_raw: row.original_matcher_raw,
+      original_reason_raw: row.original_reason_raw,
+      original_citations_raw: row.original_citations_raw,
+      current_replacement_refs: row.current_replacement_refs,
+      semantic_status: row.semantic_status,
+      semantic_owner: row.owner,
+      lane: lane,
+      elixir: evidence.lane.elixir,
+      otp: evidence.lane.otp,
+      matched_mfas: matched_strings,
+      mfa_citations: Map.new(matched_strings, &{&1, ["phoenix/lib/phoenix/digester.ex:20"]}),
+      direct_callers: Enum.map(callers, &mfa_string!/1),
+      caller_input_trace:
+        "Mix.Tasks.Phx.Digest.run/1 receives all_args; unless --no-compile is present it separately runs the host Mix compile task, parses positional input and output/version options, then passes those values to Phoenix.Digester.compile/3.",
+      delegate_trace: [
+        "Mix.Tasks.Phx.Digest.run/1 -> Phoenix.Digester.compile/3",
+        "Phoenix.Digester.compile/3 -> filesystem checks, static-file traversal, digest generation, JSON manifest decoding, and manifest writes",
+        "write_to_disk/2 -> configured static_compressors -> compressor.compress_file/2"
+      ],
+      verdict:
+        "Asset digest and compression API, not a BEAM or module compiler. Retain CN-002 to account for the compile-name collision; its default Mix caller's project compile step is a separate caller action.",
+      citations: citations,
+      source_sha256s:
+        resolved
+        |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
+        |> Map.new(),
+      removal_witness: Enum.map(removal_witness, &mfa_string!/1),
+      overlap_mfas: Enum.map(overlap_mfas, &mfa_string!/1),
+      retained_exclusion: true,
+      applicability: :each_exact_installed_lane,
+      limitations: [
+        "Caller-selected file paths and configured JSON/compressor implementations are not evaluated as safe by this row disposition.",
+        "This contract does not claim runtime atom-count, never-eval, or general file-system safety."
+      ]
+    }
+  end
+
+  defp assert_cn002_record!(record, graph, evidence, ledger) do
+    expected = cn002_record!(graph, evidence, ledger)
+    assert record == expected
+    assert record.matched_mfas == Map.fetch!(@cn002_expected_matches_by_lane, evidence.lane.name)
+    assert record.removal_witness != []
+    assert record.overlap_mfas == []
+
+    Enum.each(record.citations, fn {citation, expected_source} ->
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.text =~ expected_source, citation
+      assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
+    end)
+
+    Enum.each(record.mfa_citations, fn {_mfa, citations} ->
+      assert citations != []
+
+      assert Enum.all?(
+               citations,
+               &Enum.any?(record.citations, fn {citation, _} -> citation == &1 end)
+             )
+    end)
+
+    :ok
+  end
+
+  defp cn002_removal_witness!(graph, matched_mfas) do
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    whole_modules = for {module, :_, :_} <- tier, do: module
+    cn002_entry = Enum.at(@call_name_exclusions, 1)
+    other_rows = Enum.reject(@call_name_exclusions, &(&1 == cn002_entry))
+
+    uncovered =
+      graph.full_exported
+      |> Enum.filter(&banned_module_named?(&1, whole_modules))
+      |> Enum.reject(fn {module, function, arity} ->
+        function in [:module_info, :__info__] or
+          String.starts_with?(Atom.to_string(function), "MACRO-") or
+          covered?({module, function, arity}, tier, names)
+      end)
+
+    Enum.filter(uncovered, fn mfa ->
+      mfa in matched_mfas and
+        call_name_exclusion_match?({Phoenix.Digester, [:compile]}, mfa) and
+        not Enum.any?(other_rows, fn {other_matcher, _reason, _citations} ->
+          call_name_exclusion_match?(other_matcher, mfa)
+        end)
+    end)
+  end
+
+  defp cn002_overlaps!(matched_mfas) do
+    other_call_name_rows =
+      Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 1)))
+
+    Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
+      exclusion_reason(module, function, @exclusions) != nil or
+        Enum.any?(other_call_name_rows, fn {matcher, _reason, _citations} ->
+          call_name_exclusion_match?(matcher, mfa)
+        end) or
+        Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
     end)
   end
 
@@ -10637,6 +10814,31 @@ defmodule Fablebook.Contract.TierSweepTest do
           {other_matcher, _reason, _citations} -> boundary_match?(other_matcher, mfa)
         end)
     end)
+  end
+
+  defp cn002_citations!(lane) when lane in ["core", "floor"] do
+    [
+      {"phoenix/lib/phoenix/digester.ex:16", "Digests and compresses the static files"},
+      {"phoenix/lib/phoenix/digester.ex:20",
+       "def compile(input_path, output_path, with_vsn?) do"},
+      {"phoenix/lib/phoenix/digester.ex:21", "if File.exists?(input_path) do"},
+      {"phoenix/lib/phoenix/digester.ex:93", "Phoenix.json_library().decode!()"},
+      {"phoenix/lib/phoenix/digester.ex:195",
+       "Application.fetch_env!(:phoenix, :static_compressors)"},
+      {"phoenix/lib/phoenix/digester.ex:201",
+       "compressor.compress_file(file.digested_filename, file.digested_content)"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:58", "def run(all_args) do"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:60", "if \"--no-compile\" not in all_args do"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:61", "Mix.Task.run(\"compile\", all_args)"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:68", "OptionParser.parse(all_args"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:69",
+       "input_path = List.first(args) || @default_input_path"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:70", "output_path = opts[:output] || input_path"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:71",
+       "with_vsn? = Keyword.merge(@default_opts, opts)[:vsn]"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:73",
+       "Phoenix.Digester.compile(input_path, output_path, with_vsn?)"}
+    ]
   end
 
   defp calibration_citations!(id, lane) do

@@ -1238,6 +1238,32 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
+  test "CN-002 asset digest compile name stays outside both guard mirrors without invocation", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    source = """
+    defmodule Fablebook.GuardFixture.Cn002AssetDigest do
+      def probe(input_path, output_path, with_vsn?),
+        do: Phoenix.Digester.compile(input_path, output_path, with_vsn?)
+    end
+    """
+
+    assert BannedCalls.banned_mfas() == Enum.sort(@mfa_tier)
+    assert credo_issues(source, "cn002_asset_digest.ex") == []
+
+    source_path = Path.join(dir, "cn002_asset_digest.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+    assert {Phoenix.Digester, :compile, 3} in scan.mfas
+    refute {:mfa, {Phoenix.Digester, :compile, 3}} in hits(scan)
+    refute exact_mfa_tier_hit?(scan, @mfa_tier)
+  end
+
+  @tag :tmp_dir
   test "selected-file debugger front is caught by both guards without invocation", %{tmp_dir: dir} do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
