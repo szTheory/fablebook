@@ -3436,6 +3436,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :audit_readiness
   test "discovers and traces a compile-only app outside historical active membership", ctx do
     dir =
       Path.join(
@@ -3473,6 +3474,22 @@ defmodule Fablebook.Contract.TierSweepTest do
 
       ingested =
         InstalledOtp.add_directory!(:inventory_probe, discovered, lane: ctx.graph.lane.name)
+
+      missing_source_ref = "src/#{Atom.to_string(module)}.erl"
+
+      [source_app] =
+        InstalledOtp.source_inventory!(
+          [discovered],
+          [%{hd(inspected) | source: missing_source_ref}],
+          lane: ctx.graph.lane.name
+        )
+
+      assert source_app.source_dir_status == "missing"
+      assert source_app.missing_source_beams == 1
+
+      assert [
+               %{source: ^missing_source_ref, status: "missing", bytes: nil}
+             ] = source_app.beams
 
       assert InstalledOtp.assert_parity!(
                [discovered],
@@ -3556,6 +3573,54 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert MapSet.size(graph.historical_active_modules) > 0
   end
 
+  @tag :audit_readiness
+  test "full installed BEAM identities reject omissions before accepting selected source", ctx do
+    graph = ctx.graph
+
+    discovered_apps = MapSet.new(graph.discovered, & &1.app)
+    app_roots = InstalledOtp.app_roots!(:code.lib_dir() |> to_string(), lane: graph.lane.name)
+    app_root_names = MapSet.new(app_roots, & &1.app)
+
+    discovered_beam_apps =
+      graph.discovered |> Enum.filter(&(&1.beams != [])) |> MapSet.new(& &1.app)
+
+    inspected_apps = MapSet.new(graph.inspected, & &1.app)
+    ingested_apps = MapSet.new(graph.ingested, & &1.app)
+
+    assert discovered_apps == app_root_names
+    assert discovered_beam_apps == inspected_apps
+    assert discovered_beam_apps == ingested_apps
+
+    first = hd(graph.inspected)
+    omitted = Enum.reject(graph.inspected, &(&1.app == first.app and &1.module == first.module))
+
+    error =
+      assert_raise InstalledOtp.Error, fn ->
+        InstalledOtp.assert_parity!(graph.discovered, omitted, graph.ingested, graph.lane.name)
+      end
+
+    assert error.reason == :identity_parity
+    assert error.detail.lane == graph.lane.name
+    assert Exception.message(error) =~ first.module
+
+    assert :ok =
+             InstalledOtp.assert_parity!(
+               graph.discovered,
+               graph.inspected,
+               graph.ingested,
+               graph.lane.name
+             )
+
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    resolved = SweepEvidence.resolve!(evidence, "kernel/src/file.erl:1")
+
+    assert resolved.line == 1
+    assert resolved.origin in [:installed, :archive]
+    assert resolved.sha256 =~ ~r/^[a-f0-9]{64}$/
+  end
+
+  @tag :audit_readiness
   test "source evidence rejects a wrong runtime patch before resolving citations" do
     error =
       assert_raise Fablebook.Test.SweepEvidence.Error, fn ->
@@ -3565,6 +3630,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert error.reason == :runtime_identity
   end
 
+  @tag :audit_readiness
   test "source evidence resolves the caller-file atom trace on the exact running lane" do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
@@ -6672,6 +6738,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :audit_readiness
   @tag :tmp_dir
   test "source citations reject missing, escaped, unreadable and altered evidence", %{
     tmp_dir: dir
@@ -10673,6 +10740,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     assert InstalledOtp.verify_receipt_lines!(lines).lane == "core"
   end
 
+  @tag :audit_readiness
   test "Xref query parity rejects successful empty and truncated results" do
     expected = [{:probe, :run, 0}, {:probe, :stop, 1}]
 
@@ -11017,6 +11085,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
            end)
   end
 
+  @tag :audit_readiness
   test "source inventory fails on unreadable files and required active source gaps" do
     root = temp_dir!() |> Path.join("lib")
     app_root = Path.join(root, "probe-1.0.0")
@@ -11064,6 +11133,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     end
   end
 
+  @tag :audit_readiness
   test "parity rejects omission of a discovered app or BEAM during inspection and Xref intake" do
     root = temp_dir!() |> Path.join("lib")
     app_one = create_probe_app!(root, "probe_one", "1.0.0", :probe_one, true)
@@ -11114,6 +11184,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     end
   end
 
+  @tag :audit_readiness
   test "discovery and ingestion reject duplicate, unreadable, corrupt, missing-debug, and incomplete identities" do
     root = temp_dir!() |> Path.join("lib")
     create_probe_app!(root, "probe_one", "1.0.0", :same_probe, true)
