@@ -7489,30 +7489,55 @@ defmodule Fablebook.Contract.TierSweepTest do
     record = cn004_record!(ctx.graph, evidence, ledger)
     other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
 
-    for omitted <- [
-          %{record | matched_mfas: []},
-          %{record | mfa_citations: %{}},
-          %{record | citations: List.delete_at(record.citations, 0)},
-          %{record | mode_branches: Enum.take(record.mode_branches, 1)},
-          %{
-            record
-            | direct_callers:
-                List.delete(record.direct_callers, "Elixir.Phoenix.Router:build_pipes/2")
-          },
-          %{
-            record
-            | caller_citations:
-                Map.delete(record.caller_citations, "Elixir.Phoenix.Router:build_pipes/2")
-          },
-          %{record | caller_input_trace: ""},
-          %{record | delegate_trace: []},
-          %{record | quoted_source_callsites: []},
-          %{record | coverage_carriers: []},
-          %{record | coverage_carrier_refs: []},
-          %{record | verdict_explanation: ""},
-          %{record | overlap_mfas: []},
-          %{record | lane: other_lane}
-        ] do
+    caller_citation_omissions =
+      Enum.flat_map(record.caller_citations, fn {caller, citations} ->
+        Enum.map(citations, fn citation ->
+          Map.update!(record.caller_citations, caller, &List.delete(&1, citation))
+        end)
+      end)
+
+    mode_branch_omissions = Enum.map(record.mode_branches, &List.delete(record.mode_branches, &1))
+
+    delegate_branch_omissions =
+      Enum.map(record.delegate_trace, &List.delete(record.delegate_trace, &1))
+
+    citation_omissions =
+      Enum.map(record.citations, &List.delete(record.citations, &1))
+
+    for omitted <-
+          [
+            %{record | matched_mfas: []},
+            %{record | mfa_citations: %{}},
+            %{record | citations: List.delete_at(record.citations, 0)},
+            %{record | mode_branches: Enum.take(record.mode_branches, 1)},
+            %{
+              record
+              | direct_callers:
+                  List.delete(record.direct_callers, "Elixir.Phoenix.Router:build_pipes/2")
+            },
+            %{
+              record
+              | caller_citations:
+                  Map.delete(record.caller_citations, "Elixir.Phoenix.Router:build_pipes/2")
+            },
+            %{record | caller_input_trace: ""},
+            %{record | delegate_trace: []},
+            %{record | quoted_source_callsites: []},
+            %{record | coverage_carriers: []},
+            %{record | coverage_carrier_refs: []},
+            %{record | verdict_explanation: ""},
+            %{record | mfa_dispositions: %{}},
+            %{
+              record
+              | source_sha256s: Map.delete(record.source_sha256s, "phoenix/lib/phoenix.ex")
+            },
+            %{record | overlap_mfas: []},
+            %{record | lane: other_lane}
+          ] ++
+            Enum.map(caller_citation_omissions, &%{record | caller_citations: &1}) ++
+            Enum.map(mode_branch_omissions, &%{record | mode_branches: &1}) ++
+            Enum.map(delegate_branch_omissions, &%{record | delegate_trace: &1}) ++
+            Enum.map(citation_omissions, &%{record | citations: &1}) do
       assert_raise ExUnit.AssertionError, fn ->
         assert_cn004_record!(omitted, ctx.graph, evidence, ledger)
       end
