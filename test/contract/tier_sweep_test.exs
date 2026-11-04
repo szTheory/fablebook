@@ -7501,6 +7501,24 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert_raise ExUnit.AssertionError, fn ->
         integrated_cn001_cn004_records!(ctx.graph, evidence, omitted_identity)
       end
+
+      for {field, value} <- [
+            {:semantic_status, :pending},
+            {:current_replacement_refs, []}
+          ] do
+        incomplete_outcome = %{
+          ledger
+          | exclusions:
+              Enum.map(ledger.exclusions, fn
+                %{id: ^id} = row -> Map.put(row, field, value)
+                row -> row
+              end)
+        }
+
+        assert_raise ExUnit.AssertionError, fn ->
+          integrated_cn001_cn004_records!(ctx.graph, evidence, incomplete_outcome)
+        end
+      end
     end
 
     changed_other_owner = %{
@@ -7514,6 +7532,15 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_raise ExUnit.AssertionError, fn ->
       integrated_cn001_cn004_records!(ctx.graph, evidence, changed_other_owner)
+    end
+
+    changed_metadata_owner = %{
+      ledger
+      | metadata: List.update_at(ledger.metadata, 0, &%{&1 | owner: "01.1.1.13"})
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      integrated_cn001_cn004_records!(ctx.graph, evidence, changed_metadata_owner)
     end
 
     removed_cn004_source = %{
