@@ -1469,12 +1469,6 @@ defmodule Fablebook.Contract.TierSweepTest do
        "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:48",
        "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:93"
      ]},
-    {{Plug.Builder, [:compile]}, :not_compile_module,
-     [
-       "plug/lib/plug/builder.ex:324",
-       "plug/lib/plug/builder.ex:358",
-       "plug/lib/plug/builder.ex:382"
-     ]},
     {{Regex, [:compile]}, :not_compile_module,
      ["elixir/lib/regex.ex:219", "elixir/lib/regex.ex:223"]},
     {{:re, [:compile]}, :not_compile_module,
@@ -1524,6 +1518,11 @@ defmodule Fablebook.Contract.TierSweepTest do
       "Elixir.Phoenix.Router:build_pipes/2",
       "Elixir.Plug.Builder:MACRO-__before_compile__/2"
     ]
+  }
+
+  @cn004_expected_matches_by_lane %{
+    "core" => ["Elixir.Plug.Builder:compile/3"],
+    "floor" => ["Elixir.Plug.Builder:compile/3"]
   }
 
   @cn006_expected_matches_by_lane %{
@@ -3865,7 +3864,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
     assert SweepEvidence.archive_sha256() ==
-             "c2f6c40a64cb73d17a047e8e9f9306e34f694516c487c8a57853a7a3a1e46aad"
+             "ee464338543434b288c07c0c1b82ccbe7d7b1e0263167c9be7123df88b0a087c"
 
     lane = evidence.lane.name
 
@@ -6061,8 +6060,11 @@ defmodule Fablebook.Contract.TierSweepTest do
                  "CN-001" ->
                    "01.1.1.13"
 
-                 id when id in ["CN-002", "CN-003", "CN-004", "CN-006"] ->
+                 id when id in ["CN-002", "CN-003", "CN-006"] ->
                    "01.1.1.6"
+
+                 "CN-004" ->
+                   "01.1.1.13"
 
                  id when id in ["CN-005", "BD-002", "EX-159"] ->
                    "01.1.1.5"
@@ -7095,6 +7097,12 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     uncovered = Enum.reject(named, &covered?(&1, tier, names))
     matched = matched_uncovered(uncovered, @call_name_exclusions)
+
+    cn004_matches =
+      Enum.filter(uncovered, &(&1 == {Plug.Builder, :compile, 3}))
+
+    _cn004_carrier_proof = cn004_carriers!(cn004_matches)
+    matched = MapSet.union(matched, MapSet.new(cn004_matches))
     undisposed = Enum.reject(uncovered, &MapSet.member?(matched, &1))
 
     assert {Regex, :compile, 1} in named
@@ -7461,12 +7469,12 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_cn004_record!(record, ctx.graph, evidence, ledger)
     assert record.original_id == "CN-004"
-    assert record.current_replacement_refs == [current_call_name_ref!({Plug.Builder, [:compile]})]
+    assert record.current_replacement_refs == [cn004_carrier_ref!()]
     assert record.semantic_status == :cn004_replaced_by_expansion_carrier
     assert record.verdict in [:exact_compile_boundary_redundant]
     assert record.disposition == :replaced
     assert record.matched_mfas == ["Elixir.Plug.Builder:compile/3"]
-    assert record.mode_branches |> Enum.map(& &1.mode) == [:compile, :runtime]
+    assert record.mode_branches |> Enum.map(& &1.mode) == [:compile, :runtime, :invalid]
     assert record.source_authority_gaps == []
     assert record.removal_witness == []
     assert record.overlap_mfas == ["Elixir.Plug.Builder:compile/3"]
@@ -7474,7 +7482,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :cn004
-  test "CN-004 rejects omitted matches, branches, caller evidence and lane sources", ctx do
+  test "CN-004 rejects omitted match, caller, source, mode, and carrier evidence", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     ledger = original_identity_ledger!()
@@ -7482,13 +7490,26 @@ defmodule Fablebook.Contract.TierSweepTest do
     other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
 
     for omitted <- [
-          %{record | matched_mfas: tl(record.matched_mfas)},
+          %{record | matched_mfas: []},
+          %{record | mfa_citations: %{}},
           %{record | citations: List.delete_at(record.citations, 0)},
           %{record | mode_branches: Enum.take(record.mode_branches, 1)},
-          %{record | direct_callers: []},
-          %{record | caller_citations: %{}},
+          %{
+            record
+            | direct_callers:
+                List.delete(record.direct_callers, "Elixir.Phoenix.Router:build_pipes/2")
+          },
+          %{
+            record
+            | caller_citations:
+                Map.delete(record.caller_citations, "Elixir.Phoenix.Router:build_pipes/2")
+          },
+          %{record | caller_input_trace: ""},
           %{record | delegate_trace: []},
-          %{record | source_authority_gaps: []},
+          %{record | quoted_source_callsites: []},
+          %{record | coverage_carriers: []},
+          %{record | coverage_carrier_refs: []},
+          %{record | verdict_explanation: ""},
           %{record | overlap_mfas: []},
           %{record | lane: other_lane}
         ] do
@@ -7506,6 +7527,32 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_raise ExUnit.AssertionError, fn ->
       cn004_record!(graph_with_new_match, evidence, ledger)
+    end
+
+    graph_missing_match = %{
+      ctx.graph
+      | full_exported: MapSet.delete(ctx.graph.full_exported, {Plug.Builder, :compile, 3})
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      cn004_record!(graph_missing_match, evidence, ledger)
+    end
+
+    without_carrier =
+      Enum.reject(@exclusions, fn
+        {{Plug.Builder, [:compile]}, :expansion, "plug/lib/plug/builder.ex:324"} -> true
+        _entry -> false
+      end)
+
+    assert_raise ExUnit.AssertionError, ~r/needs one exact active carrier/, fn ->
+      cn004_carriers!([{Plug.Builder, :compile, 3}], without_carrier)
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/exact Plug.Builder compile source/, fn ->
+      cn004_carriers!(
+        [{Plug.Builder, :compile, 3}],
+        [{{Plug.Builder, [:compile]}, :expansion, "phoenix/lib/phoenix.ex:72"}]
+      )
     end
 
     missing_identity = %{
@@ -7527,6 +7574,82 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
       cn004_record!(wrong_lane_graph, evidence, ledger)
+    end
+  end
+
+  @tag :tmp_dir
+  @tag :cn004
+  test "CN-004 router/config sources resolve offline with lane-bound archive integrity", %{
+    tmp_dir: tmp_dir
+  } do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    lane = evidence.lane.name
+
+    archive_evidence = %{
+      evidence
+      | installed: Map.put(evidence.installed, "phoenix", Path.join(tmp_dir, "absent-phoenix"))
+    }
+
+    Enum.each(cn004_source_sha_by_lane!(lane), fn {source_path, expected_sha} ->
+      line = if source_path == "phoenix/lib/phoenix/router.ex", do: 818, else: 72
+      citation = source_path <> ":#{line}"
+      archived = SweepEvidence.resolve!(archive_evidence, citation)
+      assert archived.origin == :archive
+      assert archived.sha256 == expected_sha
+
+      missing_manifest = %{
+        archive_evidence.manifest
+        | "files" =>
+            Enum.reject(archive_evidence.manifest["files"], fn row ->
+              row["lane"] == lane and row["source_path"] == source_path
+            end)
+      }
+
+      assert_raise SweepEvidence.Error, ~r/missing_source/, fn ->
+        SweepEvidence.resolve!(%{archive_evidence | manifest: missing_manifest}, citation)
+      end
+
+      File.write!(archived.path, "changed archived source")
+
+      assert_raise SweepEvidence.Error, ~r/source_digest/, fn ->
+        SweepEvidence.resolve!(archive_evidence, citation)
+      end
+    end)
+
+    original = Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
+    {:ok, entries} = :erl_tar.extract(String.to_charlist(original), [:compressed, :memory])
+
+    wrong_lane_entries =
+      Enum.map(entries, fn
+        {~c"manifest.json", data} ->
+          manifest = JSON.decode!(data)
+
+          wrong_lane_manifest =
+            Map.update!(manifest, "files", fn rows ->
+              Enum.map(rows, fn row ->
+                if row["lane"] == "floor" and row["source_path"] == "phoenix/lib/phoenix.ex",
+                  do: Map.put(row, "url", "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar"),
+                  else: row
+              end)
+            end)
+
+          {~c"manifest.json", JSON.encode!(wrong_lane_manifest)}
+
+        entry ->
+          entry
+      end)
+
+    wrong_lane_archive = Path.join(tmp_dir, "cn004-wrong-lane.tar.gz")
+
+    :ok =
+      :erl_tar.create(String.to_charlist(wrong_lane_archive), wrong_lane_entries, [:compressed])
+
+    wrong_lane_sha =
+      :crypto.hash(:sha256, File.read!(wrong_lane_archive)) |> Base.encode16(case: :lower)
+
+    assert_raise SweepEvidence.Error, ~r/source_identity/, fn ->
+      SweepEvidence.load_archive!(wrong_lane_archive, wrong_lane_sha)
     end
   end
 
@@ -10277,16 +10400,33 @@ defmodule Fablebook.Contract.TierSweepTest do
             |> Enum.sort()
 
           direct_refs =
-            if id == "CN-001" do
-              carrier = "{Mix.Compilers.Protocol, :project_build}"
+            cond do
+              id == "CN-001" ->
+                carrier = "{Mix.Compilers.Protocol, :project_build}"
 
-              carrier_index =
-                Enum.find_index(@exclusions, &(&1 == {Mix.Compilers.Protocol, :project_build}))
+                carrier_index =
+                  Enum.find_index(@exclusions, &(&1 == {Mix.Compilers.Protocol, :project_build}))
 
-              assert is_integer(carrier_index), "CN-001 carrier reference is missing: #{carrier}"
-              ["source:EX:#{carrier_index + 1}"]
-            else
-              Enum.map(direct_indices, &"source:#{table}:#{&1}")
+                assert is_integer(carrier_index),
+                       "CN-001 carrier reference is missing: #{carrier}"
+
+                ["source:EX:#{carrier_index + 1}"]
+
+              id == "CN-004" ->
+                carrier_index =
+                  Enum.find_index(@exclusions, fn
+                    {{Plug.Builder, [:compile]}, :expansion, "plug/lib/plug/builder.ex:324"} ->
+                      true
+
+                    _entry ->
+                      false
+                  end)
+
+                assert is_integer(carrier_index), "CN-004 exact expansion carrier is missing"
+                ["source:EX:#{carrier_index + 1}"]
+
+              true ->
+                Enum.map(direct_indices, &"source:#{table}:#{&1}")
             end
 
           replacement_refs = direct_refs ++ creator_refs
@@ -10528,7 +10668,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp original_semantic_status("CN-001"), do: :cn001_project_build_replaced
   defp original_semantic_status("CN-002"), do: :cn002_retained
   defp original_semantic_status("CN-003"), do: :cn003_retained
-  defp original_semantic_status("CN-004"), do: :cn004_source_authority_open
+  defp original_semantic_status("CN-004"), do: :cn004_replaced_by_expansion_carrier
   defp original_semantic_status("CN-006"), do: :cn006_retained
   defp original_semantic_status("CN-005"), do: :calibrated_retained
   defp original_semantic_status("BD-002"), do: :calibrated_retained
@@ -10538,7 +10678,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp original_semantic_owner(:cn002_retained), do: "01.1.1.6"
   defp original_semantic_owner(:cn001_project_build_replaced), do: "01.1.1.13"
   defp original_semantic_owner(:cn003_retained), do: "01.1.1.6"
-  defp original_semantic_owner(:cn004_source_authority_open), do: "01.1.1.6"
+  defp original_semantic_owner(:cn004_replaced_by_expansion_carrier), do: "01.1.1.13"
   defp original_semantic_owner(:cn006_retained), do: "01.1.1.6"
   defp original_semantic_owner(:pending), do: "01.1.1.4"
   defp original_semantic_owner(_sampled_status), do: "01.1.1.5"
@@ -11285,12 +11425,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert row.original_matcher_raw == original_matcher
     assert row.original_reason_raw == original_reason
     assert row.original_citations_raw == original_citations
-    assert row.current_replacement_refs == [current_call_name_ref!({Plug.Builder, [:compile]})]
-    assert row.semantic_status == :cn004_source_authority_open
-    assert row.owner == "01.1.1.6"
+    assert row.current_replacement_refs == [cn004_carrier_ref!()]
+    assert row.semantic_status == :cn004_replaced_by_expansion_carrier
+    assert row.owner == "01.1.1.13"
 
-    {{Plug.Builder, [:compile]}, :not_compile_module, _current_citations} =
-      current_call_name_entry!({Plug.Builder, [:compile]})
+    refute Enum.any?(@call_name_exclusions, fn {matcher, _reason, _citations} ->
+             matcher == {Plug.Builder, [:compile]}
+           end)
 
     lane = evidence.lane.name
     plug_ebin = :code.lib_dir(:plug) |> to_string() |> Path.join("ebin")
@@ -11315,7 +11456,9 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> Enum.sort_by(&mfa_string!/1)
 
     matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
-    assert matched_strings != [], "CN-004/#{lane} has no live full-export match"
+
+    assert matched_strings == Map.fetch!(@cn004_expected_matches_by_lane, lane),
+           "CN-004/#{lane} complete matcher/export set changed: #{inspect(matched_strings)}"
 
     callers =
       graph.full_reverse
@@ -11345,6 +11488,9 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     source_authority_gaps = cn004_source_authority_gaps!(evidence)
     overlap_mfas = cn004_overlaps!(matched_mfas)
+    coverage_carriers = cn004_carriers!(matched_mfas)
+    quoted_source_callsites = cn004_quoted_source_callsites!(lane)
+    citation_names = Enum.map(citations, &elem(&1, 0))
 
     %{
       original_id: row.id,
@@ -11360,49 +11506,128 @@ defmodule Fablebook.Contract.TierSweepTest do
       otp: evidence.lane.otp,
       module_exports: Enum.map(graph_module_exports, &mfa_string!/1),
       matched_mfas: matched_strings,
-      mfa_dispositions: Map.new(matched_strings, &{&1, :undetermined_caller_source_authority}),
-      mfa_citations:
-        Map.new(matched_strings, fn mfa ->
-          {mfa,
-           [
-             "plug/lib/plug/builder.ex:324",
-             "plug/lib/plug/builder.ex:326",
-             "plug/lib/plug/builder.ex:337",
-             "plug/lib/plug/builder.ex:358",
-             "plug/lib/plug/builder.ex:367",
-             "plug/lib/plug/builder.ex:382",
-             "plug/lib/plug/builder.ex:384"
-           ]}
-        end),
+      mfa_dispositions: Map.new(matched_strings, &{&1, :replaced_by_exact_boundary_carrier}),
+      mfa_citations: Map.new(matched_strings, &{&1, citation_names}),
       direct_callers: caller_strings,
-      caller_citations: cn004_caller_citations!(),
-      caller_input_trace:
-        "The exact full graph has three direct callers in both lanes. Plug.Builder.__before_compile__/1 passes its accumulated @plugs and @plug_builder_opts attributes. Phoenix.Controller.Pipeline.__before_compile__/1 passes an action plug plus its @plugs and obtains init_mode from Phoenix.plug_init_mode/0. Phoenix.Router.build_pipes/2 is also a direct caller, but its source and Phoenix.plug_init_mode/0 implementation are absent from the approved archive. The router call-site input trace therefore remains incomplete.",
+      caller_citations: cn004_caller_citations!(lane),
+      caller_input_trace: cn004_caller_input_trace!(lane),
       mode_branches: [
         %{
           mode: :compile,
+          invalid_mode: :raises_before_pipeline_reduction,
           module_init: :executes_plug_init_with_caller_opts,
           module_name_path: [:module_split, :string_to_atom, :alias_ast, :macro_expand],
-          function_plug: :escapes_caller_opts
+          function_plug: :escapes_caller_opts_then_quotes_call,
+          citations: [
+            "plug/lib/plug/builder.ex:326",
+            "plug/lib/plug/builder.ex:358",
+            "plug/lib/plug/builder.ex:382",
+            "plug/lib/plug/builder.ex:384"
+          ]
         },
         %{
           mode: :runtime,
+          invalid_mode: :raises_before_pipeline_reduction,
           module_init: :quotes_plug_init_with_caller_opts,
           module_name_path: :no_compile_mode_alias_expansion,
-          function_plug: :escapes_caller_opts
+          function_plug: :escapes_caller_opts_then_quotes_call,
+          citations: [
+            "plug/lib/plug/builder.ex:326",
+            "plug/lib/plug/builder.ex:368",
+            "plug/lib/plug/builder.ex:372"
+          ]
+        },
+        %{
+          mode: :invalid,
+          behavior: :raises_argument_error_before_plug_dispatch,
+          citations: [
+            "plug/lib/plug/builder.ex:328",
+            "plug/lib/plug/builder.ex:329",
+            "plug/lib/plug/builder.ex:332"
+          ]
         }
       ],
       delegate_trace: [
-        "compile/3 classifies a plug module by its existing module atom, then dispatches module plugs through init_module_plug/4 and function plugs through init_fun_plug/3.",
-        "The :compile module branch invokes plug.init(opts) immediately and requires the plug to export call/2; the :runtime branch emits a quoted plug.init(opts) call.",
-        "The compile-mode module path splits the plug atom, converts its name segments with String.to_atom/1, builds an alias AST, and calls Macro.expand/2 on that alias.",
-        "Plug.Builder's plug/2 macro expands alias ASTs and stores each plug/options/guard tuple in @plugs. Plug.init/2 and caller-supplied option behavior remain dynamic delegates outside this source record."
+        %{
+          path: :pipeline_accumulation,
+          citations: [
+            "plug/lib/plug/builder.ex:249",
+            "plug/lib/plug/builder.ex:252",
+            "plug/lib/plug/builder.ex:263",
+            "plug/lib/plug/builder.ex:264"
+          ]
+        },
+        %{
+          path: :builder_attributes_and_options,
+          citations: [
+            "plug/lib/plug/builder.ex:172",
+            "plug/lib/plug/builder.ex:173",
+            "plug/lib/plug/builder.ex:182",
+            "plug/lib/plug/builder.ex:183"
+          ]
+        },
+        %{
+          path: :init_mode_selection_and_validation,
+          citations: [
+            "plug/lib/plug/builder.ex:326",
+            "plug/lib/plug/builder.ex:328",
+            "plug/lib/plug/builder.ex:332"
+          ]
+        },
+        %{
+          path: :module_function_dispatch,
+          citations: [
+            "plug/lib/plug/builder.ex:346",
+            "plug/lib/plug/builder.ex:349",
+            "plug/lib/plug/builder.ex:353"
+          ]
+        },
+        %{
+          path: :compile_mode_module_init,
+          citations: [
+            "plug/lib/plug/builder.ex:357",
+            "plug/lib/plug/builder.ex:358",
+            "plug/lib/plug/builder.ex:360"
+          ]
+        },
+        %{
+          path: :runtime_mode_module_init,
+          citations: ["plug/lib/plug/builder.ex:367", "plug/lib/plug/builder.ex:368"]
+        },
+        %{
+          path: :function_plug_options_and_call,
+          citations: [
+            "plug/lib/plug/builder.ex:371",
+            "plug/lib/plug/builder.ex:372",
+            "plug/lib/plug/builder.ex:376",
+            "plug/lib/plug/builder.ex:420",
+            "plug/lib/plug/builder.ex:424"
+          ]
+        },
+        %{
+          path: :compile_mode_module_alias_and_atom_path,
+          citations: [
+            "plug/lib/plug/builder.ex:382",
+            "plug/lib/plug/builder.ex:383",
+            "plug/lib/plug/builder.ex:384"
+          ]
+        },
+        %{
+          path: :dynamic_callback_boundary,
+          status: :caller_selected_callback_not_resolved_here,
+          citations: [
+            "plug/lib/plug/builder.ex:358",
+            "plug/lib/plug/builder.ex:368",
+            "plug/lib/plug/builder.ex:420",
+            "plug/lib/plug/builder.ex:424"
+          ]
+        }
       ],
-      verdict: :undetermined_caller_source_authority,
+      verdict: :exact_compile_boundary_redundant,
       verdict_explanation:
-        "The source shows a real compile-time pipeline builder with an immediate plug.init(opts) branch and a compile-mode String.to_atom/1/Macro.expand/2 path. The historical :not_compile_module label does not decide this row. Keep CN-004 open because the direct Phoenix.Router caller and Phoenix.plug_init_mode/0 configuration source are not bound by the approved archive; Phase 01.1.1.4 also owns the overlapping blanket :expansion judgment.",
-      disposition: :open,
-      retained_exclusion: :undetermined,
+        "Exact-lane sources show Plug.Builder.compile/3 immediately invokes caller-selected module plug.init/1 in compile mode, emits the init call in runtime mode, invokes caller-selected function plugs later, constructs module alias atoms with String.to_atom/1, and calls Macro.expand/2. The single current match is independently covered by the existing exact Plug.Builder.compile/3 boundary carrier. This replaces only CN-004's duplicate matcher and makes no closure or safety claim about the broader expansion owner.",
+      disposition: :replaced,
+      retained_exclusion: :not_retained,
       citations: citations,
       source_sha256s:
         resolved
@@ -11410,14 +11635,18 @@ defmodule Fablebook.Contract.TierSweepTest do
         |> Map.new(),
       source_authority_gaps: source_authority_gaps,
       removal_witness: [],
+      coverage_carriers: coverage_carriers,
+      coverage_carrier_refs: [cn004_carrier_ref!()],
+      quoted_source_callsites: quoted_source_callsites,
       overlap_mfas: Enum.map(overlap_mfas, &mfa_string!/1),
       project_lib_callers: project_callers,
       applicability: :each_exact_installed_lane,
       limitations: [
-        "The approved source archive omits phoenix/lib/phoenix/router.ex, which contains the direct Phoenix.Router.build_pipes/2 call site.",
-        "The approved source archive omits phoenix/lib/phoenix.ex, which contains Phoenix.plug_init_mode/0 and its configuration lookup.",
-        "The separate project-authored Macro caller-AST and blanket :expansion judgment remains assigned to Phase 01.1.1.4.",
-        "This static record makes no runtime atom-count, plugin callback, or general safety claim."
+        "Phoenix.Router.build_pipes/2 passes caller-authored route pipeline entries; core accepts explicit plug/options pairs while floor supplies empty options for each plug atom.",
+        "Phoenix.plug_init_mode/0 reads :phoenix, :plug_init_mode with :compile default; the source trace does not run that configuration lookup.",
+        "Compile-mode plug.init/1 and emitted function calls are dynamic caller-selected callbacks; their callback bodies are not resolved or invoked here.",
+        "The separate project-authored Macro caller-AST and broader expansion owner remains assigned to Phase 01.1.4; this row replacement makes no claim about that owner's scope.",
+        "This static record makes no runtime atom-count, arbitrary callback-safety, or general safety claim."
       ]
     }
   end
@@ -11426,17 +11655,32 @@ defmodule Fablebook.Contract.TierSweepTest do
     expected = cn004_record!(graph, evidence, ledger)
     citation_keys = MapSet.new(Enum.map(record.citations, &elem(&1, 0)))
     assert record == expected
-    assert record.matched_mfas != []
+    assert record.matched_mfas == Map.fetch!(@cn004_expected_matches_by_lane, evidence.lane.name)
 
     assert record.direct_callers ==
              Map.fetch!(@cn004_expected_direct_callers_by_lane, evidence.lane.name)
 
-    assert record.mode_branches |> Enum.map(& &1.mode) == [:compile, :runtime]
-    assert record.source_authority_gaps != []
-    assert record.disposition == :open
-    assert record.retained_exclusion == :undetermined
+    assert record.mode_branches |> Enum.map(& &1.mode) == [:compile, :runtime, :invalid]
+    assert record.source_authority_gaps == []
+    assert record.disposition == :replaced
+    assert record.retained_exclusion == :not_retained
     assert record.removal_witness == []
     assert record.overlap_mfas == ["Elixir.Plug.Builder:compile/3"]
+    assert record.current_replacement_refs == [cn004_carrier_ref!()]
+    assert record.coverage_carrier_refs == [cn004_carrier_ref!()]
+
+    expected_mfas =
+      graph.full_exported
+      |> Enum.filter(&call_name_exclusion_match?({Plug.Builder, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+
+    assert record.coverage_carriers == cn004_carriers!(expected_mfas)
+    assert record.quoted_source_callsites == cn004_quoted_source_callsites!(evidence.lane.name)
+    assert Map.keys(record.caller_citations) |> Enum.sort() == Enum.sort(record.direct_callers)
+    assert Enum.all?(record.caller_citations, fn {_caller, citations} -> citations != [] end)
+    assert record.verdict_explanation =~ "single current match"
+    assert record.verdict_explanation =~ "broader expansion owner"
+    assert Enum.any?(record.delegate_trace, &(&1.path == :dynamic_callback_boundary))
     assert record.project_lib_callers == []
 
     Enum.each(record.citations, fn {citation, expected_source} ->
@@ -11459,10 +11703,24 @@ defmodule Fablebook.Contract.TierSweepTest do
       end)
     end)
 
+    Enum.each(record.mode_branches, fn branch ->
+      Enum.each(branch.citations, fn citation ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
+    end)
+
+    Enum.each(record.delegate_trace, fn trace ->
+      assert trace.citations != []
+
+      Enum.each(trace.citations, fn citation ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
+    end)
+
     :ok
   end
 
-  defp cn004_citations!(_lane) do
+  defp cn004_citations!(lane) do
     [
       {"plug/lib/plug/builder.ex:148", "defmacro __using__(opts) do"},
       {"plug/lib/plug/builder.ex:166",
@@ -11485,12 +11743,16 @@ defmodule Fablebook.Contract.TierSweepTest do
       {"plug/lib/plug/builder.ex:324", "def compile(env, pipeline, builder_opts) do"},
       {"plug/lib/plug/builder.ex:326", "init_mode = builder_opts[:init_mode] || :compile"},
       {"plug/lib/plug/builder.ex:328", "unless init_mode in [:compile, :runtime] do"},
+      {"plug/lib/plug/builder.ex:329", "raise ArgumentError, \"\"\""},
+      {"plug/lib/plug/builder.ex:332", "Supported values include :compile or :runtime."},
       {"plug/lib/plug/builder.ex:337",
        "Enum.reduce(pipeline, conn, fn {plug, opts, guards}, acc ->"},
       {"plug/lib/plug/builder.ex:339", "|> init_plug(init_mode)"},
       {"plug/lib/plug/builder.ex:340", "|> quote_plug(init_mode, acc, env, builder_opts)"},
       {"plug/lib/plug/builder.ex:346",
        "defp module_plug?(plug), do: match?(~c\"Elixir.\" ++ _, Atom.to_charlist(plug))"},
+      {"plug/lib/plug/builder.ex:349", "defp init_plug({plug, opts, guards}, init_mode) do"},
+      {"plug/lib/plug/builder.ex:353", "init_fun_plug(plug, opts, guards)"},
       {"plug/lib/plug/builder.ex:357", "defp init_module_plug(plug, opts, guards, :compile) do"},
       {"plug/lib/plug/builder.ex:358", "initialized_opts = plug.init(opts)"},
       {"plug/lib/plug/builder.ex:360", "if function_exported?(plug, :call, 2) do"},
@@ -11499,25 +11761,51 @@ defmodule Fablebook.Contract.TierSweepTest do
        "{:module, plug, quote(do: unquote(plug).init(unquote(escape(opts)))), guards}"},
       {"plug/lib/plug/builder.ex:371", "defp init_fun_plug(plug, opts, guards) do"},
       {"plug/lib/plug/builder.ex:372", "{:function, plug, escape(opts), guards}"},
+      {"plug/lib/plug/builder.ex:376", "Macro.escape(opts, unquote: true)"},
       {"plug/lib/plug/builder.ex:382",
        "parts = [:\"Elixir\" | Enum.map(Module.split(plug), &String.to_atom/1)]"},
       {"plug/lib/plug/builder.ex:383", "alias = {:__aliases__, [line: env.line], parts}"},
       {"plug/lib/plug/builder.ex:384", "_ = Macro.expand(alias, env)"},
+      {"plug/lib/plug/builder.ex:420", "quote do: unquote(plug)(conn, unquote(opts))"},
+      {"plug/lib/plug/builder.ex:424", "quote do: unquote(plug).call(conn, unquote(opts))"},
       {"phoenix/lib/phoenix/controller/pipeline.ex:75", "defmacro __before_compile__(env) do"},
       {"phoenix/lib/phoenix/controller/pipeline.ex:77",
        "plugs = [action | Module.get_attribute(env.module, :plugs)]"},
       {"phoenix/lib/phoenix/controller/pipeline.ex:80", "Plug.Builder.compile(env, plugs,"},
-      {"phoenix/lib/phoenix/controller/pipeline.ex:82", "init_mode: Phoenix.plug_init_mode()"}
-    ]
+      {"phoenix/lib/phoenix/controller/pipeline.ex:82", "init_mode: Phoenix.plug_init_mode()"},
+      {"phoenix/lib/phoenix.ex:72", "def plug_init_mode do"},
+      {"phoenix/lib/phoenix.ex:73", "Application.get_env(:phoenix, :plug_init_mode, :compile)"}
+    ] ++ cn004_router_citations!(lane)
   end
 
-  defp cn004_caller_citations! do
+  defp cn004_caller_citations!(lane) do
+    router_citations =
+      if lane == "core" do
+        [
+          "phoenix/lib/phoenix/router.ex:818",
+          "phoenix/lib/phoenix/router.ex:823",
+          "phoenix/lib/phoenix/router.ex:824",
+          "phoenix/lib/phoenix/router.ex:827",
+          "phoenix/lib/phoenix/router.ex:828"
+        ]
+      else
+        [
+          "phoenix/lib/phoenix/router.ex:818",
+          "phoenix/lib/phoenix/router.ex:819",
+          "phoenix/lib/phoenix/router.ex:820",
+          "phoenix/lib/phoenix/router.ex:821"
+        ]
+      end
+
     %{
       "Elixir.Plug.Builder:MACRO-__before_compile__/2" => [
         "plug/lib/plug/builder.ex:172",
         "plug/lib/plug/builder.ex:173",
         "plug/lib/plug/builder.ex:182",
-        "plug/lib/plug/builder.ex:183"
+        "plug/lib/plug/builder.ex:183",
+        "plug/lib/plug/builder.ex:249",
+        "plug/lib/plug/builder.ex:252",
+        "plug/lib/plug/builder.ex:264"
       ],
       "Elixir.Phoenix.Controller.Pipeline:MACRO-__before_compile__/2" => [
         "phoenix/lib/phoenix/controller/pipeline.ex:75",
@@ -11525,42 +11813,143 @@ defmodule Fablebook.Contract.TierSweepTest do
         "phoenix/lib/phoenix/controller/pipeline.ex:80",
         "phoenix/lib/phoenix/controller/pipeline.ex:82"
       ],
-      "Elixir.Phoenix.Router:build_pipes/2" => []
+      "Elixir.Phoenix.Router:build_pipes/2" => router_citations
     }
   end
 
-  defp cn004_source_authority_gaps!(evidence) do
+  defp cn004_router_citations!("core") do
     [
-      {
-        "phoenix/lib/phoenix/router.ex",
-        "direct caller Phoenix.Router.build_pipes/2 input construction"
-      },
-      {
-        "phoenix/lib/phoenix.ex",
-        "Phoenix.plug_init_mode/0 configuration source"
+      {"phoenix/lib/phoenix/router.ex:818", "defp build_pipes(name, pipe_through) do"},
+      {"phoenix/lib/phoenix/router.ex:823", "{plug, opts} -> {plug, opts, true}"},
+      {"phoenix/lib/phoenix/router.ex:824", "plug -> {plug, [], true}"},
+      {"phoenix/lib/phoenix/router.ex:827",
+       "opts = [init_mode: Phoenix.plug_init_mode(), log_on_halt: :debug]"},
+      {"phoenix/lib/phoenix/router.ex:828",
+       "{conn, body} = Plug.Builder.compile(__ENV__, plugs, opts)"},
+      {"phoenix/lib/phoenix/router.ex:945", "defmacro pipeline(plug, do: block) do"},
+      {"phoenix/lib/phoenix/router.ex:966",
+       "Plug.Builder.compile(__ENV__, @phoenix_pipeline, init_mode: Phoenix.plug_init_mode())"}
+    ]
+  end
+
+  defp cn004_router_citations!("floor") do
+    [
+      {"phoenix/lib/phoenix/router.ex:818", "defp build_pipes(name, pipe_through) do"},
+      {"phoenix/lib/phoenix/router.ex:819",
+       "plugs = pipe_through |> Enum.reverse() |> Enum.map(&{&1, [], true})"},
+      {"phoenix/lib/phoenix/router.ex:820",
+       "opts = [init_mode: Phoenix.plug_init_mode(), log_on_halt: :debug]"},
+      {"phoenix/lib/phoenix/router.ex:821",
+       "{conn, body} = Plug.Builder.compile(__ENV__, plugs, opts)"},
+      {"phoenix/lib/phoenix/router.ex:938", "defmacro pipeline(plug, do: block) do"},
+      {"phoenix/lib/phoenix/router.ex:959",
+       "Plug.Builder.compile(__ENV__, @phoenix_pipeline, init_mode: Phoenix.plug_init_mode())"}
+    ]
+  end
+
+  defp cn004_source_sha_by_lane!("core") do
+    %{
+      "phoenix/lib/phoenix/router.ex" =>
+        "046564dae97dbd0ba58eb78e630fb226a2c8360a86b933dd9604e998c68b17bd",
+      "phoenix/lib/phoenix.ex" =>
+        "f831736998100ebf303c30d67802035f87830620b203d78f3d1d41df94a6df62"
+    }
+  end
+
+  defp cn004_source_sha_by_lane!("floor") do
+    %{
+      "phoenix/lib/phoenix/router.ex" =>
+        "78469c9caa87b05e16ddca8159822263165addc08b07ae8a5e06f76daeab5937",
+      "phoenix/lib/phoenix.ex" =>
+        "f831736998100ebf303c30d67802035f87830620b203d78f3d1d41df94a6df62"
+    }
+  end
+
+  defp cn004_quoted_source_callsites!("core") do
+    [
+      %{
+        caller: "Elixir.Phoenix.Router:pipeline/2",
+        citation: "phoenix/lib/phoenix/router.ex:966",
+        target: "Elixir.Plug.Builder:compile/3"
       }
     ]
-    |> Enum.map(fn {path, needed_for} ->
-      error =
-        assert_raise SweepEvidence.Error, fn ->
-          SweepEvidence.resolve!(evidence, path <> ":1")
-        end
+  end
 
-      assert error.reason == :missing_source
-      %{source_path: path, needed_for: needed_for, authority: :missing_from_approved_archive}
+  defp cn004_quoted_source_callsites!("floor") do
+    [
+      %{
+        caller: "Elixir.Phoenix.Router:pipeline/2",
+        citation: "phoenix/lib/phoenix/router.ex:959",
+        target: "Elixir.Plug.Builder:compile/3"
+      }
+    ]
+  end
+
+  defp cn004_caller_input_trace!("core") do
+    "The three direct graph callers are Plug.Builder.__before_compile__/1, Phoenix.Controller.Pipeline.__before_compile__/1, and Phoenix.Router.build_pipes/2. Builder attributes carry each plug/options/guard tuple plus builder_opts; the controller prepends its action plug and uses Phoenix.plug_init_mode/0. Router route pipe_through entries accept {plug, opts} pairs or bare plug atoms, mapping bare atoms to empty options, then pass __ENV__, init_mode from Phoenix.plug_init_mode/0, and log_on_halt: :debug. Phoenix.Router.pipeline/2 also quotes a separate Plug.Builder.compile/3 call, which source inspection records despite its absence as a direct compiled graph edge. Phoenix.plug_init_mode/0 reads :phoenix/:plug_init_mode with :compile default."
+  end
+
+  defp cn004_caller_input_trace!("floor") do
+    "The three direct graph callers are Plug.Builder.__before_compile__/1, Phoenix.Controller.Pipeline.__before_compile__/1, and Phoenix.Router.build_pipes/2. Builder attributes carry each plug/options/guard tuple plus builder_opts; the controller prepends its action plug and uses Phoenix.plug_init_mode/0. Router route pipe_through entries are reversed and every plug atom is paired with empty options, then __ENV__, init_mode from Phoenix.plug_init_mode/0, and log_on_halt: :debug are passed to Plug.Builder.compile/3. Phoenix.Router.pipeline/2 also quotes a separate Plug.Builder.compile/3 call, which source inspection records despite its absence as a direct compiled graph edge. Phoenix.plug_init_mode/0 reads :phoenix/:plug_init_mode with :compile default."
+  end
+
+  defp cn004_carrier_ref! do
+    carrier_index =
+      Enum.find_index(@exclusions, fn
+        {{Plug.Builder, [:compile]}, :expansion, "plug/lib/plug/builder.ex:324"} -> true
+        _entry -> false
+      end)
+
+    assert is_integer(carrier_index), "CN-004 exact expansion carrier is missing"
+    "source:EX:#{carrier_index + 1}"
+  end
+
+  defp cn004_carriers!(matched_mfas, exclusions \\ @exclusions) do
+    Enum.map(matched_mfas, fn mfa ->
+      assert mfa == {Plug.Builder, :compile, 3},
+             "CN-004 has no independently reviewed carrier for #{mfa_string!(mfa)}"
+
+      carriers =
+        Enum.filter(exclusions, fn
+          {matcher, _reason, _citation} -> call_name_exclusion_match?(matcher, mfa)
+          _other -> false
+        end)
+
+      assert length(carriers) == 1,
+             "CN-004 needs one exact active carrier for #{mfa_string!(mfa)}"
+
+      [{matcher, :expansion, citation}] = carriers
+
+      assert citation == "plug/lib/plug/builder.ex:324",
+             "CN-004 carrier must cite the exact Plug.Builder compile source"
+
+      %{
+        mfa: mfa_string!(mfa),
+        ref: cn004_carrier_ref!(),
+        matcher: inspect(matcher),
+        citation: citation,
+        source_proof: [
+          "plug/lib/plug/builder.ex:358",
+          "plug/lib/plug/builder.ex:382",
+          "plug/lib/plug/builder.ex:384"
+        ],
+        scope: :this_exact_mfa_only
+      }
     end)
   end
 
-  defp cn004_overlaps!(matched_mfas) do
-    other_call_name_rows =
-      Enum.reject(
-        @call_name_exclusions,
-        &(&1 == current_call_name_entry!({Plug.Builder, [:compile]}))
-      )
+  defp cn004_source_authority_gaps!(evidence) do
+    Enum.each(["phoenix/lib/phoenix/router.ex", "phoenix/lib/phoenix.ex"], fn path ->
+      assert SweepEvidence.resolve!(evidence, path <> ":1").line == 1
+    end)
 
+    []
+  end
+
+  defp cn004_overlaps!(matched_mfas) do
     Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
       exclusion_reason(module, function, @exclusions) != nil or
-        Enum.any?(other_call_name_rows, fn {matcher, _reason, _citations} ->
+        Enum.any?(@call_name_exclusions, fn {matcher, _reason, _citations} ->
           call_name_exclusion_match?(matcher, mfa)
         end) or
         Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
