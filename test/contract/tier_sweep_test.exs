@@ -1490,6 +1490,55 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @call_name_lane_specific [{{Mix.Compilers.Protocol, [:compile]}, :latest}]
 
+  @cn002_expected_matches_by_lane %{
+    "core" => ["Elixir.Phoenix.Digester:compile/3"],
+    "floor" => ["Elixir.Phoenix.Digester:compile/3"]
+  }
+
+  @cn001_expected_matches_by_lane %{
+    "core" => ["Elixir.Mix.Compilers.Protocol:compile/4"],
+    "floor" => []
+  }
+
+  @cn001_expected_direct_callers_by_lane %{
+    "core" => [
+      "Elixir.Mix.Compilers.Elixir:maybe_consolidate/4",
+      "Elixir.Mix.Compilers.Protocol:umbrella/2"
+    ],
+    "floor" => []
+  }
+
+  @cn003_expected_direct_callers_by_lane %{
+    "core" => ["Elixir.Mix.Tasks.Compile.PhoenixLiveView:compile/0"],
+    "floor" => ["Elixir.Mix.Tasks.Compile.PhoenixLiveView:compile/0"]
+  }
+
+  @cn004_expected_direct_callers_by_lane %{
+    "core" => [
+      "Elixir.Phoenix.Controller.Pipeline:MACRO-__before_compile__/2",
+      "Elixir.Phoenix.Router:build_pipes/2",
+      "Elixir.Plug.Builder:MACRO-__before_compile__/2"
+    ],
+    "floor" => [
+      "Elixir.Phoenix.Controller.Pipeline:MACRO-__before_compile__/2",
+      "Elixir.Phoenix.Router:build_pipes/2",
+      "Elixir.Plug.Builder:MACRO-__before_compile__/2"
+    ]
+  }
+
+  @cn006_expected_matches_by_lane %{
+    "core" => ["re:compile/1", "re:compile/2"],
+    "floor" => ["re:compile/1", "re:compile/2"]
+  }
+
+  @cn001_source_authority_gaps [
+    {
+      "mix/lib/mix/compilers/elixir.ex",
+      "direct caller Mix.Compilers.Elixir.maybe_consolidate/4"
+    },
+    {"elixir/lib/protocol.ex", "Protocol delegate implementations"}
+  ]
+
   @exclusions [
     {{:fun_prefix, "MACRO-"}, :macro},
     {:erl_tracer, :own_native},
@@ -5953,6 +6002,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :cn001
   test "original exclusion and lane metadata identities remain lossless and owned" do
     ledger = original_identity_ledger!()
     assert_original_identity_ledger!(ledger, ledger)
@@ -5969,28 +6019,79 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert Enum.frequencies_by(ledger.metadata, & &1.table) == %{"CN-LANE" => 1, "BD-LANE" => 4}
 
     sampled = Enum.filter(ledger.exclusions, &(&1.semantic_status != :pending))
-    assert MapSet.new(Enum.map(sampled, & &1.id)) == MapSet.new(["CN-005", "BD-002", "EX-159"])
-    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 218
+
+    assert MapSet.new(Enum.map(sampled, & &1.id)) ==
+             MapSet.new([
+               "CN-001",
+               "CN-002",
+               "CN-003",
+               "CN-004",
+               "CN-005",
+               "CN-006",
+               "BD-002",
+               "EX-159"
+             ])
+
+    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 213
 
     assert Enum.all?(
              ledger.metadata,
              &(&1.owner == "01.1.1.4" and &1.semantic_status == :pending)
            )
 
+    cn001 = Enum.find(ledger.exclusions, &(&1.id == "CN-001"))
+    cn005 = Enum.find(ledger.exclusions, &(&1.id == "CN-005"))
+    cn006 = Enum.find(ledger.exclusions, &(&1.id == "CN-006"))
+    cn_lane_001 = Enum.find(ledger.metadata, &(&1.id == "CN-LANE-001"))
+
+    assert cn001.identity_class == :exclusion
+    assert cn_lane_001.identity_class == :lane_metadata
+    assert cn_lane_001.table == "CN-LANE"
+    assert cn_lane_001.original_entry_raw == "{{Mix.Compilers.Protocol, [:compile]}, :latest}"
+    assert cn_lane_001.original_matcher_raw == "{Mix.Compilers.Protocol, [:compile]}"
+    assert cn_lane_001.lane_payload_raw == ":latest"
+    assert cn_lane_001.current_replacement_refs == ["source:CN-LANE:1"]
+    refute cn001.id == cn_lane_001.id
+
+    assert cn005.semantic_status == :calibrated_retained
+    assert cn005.owner == "01.1.1.5"
+    assert cn006.semantic_status == :cn006_retained
+    assert cn006.owner == "01.1.1.6"
+    assert cn006.current_replacement_refs == ["source:CN:6"]
+
     assert Enum.all?(ledger.exclusions, fn row ->
              row.remaining_semantic_owner == "01.1.1.4" and row.current_replacement_refs != []
            end)
 
     assert Enum.all?(ledger.exclusions, fn row ->
-             if row.id in ["CN-005", "BD-002", "EX-159"],
-               do: row.owner == "01.1.1.5",
-               else: row.owner == "01.1.1.4"
+             expected_owner =
+               case row.id do
+                 id when id in ["CN-001", "CN-002", "CN-003", "CN-004", "CN-006"] ->
+                   "01.1.1.6"
+
+                 id when id in ["CN-005", "BD-002", "EX-159"] ->
+                   "01.1.1.5"
+
+                 _id ->
+                   "01.1.1.4"
+               end
+
+             row.owner == expected_owner
            end)
 
     omitted = %{ledger | exclusions: List.delete_at(ledger.exclusions, 0)}
 
     assert_raise ExUnit.AssertionError, fn ->
       assert_original_identity_ledger!(omitted, ledger)
+    end
+
+    omitted_lane_metadata = %{
+      ledger
+      | metadata: Enum.reject(ledger.metadata, &(&1.id == "CN-LANE-001"))
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_original_identity_ledger!(omitted_lane_metadata, ledger)
     end
 
     duplicate = %{ledger | exclusions: [hd(ledger.exclusions) | ledger.exclusions]}
@@ -6969,6 +7070,365 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert unmatched_exclusions == [],
            "call-name exclusions matching no uncovered function: #{inspect(unmatched_exclusions)}"
+  end
+
+  @tag :cn002
+  test "CN-002 preserves its identity and traces the complete live lane disposition", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn002_record!(ctx.graph, evidence, ledger)
+
+    assert_cn002_record!(record, ctx.graph, evidence, ledger)
+    assert record.original_id == "CN-002"
+    assert record.current_replacement_refs == ["source:CN:2"]
+    assert record.retained_exclusion
+    assert record.matched_mfas != []
+    assert record.removal_witness != []
+    assert record.overlap_mfas == []
+  end
+
+  @tag :cn002
+  test "CN-002 rejects omitted row evidence and cross-lane source substitution", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn002_record!(ctx.graph, evidence, ledger)
+    other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+
+    for omitted <- [
+          %{record | matched_mfas: tl(record.matched_mfas)},
+          %{
+            record
+            | citations:
+                Enum.reject(
+                  record.citations,
+                  &(elem(&1, 0) == "phoenix/lib/phoenix/digester.ex:20")
+                )
+          },
+          %{record | removal_witness: []},
+          %{record | lane: other_lane}
+        ] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn002_record!(omitted, ctx.graph, evidence, ledger)
+      end
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "CN-002"))
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/original CN-002 identity is missing/, fn ->
+      cn002_record!(ctx.graph, evidence, missing_identity)
+    end
+
+    wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn002_record!(ctx.graph, wrong_lane_evidence, ledger)
+    end
+
+    wrong_lane_graph = %{ctx.graph | lane: Map.put(ctx.graph.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn002_record!(wrong_lane_graph, evidence, ledger)
+    end
+
+    for lane <- ["core", "floor"] do
+      assert Enum.any?(evidence.manifest["files"], fn row ->
+               row["lane"] == lane and
+                 row["source_path"] == "phoenix/lib/phoenix/digester.ex" and
+                 row["status"] == "present"
+             end),
+             "#{lane} source availability must be proved by its lane record"
+    end
+
+    missing_lane_source_manifest =
+      Map.update!(evidence.manifest, "files", fn rows ->
+        Enum.reject(rows, fn row ->
+          row["lane"] == evidence.lane.name and
+            row["source_path"] == "phoenix/lib/phoenix/digester.ex"
+        end)
+      end)
+
+    missing_lane_source = %{evidence | manifest: missing_lane_source_manifest}
+
+    error =
+      assert_raise SweepEvidence.Error, fn ->
+        SweepEvidence.resolve!(missing_lane_source, "phoenix/lib/phoenix/digester.ex:20")
+      end
+
+    assert error.reason == :missing_source
+  end
+
+  @tag :cn001
+  test "CN-001 stays open until its Protocol delegate source is bound", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn001_record!(ctx.graph, evidence, ledger)
+
+    assert_cn001_record!(record, ctx.graph, evidence, ledger)
+    assert record.original_id == "CN-001"
+    assert record.current_replacement_refs == ["source:CN:1"]
+    assert record.semantic_status == :cn001_source_authority_open
+    assert record.verdict == :undetermined_source_authority
+
+    if evidence.lane.name == "core" do
+      omitted_core_citation = %{
+        record
+        | citations:
+            Enum.reject(
+              record.citations,
+              &(elem(&1, 0) == "mix/lib/mix/compilers/protocol.ex:107")
+            )
+      }
+
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn001_record!(omitted_core_citation, ctx.graph, evidence, ledger)
+      end
+    else
+      invented_floor_export = %{
+        record
+        | module_exports: ["Elixir.Mix.Compilers.Protocol:compile/4"],
+          matched_mfas: ["Elixir.Mix.Compilers.Protocol:compile/4"]
+      }
+
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn001_record!(invented_floor_export, ctx.graph, evidence, ledger)
+      end
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "CN-001"))
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/original CN-001 identity is missing/, fn ->
+      cn001_record!(ctx.graph, evidence, missing_identity)
+    end
+  end
+
+  @tag :cn003
+  test "CN-003 preserves its identity and traces the complete live lane disposition", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn003_record!(ctx.graph, evidence, ledger)
+
+    assert_cn003_record!(record, ctx.graph, evidence, ledger)
+    assert record.original_id == "CN-003"
+    assert record.current_replacement_refs == ["source:CN:3"]
+    assert record.semantic_status == :cn003_retained
+    assert record.retained_exclusion
+    assert record.matched_mfas != []
+    assert record.removal_witness != []
+    assert record.overlap_mfas == []
+  end
+
+  @tag :cn004
+  test "CN-004 preserves its identity and records the exact-lane open source trace", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn004_record!(ctx.graph, evidence, ledger)
+
+    assert_cn004_record!(record, ctx.graph, evidence, ledger)
+    assert record.original_id == "CN-004"
+    assert record.current_replacement_refs == ["source:CN:4"]
+    assert record.semantic_status == :cn004_source_authority_open
+    assert record.verdict == :undetermined_caller_source_authority
+    assert record.disposition == :open
+    assert record.matched_mfas != []
+    assert record.mode_branches |> Enum.map(& &1.mode) == [:compile, :runtime]
+    assert record.source_authority_gaps != []
+    assert record.removal_witness == []
+    assert record.overlap_mfas == ["Elixir.Plug.Builder:compile/3"]
+  end
+
+  @tag :cn004
+  test "CN-004 rejects omitted matches, branches, caller evidence and lane sources", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn004_record!(ctx.graph, evidence, ledger)
+    other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+
+    for omitted <- [
+          %{record | matched_mfas: tl(record.matched_mfas)},
+          %{record | citations: List.delete_at(record.citations, 0)},
+          %{record | mode_branches: Enum.take(record.mode_branches, 1)},
+          %{record | direct_callers: []},
+          %{record | caller_citations: %{}},
+          %{record | delegate_trace: []},
+          %{record | source_authority_gaps: []},
+          %{record | overlap_mfas: []},
+          %{record | lane: other_lane}
+        ] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn004_record!(omitted, ctx.graph, evidence, ledger)
+      end
+    end
+
+    unexpected_match = {Plug.Builder, :compile, 4}
+
+    graph_with_new_match = %{
+      ctx.graph
+      | full_exported: MapSet.put(ctx.graph.full_exported, unexpected_match)
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      cn004_record!(graph_with_new_match, evidence, ledger)
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "CN-004"))
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/original CN-004 identity is missing/, fn ->
+      cn004_record!(ctx.graph, evidence, missing_identity)
+    end
+
+    wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn004_record!(ctx.graph, wrong_lane_evidence, ledger)
+    end
+
+    wrong_lane_graph = %{ctx.graph | lane: Map.put(ctx.graph.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn004_record!(wrong_lane_graph, evidence, ledger)
+    end
+  end
+
+  @tag :cn006
+  test "CN-006 preserves both exact-lane re:compile arities with source and row witnesses", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn006_record!(ctx.graph, evidence, ledger)
+
+    assert_cn006_record!(record, ctx.graph, evidence, ledger)
+    assert record.original_id == "CN-006"
+    assert record.current_replacement_refs == ["source:CN:6"]
+    assert record.semantic_status == :cn006_retained
+    assert record.matched_mfas == Map.fetch!(@cn006_expected_matches_by_lane, evidence.lane.name)
+    assert record.verdict == :retained_regex_data_native_boundary
+    assert record.disposition == :retained_non_module_compile
+    assert record.removal_witness == record.matched_mfas
+    assert record.overlap_mfas == []
+    assert record.direct_callers != []
+  end
+
+  @tag :cn006
+  test "CN-006 rejects an omitted arity, source branch, caller set and witness", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn006_record!(ctx.graph, evidence, ledger)
+    other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+
+    for omitted <- [
+          %{record | matched_mfas: List.delete_at(record.matched_mfas, 1)},
+          %{record | citations: List.delete_at(record.citations, 0)},
+          %{record | arity_traces: Map.delete(record.arity_traces, "re:compile/2")},
+          %{record | direct_callers: []},
+          %{record | caller_input_trace: ""},
+          %{record | delegate_trace: []},
+          %{record | removal_witness: []},
+          %{record | overlap_mfas: record.matched_mfas},
+          %{record | lane: other_lane}
+        ] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn006_record!(omitted, ctx.graph, evidence, ledger)
+      end
+    end
+
+    graph_with_new_match = %{
+      ctx.graph
+      | full_exported: MapSet.put(ctx.graph.full_exported, {:re, :compile, 3})
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      cn006_record!(graph_with_new_match, evidence, ledger)
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "CN-006"))
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/original CN-006 identity is missing/, fn ->
+      cn006_record!(ctx.graph, evidence, missing_identity)
+    end
+
+    wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn006_record!(ctx.graph, wrong_lane_evidence, ledger)
+    end
+
+    wrong_lane_graph = %{ctx.graph | lane: Map.put(ctx.graph.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn006_record!(wrong_lane_graph, evidence, ledger)
+    end
+  end
+
+  @tag :cn003
+  test "CN-003 rejects omitted row evidence, new matches and cross-lane substitutions", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn003_record!(ctx.graph, evidence, ledger)
+    other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+
+    for omitted <- [
+          %{record | matched_mfas: tl(record.matched_mfas)},
+          %{record | citations: List.delete_at(record.citations, 0)},
+          %{record | direct_callers: []},
+          %{record | removal_witness: []},
+          %{record | lane: other_lane}
+        ] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn003_record!(omitted, ctx.graph, evidence, ledger)
+      end
+    end
+
+    unexpected_match = {Phoenix.LiveView.ColocatedAssets, :compile, 99}
+
+    graph_with_new_match = %{
+      ctx.graph
+      | full_exported: MapSet.put(ctx.graph.full_exported, unexpected_match)
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      cn003_record!(graph_with_new_match, evidence, ledger)
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "CN-003"))
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/original CN-003 identity is missing/, fn ->
+      cn003_record!(ctx.graph, evidence, missing_identity)
+    end
+
+    wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn003_record!(ctx.graph, wrong_lane_evidence, ledger)
+    end
+
+    wrong_lane_graph = %{ctx.graph | lane: Map.put(ctx.graph.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn003_record!(wrong_lane_graph, evidence, ledger)
+    end
   end
 
   test "exact guard coverage supersedes a preserved call-name exclusion" do
@@ -9828,11 +10288,21 @@ defmodule Fablebook.Contract.TierSweepTest do
     do:
       raise(ExUnit.AssertionError, message: "invalid original audit-budget MFA #{inspect(other)}")
 
+  defp original_semantic_status("CN-001"), do: :cn001_source_authority_open
+  defp original_semantic_status("CN-002"), do: :cn002_retained
+  defp original_semantic_status("CN-003"), do: :cn003_retained
+  defp original_semantic_status("CN-004"), do: :cn004_source_authority_open
+  defp original_semantic_status("CN-006"), do: :cn006_retained
   defp original_semantic_status("CN-005"), do: :calibrated_retained
   defp original_semantic_status("BD-002"), do: :calibrated_retained
   defp original_semantic_status("EX-159"), do: :calibrated_replaced_by_tier
   defp original_semantic_status(_id), do: :pending
 
+  defp original_semantic_owner(:cn002_retained), do: "01.1.1.6"
+  defp original_semantic_owner(:cn001_source_authority_open), do: "01.1.1.6"
+  defp original_semantic_owner(:cn003_retained), do: "01.1.1.6"
+  defp original_semantic_owner(:cn004_source_authority_open), do: "01.1.1.6"
+  defp original_semantic_owner(:cn006_retained), do: "01.1.1.6"
   defp original_semantic_owner(:pending), do: "01.1.1.4"
   defp original_semantic_owner(_sampled_status), do: "01.1.1.5"
 
@@ -9845,6 +10315,1252 @@ defmodule Fablebook.Contract.TierSweepTest do
              "duplicate baseline matches for #{id}/#{lane}"
 
       {lane, matches}
+    end)
+  end
+
+  defp cn001_record!(graph, evidence, ledger) do
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-001"))
+    assert row != nil, "original CN-001 identity is missing"
+    assert graph.lane == evidence.lane, "CN-001 graph and source evidence lanes differ"
+
+    [original_matcher, original_reason | original_citations] =
+      source_tuple_parts!(row.original_entry_raw)
+
+    assert original_matcher == "{Mix.Compilers.Protocol, [:compile]}"
+    assert original_reason == ":not_compile_module"
+    assert List.first(original_citations) =~ "mix/lib/mix/compilers/protocol.ex:107"
+    assert row.original_matcher_raw == original_matcher
+    assert row.original_reason_raw == original_reason
+    assert row.original_citations_raw == List.first(original_citations)
+    assert row.current_replacement_refs == ["source:CN:1"]
+    assert row.semantic_status == :cn001_source_authority_open
+    assert row.owner == "01.1.1.6"
+
+    {{Mix.Compilers.Protocol, [:compile]}, :not_compile_module, _current_citations} =
+      Enum.at(@call_name_exclusions, 0)
+
+    lane = evidence.lane.name
+    mix_root = Map.fetch!(evidence.installed, "mix")
+    mix_ebin = Path.join(mix_root, "ebin")
+    assert Path.expand(mix_root) == :code.lib_dir(:mix) |> to_string() |> Path.expand()
+    mix_beams = File.ls!(mix_ebin) |> MapSet.new()
+
+    inventory_module_exports =
+      InstalledOtp.export_inventory!([mix_ebin], lane: lane)
+      |> Enum.filter(fn {module, _function, _arity} -> module == Mix.Compilers.Protocol end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    graph_module_exports =
+      graph.full_exported
+      |> Enum.filter(fn {module, _function, _arity} -> module == Mix.Compilers.Protocol end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    assert graph_module_exports == inventory_module_exports,
+           "CN-001/#{lane} graph exports differ from the exact installed Mix inventory"
+
+    matched_mfas =
+      graph_module_exports
+      |> Enum.filter(&call_name_exclusion_match?({Mix.Compilers.Protocol, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    inventory_matches =
+      inventory_module_exports
+      |> Enum.filter(&call_name_exclusion_match?({Mix.Compilers.Protocol, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+
+    assert matched_strings == Map.fetch!(@cn001_expected_matches_by_lane, lane),
+           "CN-001/#{lane} live full-export matches changed: #{inspect(matched_strings)}"
+
+    assert Enum.map(inventory_matches, &mfa_string!/1) == matched_strings,
+           "CN-001/#{lane} graph call-name matches differ from the installed Mix inventory"
+
+    callers =
+      graph.full_reverse
+      |> Map.get({Mix.Compilers.Protocol, :compile}, [])
+      |> Enum.uniq()
+      |> Enum.sort_by(&mfa_string!/1)
+
+    caller_strings = Enum.map(callers, &mfa_string!/1)
+
+    assert caller_strings == Map.fetch!(@cn001_expected_direct_callers_by_lane, lane),
+           "CN-001/#{lane} direct caller set changed: #{inspect(caller_strings)}"
+
+    protocol_beam = "Elixir.Mix.Compilers.Protocol.beam"
+
+    if lane == "floor" do
+      refute MapSet.member?(mix_beams, protocol_beam),
+             "CN-001/floor target BEAM unexpectedly exists in the exact Mix inventory"
+
+      assert graph_module_exports == []
+      assert inventory_module_exports == []
+      assert matched_mfas == []
+      assert callers == []
+    else
+      assert lane == "core"
+      assert MapSet.member?(mix_beams, protocol_beam)
+
+      assert {Mix.Compilers.Protocol, :compile, 4} in BannedCalls.banned_mfas(),
+             "CN-001 core front lost its mirrored enforcement tier"
+    end
+
+    citations = cn001_citations!(lane)
+
+    resolved =
+      Enum.map(citations, fn {citation, expected_source} ->
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.text =~ expected_source, citation
+        {citation, source}
+      end)
+
+    source_authority_gaps =
+      if lane == "core", do: cn001_source_authority_gaps!(evidence), else: []
+
+    %{
+      original_id: row.id,
+      original_entry_raw: row.original_entry_raw,
+      original_matcher_raw: row.original_matcher_raw,
+      original_reason_raw: row.original_reason_raw,
+      original_citations_raw: row.original_citations_raw,
+      current_replacement_refs: row.current_replacement_refs,
+      semantic_status: row.semantic_status,
+      semantic_owner: row.owner,
+      lane: lane,
+      elixir: evidence.lane.elixir,
+      otp: evidence.lane.otp,
+      module_exports: Enum.map(graph_module_exports, &mfa_string!/1),
+      matched_mfas: matched_strings,
+      direct_callers: caller_strings,
+      citations: citations,
+      source_sha256s:
+        resolved
+        |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
+        |> Map.new(),
+      source_authority_gaps: source_authority_gaps,
+      source_gap_local_hash_accepted: false,
+      caller_input_trace:
+        "The exact full graph reports Mix.Compilers.Protocol.umbrella/2 and Mix.Compilers.Elixir.maybe_consolidate/4 as direct callers of compile/4. The approved umbrella source shows args parsed into opts and passes force state, old/new protocol snapshots, and opts to compile/4. The maybe_consolidate/4 caller source is not bound by the approved archive.",
+      delegate_trace:
+        "Approved Mix source shows compile/4 extracts protocols or diffs the manifest, consolidates protocols, and prepends the output path through Code.prepend_path/1. The Protocol.extract_protocols/0, extract_impls/2, and consolidate/2 implementations are not bound because elixir/lib/protocol.ex is absent from approved source authority.",
+      enforcement_dependency:
+        if(lane == "core", do: {Mix.Compilers.Protocol, :compile, 4}, else: nil),
+      verdict: :undetermined_source_authority,
+      disposition: :open,
+      retained_exclusion: :undetermined,
+      removal_witness: [],
+      limitations: [
+        "The approved source archive does not bind the Mix.Compilers.Elixir.maybe_consolidate/4 caller.",
+        "The approved source archive does not bind elixir/lib/protocol.ex, so Protocol delegate semantics remain unverified.",
+        "The floor absence claim is based on exact Mix BEAM and export inventories, not missing source text."
+      ]
+    }
+  end
+
+  defp assert_cn001_record!(record, graph, evidence, ledger) do
+    expected = cn001_record!(graph, evidence, ledger)
+    assert record == expected
+    assert record.matched_mfas == Map.fetch!(@cn001_expected_matches_by_lane, evidence.lane.name)
+
+    if evidence.lane.name == "floor" do
+      assert record.module_exports == []
+    else
+      assert "Elixir.Mix.Compilers.Protocol:compile/4" in record.module_exports
+    end
+
+    assert record.current_replacement_refs == ["source:CN:1"]
+    assert record.semantic_status == :cn001_source_authority_open
+    assert record.verdict == :undetermined_source_authority
+    assert record.disposition == :open
+    assert record.removal_witness == []
+
+    Enum.each(record.citations, fn {citation, expected_source} ->
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.text =~ expected_source, citation
+      assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
+    end)
+
+    assert record.source_gap_local_hash_accepted == false
+    :ok
+  end
+
+  defp cn001_source_authority_gaps!(evidence) do
+    Enum.map(@cn001_source_authority_gaps, fn {path, needed_for} ->
+      error =
+        assert_raise SweepEvidence.Error, fn ->
+          SweepEvidence.resolve!(evidence, path <> ":1")
+        end
+
+      assert error.reason == :missing_source
+      %{source_path: path, needed_for: needed_for, authority: :missing_from_approved_archive}
+    end)
+  end
+
+  defp cn001_citations!("core") do
+    [
+      {"mix/lib/mix/compilers/protocol.ex:14", "def umbrella(args, res) do"},
+      {"mix/lib/mix/compilers/protocol.ex:16", "OptionParser.parse(args"},
+      {"mix/lib/mix/compilers/protocol.ex:31", "old_protocols_and_impls} = read_manifest"},
+      {"mix/lib/mix/compilers/protocol.ex:46", "protocols_and_impls_from_paths(deps_paths)"},
+      {"mix/lib/mix/compilers/protocol.ex:48", "case compile(on_or_force == :force"},
+      {"mix/lib/mix/compilers/protocol.ex:107", "def compile(force?"},
+      {"mix/lib/mix/compilers/protocol.ex:116", "Protocol.extract_protocols()"},
+      {"mix/lib/mix/compilers/protocol.ex:117", "consolidate(paths, output, opts)"},
+      {"mix/lib/mix/compilers/protocol.ex:120", "diff_manifest("},
+      {"mix/lib/mix/compilers/protocol.ex:121",
+       "consolidate(consolidation_paths(), output, opts)"},
+      {"mix/lib/mix/compilers/protocol.ex:124", "Code.prepend_path(output)"},
+      {"mix/lib/mix/compilers/protocol.ex:162", "defp consolidate_each(protocol"},
+      {"mix/lib/mix/compilers/protocol.ex:163", "Protocol.extract_impls(protocol, paths)"},
+      {"mix/lib/mix/compilers/protocol.ex:166", "Protocol.consolidate(protocol, impls)"},
+      {"mix/lib/mix/compilers/protocol.ex:168", "File.write!(Path.join(output"},
+      {"elixir/lib/code.ex:448", "def prepend_path(path, opts"},
+      {"elixir/lib/code.ex:449", "apply(:code, :add_patha,"}
+    ]
+  end
+
+  defp cn001_citations!("floor"), do: []
+
+  defp cn002_record!(graph, evidence, ledger) do
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-002"))
+    assert row != nil, "original CN-002 identity is missing"
+
+    assert graph.lane == evidence.lane,
+           "CN-002 graph and source evidence lanes differ"
+
+    [original_matcher, original_reason, original_citations] =
+      source_tuple_parts!(row.original_entry_raw)
+
+    assert original_matcher == "{Phoenix.Digester, [:compile]}"
+    assert original_reason == ":not_compile_module"
+    assert original_citations =~ "phoenix/lib/phoenix/digester.ex:20"
+    assert row.original_matcher_raw == original_matcher
+    assert row.original_reason_raw == original_reason
+    assert row.original_citations_raw == original_citations
+    assert row.current_replacement_refs == ["source:CN:2"]
+    assert row.semantic_status == :cn002_retained
+    assert row.owner == "01.1.1.6"
+
+    {{Phoenix.Digester, [:compile]}, :not_compile_module, _current_citations} =
+      Enum.at(@call_name_exclusions, 1)
+
+    lane = evidence.lane.name
+
+    matched_mfas =
+      graph.full_exported
+      |> Enum.filter(&call_name_exclusion_match?({Phoenix.Digester, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} ->
+        function in [:module_info, :__info__]
+      end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+
+    assert matched_strings == Map.fetch!(@cn002_expected_matches_by_lane, lane),
+           "CN-002/#{lane} live full-export matches changed: #{inspect(matched_strings)}"
+
+    assert length(matched_strings) == MapSet.size(MapSet.new(matched_strings)),
+           "CN-002/#{lane} full export contains duplicate matches"
+
+    callers =
+      graph.full_reverse
+      |> Map.get({Phoenix.Digester, :compile}, [])
+      |> Enum.uniq()
+      |> Enum.sort_by(&mfa_string!/1)
+
+    assert callers == [{Mix.Tasks.Phx.Digest, :run, 1}],
+           "CN-002/#{lane} direct caller set changed: #{inspect(callers)}"
+
+    citations = cn002_citations!(lane)
+
+    resolved =
+      Enum.map(citations, fn {citation, expected_source} ->
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.text =~ expected_source, citation
+        {citation, source}
+      end)
+
+    removal_witness = cn002_removal_witness!(graph, matched_mfas)
+    overlap_mfas = cn002_overlaps!(matched_mfas)
+
+    assert removal_witness != [], "CN-002/#{lane} retained row has no removal consequence"
+    assert overlap_mfas == [], "CN-002/#{lane} overlaps another retained exclusion"
+
+    %{
+      original_id: row.id,
+      original_entry_raw: row.original_entry_raw,
+      original_matcher_raw: row.original_matcher_raw,
+      original_reason_raw: row.original_reason_raw,
+      original_citations_raw: row.original_citations_raw,
+      current_replacement_refs: row.current_replacement_refs,
+      semantic_status: row.semantic_status,
+      semantic_owner: row.owner,
+      lane: lane,
+      elixir: evidence.lane.elixir,
+      otp: evidence.lane.otp,
+      matched_mfas: matched_strings,
+      mfa_citations: Map.new(matched_strings, &{&1, ["phoenix/lib/phoenix/digester.ex:20"]}),
+      direct_callers: Enum.map(callers, &mfa_string!/1),
+      caller_input_trace:
+        "Mix.Tasks.Phx.Digest.run/1 receives all_args; unless --no-compile is present it separately runs the host Mix compile task, parses positional input and output/version options, then passes those values to Phoenix.Digester.compile/3.",
+      delegate_trace: [
+        "Mix.Tasks.Phx.Digest.run/1 -> Phoenix.Digester.compile/3",
+        "Phoenix.Digester.compile/3 -> filesystem checks, static-file traversal, digest generation, JSON manifest decoding, and manifest writes",
+        "write_to_disk/2 -> configured static_compressors -> compressor.compress_file/2"
+      ],
+      verdict:
+        "Asset digest and compression API, not a BEAM or module compiler. Retain CN-002 to account for the compile-name collision; its default Mix caller's project compile step is a separate caller action.",
+      citations: citations,
+      source_sha256s:
+        resolved
+        |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
+        |> Map.new(),
+      removal_witness: Enum.map(removal_witness, &mfa_string!/1),
+      overlap_mfas: Enum.map(overlap_mfas, &mfa_string!/1),
+      retained_exclusion: true,
+      applicability: :each_exact_installed_lane,
+      limitations: [
+        "Caller-selected file paths and configured JSON/compressor implementations are not evaluated as safe by this row disposition.",
+        "This contract does not claim runtime atom-count, never-eval, or general file-system safety."
+      ]
+    }
+  end
+
+  defp assert_cn002_record!(record, graph, evidence, ledger) do
+    expected = cn002_record!(graph, evidence, ledger)
+    assert record == expected
+    assert record.matched_mfas == Map.fetch!(@cn002_expected_matches_by_lane, evidence.lane.name)
+    assert record.removal_witness != []
+    assert record.overlap_mfas == []
+
+    Enum.each(record.citations, fn {citation, expected_source} ->
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.text =~ expected_source, citation
+      assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
+    end)
+
+    Enum.each(record.mfa_citations, fn {_mfa, citations} ->
+      assert citations != []
+
+      assert Enum.all?(
+               citations,
+               &Enum.any?(record.citations, fn {citation, _} -> citation == &1 end)
+             )
+    end)
+
+    :ok
+  end
+
+  defp cn003_record!(graph, evidence, ledger) do
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-003"))
+    assert row != nil, "original CN-003 identity is missing"
+    assert graph.lane == evidence.lane, "CN-003 graph and source evidence lanes differ"
+
+    [original_matcher, original_reason, original_citations] =
+      source_tuple_parts!(row.original_entry_raw)
+
+    assert original_matcher == "{Phoenix.LiveView.ColocatedAssets, [:compile]}"
+    assert original_reason == ":not_compile_module"
+    assert original_citations =~ "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:48"
+    assert row.original_matcher_raw == original_matcher
+    assert row.original_reason_raw == original_reason
+    assert row.original_citations_raw == original_citations
+    assert row.current_replacement_refs == ["source:CN:3"]
+    assert row.semantic_status == :cn003_retained
+    assert row.owner == "01.1.1.6"
+
+    {{Phoenix.LiveView.ColocatedAssets, [:compile]}, :not_compile_module, _current_citations} =
+      Enum.at(@call_name_exclusions, 2)
+
+    lane = evidence.lane.name
+    live_view_ebin = :code.lib_dir(:phoenix_live_view) |> to_string() |> Path.join("ebin")
+
+    inventory_module_exports =
+      InstalledOtp.export_inventory!([live_view_ebin], lane: lane)
+      |> Enum.filter(fn {module, _function, _arity} ->
+        module == Phoenix.LiveView.ColocatedAssets
+      end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    graph_module_exports =
+      graph.full_exported
+      |> Enum.filter(fn {module, _function, _arity} ->
+        module == Phoenix.LiveView.ColocatedAssets
+      end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    assert graph_module_exports == inventory_module_exports,
+           "CN-003/#{lane} graph exports differ from the exact installed LiveView inventory"
+
+    matched_mfas =
+      graph_module_exports
+      |> Enum.filter(
+        &call_name_exclusion_match?({Phoenix.LiveView.ColocatedAssets, [:compile]}, &1)
+      )
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+
+    assert matched_strings != [], "CN-003/#{lane} has no live full-export match"
+
+    callers =
+      graph.full_reverse
+      |> Map.get({Phoenix.LiveView.ColocatedAssets, :compile}, [])
+      |> Enum.uniq()
+      |> Enum.sort_by(&mfa_string!/1)
+
+    caller_strings = Enum.map(callers, &mfa_string!/1)
+
+    assert caller_strings == Map.fetch!(@cn003_expected_direct_callers_by_lane, lane),
+           "CN-003/#{lane} direct caller set changed: #{inspect(caller_strings)}"
+
+    front = {Phoenix.LiveView.ColocatedAssets, :compile, 0}
+    assert front in BannedCalls.banned_mfas(), "CN-003/#{lane} exact guard front disappeared"
+
+    citations = cn003_citations!(lane)
+
+    resolved =
+      Enum.map(citations, fn {citation, expected_source} ->
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.text =~ expected_source, citation
+        {citation, source}
+      end)
+
+    source_authority_gaps = cn003_source_authority_gaps!(evidence)
+    removal_witness = cn003_removal_witness!(graph, matched_mfas)
+    overlap_mfas = cn003_overlaps!(matched_mfas)
+
+    assert removal_witness != [], "CN-003/#{lane} retained row has no tier-removal consequence"
+    assert overlap_mfas == [], "CN-003/#{lane} overlaps another retained exclusion"
+
+    %{
+      original_id: row.id,
+      original_entry_raw: row.original_entry_raw,
+      original_matcher_raw: row.original_matcher_raw,
+      original_reason_raw: row.original_reason_raw,
+      original_citations_raw: row.original_citations_raw,
+      current_replacement_refs: row.current_replacement_refs,
+      semantic_status: row.semantic_status,
+      semantic_owner: row.owner,
+      lane: lane,
+      elixir: evidence.lane.elixir,
+      otp: evidence.lane.otp,
+      module_exports: Enum.map(graph_module_exports, &mfa_string!/1),
+      matched_mfas: matched_strings,
+      mfa_dispositions: Map.new(matched_strings, &{&1, :cn003_retained}),
+      mfa_citations:
+        Map.new(
+          matched_strings,
+          &{&1, ["phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:48"]}
+        ),
+      direct_callers: caller_strings,
+      caller_input_trace:
+        "The exact full graph reports Mix.Tasks.Compile.PhoenixLiveView.compile/0 as the only direct caller in each lane. compile/0 has no caller-supplied arguments; the module lookup root comes from :phoenix_live_view Application configuration, Mix.Project.config()[:app], and Mix.Project.build_path(). The approved source doc says the LiveView compiler invokes compile/0, but the caller task source file is not present in the approved archive.",
+      delegate_trace: [
+        "Phoenix.LiveView.ColocatedAssets.extract/5 writes transformed component data under target_dir()/inspect(module).",
+        "compile/0 enumerates target subdirectories, takes each Path.basename/1, and calls Module.concat/1 to derive a module name.",
+        "process_module/2 requires Code.ensure_loaded?/1 and delegates metadata discovery to Phoenix.Component.MacroComponent.get_data/1.",
+        "get_data/1 calls __phoenix_macro_components__/0 only when the discovered module exports it; compile/0 then uses that metadata to clean outdated files and write callback manifests."
+      ],
+      verdict:
+        "Build-time colocated-asset manifest processing, not module compilation. Retain CN-003 to document the compile-name collision and the directory-basename module lookup; the exact guard front remains an independent enforcement dependency.",
+      citations: citations,
+      source_sha256s:
+        resolved
+        |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
+        |> Map.new(),
+      source_authority_gaps: source_authority_gaps,
+      removal_witness: Enum.map(removal_witness, &mfa_string!/1),
+      overlap_mfas: Enum.map(overlap_mfas, &mfa_string!/1),
+      retained_exclusion: true,
+      applicability: :each_exact_installed_lane,
+      limitations: [
+        "The approved source archive omits the direct Mix compiler task source, so its exact call-site body is not asserted; the full graph still proves the complete direct-caller set.",
+        "Application and Mix configuration values and target-directory contents are not evaluated by this static trace.",
+        "This contract does not claim runtime atom-count, path-safety, or general file-system safety."
+      ]
+    }
+  end
+
+  defp assert_cn003_record!(record, graph, evidence, ledger) do
+    expected = cn003_record!(graph, evidence, ledger)
+    citation_keys = MapSet.new(Enum.map(record.citations, &elem(&1, 0)))
+    assert record == expected
+    assert record.matched_mfas != []
+    assert record.removal_witness != []
+    assert record.overlap_mfas == []
+    assert record.retained_exclusion
+
+    Enum.each(record.citations, fn {citation, expected_source} ->
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.text =~ expected_source, citation
+      assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
+    end)
+
+    Enum.each(record.mfa_citations, fn {_mfa, citations} ->
+      assert citations != []
+
+      Enum.each(citations, fn citation ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
+    end)
+
+    :ok
+  end
+
+  defp cn003_citations!("core") do
+    [
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:24", "The flow is:"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:29",
+       "LiveView compiler invokes ColocatedAssets.compile/0."},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:35",
+       "def extract(callback_module, module, filename, text, data) do"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:39",
+       "|> Path.join(inspect(module))"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:48", "def compile do"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:89",
+       "modules = subdirectories(target_dir)"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:93",
+       "module = Module.concat([Path.basename(module_folder)])"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:100",
+       "with true <- Code.ensure_loaded?(module),"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:101",
+       "data when data != %{} <- Phoenix.Component.MacroComponent.get_data(module),"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:217", "Application.get_env("},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:234", "defp target_dir do"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:235",
+       "app = to_string(Mix.Project.config()[:app])"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:236",
+       "default = Path.join(Mix.Project.build_path(), \"phoenix-colocated\")"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:239",
+       "|> Keyword.get(:target_directory, default)"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:243",
+       "defp subdirectories(path) do"},
+      {"phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex:244",
+       "Path.wildcard(Path.join(path, \"*\")) |> Enum.filter(&File.dir?(&1))"},
+      {"phoenix_live_view/lib/phoenix_component/macro_component.ex:203",
+       "@spec get_data(module()) :: map()"},
+      {"phoenix_live_view/lib/phoenix_component/macro_component.ex:205",
+       "if Code.ensure_loaded?(component_module) and"},
+      {"phoenix_live_view/lib/phoenix_component/macro_component.ex:206",
+       "function_exported?(component_module, :__phoenix_macro_components__, 0) do"},
+      {"phoenix_live_view/lib/phoenix_component/macro_component.ex:207",
+       "component_module.__phoenix_macro_components__()"}
+    ]
+  end
+
+  defp cn003_citations!("floor") do
+    Enum.map(cn003_citations!("core"), fn {citation, expected} ->
+      citation =
+        citation
+        |> String.replace("colocated_assets.ex:217", "colocated_assets.ex:190")
+        |> String.replace("colocated_assets.ex:234", "colocated_assets.ex:207")
+        |> String.replace("colocated_assets.ex:235", "colocated_assets.ex:208")
+        |> String.replace("colocated_assets.ex:236", "colocated_assets.ex:209")
+        |> String.replace("colocated_assets.ex:239", "colocated_assets.ex:212")
+        |> String.replace("colocated_assets.ex:243", "colocated_assets.ex:216")
+        |> String.replace("colocated_assets.ex:244", "colocated_assets.ex:217")
+
+      {citation, expected}
+    end)
+  end
+
+  defp cn003_source_authority_gaps!(evidence) do
+    path = "phoenix_live_view/lib/mix/tasks/compile/phoenix_live_view.ex"
+
+    error =
+      assert_raise SweepEvidence.Error, fn ->
+        SweepEvidence.resolve!(evidence, path <> ":1")
+      end
+
+    assert error.reason == :missing_source
+
+    [
+      %{
+        source_path: path,
+        needed_for: "direct caller Mix.Tasks.Compile.PhoenixLiveView.compile/0 call-site body",
+        authority: :missing_from_approved_archive
+      }
+    ]
+  end
+
+  defp cn003_removal_witness!(graph, matched_mfas) do
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    exact_front = {Phoenix.LiveView.ColocatedAssets, :compile, 0}
+    assert exact_front in tier
+    tier_without_front = List.delete(tier, exact_front)
+    whole_modules = for {module, :_, :_} <- tier_without_front, do: module
+    cn003_entry = Enum.at(@call_name_exclusions, 2)
+    other_rows = Enum.reject(@call_name_exclusions, &(&1 == cn003_entry))
+
+    uncovered =
+      graph.full_exported
+      |> Enum.filter(&banned_module_named?(&1, whole_modules))
+      |> Enum.reject(fn {module, function, arity} ->
+        function in [:module_info, :__info__] or
+          String.starts_with?(Atom.to_string(function), "MACRO-") or
+          covered?({module, function, arity}, tier_without_front, names)
+      end)
+
+    Enum.filter(uncovered, fn mfa ->
+      mfa in matched_mfas and
+        call_name_exclusion_match?({Phoenix.LiveView.ColocatedAssets, [:compile]}, mfa) and
+        not Enum.any?(other_rows, fn {other_matcher, _reason, _citations} ->
+          call_name_exclusion_match?(other_matcher, mfa)
+        end)
+    end)
+  end
+
+  defp cn003_overlaps!(matched_mfas) do
+    other_call_name_rows =
+      Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 2)))
+
+    Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
+      exclusion_reason(module, function, @exclusions) != nil or
+        Enum.any?(other_call_name_rows, fn {matcher, _reason, _citations} ->
+          call_name_exclusion_match?(matcher, mfa)
+        end) or
+        Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
+    end)
+  end
+
+  defp cn004_record!(graph, evidence, ledger) do
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-004"))
+    assert row != nil, "original CN-004 identity is missing"
+    assert graph.lane == evidence.lane, "CN-004 graph and source evidence lanes differ"
+
+    [original_matcher, original_reason, original_citations] =
+      source_tuple_parts!(row.original_entry_raw)
+
+    assert original_matcher == "{Plug.Builder, [:compile]}"
+    assert original_reason == ":not_compile_module"
+    assert original_citations =~ "plug/lib/plug/builder.ex:324"
+    assert row.original_matcher_raw == original_matcher
+    assert row.original_reason_raw == original_reason
+    assert row.original_citations_raw == original_citations
+    assert row.current_replacement_refs == ["source:CN:4"]
+    assert row.semantic_status == :cn004_source_authority_open
+    assert row.owner == "01.1.1.6"
+
+    {{Plug.Builder, [:compile]}, :not_compile_module, _current_citations} =
+      Enum.at(@call_name_exclusions, 3)
+
+    lane = evidence.lane.name
+    plug_ebin = :code.lib_dir(:plug) |> to_string() |> Path.join("ebin")
+
+    inventory_module_exports =
+      InstalledOtp.export_inventory!([plug_ebin], lane: lane)
+      |> Enum.filter(fn {module, _function, _arity} -> module == Plug.Builder end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    graph_module_exports =
+      graph.full_exported
+      |> Enum.filter(fn {module, _function, _arity} -> module == Plug.Builder end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    assert graph_module_exports == inventory_module_exports,
+           "CN-004/#{lane} graph exports differ from the exact installed Plug inventory"
+
+    matched_mfas =
+      graph_module_exports
+      |> Enum.filter(&call_name_exclusion_match?({Plug.Builder, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+    assert matched_strings != [], "CN-004/#{lane} has no live full-export match"
+
+    callers =
+      graph.full_reverse
+      |> Map.get({Plug.Builder, :compile}, [])
+      |> Enum.uniq()
+      |> Enum.sort_by(&mfa_string!/1)
+
+    caller_strings = Enum.map(callers, &mfa_string!/1)
+
+    assert caller_strings == Map.fetch!(@cn004_expected_direct_callers_by_lane, lane),
+           "CN-004/#{lane} direct caller set changed: #{inspect(caller_strings)}"
+
+    project_callers = Enum.filter(caller_strings, &String.starts_with?(&1, "Elixir.Fablebook."))
+    assert project_callers == [], "CN-004/#{lane} has a direct project lib/ caller"
+
+    assert {String, :to_atom, 1} in BannedCalls.banned_mfas(),
+           "CN-004/#{lane} lost its independent String.to_atom/1 guard dependency"
+
+    citations = cn004_citations!(lane)
+
+    resolved =
+      Enum.map(citations, fn {citation, expected_source} ->
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.text =~ expected_source, citation
+        {citation, source}
+      end)
+
+    source_authority_gaps = cn004_source_authority_gaps!(evidence)
+    overlap_mfas = cn004_overlaps!(matched_mfas)
+
+    %{
+      original_id: row.id,
+      original_entry_raw: row.original_entry_raw,
+      original_matcher_raw: row.original_matcher_raw,
+      original_reason_raw: row.original_reason_raw,
+      original_citations_raw: row.original_citations_raw,
+      current_replacement_refs: row.current_replacement_refs,
+      semantic_status: row.semantic_status,
+      semantic_owner: row.owner,
+      lane: lane,
+      elixir: evidence.lane.elixir,
+      otp: evidence.lane.otp,
+      module_exports: Enum.map(graph_module_exports, &mfa_string!/1),
+      matched_mfas: matched_strings,
+      mfa_dispositions: Map.new(matched_strings, &{&1, :undetermined_caller_source_authority}),
+      mfa_citations:
+        Map.new(matched_strings, fn mfa ->
+          {mfa,
+           [
+             "plug/lib/plug/builder.ex:324",
+             "plug/lib/plug/builder.ex:326",
+             "plug/lib/plug/builder.ex:337",
+             "plug/lib/plug/builder.ex:358",
+             "plug/lib/plug/builder.ex:367",
+             "plug/lib/plug/builder.ex:382",
+             "plug/lib/plug/builder.ex:384"
+           ]}
+        end),
+      direct_callers: caller_strings,
+      caller_citations: cn004_caller_citations!(),
+      caller_input_trace:
+        "The exact full graph has three direct callers in both lanes. Plug.Builder.__before_compile__/1 passes its accumulated @plugs and @plug_builder_opts attributes. Phoenix.Controller.Pipeline.__before_compile__/1 passes an action plug plus its @plugs and obtains init_mode from Phoenix.plug_init_mode/0. Phoenix.Router.build_pipes/2 is also a direct caller, but its source and Phoenix.plug_init_mode/0 implementation are absent from the approved archive. The router call-site input trace therefore remains incomplete.",
+      mode_branches: [
+        %{
+          mode: :compile,
+          module_init: :executes_plug_init_with_caller_opts,
+          module_name_path: [:module_split, :string_to_atom, :alias_ast, :macro_expand],
+          function_plug: :escapes_caller_opts
+        },
+        %{
+          mode: :runtime,
+          module_init: :quotes_plug_init_with_caller_opts,
+          module_name_path: :no_compile_mode_alias_expansion,
+          function_plug: :escapes_caller_opts
+        }
+      ],
+      delegate_trace: [
+        "compile/3 classifies a plug module by its existing module atom, then dispatches module plugs through init_module_plug/4 and function plugs through init_fun_plug/3.",
+        "The :compile module branch invokes plug.init(opts) immediately and requires the plug to export call/2; the :runtime branch emits a quoted plug.init(opts) call.",
+        "The compile-mode module path splits the plug atom, converts its name segments with String.to_atom/1, builds an alias AST, and calls Macro.expand/2 on that alias.",
+        "Plug.Builder's plug/2 macro expands alias ASTs and stores each plug/options/guard tuple in @plugs. Plug.init/2 and caller-supplied option behavior remain dynamic delegates outside this source record."
+      ],
+      verdict: :undetermined_caller_source_authority,
+      verdict_explanation:
+        "The source shows a real compile-time pipeline builder with an immediate plug.init(opts) branch and a compile-mode String.to_atom/1/Macro.expand/2 path. The historical :not_compile_module label does not decide this row. Keep CN-004 open because the direct Phoenix.Router caller and Phoenix.plug_init_mode/0 configuration source are not bound by the approved archive; Phase 01.1.1.4 also owns the overlapping blanket :expansion judgment.",
+      disposition: :open,
+      retained_exclusion: :undetermined,
+      citations: citations,
+      source_sha256s:
+        resolved
+        |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
+        |> Map.new(),
+      source_authority_gaps: source_authority_gaps,
+      removal_witness: [],
+      overlap_mfas: Enum.map(overlap_mfas, &mfa_string!/1),
+      project_lib_callers: project_callers,
+      applicability: :each_exact_installed_lane,
+      limitations: [
+        "The approved source archive omits phoenix/lib/phoenix/router.ex, which contains the direct Phoenix.Router.build_pipes/2 call site.",
+        "The approved source archive omits phoenix/lib/phoenix.ex, which contains Phoenix.plug_init_mode/0 and its configuration lookup.",
+        "The separate project-authored Macro caller-AST and blanket :expansion judgment remains assigned to Phase 01.1.1.4.",
+        "This static record makes no runtime atom-count, plugin callback, or general safety claim."
+      ]
+    }
+  end
+
+  defp assert_cn004_record!(record, graph, evidence, ledger) do
+    expected = cn004_record!(graph, evidence, ledger)
+    citation_keys = MapSet.new(Enum.map(record.citations, &elem(&1, 0)))
+    assert record == expected
+    assert record.matched_mfas != []
+
+    assert record.direct_callers ==
+             Map.fetch!(@cn004_expected_direct_callers_by_lane, evidence.lane.name)
+
+    assert record.mode_branches |> Enum.map(& &1.mode) == [:compile, :runtime]
+    assert record.source_authority_gaps != []
+    assert record.disposition == :open
+    assert record.retained_exclusion == :undetermined
+    assert record.removal_witness == []
+    assert record.overlap_mfas == ["Elixir.Plug.Builder:compile/3"]
+    assert record.project_lib_callers == []
+
+    Enum.each(record.citations, fn {citation, expected_source} ->
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.text =~ expected_source, citation
+      assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
+    end)
+
+    Enum.each(record.mfa_citations, fn {_mfa, citations} ->
+      assert citations != []
+
+      Enum.each(citations, fn citation ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
+    end)
+
+    Enum.each(record.caller_citations, fn {_caller, citations} ->
+      Enum.each(citations, fn citation ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
+    end)
+
+    :ok
+  end
+
+  defp cn004_citations!(_lane) do
+    [
+      {"plug/lib/plug/builder.ex:148", "defmacro __using__(opts) do"},
+      {"plug/lib/plug/builder.ex:166",
+       "Module.register_attribute(__MODULE__, :plugs, accumulate: true)"},
+      {"plug/lib/plug/builder.ex:167", "@before_compile Plug.Builder"},
+      {"plug/lib/plug/builder.ex:172", "defmacro __before_compile__(env) do"},
+      {"plug/lib/plug/builder.ex:173", "plugs = Module.get_attribute(env.module, :plugs)"},
+      {"plug/lib/plug/builder.ex:176", "if builder_ref = get_plug_builder_ref(env.module) do"},
+      {"plug/lib/plug/builder.ex:177", "traverse(plugs, builder_ref)"},
+      {"plug/lib/plug/builder.ex:182",
+       "builder_opts = Module.get_attribute(env.module, :plug_builder_opts)"},
+      {"plug/lib/plug/builder.ex:183",
+       "{conn, body} = Plug.Builder.compile(env, plugs, builder_opts)"},
+      {"plug/lib/plug/builder.ex:249", "defmacro plug(plug, opts"},
+      {"plug/lib/plug/builder.ex:252", "plug = expand_alias(plug, __CALLER__)"},
+      {"plug/lib/plug/builder.ex:263", "quote do"},
+      {"plug/lib/plug/builder.ex:264", "@plugs {unquote(plug), unquote(opts), true}"},
+      {"plug/lib/plug/builder.ex:268", "defp expand_alias({:__aliases__, _, _} = alias, env),"},
+      {"plug/lib/plug/builder.ex:269", "do: Macro.expand(alias, %{env | function: {:init, 1}})"},
+      {"plug/lib/plug/builder.ex:324", "def compile(env, pipeline, builder_opts) do"},
+      {"plug/lib/plug/builder.ex:326", "init_mode = builder_opts[:init_mode] || :compile"},
+      {"plug/lib/plug/builder.ex:328", "unless init_mode in [:compile, :runtime] do"},
+      {"plug/lib/plug/builder.ex:337",
+       "Enum.reduce(pipeline, conn, fn {plug, opts, guards}, acc ->"},
+      {"plug/lib/plug/builder.ex:339", "|> init_plug(init_mode)"},
+      {"plug/lib/plug/builder.ex:340", "|> quote_plug(init_mode, acc, env, builder_opts)"},
+      {"plug/lib/plug/builder.ex:346",
+       "defp module_plug?(plug), do: match?(~c\"Elixir.\" ++ _, Atom.to_charlist(plug))"},
+      {"plug/lib/plug/builder.ex:357", "defp init_module_plug(plug, opts, guards, :compile) do"},
+      {"plug/lib/plug/builder.ex:358", "initialized_opts = plug.init(opts)"},
+      {"plug/lib/plug/builder.ex:360", "if function_exported?(plug, :call, 2) do"},
+      {"plug/lib/plug/builder.ex:367", "defp init_module_plug(plug, opts, guards, :runtime) do"},
+      {"plug/lib/plug/builder.ex:368",
+       "{:module, plug, quote(do: unquote(plug).init(unquote(escape(opts)))), guards}"},
+      {"plug/lib/plug/builder.ex:371", "defp init_fun_plug(plug, opts, guards) do"},
+      {"plug/lib/plug/builder.ex:372", "{:function, plug, escape(opts), guards}"},
+      {"plug/lib/plug/builder.ex:382",
+       "parts = [:\"Elixir\" | Enum.map(Module.split(plug), &String.to_atom/1)]"},
+      {"plug/lib/plug/builder.ex:383", "alias = {:__aliases__, [line: env.line], parts}"},
+      {"plug/lib/plug/builder.ex:384", "_ = Macro.expand(alias, env)"},
+      {"phoenix/lib/phoenix/controller/pipeline.ex:75", "defmacro __before_compile__(env) do"},
+      {"phoenix/lib/phoenix/controller/pipeline.ex:77",
+       "plugs = [action | Module.get_attribute(env.module, :plugs)]"},
+      {"phoenix/lib/phoenix/controller/pipeline.ex:80", "Plug.Builder.compile(env, plugs,"},
+      {"phoenix/lib/phoenix/controller/pipeline.ex:82", "init_mode: Phoenix.plug_init_mode()"}
+    ]
+  end
+
+  defp cn004_caller_citations! do
+    %{
+      "Elixir.Plug.Builder:MACRO-__before_compile__/2" => [
+        "plug/lib/plug/builder.ex:172",
+        "plug/lib/plug/builder.ex:173",
+        "plug/lib/plug/builder.ex:182",
+        "plug/lib/plug/builder.ex:183"
+      ],
+      "Elixir.Phoenix.Controller.Pipeline:MACRO-__before_compile__/2" => [
+        "phoenix/lib/phoenix/controller/pipeline.ex:75",
+        "phoenix/lib/phoenix/controller/pipeline.ex:77",
+        "phoenix/lib/phoenix/controller/pipeline.ex:80",
+        "phoenix/lib/phoenix/controller/pipeline.ex:82"
+      ],
+      "Elixir.Phoenix.Router:build_pipes/2" => []
+    }
+  end
+
+  defp cn004_source_authority_gaps!(evidence) do
+    [
+      {
+        "phoenix/lib/phoenix/router.ex",
+        "direct caller Phoenix.Router.build_pipes/2 input construction"
+      },
+      {
+        "phoenix/lib/phoenix.ex",
+        "Phoenix.plug_init_mode/0 configuration source"
+      }
+    ]
+    |> Enum.map(fn {path, needed_for} ->
+      error =
+        assert_raise SweepEvidence.Error, fn ->
+          SweepEvidence.resolve!(evidence, path <> ":1")
+        end
+
+      assert error.reason == :missing_source
+      %{source_path: path, needed_for: needed_for, authority: :missing_from_approved_archive}
+    end)
+  end
+
+  defp cn004_overlaps!(matched_mfas) do
+    other_call_name_rows =
+      Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 3)))
+
+    Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
+      exclusion_reason(module, function, @exclusions) != nil or
+        Enum.any?(other_call_name_rows, fn {matcher, _reason, _citations} ->
+          call_name_exclusion_match?(matcher, mfa)
+        end) or
+        Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
+    end)
+  end
+
+  defp cn006_record!(graph, evidence, ledger) do
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-006"))
+    assert row != nil, "original CN-006 identity is missing"
+    assert graph.lane == evidence.lane, "CN-006 graph and source evidence lanes differ"
+
+    [original_matcher, original_reason, original_citations] =
+      source_tuple_parts!(row.original_entry_raw)
+
+    assert original_matcher == "{:re, [:compile]}"
+    assert original_reason == ":not_compile_module"
+
+    assert original_citations =~ "stdlib/src/re.erl:128" or
+             original_citations =~ "stdlib/src/re.erl:86"
+
+    assert row.original_matcher_raw == original_matcher
+    assert row.original_reason_raw == original_reason
+    assert row.original_citations_raw == original_citations
+    assert row.current_replacement_refs == ["source:CN:6"]
+    assert row.semantic_status == :cn006_retained
+    assert row.owner == "01.1.1.6"
+
+    {{:re, [:compile]}, :not_compile_module, _current_citations} =
+      Enum.find(@call_name_exclusions, fn {matcher, _reason, _citations} ->
+        matcher == {:re, [:compile]}
+      end)
+
+    lane = evidence.lane.name
+    stdlib_ebin = :code.lib_dir(:stdlib) |> to_string() |> Path.join("ebin")
+
+    inventory_module_exports =
+      InstalledOtp.export_inventory!([stdlib_ebin], lane: lane)
+      |> Enum.filter(fn {module, _function, _arity} -> module == :re end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    graph_module_exports =
+      graph.full_exported
+      |> Enum.filter(fn {module, _function, _arity} -> module == :re end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    assert graph_module_exports == inventory_module_exports,
+           "CN-006/#{lane} graph exports differ from the exact installed stdlib inventory"
+
+    matched_mfas =
+      graph_module_exports
+      |> Enum.filter(&call_name_exclusion_match?({:re, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+
+    assert matched_strings == Map.fetch!(@cn006_expected_matches_by_lane, lane),
+           "CN-006/#{lane} complete match set changed: #{inspect(matched_strings)}"
+
+    callers =
+      graph.full_reverse
+      |> Map.get({:re, :compile}, [])
+      |> Enum.uniq()
+      |> Enum.sort_by(&mfa_string!/1)
+
+    caller_strings = Enum.map(callers, &mfa_string!/1)
+    assert caller_strings != [], "CN-006/#{lane} has no exact full-graph caller evidence"
+
+    project_callers = Enum.filter(caller_strings, &String.starts_with?(&1, "Elixir.Fablebook."))
+    assert project_callers == [], "CN-006/#{lane} has a direct project lib/ caller"
+
+    citations = cn006_citations!(lane)
+
+    resolved =
+      Enum.map(citations, fn {citation, expected_source} ->
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.text =~ expected_source, citation
+        {citation, source}
+      end)
+
+    removal_witness = cn006_removal_witness!(matched_mfas)
+    overlap_mfas = cn006_overlaps!(matched_mfas)
+
+    assert removal_witness == matched_mfas,
+           "CN-006/#{lane} retained arities lack individual row-removal witnesses"
+
+    assert overlap_mfas == [], "CN-006/#{lane} overlaps another exclusion"
+
+    arity_traces = %{
+      "re:compile/1" => %{
+        source_contract: :caller_supplied_iodata_pattern,
+        options: :defaults_to_compile_2_with_empty_options,
+        delegate: :native_regex_compiler_nif
+      },
+      "re:compile/2" => %{
+        source_contract: :caller_supplied_iodata_or_unicode_charlist_pattern,
+        options:
+          if(lane == "core", do: :compile_options_including_export, else: :otp_27_compile_options),
+        delegate: :native_regex_compiler_nif
+      }
+    }
+
+    %{
+      original_id: row.id,
+      original_entry_raw: row.original_entry_raw,
+      original_matcher_raw: row.original_matcher_raw,
+      original_reason_raw: row.original_reason_raw,
+      original_citations_raw: row.original_citations_raw,
+      current_replacement_refs: row.current_replacement_refs,
+      semantic_status: row.semantic_status,
+      semantic_owner: row.owner,
+      lane: lane,
+      elixir: evidence.lane.elixir,
+      otp: evidence.lane.otp,
+      module_exports: Enum.map(graph_module_exports, &mfa_string!/1),
+      matched_mfas: matched_strings,
+      mfa_dispositions: Map.new(matched_strings, &{&1, :retained_regex_data_native_boundary}),
+      mfa_citations: %{
+        "re:compile/1" => [
+          lane_citation!(lane, "stdlib/src/re.erl:123", "The same as"),
+          lane_citation!(lane, "stdlib/src/re.erl:124", "-spec compile(Regexp)"),
+          lane_citation!(lane, "stdlib/src/re.erl:128", "compile(_) ->"),
+          lane_citation!(lane, "stdlib/src/re.erl:129", "erlang:nif_error(undef).")
+        ],
+        "re:compile/2" => [
+          lane_citation!(lane, "stdlib/src/re.erl:132", "Compiles a regular expression"),
+          lane_citation!(lane, "stdlib/src/re.erl:133", "format to be used later as a parameter"),
+          lane_citation!(lane, "stdlib/src/re.erl:282", "-spec compile(Regexp, Options)"),
+          lane_citation!(lane, "stdlib/src/re.erl:284", "Options :: [Option]"),
+          lane_citation!(lane, "stdlib/src/re.erl:288", "compile(_, _) ->"),
+          lane_citation!(lane, "stdlib/src/re.erl:289", "erlang:nif_error(undef).")
+        ]
+      },
+      direct_callers: caller_strings,
+      direct_caller_count: length(caller_strings),
+      direct_callers_scope: :combined_compile_arities_in_full_reverse_graph,
+      caller_input_trace:
+        "The full graph records all direct callers of re:compile/1 and /2 together because its reverse map is keyed by module and function, not target arity. The exact lane source specs define the API inputs as caller-supplied Regexp data (iodata for /1; iodata or Unicode charlist for /2) and, for /2, a caller-supplied option list. The OTP API contract compiles that regex data to the internal format used by run/2 and run/3; these arguments are not module names or BEAM module source.",
+      arity_traces: arity_traces,
+      delegate_trace: [
+        "compile/1 is documented as compile/2 with an empty option list.",
+        "compile/1 and compile/2 are Erlang NIF stubs that call erlang:nif_error(undef) if their native implementation is unavailable.",
+        "The documented output is an internal regular-expression representation for later run/2 or run/3 matching; compile/2 supports the export option only on the core OTP lane (OTP 28.1 and later).",
+        "The visible Erlang source does not compile, load, or evaluate BEAM modules. The NIF implementation is outside this static source trace."
+      ],
+      verdict: :retained_regex_data_native_boundary,
+      verdict_explanation:
+        "Both original matches compile caller-supplied regular-expression data to an internal pattern through the OTP native regex boundary. The public contract and NIF stubs do not implement Elixir/Erlang module compilation or code loading. Retain the original row for that narrow reason; the hidden native implementation is not inspected, invoked, or used for a runtime atom-count or general safety conclusion.",
+      disposition: :retained_non_module_compile,
+      retained_exclusion: true,
+      citations: citations,
+      source_sha256s:
+        resolved
+        |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
+        |> Map.new(),
+      removal_witness: Enum.map(removal_witness, &mfa_string!/1),
+      overlap_mfas: Enum.map(overlap_mfas, &mfa_string!/1),
+      project_lib_callers: project_callers,
+      applicability: :each_exact_installed_lane,
+      limitations: [
+        "The reverse graph combines direct caller functions across both compile arities because target arity is not retained in its reverse-map key.",
+        "The native NIF implementation is not present in the Erlang source body and is not invoked or characterized here.",
+        "This static record makes no runtime atom-count, regex denial-of-service, or general safety claim."
+      ]
+    }
+  end
+
+  defp assert_cn006_record!(record, graph, evidence, ledger) do
+    expected = cn006_record!(graph, evidence, ledger)
+    citation_keys = MapSet.new(Enum.map(record.citations, &elem(&1, 0)))
+    assert record == expected
+    assert record.matched_mfas == Map.fetch!(@cn006_expected_matches_by_lane, evidence.lane.name)
+    assert record.removal_witness == record.matched_mfas
+    assert record.disposition == :retained_non_module_compile
+    assert record.retained_exclusion
+    assert record.overlap_mfas == []
+    assert record.project_lib_callers == []
+    assert record.direct_caller_count == length(record.direct_callers)
+    assert record.direct_callers_scope == :combined_compile_arities_in_full_reverse_graph
+    assert Map.keys(record.arity_traces) |> Enum.sort() == ["re:compile/1", "re:compile/2"]
+
+    Enum.each(record.citations, fn {citation, expected_source} ->
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.text =~ expected_source, citation
+      assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
+    end)
+
+    Enum.each(record.mfa_citations, fn {mfa, citations} ->
+      assert citations != []
+
+      Enum.each(citations, fn {citation, _expected_source} ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
+
+      assert Map.has_key?(record.mfa_dispositions, mfa)
+    end)
+
+    :ok
+  end
+
+  defp cn006_citations!("core") do
+    [
+      {"stdlib/src/re.erl:123", "The same as"},
+      {"stdlib/src/re.erl:124", "-spec compile(Regexp)"},
+      {"stdlib/src/re.erl:128", "compile(_) ->"},
+      {"stdlib/src/re.erl:129", "erlang:nif_error(undef)."},
+      {"stdlib/src/re.erl:132", "Compiles a regular expression"},
+      {"stdlib/src/re.erl:133", "format to be used later as a parameter"},
+      {"stdlib/src/re.erl:282", "-spec compile(Regexp, Options)"},
+      {"stdlib/src/re.erl:284", "Options :: [Option]"},
+      {"stdlib/src/re.erl:285", "Option :: compile_option() | export"},
+      {"stdlib/src/re.erl:280", "supported since OTP 28.1"},
+      {"stdlib/src/re.erl:288", "compile(_, _) ->"},
+      {"stdlib/src/re.erl:289", "erlang:nif_error(undef)."}
+    ]
+  end
+
+  defp cn006_citations!("floor") do
+    [
+      {"stdlib/src/re.erl:80", "The same as"},
+      {"stdlib/src/re.erl:81", "-spec compile(Regexp)"},
+      {"stdlib/src/re.erl:86", "compile(_) ->"},
+      {"stdlib/src/re.erl:87", "erlang:nif_error(undef)."},
+      {"stdlib/src/re.erl:90", "Compiles a regular expression"},
+      {"stdlib/src/re.erl:91", "format to be used later as a parameter"},
+      {"stdlib/src/re.erl:229", "-spec compile(Regexp, Options)"},
+      {"stdlib/src/re.erl:231", "Options :: [Option]"},
+      {"stdlib/src/re.erl:232", "Option :: compile_option()"},
+      {"stdlib/src/re.erl:236", "compile(_, _) ->"},
+      {"stdlib/src/re.erl:237", "erlang:nif_error(undef)."}
+    ]
+  end
+
+  defp cn006_removal_witness!(matched_mfas) do
+    matcher = {:re, [:compile]}
+
+    row =
+      Enum.find(@call_name_exclusions, fn {entry_matcher, _reason, _citations} ->
+        entry_matcher == matcher
+      end)
+
+    assert row != nil, "CN-006 row is absent from the active call-name exclusions"
+    other_rows = Enum.reject(@call_name_exclusions, &(&1 == row))
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+
+    Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
+      not covered?(mfa, tier, names) and
+        exact_mfa_exclusion_reason(mfa, @exclusions) == nil and
+        exclusion_reason(module, function, @exclusions) == nil and
+        not Enum.any?(other_rows, fn {other_matcher, _reason, _citations} ->
+          call_name_exclusion_match?(other_matcher, mfa)
+        end) and
+        not Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
+    end)
+  end
+
+  defp cn006_overlaps!(matched_mfas) do
+    other_call_name_rows =
+      Enum.reject(@call_name_exclusions, fn {matcher, _reason, _citations} ->
+        matcher == {:re, [:compile]}
+      end)
+
+    Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
+      exact_mfa_exclusion_reason(mfa, @exclusions) != nil or
+        exclusion_reason(module, function, @exclusions) != nil or
+        Enum.any?(other_call_name_rows, fn {matcher, _reason, _citations} ->
+          call_name_exclusion_match?(matcher, mfa)
+        end) or
+        Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
+    end)
+  end
+
+  defp lane_citation!("core", citation, expected), do: {citation, expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:123", expected),
+    do: {"stdlib/src/re.erl:80", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:124", expected),
+    do: {"stdlib/src/re.erl:81", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:128", expected),
+    do: {"stdlib/src/re.erl:86", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:129", expected),
+    do: {"stdlib/src/re.erl:87", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:132", expected),
+    do: {"stdlib/src/re.erl:90", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:133", expected),
+    do: {"stdlib/src/re.erl:91", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:282", expected),
+    do: {"stdlib/src/re.erl:229", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:284", expected),
+    do: {"stdlib/src/re.erl:231", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:285", _expected),
+    do: {"stdlib/src/re.erl:232", "Option :: compile_option()"}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:280", _expected),
+    do: {"stdlib/src/re.erl:232", "Option :: compile_option()"}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:288", expected),
+    do: {"stdlib/src/re.erl:236", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:289", expected),
+    do: {"stdlib/src/re.erl:237", expected}
+
+  defp cn002_removal_witness!(graph, matched_mfas) do
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    whole_modules = for {module, :_, :_} <- tier, do: module
+    cn002_entry = Enum.at(@call_name_exclusions, 1)
+    other_rows = Enum.reject(@call_name_exclusions, &(&1 == cn002_entry))
+
+    uncovered =
+      graph.full_exported
+      |> Enum.filter(&banned_module_named?(&1, whole_modules))
+      |> Enum.reject(fn {module, function, arity} ->
+        function in [:module_info, :__info__] or
+          String.starts_with?(Atom.to_string(function), "MACRO-") or
+          covered?({module, function, arity}, tier, names)
+      end)
+
+    Enum.filter(uncovered, fn mfa ->
+      mfa in matched_mfas and
+        call_name_exclusion_match?({Phoenix.Digester, [:compile]}, mfa) and
+        not Enum.any?(other_rows, fn {other_matcher, _reason, _citations} ->
+          call_name_exclusion_match?(other_matcher, mfa)
+        end)
+    end)
+  end
+
+  defp cn002_overlaps!(matched_mfas) do
+    other_call_name_rows =
+      Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 1)))
+
+    Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
+      exclusion_reason(module, function, @exclusions) != nil or
+        Enum.any?(other_call_name_rows, fn {matcher, _reason, _citations} ->
+          call_name_exclusion_match?(matcher, mfa)
+        end) or
+        Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
     end)
   end
 
@@ -10617,6 +12333,31 @@ defmodule Fablebook.Contract.TierSweepTest do
           {other_matcher, _reason, _citations} -> boundary_match?(other_matcher, mfa)
         end)
     end)
+  end
+
+  defp cn002_citations!(lane) when lane in ["core", "floor"] do
+    [
+      {"phoenix/lib/phoenix/digester.ex:16", "Digests and compresses the static files"},
+      {"phoenix/lib/phoenix/digester.ex:20",
+       "def compile(input_path, output_path, with_vsn?) do"},
+      {"phoenix/lib/phoenix/digester.ex:21", "if File.exists?(input_path) do"},
+      {"phoenix/lib/phoenix/digester.ex:93", "Phoenix.json_library().decode!()"},
+      {"phoenix/lib/phoenix/digester.ex:195",
+       "Application.fetch_env!(:phoenix, :static_compressors)"},
+      {"phoenix/lib/phoenix/digester.ex:201",
+       "compressor.compress_file(file.digested_filename, file.digested_content)"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:58", "def run(all_args) do"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:60", "if \"--no-compile\" not in all_args do"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:61", "Mix.Task.run(\"compile\", all_args)"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:68", "OptionParser.parse(all_args"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:69",
+       "input_path = List.first(args) || @default_input_path"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:70", "output_path = opts[:output] || input_path"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:71",
+       "with_vsn? = Keyword.merge(@default_opts, opts)[:vsn]"},
+      {"phoenix/lib/mix/tasks/phx.digest.ex:73",
+       "Phoenix.Digester.compile(input_path, output_path, with_vsn?)"}
+    ]
   end
 
   defp calibration_citations!(id, lane) do

@@ -1,0 +1,1279 @@
+{
+  "schema": "fablebook.call-name-planning-scope/1",
+  "phase": "01.1.1.6",
+  "date": "2026-11-03",
+  "source_archive_sha256": "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894",
+  "method": "Pinned Erlang beam_lib:chunks/2 reads exports without loading the audited modules; Python standard library hashes approved archive/source and records complete app ebin inventories. No audited API, compiler, project test or full sweep ran. This is planning evidence, not semantic disposition or full graph acceptance.",
+  "calibration": {
+    "factor": 0.5,
+    "confidence": "high",
+    "sample_count": 19,
+    "context_target": 100000,
+    "limits": "bytes/4 times factor is a sizing proxy only, not measured token use or review duration; active semantic review remains execution evidence."
+  },
+  "lanes": {
+    "core": {
+      "elixir": "1.20.4-otp-29",
+      "otp": "29.1.2",
+      "rows": [
+        {
+          "original_id": "CN-001",
+          "module": "Elixir.Mix.Compilers.Protocol",
+          "beam_dir": "/private/tmp/fablebook-asdf/installs/elixir/1.20.4-otp-29/lib/mix/ebin",
+          "beam_inventory_sha256": "0fdb80a82bea80a4c11cb0248218fa8ea643dc4fed198e2efa8731f410d7f48a",
+          "beam_inventory_count": 102,
+          "beam_path": "/private/tmp/fablebook-asdf/installs/elixir/1.20.4-otp-29/lib/mix/ebin/Elixir.Mix.Compilers.Protocol.beam",
+          "beam_sha256": "a62f898a55b91155e49f1d294ed55ae11804e556a7f32aeb78f2a0ca34dde9e8",
+          "exports": [
+            "__info__/1",
+            "clean/0",
+            "compile/4",
+            "module_info/0",
+            "module_info/1",
+            "status/2",
+            "umbrella/2"
+          ],
+          "matches": [
+            "Elixir.Mix.Compilers.Protocol:compile/4"
+          ],
+          "source_manifest_status": "present",
+          "source": {
+            "path": "mix/lib/mix/compilers/protocol.ex",
+            "sha256": "c229bd91a98d00f3f85faf4d2ee6b33cec3be9bb29b2f644918fc08a2eaa87c7",
+            "size_bytes": 6973,
+            "full_file_range": [
+              1,
+              248
+            ],
+            "range_bytes": 6973,
+            "manifest_url": "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/compilers/protocol.ex",
+            "installed_path": "/private/tmp/fablebook-asdf/installs/elixir/1.20.4-otp-29/lib/mix/lib/mix/compilers/protocol.ex",
+            "installed_digest_matches_manifest": true,
+            "definition_lines": [
+              {
+                "line": 14,
+                "text": "  def umbrella(args, res) do"
+              },
+              {
+                "line": 60,
+                "text": "  defp manifest, do: Path.join(Mix.Project.manifest_path(), @manifest)"
+              },
+              {
+                "line": 62,
+                "text": "  defp read_manifest(manifest) do"
+              },
+              {
+                "line": 74,
+                "text": "  defp write_manifest(manifest, metadata) do"
+              },
+              {
+                "line": 80,
+                "text": "  def clean do"
+              },
+              {
+                "line": 87,
+                "text": "  def status(mtime_changed?, opts) do"
+              },
+              {
+                "line": 107,
+                "text": "  def compile(force?, old_protocols_and_impls, protocols_and_impls, opts) do"
+              },
+              {
+                "line": 128,
+                "text": "  defp clean_consolidated do"
+              },
+              {
+                "line": 132,
+                "text": "  defp consolidation_paths do"
+              },
+              {
+                "line": 145,
+                "text": "  defp consolidate([], _paths, output, _opts) do"
+              },
+              {
+                "line": 151,
+                "text": "  defp consolidate(protocols, paths, output, opts) do"
+              },
+              {
+                "line": 162,
+                "text": "  defp consolidate_each(protocol, paths, output, opts) do"
+              },
+              {
+                "line": 191,
+                "text": "  defp inspect_protocol(protocol) do"
+              },
+              {
+                "line": 195,
+                "text": "  defp reload(module) do"
+              },
+              {
+                "line": 200,
+                "text": "  defp diff_manifest({new_protocols, new_impls}, {old_protocols, old_impls}, output) do"
+              },
+              {
+                "line": 244,
+                "text": "  defp remove_consolidated(protocol, output) do"
+              }
+            ]
+          }
+        },
+        {
+          "original_id": "CN-002",
+          "module": "Elixir.Phoenix.Digester",
+          "beam_dir": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/core/build/test/lib/phoenix/ebin",
+          "beam_inventory_sha256": "4f577fd58e5a8247f379e0c043c18cfb6e48e9f7750f3c0ce95e5f60179476c2",
+          "beam_inventory_count": 93,
+          "beam_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/core/build/test/lib/phoenix/ebin/Elixir.Phoenix.Digester.beam",
+          "beam_sha256": "6b41afda7a81a42aa7f92dd7c3900c4e54cf19cfd3ca27d7fa1bbfe1cda23627",
+          "exports": [
+            "__info__/1",
+            "clean/3",
+            "clean/4",
+            "clean_all/1",
+            "compile/3",
+            "module_info/0",
+            "module_info/1"
+          ],
+          "matches": [
+            "Elixir.Phoenix.Digester:compile/3"
+          ],
+          "source_manifest_status": "present",
+          "source": {
+            "path": "phoenix/lib/phoenix/digester.ex",
+            "sha256": "01bc50dc2769f1e6e7dcbef274cb5bbe5f93b5edee6afff58cf85b6d78731d75",
+            "size_bytes": 12415,
+            "full_file_range": [
+              1,
+              416
+            ],
+            "range_bytes": 12415,
+            "manifest_url": "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+            "installed_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/core/deps/phoenix/lib/phoenix/digester.ex",
+            "installed_digest_matches_manifest": true,
+            "definition_lines": [
+              {
+                "line": 9,
+                "text": "  defp now() do"
+              },
+              {
+                "line": 20,
+                "text": "  def compile(input_path, output_path, with_vsn?) do"
+              },
+              {
+                "line": 40,
+                "text": "  defp filter_files(input_path) do"
+              },
+              {
+                "line": 48,
+                "text": "  defp fixup_sourcemaps(files) when is_list(files) do"
+              },
+              {
+                "line": 52,
+                "text": "  defp maybe_fixup_sourcemap(sourcemap, files) do"
+              },
+              {
+                "line": 60,
+                "text": "  defp fixup_sourcemap(%{} = sourcemap, files) do"
+              },
+              {
+                "line": 72,
+                "text": "  defp generate_latest(files) do"
+              },
+              {
+                "line": 82,
+                "text": "  defp load_compile_digests(output_path) do"
+              },
+              {
+                "line": 87,
+                "text": "  defp load_manifest(output_path) do"
+              },
+              {
+                "line": 100,
+                "text": "  defp migrate_manifest(%{\"version\" => @manifest_version} = manifest, _output_path), do: manifest"
+              },
+              {
+                "line": 101,
+                "text": "  defp migrate_manifest(_latest, _output_path), do: @empty_manifest"
+              },
+              {
+                "line": 103,
+                "text": "  defp save_manifest(files, latest, old_digests, output_path) do"
+              },
+              {
+                "line": 115,
+                "text": "  defp write_manifest(latest, digests, output_path) do"
+              },
+              {
+                "line": 130,
+                "text": "  defp remove_manifest(output_path) do"
+              },
+              {
+                "line": 134,
+                "text": "  defp generate_digests(files) do"
+              },
+              {
+                "line": 144,
+                "text": "  defp build_digest(file) do"
+              },
+              {
+                "line": 154,
+                "text": "  defp manifest_join(\".\", filename), do: filename"
+              },
+              {
+                "line": 155,
+                "text": "  defp manifest_join(path, filename), do: Path.join(path, filename)"
+              },
+              {
+                "line": 157,
+                "text": "  defp compiled_file?(file_path) do"
+              },
+              {
+                "line": 165,
+                "text": "  defp compressed_extensions do"
+              },
+              {
+                "line": 170,
+                "text": "  defp map_file(file_path, input_path) do"
+              },
+              {
+                "line": 191,
+                "text": "  defp write_to_disk(file, output_path) do"
+              },
+              {
+                "line": 230,
+                "text": "  defp digested_contents(file, latest, with_vsn?) do"
+              },
+              {
+                "line": 244,
+                "text": "  defp digest_stylesheet_asset_references(file, latest, with_vsn?) do"
+              },
+              {
+                "line": 260,
+                "text": "  defp digest_javascript_asset_references(file, latest) do"
+              },
+              {
+                "line": 268,
+                "text": "  defp digest_javascript_map_asset_references(file, latest) do"
+              },
+              {
+                "line": 276,
+                "text": "  defp digested_url(\"/\" <> relative_path, _file, latest, with_vsn?) do"
+              },
+              {
+                "line": 283,
+                "text": "  defp digested_url(url, file, latest, with_vsn?) do"
+              },
+              {
+                "line": 305,
+                "text": "  defp relative_digested_path(digested_path, true),"
+              },
+              {
+                "line": 308,
+                "text": "  defp relative_digested_path(digested_path, false),"
+              },
+              {
+                "line": 311,
+                "text": "  defp relative_digested_path(digested_path),"
+              },
+              {
+                "line": 314,
+                "text": "  defp absolute_digested_url(url, digested_path, true),"
+              },
+              {
+                "line": 317,
+                "text": "  defp absolute_digested_url(url, digested_path, false),"
+              },
+              {
+                "line": 320,
+                "text": "  defp absolute_digested_url(url, digested_path),"
+              },
+              {
+                "line": 335,
+                "text": "  def clean(path, age, keep, now \\\\ now()) do"
+              },
+              {
+                "line": 356,
+                "text": "  def clean_all(path) do"
+              },
+              {
+                "line": 376,
+                "text": "  defp files_to_clean(latest, digests, max_age, keep) do"
+              },
+              {
+                "line": 384,
+                "text": "  defp versions_to_clean(versions, max_age, keep) do"
+              },
+              {
+                "line": 393,
+                "text": "  defp group_by_logical_path(digests) do"
+              },
+              {
+                "line": 397,
+                "text": "  defp remove_files(files, output_path) do"
+              },
+              {
+                "line": 407,
+                "text": "  defp remove_compressed_files(files, output_path) do"
+              },
+              {
+                "line": 411,
+                "text": "  defp remove_compressed_file(file, output_path) do"
+              }
+            ]
+          }
+        },
+        {
+          "original_id": "CN-003",
+          "module": "Elixir.Phoenix.LiveView.ColocatedAssets",
+          "beam_dir": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/core/build/test/lib/phoenix_live_view/ebin",
+          "beam_inventory_sha256": "76668f328fad8b0ca64f592550d84a64be32141d045d2a9e4a6773be0e0d8f54",
+          "beam_inventory_count": 79,
+          "beam_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/core/build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.ColocatedAssets.beam",
+          "beam_sha256": "9e49972a6c6f20342fb9e0c961c53132fe6eb28de06d8c05b3d7305e09d0dffd",
+          "exports": [
+            "__info__/1",
+            "__struct__/0",
+            "__struct__/1",
+            "behaviour_info/1",
+            "compile/0",
+            "extract/5",
+            "module_info/0",
+            "module_info/1"
+          ],
+          "matches": [
+            "Elixir.Phoenix.LiveView.ColocatedAssets:compile/0"
+          ],
+          "source_manifest_status": "present",
+          "source": {
+            "path": "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex",
+            "sha256": "fec6745c584fe70c1808763b86ade20facd54a5907f1c9301d395a7470e3ce67",
+            "size_bytes": 8580,
+            "full_file_range": [
+              1,
+              297
+            ],
+            "range_bytes": 8580,
+            "manifest_url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.13.tar",
+            "installed_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/core/deps/phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex",
+            "installed_digest_matches_manifest": true,
+            "definition_lines": [
+              {
+                "line": 4,
+                "text": "  defstruct [:relative_path, :data]"
+              },
+              {
+                "line": 11,
+                "text": "  defmodule Entry do"
+              },
+              {
+                "line": 35,
+                "text": "  def extract(callback_module, module, filename, text, data) do"
+              },
+              {
+                "line": 48,
+                "text": "  def compile do"
+              },
+              {
+                "line": 77,
+                "text": "  defp clear_manifests! do"
+              },
+              {
+                "line": 87,
+                "text": "  defp clear_outdated_and_get_files! do"
+              },
+              {
+                "line": 99,
+                "text": "  defp process_module(module_folder, module) do"
+              },
+              {
+                "line": 127,
+                "text": "  defp filter_colocated(data) do"
+              },
+              {
+                "line": 134,
+                "text": "  defp maybe_link_node_modules! do"
+              },
+              {
+                "line": 154,
+                "text": "  defp relative_to_target(location) do"
+              },
+              {
+                "line": 162,
+                "text": "  defp do_symlink(node_modules_path, is_fallback) do"
+              },
+              {
+                "line": 192,
+                "text": "  defp node_modules_link do"
+              },
+              {
+                "line": 199,
+                "text": "  defp remove_symlink!(target, keep) do"
+              },
+              {
+                "line": 208,
+                "text": "  defp configured_callbacks do"
+              },
+              {
+                "line": 216,
+                "text": "  defp global_settings do"
+              },
+              {
+                "line": 224,
+                "text": "  defp project_settings do"
+              },
+              {
+                "line": 234,
+                "text": "  defp target_dir do"
+              },
+              {
+                "line": 243,
+                "text": "  defp subdirectories(path) do"
+              },
+              {
+                "line": 247,
+                "text": "  defp warn_for_outdated_config! do"
+              }
+            ]
+          }
+        },
+        {
+          "original_id": "CN-004",
+          "module": "Elixir.Plug.Builder",
+          "beam_dir": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/core/build/test/lib/plug/ebin",
+          "beam_inventory_sha256": "5c06ed62b3eb20a4e9e5ad8963e94da6a74d5f5e148f85c968c1f1d2b035c8ac",
+          "beam_inventory_count": 62,
+          "beam_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/core/build/test/lib/plug/ebin/Elixir.Plug.Builder.beam",
+          "beam_sha256": "8adbba8d4d584b5fecbb54b9143b5cac555876dcdc9de18b9e225c540736c320",
+          "exports": [
+            "MACRO-__before_compile__/2",
+            "MACRO-__using__/2",
+            "MACRO-builder_opts/1",
+            "MACRO-plug/2",
+            "MACRO-plug/3",
+            "__builder_opts__/1",
+            "__info__/1",
+            "compile/3",
+            "module_info/0",
+            "module_info/1"
+          ],
+          "matches": [
+            "Elixir.Plug.Builder:compile/3"
+          ],
+          "source_manifest_status": "present",
+          "source": {
+            "path": "plug/lib/plug/builder.ex",
+            "sha256": "8d1b87dd51870df64b20e0ad203a18f072ecb47a15f11132e75e3e0ca47f766b",
+            "size_bytes": 13225,
+            "full_file_range": [
+              1,
+              457
+            ],
+            "range_bytes": 13225,
+            "manifest_url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar",
+            "installed_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/core/deps/plug/lib/plug/builder.ex",
+            "installed_digest_matches_manifest": true,
+            "definition_lines": [
+              {
+                "line": 148,
+                "text": "  defmacro __using__(opts) do"
+              },
+              {
+                "line": 172,
+                "text": "  defmacro __before_compile__(env) do"
+              },
+              {
+                "line": 216,
+                "text": "  defp traverse(tuple, ref) when is_tuple(tuple) do"
+              },
+              {
+                "line": 220,
+                "text": "  defp traverse(map, ref) when is_map(map) do"
+              },
+              {
+                "line": 224,
+                "text": "  defp traverse(list, ref) when is_list(list) do"
+              },
+              {
+                "line": 228,
+                "text": "  defp traverse(ref, ref) do"
+              },
+              {
+                "line": 232,
+                "text": "  defp traverse(term, _ref) do"
+              },
+              {
+                "line": 249,
+                "text": "  defmacro plug(plug, opts \\\\ []) do"
+              },
+              {
+                "line": 268,
+                "text": "  defp expand_alias({:__aliases__, _, _} = alias, env),"
+              },
+              {
+                "line": 271,
+                "text": "  defp expand_alias(other, _env), do: other"
+              },
+              {
+                "line": 279,
+                "text": "  defmacro builder_opts() do"
+              },
+              {
+                "line": 286,
+                "text": "  def __builder_opts__(module) do"
+              },
+              {
+                "line": 290,
+                "text": "  defp get_plug_builder_ref(module) do"
+              },
+              {
+                "line": 294,
+                "text": "  defp generate_plug_builder_ref(module) do"
+              },
+              {
+                "line": 324,
+                "text": "  def compile(env, pipeline, builder_opts) do"
+              },
+              {
+                "line": 346,
+                "text": "  defp module_plug?(plug), do: match?(~c\"Elixir.\" ++ _, Atom.to_charlist(plug))"
+              },
+              {
+                "line": 349,
+                "text": "  defp init_plug({plug, opts, guards}, init_mode) do"
+              },
+              {
+                "line": 357,
+                "text": "  defp init_module_plug(plug, opts, guards, :compile) do"
+              },
+              {
+                "line": 367,
+                "text": "  defp init_module_plug(plug, opts, guards, :runtime) do"
+              },
+              {
+                "line": 371,
+                "text": "  defp init_fun_plug(plug, opts, guards) do"
+              },
+              {
+                "line": 375,
+                "text": "  defp escape(opts) do"
+              },
+              {
+                "line": 379,
+                "text": "  defp quote_plug({:module, plug, opts, guards}, :compile, acc, env, builder_opts) do"
+              },
+              {
+                "line": 389,
+                "text": "  defp quote_plug({plug_type, plug, opts, guards}, _init_mode, acc, env, builder_opts) do"
+              },
+              {
+                "line": 395,
+                "text": "  defp quote_plug(plug_type, plug, opts, guards, acc, env, builder_opts) do"
+              },
+              {
+                "line": 419,
+                "text": "  defp quote_plug_call(:function, plug, opts) do"
+              },
+              {
+                "line": 423,
+                "text": "  defp quote_plug_call(:module, plug, opts) do"
+              },
+              {
+                "line": 427,
+                "text": "  defp compile_guards(call, true) do"
+              },
+              {
+                "line": 431,
+                "text": "  defp compile_guards(call, guards) do"
+              },
+              {
+                "line": 440,
+                "text": "  defp log_halt(plug_type, plug, env, builder_opts) do"
+              }
+            ]
+          }
+        },
+        {
+          "original_id": "CN-006",
+          "module": "re",
+          "beam_dir": "/private/tmp/fablebook-asdf/installs/erlang/29.1.2/lib/stdlib-8.1.1/ebin",
+          "beam_inventory_sha256": "7e0777e05baa09954169ea4787ff3984c80df0fb98a514905aeef2e3a3877bab",
+          "beam_inventory_count": 98,
+          "beam_path": "/private/tmp/fablebook-asdf/installs/erlang/29.1.2/lib/stdlib-8.1.1/ebin/re.beam",
+          "beam_sha256": "7a6d8965ba7d802795f648a388ab243ec5f83df7816caf4d6552bbcb943deb6c",
+          "exports": [
+            "compile/1",
+            "compile/2",
+            "grun/3",
+            "import/1",
+            "inspect/2",
+            "internal_run/4",
+            "module_info/0",
+            "module_info/1",
+            "replace/3",
+            "replace/4",
+            "run/2",
+            "run/3",
+            "split/2",
+            "split/3",
+            "ucompile/2",
+            "urun/3",
+            "version/0"
+          ],
+          "matches": [
+            "re:compile/1",
+            "re:compile/2"
+          ],
+          "source_manifest_status": "present",
+          "source": {
+            "path": "stdlib/src/re.erl",
+            "sha256": "4f121979023d8e5011d2e026600250dedd284c3a5b909e38688efd34d5b74128",
+            "size_bytes": 72908,
+            "full_file_range": [
+              1,
+              1991
+            ],
+            "range_bytes": 72908,
+            "manifest_url": "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/stdlib/src/re.erl",
+            "installed_path": "/private/tmp/fablebook-asdf/installs/erlang/29.1.2/lib/stdlib-8.1.1/src/re.erl",
+            "installed_digest_matches_manifest": true,
+            "definition_lines": [
+              {
+                "line": 124,
+                "text": "-spec compile(Regexp) -> {ok, mp()} | {error, ErrSpec} when"
+              },
+              {
+                "line": 128,
+                "text": "compile(_) ->"
+              },
+              {
+                "line": 160,
+                "text": "  defined as in the ISO 8859-1 character set."
+              },
+              {
+                "line": 282,
+                "text": "-spec compile(Regexp, Options) -> {ok, mp() | exported()} | {error, ErrSpec} when"
+              },
+              {
+                "line": 288,
+                "text": "compile(_, _) ->"
+              },
+              {
+                "line": 569,
+                "text": "  default return type is (zero-based) indexes of the captured parts of the"
+              },
+              {
+                "line": 1084,
+                "text": "  default). Specifying `{parts,0}` gives as many parts as possible disregarding"
+              },
+              {
+                "line": 1089,
+                "text": "  default behavior of the `split` built-in function in Perl."
+              }
+            ]
+          }
+        }
+      ],
+      "primary_source_bytes": 114101,
+      "raw_full_file_tokens_proxy": 28525.25,
+      "calibrated_full_file_tokens_proxy": 14262.625
+    },
+    "floor": {
+      "elixir": "1.18.5-otp-27",
+      "otp": "27.3.4.9",
+      "rows": [
+        {
+          "original_id": "CN-001",
+          "module": "Elixir.Mix.Compilers.Protocol",
+          "beam_dir": "/private/tmp/fablebook-asdf/installs/elixir/1.18.5-otp-27/lib/mix/ebin",
+          "beam_inventory_sha256": "a2164b6425b6b65d1195487f3555f682a986f897ce13429b2fd52c702fe060fb",
+          "beam_inventory_count": 100,
+          "beam_path": null,
+          "exports": [],
+          "matches": [],
+          "absence_basis": "Complete pinned app ebin filename inventory contains no target module BEAM; full installed graph acceptance still required during execution.",
+          "source_manifest_status": "absent-at-immutable-ref"
+        },
+        {
+          "original_id": "CN-002",
+          "module": "Elixir.Phoenix.Digester",
+          "beam_dir": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/floor/build/test/lib/phoenix/ebin",
+          "beam_inventory_sha256": "b4e4a2e64940fcc7972146a4d80534c71cad692c002db7ea2109672c07413629",
+          "beam_inventory_count": 92,
+          "beam_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/floor/build/test/lib/phoenix/ebin/Elixir.Phoenix.Digester.beam",
+          "beam_sha256": "35565dee67c65bda1720b5aa93cbfdf9a96fa875a9ce90d1379fa9a0f9222dea",
+          "exports": [
+            "__info__/1",
+            "clean/3",
+            "clean/4",
+            "clean_all/1",
+            "compile/3",
+            "module_info/0",
+            "module_info/1"
+          ],
+          "matches": [
+            "Elixir.Phoenix.Digester:compile/3"
+          ],
+          "source_manifest_status": "present",
+          "source": {
+            "path": "phoenix/lib/phoenix/digester.ex",
+            "sha256": "01bc50dc2769f1e6e7dcbef274cb5bbe5f93b5edee6afff58cf85b6d78731d75",
+            "size_bytes": 12415,
+            "full_file_range": [
+              1,
+              416
+            ],
+            "range_bytes": 12415,
+            "manifest_url": "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+            "installed_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/floor/deps/phoenix/lib/phoenix/digester.ex",
+            "installed_digest_matches_manifest": true,
+            "definition_lines": [
+              {
+                "line": 9,
+                "text": "  defp now() do"
+              },
+              {
+                "line": 20,
+                "text": "  def compile(input_path, output_path, with_vsn?) do"
+              },
+              {
+                "line": 40,
+                "text": "  defp filter_files(input_path) do"
+              },
+              {
+                "line": 48,
+                "text": "  defp fixup_sourcemaps(files) when is_list(files) do"
+              },
+              {
+                "line": 52,
+                "text": "  defp maybe_fixup_sourcemap(sourcemap, files) do"
+              },
+              {
+                "line": 60,
+                "text": "  defp fixup_sourcemap(%{} = sourcemap, files) do"
+              },
+              {
+                "line": 72,
+                "text": "  defp generate_latest(files) do"
+              },
+              {
+                "line": 82,
+                "text": "  defp load_compile_digests(output_path) do"
+              },
+              {
+                "line": 87,
+                "text": "  defp load_manifest(output_path) do"
+              },
+              {
+                "line": 100,
+                "text": "  defp migrate_manifest(%{\"version\" => @manifest_version} = manifest, _output_path), do: manifest"
+              },
+              {
+                "line": 101,
+                "text": "  defp migrate_manifest(_latest, _output_path), do: @empty_manifest"
+              },
+              {
+                "line": 103,
+                "text": "  defp save_manifest(files, latest, old_digests, output_path) do"
+              },
+              {
+                "line": 115,
+                "text": "  defp write_manifest(latest, digests, output_path) do"
+              },
+              {
+                "line": 130,
+                "text": "  defp remove_manifest(output_path) do"
+              },
+              {
+                "line": 134,
+                "text": "  defp generate_digests(files) do"
+              },
+              {
+                "line": 144,
+                "text": "  defp build_digest(file) do"
+              },
+              {
+                "line": 154,
+                "text": "  defp manifest_join(\".\", filename), do: filename"
+              },
+              {
+                "line": 155,
+                "text": "  defp manifest_join(path, filename), do: Path.join(path, filename)"
+              },
+              {
+                "line": 157,
+                "text": "  defp compiled_file?(file_path) do"
+              },
+              {
+                "line": 165,
+                "text": "  defp compressed_extensions do"
+              },
+              {
+                "line": 170,
+                "text": "  defp map_file(file_path, input_path) do"
+              },
+              {
+                "line": 191,
+                "text": "  defp write_to_disk(file, output_path) do"
+              },
+              {
+                "line": 230,
+                "text": "  defp digested_contents(file, latest, with_vsn?) do"
+              },
+              {
+                "line": 244,
+                "text": "  defp digest_stylesheet_asset_references(file, latest, with_vsn?) do"
+              },
+              {
+                "line": 260,
+                "text": "  defp digest_javascript_asset_references(file, latest) do"
+              },
+              {
+                "line": 268,
+                "text": "  defp digest_javascript_map_asset_references(file, latest) do"
+              },
+              {
+                "line": 276,
+                "text": "  defp digested_url(\"/\" <> relative_path, _file, latest, with_vsn?) do"
+              },
+              {
+                "line": 283,
+                "text": "  defp digested_url(url, file, latest, with_vsn?) do"
+              },
+              {
+                "line": 305,
+                "text": "  defp relative_digested_path(digested_path, true),"
+              },
+              {
+                "line": 308,
+                "text": "  defp relative_digested_path(digested_path, false),"
+              },
+              {
+                "line": 311,
+                "text": "  defp relative_digested_path(digested_path),"
+              },
+              {
+                "line": 314,
+                "text": "  defp absolute_digested_url(url, digested_path, true),"
+              },
+              {
+                "line": 317,
+                "text": "  defp absolute_digested_url(url, digested_path, false),"
+              },
+              {
+                "line": 320,
+                "text": "  defp absolute_digested_url(url, digested_path),"
+              },
+              {
+                "line": 335,
+                "text": "  def clean(path, age, keep, now \\\\ now()) do"
+              },
+              {
+                "line": 356,
+                "text": "  def clean_all(path) do"
+              },
+              {
+                "line": 376,
+                "text": "  defp files_to_clean(latest, digests, max_age, keep) do"
+              },
+              {
+                "line": 384,
+                "text": "  defp versions_to_clean(versions, max_age, keep) do"
+              },
+              {
+                "line": 393,
+                "text": "  defp group_by_logical_path(digests) do"
+              },
+              {
+                "line": 397,
+                "text": "  defp remove_files(files, output_path) do"
+              },
+              {
+                "line": 407,
+                "text": "  defp remove_compressed_files(files, output_path) do"
+              },
+              {
+                "line": 411,
+                "text": "  defp remove_compressed_file(file, output_path) do"
+              }
+            ]
+          }
+        },
+        {
+          "original_id": "CN-003",
+          "module": "Elixir.Phoenix.LiveView.ColocatedAssets",
+          "beam_dir": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/floor/build/test/lib/phoenix_live_view/ebin",
+          "beam_inventory_sha256": "76668f328fad8b0ca64f592550d84a64be32141d045d2a9e4a6773be0e0d8f54",
+          "beam_inventory_count": 79,
+          "beam_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/floor/build/test/lib/phoenix_live_view/ebin/Elixir.Phoenix.LiveView.ColocatedAssets.beam",
+          "beam_sha256": "148d93bf5d9dfefcf77715b91293349e2e2afd37934568eb8dc1249c47cf2d84",
+          "exports": [
+            "__info__/1",
+            "__struct__/0",
+            "__struct__/1",
+            "behaviour_info/1",
+            "compile/0",
+            "extract/5",
+            "module_info/0",
+            "module_info/1"
+          ],
+          "matches": [
+            "Elixir.Phoenix.LiveView.ColocatedAssets:compile/0"
+          ],
+          "source_manifest_status": "present",
+          "source": {
+            "path": "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex",
+            "sha256": "06d0272db64b5d72559198114825b17d2b6b50e181993e81ef85db53163961eb",
+            "size_bytes": 7420,
+            "full_file_range": [
+              1,
+              270
+            ],
+            "range_bytes": 7420,
+            "manifest_url": "https://repo.hex.pm/tarballs/phoenix_live_view-1.2.9.tar",
+            "installed_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/floor/deps/phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex",
+            "installed_digest_matches_manifest": true,
+            "definition_lines": [
+              {
+                "line": 4,
+                "text": "  defstruct [:relative_path, :data]"
+              },
+              {
+                "line": 11,
+                "text": "  defmodule Entry do"
+              },
+              {
+                "line": 35,
+                "text": "  def extract(callback_module, module, filename, text, data) do"
+              },
+              {
+                "line": 48,
+                "text": "  def compile do"
+              },
+              {
+                "line": 77,
+                "text": "  defp clear_manifests! do"
+              },
+              {
+                "line": 87,
+                "text": "  defp clear_outdated_and_get_files! do"
+              },
+              {
+                "line": 99,
+                "text": "  defp process_module(module_folder, module) do"
+              },
+              {
+                "line": 127,
+                "text": "  defp filter_colocated(data) do"
+              },
+              {
+                "line": 134,
+                "text": "  defp maybe_link_node_modules! do"
+              },
+              {
+                "line": 148,
+                "text": "  defp relative_to_target(location) do"
+              },
+              {
+                "line": 156,
+                "text": "  defp do_symlink(node_modules_path, is_fallback) do"
+              },
+              {
+                "line": 181,
+                "text": "  defp configured_callbacks do"
+              },
+              {
+                "line": 189,
+                "text": "  defp global_settings do"
+              },
+              {
+                "line": 197,
+                "text": "  defp project_settings do"
+              },
+              {
+                "line": 207,
+                "text": "  defp target_dir do"
+              },
+              {
+                "line": 216,
+                "text": "  defp subdirectories(path) do"
+              },
+              {
+                "line": 220,
+                "text": "  defp warn_for_outdated_config! do"
+              }
+            ]
+          }
+        },
+        {
+          "original_id": "CN-004",
+          "module": "Elixir.Plug.Builder",
+          "beam_dir": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/floor/build/test/lib/plug/ebin",
+          "beam_inventory_sha256": "5c06ed62b3eb20a4e9e5ad8963e94da6a74d5f5e148f85c968c1f1d2b035c8ac",
+          "beam_inventory_count": 62,
+          "beam_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/floor/build/test/lib/plug/ebin/Elixir.Plug.Builder.beam",
+          "beam_sha256": "0271994e07c76f505ab99c139f5c8fdf34dbd0cd824caf6b20e4a7f95735a188",
+          "exports": [
+            "MACRO-__before_compile__/2",
+            "MACRO-__using__/2",
+            "MACRO-builder_opts/1",
+            "MACRO-plug/2",
+            "MACRO-plug/3",
+            "__builder_opts__/1",
+            "__info__/1",
+            "compile/3",
+            "module_info/0",
+            "module_info/1"
+          ],
+          "matches": [
+            "Elixir.Plug.Builder:compile/3"
+          ],
+          "source_manifest_status": "present",
+          "source": {
+            "path": "plug/lib/plug/builder.ex",
+            "sha256": "8d1b87dd51870df64b20e0ad203a18f072ecb47a15f11132e75e3e0ca47f766b",
+            "size_bytes": 13225,
+            "full_file_range": [
+              1,
+              457
+            ],
+            "range_bytes": 13225,
+            "manifest_url": "https://repo.hex.pm/tarballs/plug-1.20.3.tar",
+            "installed_path": "/private/tmp/fablebook-resume.s7Ay0g/fablebook/_build/lanes/floor/deps/plug/lib/plug/builder.ex",
+            "installed_digest_matches_manifest": true,
+            "definition_lines": [
+              {
+                "line": 148,
+                "text": "  defmacro __using__(opts) do"
+              },
+              {
+                "line": 172,
+                "text": "  defmacro __before_compile__(env) do"
+              },
+              {
+                "line": 216,
+                "text": "  defp traverse(tuple, ref) when is_tuple(tuple) do"
+              },
+              {
+                "line": 220,
+                "text": "  defp traverse(map, ref) when is_map(map) do"
+              },
+              {
+                "line": 224,
+                "text": "  defp traverse(list, ref) when is_list(list) do"
+              },
+              {
+                "line": 228,
+                "text": "  defp traverse(ref, ref) do"
+              },
+              {
+                "line": 232,
+                "text": "  defp traverse(term, _ref) do"
+              },
+              {
+                "line": 249,
+                "text": "  defmacro plug(plug, opts \\\\ []) do"
+              },
+              {
+                "line": 268,
+                "text": "  defp expand_alias({:__aliases__, _, _} = alias, env),"
+              },
+              {
+                "line": 271,
+                "text": "  defp expand_alias(other, _env), do: other"
+              },
+              {
+                "line": 279,
+                "text": "  defmacro builder_opts() do"
+              },
+              {
+                "line": 286,
+                "text": "  def __builder_opts__(module) do"
+              },
+              {
+                "line": 290,
+                "text": "  defp get_plug_builder_ref(module) do"
+              },
+              {
+                "line": 294,
+                "text": "  defp generate_plug_builder_ref(module) do"
+              },
+              {
+                "line": 324,
+                "text": "  def compile(env, pipeline, builder_opts) do"
+              },
+              {
+                "line": 346,
+                "text": "  defp module_plug?(plug), do: match?(~c\"Elixir.\" ++ _, Atom.to_charlist(plug))"
+              },
+              {
+                "line": 349,
+                "text": "  defp init_plug({plug, opts, guards}, init_mode) do"
+              },
+              {
+                "line": 357,
+                "text": "  defp init_module_plug(plug, opts, guards, :compile) do"
+              },
+              {
+                "line": 367,
+                "text": "  defp init_module_plug(plug, opts, guards, :runtime) do"
+              },
+              {
+                "line": 371,
+                "text": "  defp init_fun_plug(plug, opts, guards) do"
+              },
+              {
+                "line": 375,
+                "text": "  defp escape(opts) do"
+              },
+              {
+                "line": 379,
+                "text": "  defp quote_plug({:module, plug, opts, guards}, :compile, acc, env, builder_opts) do"
+              },
+              {
+                "line": 389,
+                "text": "  defp quote_plug({plug_type, plug, opts, guards}, _init_mode, acc, env, builder_opts) do"
+              },
+              {
+                "line": 395,
+                "text": "  defp quote_plug(plug_type, plug, opts, guards, acc, env, builder_opts) do"
+              },
+              {
+                "line": 419,
+                "text": "  defp quote_plug_call(:function, plug, opts) do"
+              },
+              {
+                "line": 423,
+                "text": "  defp quote_plug_call(:module, plug, opts) do"
+              },
+              {
+                "line": 427,
+                "text": "  defp compile_guards(call, true) do"
+              },
+              {
+                "line": 431,
+                "text": "  defp compile_guards(call, guards) do"
+              },
+              {
+                "line": 440,
+                "text": "  defp log_halt(plug_type, plug, env, builder_opts) do"
+              }
+            ]
+          }
+        },
+        {
+          "original_id": "CN-006",
+          "module": "re",
+          "beam_dir": "/private/tmp/fablebook-asdf/installs/erlang/27.3.4.9/lib/stdlib-6.2.2.3/ebin",
+          "beam_inventory_sha256": "8327a5cda2322375b3886e6d40deafeab90f6abca3b4e2df6187616713be8ac4",
+          "beam_inventory_count": 93,
+          "beam_path": "/private/tmp/fablebook-asdf/installs/erlang/27.3.4.9/lib/stdlib-6.2.2.3/ebin/re.beam",
+          "beam_sha256": "a8b4890e00d94a98d7e25bf4ce738137672da75e19d1f23a011ea67179faddc9",
+          "exports": [
+            "compile/1",
+            "compile/2",
+            "grun/3",
+            "inspect/2",
+            "internal_run/4",
+            "module_info/0",
+            "module_info/1",
+            "replace/3",
+            "replace/4",
+            "run/2",
+            "run/3",
+            "split/2",
+            "split/3",
+            "ucompile/2",
+            "urun/3",
+            "version/0"
+          ],
+          "matches": [
+            "re:compile/1",
+            "re:compile/2"
+          ],
+          "source_manifest_status": "present",
+          "source": {
+            "path": "stdlib/src/re.erl",
+            "sha256": "25b7b7cde4828533a241cf84d7b3b08617f57ddda31e7a2b7a4c4fd57452f742",
+            "size_bytes": 70857,
+            "full_file_range": [
+              1,
+              1956
+            ],
+            "range_bytes": 70857,
+            "manifest_url": "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/re.erl",
+            "installed_path": "/private/tmp/fablebook-asdf/installs/erlang/27.3.4.9/lib/stdlib-6.2.2.3/src/re.erl",
+            "installed_digest_matches_manifest": true,
+            "definition_lines": [
+              {
+                "line": 81,
+                "text": "-spec compile(Regexp) -> {ok, MP} | {error, ErrSpec} when"
+              },
+              {
+                "line": 86,
+                "text": "compile(_) ->"
+              },
+              {
+                "line": 118,
+                "text": "  defined as in the ISO 8859-1 character set."
+              },
+              {
+                "line": 229,
+                "text": "-spec compile(Regexp, Options) -> {ok, MP} | {error, ErrSpec} when"
+              },
+              {
+                "line": 236,
+                "text": "compile(_, _) ->"
+              },
+              {
+                "line": 535,
+                "text": "  default return type is (zero-based) indexes of the captured parts of the"
+              },
+              {
+                "line": 1051,
+                "text": "  default). Specifying `{parts,0}` gives as many parts as possible disregarding"
+              },
+              {
+                "line": 1056,
+                "text": "  default behavior of the `split` built-in function in Perl."
+              }
+            ]
+          }
+        }
+      ],
+      "primary_source_bytes": 103917,
+      "raw_full_file_tokens_proxy": 25979.25,
+      "calibrated_full_file_tokens_proxy": 12989.625
+    }
+  },
+  "findings": [
+    {
+      "original_id": "CN-003",
+      "status": "guard_dependency",
+      "mfa": "Elixir.Phoenix.LiveView.ColocatedAssets:compile/0",
+      "source": "phoenix_live_view/lib/phoenix_live_view/colocated_assets.ex",
+      "lanes": [
+        "core",
+        "floor"
+      ],
+      "front_line": 48,
+      "atom_sink_line": 93,
+      "sink": "Module.concat([Path.basename(module_folder)])",
+      "guard_present": false,
+      "contract_mirror_present": false,
+      "lib_collision": "No direct source match found; compiled-BEAM collision proof pending."
+    }
+  ],
+  "source_gaps": [
+    {
+      "original_id": "CN-001",
+      "lane": "core",
+      "source_path": "elixir/lib/protocol.ex",
+      "local_path": "/private/tmp/fablebook-asdf/installs/elixir/1.20.4-otp-29/lib/elixir/lib/protocol.ex",
+      "size_bytes": 38981,
+      "sha256": "d44b95548c88c9566ab8862141998082c4c93081a5d47100a257b810821d0fc9",
+      "in_approved_manifest": false,
+      "status": "local sizing input only; accepted source authority binding required before citation"
+    }
+  ],
+  "status": "guard prerequisite required; no executable plans"
+}

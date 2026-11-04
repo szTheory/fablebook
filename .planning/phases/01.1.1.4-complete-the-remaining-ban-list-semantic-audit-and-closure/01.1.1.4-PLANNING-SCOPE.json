@@ -1,0 +1,2759 @@
+{
+  "calibration": {
+    "confidence": "high",
+    "context_window": 200000,
+    "factor": 0.5,
+    "method": "Full-file bytes/4 is the existing conservative source-context planning proxy; it is not actual token use, semantic-review duration, or a lower bound on targeted-range reads. Current resolution is partial; omitted files can only increase whole-file footprint. No implementation tests ran.",
+    "per_plan_context_target": 100000,
+    "sample_count": 19
+  },
+  "identity_reconciliation": {
+    "original_exclusions": 221,
+    "pending_exclusions": 218,
+    "rows": [
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": []
+        },
+        "original_id": "CN-001"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "CN-002"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "CN-003"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "CN-004"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "CN-006"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-001"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-002"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-003"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-004"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-005"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-006"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-007"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-008"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-009"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-010"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-011"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-012"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-013"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-014"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-015"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-016"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-017"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-018"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-019"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-020"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-021"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-022"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-023"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-024"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-025"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-026"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-027"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-028"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-029"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-030"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-031"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-032"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-033"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-034"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-035"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-036"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-037"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-038"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-039"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-040"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-041"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-042"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-043"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-044"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-045"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-046"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-047"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-048"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-049"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-050"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-051"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-052"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-053"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": []
+        },
+        "original_id": "EX-054"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-055"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-056"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-057"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-058"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-059"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-060"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-061"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-062"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-063"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-064"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-065"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-066"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-067"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-068"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-069"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-070"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-071"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-072"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-073"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-074"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-075"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": []
+        },
+        "original_id": "EX-076"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-077"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-078"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-079"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-080"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-081"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-082"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-083"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-084"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-085"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-086"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-087"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-088"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-089"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-090"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-091"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-092"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-093"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-094"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": []
+        },
+        "original_id": "EX-095"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-096"
+      },
+      {
+        "bundles": {
+          "core": [],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-097"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-098"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-099"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-100"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-101"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-102"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-103"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-104"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-105"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-106"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P01",
+            "01.1.1.4-P02",
+            "01.1.1.4-P03",
+            "01.1.1.4-P04",
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-107"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-108"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-109"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-110"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-111"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-112"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-113"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-114"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-115"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": []
+        },
+        "original_id": "EX-116"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-117"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-118"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-119"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-120"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-121"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-122"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-123"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-124"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-125"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-126"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-127"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-128"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-129"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-130"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": []
+        },
+        "original_id": "EX-131"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-132"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-133"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-134"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-135"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-136"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-137"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-138"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-139"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-140"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-141"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-142"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-143"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-144"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-145"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-146"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-147"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-148"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-149"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-150"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-151"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-152"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-153"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-154"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-155"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-156"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-157"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-158"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-160"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-161"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-162"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-163"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-164"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-165"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-166"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-167"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-168"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-169"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-170"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-171"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-172"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-173"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "EX-174"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-175"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "EX-176"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "EX-177"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-178"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-179"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-180"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "EX-181"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "EX-182"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "BD-001"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "BD-003"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "BD-004"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "BD-005"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "BD-006"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "BD-007"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "BD-008"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "BD-009"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "BD-010"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "BD-011"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "BD-012"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "BD-013"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "BD-014"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "BD-015"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "BD-016"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "BD-017"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "BD-018"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "BD-019"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "BD-020"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "BD-021"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P03"
+          ],
+          "floor": [
+            "01.1.1.4-P03"
+          ]
+        },
+        "original_id": "BD-022"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "BD-023"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "BD-024"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "BD-025"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "BD-026"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "BD-027"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "BD-028"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": [
+            "01.1.1.4-P04"
+          ]
+        },
+        "original_id": "BD-029"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P02"
+          ],
+          "floor": [
+            "01.1.1.4-P02"
+          ]
+        },
+        "original_id": "BD-030"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P01"
+          ],
+          "floor": [
+            "01.1.1.4-P01"
+          ]
+        },
+        "original_id": "BD-031"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P05"
+          ],
+          "floor": [
+            "01.1.1.4-P05"
+          ]
+        },
+        "original_id": "BD-032"
+      },
+      {
+        "bundles": {
+          "core": [
+            "01.1.1.4-P04"
+          ],
+          "floor": []
+        },
+        "original_id": "BD-033"
+      }
+    ],
+    "sampled": [
+      "CN-005",
+      "BD-002",
+      "EX-159"
+    ],
+    "separate_metadata_identities": 5,
+    "status": "historical-baseline-only-live-export-equality-not-run"
+  },
+  "lanes": {
+    "core": {
+      "code_server": [
+        {
+          "in_approved_manifest": false,
+          "sha256": "160bf6a3aa23a9cc60043d4bfb0f1ff1475c11607e8e4e97e6c4c0806d825f9b",
+          "size_bytes": 43901,
+          "source_path": "kernel/src/code_server.erl"
+        }
+      ],
+      "current_source_bytes": 10615221,
+      "elixir": "1.20.4-otp-29",
+      "otp": "29.1.2",
+      "pending_matched_modules_in_historical_budget": 311,
+      "resolved_modules": 297,
+      "source_set_sha256": "91818422ad0d8a08a8173c9de832490e9193c0886888e14f4a4fb127c247ea1d",
+      "unbound_modules": 199,
+      "unique_source_paths": 295,
+      "unresolved": [
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir.erl",
+          "module": "elixir"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_bitstring.erl",
+          "module": "elixir_bitstring"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_bootstrap.erl",
+          "module": "elixir_bootstrap"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_clauses.erl",
+          "module": "elixir_clauses"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_def.erl",
+          "module": "elixir_def"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_dispatch.erl",
+          "module": "elixir_dispatch"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_erl.erl",
+          "module": "elixir_erl"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_errors.erl",
+          "module": "elixir_errors"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_expand.erl",
+          "module": "elixir_expand"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_fn.erl",
+          "module": "elixir_fn"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_map.erl",
+          "module": "elixir_map"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_module.erl",
+          "module": "elixir_module"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_overridable.erl",
+          "module": "elixir_overridable"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "/private/tmp/fablebook-asdf/plugins/erlang/kerl-home/builds/asdf_29.1.2/otp_src_29.1.2/erts/preloaded/src/prim_eval.S",
+          "module": "prim_eval"
+        }
+      ]
+    },
+    "floor": {
+      "code_server": [
+        {
+          "in_approved_manifest": false,
+          "sha256": "c14b0bcf274b8df8bc54446e9477de6b2b74f5b6811fcac44ef934c449b892fa",
+          "size_bytes": 42809,
+          "source_path": "kernel/src/code_server.erl"
+        }
+      ],
+      "current_source_bytes": 9868192,
+      "elixir": "1.18.5-otp-27",
+      "otp": "27.3.4.9",
+      "pending_matched_modules_in_historical_budget": 307,
+      "resolved_modules": 293,
+      "source_set_sha256": "05f2e03d4c472aa6c1b6b01fe5809158068bd3f2f4cfc282b88928a890493391",
+      "unbound_modules": 199,
+      "unique_source_paths": 291,
+      "unresolved": [
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir.erl",
+          "module": "elixir"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_bitstring.erl",
+          "module": "elixir_bitstring"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_bootstrap.erl",
+          "module": "elixir_bootstrap"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_clauses.erl",
+          "module": "elixir_clauses"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_def.erl",
+          "module": "elixir_def"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_dispatch.erl",
+          "module": "elixir_dispatch"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_erl.erl",
+          "module": "elixir_erl"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_errors.erl",
+          "module": "elixir_errors"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_expand.erl",
+          "module": "elixir_expand"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_fn.erl",
+          "module": "elixir_fn"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_map.erl",
+          "module": "elixir_map"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_module.erl",
+          "module": "elixir_module"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "elixir/src/elixir_overridable.erl",
+          "module": "elixir_overridable"
+        },
+        {
+          "candidate_count": 0,
+          "compile_source": "/private/tmp/fablebook-asdf/plugins/erlang/kerl-home/builds/asdf_27.3.4.9/otp_src_27.3.4.9/erts/preloaded/src/prim_eval.S",
+          "module": "prim_eval"
+        }
+      ]
+    }
+  },
+  "partitions": {
+    "01.1.1.4-P01": {
+      "core": {
+        "current_source_bytes": 2457335,
+        "raw_full_file_tokens_proxy": 614333.75,
+        "unique_paths": 60,
+        "unresolved_pending_modules": [
+          "elixir_expand",
+          "elixir_overridable"
+        ]
+      },
+      "floor": {
+        "current_source_bytes": 2221019,
+        "raw_full_file_tokens_proxy": 555254.75,
+        "unique_paths": 61,
+        "unresolved_pending_modules": [
+          "elixir_expand",
+          "elixir_overridable"
+        ]
+      }
+    },
+    "01.1.1.4-P02": {
+      "core": {
+        "current_source_bytes": 1891757,
+        "raw_full_file_tokens_proxy": 472939.25,
+        "unique_paths": 58,
+        "unresolved_pending_modules": [
+          "elixir_bitstring",
+          "elixir_bootstrap",
+          "elixir_clauses",
+          "elixir_erl",
+          "elixir_errors"
+        ]
+      },
+      "floor": {
+        "current_source_bytes": 1794719,
+        "raw_full_file_tokens_proxy": 448679.75,
+        "unique_paths": 58,
+        "unresolved_pending_modules": [
+          "elixir_bitstring",
+          "elixir_bootstrap",
+          "elixir_clauses",
+          "elixir_erl",
+          "elixir_errors"
+        ]
+      }
+    },
+    "01.1.1.4-P03": {
+      "core": {
+        "current_source_bytes": 2193922,
+        "raw_full_file_tokens_proxy": 548480.5,
+        "unique_paths": 58,
+        "unresolved_pending_modules": [
+          "elixir_fn",
+          "elixir_map"
+        ]
+      },
+      "floor": {
+        "current_source_bytes": 2079310,
+        "raw_full_file_tokens_proxy": 519827.5,
+        "unique_paths": 57,
+        "unresolved_pending_modules": [
+          "elixir_fn",
+          "elixir_map"
+        ]
+      }
+    },
+    "01.1.1.4-P04": {
+      "core": {
+        "current_source_bytes": 1732433,
+        "raw_full_file_tokens_proxy": 433108.25,
+        "unique_paths": 58,
+        "unresolved_pending_modules": [
+          "elixir_def",
+          "elixir_dispatch",
+          "elixir_module",
+          "prim_eval"
+        ]
+      },
+      "floor": {
+        "current_source_bytes": 1631012,
+        "raw_full_file_tokens_proxy": 407753,
+        "unique_paths": 56,
+        "unresolved_pending_modules": [
+          "elixir_def",
+          "elixir_dispatch",
+          "elixir_module",
+          "prim_eval"
+        ]
+      }
+    },
+    "01.1.1.4-P05": {
+      "core": {
+        "current_source_bytes": 2420855,
+        "raw_full_file_tokens_proxy": 605213.75,
+        "unique_paths": 62,
+        "unresolved_pending_modules": [
+          "elixir"
+        ]
+      },
+      "floor": {
+        "current_source_bytes": 2218980,
+        "raw_full_file_tokens_proxy": 554745,
+        "unique_paths": 60,
+        "unresolved_pending_modules": [
+          "elixir"
+        ]
+      }
+    }
+  },
+  "schema": "fablebook.planning-source-footprint/1",
+  "status": "lower-bound-sizing-only-not-semantic-acceptance",
+  "planning_date": "2026-11-03",
+  "provenance": {
+    "budget": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json",
+    "calibration": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-CALIBRATION.md",
+    "source_archive": "test/fixtures/guards/exact_sources.tar.gz",
+    "source_archive_sha256": "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894",
+    "probe": "Python stdlib-only read-only filesystem, BEAM CInf external-term decoding, archive manifest inspection, hashing and historical set reconciliation; no project/OTP evaluator, parser, loader, atom-creator or test command invoked.",
+    "limitations": [
+      "Source paths selected from pinned local BEAM compile-info using unique longest matching path suffix; this is sizing input, not SweepEvidence semantic citation acceptance.",
+      "Fourteen pending modules per lane were unresolved by this local-file probe. Archive/source-only resolution was not substituted for them.",
+      "Original-row match unions use preserved historical budget MFA sets. Current full installed export-set equality has not been tested or claimed.",
+      "Source-set digest serializes sorted Python tuple representations of local path suffix, SHA-256 and byte size; it is a probe digest, not the calibration artifact's canonical source-set digest."
+    ]
+  }
+}

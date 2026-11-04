@@ -1,15 +1,15 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.3.1.3
-current_phase_name: Debugger installed-wide acceptance
+current_phase: 01.1.1.6
+current_phase_name: Audit remaining ban-list call-name exclusions (INSERTED)
 status: executing
-stopped_at: Phase 01.1.1.3.1.3 complete; PR #33 exact-head checks and merged delivery verified; stopped at the selected phase boundary
-last_updated: "2026-11-02T02:03:09Z"
-last_activity: 2026-11-02
-last_activity_desc: Phase 01.1.1.3.1.3 complete; local lanes, exact-head CI markers, PR merge, and main ancestry verified
-state_head: e301e49186b563a32c6fa0f11f1eb4d71cb9b5d7
+stopped_at: Completed 01.1.1.6-04-PLAN.md
+last_updated: "2026-11-04T00:38:06.723Z"
+last_activity: 2026-11-03
+last_activity_desc: Phase 01.1.1.6 execution started
+state_head: 61fdb87c67b9f79f4cfac482c28e87c6262ea64d
 progress:
-  total_phases: 41
+  total_phases: 42
   completed_phases: 1
   total_plans: 31
   completed_plans: 26
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.3.1.3 — Debugger installed-wide acceptance
+**Current focus:** Phase 01.1.1.6 — Audit remaining ban-list call-name exclusions (INSERTED)
 
 ## Current Position
 
-Phase: 01.1.1.3.1.3 (Debugger installed-wide acceptance) — COMPLETE
-Plan: 2/2 complete; local review, exact lanes, exact-head CI, and merged delivery verified
-Status: Executing
-Last activity: 2026-11-02 — PR #33 is green and merged; exact-head markers and main ancestry verified
+Phase: 01.1.1.6 (Audit remaining ban-list call-name exclusions (INSERTED)) — EXECUTING
+Plan: 5 of 5
+Status: Ready to execute
+Last activity: 2026-11-03 — Phase 01.1.1.6 execution started
 
 Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plans complete; nested phase plans do not change parent completion counts
 
@@ -78,6 +78,10 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plan
 | Phase 01.1.1.3.1.2 P03 | 212min | 2 tasks | 6 files |
 | Phase 01.1.1.3.1.2 P04 | 132min | 2 tasks | 5 files |
 | Phase 01.1.1.3.1.2 P05 | 51min | 3 tasks | 13 files |
+| Phase 01.1.1.6 P01 | 59 min | 2 tasks | 2 files |
+| Phase 01.1.1.6 P02 | 76 min | 2 tasks | 1 files |
+| Phase 01.1.1.6 P03 | 30 min | 2 tasks | 1 files |
+| Phase 01.1.1.6 P04 | 39 min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -135,6 +139,16 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.3.1.2]: Explicit debugger-remainder delivery preserves the selected-settings default and binds evidence to current source, ownership, head, and run.
 - [Phase 01.1.1.3.1.2]: T-15 remains recorded against the undigested pre-fix checker state; the final strict controls pass, but no third review or independent final sign-off is claimed.
 - [Phase 01.1.1.3.1.2]: Installed-wide acceptance, runtime safety, and SEC-01 remain pending under their existing owners.
+- [Phase 01.1.1.6]: Retain CN-002 because Phoenix.Digester.compile/3 digests static assets; the Mix caller project compile remains a separate action.
+- [Phase 01.1.1.6]: Keep the disposition bounded to the cited lane sources and static checks; make no runtime atom-count, never-eval, or general filesystem-safety claim.
+- [Phase 01.1.1.6]: Keep CN-001 open until its exact caller and Protocol delegate sources are bound through approved authority.
+- [Phase 01.1.1.6]: Prove floor target absence from the exact pinned Mix BEAM and export inventories, not source omissions.
+- [Phase 01.1.1.6]: Keep CN-LANE-001 as a separate metadata identity; the CN-001 guard tier is enforcement evidence only.
+- [Phase 01.1.1.6]: Retain CN-003 as a narrow build-time colocated-asset compile-name row; keep the exact guard front as a separate enforcement dependency. — Core and floor source/BEAM evidence agree, and a tier-removal witness shows the row catches the current match if the exact guard entry is removed. The project lib scan is clean.
+- [Phase 01.1.1.6]: Record the missing direct Mix compiler task source as an explicit CN-003 authority gap. — The full graph proves the sole direct caller in both lanes and compile/0 accepts no caller arguments, while the approved archive omits the caller task source; internal path/module inputs are traced from Application/Mix config and output subdirectories.
+- [Phase 01.1.1.6]: Keep CN-004 source-authority open — The approved exact-source archive omits Phoenix.Router.build_pipes/2 and Phoenix.plug_init_mode/0. Without those caller inputs, compile/runtime init-mode selection is not fully established and a retained or removed disposition would be premature.
+- [Phase 01.1.1.6]: Keep the overlapping expansion and Macro caller-AST judgments with Phase 01.1.1.4 — CN-004 compile/3 overlaps the existing blanket :expansion exclusion, and this plan does not own the project-authored Macro caller-AST judgment or final Credo wording. Preserve that exclusion without broadening it.
+- [Phase 01.1.1.6]: Tie CN-004's compiler-lowered atom creation to the exact independent guard entry — Elixir lowers String.to_atom/1 to :erlang.binary_to_atom/1 in the compiled BEAM. The uncalled contract probe verifies that exact :binary_to_atom name-tier hit and proves that removing the matching tier entry removes the hit.
 
 ### Pending Todos
 
@@ -169,7 +183,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-02T02:03:09Z
-Stopped at: Phase 01.1.1.3.1.3 complete after PR #33 exact-head CI and merge identity verification. No later phase was started.
-Next action: At the next milestone, archive the current milestone, then restart numbering at Phase 1 with `$gsd-new-milestone --reset-phase-numbers`.
+Last session: 2026-11-04T00:38:06.674Z
+Stopped at: Completed 01.1.1.6-04-PLAN.md
+Next action: Run `$gsd-execute-phase 01.1.1.6` from this clean execution checkout.
 Resume file: None
