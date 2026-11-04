@@ -829,7 +829,7 @@ Plan counts are estimates (146 in total); `/gsd-plan-phase` refines them, and a 
   3. A complete row is carried end to end as the production-quality tracer before expanding the bounded call-name slice. Any additional matched function or source file remains included; no match is capped.
   4. No dangerous evaluator, parser, loader, or atom-creation API is invoked. Any newly judged front called from lib/ stops for the existing owner decision.
   5. Delivery remains contract-test-only, with distinct exact-head core/floor evidence and required green scoped merge/CI receipts. The other original rows remain pending for later deliveries; this phase claims no whole-table closure or Phase 5 proof.
-**Plans:** 4/5 plans executed across 5 waves
+**Plans:** 5/5 plans complete across 5 waves
 
 Plans:
 **Wave 1**
@@ -845,7 +845,7 @@ Plans:
 - [x] 01.1.1.6-04-PLAN.md — Complete CN-004 caller and delegate evidence.
 
 **Wave 5** *(blocked on Wave 4 completion)*
-- [ ] 01.1.1.6-05-PLAN.md — Complete CN-006 and record exact-head delivery evidence.
+- [x] 01.1.1.6-05-PLAN.md — Complete CN-006 and record exact-head delivery evidence.
 
 **Cross-cutting constraints:** <!-- gsd:generated -->
 - Per D-09, execution is sequential without delegated agents, remaining effort is refreshed at the boundary, auto-advance stays off, and work stops at `.6`.

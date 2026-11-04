@@ -1,0 +1,234 @@
+{
+  "schema": "fablebook.phase-delivery/1",
+  "phase": "01.1.1.6",
+  "receipt_status": "verified",
+  "candidate": {
+    "pr_number": 45,
+    "pr_url": "https://github.com/szTheory/fablebook/pull/45",
+    "base_branch": "main",
+    "tested_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+    "local_tested_head": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+    "pr_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+    "pr_state": "MERGED",
+    "merge_method": "squash",
+    "merged_at": "2026-11-04T02:32:10Z",
+    "merge_sha": "96c285533dfb3e4247b899f608d8ce35d2fc9c1b"
+  },
+  "local_gates": [
+    {
+      "command": "MIX_ENV=test bin/lane core mix ci",
+      "lane": "core Elixir 1.20.4 / OTP 29.1.2",
+      "tested_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "passed",
+      "result": "340 tests passed"
+    },
+    {
+      "command": "bin/lane floor mix compile --warnings-as-errors",
+      "lane": "floor Elixir 1.18.5 / OTP 27.3.4.9",
+      "tested_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "passed"
+    },
+    {
+      "command": "bin/lane floor mix compile --no-optional-deps --warnings-as-errors --force",
+      "lane": "floor Elixir 1.18.5 / OTP 27.3.4.9",
+      "tested_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "passed"
+    },
+    {
+      "command": "MIX_ENV=test bin/lane floor mix test --warnings-as-errors --include prod_guard",
+      "lane": "floor Elixir 1.18.5 / OTP 27.3.4.9",
+      "tested_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "passed",
+      "result": "340 tests, 0 failures, 4 excluded"
+    },
+    {
+      "command": "MIX_ENV=test bin/lane core mix credo --strict",
+      "lane": "core Elixir 1.20.4 / OTP 29.1.2",
+      "tested_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "passed"
+    },
+    {
+      "command": "git diff --exit-code origin/main...HEAD -- lib .github mix.exs mix.lock mix.floor.lock .credo.exs credo/checks/banned_calls.ex",
+      "tested_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "passed",
+      "observed": "No forbidden product/source/build-input/guard-path changes"
+    },
+    {
+      "command": "MIX_ENV=test bin/lane core mix test --warnings-as-errors <11 files from prior phase verification reports>",
+      "lane": "core Elixir 1.20.4 / OTP 29.1.2",
+      "tested_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "passed",
+      "result": "319 tests passed, 5 excluded, 0 failures"
+    }
+  ],
+  "required_checks": [
+    {
+      "name": "ci-gate",
+      "run_id": "41759755986",
+      "run_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986",
+      "head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "completed",
+      "conclusion": "success",
+      "job_id": "126347652675",
+      "job_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986/job/126347652675"
+    },
+    {
+      "name": "security",
+      "run_id": "41759755986",
+      "run_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986",
+      "head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "completed",
+      "conclusion": "success",
+      "job_id": "126344380797",
+      "job_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986/job/126344380797"
+    },
+    {
+      "name": "dialyzer",
+      "run_id": "41759755986",
+      "run_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986",
+      "head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "completed",
+      "conclusion": "success",
+      "job_id": "126344380644",
+      "job_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986/job/126344380644"
+    },
+    {
+      "name": "floor",
+      "run_id": "41759755986",
+      "run_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986",
+      "head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "completed",
+      "conclusion": "success",
+      "job_id": "126344380557",
+      "job_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986/job/126344380557"
+    },
+    {
+      "name": "core",
+      "run_id": "41759755986",
+      "run_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986",
+      "head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "completed",
+      "conclusion": "success",
+      "job_id": "126344380328",
+      "job_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986/job/126344380328"
+    }
+  ],
+  "allowed_skips": [
+    {
+      "name": "ci-health",
+      "run_id": "41759755986",
+      "run_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986",
+      "head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "completed",
+      "conclusion": "skipped",
+      "job_id": "126344382203",
+      "job_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986/job/126344382203"
+    },
+    {
+      "name": "nightly",
+      "run_id": "41759755986",
+      "run_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986",
+      "head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+      "status": "completed",
+      "conclusion": "skipped",
+      "job_id": "126344381856",
+      "job_url": "https://github.com/szTheory/fablebook/actions/runs/41759755986/job/126344381856"
+    }
+  ],
+  "check_run_pagination": {
+    "page_size": 100,
+    "total_count": 7,
+    "rows_returned": 7,
+    "complete": true
+  },
+  "negative_control": {
+    "control": "Synthetic wrong-head check run",
+    "result": "rejected"
+  },
+  "merge_verification": {
+    "verified": true,
+    "merge_sha": "96c285533dfb3e4247b899f608d8ce35d2fc9c1b",
+    "fresh_origin_main_sha": "96c285533dfb3e4247b899f608d8ce35d2fc9c1b",
+    "live_github_main_sha": "96c285533dfb3e4247b899f608d8ce35d2fc9c1b",
+    "merge_is_ancestor_of_fresh_origin_main": true,
+    "freshness_evidence": "git fetch origin main completed after PR merge; live GitHub main SHA still matches origin/main",
+    "verifier_note": "A redundant second local fetch was blocked because the execution checkout could not rewrite .git/FETCH_HEAD. The successful post-merge fetch and a live GitHub main SHA query agreed; ancestry passed against that fetched origin/main."
+  },
+  "source_scope": {
+    "forbidden_paths_gate": "passed before merge",
+    "paths_checked": [
+      "lib",
+      ".github",
+      "mix.exs",
+      "mix.lock",
+      "mix.floor.lock",
+      ".credo.exs",
+      "credo/checks/banned_calls.ex"
+    ],
+    "nonplanning_worktree_clean_at_final_verification": true
+  },
+  "phase_scope": {
+    "delivered_ids": [
+      "CN-001",
+      "CN-002",
+      "CN-003",
+      "CN-004",
+      "CN-006",
+      "CN-LANE-001"
+    ],
+    "requirements": [],
+    "prerequisite_history": {
+      "phase": "01.1.1.12",
+      "merge_sha": "716ef4613312badee0a0fff942eab218ebc1b88c",
+      "role": "prerequisite only; not a .6 test or delivery result"
+    },
+    "limitations": [
+      "CN-001 remains open where approved source authority is incomplete",
+      "CN-004 remains open where approved source authority is incomplete",
+      "CN-005 remains owned by Phase 01.1.1.5",
+      "No whole-table, SEC-01, runtime atom-count, never-eval, or general safety claim"
+    ]
+  },
+  "code_review": {
+    "status": "clean",
+    "depth": "standard",
+    "files_reviewed": [
+      "test/contract/tier_sweep_test.exs",
+      "test/contract/banned_calls_test.exs"
+    ],
+    "findings": {
+      "critical": 0,
+      "warning": 0,
+      "info": 0,
+      "total": 0
+    },
+    "report": "01.1.1.6-REVIEW.md",
+    "disposition": "01.1.1.6-REVIEW-DISPOSITION.md"
+  },
+  "regression_gate": {
+    "status": "passed",
+    "lane": "core Elixir 1.20.4 / OTP 29.1.2",
+    "tested_head_sha": "d80a57fdbf9cfdafb927f946f71d99ece76080e7",
+    "command": "MIX_ENV=test bin/lane core mix test --warnings-as-errors test/contract/banned_calls_test.exs test/contract/ci_shape_test.exs test/contract/dependency_budget_test.exs test/contract/hex_publish_test.exs test/contract/prod_guard_message_test.exs test/contract/prod_guard_test.exs test/contract/style_attr_test.exs test/contract/tarball_test.exs test/contract/tier_sweep_test.exs test/planning/contract_rule_test.exs test/planning/intent_test.exs",
+    "prior_verification_reports": 5,
+    "test_files": [
+      "test/contract/banned_calls_test.exs",
+      "test/contract/ci_shape_test.exs",
+      "test/contract/dependency_budget_test.exs",
+      "test/contract/hex_publish_test.exs",
+      "test/contract/prod_guard_message_test.exs",
+      "test/contract/prod_guard_test.exs",
+      "test/contract/style_attr_test.exs",
+      "test/contract/tarball_test.exs",
+      "test/contract/tier_sweep_test.exs",
+      "test/planning/contract_rule_test.exs",
+      "test/planning/intent_test.exs"
+    ],
+    "result": {
+      "passed": 319,
+      "excluded": 5,
+      "failures": 0
+    },
+    "elapsed_seconds": 369.9
+  }
+}
