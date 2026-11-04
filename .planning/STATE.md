@@ -4,12 +4,12 @@ current_phase: 1
 current_phase_name: Release pipeline, CI gate and guards
 status: verifying
 stopped_at: Phase 01.1.1.6 complete; paused at the requested boundary. Parent Phase 1 verification remains pending.
-last_updated: "2026-11-04T03:10:36Z"
+last_updated: "2026-11-04T15:12:13.068Z"
 last_activity: 2026-11-03
 last_activity_desc: Phase 01.1.1.6 complete, transitioned to Phase 1
-state_head: 96c285533dfb3e4247b899f608d8ce35d2fc9c1b
+state_head: e91581fe0ec6aa811744a22024c2e5107c0ddddb
 progress:
-  total_phases: 42
+  total_phases: 43
   completed_phases: 1
   total_plans: 31
   completed_plans: 26
@@ -173,6 +173,7 @@ None yet.
 - Phase 01.1 inserted after Phase 1: Close phase 1 guard gaps (atom-ban bypass, code loading, hex-publish hardening); split per INT-20261029-01 to keep the 5-plan cap (URGENT)
 - Phase 01.1.1.1 inserted after Phase 01.1.1: Finish the ban list: open items transferred from 01.1.1 at planning (INT-20261029-02) (URGENT)
 - Phase numbering: keep existing dotted IDs stable as historical ownership and evidence references. After archiving the current milestone, start the next milestone at Phase 1 with `$gsd-new-milestone --reset-phase-numbers` (INT-20261101-02). Do not add further nested decimal insertions.
+- Phase 01.1.1.13 inserted after Phase 01.1.1.1: User approved first same-level bounded delivery for CN-001 and CN-004 source-authority closure; Phase 2 remains gated on both this slice and full 01.1.1.1 aggregate closure. (URGENT)
 
 ## Deferred Items
 

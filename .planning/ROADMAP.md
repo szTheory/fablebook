@@ -37,6 +37,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
 - [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
+- [ ] **Phase 01.1.1.13: Close CN-001 and CN-004 source-authority gaps**
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -219,10 +220,35 @@ Plans:
 - SC4 / D-10, D-11: AST classification follows the owner record and a newly banned lib call halts its affected work.
 - SC6 / D-13, D-14: scoped audit PR merges green; no new dependency or runtime-property completion is claimed.
 
+**Replan status:** The five listed plans are the historical decomposition and remain blocked after the halted Plan 01 summary. Preserve the delivered 01-01 tracer; do not execute old tasks 01-02/01-03 or Plans 02–05. The first same-level delivery is Phase 01.1.1.13 for the still-open CN-001 and CN-004 source-authority gaps. All other original rows remain open under this aggregate acceptance contract until bounded same-level allocations are recorded. Phase 2 remains gated on the complete Phase 01.1.1.1 closure.
+
+### Phase 01.1.1.13: Close CN-001 and CN-004 source-authority gaps (INSERTED)
+
+**Goal:** Close the source-authority gaps left open for original call-name rows CN-001 and CN-004. Recompute each row's complete current core and floor match sets, bind exact-lane caller/delegate source evidence, and reach a truthful cited disposition with a non-vacuous lane witness. Preserve both original identities and every match; this bounded delivery does not close the remaining exclusion table or SEC-01.
+**Requirements**: None
+**Depends on:** Phase 01.1.1.6
+**Success Criteria** (what must be TRUE):
+  1. CN-001 and CN-004 retain their original identities and complete current exact-lane match sets; any lane absence is established by installed export/inventory evidence.
+  2. Every matched function in both rows has exact core/floor source authority and a caller/delegate trace sufficient to judge caller influence. Missing or mismatched source evidence keeps the row open and blocks closure.
+  3. Each row has a substantive cited disposition, and every retained matcher has a non-vacuous removal witness on each applicable lane. Any narrowing, replacement, or removal preserves original-to-current traceability.
+  4. Contract tests enforce the complete-set, source, disposition, and removal evidence without invoking any audited evaluator, parser, loader, or atom-creation API. A newly judged `lib/` caller triggers the existing owner-decision stop.
+  5. Delivery remains contract-test-only and merges green with exact-head core/floor checks and a CI run link. No other exclusion rows, whole-table closure, SEC-01 completion, runtime atom-count property, or never-eval proof is claimed.
+**Plans:** 3 plans across 3 waves
+
+Plans:
+**Wave 1**
+- [ ] 01.1.1.13-01-PLAN.md — Complete CN-001 source authority, disposition and applicable coverage controls
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01.1.1.13-02-PLAN.md — Complete CN-004 caller trace, source authority and overlap-aware disposition
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 01.1.1.13-03-PLAN.md — Integrated two-row controls, bounded review and exact-head delivery
+
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
 **Mode:** mvp
-**Depends on**: Phase 01.1.1.1
+**Depends on**: Phase 01.1.1.1, Phase 01.1.1.13
 **Requirements**: None completed here (a vertical slice and a spike; see Partial delivery).
 **Partial delivery**: QA-04 (skeleton `hosts/operator`, completes in Phase 9), VIS-01 and VIS-02 (guards, complete in Phase 21), CANVAS-01 and SEC-03 (nonce CSP exercised, complete in Phase 7).
 **Provisional on:** Q9
