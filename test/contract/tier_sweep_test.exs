@@ -10787,6 +10787,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp assert_cn003_record!(record, graph, evidence, ledger) do
     expected = cn003_record!(graph, evidence, ledger)
+    citation_keys = MapSet.new(Enum.map(record.citations, &elem(&1, 0)))
     assert record == expected
     assert record.matched_mfas != []
     assert record.removal_witness != []
@@ -10802,11 +10803,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     Enum.each(record.mfa_citations, fn {_mfa, citations} ->
       assert citations != []
 
-      assert Enum.all?(citations, fn citation ->
-               Enum.any?(record.citations, fn {record_citation, _expected} ->
-                 record_citation == citation
-               end)
-             end)
+      Enum.each(citations, fn citation ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
     end)
 
     :ok
@@ -11082,6 +11081,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp assert_cn004_record!(record, graph, evidence, ledger) do
     expected = cn004_record!(graph, evidence, ledger)
+    citation_keys = MapSet.new(Enum.map(record.citations, &elem(&1, 0)))
     assert record == expected
     assert record.matched_mfas != []
 
@@ -11105,19 +11105,15 @@ defmodule Fablebook.Contract.TierSweepTest do
     Enum.each(record.mfa_citations, fn {_mfa, citations} ->
       assert citations != []
 
-      assert Enum.all?(citations, fn citation ->
-               Enum.any?(record.citations, fn {record_citation, _expected} ->
-                 record_citation == citation
-               end)
-             end)
+      Enum.each(citations, fn citation ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
     end)
 
     Enum.each(record.caller_citations, fn {_caller, citations} ->
-      assert Enum.all?(citations, fn citation ->
-               Enum.any?(record.citations, fn {record_citation, _expected} ->
-                 record_citation == citation
-               end)
-             end)
+      Enum.each(citations, fn citation ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
     end)
 
     :ok
@@ -11388,6 +11384,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp assert_cn006_record!(record, graph, evidence, ledger) do
     expected = cn006_record!(graph, evidence, ledger)
+    citation_keys = MapSet.new(Enum.map(record.citations, &elem(&1, 0)))
     assert record == expected
     assert record.matched_mfas == Map.fetch!(@cn006_expected_matches_by_lane, evidence.lane.name)
     assert record.removal_witness == record.matched_mfas
@@ -11408,11 +11405,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     Enum.each(record.mfa_citations, fn {mfa, citations} ->
       assert citations != []
 
-      assert Enum.all?(citations, fn {citation, _expected_source} ->
-               Enum.any?(record.citations, fn {record_citation, _} ->
-                 record_citation == citation
-               end)
-             end)
+      Enum.each(citations, fn {citation, _expected_source} ->
+        assert MapSet.member?(citation_keys, citation)
+      end)
 
       assert Map.has_key?(record.mfa_dispositions, mfa)
     end)
