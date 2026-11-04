@@ -1187,6 +1187,49 @@ defmodule Fablebook.Contract.BannedCallsTest do
   end
 
   @tag :tmp_dir
+  @tag :cn004_guard
+  test "CN-004 compile-name conversion depends on its exact lowered atom-name tier entry", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    mfa = {String, :to_atom, 1}
+    assert mfa in @mfa_tier
+    assert mfa in BannedCalls.banned_mfas()
+
+    source = """
+    defmodule Fablebook.GuardFixture.CN004CompileName do
+      def probe(module_name), do: String.to_atom(module_name)
+    end
+    """
+
+    assert credo_issues(source, "cn004_compile_name.ex") != []
+
+    source_path = Path.join(dir, "cn004_compile_name.ex")
+    File.write!(source_path, source)
+    [beam] = compile!([source_path], dir, true)
+    assert {:ok, scan} = BeamWalker.scan(beam)
+
+    lowered_mfa = Map.fetch!(@rewritten_calls, mfa)
+    assert lowered_mfa in scan.mfas
+
+    {_lowered_module, lowered_function, _lowered_arity} = lowered_mfa
+    assert lowered_function in @atom_tier
+    assert lowered_function in BannedCalls.banned_names()
+
+    assert {:atom, lowered_function} in hits(scan),
+           "the uncalled CN-004 positive probe must retain the lowered atom-name hit"
+
+    refute {:atom, lowered_function} in hits(
+             scan,
+             @mfa_tier,
+             Enum.reject(@atom_tier, &(&1 == lowered_function))
+           ),
+           "the CN-004 positive probe must depend on the exact lowered atom-name tier entry"
+  end
+
+  @tag :tmp_dir
   test "confirmed call-name fronts have static inventory and uncalled source and BEAM probes", %{
     tmp_dir: dir
   } do
@@ -2036,8 +2079,12 @@ defmodule Fablebook.Contract.BannedCallsTest do
     """
   end
 
-  defp hits(%{atoms: atoms, mfas: mfas, pairs: pairs, literals: literals}, mfa_tier \\ @mfa_tier) do
-    atom_hits = for atom <- @atom_tier, atom in atoms, do: {:atom, atom}
+  defp hits(
+         %{atoms: atoms, mfas: mfas, pairs: pairs, literals: literals},
+         mfa_tier \\ @mfa_tier,
+         atom_tier \\ @atom_tier
+       ) do
+    atom_hits = for atom <- atom_tier, atom in atoms, do: {:atom, atom}
     mfa_hits = for mfa <- mfas, Enum.any?(mfa_tier, &mfa_match?(&1, mfa)), do: {:mfa, mfa}
 
     pair_hits =
