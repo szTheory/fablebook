@@ -1526,6 +1526,11 @@ defmodule Fablebook.Contract.TierSweepTest do
     ]
   }
 
+  @cn006_expected_matches_by_lane %{
+    "core" => ["re:compile/1", "re:compile/2"],
+    "floor" => ["re:compile/1", "re:compile/2"]
+  }
+
   @cn001_source_authority_gaps [
     {
       "mix/lib/mix/compilers/elixir.ex",
@@ -6016,9 +6021,18 @@ defmodule Fablebook.Contract.TierSweepTest do
     sampled = Enum.filter(ledger.exclusions, &(&1.semantic_status != :pending))
 
     assert MapSet.new(Enum.map(sampled, & &1.id)) ==
-             MapSet.new(["CN-001", "CN-002", "CN-003", "CN-004", "CN-005", "BD-002", "EX-159"])
+             MapSet.new([
+               "CN-001",
+               "CN-002",
+               "CN-003",
+               "CN-004",
+               "CN-005",
+               "CN-006",
+               "BD-002",
+               "EX-159"
+             ])
 
-    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 214
+    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 213
 
     assert Enum.all?(
              ledger.metadata,
@@ -6026,6 +6040,8 @@ defmodule Fablebook.Contract.TierSweepTest do
            )
 
     cn001 = Enum.find(ledger.exclusions, &(&1.id == "CN-001"))
+    cn005 = Enum.find(ledger.exclusions, &(&1.id == "CN-005"))
+    cn006 = Enum.find(ledger.exclusions, &(&1.id == "CN-006"))
     cn_lane_001 = Enum.find(ledger.metadata, &(&1.id == "CN-LANE-001"))
 
     assert cn001.identity_class == :exclusion
@@ -6037,6 +6053,12 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert cn_lane_001.current_replacement_refs == ["source:CN-LANE:1"]
     refute cn001.id == cn_lane_001.id
 
+    assert cn005.semantic_status == :calibrated_retained
+    assert cn005.owner == "01.1.1.5"
+    assert cn006.semantic_status == :cn006_retained
+    assert cn006.owner == "01.1.1.6"
+    assert cn006.current_replacement_refs == ["source:CN:6"]
+
     assert Enum.all?(ledger.exclusions, fn row ->
              row.remaining_semantic_owner == "01.1.1.4" and row.current_replacement_refs != []
            end)
@@ -6044,9 +6066,14 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert Enum.all?(ledger.exclusions, fn row ->
              expected_owner =
                case row.id do
-                 id when id in ["CN-001", "CN-002", "CN-003", "CN-004"] -> "01.1.1.6"
-                 id when id in ["CN-005", "BD-002", "EX-159"] -> "01.1.1.5"
-                 _id -> "01.1.1.4"
+                 id when id in ["CN-001", "CN-002", "CN-003", "CN-004", "CN-006"] ->
+                   "01.1.1.6"
+
+                 id when id in ["CN-005", "BD-002", "EX-159"] ->
+                   "01.1.1.5"
+
+                 _id ->
+                   "01.1.1.4"
                end
 
              row.owner == expected_owner
@@ -7274,6 +7301,80 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
       cn004_record!(wrong_lane_graph, evidence, ledger)
+    end
+  end
+
+  @tag :cn006
+  test "CN-006 preserves both exact-lane re:compile arities with source and row witnesses", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn006_record!(ctx.graph, evidence, ledger)
+
+    assert_cn006_record!(record, ctx.graph, evidence, ledger)
+    assert record.original_id == "CN-006"
+    assert record.current_replacement_refs == ["source:CN:6"]
+    assert record.semantic_status == :cn006_retained
+    assert record.matched_mfas == Map.fetch!(@cn006_expected_matches_by_lane, evidence.lane.name)
+    assert record.verdict == :retained_regex_data_native_boundary
+    assert record.disposition == :retained_non_module_compile
+    assert record.removal_witness == record.matched_mfas
+    assert record.overlap_mfas == []
+    assert record.direct_callers != []
+  end
+
+  @tag :cn006
+  test "CN-006 rejects an omitted arity, source branch, caller set and witness", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn006_record!(ctx.graph, evidence, ledger)
+    other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+
+    for omitted <- [
+          %{record | matched_mfas: List.delete_at(record.matched_mfas, 1)},
+          %{record | citations: List.delete_at(record.citations, 0)},
+          %{record | arity_traces: Map.delete(record.arity_traces, "re:compile/2")},
+          %{record | direct_callers: []},
+          %{record | caller_input_trace: ""},
+          %{record | delegate_trace: []},
+          %{record | removal_witness: []},
+          %{record | overlap_mfas: record.matched_mfas},
+          %{record | lane: other_lane}
+        ] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn006_record!(omitted, ctx.graph, evidence, ledger)
+      end
+    end
+
+    graph_with_new_match = %{
+      ctx.graph
+      | full_exported: MapSet.put(ctx.graph.full_exported, {:re, :compile, 3})
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      cn006_record!(graph_with_new_match, evidence, ledger)
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "CN-006"))
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/original CN-006 identity is missing/, fn ->
+      cn006_record!(ctx.graph, evidence, missing_identity)
+    end
+
+    wrong_lane_evidence = %{evidence | lane: Map.put(evidence.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn006_record!(ctx.graph, wrong_lane_evidence, ledger)
+    end
+
+    wrong_lane_graph = %{ctx.graph | lane: Map.put(ctx.graph.lane, :name, other_lane)}
+
+    assert_raise ExUnit.AssertionError, ~r/graph and source evidence lanes differ/, fn ->
+      cn006_record!(wrong_lane_graph, evidence, ledger)
     end
   end
 
@@ -10191,6 +10292,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp original_semantic_status("CN-002"), do: :cn002_retained
   defp original_semantic_status("CN-003"), do: :cn003_retained
   defp original_semantic_status("CN-004"), do: :cn004_source_authority_open
+  defp original_semantic_status("CN-006"), do: :cn006_retained
   defp original_semantic_status("CN-005"), do: :calibrated_retained
   defp original_semantic_status("BD-002"), do: :calibrated_retained
   defp original_semantic_status("EX-159"), do: :calibrated_replaced_by_tier
@@ -10200,6 +10302,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp original_semantic_owner(:cn001_source_authority_open), do: "01.1.1.6"
   defp original_semantic_owner(:cn003_retained), do: "01.1.1.6"
   defp original_semantic_owner(:cn004_source_authority_open), do: "01.1.1.6"
+  defp original_semantic_owner(:cn006_retained), do: "01.1.1.6"
   defp original_semantic_owner(:pending), do: "01.1.1.4"
   defp original_semantic_owner(_sampled_status), do: "01.1.1.5"
 
@@ -11121,6 +11224,312 @@ defmodule Fablebook.Contract.TierSweepTest do
         Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
     end)
   end
+
+  defp cn006_record!(graph, evidence, ledger) do
+    row = Enum.find(ledger.exclusions, &(&1.id == "CN-006"))
+    assert row != nil, "original CN-006 identity is missing"
+    assert graph.lane == evidence.lane, "CN-006 graph and source evidence lanes differ"
+
+    [original_matcher, original_reason, original_citations] =
+      source_tuple_parts!(row.original_entry_raw)
+
+    assert original_matcher == "{:re, [:compile]}"
+    assert original_reason == ":not_compile_module"
+
+    assert original_citations =~ "stdlib/src/re.erl:128" or
+             original_citations =~ "stdlib/src/re.erl:86"
+
+    assert row.original_matcher_raw == original_matcher
+    assert row.original_reason_raw == original_reason
+    assert row.original_citations_raw == original_citations
+    assert row.current_replacement_refs == ["source:CN:6"]
+    assert row.semantic_status == :cn006_retained
+    assert row.owner == "01.1.1.6"
+
+    {{:re, [:compile]}, :not_compile_module, _current_citations} =
+      Enum.find(@call_name_exclusions, fn {matcher, _reason, _citations} ->
+        matcher == {:re, [:compile]}
+      end)
+
+    lane = evidence.lane.name
+    stdlib_ebin = :code.lib_dir(:stdlib) |> to_string() |> Path.join("ebin")
+
+    inventory_module_exports =
+      InstalledOtp.export_inventory!([stdlib_ebin], lane: lane)
+      |> Enum.filter(fn {module, _function, _arity} -> module == :re end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    graph_module_exports =
+      graph.full_exported
+      |> Enum.filter(fn {module, _function, _arity} -> module == :re end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    assert graph_module_exports == inventory_module_exports,
+           "CN-006/#{lane} graph exports differ from the exact installed stdlib inventory"
+
+    matched_mfas =
+      graph_module_exports
+      |> Enum.filter(&call_name_exclusion_match?({:re, [:compile]}, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.sort_by(&mfa_string!/1)
+
+    matched_strings = Enum.map(matched_mfas, &mfa_string!/1)
+
+    assert matched_strings == Map.fetch!(@cn006_expected_matches_by_lane, lane),
+           "CN-006/#{lane} complete match set changed: #{inspect(matched_strings)}"
+
+    callers =
+      graph.full_reverse
+      |> Map.get({:re, :compile}, [])
+      |> Enum.uniq()
+      |> Enum.sort_by(&mfa_string!/1)
+
+    caller_strings = Enum.map(callers, &mfa_string!/1)
+    assert caller_strings != [], "CN-006/#{lane} has no exact full-graph caller evidence"
+
+    project_callers = Enum.filter(caller_strings, &String.starts_with?(&1, "Elixir.Fablebook."))
+    assert project_callers == [], "CN-006/#{lane} has a direct project lib/ caller"
+
+    citations = cn006_citations!(lane)
+
+    resolved =
+      Enum.map(citations, fn {citation, expected_source} ->
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.text =~ expected_source, citation
+        {citation, source}
+      end)
+
+    removal_witness = cn006_removal_witness!(matched_mfas)
+    overlap_mfas = cn006_overlaps!(matched_mfas)
+
+    assert removal_witness == matched_mfas,
+           "CN-006/#{lane} retained arities lack individual row-removal witnesses"
+
+    assert overlap_mfas == [], "CN-006/#{lane} overlaps another exclusion"
+
+    arity_traces = %{
+      "re:compile/1" => %{
+        source_contract: :caller_supplied_iodata_pattern,
+        options: :defaults_to_compile_2_with_empty_options,
+        delegate: :native_regex_compiler_nif
+      },
+      "re:compile/2" => %{
+        source_contract: :caller_supplied_iodata_or_unicode_charlist_pattern,
+        options:
+          if(lane == "core", do: :compile_options_including_export, else: :otp_27_compile_options),
+        delegate: :native_regex_compiler_nif
+      }
+    }
+
+    %{
+      original_id: row.id,
+      original_entry_raw: row.original_entry_raw,
+      original_matcher_raw: row.original_matcher_raw,
+      original_reason_raw: row.original_reason_raw,
+      original_citations_raw: row.original_citations_raw,
+      current_replacement_refs: row.current_replacement_refs,
+      semantic_status: row.semantic_status,
+      semantic_owner: row.owner,
+      lane: lane,
+      elixir: evidence.lane.elixir,
+      otp: evidence.lane.otp,
+      module_exports: Enum.map(graph_module_exports, &mfa_string!/1),
+      matched_mfas: matched_strings,
+      mfa_dispositions: Map.new(matched_strings, &{&1, :retained_regex_data_native_boundary}),
+      mfa_citations: %{
+        "re:compile/1" => [
+          lane_citation!(lane, "stdlib/src/re.erl:123", "The same as"),
+          lane_citation!(lane, "stdlib/src/re.erl:124", "-spec compile(Regexp)"),
+          lane_citation!(lane, "stdlib/src/re.erl:128", "compile(_) ->"),
+          lane_citation!(lane, "stdlib/src/re.erl:129", "erlang:nif_error(undef).")
+        ],
+        "re:compile/2" => [
+          lane_citation!(lane, "stdlib/src/re.erl:132", "Compiles a regular expression"),
+          lane_citation!(lane, "stdlib/src/re.erl:133", "format to be used later as a parameter"),
+          lane_citation!(lane, "stdlib/src/re.erl:282", "-spec compile(Regexp, Options)"),
+          lane_citation!(lane, "stdlib/src/re.erl:284", "Options :: [Option]"),
+          lane_citation!(lane, "stdlib/src/re.erl:288", "compile(_, _) ->"),
+          lane_citation!(lane, "stdlib/src/re.erl:289", "erlang:nif_error(undef).")
+        ]
+      },
+      direct_callers: caller_strings,
+      direct_caller_count: length(caller_strings),
+      direct_callers_scope: :combined_compile_arities_in_full_reverse_graph,
+      caller_input_trace:
+        "The full graph records all direct callers of re:compile/1 and /2 together because its reverse map is keyed by module and function, not target arity. The exact lane source specs define the API inputs as caller-supplied Regexp data (iodata for /1; iodata or Unicode charlist for /2) and, for /2, a caller-supplied option list. The OTP API contract compiles that regex data to the internal format used by run/2 and run/3; these arguments are not module names or BEAM module source.",
+      arity_traces: arity_traces,
+      delegate_trace: [
+        "compile/1 is documented as compile/2 with an empty option list.",
+        "compile/1 and compile/2 are Erlang NIF stubs that call erlang:nif_error(undef) if their native implementation is unavailable.",
+        "The documented output is an internal regular-expression representation for later run/2 or run/3 matching; compile/2 supports the export option only on the core OTP lane (OTP 28.1 and later).",
+        "The visible Erlang source does not compile, load, or evaluate BEAM modules. The NIF implementation is outside this static source trace."
+      ],
+      verdict: :retained_regex_data_native_boundary,
+      verdict_explanation:
+        "Both original matches compile caller-supplied regular-expression data to an internal pattern through the OTP native regex boundary. The public contract and NIF stubs do not implement Elixir/Erlang module compilation or code loading. Retain the original row for that narrow reason; the hidden native implementation is not inspected, invoked, or used for a runtime atom-count or general safety conclusion.",
+      disposition: :retained_non_module_compile,
+      retained_exclusion: true,
+      citations: citations,
+      source_sha256s:
+        resolved
+        |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
+        |> Map.new(),
+      removal_witness: Enum.map(removal_witness, &mfa_string!/1),
+      overlap_mfas: Enum.map(overlap_mfas, &mfa_string!/1),
+      project_lib_callers: project_callers,
+      applicability: :each_exact_installed_lane,
+      limitations: [
+        "The reverse graph combines direct caller functions across both compile arities because target arity is not retained in its reverse-map key.",
+        "The native NIF implementation is not present in the Erlang source body and is not invoked or characterized here.",
+        "This static record makes no runtime atom-count, regex denial-of-service, or general safety claim."
+      ]
+    }
+  end
+
+  defp assert_cn006_record!(record, graph, evidence, ledger) do
+    expected = cn006_record!(graph, evidence, ledger)
+    assert record == expected
+    assert record.matched_mfas == Map.fetch!(@cn006_expected_matches_by_lane, evidence.lane.name)
+    assert record.removal_witness == record.matched_mfas
+    assert record.disposition == :retained_non_module_compile
+    assert record.retained_exclusion
+    assert record.overlap_mfas == []
+    assert record.project_lib_callers == []
+    assert record.direct_caller_count == length(record.direct_callers)
+    assert record.direct_callers_scope == :combined_compile_arities_in_full_reverse_graph
+    assert Map.keys(record.arity_traces) |> Enum.sort() == ["re:compile/1", "re:compile/2"]
+
+    Enum.each(record.citations, fn {citation, expected_source} ->
+      resolved = SweepEvidence.resolve!(evidence, citation)
+      assert resolved.text =~ expected_source, citation
+      assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
+    end)
+
+    Enum.each(record.mfa_citations, fn {mfa, citations} ->
+      assert citations != []
+
+      assert Enum.all?(citations, fn {citation, _expected_source} ->
+               Enum.any?(record.citations, fn {record_citation, _} ->
+                 record_citation == citation
+               end)
+             end)
+
+      assert Map.has_key?(record.mfa_dispositions, mfa)
+    end)
+
+    :ok
+  end
+
+  defp cn006_citations!("core") do
+    [
+      {"stdlib/src/re.erl:123", "The same as"},
+      {"stdlib/src/re.erl:124", "-spec compile(Regexp)"},
+      {"stdlib/src/re.erl:128", "compile(_) ->"},
+      {"stdlib/src/re.erl:129", "erlang:nif_error(undef)."},
+      {"stdlib/src/re.erl:132", "Compiles a regular expression"},
+      {"stdlib/src/re.erl:133", "format to be used later as a parameter"},
+      {"stdlib/src/re.erl:282", "-spec compile(Regexp, Options)"},
+      {"stdlib/src/re.erl:284", "Options :: [Option]"},
+      {"stdlib/src/re.erl:285", "Option :: compile_option() | export"},
+      {"stdlib/src/re.erl:280", "supported since OTP 28.1"},
+      {"stdlib/src/re.erl:288", "compile(_, _) ->"},
+      {"stdlib/src/re.erl:289", "erlang:nif_error(undef)."}
+    ]
+  end
+
+  defp cn006_citations!("floor") do
+    [
+      {"stdlib/src/re.erl:80", "The same as"},
+      {"stdlib/src/re.erl:81", "-spec compile(Regexp)"},
+      {"stdlib/src/re.erl:86", "compile(_) ->"},
+      {"stdlib/src/re.erl:87", "erlang:nif_error(undef)."},
+      {"stdlib/src/re.erl:90", "Compiles a regular expression"},
+      {"stdlib/src/re.erl:91", "format to be used later as a parameter"},
+      {"stdlib/src/re.erl:229", "-spec compile(Regexp, Options)"},
+      {"stdlib/src/re.erl:231", "Options :: [Option]"},
+      {"stdlib/src/re.erl:232", "Option :: compile_option()"},
+      {"stdlib/src/re.erl:236", "compile(_, _) ->"},
+      {"stdlib/src/re.erl:237", "erlang:nif_error(undef)."}
+    ]
+  end
+
+  defp cn006_removal_witness!(matched_mfas) do
+    matcher = {:re, [:compile]}
+
+    row =
+      Enum.find(@call_name_exclusions, fn {entry_matcher, _reason, _citations} ->
+        entry_matcher == matcher
+      end)
+
+    assert row != nil, "CN-006 row is absent from the active call-name exclusions"
+    other_rows = Enum.reject(@call_name_exclusions, &(&1 == row))
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+
+    Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
+      not covered?(mfa, tier, names) and
+        exact_mfa_exclusion_reason(mfa, @exclusions) == nil and
+        exclusion_reason(module, function, @exclusions) == nil and
+        not Enum.any?(other_rows, fn {other_matcher, _reason, _citations} ->
+          call_name_exclusion_match?(other_matcher, mfa)
+        end) and
+        not Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
+    end)
+  end
+
+  defp cn006_overlaps!(matched_mfas) do
+    other_call_name_rows =
+      Enum.reject(@call_name_exclusions, fn {matcher, _reason, _citations} ->
+        matcher == {:re, [:compile]}
+      end)
+
+    Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
+      exact_mfa_exclusion_reason(mfa, @exclusions) != nil or
+        exclusion_reason(module, function, @exclusions) != nil or
+        Enum.any?(other_call_name_rows, fn {matcher, _reason, _citations} ->
+          call_name_exclusion_match?(matcher, mfa)
+        end) or
+        Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), mfa))
+    end)
+  end
+
+  defp lane_citation!("core", citation, expected), do: {citation, expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:123", expected),
+    do: {"stdlib/src/re.erl:80", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:124", expected),
+    do: {"stdlib/src/re.erl:81", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:128", expected),
+    do: {"stdlib/src/re.erl:86", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:129", expected),
+    do: {"stdlib/src/re.erl:87", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:132", expected),
+    do: {"stdlib/src/re.erl:90", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:133", expected),
+    do: {"stdlib/src/re.erl:91", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:282", expected),
+    do: {"stdlib/src/re.erl:229", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:284", expected),
+    do: {"stdlib/src/re.erl:231", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:285", _expected),
+    do: {"stdlib/src/re.erl:232", "Option :: compile_option()"}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:280", _expected),
+    do: {"stdlib/src/re.erl:232", "Option :: compile_option()"}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:288", expected),
+    do: {"stdlib/src/re.erl:236", expected}
+
+  defp lane_citation!("floor", "stdlib/src/re.erl:289", expected),
+    do: {"stdlib/src/re.erl:237", expected}
 
   defp cn002_removal_witness!(graph, matched_mfas) do
     tier = BannedCalls.banned_mfas()
