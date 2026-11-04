@@ -18,6 +18,9 @@ if Enum.any?(formatter_args, fn
      _ -> false
    end) or
      Enum.chunk_every(formatter_args, 2, 1, :discard)
-     |> Enum.any?(fn ["--formatter", formatter] -> formatter == tap_formatter; _ -> false end) do
+     |> Enum.any?(fn
+       ["--formatter", formatter] -> formatter == tap_formatter
+       _ -> false
+     end) do
   Code.require_file("support/exunit_tap_formatter.ex", __DIR__)
 end

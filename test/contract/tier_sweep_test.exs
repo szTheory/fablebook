@@ -7491,6 +7491,46 @@ defmodule Fablebook.Contract.TierSweepTest do
     records = integrated_cn001_cn004_records!(ctx.graph, evidence, ledger)
 
     assert Map.keys(records) |> Enum.sort() == ["CN-001", "CN-004"]
+
+    for id <- ["CN-001", "CN-004"] do
+      omitted_identity = %{
+        ledger
+        | exclusions: Enum.reject(ledger.exclusions, &(&1.id == id))
+      }
+
+      assert_raise ExUnit.AssertionError, fn ->
+        integrated_cn001_cn004_records!(ctx.graph, evidence, omitted_identity)
+      end
+    end
+
+    changed_other_owner = %{
+      ledger
+      | exclusions:
+          Enum.map(ledger.exclusions, fn
+            %{id: "CN-002"} = row -> %{row | owner: "01.1.1.13"}
+            row -> row
+          end)
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      integrated_cn001_cn004_records!(ctx.graph, evidence, changed_other_owner)
+    end
+
+    removed_cn004_source = %{
+      evidence
+      | manifest:
+          Map.update!(evidence.manifest, "files", fn rows ->
+            Enum.reject(
+              rows,
+              &(&1["lane"] == evidence.lane.name and
+                  &1["source_path"] == "phoenix/lib/phoenix/router.ex")
+            )
+          end)
+    }
+
+    assert_raise SweepEvidence.Error, fn ->
+      integrated_cn001_cn004_records!(ctx.graph, removed_cn004_source, ledger)
+    end
   end
 
   @tag :cn004
@@ -10751,7 +10791,62 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp integrated_cn001_cn004_records!(graph, evidence, ledger) do
-    %{"CN-001" => cn001_record!(graph, evidence, ledger)}
+    expected_ledger = original_identity_ledger!()
+    assert_original_identity_ledger!(ledger, expected_ledger)
+
+    assert Enum.map(ledger.exclusions, & &1.id) ==
+             Enum.map(expected_ledger.exclusions, & &1.id),
+           "integrated acceptance changed complete original exclusion identity membership"
+
+    assert Enum.map(ledger.metadata, & &1.id) ==
+             Enum.map(expected_ledger.metadata, & &1.id),
+           "integrated acceptance changed separate original metadata identity membership"
+
+    for row <- ledger.exclusions, row.id not in ["CN-001", "CN-004"] do
+      assert row.semantic_status == original_semantic_status(row.id),
+             "integrated acceptance changed #{row.id} semantic status"
+
+      assert row.owner == original_semantic_owner(row.semantic_status),
+             "integrated acceptance changed #{row.id} semantic owner"
+    end
+
+    for row <- ledger.metadata do
+      assert row.semantic_status == :pending,
+             "integrated acceptance changed #{row.id} metadata status"
+
+      assert row.owner == "01.1.1.4",
+             "integrated acceptance changed #{row.id} metadata owner"
+    end
+
+    cn001 = cn001_record!(graph, evidence, ledger)
+    cn004 = cn004_record!(graph, evidence, ledger)
+    assert_cn001_record!(cn001, graph, evidence, ledger)
+    assert_cn004_record!(cn004, graph, evidence, ledger)
+
+    assert cn001.original_id == "CN-001"
+    assert cn004.original_id == "CN-004"
+    assert cn001.semantic_status == :cn001_project_build_replaced
+    assert cn004.semantic_status == :cn004_replaced_by_expansion_carrier
+    assert cn001.coverage_carrier_refs == cn001.current_replacement_refs
+    assert cn004.coverage_carrier_refs == cn004.current_replacement_refs
+
+    assert cn001.carrier_loss_witness ==
+             if(evidence.lane.name == "core",
+               do: ["Elixir.Mix.Compilers.Protocol:compile/4"],
+               else: []
+             )
+
+    assert cn004.coverage_carriers ==
+             cn004_carriers!(
+               Enum.filter(graph.full_exported, fn {module, function, arity} ->
+                 call_name_exclusion_match?({Plug.Builder, [:compile]}, {module, function, arity})
+               end)
+               |> Enum.reject(fn {_module, function, _arity} ->
+                 function in [:module_info, :__info__]
+               end)
+             )
+
+    %{"CN-001" => cn001, "CN-004" => cn004}
   end
 
   defp cn001_record!(graph, evidence, ledger) do
