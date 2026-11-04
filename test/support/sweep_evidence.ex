@@ -36,7 +36,7 @@ defmodule Fablebook.Test.SweepEvidence do
   @cn004_source_identities %{
     {"core", "phoenix/lib/phoenix/router.ex"} => {
       "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
-      46089,
+      46_089,
       "046564dae97dbd0ba58eb78e630fb226a2c8360a86b933dd9604e998c68b17bd"
     },
     {"core", "phoenix/lib/phoenix.ex"} => {
@@ -46,7 +46,7 @@ defmodule Fablebook.Test.SweepEvidence do
     },
     {"floor", "phoenix/lib/phoenix/router.ex"} => {
       "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
-      45684,
+      45_684,
       "78469c9caa87b05e16ddca8159822263165addc08b07ae8a5e06f76daeab5937"
     },
     {"floor", "phoenix/lib/phoenix.ex"} => {

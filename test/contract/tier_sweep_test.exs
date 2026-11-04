@@ -10484,79 +10484,12 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     exclusions =
       Enum.flat_map(["CN", "EX", "BD"], fn table ->
-        originals = Map.fetch!(original_tables, table)
         current = Map.fetch!(current_tables, table)
         current_indices = source_row_indices(current)
 
-        Enum.with_index(originals, 1)
-        |> Enum.map(fn {original_entry, index} ->
-          id = table <> "-" <> String.pad_leading(Integer.to_string(index), 3, "0")
-          [original_matcher, original_reason | citations] = source_tuple_parts!(original_entry)
-          direct_indices = Map.get(current_indices, original_entry, [])
-
-          assert length(direct_indices) <= 1,
-                 "duplicate live replacement for original identity #{id}"
-
-          creator_refs =
-            @creator_audit
-            |> Enum.filter(&(&1.original_id == id))
-            |> Enum.map(&"creator:#{id}:#{&1.lane}")
-            |> Enum.sort()
-
-          direct_refs =
-            cond do
-              id == "CN-001" ->
-                carrier = "{Mix.Compilers.Protocol, :project_build}"
-
-                carrier_index =
-                  Enum.find_index(@exclusions, &(&1 == {Mix.Compilers.Protocol, :project_build}))
-
-                assert is_integer(carrier_index),
-                       "CN-001 carrier reference is missing: #{carrier}"
-
-                ["source:EX:#{carrier_index + 1}"]
-
-              id == "CN-004" ->
-                carrier_index =
-                  Enum.find_index(@exclusions, fn
-                    {{Plug.Builder, [:compile]}, :expansion, "plug/lib/plug/builder.ex:324"} ->
-                      true
-
-                    _entry ->
-                      false
-                  end)
-
-                assert is_integer(carrier_index), "CN-004 exact expansion carrier is missing"
-                ["source:EX:#{carrier_index + 1}"]
-
-              true ->
-                Enum.map(direct_indices, &"source:#{table}:#{&1}")
-            end
-
-          replacement_refs = direct_refs ++ creator_refs
-
-          assert replacement_refs != [],
-                 "original identity #{id} has no live replacement reference"
-
-          lane_matches = original_lane_matches!(lane_baselines, id)
-
-          sampled_status = original_semantic_status(id)
-
-          %{
-            id: id,
-            table: table,
-            identity_class: :exclusion,
-            original_entry_raw: original_entry,
-            original_matcher_raw: original_matcher,
-            original_reason_raw: original_reason,
-            original_citations_raw: List.first(citations),
-            lane_matches: lane_matches,
-            current_replacement_refs: replacement_refs,
-            semantic_status: sampled_status,
-            owner: original_semantic_owner(sampled_status),
-            remaining_semantic_owner: "01.1.1.4"
-          }
-        end)
+        original_tables[table]
+        |> Enum.with_index(1)
+        |> Enum.map(&original_exclusion_record!(&1, table, current_indices, lane_baselines))
       end)
 
     missing_live_ids =
@@ -10627,6 +10560,67 @@ defmodule Fablebook.Contract.TierSweepTest do
       }
     }
   end
+
+  defp original_exclusion_record!({original_entry, index}, table, current_indices, lane_baselines) do
+    id = table <> "-" <> String.pad_leading(Integer.to_string(index), 3, "0")
+    [original_matcher, original_reason | citations] = source_tuple_parts!(original_entry)
+    direct_indices = Map.get(current_indices, original_entry, [])
+
+    assert length(direct_indices) <= 1,
+           "duplicate live replacement for original identity #{id}"
+
+    creator_refs =
+      @creator_audit
+      |> Enum.filter(&(&1.original_id == id))
+      |> Enum.map(&"creator:#{id}:#{&1.lane}")
+      |> Enum.sort()
+
+    direct_refs = original_direct_refs!(id, table, direct_indices)
+    replacement_refs = direct_refs ++ creator_refs
+
+    assert replacement_refs != [], "original identity #{id} has no live replacement reference"
+
+    lane_matches = original_lane_matches!(lane_baselines, id)
+    sampled_status = original_semantic_status(id)
+
+    %{
+      id: id,
+      table: table,
+      identity_class: :exclusion,
+      original_entry_raw: original_entry,
+      original_matcher_raw: original_matcher,
+      original_reason_raw: original_reason,
+      original_citations_raw: List.first(citations),
+      lane_matches: lane_matches,
+      current_replacement_refs: replacement_refs,
+      semantic_status: sampled_status,
+      owner: original_semantic_owner(sampled_status),
+      remaining_semantic_owner: "01.1.1.4"
+    }
+  end
+
+  defp original_direct_refs!("CN-001", _table, _direct_indices) do
+    carrier = {Mix.Compilers.Protocol, :project_build}
+    carrier_index = Enum.find_index(@exclusions, &(&1 == carrier))
+    assert is_integer(carrier_index), "CN-001 carrier reference is missing: #{inspect(carrier)}"
+    ["source:EX:#{carrier_index + 1}"]
+  end
+
+  defp original_direct_refs!("CN-004", _table, _direct_indices) do
+    carrier_index = Enum.find_index(@exclusions, &cn004_expansion_carrier?/1)
+    assert is_integer(carrier_index), "CN-004 exact expansion carrier is missing"
+    ["source:EX:#{carrier_index + 1}"]
+  end
+
+  defp original_direct_refs!(_id, table, direct_indices),
+    do: Enum.map(direct_indices, &"source:#{table}:#{&1}")
+
+  defp cn004_expansion_carrier?(
+         {{Plug.Builder, [:compile]}, :expansion, "plug/lib/plug/builder.ex:324"}
+       ),
+       do: true
+
+  defp cn004_expansion_carrier?(_entry), do: false
 
   defp assert_original_identity_ledger!(ledger, expected) do
     assert ledger == expected
