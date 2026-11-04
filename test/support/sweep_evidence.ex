@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894"
+  @archive_sha "ee464338543434b288c07c0c1b82ccbe7d7b1e0263167c9be7123df88b0a087c"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -21,6 +21,38 @@ defmodule Fablebook.Test.SweepEvidence do
     "floor" => %{
       "otp" => ["27.3.4.9", "4aa809ae4eb4a20ad89c23837376acf179877f39"],
       "elixir" => ["1.18.5", "dfe6612e546cec6557900e67651f7d21805472ef"]
+    }
+  }
+  @cn001_source_identities %{
+    "mix/lib/mix/compilers/elixir.ex" => {
+      "core",
+      "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/compilers/elixir.ex"
+    },
+    "elixir/lib/protocol.ex" => {
+      "core",
+      "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/protocol.ex"
+    }
+  }
+  @cn004_source_identities %{
+    {"core", "phoenix/lib/phoenix/router.ex"} => {
+      "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      46_089,
+      "046564dae97dbd0ba58eb78e630fb226a2c8360a86b933dd9604e998c68b17bd"
+    },
+    {"core", "phoenix/lib/phoenix.ex"} => {
+      "https://repo.hex.pm/tarballs/phoenix-1.8.16.tar",
+      2891,
+      "f831736998100ebf303c30d67802035f87830620b203d78f3d1d41df94a6df62"
+    },
+    {"floor", "phoenix/lib/phoenix/router.ex"} => {
+      "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      45_684,
+      "78469c9caa87b05e16ddca8159822263165addc08b07ae8a5e06f76daeab5937"
+    },
+    {"floor", "phoenix/lib/phoenix.ex"} => {
+      "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
+      2891,
+      "f831736998100ebf303c30d67802035f87830620b203d78f3d1d41df94a6df62"
     }
   }
   @elixir_apps [:elixir, :eex, :mix, :iex, :logger, :ex_unit]
@@ -189,6 +221,8 @@ defmodule Fablebook.Test.SweepEvidence do
        when status in ["present", "license"] do
     path = row["path"]
     if not String.starts_with?(path, row["lane"] <> "/"), do: fail!(:source_root, row)
+    validate_cn001_source_identity!(row)
+    validate_cn004_source_identity!(row)
     data = Map.fetch!(files, path)
 
     if byte_size(data) != row["bytes"] or digest(data) != row["sha256"],
@@ -196,6 +230,42 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   defp validate_record!(row, _files), do: fail!(:manifest_status, row)
+
+  defp validate_cn001_source_identity!(row) do
+    lane = row["lane"]
+    url = row["url"]
+
+    case Map.fetch(@cn001_source_identities, row["source_path"]) do
+      {:ok, {expected_lane, expected_url}}
+      when lane == expected_lane and url == expected_url ->
+        :ok
+
+      {:ok, expected} ->
+        fail!(:source_identity, {row, expected})
+
+      :error ->
+        :ok
+    end
+  end
+
+  defp validate_cn004_source_identity!(row) do
+    identity = {row["lane"], row["source_path"]}
+    url = row["url"]
+    bytes = row["bytes"]
+    sha256 = row["sha256"]
+
+    case Map.fetch(@cn004_source_identities, identity) do
+      {:ok, {expected_url, expected_bytes, expected_sha256}}
+      when url == expected_url and bytes == expected_bytes and sha256 == expected_sha256 ->
+        :ok
+
+      {:ok, expected} ->
+        fail!(:source_identity, {row, expected})
+
+      :error ->
+        :ok
+    end
+  end
 
   defp extract_files!(files) do
     token = :crypto.strong_rand_bytes(12) |> Base.url_encode64(padding: false)

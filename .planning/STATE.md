@@ -1,18 +1,18 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 1
-current_phase_name: Release pipeline, CI gate and guards
-status: verifying
+current_phase: 01.1.1.13
+current_phase_name: Close CN-001 and CN-004 source-authority gaps (INSERTED)
+status: executing
 stopped_at: Phase 01.1.1.6 complete; paused at the requested boundary. Parent Phase 1 verification remains pending.
-last_updated: "2026-11-04T03:10:36Z"
-last_activity: 2026-11-03
-last_activity_desc: Phase 01.1.1.6 complete, transitioned to Phase 1
-state_head: 96c285533dfb3e4247b899f608d8ce35d2fc9c1b
+last_updated: "2026-11-04T20:42:43.214Z"
+last_activity: 2026-11-04
+last_activity_desc: Phase 01.1.1.13 execution started
+state_head: 7f08b327f7c545c45fac10b94d221d1b06d1984b
 progress:
-  total_phases: 42
+  total_phases: 43
   completed_phases: 1
-  total_plans: 31
-  completed_plans: 26
+  total_plans: 34
+  completed_plans: 28
   percent: 2
 ---
 
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-10-30)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.6 — Audit remaining ban-list call-name exclusions (INSERTED)
+**Current focus:** Phase 01.1.1.13 — Close CN-001 and CN-004 source-authority gaps (INSERTED)
 
 ## Current Position
 
-Phase: 1 — Release pipeline, CI gate and guards
-Plan: 5
-Status: Phase complete — ready for verification
-Last activity: 2026-11-03 — Phase 01.1.1.6 complete, transitioned to Phase 1
+Phase: 01.1.1.13 (Close CN-001 and CN-004 source-authority gaps (INSERTED)) — EXECUTING
+Plan: 3 of 3
+Status: Ready to execute
+Last activity: 2026-11-04 — Phase 01.1.1.13 execution started
 
 Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plans complete; nested phase plans do not change parent completion counts
 
@@ -83,6 +83,8 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plan
 | Phase 01.1.1.6 P02 | 76 min | 2 tasks | 1 files |
 | Phase 01.1.1.6 P03 | 30 min | 2 tasks | 1 files |
 | Phase 01.1.1.6 P04 | 39 min | 2 tasks | 2 files |
+| Phase 01.1.1.13 P01 | 62 | 2 tasks | 3 files |
+| Phase 01.1.1.13 P02 | 102min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -150,6 +152,11 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.6]: Keep CN-004 source-authority open — The approved exact-source archive omits Phoenix.Router.build_pipes/2 and Phoenix.plug_init_mode/0. Without those caller inputs, compile/runtime init-mode selection is not fully established and a retained or removed disposition would be premature.
 - [Phase 01.1.1.6]: Keep the overlapping expansion and Macro caller-AST judgments with Phase 01.1.1.4 — CN-004 compile/3 overlaps the existing blanket :expansion exclusion, and this plan does not own the project-authored Macro caller-AST judgment or final Credo wording. Preserve that exclusion without broadening it.
 - [Phase 01.1.1.6]: Tie CN-004's compiler-lowered atom creation to the exact independent guard entry — Elixir lowers String.to_atom/1 to :erlang.binary_to_atom/1 in the compiled BEAM. The uncalled contract probe verifies that exact :binary_to_atom name-tier hit and proves that removing the matching tier entry removes the hit.
+- [Phase 01.1.1.13]: CN-001 keeps its original identity and maps to the source-backed Mix project-build carrier; core carrier-loss coverage is non-vacuous and floor absence is inventory-proven.
+- [Phase 01.1.1.13]: Preserve the Phase 01.1.1.5 calibration archive digest as historical evidence while current archive checks use the extended archive digest.
+- [Phase 01.1.1.13]: Preserve CN-004 identity and map its exact live Plug.Builder.compile/3 match to independently sourced exact boundary coverage, without judging the broader expansion owner.
+- [Phase 01.1.1.13]: Keep Phoenix.Router.pipeline/2 as a separate source-only quoted callsite, distinct from direct compiled callers.
+- [Phase 01.1.1.13]: Pin core/floor Phoenix source records independently, including both equal-byte Phoenix config rows.
 
 ### Pending Todos
 
@@ -184,7 +191,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-04T03:10:36Z
-Stopped at: Phase 01.1.1.6 complete; paused at the requested boundary. Parent Phase 1 verification remains pending.
-Next action: Wait for user direction before continuing with parent Phase 1 verification or other work.
+Last session: 2026-11-04T20:42:43.078Z
+Stopped at: Completed 01.1.1.13-02-PLAN.md; allocation assessment returned to parent.
+Next action: Parent reviews the source-bound allocation assessment; Plan 03 remains unstarted until dispatch.
 Resume file: None
