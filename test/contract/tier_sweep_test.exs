@@ -7481,6 +7481,18 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert Enum.all?(record.caller_citations, fn {_caller, citations} -> citations != [] end)
   end
 
+  @tag :cn001
+  @tag :cn004
+  test "CN-001 and CN-004 satisfy integrated original-identity acceptance", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+
+    records = integrated_cn001_cn004_records!(ctx.graph, evidence, ledger)
+
+    assert Map.keys(records) |> Enum.sort() == ["CN-001", "CN-004"]
+  end
+
   @tag :cn004
   test "CN-004 rejects omitted match, caller, source, mode, and carrier evidence", ctx do
     evidence = SweepEvidence.source_roots!()
@@ -10736,6 +10748,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert is_integer(index), "missing current call-name matcher #{inspect(matcher)}"
     "source:CN:#{index + 1}"
+  end
+
+  defp integrated_cn001_cn004_records!(graph, evidence, ledger) do
+    %{"CN-001" => cn001_record!(graph, evidence, ledger)}
   end
 
   defp cn001_record!(graph, evidence, ledger) do
