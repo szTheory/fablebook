@@ -1462,8 +1462,6 @@ defmodule Fablebook.Contract.TierSweepTest do
   @escript_debug_exclusion {{:mfa, @escript_debug_mfa}, :private_front, @escript_debug_citations}
 
   @call_name_exclusions [
-    {{Mix.Compilers.Protocol, [:compile]}, :not_compile_module,
-     ["mix/lib/mix/compilers/protocol.ex:107", "mix/lib/mix/compilers/protocol.ex:162"]},
     {{Phoenix.Digester, [:compile]}, :not_compile_module,
      ["phoenix/lib/phoenix/digester.ex:20", "phoenix/lib/phoenix/digester.ex:93"]},
     {{Phoenix.LiveView.ColocatedAssets, [:compile]}, :not_compile_module,
@@ -1489,6 +1487,8 @@ defmodule Fablebook.Contract.TierSweepTest do
   ]
 
   @call_name_lane_specific [{{Mix.Compilers.Protocol, [:compile]}, :latest}]
+
+  @calibration_source_archive_sha "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894"
 
   @cn002_expected_matches_by_lane %{
     "core" => ["Elixir.Phoenix.Digester:compile/3"],
@@ -1530,14 +1530,6 @@ defmodule Fablebook.Contract.TierSweepTest do
     "core" => ["re:compile/1", "re:compile/2"],
     "floor" => ["re:compile/1", "re:compile/2"]
   }
-
-  @cn001_source_authority_gaps [
-    {
-      "mix/lib/mix/compilers/elixir.ex",
-      "direct caller Mix.Compilers.Elixir.maybe_consolidate/4"
-    },
-    {"elixir/lib/protocol.ex", "Protocol delegate implementations"}
-  ]
 
   @exclusions [
     {{:fun_prefix, "MACRO-"}, :macro},
@@ -3873,7 +3865,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
     assert SweepEvidence.archive_sha256() ==
-             "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894"
+             "c2f6c40a64cb73d17a047e8e9f9306e34f694516c487c8a57853a7a3a1e46aad"
 
     lane = evidence.lane.name
 
@@ -6057,7 +6049,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert cn005.owner == "01.1.1.5"
     assert cn006.semantic_status == :cn006_retained
     assert cn006.owner == "01.1.1.6"
-    assert cn006.current_replacement_refs == ["source:CN:6"]
+    assert cn006.current_replacement_refs == [current_call_name_ref!({:re, [:compile]})]
 
     assert Enum.all?(ledger.exclusions, fn row ->
              row.remaining_semantic_owner == "01.1.1.4" and row.current_replacement_refs != []
@@ -6066,7 +6058,10 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert Enum.all?(ledger.exclusions, fn row ->
              expected_owner =
                case row.id do
-                 id when id in ["CN-001", "CN-002", "CN-003", "CN-004", "CN-006"] ->
+                 "CN-001" ->
+                   "01.1.1.13"
+
+                 id when id in ["CN-002", "CN-003", "CN-004", "CN-006"] ->
                    "01.1.1.6"
 
                  id when id in ["CN-005", "BD-002", "EX-159"] ->
@@ -6978,7 +6973,26 @@ defmodule Fablebook.Contract.TierSweepTest do
                    else: row
                end)
              end)
-           end, :source_root}
+           end, :source_root},
+          {"cn001-source-url",
+           fn manifest ->
+             Map.update!(manifest, "files", fn rows ->
+               Enum.map(rows, fn row ->
+                 if row["source_path"] == "elixir/lib/protocol.ex",
+                   do:
+                     Map.put(
+                       row,
+                       "url",
+                       String.replace(
+                         row["url"],
+                         "759443e724f55bf58e71c0603644e99058918d52",
+                         "dfe6612e546cec6557900e67651f7d21805472ef"
+                       )
+                     ),
+                   else: row
+               end)
+             end)
+           end, :source_identity}
         ] do
       entries =
         Enum.map(files, fn
@@ -6995,6 +7009,41 @@ defmodule Fablebook.Contract.TierSweepTest do
       error = assert_raise SweepEvidence.Error, fn -> SweepEvidence.load_archive!(path, sha) end
       assert error.reason == reason
     end
+
+    protocol_source =
+      Enum.find(files, fn {name, _} -> name == ~c"core/elixir/lib/protocol.ex" end)
+
+    {_, protocol_bytes} = protocol_source
+
+    {~c"manifest.json", raw_manifest} =
+      Enum.find(files, fn {name, _} -> name == ~c"manifest.json" end)
+
+    manifest = JSON.decode!(raw_manifest)
+    core_record = Enum.find(manifest["files"], &(&1["source_path"] == "elixir/lib/protocol.ex"))
+    floor_record = %{core_record | "lane" => "floor", "path" => "floor/elixir/lib/protocol.ex"}
+    wrong_lane_manifest = Map.update!(manifest, "files", &(&1 ++ [floor_record]))
+
+    wrong_lane_entries =
+      Enum.reject(files, fn {name, _} -> name == ~c"manifest.json" end) ++
+        [
+          {~c"floor/elixir/lib/protocol.ex", protocol_bytes},
+          {~c"manifest.json", JSON.encode!(wrong_lane_manifest)}
+        ]
+
+    wrong_lane_archive = Path.join(dir, "cn001-same-bytes-wrong-lane.tar.gz")
+
+    :ok =
+      :erl_tar.create(String.to_charlist(wrong_lane_archive), wrong_lane_entries, [:compressed])
+
+    wrong_lane_sha =
+      :crypto.hash(:sha256, File.read!(wrong_lane_archive)) |> Base.encode16(case: :lower)
+
+    wrong_lane_error =
+      assert_raise SweepEvidence.Error, fn ->
+        SweepEvidence.load_archive!(wrong_lane_archive, wrong_lane_sha)
+      end
+
+    assert wrong_lane_error.reason == :source_identity
 
     link = Path.join(dir, "link")
     File.ln_s!(original, link)
@@ -7081,7 +7130,11 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_cn002_record!(record, ctx.graph, evidence, ledger)
     assert record.original_id == "CN-002"
-    assert record.current_replacement_refs == ["source:CN:2"]
+
+    assert record.current_replacement_refs == [
+             current_call_name_ref!({Phoenix.Digester, [:compile]})
+           ]
+
     assert record.retained_exclusion
     assert record.matched_mfas != []
     assert record.removal_witness != []
@@ -7163,17 +7216,31 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :cn001
-  test "CN-001 stays open until its Protocol delegate source is bound", ctx do
+  test "CN-001 preserves identity and records its source-backed build carrier", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     ledger = original_identity_ledger!()
+
     record = cn001_record!(ctx.graph, evidence, ledger)
 
     assert_cn001_record!(record, ctx.graph, evidence, ledger)
     assert record.original_id == "CN-001"
-    assert record.current_replacement_refs == ["source:CN:1"]
-    assert record.semantic_status == :cn001_source_authority_open
-    assert record.verdict == :undetermined_source_authority
+
+    assert record.current_replacement_refs ==
+             ledger.exclusions
+             |> Enum.find(&(&1.id == "CN-001"))
+             |> Map.fetch!(:current_replacement_refs)
+
+    assert record.semantic_status == :cn001_project_build_replaced
+    assert record.verdict == :source_backed_project_build
+    assert record.disposition == :replaced
+    assert length(record.coverage_carrier_refs) == 1
+
+    assert record.carrier_loss_witness ==
+             if(evidence.lane.name == "core",
+               do: ["Elixir.Mix.Compilers.Protocol:compile/4"],
+               else: []
+             )
 
     if evidence.lane.name == "core" do
       omitted_core_citation = %{
@@ -7187,6 +7254,140 @@ defmodule Fablebook.Contract.TierSweepTest do
 
       assert_raise ExUnit.AssertionError, fn ->
         assert_cn001_record!(omitted_core_citation, ctx.graph, evidence, ledger)
+      end
+
+      for omitted <- [
+            %{record | matched_mfas: []},
+            %{record | direct_callers: []},
+            %{record | mfa_citations: %{}},
+            %{record | caller_citations: %{}},
+            %{record | coverage_carrier_refs: []},
+            %{record | source_authority_gaps: [%{source_path: "missing"}]}
+          ] do
+        assert_raise ExUnit.AssertionError, fn ->
+          assert_cn001_record!(omitted, ctx.graph, evidence, ledger)
+        end
+      end
+
+      for citation_path <- [
+            "mix/lib/mix/compilers/elixir.ex",
+            "elixir/lib/protocol.ex"
+          ] do
+        citation =
+          Enum.find(record.citations, &(citation_source_path!(elem(&1, 0)) == citation_path))
+
+        assert citation != nil
+
+        omitted_source = %{record | citations: List.delete(record.citations, citation)}
+
+        assert_raise ExUnit.AssertionError, fn ->
+          assert_cn001_record!(omitted_source, ctx.graph, evidence, ledger)
+        end
+
+        app = hd(String.split(citation_path, "/"))
+
+        archived = %{
+          evidence
+          | installed:
+              Map.put(evidence.installed, app, Path.join(evidence.archive_root, "missing-#{app}"))
+        }
+
+        assert SweepEvidence.resolve!(archived, elem(citation, 0)).origin == :archive
+
+        missing_manifest = %{
+          evidence
+          | manifest:
+              Map.update!(evidence.manifest, "files", fn rows ->
+                Enum.reject(rows, &(&1["source_path"] == citation_path and &1["lane"] == "core"))
+              end)
+        }
+
+        missing_error =
+          assert_raise SweepEvidence.Error, fn ->
+            SweepEvidence.resolve!(missing_manifest, elem(citation, 0))
+          end
+
+        assert missing_error.reason == :missing_source
+      end
+
+      caller_citations = List.flatten(Map.values(record.caller_citations))
+
+      delegate_citations =
+        record.citations
+        |> Enum.filter(fn {citation, _} ->
+          citation_source_path!(citation) in ["elixir/lib/protocol.ex", "elixir/lib/code.ex"]
+        end)
+        |> Enum.map(&elem(&1, 0))
+
+      for citation <- Enum.uniq(caller_citations ++ delegate_citations) do
+        omitted = %{
+          record
+          | citations: Enum.reject(record.citations, &(elem(&1, 0) == citation))
+        }
+
+        assert_raise ExUnit.AssertionError, fn ->
+          assert_cn001_record!(omitted, ctx.graph, evidence, ledger)
+        end
+      end
+
+      protocol_citation =
+        Enum.find(
+          record.citations,
+          &(citation_source_path!(elem(&1, 0)) == "elixir/lib/protocol.ex")
+        )
+
+      protocol_archived = %{
+        evidence
+        | installed:
+            Map.put(
+              evidence.installed,
+              "elixir",
+              Path.join(evidence.archive_root, "missing-elixir")
+            )
+      }
+
+      protocol_source = SweepEvidence.resolve!(protocol_archived, elem(protocol_citation, 0))
+      assert protocol_source.origin == :archive
+      File.write!(protocol_source.path, "altered exact source bytes")
+
+      assert_raise SweepEvidence.Error, ~r/source_digest/, fn ->
+        SweepEvidence.resolve!(protocol_archived, elem(protocol_citation, 0))
+      end
+
+      missing_carrier = %{
+        ledger
+        | exclusions:
+            Enum.map(ledger.exclusions, fn
+              %{id: "CN-001"} = row -> %{row | current_replacement_refs: []}
+              row -> row
+            end)
+      }
+
+      assert_raise ExUnit.AssertionError, fn ->
+        cn001_record!(ctx.graph, evidence, missing_carrier)
+      end
+
+      unexpected_match = {Mix.Compilers.Protocol, :compile, 99}
+
+      graph_with_new_match = %{
+        ctx.graph
+        | full_exported: MapSet.put(ctx.graph.full_exported, unexpected_match)
+      }
+
+      assert_raise ExUnit.AssertionError, fn ->
+        cn001_record!(graph_with_new_match, evidence, ledger)
+      end
+
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn001_record!(%{record | carrier_loss_witness: []}, ctx.graph, evidence, ledger)
+      end
+
+      assert_raise ExUnit.AssertionError, fn ->
+        cn001_project_build_loss_witness!(
+          ctx.graph,
+          hd(record.coverage_carrier_refs),
+          List.delete(@exclusions, {Mix.Compilers.Protocol, :project_build})
+        )
       end
     else
       invented_floor_export = %{
@@ -7219,7 +7420,11 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_cn003_record!(record, ctx.graph, evidence, ledger)
     assert record.original_id == "CN-003"
-    assert record.current_replacement_refs == ["source:CN:3"]
+
+    assert record.current_replacement_refs == [
+             current_call_name_ref!({Phoenix.LiveView.ColocatedAssets, [:compile]})
+           ]
+
     assert record.semantic_status == :cn003_retained
     assert record.retained_exclusion
     assert record.matched_mfas != []
@@ -7236,7 +7441,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_cn004_record!(record, ctx.graph, evidence, ledger)
     assert record.original_id == "CN-004"
-    assert record.current_replacement_refs == ["source:CN:4"]
+    assert record.current_replacement_refs == [current_call_name_ref!({Plug.Builder, [:compile]})]
     assert record.semantic_status == :cn004_source_authority_open
     assert record.verdict == :undetermined_caller_source_authority
     assert record.disposition == :open
@@ -7313,7 +7518,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_cn006_record!(record, ctx.graph, evidence, ledger)
     assert record.original_id == "CN-006"
-    assert record.current_replacement_refs == ["source:CN:6"]
+    assert record.current_replacement_refs == [current_call_name_ref!({:re, [:compile]})]
     assert record.semantic_status == :cn006_retained
     assert record.matched_mfas == Map.fetch!(@cn006_expected_matches_by_lane, evidence.lane.name)
     assert record.verdict == :retained_regex_data_native_boundary
@@ -7433,7 +7638,6 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   test "exact guard coverage supersedes a preserved call-name exclusion" do
     fronts = [
-      {Mix.Compilers.Protocol, :compile, 4},
       {Phoenix.LiveView.ColocatedAssets, :compile, 0}
     ]
 
@@ -10051,7 +10255,19 @@ defmodule Fablebook.Contract.TierSweepTest do
             |> Enum.map(&"creator:#{id}:#{&1.lane}")
             |> Enum.sort()
 
-          direct_refs = Enum.map(direct_indices, &"source:#{table}:#{&1}")
+          direct_refs =
+            if id == "CN-001" do
+              carrier = "{Mix.Compilers.Protocol, :project_build}"
+
+              carrier_index =
+                Enum.find_index(@exclusions, &(&1 == {Mix.Compilers.Protocol, :project_build}))
+
+              assert is_integer(carrier_index), "CN-001 carrier reference is missing: #{carrier}"
+              ["source:EX:#{carrier_index + 1}"]
+            else
+              Enum.map(direct_indices, &"source:#{table}:#{&1}")
+            end
+
           replacement_refs = direct_refs ++ creator_refs
 
           assert replacement_refs != [],
@@ -10288,7 +10504,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     do:
       raise(ExUnit.AssertionError, message: "invalid original audit-budget MFA #{inspect(other)}")
 
-  defp original_semantic_status("CN-001"), do: :cn001_source_authority_open
+  defp original_semantic_status("CN-001"), do: :cn001_project_build_replaced
   defp original_semantic_status("CN-002"), do: :cn002_retained
   defp original_semantic_status("CN-003"), do: :cn003_retained
   defp original_semantic_status("CN-004"), do: :cn004_source_authority_open
@@ -10299,7 +10515,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp original_semantic_status(_id), do: :pending
 
   defp original_semantic_owner(:cn002_retained), do: "01.1.1.6"
-  defp original_semantic_owner(:cn001_source_authority_open), do: "01.1.1.6"
+  defp original_semantic_owner(:cn001_project_build_replaced), do: "01.1.1.13"
   defp original_semantic_owner(:cn003_retained), do: "01.1.1.6"
   defp original_semantic_owner(:cn004_source_authority_open), do: "01.1.1.6"
   defp original_semantic_owner(:cn006_retained), do: "01.1.1.6"
@@ -10318,6 +10534,24 @@ defmodule Fablebook.Contract.TierSweepTest do
     end)
   end
 
+  defp current_call_name_entry!(matcher) do
+    Enum.find(@call_name_exclusions, fn {current_matcher, _reason, _citations} ->
+      current_matcher == matcher
+    end) ||
+      raise ExUnit.AssertionError,
+        message: "missing current call-name matcher #{inspect(matcher)}"
+  end
+
+  defp current_call_name_ref!(matcher) do
+    index =
+      Enum.find_index(@call_name_exclusions, fn {current_matcher, _reason, _citations} ->
+        current_matcher == matcher
+      end)
+
+    assert is_integer(index), "missing current call-name matcher #{inspect(matcher)}"
+    "source:CN:#{index + 1}"
+  end
+
   defp cn001_record!(graph, evidence, ledger) do
     row = Enum.find(ledger.exclusions, &(&1.id == "CN-001"))
     assert row != nil, "original CN-001 identity is missing"
@@ -10332,12 +10566,19 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert row.original_matcher_raw == original_matcher
     assert row.original_reason_raw == original_reason
     assert row.original_citations_raw == List.first(original_citations)
-    assert row.current_replacement_refs == ["source:CN:1"]
-    assert row.semantic_status == :cn001_source_authority_open
-    assert row.owner == "01.1.1.6"
 
-    {{Mix.Compilers.Protocol, [:compile]}, :not_compile_module, _current_citations} =
-      Enum.at(@call_name_exclusions, 0)
+    carrier_index =
+      Enum.find_index(@exclusions, &(&1 == {Mix.Compilers.Protocol, :project_build}))
+
+    assert is_integer(carrier_index), "CN-001 project-build carrier is missing"
+    carrier_ref = "source:EX:#{carrier_index + 1}"
+    assert row.current_replacement_refs == [carrier_ref]
+    assert row.semantic_status == :cn001_project_build_replaced
+    assert row.owner == "01.1.1.13"
+
+    refute Enum.any?(@call_name_exclusions, fn {matcher, _, _} ->
+             call_name_exclusion_match?(matcher, {Mix.Compilers.Protocol, :compile, 4})
+           end)
 
     lane = evidence.lane.name
     mix_root = Map.fetch!(evidence.installed, "mix")
@@ -10416,8 +10657,8 @@ defmodule Fablebook.Contract.TierSweepTest do
         {citation, source}
       end)
 
-    source_authority_gaps =
-      if lane == "core", do: cn001_source_authority_gaps!(evidence), else: []
+    carrier_loss_witness =
+      if lane == "core", do: cn001_project_build_loss_witness!(graph, carrier_ref), else: []
 
     %{
       original_id: row.id,
@@ -10439,22 +10680,44 @@ defmodule Fablebook.Contract.TierSweepTest do
         resolved
         |> Enum.map(fn {citation, source} -> {citation_source_path!(citation), source.sha256} end)
         |> Map.new(),
-      source_authority_gaps: source_authority_gaps,
+      mfa_citations:
+        Map.new(matched_strings, fn mfa ->
+          {mfa, Enum.map(citations, &elem(&1, 0))}
+        end),
+      caller_citations:
+        if lane == "core" do
+          %{
+            "Elixir.Mix.Compilers.Protocol:umbrella/2" => [
+              "mix/lib/mix/compilers/protocol.ex:14",
+              "mix/lib/mix/compilers/protocol.ex:16",
+              "mix/lib/mix/compilers/protocol.ex:46"
+            ],
+            "Elixir.Mix.Compilers.Elixir:maybe_consolidate/4" => [
+              "mix/lib/mix/compilers/elixir.ex:1432",
+              "mix/lib/mix/compilers/elixir.ex:1438",
+              "mix/lib/mix/compilers/elixir.ex:1441"
+            ]
+          }
+        else
+          %{}
+        end,
+      source_authority_gaps: [],
       source_gap_local_hash_accepted: false,
+      coverage_carrier_refs: [carrier_ref],
+      carrier_loss_witness: carrier_loss_witness,
       caller_input_trace:
-        "The exact full graph reports Mix.Compilers.Protocol.umbrella/2 and Mix.Compilers.Elixir.maybe_consolidate/4 as direct callers of compile/4. The approved umbrella source shows args parsed into opts and passes force state, old/new protocol snapshots, and opts to compile/4. The maybe_consolidate/4 caller source is not bound by the approved archive.",
+        "The exact full graph reports Mix.Compilers.Protocol.umbrella/2 and Mix.Compilers.Elixir.maybe_consolidate/4 as direct callers of compile/4. The umbrella route parses build arguments, resolves protocol and implementation BEAM paths, and passes force state, prior manifest state, current project module metadata, and compiler options. The Elixir compiler route derives protocol metadata from just-compiled and pending project modules, then passes its consolidation state and project compiler options.",
       delegate_trace:
-        "Approved Mix source shows compile/4 extracts protocols or diffs the manifest, consolidates protocols, and prepends the output path through Code.prepend_path/1. The Protocol.extract_protocols/0, extract_impls/2, and consolidate/2 implementations are not bound because elixir/lib/protocol.ex is absent from approved source authority.",
+        "Exact Protocol source shows extraction from BEAM attributes without loading implementation modules, consolidation reads protocol debug information and version-matched checker data, and :elixir_erl.consolidate/4 returns the generated binary. Mix writes those generated BEAMs to its build output and Code.prepend_path/1 adds that output directory. No runtime evaluation of caller source is established by this trace.",
       enforcement_dependency:
         if(lane == "core", do: {Mix.Compilers.Protocol, :compile, 4}, else: nil),
-      verdict: :undetermined_source_authority,
-      disposition: :open,
-      retained_exclusion: :undetermined,
+      verdict: :source_backed_project_build,
+      disposition: :replaced,
+      retained_exclusion: false,
       removal_witness: [],
       limitations: [
-        "The approved source archive does not bind the Mix.Compilers.Elixir.maybe_consolidate/4 caller.",
-        "The approved source archive does not bind elixir/lib/protocol.ex, so Protocol delegate semantics remain unverified.",
-        "The floor absence claim is based on exact Mix BEAM and export inventories, not missing source text."
+        "The floor absence claim is based on exact Mix BEAM and export inventories, not missing source text.",
+        "The independently justified Mix.Compilers.Protocol project-build carrier must remain present; removing it makes compile/4 undisposed when its exact enforcement tier is also removed."
       ]
     }
   end
@@ -10470,11 +10733,17 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert "Elixir.Mix.Compilers.Protocol:compile/4" in record.module_exports
     end
 
-    assert record.current_replacement_refs == ["source:CN:1"]
-    assert record.semantic_status == :cn001_source_authority_open
-    assert record.verdict == :undetermined_source_authority
-    assert record.disposition == :open
+    assert record.current_replacement_refs == record.coverage_carrier_refs
+    assert record.semantic_status == :cn001_project_build_replaced
+    assert record.verdict == :source_backed_project_build
+    assert record.disposition == :replaced
     assert record.removal_witness == []
+
+    assert record.carrier_loss_witness ==
+             if(evidence.lane.name == "core",
+               do: ["Elixir.Mix.Compilers.Protocol:compile/4"],
+               else: []
+             )
 
     Enum.each(record.citations, fn {citation, expected_source} ->
       resolved = SweepEvidence.resolve!(evidence, citation)
@@ -10482,20 +10751,17 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert record.source_sha256s[citation_source_path!(citation)] == resolved.sha256
     end)
 
+    Enum.each(record.caller_citations, fn {_caller, citations} ->
+      assert citations != []
+
+      assert Enum.all?(
+               citations,
+               &Enum.any?(record.citations, fn {citation, _} -> citation == &1 end)
+             )
+    end)
+
     assert record.source_gap_local_hash_accepted == false
     :ok
-  end
-
-  defp cn001_source_authority_gaps!(evidence) do
-    Enum.map(@cn001_source_authority_gaps, fn {path, needed_for} ->
-      error =
-        assert_raise SweepEvidence.Error, fn ->
-          SweepEvidence.resolve!(evidence, path <> ":1")
-        end
-
-      assert error.reason == :missing_source
-      %{source_path: path, needed_for: needed_for, authority: :missing_from_approved_archive}
-    end)
   end
 
   defp cn001_citations!("core") do
@@ -10516,12 +10782,57 @@ defmodule Fablebook.Contract.TierSweepTest do
       {"mix/lib/mix/compilers/protocol.ex:163", "Protocol.extract_impls(protocol, paths)"},
       {"mix/lib/mix/compilers/protocol.ex:166", "Protocol.consolidate(protocol, impls)"},
       {"mix/lib/mix/compilers/protocol.ex:168", "File.write!(Path.join(output"},
+      {"mix/lib/mix/compilers/elixir.ex:1157", "defp after_compile(manifest, state, opts) do"},
+      {"mix/lib/mix/compilers/elixir.ex:1160",
+       "maybe_consolidate(consolidation, modules, pending_modules, opts)"},
+      {"mix/lib/mix/compilers/elixir.ex:1432", "defp maybe_consolidate("},
+      {"mix/lib/mix/compilers/elixir.ex:1438",
+       "protocols_and_impls_from_modules(modules, protocols_and_impls)"},
+      {"mix/lib/mix/compilers/elixir.ex:1441", "Mix.Compilers.Protocol.compile("},
+      {"elixir/lib/protocol.ex:462", "def extract_protocols(paths) do"},
+      {"elixir/lib/protocol.ex:491",
+       "def extract_impls(protocol, paths) when is_atom(protocol) do"},
+      {"elixir/lib/protocol.ex:502",
+       "defp extract_matching_by_attribute(paths, prefix, callback) do"},
+      {"elixir/lib/protocol.ex:578",
+       "def consolidate(protocol, types) when is_atom(protocol) do"},
+      {"elixir/lib/protocol.ex:592",
+       "case :beam_lib.chunks(beam_file(protocol), chunk_ids, opts) do"},
+      {"elixir/lib/protocol.ex:601",
+       "{@elixir_checker_version, contents} <- :erlang.binary_to_term(checker)"},
+      {"elixir/lib/protocol.ex:795",
+       "{:ok, :elixir_erl.consolidate(module_map, checker, specs, docs_chunk)}"},
       {"elixir/lib/code.ex:448", "def prepend_path(path, opts"},
       {"elixir/lib/code.ex:449", "apply(:code, :add_patha,"}
     ]
   end
 
   defp cn001_citations!("floor"), do: []
+
+  defp cn001_project_build_loss_witness!(graph, carrier_ref, exclusions \\ @exclusions) do
+    carrier = {Mix.Compilers.Protocol, :project_build}
+    carrier_index = Enum.find_index(exclusions, &(&1 == carrier))
+    assert is_integer(carrier_index)
+    assert carrier_ref == "source:EX:#{carrier_index + 1}"
+
+    target = {Mix.Compilers.Protocol, :compile, 4}
+    assert target in graph.full_exported
+    assert target in BannedCalls.banned_mfas()
+
+    tier_without_front = List.delete(BannedCalls.banned_mfas(), target)
+    exclusions_without_carrier = List.delete(exclusions, carrier)
+
+    refute covered?(target, tier_without_front, BannedCalls.banned_names())
+    assert exclusion_reason(elem(target, 0), elem(target, 1), exclusions_without_carrier) == nil
+
+    refute Enum.any?(@call_name_exclusions, fn {matcher, _, _} ->
+             call_name_exclusion_match?(matcher, target)
+           end)
+
+    refute Enum.any?(@boundary_exclusions, &boundary_match?(elem(&1, 0), target))
+
+    [mfa_string!(target)]
+  end
 
   defp cn002_record!(graph, evidence, ledger) do
     row = Enum.find(ledger.exclusions, &(&1.id == "CN-002"))
@@ -10539,12 +10850,16 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert row.original_matcher_raw == original_matcher
     assert row.original_reason_raw == original_reason
     assert row.original_citations_raw == original_citations
-    assert row.current_replacement_refs == ["source:CN:2"]
+
+    assert row.current_replacement_refs == [
+             current_call_name_ref!({Phoenix.Digester, [:compile]})
+           ]
+
     assert row.semantic_status == :cn002_retained
     assert row.owner == "01.1.1.6"
 
     {{Phoenix.Digester, [:compile]}, :not_compile_module, _current_citations} =
-      Enum.at(@call_name_exclusions, 1)
+      current_call_name_entry!({Phoenix.Digester, [:compile]})
 
     lane = evidence.lane.name
 
@@ -10667,12 +10982,16 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert row.original_matcher_raw == original_matcher
     assert row.original_reason_raw == original_reason
     assert row.original_citations_raw == original_citations
-    assert row.current_replacement_refs == ["source:CN:3"]
+
+    assert row.current_replacement_refs == [
+             current_call_name_ref!({Phoenix.LiveView.ColocatedAssets, [:compile]})
+           ]
+
     assert row.semantic_status == :cn003_retained
     assert row.owner == "01.1.1.6"
 
     {{Phoenix.LiveView.ColocatedAssets, [:compile]}, :not_compile_module, _current_citations} =
-      Enum.at(@call_name_exclusions, 2)
+      current_call_name_entry!({Phoenix.LiveView.ColocatedAssets, [:compile]})
 
     lane = evidence.lane.name
     live_view_ebin = :code.lib_dir(:phoenix_live_view) |> to_string() |> Path.join("ebin")
@@ -10894,7 +11213,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert exact_front in tier
     tier_without_front = List.delete(tier, exact_front)
     whole_modules = for {module, :_, :_} <- tier_without_front, do: module
-    cn003_entry = Enum.at(@call_name_exclusions, 2)
+    cn003_entry = current_call_name_entry!({Phoenix.LiveView.ColocatedAssets, [:compile]})
     other_rows = Enum.reject(@call_name_exclusions, &(&1 == cn003_entry))
 
     uncovered =
@@ -10917,7 +11236,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp cn003_overlaps!(matched_mfas) do
     other_call_name_rows =
-      Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 2)))
+      Enum.reject(
+        @call_name_exclusions,
+        &(&1 == current_call_name_entry!({Phoenix.LiveView.ColocatedAssets, [:compile]}))
+      )
 
     Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
       exclusion_reason(module, function, @exclusions) != nil or
@@ -10942,12 +11264,12 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert row.original_matcher_raw == original_matcher
     assert row.original_reason_raw == original_reason
     assert row.original_citations_raw == original_citations
-    assert row.current_replacement_refs == ["source:CN:4"]
+    assert row.current_replacement_refs == [current_call_name_ref!({Plug.Builder, [:compile]})]
     assert row.semantic_status == :cn004_source_authority_open
     assert row.owner == "01.1.1.6"
 
     {{Plug.Builder, [:compile]}, :not_compile_module, _current_citations} =
-      Enum.at(@call_name_exclusions, 3)
+      current_call_name_entry!({Plug.Builder, [:compile]})
 
     lane = evidence.lane.name
     plug_ebin = :code.lib_dir(:plug) |> to_string() |> Path.join("ebin")
@@ -11210,7 +11532,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp cn004_overlaps!(matched_mfas) do
     other_call_name_rows =
-      Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 3)))
+      Enum.reject(
+        @call_name_exclusions,
+        &(&1 == current_call_name_entry!({Plug.Builder, [:compile]}))
+      )
 
     Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
       exclusion_reason(module, function, @exclusions) != nil or
@@ -11238,7 +11563,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert row.original_matcher_raw == original_matcher
     assert row.original_reason_raw == original_reason
     assert row.original_citations_raw == original_citations
-    assert row.current_replacement_refs == ["source:CN:6"]
+    assert row.current_replacement_refs == [current_call_name_ref!({:re, [:compile]})]
     assert row.semantic_status == :cn006_retained
     assert row.owner == "01.1.1.6"
 
@@ -11530,7 +11855,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     tier = BannedCalls.banned_mfas()
     names = BannedCalls.banned_names()
     whole_modules = for {module, :_, :_} <- tier, do: module
-    cn002_entry = Enum.at(@call_name_exclusions, 1)
+    cn002_entry = current_call_name_entry!({Phoenix.Digester, [:compile]})
     other_rows = Enum.reject(@call_name_exclusions, &(&1 == cn002_entry))
 
     uncovered =
@@ -11553,7 +11878,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp cn002_overlaps!(matched_mfas) do
     other_call_name_rows =
-      Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 1)))
+      Enum.reject(
+        @call_name_exclusions,
+        &(&1 == current_call_name_entry!({Phoenix.Digester, [:compile]}))
+      )
 
     Enum.filter(matched_mfas, fn {module, function, _arity} = mfa ->
       exclusion_reason(module, function, @exclusions) != nil or
@@ -12156,7 +12484,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert nonempty_evidence_string?(provenance["recorded_by"])
     assert provenance["reviewed_revision"] == reviewed_revision
     assert String.match?(provenance["reviewed_revision"], ~r/^[0-9a-f]{40}$/)
-    assert provenance["source_archive_sha256"] == SweepEvidence.archive_sha256()
+    assert provenance["source_archive_sha256"] == @calibration_source_archive_sha
     assert String.match?(provenance["source_set_sha256"], ~r/^[0-9a-f]{64}$/)
 
     doc_digest = canonical_source_set_digest!(calibration_lane["sources"])
@@ -12239,9 +12567,9 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp calibration_entry!("CN-005", row) do
-    entry = Enum.at(@call_name_exclusions, 4)
+    entry = current_call_name_entry!({Regex, [:compile]})
     assert {{Regex, [:compile]}, :not_compile_module, _citations} = entry
-    assert hd(row.current_replacement_refs) == "source:CN:5"
+    assert hd(row.current_replacement_refs) == current_call_name_ref!({Regex, [:compile]})
     {elem(entry, 0), elem(entry, 1), :call_name}
   end
 
@@ -12285,7 +12613,8 @@ defmodule Fablebook.Contract.TierSweepTest do
           covered?({module, function, arity}, tier, names)
       end)
 
-    others = Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 4)))
+    others =
+      Enum.reject(@call_name_exclusions, &(&1 == current_call_name_entry!({Regex, [:compile]})))
 
     Enum.filter(uncovered, fn mfa ->
       mfa in matched_mfas and call_name_exclusion_match?(matcher, mfa) and
@@ -12314,7 +12643,10 @@ defmodule Fablebook.Contract.TierSweepTest do
     Enum.filter(matched_mfas, fn mfa ->
       exclusion_reason(elem(mfa, 0), elem(mfa, 1), @exclusions) != nil or
         Enum.any?(
-          Enum.reject(@call_name_exclusions, &(&1 == Enum.at(@call_name_exclusions, 4))),
+          Enum.reject(
+            @call_name_exclusions,
+            &(&1 == current_call_name_entry!({Regex, [:compile]}))
+          ),
           fn
             {other_matcher, _reason, _citations} -> call_name_exclusion_match?(other_matcher, mfa)
           end

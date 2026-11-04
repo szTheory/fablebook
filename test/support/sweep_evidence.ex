@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "27c45913ed03b510f2f44ccef8f65a95d932c9fb917e6c4e942b0cfd18a73894"
+  @archive_sha "c2f6c40a64cb73d17a047e8e9f9306e34f694516c487c8a57853a7a3a1e46aad"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -21,6 +21,16 @@ defmodule Fablebook.Test.SweepEvidence do
     "floor" => %{
       "otp" => ["27.3.4.9", "4aa809ae4eb4a20ad89c23837376acf179877f39"],
       "elixir" => ["1.18.5", "dfe6612e546cec6557900e67651f7d21805472ef"]
+    }
+  }
+  @cn001_source_identities %{
+    "mix/lib/mix/compilers/elixir.ex" => {
+      "core",
+      "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/compilers/elixir.ex"
+    },
+    "elixir/lib/protocol.ex" => {
+      "core",
+      "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/elixir/lib/protocol.ex"
     }
   }
   @elixir_apps [:elixir, :eex, :mix, :iex, :logger, :ex_unit]
@@ -189,6 +199,7 @@ defmodule Fablebook.Test.SweepEvidence do
        when status in ["present", "license"] do
     path = row["path"]
     if not String.starts_with?(path, row["lane"] <> "/"), do: fail!(:source_root, row)
+    validate_cn001_source_identity!(row)
     data = Map.fetch!(files, path)
 
     if byte_size(data) != row["bytes"] or digest(data) != row["sha256"],
@@ -196,6 +207,23 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   defp validate_record!(row, _files), do: fail!(:manifest_status, row)
+
+  defp validate_cn001_source_identity!(row) do
+    lane = row["lane"]
+    url = row["url"]
+
+    case Map.fetch(@cn001_source_identities, row["source_path"]) do
+      {:ok, {expected_lane, expected_url}}
+      when lane == expected_lane and url == expected_url ->
+        :ok
+
+      {:ok, expected} ->
+        fail!(:source_identity, {row, expected})
+
+      :error ->
+        :ok
+    end
+  end
 
   defp extract_files!(files) do
     token = :crypto.strong_rand_bytes(12) |> Base.url_encode64(padding: false)
