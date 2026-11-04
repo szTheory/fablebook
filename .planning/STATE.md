@@ -4,15 +4,15 @@ current_phase: 01.1.1.13
 current_phase_name: Close CN-001 and CN-004 source-authority gaps (INSERTED)
 status: executing
 stopped_at: Phase 01.1.1.6 complete; paused at the requested boundary. Parent Phase 1 verification remains pending.
-last_updated: "2026-11-04T18:58:57.577Z"
+last_updated: "2026-11-04T20:42:43.214Z"
 last_activity: 2026-11-04
 last_activity_desc: Phase 01.1.1.13 execution started
-state_head: bf3cbac95e327300a99c3984938a300a2f23c66c
+state_head: 7f08b327f7c545c45fac10b94d221d1b06d1984b
 progress:
   total_phases: 43
   completed_phases: 1
   total_plans: 34
-  completed_plans: 27
+  completed_plans: 28
   percent: 2
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-10-30)
 ## Current Position
 
 Phase: 01.1.1.13 (Close CN-001 and CN-004 source-authority gaps (INSERTED)) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-11-04 — Phase 01.1.1.13 execution started
 
@@ -84,6 +84,7 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plan
 | Phase 01.1.1.6 P03 | 30 min | 2 tasks | 1 files |
 | Phase 01.1.1.6 P04 | 39 min | 2 tasks | 2 files |
 | Phase 01.1.1.13 P01 | 62 | 2 tasks | 3 files |
+| Phase 01.1.1.13 P02 | 102min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -153,6 +154,9 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.6]: Tie CN-004's compiler-lowered atom creation to the exact independent guard entry — Elixir lowers String.to_atom/1 to :erlang.binary_to_atom/1 in the compiled BEAM. The uncalled contract probe verifies that exact :binary_to_atom name-tier hit and proves that removing the matching tier entry removes the hit.
 - [Phase 01.1.1.13]: CN-001 keeps its original identity and maps to the source-backed Mix project-build carrier; core carrier-loss coverage is non-vacuous and floor absence is inventory-proven.
 - [Phase 01.1.1.13]: Preserve the Phase 01.1.1.5 calibration archive digest as historical evidence while current archive checks use the extended archive digest.
+- [Phase 01.1.1.13]: Preserve CN-004 identity and map its exact live Plug.Builder.compile/3 match to independently sourced exact boundary coverage, without judging the broader expansion owner.
+- [Phase 01.1.1.13]: Keep Phoenix.Router.pipeline/2 as a separate source-only quoted callsite, distinct from direct compiled callers.
+- [Phase 01.1.1.13]: Pin core/floor Phoenix source records independently, including both equal-byte Phoenix config rows.
 
 ### Pending Todos
 
@@ -187,7 +191,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-04T18:58:57.436Z
-Stopped at: Completed 01.1.1.13-01-PLAN.md; waiting at the allocation handoff before Plan 02.
-Next action: Parent reviews allocation assessment and decides whether to dispatch Plan 02.
+Last session: 2026-11-04T20:42:43.078Z
+Stopped at: Completed 01.1.1.13-02-PLAN.md; allocation assessment returned to parent.
+Next action: Parent reviews the source-bound allocation assessment; Plan 03 remains unstarted until dispatch.
 Resume file: None

@@ -233,14 +233,14 @@ Plans:
   3. Each row has a substantive cited disposition, and every retained matcher has a non-vacuous removal witness on each applicable lane. Any narrowing, replacement, or removal preserves original-to-current traceability.
   4. Contract tests enforce the complete-set, source, disposition, and removal evidence without invoking any audited evaluator, parser, loader, or atom-creation API. A newly judged `lib/` caller triggers the existing owner-decision stop.
   5. Delivery remains contract-test-only and merges green with exact-head core/floor checks and a CI run link. No other exclusion rows, whole-table closure, SEC-01 completion, runtime atom-count property, or never-eval proof is claimed.
-**Plans:** 1/3 plans executed across 3 waves
+**Plans:** 2/3 plans executed across 3 waves
 
 Plans:
 **Wave 1**
 - [x] 01.1.1.13-01-PLAN.md — Complete CN-001 source authority, disposition and applicable coverage controls
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01.1.1.13-02-PLAN.md — Complete CN-004 caller trace, source authority and overlap-aware disposition
+- [x] 01.1.1.13-02-PLAN.md — Complete CN-004 caller trace, source authority and overlap-aware disposition
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 01.1.1.13-03-PLAN.md — Integrated two-row controls, bounded review and exact-head delivery
