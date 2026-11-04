@@ -7411,6 +7411,26 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :cn001
+  test "CN-001 rejects a substituted project-build carrier reference", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    record = cn001_record!(ctx.graph, evidence, ledger)
+
+    for wrong_ref <- ["source:EX:0", "source:CN:1", "source:EX:999"] do
+      assert_raise ExUnit.AssertionError, fn ->
+        cn001_project_build_loss_witness!(ctx.graph, wrong_ref)
+      end
+
+      substituted = %{record | coverage_carrier_refs: [wrong_ref]}
+
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_cn001_record!(substituted, ctx.graph, evidence, ledger)
+      end
+    end
+  end
+
   @tag :cn003
   test "CN-003 preserves its identity and traces the complete live lane disposition", ctx do
     evidence = SweepEvidence.source_roots!()
