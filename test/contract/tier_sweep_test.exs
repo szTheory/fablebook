@@ -7453,7 +7453,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :cn004
-  test "CN-004 preserves its identity and records the exact-lane open source trace", ctx do
+  test "CN-004 preserves its identity and records complete exact-lane source authority", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     ledger = original_identity_ledger!()
@@ -7462,14 +7462,15 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_cn004_record!(record, ctx.graph, evidence, ledger)
     assert record.original_id == "CN-004"
     assert record.current_replacement_refs == [current_call_name_ref!({Plug.Builder, [:compile]})]
-    assert record.semantic_status == :cn004_source_authority_open
-    assert record.verdict == :undetermined_caller_source_authority
-    assert record.disposition == :open
-    assert record.matched_mfas != []
+    assert record.semantic_status == :cn004_replaced_by_expansion_carrier
+    assert record.verdict in [:exact_compile_boundary_redundant]
+    assert record.disposition == :replaced
+    assert record.matched_mfas == ["Elixir.Plug.Builder:compile/3"]
     assert record.mode_branches |> Enum.map(& &1.mode) == [:compile, :runtime]
-    assert record.source_authority_gaps != []
+    assert record.source_authority_gaps == []
     assert record.removal_witness == []
     assert record.overlap_mfas == ["Elixir.Plug.Builder:compile/3"]
+    assert Enum.all?(record.caller_citations, fn {_caller, citations} -> citations != [] end)
   end
 
   @tag :cn004
