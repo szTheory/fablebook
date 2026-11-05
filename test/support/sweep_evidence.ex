@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "d6a508be4c5333526a99de476a84a7f09f0ddb4993fadf7743051e594a323fdb"
+  @archive_sha "4e0bfe99985d6be92d8dfddf26ca8a7d935234d338b5d43bb2c2f3c860987778"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -67,6 +67,49 @@ defmodule Fablebook.Test.SweepEvidence do
       "4539da56203ba4f5c8150efad93cf05f7279b7b3a7054c6235e4dee503efb550"
     }
   }
+  @asn1_source_identities %{
+    {"core", "asn1/src/asn1ct.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct.erl",
+      75_577,
+      "c6d680ca6798f80e60c71a5f234d82c1d0c3505ef72fdd6ca320393c2b89df54"
+    },
+    {"core", "asn1/src/asn1ct_check.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_check.erl",
+      208_843,
+      "9e1a05b8b0ba48c206b2a6a64770000b6493762d03c76fd3d57573c70ef4f9f8"
+    },
+    {"core", "asn1/src/asn1ct_gen.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_gen.erl",
+      54_635,
+      "435cfc5de920ed0e9b7c9368c039de71968daf319bb1b214bff790edd49a4014"
+    },
+    {"core", "asn1/src/asn1ct_table.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_table.erl",
+      1_986,
+      "031275fc12cd8cae17944a8b9dda857d40d87d272c82591304863c896fc6cf7f"
+    },
+    {"floor", "asn1/src/asn1ct.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct.erl",
+      75_395,
+      "b4dcd502873bef48d13b0ef19b9750deaf56c3fd26ecf9c0150581a631f3e59e"
+    },
+    {"floor", "asn1/src/asn1ct_check.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_check.erl",
+      208_746,
+      "7539066b341ccbcdbdce1a743567accd073123d14b8252930f4473d5fe626277"
+    },
+    {"floor", "asn1/src/asn1ct_gen.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_gen.erl",
+      53_892,
+      "894e107c632b9361d9c1c70614dd60db2638333fdc152336f11b6d2ab3b9abef"
+    },
+    {"floor", "asn1/src/asn1ct_table.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_table.erl",
+      1_944,
+      "cc26687a7002adc3d12225abbd0d802fe39ea27b0ff55e26805e32771d249749"
+    }
+  }
+  @asn1_source_names ~w(asn1/src/asn1ct.erl asn1/src/asn1ct_check.erl asn1/src/asn1ct_gen.erl asn1/src/asn1ct_table.erl)
   @elixir_apps [:elixir, :eex, :mix, :iex, :logger, :ex_unit]
 
   def lane! do
@@ -207,6 +250,7 @@ defmodule Fablebook.Test.SweepEvidence do
       do: fail!(:manifest_inventory, Map.keys(files))
 
     Enum.each(records, &validate_record!(&1, files))
+    validate_asn1_inventory!(records)
   end
 
   defp validate_lock_manifest!(locks) do
@@ -236,6 +280,7 @@ defmodule Fablebook.Test.SweepEvidence do
     validate_cn001_source_identity!(row)
     validate_cn004_source_identity!(row)
     validate_leex_source_identity!(row)
+    validate_asn1_source_identity!(row)
     data = Map.fetch!(files, path)
 
     if byte_size(data) != row["bytes"] or digest(data) != row["sha256"],
@@ -291,6 +336,34 @@ defmodule Fablebook.Test.SweepEvidence do
     end
   end
 
+  defp validate_asn1_source_identity!(row) do
+    identity = {row["lane"], row["source_path"]}
+    actual = {row["url"], row["bytes"], row["sha256"]}
+    expected_path = if is_binary(row["source_path"]), do: row["lane"] <> "/" <> row["source_path"]
+
+    case Map.fetch(@asn1_source_identities, identity) do
+      {:ok, ^actual} ->
+        if row["path"] == expected_path,
+          do: :ok,
+          else: fail!(:source_identity, {row, expected_path})
+
+      {:ok, expected} ->
+        fail!(:source_identity, {row, expected})
+
+      :error ->
+        if row["source_path"] in @asn1_source_names,
+          do: fail!(:source_identity, {row, :unexpected_lane_or_path}),
+          else: :ok
+    end
+  end
+
+  defp validate_asn1_inventory!(records) do
+    Enum.each(@asn1_source_identities, fn {{lane, source_path}, _identity} ->
+      found = Enum.any?(records, &(&1["lane"] == lane and &1["source_path"] == source_path))
+      unless found, do: fail!(:source_identity, {lane, source_path, :missing})
+    end)
+  end
+
   defp extract_files!(files) do
     token = :crypto.strong_rand_bytes(12) |> Base.url_encode64(padding: false)
     root = Path.join(System.tmp_dir!(), "fablebook-sources-#{token}")
@@ -344,7 +417,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   defp parse_citation!(citation) do
-    case Regex.run(~r/^([a-z_]+\/(?:src|lib)\/[^:]+):([1-9][0-9]*)$/, citation) do
+    case Regex.run(~r/^([a-z0-9_]+\/(?:src|lib)\/[^:]+):([1-9][0-9]*)$/, citation) do
       [_, path, line] ->
         if not safe_path?(path), do: fail!(:citation_path, citation)
         {path, String.to_integer(line)}
