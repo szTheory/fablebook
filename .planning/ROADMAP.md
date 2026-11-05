@@ -39,6 +39,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
 - [x] **Phase 01.1.1.13: Close CN-001 and CN-004 source-authority gaps** (bounded delivery complete 2026-11-04; Phase 01.1.1.1 aggregate remains open)
 - [x] **Phase 01.1.1.14: Bound Leex caller-chosen atom creation** (completed 2026-11-05)
+- [x] **Phase 01.1.1.15: Bound ASN.1 table-wrapper exclusions** (INSERTED) - source-backed disposition for the bounded EX-107 ASN.1 table-wrapper slice; parent aggregate remains open (completed 2026-11-05)
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -262,6 +263,20 @@ Plans:
 
 Plans:
 - [x] 01.1.1.14-01-PLAN.md — Source-backed EX-165 Leex disposition and both-guard coverage
+
+### Phase 01.1.1.15: Bound ASN.1 table-wrapper exclusions (INSERTED)
+
+**Goal:** Establish a source-backed disposition for the ASN.1 table-wrapper portion of EX-107 across core and floor, determining whether the bounded matched functions and caller paths create atoms from caller-chosen inputs. Preserve the full EX-107 identity and match sets; this slice does not close the remaining EX-107 matches or the 01.1.1.1 aggregate.
+**Requirements**: None completed here (SEC-01 remains assigned to Phase 5)
+**Depends on:** Phase 01.1.1.14
+**Success Criteria** (what must be TRUE):
+  1. EX-107 retains its complete current core and floor match sets; the bounded slice is losslessly identified as the nine `asn1ct_table` functions plus `asn1ct_check:check/2` and `asn1ct_gen:insert_once/2`, with all other matches still pending.
+  2. Exact core/floor sources for `asn1ct`, `asn1ct_check`, `asn1ct_gen` and `asn1ct_table` are hash-bound in the approved offline archive; the 28 direct edges and their 17 caller MFAs are reconciled, including the `insert_once/2` table-name origin.
+  3. The bounded source-backed disposition is supported by cited lane evidence, and any retained matcher has an individual non-vacuous removal witness on each applicable lane. No claim about the rest of EX-107 is inferred.
+  4. Contract controls preserve the full row match union and the bounded sub-scope on both lanes without executing the audited functions or changing production code.
+  5. Delivery remains contract/test/evidence-only, passes required core/floor checks, and records a CI link at the tested revision. No whole-table closure, SEC-01 completion, parent phase completion, or Phase 2 start is claimed.
+**Plans:** 1/1 plans complete (planned by GSD)
+- [x] 01.1.1.15-01-PLAN.md
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.

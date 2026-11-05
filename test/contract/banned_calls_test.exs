@@ -182,6 +182,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:cover, :compile, :_},
     {:merl, :_, :_},
     {:asn1ct, :_, :_},
+    {:asn1ct_check, :check, 2},
     {:qlc, :string_to_handle, :_},
     {:c, :erlangrc, :_},
     {:shell, :start, :_},
@@ -680,6 +681,51 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
 
     assert credo_issues("Regex.compile(pattern)", "leex_benign.ex") == []
+  end
+
+  @tag :tmp_dir
+  test "asn1ct_check.check/2 is caught through uncalled direct, capture and apply bodies", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    mfa = {:asn1ct_check, :check, 2}
+    assert mfa in @mfa_tier
+
+    for form <- [:direct, :capture, :apply] do
+      body =
+        case form do
+          :direct -> "def probe(state, module), do: :asn1ct_check.check(state, module)"
+          :capture -> "def probe, do: &:asn1ct_check.check/2"
+          :apply -> "def probe(state, module), do: apply(:asn1ct_check, :check, [state, module])"
+        end
+
+      source = """
+      defmodule Fablebook.GuardFixture.Asn1Check#{Macro.camelize(to_string(form))} do
+        #{body}
+      end
+      """
+
+      filename = "asn1ct_check_#{form}.ex"
+      path = Path.join(dir, filename)
+      File.write!(path, source)
+
+      assert credo_issues(source, filename) != [], "Credo missed #{form} for #{inspect(mfa)}"
+
+      [beam] = compile!([path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "BEAM walker missed #{form} for #{inspect(mfa)}"
+
+      tier_without_check = Enum.reject(@mfa_tier, &(&1 == mfa))
+
+      refute Enum.any?(hits(scan, tier_without_check), &mfa_hit?(&1, mfa)),
+             "#{form} probe remained after removing its exact check/2 tier"
+    end
+
+    assert credo_issues("Regex.compile(pattern)", "asn1ct_check_benign.ex") == []
   end
 
   @tag :tmp_dir

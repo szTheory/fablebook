@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 1
 current_phase_name: Release pipeline, CI gate and guards
 status: verifying
-stopped_at: Phase 01.1.1.14 complete; PR #48 needs green CI after phase-state sync and merge
-last_updated: "2026-11-05T16:55:00Z"
+stopped_at: Phase 01.1.1.15 complete, ready to verify Phase 1
+last_updated: "2026-11-05T23:10:15.729Z"
 last_activity: 2026-11-05
-last_activity_desc: Phase 01.1.1.14 verification passed and roadmap bookkeeping completed; PR merge remains
-state_head: e6ac59f37e51ce6f8d914cfa0238325a5226d4c9
+last_activity_desc: Phase 01.1.1.15 complete, transitioned to Phase 1
+state_head: 687ada6ea263eab7b6b3df8e9cc75279277b7aa5
 progress:
-  total_phases: 44
+  total_phases: 45
   completed_phases: 1
-  total_plans: 35
-  completed_plans: 30
+  total_plans: 36
+  completed_plans: 31
   percent: 2
 ---
 
@@ -23,21 +23,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-04)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Parent closure of the Phase 01.1.1.1 aggregate; Phase 2 remains gated
+**Current focus:** Phase 01.1.1.15 — Bound ASN.1 table-wrapper exclusions
 
 ## Current Position
 
 Phase: 1 — Release pipeline, CI gate and guards
 Plan: 5
-Status: Phase 01.1.1.14 complete locally and verified; PR #48 needs green CI after phase-state sync and merge; parent aggregate remains open
-Last activity: 2026-11-05 — Phase 01.1.1.14 source-backed Leex audit and mirrored guards completed
+Status: Phase complete — ready for verification
+Last activity: 2026-11-05 — Phase 01.1.1.15 complete, transitioned to Phase 1
 
-Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 29/34 plans complete ([█████████████████░░░] 85%); nested phase plans do not change parent completion counts
+Progress: 1/45 phases complete ([░░░░░░░░░░] 2%); 31/36 plans complete ([█████████████████░░░] 86%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
+- Total plans completed: 24
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -51,6 +51,7 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 29/34 plan
 | 01.1.1.6 | 5 | - | - |
 | 01.1.1.13 | 3 | - | - |
 | 01.1.1.14 | 1 | - | - |
+| 01.1.1.15 | 1 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -88,6 +89,7 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 29/34 plan
 | Phase 01.1.1.13 P01 | 62 | 2 tasks | 3 files |
 | Phase 01.1.1.13 P02 | 102min | 2 tasks | 3 files |
 | Phase 01.1.1.13 P03 | 44m | 2 tasks | 7 files |
+| Phase 01.1.1.15 P01 | 124 min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -163,7 +165,11 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.13]: Keep the original CN-001 and CN-004 identities and validate their complete lane evidence together.
 - [Phase 01.1.1.13]: Use a test-only TAP formatter selected explicitly through Mix so RED evidence comes from ExUnit events.
 - [Phase 01.1.1.13]: Deliver from a clean branch rooted at freshly fetched origin/main, then bind CI and merge evidence to the captured candidate.
-- [Phase 01.1.1.14]: EX-165 has exact core/floor Leex dispositions and mirrored compile-only guards. Verification passed 7/7 against PR #48 CI run 42066556655 at candidate `53d938f`; the owner authorized publishing and merging after CI. The phase is complete locally; keep the parent aggregate and Phase 2 gate open.
+- [Phase 01.1.1.14]: EX-165 has exact core/floor Leex dispositions and mirrored compile-only guards. Verification passed 7/7 against final PR #48 CI run 42069574938 at head `9ff0e7e`; PR #48 is merged. Keep the parent aggregate and Phase 2 gate open, with SEC-01 assigned to Phase 5.
+- [Phase 01.1.1.15]: Keep EX-107 as the unchanged primary identity; the 11-MFA ASN.1 set is only a bounded evidence slice.
+- [Phase 01.1.1.15]: Retain an exact asn1ct_check:check/2 tier because its archived source trace reaches stored list_to_atom values.
+- [Phase 01.1.1.15]: Keep the remaining selected wrappers and all 166 outside matches per lane under the unchanged EX-107 disposition.
+- [Phase 01.1.1.15]: Hosted CI is pending an external delivery decision; local checks do not provide a hosted URL.
 
 ### Pending Todos
 
@@ -175,10 +181,9 @@ None yet.
 
 - [Phase 01.1.1.1 planning]: The owner approved same-level re-scope. All matched target source paths for the 213 pending exclusions are now hash-verified and token-sized: 306 core files / 2,996,938 `o200k_base` tokens; 302 floor files / 2,793,931. Meaningful caller/delegate sources and working-time fit still need bounded allocations. Phase 01.1.1.14 is the first source-sized candidate (EX-165 Leex, 60,386 source tokens across both lanes). Keep the aggregate and Phase 2 gates open, SEC-01 with Phase 5, and historical plans blocked; continue splitting and sizing without dropping any row or match.
 
-- [Phase 01.1.1.14 verification]: The final report passes 7/7 with CI run 42066556655 linked in the phase summary. Propagating the completed phase state to the PR will update its head, so require green CI again before merge. Keep Phase 2 gated and the parent aggregate open.
-
 - [Parent verification debt]: Phase 1 and 01.1 reports remain gaps_found; phase.complete routed to Phase 1 for re-verification. Do not mark either parent complete from the child report.
 - [Phase 01.1.1.1]: Parser disposition, unswept installed OTP apps/debugger remainder, and full carried-exclusion audit remain open per INT-20261029-02.
+- [Phase 01.1.1.3.1.1 documentation]: ROADMAP says Plans 01–04 executed, PR #31 merged, and verification passed, but the Plan 04 SUMMARY and phase VERIFICATION artifacts are absent. Treat this as documentation reconciliation; do not rerun the merged plan.
 
 - [Before Phase 1 to 4 planning]: owner answers (or accepts the recommended answers) for Q7, Q9, Q12, Q13, Q15, Q19, Q20, Q24. Q14 and Q16 before Phase 4. Q8 before Phase 7. Q17 before Phase 25. Q21 before Phase 1 (SBOM) and Phase 13 (QR).
 - [Phase 2]: the runner spike decides Q1; media emulation through the wrapper is the blocker candidate.
@@ -191,6 +196,7 @@ None yet.
 - Phase 01.1 inserted after Phase 1: Close phase 1 guard gaps (atom-ban bypass, code loading, hex-publish hardening); split per INT-20261029-01 to keep the 5-plan cap (URGENT)
 - Phase 01.1.1.1 inserted after Phase 01.1.1: Finish the ban list: open items transferred from 01.1.1 at planning (INT-20261029-02) (URGENT)
 - Phase numbering: keep existing dotted IDs stable as historical ownership and evidence references. After archiving the current milestone, start the next milestone at Phase 1 with `$gsd-new-milestone --reset-phase-numbers` (INT-20261101-02). Do not add further nested decimal insertions.
+- Phase 01.1.1.15 inserted after Phase 01.1.1.14: Bound ASN.1 table-wrapper disposition for EX-107; owner authorized a same-level sibling phase (URGENT)
 
 ## Deferred Items
 
@@ -202,8 +208,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-05T16:55:00Z
-Stopped at: Phase 01.1.1.14 complete locally; PR #48 state sync and final CI remain
+Last session: 2026-11-05T22:26:00.243Z
+Stopped at: Phase 01.1.1.15 complete, ready to verify Phase 1
 
-Next action: Propagate ROADMAP, STATE and state.json completion updates to PR #48, wait for green CI on its updated head, then merge. Continue sizing remaining source-connected scope while keeping the parent aggregate and Phase 2 gates open.
-Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.continue-here.md
+Next action: Parent reviews and commits the summary/tracking files; then decide whether to trigger hosted CI for tested commit 18619f7.
+Resume file: .planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-01-SUMMARY.md

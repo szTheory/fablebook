@@ -2876,6 +2876,192 @@ defmodule Fablebook.Contract.TierSweepTest do
                  end)
 
   @leex_expected_mfas [{:leex, :file, 1}, {:leex, :file, 2}]
+  @asn1_table_mfas [
+    {:asn1ct_table, :new, 1},
+    {:asn1ct_table, :new_reuse, 1},
+    {:asn1ct_table, :exists, 1},
+    {:asn1ct_table, :size, 1},
+    {:asn1ct_table, :insert, 2},
+    {:asn1ct_table, :lookup, 2},
+    {:asn1ct_table, :match, 2},
+    {:asn1ct_table, :to_list, 1},
+    {:asn1ct_table, :delete, 1}
+  ]
+  @asn1_check_mfa {:asn1ct_check, :check, 2}
+  @asn1_insert_once_mfa {:asn1ct_gen, :insert_once, 2}
+  @asn1_expected_selected_mfas @asn1_table_mfas ++ [@asn1_check_mfa, @asn1_insert_once_mfa]
+  @asn1_expected_direct_edges [
+    {{:asn1ct, :check_tagdefault, 1}, {:asn1ct_table, :new, 1}},
+    {{:asn1ct, :compile_pass, 1}, {:asn1ct_table, :delete, 1}},
+    {{:asn1ct, :discover_dupl_in_mods, 5}, {:asn1ct_table, :insert, 2}},
+    {{:asn1ct, :generate, 4}, {:asn1ct_table, :delete, 1}},
+    {{:asn1ct, :generate, 4}, {:asn1ct_table, :new, 1}},
+    {{:asn1ct, :merge_modules, 2}, {:asn1ct_table, :delete, 1}},
+    {{:asn1ct, :merge_modules, 2}, {:asn1ct_table, :size, 1}},
+    {{:asn1ct, :read_config_data, 1}, {:asn1ct_table, :exists, 1}},
+    {{:asn1ct, :read_config_data, 1}, {:asn1ct_table, :lookup, 2}},
+    {{:asn1ct, :remove_name_collisions, 1}, {:asn1ct_table, :new, 1}},
+    {{:asn1ct, :remove_name_collisions2, 4}, {:asn1ct_table, :insert, 2}},
+    {{:asn1ct, :save_automatic_tagged_types, 1}, {:asn1ct_table, :insert, 2}},
+    {{:asn1ct, :save_config, 2}, {:asn1ct_table, :insert, 2}},
+    {{:asn1ct, :save_config, 2}, {:asn1ct_table, :new_reuse, 1}},
+    {{:asn1ct, :save_imports, 1}, {:asn1ct_table, :insert, 2}},
+    {{:asn1ct, :save_imports, 1}, {:asn1ct_table, :new, 1}},
+    {{:asn1ct_check, :check, 2}, {:asn1ct_table, :delete, 1}},
+    {{:asn1ct_check, :check, 2}, {:asn1ct_table, :new, 1}},
+    {{:asn1ct_check, :check, 2}, {:asn1ct_table, :to_list, 1}},
+    {{:asn1ct_check, :is_automatic_tagged_in_multi_file, 1}, {:asn1ct_table, :exists, 1}},
+    {{:asn1ct_check, :is_automatic_tagged_in_multi_file, 1}, {:asn1ct_table, :lookup, 2}},
+    {{:asn1ct_check, :renamed_reference, 3}, {:asn1ct_table, :exists, 1}},
+    {{:asn1ct_check, :renamed_reference, 3}, {:asn1ct_table, :match, 2}},
+    {{:asn1ct_gen, :insert_once, 2}, {:asn1ct_table, :insert, 2}},
+    {{:asn1ct_gen, :insert_once, 2}, {:asn1ct_table, :lookup, 2}},
+    {{:asn1ct_table, :delete, 1}, {:asn1ct_table, :delete, 1}},
+    {{:asn1ct_table, :new_reuse, 1}, {:asn1ct_table, :exists, 1}},
+    {{:asn1ct_table, :new_reuse, 1}, {:asn1ct_table, :new, 1}}
+  ]
+  @asn1_edge_citations_by_lane %{
+    "core" =>
+      Enum.map(
+        [482, 611, 612, 635, 667, 692, 858, 859, 936, 963, 1088, 1103, 1825, 1826, 1830, 1833],
+        &{"asn1/src/asn1ct.erl:#{&1}", "asn1ct_table:"}
+      ) ++
+        Enum.map(
+          [93, 94, 143, 145, 146, 153, 4000, 4003, 4005, 4009, 4780, 4785],
+          &{"asn1/src/asn1ct_check.erl:#{&1}", "asn1ct_table:"}
+        ) ++
+        Enum.map([1380, 1382], &{"asn1/src/asn1ct_gen.erl:#{&1}", "asn1ct_table:"}) ++
+        [
+          {"asn1/src/asn1ct_table.erl:47", "exists(Table)"},
+          {"asn1/src/asn1ct_table.erl:47", "new(Table)"},
+          {"asn1/src/asn1ct_table.erl:66", "delete(T)"}
+        ],
+    "floor" =>
+      Enum.map(
+        [477, 606, 607, 630, 662, 687, 853, 854, 931, 958, 1083, 1098, 1820, 1821, 1825, 1828],
+        &{"asn1/src/asn1ct.erl:#{&1}", "asn1ct_table:"}
+      ) ++
+        Enum.map(
+          [89, 90, 139, 141, 142, 149, 3995, 3998, 4000, 4004, 4775, 4780],
+          &{"asn1/src/asn1ct_check.erl:#{&1}", "asn1ct_table:"}
+        ) ++
+        Enum.map([1367, 1369], &{"asn1/src/asn1ct_gen.erl:#{&1}", "asn1ct_table:"}) ++
+        [
+          {"asn1/src/asn1ct_table.erl:45", "exists(Table)"},
+          {"asn1/src/asn1ct_table.erl:45", "new(Table)"},
+          {"asn1/src/asn1ct_table.erl:64", "delete(T)"}
+        ]
+  }
+  @asn1_table_definition_citations_by_lane %{
+    "core" => %{
+      new: [
+        {"asn1/src/asn1ct_table.erl:40", "new(Table) ->"},
+        {"asn1/src/asn1ct_table.erl:42", "TableId = ets:new(Table, [])"}
+      ],
+      new_reuse: [
+        {"asn1/src/asn1ct_table.erl:46", "new_reuse(Table) ->"},
+        {"asn1/src/asn1ct_table.erl:47", "not exists(Table) andalso new(Table)"}
+      ],
+      exists: [{"asn1/src/asn1ct_table.erl:49", "exists(Table) -> get(Table) =/= undefined."}],
+      size: [{"asn1/src/asn1ct_table.erl:51", "size(Table) -> ets:info(get(Table), size)."}],
+      insert: [
+        {"asn1/src/asn1ct_table.erl:53", "insert(Table, Tuple) -> ets:insert(get(Table), Tuple)."}
+      ],
+      lookup: [
+        {"asn1/src/asn1ct_table.erl:55", "lookup(Table, Key) -> ets:lookup(get(Table), Key)."}
+      ],
+      match: [
+        {"asn1/src/asn1ct_table.erl:57",
+         "match(Table, MatchSpec) -> ets:match(get(Table), MatchSpec)."}
+      ],
+      to_list: [{"asn1/src/asn1ct_table.erl:59", "to_list(Table) -> ets:tab2list(get(Table))."}],
+      delete: [
+        {"asn1/src/asn1ct_table.erl:65", "delete(Tables) when is_list(Tables) ->"},
+        {"asn1/src/asn1ct_table.erl:68", "delete(Table) when is_atom(Table) ->"}
+      ]
+    },
+    "floor" => %{
+      new: [
+        {"asn1/src/asn1ct_table.erl:38", "new(Table) ->"},
+        {"asn1/src/asn1ct_table.erl:40", "TableId = ets:new(Table, [])"}
+      ],
+      new_reuse: [
+        {"asn1/src/asn1ct_table.erl:44", "new_reuse(Table) ->"},
+        {"asn1/src/asn1ct_table.erl:45", "not exists(Table) andalso new(Table)"}
+      ],
+      exists: [{"asn1/src/asn1ct_table.erl:47", "exists(Table) -> get(Table) =/= undefined."}],
+      size: [{"asn1/src/asn1ct_table.erl:49", "size(Table) -> ets:info(get(Table), size)."}],
+      insert: [
+        {"asn1/src/asn1ct_table.erl:51", "insert(Table, Tuple) -> ets:insert(get(Table), Tuple)."}
+      ],
+      lookup: [
+        {"asn1/src/asn1ct_table.erl:53", "lookup(Table, Key) -> ets:lookup(get(Table), Key)."}
+      ],
+      match: [
+        {"asn1/src/asn1ct_table.erl:55",
+         "match(Table, MatchSpec) -> ets:match(get(Table), MatchSpec)."}
+      ],
+      to_list: [{"asn1/src/asn1ct_table.erl:57", "to_list(Table) -> ets:tab2list(get(Table))."}],
+      delete: [
+        {"asn1/src/asn1ct_table.erl:63", "delete(Tables) when is_list(Tables) ->"},
+        {"asn1/src/asn1ct_table.erl:66", "delete(Table) when is_atom(Table) ->"}
+      ]
+    }
+  }
+  @asn1_gen_insert_citations_by_lane %{
+    "core" => [
+      {"asn1/src/asn1ct_gen.erl:1379", "insert_once(Table,Object) ->"},
+      {"asn1/src/asn1ct_gen.erl:1380", "asn1ct_table:lookup(Table, element(1, Object))"},
+      {"asn1/src/asn1ct_gen.erl:1382", "asn1ct_table:insert(Table, Object)"}
+    ],
+    "floor" => [
+      {"asn1/src/asn1ct_gen.erl:1366", "insert_once(Table,Object) ->"},
+      {"asn1/src/asn1ct_gen.erl:1367", "asn1ct_table:lookup(Table, element(1, Object))"},
+      {"asn1/src/asn1ct_gen.erl:1369", "asn1ct_table:insert(Table, Object)"}
+    ]
+  }
+  @asn1_check_trace_citations_by_lane %{
+    "core" => [
+      {"asn1/src/asn1ct_check.erl:73",
+       "check(S,{Types,Values,ParameterizedTypes,Classes,Objects,ObjectSets}) ->"},
+      {"asn1/src/asn1ct_check.erl:93", "asn1ct_table:new(parameterized_objects)"},
+      {"asn1/src/asn1ct_check.erl:94", "asn1ct_table:new(inlined_objects)"},
+      {"asn1/src/asn1ct_check.erl:139", "{Oerror,ExclO,ExclOS} = checko(S,NewObjects ++"},
+      {"asn1/src/asn1ct_check.erl:443", "O = check_object(NewS, Object, TS),"},
+      {"asn1/src/asn1ct_check.erl:1365", "try match_syntax_type(S, Field, A) of"},
+      {"asn1/src/asn1ct_check.erl:1429",
+       "InlinedObjName = list_to_atom(lists:concat([S#state.tname,"},
+      {"asn1/src/asn1ct_check.erl:1435", "insert_once(S, inlined_objects, ObjKey)"},
+      {"asn1/src/asn1ct_check.erl:1458", "Name = list_to_atom(asn1ct_gen:list2name(NameList))"},
+      {"asn1/src/asn1ct_check.erl:1461",
+       "insert_once(S, parameterized_objects, {Name,type,NewTDef})"},
+      {"asn1/src/asn1ct_check.erl:1488",
+       "insert_once(S0, parameterized_objects, {ERefName,type,TDef})"},
+      {"asn1/src/asn1ct_check.erl:2607", "asn1ct_gen:insert_once(parameterized_objects,"},
+      {"asn1/src/asn1ct_check.erl:6093", "insert_once(S,Tab,Key) ->"},
+      {"asn1/src/asn1ct_check.erl:6096", "asn1ct_gen:insert_once(Tab,Key),"}
+    ],
+    "floor" => [
+      {"asn1/src/asn1ct_check.erl:69",
+       "check(S,{Types,Values,ParameterizedTypes,Classes,Objects,ObjectSets}) ->"},
+      {"asn1/src/asn1ct_check.erl:89", "asn1ct_table:new(parameterized_objects)"},
+      {"asn1/src/asn1ct_check.erl:90", "asn1ct_table:new(inlined_objects)"},
+      {"asn1/src/asn1ct_check.erl:135", "{Oerror,ExclO,ExclOS} = checko(S,NewObjects ++"},
+      {"asn1/src/asn1ct_check.erl:439", "O = check_object(NewS, Object, TS),"},
+      {"asn1/src/asn1ct_check.erl:1361", "try match_syntax_type(S, Field, A) of"},
+      {"asn1/src/asn1ct_check.erl:1425",
+       "InlinedObjName = list_to_atom(lists:concat([S#state.tname,"},
+      {"asn1/src/asn1ct_check.erl:1431", "insert_once(S, inlined_objects, ObjKey)"},
+      {"asn1/src/asn1ct_check.erl:1454", "Name = list_to_atom(asn1ct_gen:list2name(NameList))"},
+      {"asn1/src/asn1ct_check.erl:1457",
+       "insert_once(S, parameterized_objects, {Name,type,NewTDef})"},
+      {"asn1/src/asn1ct_check.erl:1484",
+       "insert_once(S0, parameterized_objects, {ERefName,type,TDef})"},
+      {"asn1/src/asn1ct_check.erl:2602", "asn1ct_gen:insert_once(parameterized_objects,"},
+      {"asn1/src/asn1ct_check.erl:6088", "insert_once(S,Tab,Key) ->"},
+      {"asn1/src/asn1ct_check.erl:6091", "asn1ct_gen:insert_once(Tab,Key),"}
+    ]
+  }
   @leex_expected_replacements Map.new(@leex_expected_mfas, &{&1, {:tier, &1}})
   @leex_expected_trace [
     {Mix.Tasks.Compile.Leex, :run, 1},
@@ -3998,7 +4184,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
     assert SweepEvidence.archive_sha256() ==
-             "d6a508be4c5333526a99de476a84a7f09f0ddb4993fadf7743051e594a323fdb"
+             "4e0bfe99985d6be92d8dfddf26ca8a7d935234d338b5d43bb2c2f3c860987778"
 
     lane = evidence.lane.name
 
@@ -6818,6 +7004,15 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_raise ExUnit.AssertionError, fn ->
       assert_leex_audit!(records, ctx.graph, tier, [:file | names], evidence, ledger, exclusions)
     end
+  end
+
+  test "EX-107 keeps its full lane unions while tracing the bounded ASN.1 table slice", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    tier = BannedCalls.banned_mfas()
+
+    assert_asn1_table_audit!(ctx.graph, evidence, ledger, tier)
   end
 
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
@@ -10141,6 +10336,140 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert Enum.map(record.matched_mfas, &mfa_string!/1) == record.removal_witness
   end
+
+  defp assert_asn1_table_audit!(graph, evidence, ledger, tier) do
+    lane = evidence.lane.name
+
+    archive_only = %{
+      evidence
+      | installed:
+          Map.put(evidence.installed, "asn1", Path.join(evidence.archive_root, "missing-asn1"))
+    }
+
+    row = Enum.find(ledger.exclusions, &(&1.id == "EX-107"))
+    assert row != nil, "the original EX-107 identity is missing"
+    assert row.original_entry_raw == "{{:prefix, \":asn1ct_\"}, :compiler_pass}"
+    assert row.semantic_status == :pending
+    assert row.owner == "01.1.1.4"
+
+    lane_matches = Map.fetch!(row.lane_matches, lane) |> MapSet.new()
+
+    live_matches =
+      graph.full_exported
+      |> Enum.filter(&asn1_original_match?/1)
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.map(&mfa_string!/1)
+      |> MapSet.new()
+
+    assert live_matches == lane_matches,
+           "EX-107/#{lane} differs from its unchanged full lane export match set"
+
+    assert MapSet.size(lane_matches) == 177
+
+    selected = MapSet.new(Enum.map(@asn1_expected_selected_mfas, &mfa_string!/1))
+    assert MapSet.size(selected) == 11
+    assert MapSet.subset?(selected, lane_matches)
+    pending = MapSet.difference(lane_matches, selected)
+    assert MapSet.size(pending) == 166
+
+    direct_edges =
+      graph.full_edges
+      |> Enum.filter(fn
+        {_caller, {:asn1ct_table, function}}
+        when function in [
+               :new,
+               :new_reuse,
+               :exists,
+               :size,
+               :insert,
+               :lookup,
+               :match,
+               :to_list,
+               :delete
+             ] ->
+          true
+
+        _edge ->
+          false
+      end)
+      |> MapSet.new()
+
+    expected_direct_edges =
+      Enum.map(@asn1_expected_direct_edges, fn {caller, {module, function, _arity}} ->
+        {caller, {module, function}}
+      end)
+      |> MapSet.new()
+
+    assert direct_edges == expected_direct_edges,
+           "EX-107/#{lane} table edge set differs from the reviewed 28-edge source trace; " <>
+             "missing=#{inspect(MapSet.difference(expected_direct_edges, direct_edges))}; " <>
+             "unexpected=#{inspect(MapSet.difference(direct_edges, expected_direct_edges))}"
+
+    assert MapSet.size(direct_edges) == 28
+    assert direct_edges |> Enum.map(&elem(&1, 0)) |> MapSet.new() |> MapSet.size() == 17
+
+    for {citation, expected} <- Map.fetch!(@asn1_edge_citations_by_lane, lane) do
+      source = SweepEvidence.resolve!(archive_only, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+    end
+
+    table_citations = Map.fetch!(@asn1_table_definition_citations_by_lane, lane)
+
+    for mfa = {:asn1ct_table, function, _arity} <- @asn1_table_mfas do
+      citations = Map.fetch!(table_citations, function)
+
+      for {citation, expected} <- citations do
+        source = SweepEvidence.resolve!(archive_only, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected, citation
+      end
+
+      refute mfa in tier, "#{inspect(mfa)} must remain covered by EX-107"
+      assert exclusion_reason(elem(mfa, 0), elem(mfa, 1), @exclusions) == :compiler_pass
+    end
+
+    for {citation, expected} <- Map.fetch!(@asn1_gen_insert_citations_by_lane, lane) do
+      source = SweepEvidence.resolve!(archive_only, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+    end
+
+    refute @asn1_insert_once_mfa in tier
+
+    assert exclusion_reason(
+             elem(@asn1_insert_once_mfa, 0),
+             elem(@asn1_insert_once_mfa, 1),
+             @exclusions
+           ) ==
+             :compiler_pass
+
+    check_citations = Map.fetch!(@asn1_check_trace_citations_by_lane, lane)
+
+    for {citation, expected} <- check_citations do
+      source = SweepEvidence.resolve!(archive_only, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+    end
+
+    assert @asn1_check_mfa in tier
+    assert disposition(@asn1_check_mfa, tier, BannedCalls.banned_names(), @exclusions) == :tier
+
+    assert Enum.any?(check_citations, fn {_citation, text} ->
+             String.contains?(text, "list_to_atom")
+           end),
+           "check/2 disposition must cite its stored-value atom path, not fixed table names"
+
+    tier_without_check = Enum.reject(tier, &(&1 == @asn1_check_mfa))
+
+    refute covered?(@asn1_check_mfa, tier_without_check, BannedCalls.banned_names()),
+           "removing the exact check/2 matcher must remove its active guard disposition"
+
+    assert [mfa_string!(@asn1_check_mfa)] == ["asn1ct_check:check/2"]
+  end
+
+  defp asn1_original_match?({module, _function, _arity}),
+    do: String.starts_with?(inspect(module), ":asn1ct_")
 
   defp assert_yecc_audit!(records, graph, tier, evidence, exclusions \\ @exclusions) do
     assert length(records) == length(@yecc_expected_ids)
