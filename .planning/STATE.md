@@ -1,13 +1,13 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.15
-current_phase_name: Bound ASN.1 table-wrapper exclusions
+current_phase: 1
+current_phase_name: Release pipeline, CI gate and guards
 status: verifying
-stopped_at: Completed 01.1.1.15-01-PLAN.md
-last_updated: "2026-11-05T22:26:00.557Z"
+stopped_at: Phase 01.1.1.15 complete, ready to verify Phase 1
+last_updated: "2026-11-05T23:10:15.729Z"
 last_activity: 2026-11-05
-last_activity_desc: Plan 01 execution complete; hosted CI pending
-state_head: 18619f7324fa8f309926987c1c24a3b3a606dfaa
+last_activity_desc: Phase 01.1.1.15 complete, transitioned to Phase 1
+state_head: 687ada6ea263eab7b6b3df8e9cc75279277b7aa5
 progress:
   total_phases: 45
   completed_phases: 1
@@ -27,17 +27,17 @@ See: .planning/PROJECT.md (updated 2026-11-04)
 
 ## Current Position
 
-Phase: 01.1.1.15 (Bound ASN.1 table-wrapper exclusions) — VERIFYING
-Plan: 1 of 1
-Status: Plan tasks complete; local checks passed; hosted CI pending an external delivery decision
-Last activity: 2026-11-05 — Plan 01 execution complete; hosted CI pending
+Phase: 1 — Release pipeline, CI gate and guards
+Plan: 5
+Status: Phase complete — ready for verification
+Last activity: 2026-11-05 — Phase 01.1.1.15 complete, transitioned to Phase 1
 
 Progress: 1/45 phases complete ([░░░░░░░░░░] 2%); 31/36 plans complete ([█████████████████░░░] 86%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
+- Total plans completed: 24
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -51,6 +51,7 @@ Progress: 1/45 phases complete ([░░░░░░░░░░] 2%); 31/36 plan
 | 01.1.1.6 | 5 | - | - |
 | 01.1.1.13 | 3 | - | - |
 | 01.1.1.14 | 1 | - | - |
+| 01.1.1.15 | 1 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -208,7 +209,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-11-05T22:26:00.243Z
-Stopped at: Completed 01.1.1.15-01-PLAN.md
+Stopped at: Phase 01.1.1.15 complete, ready to verify Phase 1
 
 Next action: Parent reviews and commits the summary/tracking files; then decide whether to trigger hosted CI for tested commit 18619f7.
 Resume file: .planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-01-SUMMARY.md

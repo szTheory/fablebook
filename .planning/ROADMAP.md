@@ -39,7 +39,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
 - [x] **Phase 01.1.1.13: Close CN-001 and CN-004 source-authority gaps** (bounded delivery complete 2026-11-04; Phase 01.1.1.1 aggregate remains open)
 - [x] **Phase 01.1.1.14: Bound Leex caller-chosen atom creation** (completed 2026-11-05)
-- [ ] **Phase 01.1.1.15: Bound ASN.1 table-wrapper exclusions** (INSERTED) - source-backed disposition for the bounded EX-107 ASN.1 table-wrapper slice; parent aggregate remains open
+- [x] **Phase 01.1.1.15: Bound ASN.1 table-wrapper exclusions** (INSERTED) - source-backed disposition for the bounded EX-107 ASN.1 table-wrapper slice; parent aggregate remains open (completed 2026-11-05)
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -275,7 +275,7 @@ Plans:
   3. The bounded source-backed disposition is supported by cited lane evidence, and any retained matcher has an individual non-vacuous removal witness on each applicable lane. No claim about the rest of EX-107 is inferred.
   4. Contract controls preserve the full row match union and the bounded sub-scope on both lanes without executing the audited functions or changing production code.
   5. Delivery remains contract/test/evidence-only, passes required core/floor checks, and records a CI link at the tested revision. No whole-table closure, SEC-01 completion, parent phase completion, or Phase 2 start is claimed.
-**Plans:** 1/1 plans executed (planned by GSD)
+**Plans:** 1/1 plans complete (planned by GSD)
 - [x] 01.1.1.15-01-PLAN.md
 
 ### Phase 2: Walking skeleton and runner spike
