@@ -38,7 +38,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
 - [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
 - [x] **Phase 01.1.1.13: Close CN-001 and CN-004 source-authority gaps** (bounded delivery complete 2026-11-04; Phase 01.1.1.1 aggregate remains open)
-- [ ] **Phase 01.1.1.14: Bound Leex caller-chosen atom creation**
+- [x] **Phase 01.1.1.14: Bound Leex caller-chosen atom creation** (completed 2026-11-05)
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -258,10 +258,10 @@ Plans:
   4. The existing Credo and compiled-BEAM guard layers detect uncalled direct/capture/apply fixtures for every newly banned Leex front on both lanes; the audited API is never invoked.
   5. Complete exact-lane coverage and removal/disposition controls for EX-165 fail if a current match is dropped or left without an observable verdict.
   6. Delivery is contract/test/evidence-only, passes existing required core/floor checks, and records a CI run link at the tested revision. No SEC-01 completion, whole-table closure, runtime property, Phase 2 start, or parent phase completion is claimed.
-**Plans:** 1 plan (planned by GSD)
+**Plans:** 1/1 plans complete (planned by GSD)
 
 Plans:
-- [ ] 01.1.1.14-01-PLAN.md — Source-backed EX-165 Leex disposition and both-guard coverage
+- [x] 01.1.1.14-01-PLAN.md — Source-backed EX-165 Leex disposition and both-guard coverage
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.

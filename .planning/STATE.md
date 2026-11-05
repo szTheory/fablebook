@@ -3,16 +3,16 @@ gsd_state_version: "1.0"
 current_phase: 1
 current_phase_name: Release pipeline, CI gate and guards
 status: verifying
-stopped_at: Phase 01.1.1.14 verification found a missing CI run link; owner authorized remote PR and CI delivery, pending green checks
-last_updated: "2026-11-05T16:33:31Z"
+stopped_at: Phase 01.1.1.14 complete; PR #48 needs green CI after phase-state sync and merge
+last_updated: "2026-11-05T16:55:00Z"
 last_activity: 2026-11-05
-last_activity_desc: Owner authorized publishing Phase 01.1.1.14 for CI after local implementation, lane checks and reviews passed
-state_head: 3a302338271f37c5e37985fa6aa2acc93c4abec0
+last_activity_desc: Phase 01.1.1.14 verification passed and roadmap bookkeeping completed; PR merge remains
+state_head: e6ac59f37e51ce6f8d914cfa0238325a5226d4c9
 progress:
   total_phases: 44
   completed_phases: 1
   total_plans: 35
-  completed_plans: 29
+  completed_plans: 30
   percent: 2
 ---
 
@@ -29,15 +29,15 @@ See: .planning/PROJECT.md (updated 2026-11-04)
 
 Phase: 1 — Release pipeline, CI gate and guards
 Plan: 5
-Status: Phase 01.1.1.14 implementation and local gates complete; phase verification has one missing CI run link; parent aggregate closure remains open
-Last activity: 2026-11-05 — Phase 01.1.1.14 source-backed Leex audit and mirrored guards completed locally
+Status: Phase 01.1.1.14 complete locally and verified; PR #48 needs green CI after phase-state sync and merge; parent aggregate remains open
+Last activity: 2026-11-05 — Phase 01.1.1.14 source-backed Leex audit and mirrored guards completed
 
 Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 29/34 plans complete ([█████████████████░░░] 85%); nested phase plans do not change parent completion counts
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
+- Total plans completed: 23
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -50,6 +50,7 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 29/34 plan
 | 01.1.1.3.1.2 | 5 | - | - |
 | 01.1.1.6 | 5 | - | - |
 | 01.1.1.13 | 3 | - | - |
+| 01.1.1.14 | 1 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -162,7 +163,7 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.13]: Keep the original CN-001 and CN-004 identities and validate their complete lane evidence together.
 - [Phase 01.1.1.13]: Use a test-only TAP formatter selected explicitly through Mix so RED evidence comes from ExUnit events.
 - [Phase 01.1.1.13]: Deliver from a clean branch rooted at freshly fetched origin/main, then bind CI and merge evidence to the captured candidate.
-- [Phase 01.1.1.14]: EX-165 has exact core/floor Leex dispositions and mirrored compile-only guards. The owner authorized publishing a PR and completing remote CI; keep the phase pending until its required checks pass, the run link is recorded, and verification passes.
+- [Phase 01.1.1.14]: EX-165 has exact core/floor Leex dispositions and mirrored compile-only guards. Verification passed 7/7 against PR #48 CI run 42066556655 at candidate `53d938f`; the owner authorized publishing and merging after CI. The phase is complete locally; keep the parent aggregate and Phase 2 gate open.
 
 ### Pending Todos
 
@@ -174,7 +175,7 @@ None yet.
 
 - [Phase 01.1.1.1 planning]: The owner approved same-level re-scope. All matched target source paths for the 213 pending exclusions are now hash-verified and token-sized: 306 core files / 2,996,938 `o200k_base` tokens; 302 floor files / 2,793,931. Meaningful caller/delegate sources and working-time fit still need bounded allocations. Phase 01.1.1.14 is the first source-sized candidate (EX-165 Leex, 60,386 source tokens across both lanes). Keep the aggregate and Phase 2 gates open, SEC-01 with Phase 5, and historical plans blocked; continue splitting and sizing without dropping any row or match.
 
-- [Phase 01.1.1.14 verification]: 6/7 truths passed. The remaining criterion requires a successful CI run link at the tested revision; `gh run list` returned no run for `b965816`. Owner has authorized remote PR/CI delivery. Keep Phase 2 gated and the parent aggregate open until CI is green and phase verification passes.
+- [Phase 01.1.1.14 verification]: The final report passes 7/7 with CI run 42066556655 linked in the phase summary. Propagating the completed phase state to the PR will update its head, so require green CI again before merge. Keep Phase 2 gated and the parent aggregate open.
 
 - [Parent verification debt]: Phase 1 and 01.1 reports remain gaps_found; phase.complete routed to Phase 1 for re-verification. Do not mark either parent complete from the child report.
 - [Phase 01.1.1.1]: Parser disposition, unswept installed OTP apps/debugger remainder, and full carried-exclusion audit remain open per INT-20261029-02.
@@ -201,8 +202,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-05T16:33:31Z
-Stopped at: Phase 01.1.1.14 verification (`gaps_found`, 6/7); owner authorized PR, CI and merge after green checks
+Last session: 2026-11-05T16:55:00Z
+Stopped at: Phase 01.1.1.14 complete locally; PR #48 state sync and final CI remain
 
-Next action: Publish a clean PR from current main, wait for required CI, record its run link and rerun phase verification; after it passes, mark the phase complete and merge the PR. Keep the parent aggregate and Phase 2 gates open.
+Next action: Propagate ROADMAP, STATE and state.json completion updates to PR #48, wait for green CI on its updated head, then merge. Continue sizing remaining source-connected scope while keeping the parent aggregate and Phase 2 gates open.
 Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.continue-here.md
