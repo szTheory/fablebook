@@ -171,6 +171,8 @@ defmodule Fablebook.Credo.BannedCalls do
           {:erl_compile, :compile, :_},
           {:erl_compile_server, :compile, :_},
           {:leex, :compile, :_},
+          {:leex, :file, 1},
+          {:leex, :file, 2},
           {:yecc, :compile, :_},
           {:yecc, :file, 1},
           {:yecc, :file, 2},

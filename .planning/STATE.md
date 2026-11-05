@@ -1,18 +1,18 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.13
-current_phase_name: Close CN-001 and CN-004 source-authority gaps (INSERTED)
-status: executing
-stopped_at: Phase 01.1.1.6 complete; paused at the requested boundary. Parent Phase 1 verification remains pending.
-last_updated: "2026-11-04T20:42:43.214Z"
-last_activity: 2026-11-04
-last_activity_desc: Phase 01.1.1.13 execution started
-state_head: 7f08b327f7c545c45fac10b94d221d1b06d1984b
+current_phase: 1
+current_phase_name: Release pipeline, CI gate and guards
+status: verifying
+stopped_at: Phase 01.1.1.14 complete; PR #48 needs green CI after phase-state sync and merge
+last_updated: "2026-11-05T16:55:00Z"
+last_activity: 2026-11-05
+last_activity_desc: Phase 01.1.1.14 verification passed and roadmap bookkeeping completed; PR merge remains
+state_head: e6ac59f37e51ce6f8d914cfa0238325a5226d4c9
 progress:
-  total_phases: 43
+  total_phases: 44
   completed_phases: 1
-  total_plans: 34
-  completed_plans: 28
+  total_plans: 35
+  completed_plans: 30
   percent: 2
 ---
 
@@ -20,24 +20,24 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-10-30)
+See: .planning/PROJECT.md (updated 2026-11-04)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.13 — Close CN-001 and CN-004 source-authority gaps (INSERTED)
+**Current focus:** Parent closure of the Phase 01.1.1.1 aggregate; Phase 2 remains gated
 
 ## Current Position
 
-Phase: 01.1.1.13 (Close CN-001 and CN-004 source-authority gaps (INSERTED)) — EXECUTING
-Plan: 3 of 3
-Status: Ready to execute
-Last activity: 2026-11-04 — Phase 01.1.1.13 execution started
+Phase: 1 — Release pipeline, CI gate and guards
+Plan: 5
+Status: Phase 01.1.1.14 complete locally and verified; PR #48 needs green CI after phase-state sync and merge; parent aggregate remains open
+Last activity: 2026-11-05 — Phase 01.1.1.14 source-backed Leex audit and mirrored guards completed
 
-Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plans complete; nested phase plans do not change parent completion counts
+Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 29/34 plans complete ([█████████████████░░░] 85%); nested phase plans do not change parent completion counts
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 23
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -49,6 +49,8 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plan
 | 01.1.1.3.1.1 | 4 | - | - |
 | 01.1.1.3.1.2 | 5 | - | - |
 | 01.1.1.6 | 5 | - | - |
+| 01.1.1.13 | 3 | - | - |
+| 01.1.1.14 | 1 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -85,6 +87,7 @@ Progress: 1/41 phases complete ([░░░░░░░░░░] 2%); 26/31 plan
 | Phase 01.1.1.6 P04 | 39 min | 2 tasks | 2 files |
 | Phase 01.1.1.13 P01 | 62 | 2 tasks | 3 files |
 | Phase 01.1.1.13 P02 | 102min | 2 tasks | 3 files |
+| Phase 01.1.1.13 P03 | 44m | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -157,6 +160,10 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.13]: Preserve CN-004 identity and map its exact live Plug.Builder.compile/3 match to independently sourced exact boundary coverage, without judging the broader expansion owner.
 - [Phase 01.1.1.13]: Keep Phoenix.Router.pipeline/2 as a separate source-only quoted callsite, distinct from direct compiled callers.
 - [Phase 01.1.1.13]: Pin core/floor Phoenix source records independently, including both equal-byte Phoenix config rows.
+- [Phase 01.1.1.13]: Keep the original CN-001 and CN-004 identities and validate their complete lane evidence together.
+- [Phase 01.1.1.13]: Use a test-only TAP formatter selected explicitly through Mix so RED evidence comes from ExUnit events.
+- [Phase 01.1.1.13]: Deliver from a clean branch rooted at freshly fetched origin/main, then bind CI and merge evidence to the captured candidate.
+- [Phase 01.1.1.14]: EX-165 has exact core/floor Leex dispositions and mirrored compile-only guards. Verification passed 7/7 against PR #48 CI run 42066556655 at candidate `53d938f`; the owner authorized publishing and merging after CI. The phase is complete locally; keep the parent aggregate and Phase 2 gate open.
 
 ### Pending Todos
 
@@ -165,6 +172,10 @@ None yet.
 ### Blockers/Concerns
 
 - [Phase 01.1.1.1 execution]: Plan 01 task 01-02 explicitly requires a split: 221 original exclusions expand to 2,395/core and 2,307/floor matching functions and 10,970,916/core and 10,244,028/floor source bytes. Read the phase AUDIT-BUDGET and halted SUMMARY; original boundary count is 33, not 44. Source archive approval is resolved. Remaining creator WIP and its six Logger/ExUnit findings are preserved separately; do not merge it or dispatch dependent plans.
+
+- [Phase 01.1.1.1 planning]: The owner approved same-level re-scope. All matched target source paths for the 213 pending exclusions are now hash-verified and token-sized: 306 core files / 2,996,938 `o200k_base` tokens; 302 floor files / 2,793,931. Meaningful caller/delegate sources and working-time fit still need bounded allocations. Phase 01.1.1.14 is the first source-sized candidate (EX-165 Leex, 60,386 source tokens across both lanes). Keep the aggregate and Phase 2 gates open, SEC-01 with Phase 5, and historical plans blocked; continue splitting and sizing without dropping any row or match.
+
+- [Phase 01.1.1.14 verification]: The final report passes 7/7 with CI run 42066556655 linked in the phase summary. Propagating the completed phase state to the PR will update its head, so require green CI again before merge. Keep Phase 2 gated and the parent aggregate open.
 
 - [Parent verification debt]: Phase 1 and 01.1 reports remain gaps_found; phase.complete routed to Phase 1 for re-verification. Do not mark either parent complete from the child report.
 - [Phase 01.1.1.1]: Parser disposition, unswept installed OTP apps/debugger remainder, and full carried-exclusion audit remain open per INT-20261029-02.
@@ -191,7 +202,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-04T20:42:43.078Z
-Stopped at: Completed 01.1.1.13-02-PLAN.md; allocation assessment returned to parent.
-Next action: Parent reviews the source-bound allocation assessment; Plan 03 remains unstarted until dispatch.
-Resume file: None
+Last session: 2026-11-05T16:55:00Z
+Stopped at: Phase 01.1.1.14 complete locally; PR #48 state sync and final CI remain
+
+Next action: Propagate ROADMAP, STATE and state.json completion updates to PR #48, wait for green CI on its updated head, then merge. Continue sizing remaining source-connected scope while keeping the parent aggregate and Phase 2 gates open.
+Resume file: .planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.continue-here.md
