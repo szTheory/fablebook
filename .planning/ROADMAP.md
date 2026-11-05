@@ -37,7 +37,8 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
 - [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
-- [ ] **Phase 01.1.1.13: Close CN-001 and CN-004 source-authority gaps**
+- [x] **Phase 01.1.1.13: Close CN-001 and CN-004 source-authority gaps** (bounded delivery complete 2026-11-04; Phase 01.1.1.1 aggregate remains open)
+- [ ] **Phase 01.1.1.14: Bound Leex caller-chosen atom creation**
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -233,7 +234,7 @@ Plans:
   3. Each row has a substantive cited disposition, and every retained matcher has a non-vacuous removal witness on each applicable lane. Any narrowing, replacement, or removal preserves original-to-current traceability.
   4. Contract tests enforce the complete-set, source, disposition, and removal evidence without invoking any audited evaluator, parser, loader, or atom-creation API. A newly judged `lib/` caller triggers the existing owner-decision stop.
   5. Delivery remains contract-test-only and merges green with exact-head core/floor checks and a CI run link. No other exclusion rows, whole-table closure, SEC-01 completion, runtime atom-count property, or never-eval proof is claimed.
-**Plans:** 2/3 plans executed across 3 waves
+**Plans:** 3/3 plans complete across 3 waves; exact-head delivery merged 2026-11-04
 
 Plans:
 **Wave 1**
@@ -243,7 +244,24 @@ Plans:
 - [x] 01.1.1.13-02-PLAN.md — Complete CN-004 caller trace, source authority and overlap-aware disposition
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01.1.1.13-03-PLAN.md — Integrated two-row controls, bounded review and exact-head delivery
+- [x] 01.1.1.13-03-PLAN.md — Integrated two-row controls, bounded review and exact-head delivery
+
+### Phase 01.1.1.14: Bound Leex caller-chosen atom creation (INSERTED)
+
+**Goal:** The exact core and floor implementations establish whether caller-selected Leex filenames create atoms, and `leex:file/1,2` have an explicit source-backed disposition and mirrored compile-only guard coverage. This bounded delivery preserves EX-165's full lane match sets and does not close the parent aggregate or Phase 2 gate.
+**Requirements**: None completed here (SEC-01 remains assigned to Phase 5)
+**Depends on:** Phase 01.1.1.13
+**Success Criteria** (what must be TRUE):
+  1. Original row EX-165 remains traceable and its complete current core/floor match sets are preserved; both lanes currently match `leex:file/1,2`.
+  2. Exact core/floor source evidence covers Leex filename-to-atom behavior and the Mix `.xrl` caller/callback path; every cited source is hash-bound in the offline source archive.
+  3. The semantic verdict and disposition replace the unsupported `compiler_pass` reason with a substantive source-backed tier or a narrower justified record, while retaining all other rows and matches.
+  4. The existing Credo and compiled-BEAM guard layers detect uncalled direct/capture/apply fixtures for every newly banned Leex front on both lanes; the audited API is never invoked.
+  5. Complete exact-lane coverage and removal/disposition controls for EX-165 fail if a current match is dropped or left without an observable verdict.
+  6. Delivery is contract/test/evidence-only, passes existing required core/floor checks, and records a CI run link at the tested revision. No SEC-01 completion, whole-table closure, runtime property, Phase 2 start, or parent phase completion is claimed.
+**Plans:** 1 plan (planned by GSD)
+
+Plans:
+- [ ] 01.1.1.14-01-PLAN.md — Source-backed EX-165 Leex disposition and both-guard coverage
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
