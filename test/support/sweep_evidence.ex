@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "ee464338543434b288c07c0c1b82ccbe7d7b1e0263167c9be7123df88b0a087c"
+  @archive_sha "d6a508be4c5333526a99de476a84a7f09f0ddb4993fadf7743051e594a323fdb"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -53,6 +53,18 @@ defmodule Fablebook.Test.SweepEvidence do
       "https://repo.hex.pm/tarballs/phoenix-1.8.9.tar",
       2891,
       "f831736998100ebf303c30d67802035f87830620b203d78f3d1d41df94a6df62"
+    }
+  }
+  @leex_source_identities %{
+    {"core", "mix/lib/mix/tasks/compile.leex.ex"} => {
+      "https://raw.githubusercontent.com/elixir-lang/elixir/759443e724f55bf58e71c0603644e99058918d52/lib/mix/lib/mix/tasks/compile.leex.ex",
+      3001,
+      "b33cdcb8077d1d31847ffc2673551e1fa5d6d0849bebd8db475260a85cb16d86"
+    },
+    {"floor", "mix/lib/mix/tasks/compile.leex.ex"} => {
+      "https://raw.githubusercontent.com/elixir-lang/elixir/dfe6612e546cec6557900e67651f7d21805472ef/lib/mix/lib/mix/tasks/compile.leex.ex",
+      2828,
+      "4539da56203ba4f5c8150efad93cf05f7279b7b3a7054c6235e4dee503efb550"
     }
   }
   @elixir_apps [:elixir, :eex, :mix, :iex, :logger, :ex_unit]
@@ -223,6 +235,7 @@ defmodule Fablebook.Test.SweepEvidence do
     if not String.starts_with?(path, row["lane"] <> "/"), do: fail!(:source_root, row)
     validate_cn001_source_identity!(row)
     validate_cn004_source_identity!(row)
+    validate_leex_source_identity!(row)
     data = Map.fetch!(files, path)
 
     if byte_size(data) != row["bytes"] or digest(data) != row["sha256"],
@@ -264,6 +277,17 @@ defmodule Fablebook.Test.SweepEvidence do
 
       :error ->
         :ok
+    end
+  end
+
+  defp validate_leex_source_identity!(row) do
+    identity = {row["lane"], row["source_path"]}
+    actual = {row["url"], row["bytes"], row["sha256"]}
+
+    case Map.fetch(@leex_source_identities, identity) do
+      {:ok, ^actual} -> :ok
+      {:ok, expected} -> fail!(:source_identity, {row, expected})
+      :error -> :ok
     end
   end
 

@@ -1776,8 +1776,6 @@ defmodule Fablebook.Contract.TierSweepTest do
      ["compiler/src/beam_doc.erl:245", "compiler/src/beam_doc.erl:240"]},
     {{:elixir_errors, [:parse_error]}, :compiler_pass,
      ["elixir/lib/code.ex:1468", "elixir/lib/code.ex:1453"]},
-    {{:leex, [:file]}, :compiler_pass,
-     ["parsetools/src/leex.erl:473", "parsetools/src/leex.erl:467"]},
     {{:systools_lib, [:read_term, :read_term_from_stream, :file_term2binary]}, :compiler_pass,
      ["sasl/src/systools_lib.erl:56", "sasl/src/systools_lib.erl:54"]},
     {{:qlc, [:info]}, :pure_data, ["stdlib/src/qlc.erl:521", "stdlib/src/qlc.erl:514"]},
@@ -2877,7 +2875,143 @@ defmodule Fablebook.Contract.TierSweepTest do
                    }
                  end)
 
-  @creator_audit @consult_creator_audit ++ @yecc_audit ++ @logger_audit
+  @leex_expected_mfas [{:leex, :file, 1}, {:leex, :file, 2}]
+  @leex_expected_replacements Map.new(@leex_expected_mfas, &{&1, {:tier, &1}})
+  @leex_expected_trace [
+    {Mix.Tasks.Compile.Leex, :run, 1},
+    {Mix.Compilers.Erlang, :compile, 6},
+    {:leex, :file, 2},
+    {:leex, :file, 1},
+    {:leex, :file, 2},
+    {:leex, :parse_file, 1},
+    {:leex, :parse_rules, 7},
+    {:leex, :collect_rule, 3},
+    {:leex, :collect_action, 4},
+    {:leex, :parse_rule, 6},
+    {:leex, :out_file, 5},
+    {:leex, :out_actions, 4},
+    {:leex, :filenames, 3},
+    {:erlang, :list_to_atom, 1},
+    {:leex, :prep_out_actions, 1},
+    {:erlang, :list_to_atom, 1}
+  ]
+  @leex_expected_verdict %{
+    caller_path: :xrl_input_path_reaches_leex_file_2,
+    file_one: :delegates_to_file_two,
+    filename: :basename_reaches_module_list_to_atom,
+    action: :parsed_xrl_rule_feeds_generated_yyaction_atom,
+    action_name: :generated_rule_ordinal_not_caller_supplied_name,
+    previous_reason: :compiler_pass_unsupported_for_atom_creation
+  }
+  @leex_expected_fixtures [:leex_file_one, :leex_file_two]
+  @leex_expected_removal_witness ["leex:file/1", "leex:file/2"]
+  @leex_expected_ids for lane <- @creator_expected_lanes, do: {"EX-165", lane}
+  @leex_source_sha256_by_lane %{
+    "core" => %{
+      "mix/lib/mix/tasks/compile.leex.ex" =>
+        "b33cdcb8077d1d31847ffc2673551e1fa5d6d0849bebd8db475260a85cb16d86",
+      "mix/lib/mix/compilers/erlang.ex" =>
+        "2da279b591b437ce695ba51214eb10bd962e6ce99b493b52355e21720de9b70d",
+      "parsetools/src/leex.erl" =>
+        "13d5ae6d297f284fb1db18e00d93e856e3fa231cfdffb884cdc9cc78df81bf93"
+    },
+    "floor" => %{
+      "mix/lib/mix/tasks/compile.leex.ex" =>
+        "4539da56203ba4f5c8150efad93cf05f7279b7b3a7054c6235e4dee503efb550",
+      "mix/lib/mix/compilers/erlang.ex" =>
+        "8ffe2208057e76db7c67ba97cbb8f99f03a9418cadf2d66e190e6b760cbf1568",
+      "parsetools/src/leex.erl" =>
+        "d1a0a20abc09ae3e65fcf0ec043913b2ae551ecfa2f0134fbb43e05b075bca6f"
+    }
+  }
+  @leex_source_assertions_by_lane %{
+    "core" => [
+      {"mix/lib/mix/tasks/compile.leex.ex:65",
+       "Erlang.compile(manifest(), mappings, :xrl, :erl, opts, fn input, output ->"},
+      {"mix/lib/mix/tasks/compile.leex.ex:67", ":leex.file(Erlang.to_erl_file(input), options)"},
+      {"mix/lib/mix/compilers/erlang.ex:90",
+       "target <- extract_entries(src, src_ext, dest, dest_ext, force)"},
+      {"mix/lib/mix/compilers/erlang.ex:246",
+       "Mix.Utils.extract_files(List.wrap(src_dir), List.wrap(src_ext))"},
+      {"mix/lib/mix/compilers/erlang.ex:97",
+       "compile_entries(manifest, entries, src_ext, dest_ext, opts, callback)"},
+      {"mix/lib/mix/compilers/erlang.ex:283", "case callback.(input, output) do"},
+      {"parsetools/src/leex.erl:473", "file(File) -> file(File, [])."},
+      {"parsetools/src/leex.erl:565", "file(File, Opts0) when is_list(Opts0) ->"},
+      {"parsetools/src/leex.erl:580", "St1 = filenames(File, Opts, St0)"},
+      {"parsetools/src/leex.erl:582", "{ok,REAs,Actions,Code,St2} = parse_file(St1)"},
+      {"parsetools/src/leex.erl:586", "St3 = out_file(St2, DFA, DF, Actions, Code),"},
+      {"parsetools/src/leex.erl:927", "{ok,Line3,REAs,Actions,St4} ="},
+      {"parsetools/src/leex.erl:928", "parse_rules(Xfile, Line2, Macs, St3),"},
+      {"parsetools/src/leex.erl:931", "{ok,REAs,Actions,Code,St5}"},
+      {"parsetools/src/leex.erl:989", "{ok,REA,A,St1} = parse_rule(Re, L0, Atoks, Ms, N, St),"},
+      {"parsetools/src/leex.erl:991", "[REA|REAs], [A|As], N+1, St1);"},
+      {"parsetools/src/leex.erl:1014", "{ok,[{':',_}|Toks],L1} -> {ok,RegExp,Toks,L1};"},
+      {"parsetools/src/leex.erl:1052",
+       "{ok,{R,N},{N,Atoks,TokenChars,TokenLen,TokenLine,TokenCol,TokenLoc},St};"},
+      {"parsetools/src/leex.erl:867", "Base = filename:basename(File, \".xrl\")"},
+      {"parsetools/src/leex.erl:871", "Module = list_to_atom(Base)"},
+      {"parsetools/src/leex.erl:1876",
+       "\"##act\" -> out_actions(Ofile, St#leex.xfile, Deterministic, Actions);"},
+      {"parsetools/src/leex.erl:2128", "As1 = prep_out_actions(As)"},
+      {"parsetools/src/leex.erl:2136",
+       "({A,Code,TokenChars,TokenLen,TokenLine,TokenCol,TokenLoc}) ->"},
+      {"parsetools/src/leex.erl:2144", "Name = list_to_atom(lists:concat([yyaction_,A]))"}
+    ],
+    "floor" => [
+      {"mix/lib/mix/tasks/compile.leex.ex:60",
+       "Erlang.compile(manifest(), mappings, :xrl, :erl, opts, fn input, output ->"},
+      {"mix/lib/mix/tasks/compile.leex.ex:62", ":leex.file(Erlang.to_erl_file(input), options)"},
+      {"mix/lib/mix/compilers/erlang.ex:63",
+       "target <- extract_entries(src, src_ext, dest, dest_ext, force)"},
+      {"mix/lib/mix/compilers/erlang.ex:219",
+       "Mix.Utils.extract_files(List.wrap(src_dir), List.wrap(src_ext))"},
+      {"mix/lib/mix/compilers/erlang.ex:70",
+       "compile_entries(manifest, entries, src_ext, dest_ext, opts, callback)"},
+      {"mix/lib/mix/compilers/erlang.ex:256", "case callback.(input, output) do"},
+      {"parsetools/src/leex.erl:467", "file(File) -> file(File, [])."},
+      {"parsetools/src/leex.erl:559", "file(File, Opts0) when is_list(Opts0) ->"},
+      {"parsetools/src/leex.erl:574", "St1 = filenames(File, Opts, St0)"},
+      {"parsetools/src/leex.erl:576", "{ok,REAs,Actions,Code,St2} = parse_file(St1)"},
+      {"parsetools/src/leex.erl:580", "St3 = out_file(St2, DFA, DF, Actions, Code),"},
+      {"parsetools/src/leex.erl:921", "{ok,Line3,REAs,Actions,St4} ="},
+      {"parsetools/src/leex.erl:922", "parse_rules(Xfile, Line2, Macs, St3),"},
+      {"parsetools/src/leex.erl:925", "{ok,REAs,Actions,Code,St5}"},
+      {"parsetools/src/leex.erl:983", "{ok,REA,A,St1} = parse_rule(Re, L0, Atoks, Ms, N, St),"},
+      {"parsetools/src/leex.erl:985", "[REA|REAs], [A|As], N+1, St1);"},
+      {"parsetools/src/leex.erl:1008", "{ok,[{':',_}|Toks],L1} -> {ok,RegExp,Toks,L1};"},
+      {"parsetools/src/leex.erl:1046",
+       "{ok,{R,N},{N,Atoks,TokenChars,TokenLen,TokenLine,TokenCol,TokenLoc},St};"},
+      {"parsetools/src/leex.erl:861", "Base = filename:basename(File, \".xrl\")"},
+      {"parsetools/src/leex.erl:865", "Module = list_to_atom(Base)"},
+      {"parsetools/src/leex.erl:1870",
+       "\"##act\" -> out_actions(Ofile, St#leex.xfile, Deterministic, Actions);"},
+      {"parsetools/src/leex.erl:2127", "prep_out_actions(As) ->"},
+      {"parsetools/src/leex.erl:2130",
+       "({A,Code,TokenChars,TokenLen,TokenLine,TokenCol,TokenLoc}) ->"},
+      {"parsetools/src/leex.erl:2138", "Name = list_to_atom(lists:concat([yyaction_,A]))"}
+    ]
+  }
+  @leex_audit Enum.map(@creator_expected_lanes, fn lane ->
+                %{
+                  original_id: "EX-165",
+                  original_matcher: {:leex, [:file]},
+                  original_reason: :compiler_pass,
+                  lane: lane,
+                  matched_mfas: @leex_expected_mfas,
+                  trace: @leex_expected_trace,
+                  verdict: @leex_expected_verdict,
+                  replacement_disposition: :exact_mfa_tier,
+                  replacements: @leex_expected_replacements,
+                  tier: @leex_expected_mfas,
+                  fixtures: @leex_expected_fixtures,
+                  citations: Map.fetch!(@leex_source_assertions_by_lane, lane),
+                  applicability: :each_exact_installed_lane,
+                  removal_witness: @leex_expected_removal_witness
+                }
+              end)
+
+  @creator_audit @consult_creator_audit ++ @yecc_audit ++ @logger_audit ++ @leex_audit
 
   @eval_funs [:eval_str, :expr, :expr_list, :exprs, :match_clause]
   @barrier_modules [:code_server, :error_handler, :erl_prim_loader, :init, :erl_lint]
@@ -3864,7 +3998,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
     assert SweepEvidence.archive_sha256() ==
-             "ee464338543434b288c07c0c1b82ccbe7d7b1e0263167c9be7123df88b0a087c"
+             "d6a508be4c5333526a99de476a84a7f09f0ddb4993fadf7743051e594a323fdb"
 
     lane = evidence.lane.name
 
@@ -6020,10 +6154,11 @@ defmodule Fablebook.Contract.TierSweepTest do
                "CN-005",
                "CN-006",
                "BD-002",
-               "EX-159"
+               "EX-159",
+               "EX-165"
              ])
 
-    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 213
+    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 212
 
     assert Enum.all?(
              ledger.metadata,
@@ -6033,6 +6168,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     cn001 = Enum.find(ledger.exclusions, &(&1.id == "CN-001"))
     cn005 = Enum.find(ledger.exclusions, &(&1.id == "CN-005"))
     cn006 = Enum.find(ledger.exclusions, &(&1.id == "CN-006"))
+    ex165 = Enum.find(ledger.exclusions, &(&1.id == "EX-165"))
     cn_lane_001 = Enum.find(ledger.metadata, &(&1.id == "CN-LANE-001"))
 
     assert cn001.identity_class == :exclusion
@@ -6049,6 +6185,17 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert cn006.semantic_status == :cn006_retained
     assert cn006.owner == "01.1.1.6"
     assert cn006.current_replacement_refs == [current_call_name_ref!({:re, [:compile]})]
+    assert ex165.semantic_status == :leex_replaced_by_tier
+    assert ex165.owner == "01.1.1.14"
+    assert ex165.original_matcher_raw == "{:leex, [:file]}"
+    assert ex165.original_reason_raw == ":compiler_pass"
+
+    assert Map.new(ex165.lane_matches, fn {lane, matches} -> {lane, MapSet.new(matches)} end) ==
+             Map.new(@creator_expected_lanes, fn lane ->
+               {lane, MapSet.new(["leex:file/1", "leex:file/2"])}
+             end)
+
+    assert ex165.current_replacement_refs == ["creator:EX-165:core", "creator:EX-165:floor"]
 
     assert Enum.all?(ledger.exclusions, fn row ->
              row.remaining_semantic_owner == "01.1.1.4" and row.current_replacement_refs != []
@@ -6068,6 +6215,9 @@ defmodule Fablebook.Contract.TierSweepTest do
 
                  id when id in ["CN-005", "BD-002", "EX-159"] ->
                    "01.1.1.5"
+
+                 "EX-165" ->
+                   "01.1.1.14"
 
                  _id ->
                    "01.1.1.4"
@@ -6528,6 +6678,145 @@ defmodule Fablebook.Contract.TierSweepTest do
         evidence,
         ledger
       )
+    end
+  end
+
+  test "EX-165 core caller path resolves to Leex filename and action atom sinks" do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    caller_sources =
+      Enum.filter(
+        evidence.manifest["files"],
+        &(&1["source_path"] == "mix/lib/mix/tasks/compile.leex.ex")
+      )
+
+    assert Enum.map(caller_sources, & &1["lane"]) |> Enum.sort() == ~w(core floor)
+
+    archive_only_core = %{
+      evidence
+      | lane: %{evidence.lane | name: "core"},
+        installed:
+          evidence.installed
+          |> Map.put("mix", Path.join(evidence.archive_root, "missing-mix"))
+          |> Map.put("parsetools", Path.join(evidence.archive_root, "missing-parsetools"))
+    }
+
+    citations = Map.fetch!(@leex_source_assertions_by_lane, "core")
+
+    for {citation, expected_line} <- citations do
+      source = SweepEvidence.resolve!(archive_only_core, citation)
+      assert source.origin == :archive, citation
+      assert source.text =~ expected_line, citation
+    end
+  end
+
+  test "EX-165 retains its exact lane sets with source-backed Leex tier replacements", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    records = Enum.filter(@creator_audit, &(&1.original_id == "EX-165"))
+    ledger = original_identity_ledger!()
+    tier = BannedCalls.banned_mfas()
+    names = BannedCalls.banned_names()
+    exclusions = @exclusions
+
+    assert_leex_audit!(records, ctx.graph, tier, names, evidence, ledger, exclusions)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_leex_audit!(
+        Enum.reject(records, &(&1.original_id == "EX-165" and &1.lane == "core")),
+        ctx.graph,
+        tier,
+        names,
+        evidence,
+        ledger,
+        exclusions
+      )
+    end
+
+    lane_record = Enum.find(records, &(&1.lane == evidence.lane.name))
+    record_index = Enum.find_index(records, &(&1.lane == lane_record.lane))
+    without_file_two = %{lane_record | matched_mfas: [{:leex, :file, 1}]}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_leex_audit!(
+        List.replace_at(records, record_index, without_file_two),
+        ctx.graph,
+        tier,
+        names,
+        evidence,
+        ledger,
+        exclusions
+      )
+    end
+
+    without_verdict = %{lane_record | verdict: nil}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_leex_audit!(
+        List.replace_at(records, record_index, without_verdict),
+        ctx.graph,
+        tier,
+        names,
+        evidence,
+        ledger,
+        exclusions
+      )
+    end
+
+    other_lane = if evidence.lane.name == "core", do: "floor", else: "core"
+    wrong_lane_citation = hd(Map.fetch!(@leex_source_assertions_by_lane, other_lane))
+
+    wrong_lane_record = %{
+      lane_record
+      | citations: [wrong_lane_citation | Enum.drop(lane_record.citations, 1)]
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_leex_audit!(
+        List.replace_at(records, record_index, wrong_lane_record),
+        ctx.graph,
+        tier,
+        names,
+        evidence,
+        ledger,
+        exclusions
+      )
+    end
+
+    missing_identity = %{
+      ledger
+      | exclusions: Enum.reject(ledger.exclusions, &(&1.id == "EX-165"))
+    }
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_leex_audit!(records, ctx.graph, tier, names, evidence, missing_identity, exclusions)
+    end
+
+    for mfa <- @leex_expected_mfas do
+      tier_without_mfa = Enum.reject(tier, &(&1 == mfa))
+
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_leex_audit!(
+          records,
+          ctx.graph,
+          tier_without_mfa,
+          names,
+          evidence,
+          ledger,
+          exclusions
+        )
+      end
+    end
+
+    overlap = {{:mfa, hd(@leex_expected_mfas)}, :callback, "test-only overlap"}
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_leex_audit!(records, ctx.graph, tier, names, evidence, ledger, [overlap | exclusions])
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_leex_audit!(records, ctx.graph, tier, [:file | names], evidence, ledger, exclusions)
     end
   end
 
@@ -9733,6 +10022,126 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  defp assert_leex_audit!(records, graph, tier, names, evidence, ledger, exclusions) do
+    assert length(records) == length(@leex_expected_ids)
+
+    assert MapSet.new(Enum.map(records, &{&1.original_id, &1.lane})) ==
+             MapSet.new(@leex_expected_ids)
+
+    record = Enum.find(records, &(&1.lane == evidence.lane.name))
+    assert record != nil, "no EX-165 Leex audit row for #{evidence.lane.name}"
+    assert record.original_id == "EX-165"
+    assert record.original_matcher == {:leex, [:file]}
+    assert record.original_reason == :compiler_pass
+    assert record.matched_mfas == @leex_expected_mfas
+    assert record.trace == @leex_expected_trace
+    assert record.verdict == @leex_expected_verdict
+    assert record.replacement_disposition == :exact_mfa_tier
+    assert record.replacements == @leex_expected_replacements
+    assert record.tier == @leex_expected_mfas
+    assert record.fixtures == @leex_expected_fixtures
+    assert record.applicability == :each_exact_installed_lane
+    assert record.removal_witness == @leex_expected_removal_witness
+    assert record.citations == Map.fetch!(@leex_source_assertions_by_lane, evidence.lane.name)
+
+    original = Enum.find(ledger.exclusions, &(&1.id == "EX-165"))
+    assert original != nil, "the original EX-165 identity is missing"
+
+    assert original.original_entry_raw ==
+             "{{:leex, [:file]}, :compiler_pass, [\"parsetools/src/leex.erl:473\", \"parsetools/src/leex.erl:467\"]}"
+
+    assert original.original_matcher_raw == inspect(record.original_matcher)
+    assert original.original_reason_raw == ":compiler_pass"
+    assert original.semantic_status == :leex_replaced_by_tier
+    assert original.owner == "01.1.1.14"
+    assert original.current_replacement_refs == ["creator:EX-165:core", "creator:EX-165:floor"]
+
+    expected_lane_matches =
+      Map.new(@creator_expected_lanes, fn lane ->
+        {lane, MapSet.new(["leex:file/1", "leex:file/2"])}
+      end)
+
+    actual_lane_matches =
+      Map.new(original.lane_matches, fn {lane, matches} -> {lane, MapSet.new(matches)} end)
+
+    assert actual_lane_matches == expected_lane_matches
+
+    archive_only = %{
+      evidence
+      | installed:
+          evidence.installed
+          |> Map.put("mix", Path.join(evidence.archive_root, "missing-mix"))
+          |> Map.put("parsetools", Path.join(evidence.archive_root, "missing-parsetools"))
+    }
+
+    source_hashes = Map.fetch!(@leex_source_sha256_by_lane, evidence.lane.name)
+
+    citation_paths =
+      MapSet.new(
+        Enum.map(record.citations, fn {citation, _} -> citation_source_path!(citation) end)
+      )
+
+    assert citation_paths == MapSet.new(Map.keys(source_hashes))
+
+    for {citation, expected_text} <- record.citations do
+      resolved = SweepEvidence.resolve!(archive_only, citation)
+      assert resolved.origin == :archive, citation
+      assert resolved.text =~ expected_text, citation
+
+      assert resolved.sha256 == Map.fetch!(source_hashes, citation_source_path!(citation)),
+             citation
+    end
+
+    live_matches =
+      graph.full_exported
+      |> Enum.filter(&creator_original_match?(record.original_matcher, &1))
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> MapSet.new()
+
+    assert live_matches == MapSet.new(@leex_expected_mfas),
+           "EX-165 original matcher differs from the full installed export set"
+
+    lane_matches = Map.fetch!(original.lane_matches, evidence.lane.name)
+
+    assert MapSet.new(Enum.map(record.matched_mfas, &mfa_string!/1)) == MapSet.new(lane_matches),
+           "EX-165/#{evidence.lane.name} differs from its pinned original match set"
+
+    refute Enum.any?(exclusions, fn
+             {{:leex, functions}, _reason, _citations} when is_list(functions) ->
+               :file in functions
+
+             {{:leex, functions}, _reason} when is_list(functions) ->
+               :file in functions
+
+             _entry ->
+               false
+           end),
+           "the superseded EX-165 exclusion remains active"
+
+    for {module, function, _arity} = mfa <- record.matched_mfas do
+      assert mfa in tier, "#{inspect(mfa)} is missing its exact active tier entry"
+      assert covered?(mfa, tier, names), "#{inspect(mfa)} has no replacement guard tier"
+      assert disposition(mfa, tier, names, exclusions) == :tier
+      assert exact_mfa_exclusion_reason(mfa, exclusions) == nil
+      assert exclusion_reason(module, function, exclusions) == nil
+
+      refute Enum.any?(@call_name_exclusions, fn {matcher, _reason, _citations} ->
+               call_name_exclusion_match?(matcher, mfa)
+             end),
+             "#{inspect(mfa)} overlaps a call-name exclusion"
+
+      tier_without_mfa = Enum.reject(tier, &(&1 == mfa))
+
+      refute covered?(mfa, tier_without_mfa, names),
+             "removing only #{inspect(mfa)} must expose the exact match"
+
+      assert disposition(mfa, tier_without_mfa, names, exclusions) == nil,
+             "another tier or exclusion still covers #{inspect(mfa)}"
+    end
+
+    assert Enum.map(record.matched_mfas, &mfa_string!/1) == record.removal_witness
+  end
+
   defp assert_yecc_audit!(records, graph, tier, evidence, exclusions \\ @exclusions) do
     assert length(records) == length(@yecc_expected_ids)
 
@@ -10499,7 +10908,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> Enum.map(& &1.id)
       |> Enum.sort()
 
-    assert missing_live_ids == ["EX-089", "EX-159"]
+    assert missing_live_ids == ["EX-089", "EX-159", "EX-165"]
 
     original_ex_rows = Map.fetch!(original_tables, "EX") |> MapSet.new()
 
@@ -10771,6 +11180,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp original_semantic_status("CN-005"), do: :calibrated_retained
   defp original_semantic_status("BD-002"), do: :calibrated_retained
   defp original_semantic_status("EX-159"), do: :calibrated_replaced_by_tier
+  defp original_semantic_status("EX-165"), do: :leex_replaced_by_tier
   defp original_semantic_status(_id), do: :pending
 
   defp original_semantic_owner(:cn002_retained), do: "01.1.1.6"
@@ -10778,6 +11188,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp original_semantic_owner(:cn003_retained), do: "01.1.1.6"
   defp original_semantic_owner(:cn004_replaced_by_expansion_carrier), do: "01.1.1.13"
   defp original_semantic_owner(:cn006_retained), do: "01.1.1.6"
+  defp original_semantic_owner(:leex_replaced_by_tier), do: "01.1.1.14"
   defp original_semantic_owner(:pending), do: "01.1.1.4"
   defp original_semantic_owner(_sampled_status), do: "01.1.1.5"
 

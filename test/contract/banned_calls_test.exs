@@ -169,6 +169,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:erl_compile, :compile, :_},
     {:erl_compile_server, :compile, :_},
     {:leex, :compile, :_},
+    {:leex, :file, 1},
+    {:leex, :file, 2},
     {:yecc, :compile, :_},
     {:yecc, :file, 1},
     {:yecc, :file, 2},
@@ -435,6 +437,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {"erl_compile_compile.ex", {:mfa, {:erl_compile, :compile, 2}}},
     {"erl_compile_server_compile.ex", {:mfa, {:erl_compile_server, :compile, 1}}},
     {"leex_compile.ex", {:mfa, {:leex, :compile, 3}}},
+    {"leex_file_one.ex", {:mfa, {:leex, :file, 1}}},
+    {"leex_file_two.ex", {:mfa, {:leex, :file, 2}}},
     {"yecc_compile.ex", {:mfa, {:yecc, :compile, 3}}},
     {"mix_project_compile.ex", {:mfa, {Mix.Project, :compile, 1}}},
     {"elixir_erl_compile.ex", {:mfa, {:elixir_erl, :compile, 2}}},
@@ -598,6 +602,84 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
 
     assert credo_issues("quote do: :file.consult(path)", "quoted_consult.ex") != []
+  end
+
+  @tag :tmp_dir
+  @tag :leex_file_guard
+  test "Leex file arities are caught through uncalled direct, capture and apply probes", %{
+    tmp_dir: dir
+  } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    for {filename, mfa} <- [
+          {"leex_file_one.ex", {:leex, :file, 1}},
+          {"leex_file_two.ex", {:leex, :file, 2}}
+        ] do
+      fixture_path = Path.join(@fixture_dir, filename)
+      fixture_source = File.read!(fixture_path)
+      [fixture_beam] = compile!([fixture_path], dir, true)
+
+      assert credo_issues(fixture_source, filename) != [], "Credo missed #{filename}"
+      assert {:ok, fixture_scan} = BeamWalker.scan(fixture_beam)
+      assert {:mfa, mfa} in hits(fixture_scan), "BEAM scan missed #{filename}"
+
+      {module, function, arity} = mfa
+      hits_without_exact_mfa = hits(fixture_scan, Enum.reject(@mfa_tier, &(&1 == mfa)))
+
+      refute {:mfa, mfa} in hits_without_exact_mfa,
+             "the exact fixture hit must depend on #{inspect(mfa)}"
+
+      assert {:mfa, {module, function, :_}} in hits_without_exact_mfa,
+             "the sibling arity should preserve the check's existing function-pair strictness"
+
+      args = if arity == 1, do: "path", else: "path, options"
+      apply_args = if arity == 1, do: "path", else: "path, options"
+      suffix = if arity == 1, do: "One", else: "Two"
+
+      for form <- [:direct, :capture, :apply] do
+        body =
+          case form do
+            :direct -> "def probe(#{args}), do: :#{module}.#{function}(#{args})"
+            :capture -> "def probe, do: &:#{module}.#{function}/#{arity}"
+            :apply -> "def probe(#{args}), do: apply(:#{module}, :#{function}, [#{apply_args}])"
+          end
+
+        source = """
+        defmodule Fablebook.GuardFixture.LeexFile#{suffix}#{Macro.camelize(to_string(form))} do
+          #{body}
+        end
+        """
+
+        probe_filename = "leex_file_#{arity}_#{form}.ex"
+        probe_path = Path.join(dir, probe_filename)
+        File.write!(probe_path, source)
+
+        assert credo_issues(source, probe_filename) != [],
+               "Credo missed #{form} for #{inspect(mfa)}"
+
+        [beam] = compile!([probe_path], dir, true)
+        assert {:ok, scan} = BeamWalker.scan(beam)
+
+        assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+               "BEAM walker missed #{form} for #{inspect(mfa)}"
+
+        if form == :direct do
+          refute {:mfa, mfa} in hits(scan, Enum.reject(@mfa_tier, &(&1 == mfa))),
+                 "the exact direct hit remained after removing #{inspect(mfa)}"
+        end
+
+        without_function_tier =
+          Enum.reject(@mfa_tier, fn {candidate_module, candidate_function, _arity} ->
+            candidate_module == module and candidate_function == function
+          end)
+
+        refute Enum.any?(hits(scan, without_function_tier), &mfa_hit?(&1, mfa)),
+               "#{form} probe remained after removing the Leex file function tiers"
+      end
+    end
+
+    assert credo_issues("Regex.compile(pattern)", "leex_benign.ex") == []
   end
 
   @tag :tmp_dir
