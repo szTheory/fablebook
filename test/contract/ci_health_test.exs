@@ -433,8 +433,7 @@ defmodule Fablebook.Contract.CiHealthTest do
       after_header
       |> String.split("\n")
       |> Enum.take_while(&String.starts_with?(&1, "          "))
-      |> Enum.map(&String.replace_prefix(&1, "          ", ""))
-      |> Enum.join("\n")
+      |> Enum.map_join("\n", &String.replace_prefix(&1, "          ", ""))
 
     assert body != ""
     body <> "\n"
