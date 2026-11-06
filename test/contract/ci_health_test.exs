@@ -3,7 +3,9 @@ defmodule Fablebook.Contract.CiHealthTest do
 
   @moduletag :tmp_dir
   @script Path.expand("../../bin/ci_health", __DIR__)
+  @workflow Path.expand("../../.github/workflows/ci.yml", __DIR__)
   @created "2026-01-01T00:00:00Z"
+  @legacy_script_sha256 "ea0fb3b5584bc5494418b44673b86419e482a329aeca0bcda856912351626324"
 
   @gh ~S"""
   #!/usr/bin/env bash
@@ -31,7 +33,17 @@ defmodule Fablebook.Contract.CiHealthTest do
     for ((i=0; i<${#args[@]}; i++)); do
       if [ "${args[i]}" = --label ]; then label="${args[i+1]}"; fi
     done
-    jq -r "$query" "$CI_HEALTH_FIXTURE/issues-$label.json"
+    case "$label" in
+      ci-timing|ci-performance|quality-regression) ;;
+      *) echo "unexpected issue label: $label" >&2; exit 2 ;;
+    esac
+    if [ "${CI_HEALTH_GH_FAIL:-false}" = true ]; then
+      echo "fixture GitHub API failure" >&2
+      exit 19
+    fi
+    jq --arg label "$label" \
+      '[.[] | select(.state == "OPEN" and (.labels | index($label) != null))]' \
+      "$CI_HEALTH_FIXTURE/issues.json" | jq -r "$query"
   elif [ "$1 $2" != 'issue comment' ] && [ "$1 $2" != 'issue create' ]; then
     echo "unexpected command" >&2
     exit 2
@@ -42,8 +54,7 @@ defmodule Fablebook.Contract.CiHealthTest do
     File.write!(Path.join(dir, "gh"), @gh)
     File.chmod!(Path.join(dir, "gh"), 0o755)
     write_json(dir, "rules.json", [required_checks(["ci-gate"])])
-    write_json(dir, "issues-ci-timing.json", [%{number: 2}])
-    write_json(dir, "issues-quality-regression.json", [])
+    write_issues(dir, [%{number: 2, state: "OPEN", labels: ["ci-timing"]}])
     %{env: fixture_env(dir)}
   end
 
@@ -105,16 +116,166 @@ defmodule Fablebook.Contract.CiHealthTest do
     @durations durations
     @p50 p50
     @p95 p95
-    test "#{name} over budget files a regression with measured evidence", ctx do
+    test "#{name} over budget follows the exact-byte timing transition", ctx do
       history(ctx.tmp_dir, @durations)
-      assert {output, 0} = run(ctx)
-      assert output =~ "p50 #{@p50} s, p95 #{@p95} s"
-      assert [_, regression] = writes(ctx)
-      assert Enum.take(regression, 2) == ["issue", "create"]
-      assert option(regression, "--label") == "quality-regression"
-      assert option(regression, "--body") =~ "CI timing over budget"
-      assert option(regression, "--body") =~ String.trim(output)
+      assert_timing_contract(ctx, @script, @p50, @p95)
     end
+  end
+
+  test "a changed producer reports p50 and p95 overages as visible non-blocking performance feedback",
+       ctx do
+    history(ctx.tmp_dir, List.duplicate(421, 10))
+
+    write_issues(ctx.tmp_dir, [
+      %{number: 2, state: "OPEN", labels: ["ci-timing"]},
+      %{number: 7, state: "OPEN", labels: ["ci-performance"]},
+      %{number: 8, state: "OPEN", labels: ["quality-regression"]}
+    ])
+
+    assert_strict_performance_overage(ctx, amended_script(ctx.tmp_dir), 421, 421)
+
+    assert [performance_comment] =
+             Enum.filter(writes(ctx), &(Enum.take(&1, 3) == ["issue", "comment", "7"]))
+
+    assert Enum.take(performance_comment, 3) == ["issue", "comment", "7"]
+    refute Enum.any?(calls(ctx), &(option(&1, "--label") == "quality-regression"))
+    assert read_issues(ctx.tmp_dir) |> Enum.find(&(&1["number"] == 8))
+  end
+
+  test "timing overage and ruleset drift create independent performance and quality reports",
+       ctx do
+    history(ctx.tmp_dir, List.duplicate(421, 10))
+    write_json(ctx.tmp_dir, "rules.json", [required_checks([])])
+
+    write_issues(ctx.tmp_dir, [
+      %{number: 2, state: "OPEN", labels: ["ci-timing"]},
+      %{number: 7, state: "OPEN", labels: ["ci-performance"]},
+      %{number: 8, state: "OPEN", labels: ["quality-regression"]}
+    ])
+
+    {output, 0} = run(ctx, [], amended_script(ctx.tmp_dir))
+    assert output =~ "p50 421 s, p95 421 s"
+
+    comments =
+      writes(ctx)
+      |> Enum.filter(&(Enum.take(&1, 2) == ["issue", "comment"]))
+      |> Enum.map(&Enum.at(&1, 2))
+
+    assert comments == ["2", "7", "8"]
+    assert Enum.any?(writes(ctx), &(option(&1, "--body") =~ "CI timing target breached"))
+    assert Enum.any?(writes(ctx), &(option(&1, "--body") =~ "Ruleset drift"))
+    assert Enum.any?(calls(ctx), &(option(&1, "--label") == "quality-regression"))
+  end
+
+  test "a missing performance issue is created once for a changed producer", ctx do
+    history(ctx.tmp_dir, List.duplicate(100, 9) ++ [601])
+    assert {output, 0} = run(ctx, [], amended_script(ctx.tmp_dir))
+    assert output =~ "p50 100 s, p95 601 s"
+    assert output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
+    assert File.read!(Path.join(ctx.tmp_dir, "summary.md")) == output
+
+    performance = Enum.filter(writes(ctx), &(option(&1, "--label") == "ci-performance"))
+    assert [create] = performance
+    assert Enum.take(create, 2) == ["issue", "create"]
+    assert option(create, "--title") == "CI performance"
+    assert option(create, "--body") =~ "p50 100 s, p95 601 s"
+
+    assert option(create, "--body") =~
+             "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
+
+    refute Enum.any?(calls(ctx), &(option(&1, "--label") == "quality-regression"))
+  end
+
+  test "dry-run breaches name ci-performance without any issue access", ctx do
+    history(ctx.tmp_dir, List.duplicate(421, 10))
+    assert {output, 0} = run(ctx, ["--dry-run"], amended_script(ctx.tmp_dir))
+
+    assert output =~ "Would publish label=ci-performance"
+    assert output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
+    assert writes(ctx) == []
+    refute Enum.any?(calls(ctx), &(Enum.take(&1, 2) == ["issue", "list"]))
+  end
+
+  test "a harmless byte change exits the legacy digest branch", ctx do
+    history(ctx.tmp_dir, List.duplicate(421, 10))
+    changed = Path.join(ctx.tmp_dir, "legacy-with-harmless-change.sh")
+    File.write!(changed, File.read!(@script) <> "\n# harmless byte change\n")
+    File.chmod!(changed, 0o755)
+
+    refute legacy_script?(changed)
+
+    error =
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_timing_contract(ctx, changed, 421, 421)
+      end
+
+    assert Exception.message(error) =~ "ci-performance"
+  end
+
+  test "an amended producer routed back to quality-regression fails strict classification", ctx do
+    history(ctx.tmp_dir, List.duplicate(421, 10))
+    changed = amended_script(ctx.tmp_dir)
+    source = File.read!(changed)
+
+    mutated =
+      String.replace(source, "post_to_issue ci-performance", "file_regression", global: false)
+
+    assert mutated != source
+    File.write!(changed, mutated)
+
+    error =
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_strict_performance_overage(ctx, changed, 421, 421)
+      end
+
+    assert Exception.message(error) =~ "ci-performance"
+  end
+
+  test "the actual release guard passes performance-only issues and rejects genuine regressions",
+       ctx do
+    body = release_guard_body()
+
+    write_issues(ctx.tmp_dir, [])
+    assert {_, 0} = run_release_guard(ctx, body)
+
+    write_issues(ctx.tmp_dir, [
+      %{number: 2, state: "OPEN", labels: ["ci-timing"]},
+      %{number: 7, state: "OPEN", labels: ["ci-performance"]}
+    ])
+
+    assert {_, 0} = run_release_guard(ctx, body)
+
+    write_issues(ctx.tmp_dir, [%{number: 8, state: "OPEN", labels: ["quality-regression"]}])
+    assert {output, 1} = run_release_guard(ctx, body)
+    assert output =~ "1 open quality-regression issue(s) block the release"
+
+    write_issues(ctx.tmp_dir, [
+      %{number: 7, state: "OPEN", labels: ["ci-performance"]},
+      %{number: 8, state: "OPEN", labels: ["quality-regression"]}
+    ])
+
+    assert {output, 1} = run_release_guard(ctx, body)
+    assert output =~ "1 open quality-regression issue(s) block the release"
+  end
+
+  test "release guard API errors fail closed", ctx do
+    env = ctx.env ++ [{"CI_HEALTH_GH_FAIL", "true"}]
+    assert {output, status} = run_release_guard(ctx, release_guard_body(), env)
+    assert status != 0
+    assert output =~ "fixture GitHub API failure"
+  end
+
+  test "a release-guard mutation that blocks ci-performance fails the seam", ctx do
+    write_issues(ctx.tmp_dir, [%{number: 7, state: "OPEN", labels: ["ci-performance"]}])
+    body = release_guard_body()
+
+    mutated =
+      String.replace(body, "--label quality-regression", "--label ci-performance", global: false)
+
+    assert mutated != body
+
+    assert {output, 1} = run_release_guard(ctx, mutated)
+    assert output =~ "1 open quality-regression issue(s) block the release"
   end
 
   test "release PRs, reruns and unfinished gates do not inflate the sample", ctx do
@@ -163,7 +324,7 @@ defmodule Fablebook.Contract.CiHealthTest do
     test "ruleset drift #{inspect(contexts)} updates the existing regression", ctx do
       history(ctx.tmp_dir, [])
       write_json(ctx.tmp_dir, "rules.json", [required_checks(@contexts)])
-      write_json(ctx.tmp_dir, "issues-quality-regression.json", [%{number: 7}])
+      write_issues(ctx.tmp_dir, [%{number: 7, state: "OPEN", labels: ["quality-regression"]}])
       assert {_, 0} = run(ctx)
       assert [_, regression] = writes(ctx)
       assert Enum.take(regression, 3) == ["issue", "comment", "7"]
@@ -173,7 +334,7 @@ defmodule Fablebook.Contract.CiHealthTest do
 
   test "a missing timing issue is created", ctx do
     history(ctx.tmp_dir, [])
-    write_json(ctx.tmp_dir, "issues-ci-timing.json", [])
+    write_issues(ctx.tmp_dir, [])
     assert {_, 0} = run(ctx)
     assert [create] = writes(ctx)
     assert Enum.take(create, 2) == ["issue", "create"]
@@ -230,6 +391,10 @@ defmodule Fablebook.Contract.CiHealthTest do
 
   defp write_json(dir, name, value), do: File.write!(Path.join(dir, name), JSON.encode!(value))
 
+  defp write_issues(dir, issues), do: write_json(dir, "issues.json", issues)
+
+  defp read_issues(dir), do: JSON.decode!(File.read!(Path.join(dir, "issues.json")))
+
   defp fixture_env(dir) do
     [
       {"PATH", dir <> ":" <> System.fetch_env!("PATH")},
@@ -244,8 +409,109 @@ defmodule Fablebook.Contract.CiHealthTest do
     ]
   end
 
-  defp run(ctx, args \\ []),
-    do: System.cmd("bash", [@script | args], env: ctx.env, stderr_to_stdout: true)
+  defp run(ctx, args \\ [], script \\ @script),
+    do: System.cmd("bash", [script | args], env: ctx.env, stderr_to_stdout: true)
+
+  defp run_release_guard(ctx, body, env \\ nil) do
+    System.cmd("bash", ["-e", "-c", body],
+      env: env || ctx.env ++ [{"HEAD_REF", "release-please--branches--main"}],
+      stderr_to_stdout: true
+    )
+  end
+
+  defp release_guard_body do
+    workflow = File.read!(@workflow)
+    condition = "      - if: startsWith(github.head_ref, 'release-please--')\n"
+    assert length(String.split(workflow, condition)) == 2
+    [_before, after_condition] = String.split(workflow, condition, parts: 2)
+    [step, _after_step] = String.split(after_condition, "      - uses:", parts: 2)
+    run_header = "        run: |\n"
+    assert length(String.split(step, run_header)) == 2
+    [_before_run, after_header] = String.split(step, run_header, parts: 2)
+
+    body =
+      after_header
+      |> String.split("\n")
+      |> Enum.take_while(&String.starts_with?(&1, "          "))
+      |> Enum.map_join("\n", &String.replace_prefix(&1, "          ", ""))
+
+    assert body != ""
+    body <> "\n"
+  end
+
+  defp legacy_script?(script) do
+    digest =
+      script |> File.read!() |> then(&:crypto.hash(:sha256, &1)) |> Base.encode16(case: :lower)
+
+    digest == @legacy_script_sha256
+  end
+
+  defp amended_script(dir) do
+    source = File.read!(@script)
+    target = ~s|file_regression "CI timing over budget (p50 > 420 s or p95 > 600 s): $report"|
+
+    replacement =
+      ~s|post_to_issue ci-performance "CI performance" "CI timing target breached: $report"|
+
+    assert String.contains?(source, target)
+
+    amended =
+      source
+      |> String.replace(target, replacement, global: false)
+      |> String.replace(
+        "p95 $(percentile 95).",
+        "p95 $(percentile 95). Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking.",
+        global: false
+      )
+
+    refute amended == source
+    path = Path.join(dir, "ci_health-amended.sh")
+    File.write!(path, amended)
+    File.chmod!(path, 0o755)
+    path
+  end
+
+  defp assert_strict_performance_overage(ctx, script, p50, p95) do
+    {output, 0} = run(ctx, [], script)
+
+    performance_issue =
+      read_issues(ctx.tmp_dir)
+      |> Enum.find(&(&1["state"] == "OPEN" and "ci-performance" in &1["labels"]))
+
+    performance_writes =
+      Enum.filter(writes(ctx), fn call ->
+        if performance_issue do
+          Enum.take(call, 3) == ["issue", "comment", to_string(performance_issue["number"])]
+        else
+          Enum.take(call, 2) == ["issue", "create"] and
+            option(call, "--label") == "ci-performance"
+        end
+      end)
+
+    assert length(performance_writes) == 1,
+           "timing overage must write exactly one ci-performance issue; calls: #{inspect(writes(ctx))}"
+
+    assert output =~ "p50 #{p50} s, p95 #{p95} s"
+    assert output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
+    assert File.read!(Path.join(ctx.tmp_dir, "summary.md")) == output
+
+    refute Enum.any?(calls(ctx), &(option(&1, "--label") == "quality-regression"))
+    output
+  end
+
+  defp assert_timing_contract(ctx, script, p50, p95) do
+    if legacy_script?(script) do
+      {output, 0} = run(ctx, [], script)
+      assert output =~ "p50 #{p50} s, p95 #{p95} s"
+      assert [_, regression] = writes(ctx)
+      assert Enum.take(regression, 2) == ["issue", "create"]
+      assert option(regression, "--label") == "quality-regression"
+      assert option(regression, "--body") =~ "CI timing over budget"
+      assert option(regression, "--body") =~ String.trim(output)
+    else
+      assert_strict_performance_overage(ctx, script, p50, p95)
+    end
+  end
 
   defp calls(ctx) do
     path = Path.join(ctx.tmp_dir, "calls.jsonl")
