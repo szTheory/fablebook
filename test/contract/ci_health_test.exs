@@ -5,7 +5,6 @@ defmodule Fablebook.Contract.CiHealthTest do
   @script Path.expand("../../bin/ci_health", __DIR__)
   @workflow Path.expand("../../.github/workflows/ci.yml", __DIR__)
   @created "2026-01-01T00:00:00Z"
-  @legacy_script_sha256 "ea0fb3b5584bc5494418b44673b86419e482a329aeca0bcda856912351626324"
 
   @gh ~S"""
   #!/usr/bin/env bash
@@ -106,13 +105,10 @@ defmodule Fablebook.Contract.CiHealthTest do
     assert output =~ "(n=10): p50 420 s, p95 600 s."
     assert output =~ "https://github.com/fixture/project/actions/runs/123"
 
-    if legacy_script?(@script) do
-      refute output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
-    else
-      assert output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
-    end
+    assert output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
 
     assert length(writes(ctx)) == 1
+    refute Enum.any?(calls(ctx), &(option(&1, "--label") == "quality-regression"))
   end
 
   for {name, durations, p50, p95} <- [
@@ -122,9 +118,9 @@ defmodule Fablebook.Contract.CiHealthTest do
     @durations durations
     @p50 p50
     @p95 p95
-    test "#{name} over budget follows the exact-byte timing transition", ctx do
+    test "#{name} over budget is reported as non-blocking performance feedback", ctx do
       history(ctx.tmp_dir, @durations)
-      assert_timing_contract(ctx, @script, @p50, @p95)
+      assert_strict_performance_overage(ctx, @script, @p50, @p95)
     end
   end
 
@@ -138,7 +134,7 @@ defmodule Fablebook.Contract.CiHealthTest do
       %{number: 8, state: "OPEN", labels: ["quality-regression"]}
     ])
 
-    assert_strict_performance_overage(ctx, amended_script(ctx.tmp_dir), 421, 421)
+    assert_strict_performance_overage(ctx, harmlessly_changed_script(ctx.tmp_dir), 421, 421)
 
     assert [performance_comment] =
              Enum.filter(writes(ctx), &(Enum.take(&1, 3) == ["issue", "comment", "7"]))
@@ -159,7 +155,7 @@ defmodule Fablebook.Contract.CiHealthTest do
       %{number: 8, state: "OPEN", labels: ["quality-regression"]}
     ])
 
-    {output, 0} = run(ctx, [], amended_script(ctx.tmp_dir))
+    {output, 0} = run(ctx)
     assert output =~ "p50 421 s, p95 421 s"
 
     comments =
@@ -173,9 +169,9 @@ defmodule Fablebook.Contract.CiHealthTest do
     assert Enum.any?(calls(ctx), &(option(&1, "--label") == "quality-regression"))
   end
 
-  test "a missing performance issue is created once for a changed producer", ctx do
+  test "a timing breach creates a performance issue when none exists", ctx do
     history(ctx.tmp_dir, List.duplicate(100, 9) ++ [601])
-    assert {output, 0} = run(ctx, [], amended_script(ctx.tmp_dir))
+    assert {output, 0} = run(ctx)
     assert output =~ "p50 100 s, p95 601 s"
     assert output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
     assert File.read!(Path.join(ctx.tmp_dir, "summary.md")) == output
@@ -194,7 +190,7 @@ defmodule Fablebook.Contract.CiHealthTest do
 
   test "dry-run breaches name ci-performance without any issue access", ctx do
     history(ctx.tmp_dir, List.duplicate(421, 10))
-    assert {output, 0} = run(ctx, ["--dry-run"], amended_script(ctx.tmp_dir))
+    assert {output, 0} = run(ctx, ["--dry-run"])
 
     assert output =~ "Would publish label=ci-performance"
     assert output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
@@ -202,37 +198,22 @@ defmodule Fablebook.Contract.CiHealthTest do
     refute Enum.any?(calls(ctx), &(Enum.take(&1, 2) == ["issue", "list"]))
   end
 
-  test "only exact historical producer bytes use the legacy timing expectation", ctx do
+  test "routing a timing breach back to quality-regression fails the strict contract", ctx do
     history(ctx.tmp_dir, List.duplicate(421, 10))
-    legacy = legacy_script?(@script)
-    changed = Path.join(ctx.tmp_dir, "producer-with-harmless-change.sh")
-    File.write!(changed, File.read!(@script) <> "\n# harmless byte change\n")
-    File.chmod!(changed, 0o755)
-
-    refute legacy_script?(changed)
-
-    if legacy do
-      error =
-        assert_raise ExUnit.AssertionError, fn ->
-          assert_timing_contract(ctx, changed, 421, 421)
-        end
-
-      assert Exception.message(error) =~ "ci-performance"
-    else
-      assert_strict_performance_overage(ctx, changed, 421, 421)
-    end
-  end
-
-  test "an amended producer routed back to quality-regression fails strict classification", ctx do
-    history(ctx.tmp_dir, List.duplicate(421, 10))
-    changed = amended_script(ctx.tmp_dir)
-    source = File.read!(changed)
+    source = File.read!(@script)
 
     mutated =
-      String.replace(source, "post_to_issue ci-performance", "file_regression", global: false)
+      String.replace(
+        source,
+        "performance_report \"CI timing target breached: $report\"",
+        "file_regression \"CI timing over budget (p50 > 420 s or p95 > 600 s): $report\"",
+        global: false
+      )
 
     assert mutated != source
+    changed = Path.join(ctx.tmp_dir, "ci_health-quality-regression-mutation.sh")
     File.write!(changed, mutated)
+    File.chmod!(changed, 0o755)
 
     error =
       assert_raise ExUnit.AssertionError, fn ->
@@ -450,46 +431,12 @@ defmodule Fablebook.Contract.CiHealthTest do
     body <> "\n"
   end
 
-  defp legacy_script?(script) do
-    digest =
-      script |> File.read!() |> then(&:crypto.hash(:sha256, &1)) |> Base.encode16(case: :lower)
-
-    digest == @legacy_script_sha256
-  end
-
-  defp amended_script(dir) do
+  defp harmlessly_changed_script(dir) do
     source = File.read!(@script)
-
-    amended =
-      if legacy_script?(@script) do
-        target = ~s|file_regression "CI timing over budget (p50 > 420 s or p95 > 600 s): $report"|
-
-        replacement =
-          ~s|post_to_issue ci-performance "CI performance" "CI timing target breached: $report"|
-
-        assert String.contains?(source, target)
-
-        source
-        |> String.replace(target, replacement, global: false)
-        |> String.replace(
-          "p95 $(percentile 95).",
-          "p95 $(percentile 95). Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking.",
-          global: false
-        )
-      else
-        assert String.contains?(source, "post_to_issue ci-performance")
-
-        assert String.contains?(
-                 source,
-                 "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
-               )
-
-        source <> "\n# strict producer fixture\n"
-      end
-
-    refute amended == source
+    changed = source <> "\n# harmless byte change\n"
+    refute changed == source
     path = Path.join(dir, "ci_health-amended.sh")
-    File.write!(path, amended)
+    File.write!(path, changed)
     File.chmod!(path, 0o755)
     path
   end
@@ -520,20 +467,6 @@ defmodule Fablebook.Contract.CiHealthTest do
 
     refute Enum.any?(calls(ctx), &(option(&1, "--label") == "quality-regression"))
     output
-  end
-
-  defp assert_timing_contract(ctx, script, p50, p95) do
-    if legacy_script?(script) do
-      {output, 0} = run(ctx, [], script)
-      assert output =~ "p50 #{p50} s, p95 #{p95} s"
-      assert [_, regression] = writes(ctx)
-      assert Enum.take(regression, 2) == ["issue", "create"]
-      assert option(regression, "--label") == "quality-regression"
-      assert option(regression, "--body") =~ "CI timing over budget"
-      assert option(regression, "--body") =~ String.trim(output)
-    else
-      assert_strict_performance_overage(ctx, script, p50, p95)
-    end
   end
 
   defp calls(ctx) do
