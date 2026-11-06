@@ -103,8 +103,14 @@ defmodule Fablebook.Contract.CiHealthTest do
     history(ctx.tmp_dir, [600, 420, 100, 420, 600, 420, 100, 600, 420, 100])
     assert {output, 0} = run(ctx)
 
-    assert output =~
-             "(n=10): p50 420 s, p95 600 s. https://github.com/fixture/project/actions/runs/123"
+    assert output =~ "(n=10): p50 420 s, p95 600 s."
+    assert output =~ "https://github.com/fixture/project/actions/runs/123"
+
+    if legacy_script?(@script) do
+      refute output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
+    else
+      assert output =~ "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
+    end
 
     assert length(writes(ctx)) == 1
   end
@@ -196,20 +202,25 @@ defmodule Fablebook.Contract.CiHealthTest do
     refute Enum.any?(calls(ctx), &(Enum.take(&1, 2) == ["issue", "list"]))
   end
 
-  test "a harmless byte change exits the legacy digest branch", ctx do
+  test "only exact historical producer bytes use the legacy timing expectation", ctx do
     history(ctx.tmp_dir, List.duplicate(421, 10))
-    changed = Path.join(ctx.tmp_dir, "legacy-with-harmless-change.sh")
+    legacy = legacy_script?(@script)
+    changed = Path.join(ctx.tmp_dir, "producer-with-harmless-change.sh")
     File.write!(changed, File.read!(@script) <> "\n# harmless byte change\n")
     File.chmod!(changed, 0o755)
 
     refute legacy_script?(changed)
 
-    error =
-      assert_raise ExUnit.AssertionError, fn ->
-        assert_timing_contract(ctx, changed, 421, 421)
-      end
+    if legacy do
+      error =
+        assert_raise ExUnit.AssertionError, fn ->
+          assert_timing_contract(ctx, changed, 421, 421)
+        end
 
-    assert Exception.message(error) =~ "ci-performance"
+      assert Exception.message(error) =~ "ci-performance"
+    else
+      assert_strict_performance_overage(ctx, changed, 421, 421)
+    end
   end
 
   test "an amended producer routed back to quality-regression fails strict classification", ctx do
@@ -448,21 +459,33 @@ defmodule Fablebook.Contract.CiHealthTest do
 
   defp amended_script(dir) do
     source = File.read!(@script)
-    target = ~s|file_regression "CI timing over budget (p50 > 420 s or p95 > 600 s): $report"|
-
-    replacement =
-      ~s|post_to_issue ci-performance "CI performance" "CI timing target breached: $report"|
-
-    assert String.contains?(source, target)
 
     amended =
-      source
-      |> String.replace(target, replacement, global: false)
-      |> String.replace(
-        "p95 $(percentile 95).",
-        "p95 $(percentile 95). Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking.",
-        global: false
-      )
+      if legacy_script?(@script) do
+        target = ~s|file_regression "CI timing over budget (p50 > 420 s or p95 > 600 s): $report"|
+
+        replacement =
+          ~s|post_to_issue ci-performance "CI performance" "CI timing target breached: $report"|
+
+        assert String.contains?(source, target)
+
+        source
+        |> String.replace(target, replacement, global: false)
+        |> String.replace(
+          "p95 $(percentile 95).",
+          "p95 $(percentile 95). Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking.",
+          global: false
+        )
+      else
+        assert String.contains?(source, "post_to_issue ci-performance")
+
+        assert String.contains?(
+                 source,
+                 "Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking."
+               )
+
+        source <> "\n# strict producer fixture\n"
+      end
 
     refute amended == source
     path = Path.join(dir, "ci_health-amended.sh")
