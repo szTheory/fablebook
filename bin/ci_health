@@ -45,6 +45,10 @@ file_regression() {
   post_to_issue quality-regression "Quality regression" "$1"
 }
 
+performance_report() {
+  post_to_issue ci-performance "CI performance" "$1"
+}
+
 if [ "${1:-}" = --file-regression ]; then
   job="${2:?usage: bin/ci_health --file-regression <job> [note]}"
   body="Job \`$job\` failed on \`${GITHUB_REF:-unknown ref}\`: $(run_url)"
@@ -80,7 +84,7 @@ percentile() {
 }
 
 n="$(jq length <<<"$durations")"
-report="ci-gate on pull_request, attempt 1, last 7 days (n=$n): p50 $(percentile 50), p95 $(percentile 95). $(run_url)"
+report="ci-gate on pull_request, attempt 1, last 7 days (n=$n): p50 $(percentile 50), p95 $(percentile 95). Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking. $(run_url)"
 echo "$report"
 if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
   echo "$report" >> "$GITHUB_STEP_SUMMARY"
@@ -90,7 +94,7 @@ post_to_issue ci-timing "CI timing" "$report"
 if jq -e '(sort) as $s | length as $n
   | $n >= 10 and ($s[((50 * $n / 100) | ceil) - 1] > 420 or $s[((95 * $n / 100) | ceil) - 1] > 600)' \
   <<<"$durations" >/dev/null; then
-  file_regression "CI timing over budget (p50 > 420 s or p95 > 600 s): $report"
+  performance_report "CI timing target breached: $report"
 fi
 
 contexts="$(gh api "repos/$repo/rules/branches/main" \
