@@ -264,6 +264,40 @@ defmodule Fablebook.Contract.CiShapeTest do
     end
   end
 
+  test "quoted scalar values that start on the next line do not look like workflow fields" do
+    files = base_files()
+    original = Map.fetch!(files, "release-please.yml")
+
+    for {tag, quote} <- [{"", "\""}, {"", "'"}, {"!!str ", "\""}, {"!!str ", "'"}] do
+      scalar =
+        "name:\n  #{tag}#{quote}hello\n  queue: invalid\n  uses: owner/action@main\n  paths: [lib]#{quote}\n"
+
+      changed = String.replace(original, "name: release-please\n", scalar, global: false)
+
+      assert changed != original
+      assert workflow_violations(Map.put(files, "release-please.yml", changed)) == []
+    end
+
+    quoted =
+      String.replace(
+        original,
+        "name: release-please\n",
+        "name:\n  \"hello\n  queue: invalid\n  uses: owner/action@main\n  paths: [lib]\"\n",
+        global: false
+      )
+
+    changed =
+      String.replace(
+        quoted,
+        "  cancel-in-progress: false\n",
+        "  cancel-in-progress: false\n  queue: invalid\n",
+        global: false
+      )
+
+    assert changed != quoted
+    assert fired(Map.put(files, "release-please.yml", changed)) == [:queue_actionlint_scope]
+  end
+
   test "YAML-looking alias text inside tagged and untagged block scalars is not a mapping key" do
     files = base_files()
     original = Map.fetch!(files, "hex-publish.yml")
@@ -628,10 +662,10 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp strip_yaml_block_scalar_bodies(text) do
-    {reversed, {_scalar_indent, _quote}} =
+    {reversed, {_scalar_indent, _quote, _pending_indent}} =
       text
       |> String.split("\n", trim: false)
-      |> Enum.reduce({[], {nil, nil}}, &strip_block_scalar_line/2)
+      |> Enum.reduce({[], {nil, nil, nil}}, &strip_block_scalar_line/2)
 
     reversed |> Enum.reverse() |> Enum.join("\n")
   end
@@ -647,12 +681,12 @@ defmodule Fablebook.Contract.CiShapeTest do
     do: strip_yaml_quoted_values(strip_yaml_block_scalar_bodies(text), :all)
 
   defp strip_yaml_quoted_values(text, mode) do
-    {reversed, _quote} =
+    {reversed, _quote_state} =
       text
       |> String.split("\n", trim: false)
-      |> Enum.reduce({[], nil}, fn line, {acc, quote} ->
-        {masked, next_quote} = strip_yaml_quoted_line(line, quote, mode)
-        {[masked | acc], next_quote}
+      |> Enum.reduce({[], {nil, nil}}, fn line, {acc, quote_state} ->
+        {masked, next_quote_state} = strip_yaml_quoted_line(line, quote_state, mode)
+        {[masked | acc], next_quote_state}
       end)
 
     reversed |> Enum.reverse() |> Enum.join("\n")
@@ -671,6 +705,79 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   defp strip_yaml_quoted_line(line, nil, mode),
     do: strip_yaml_quoted_values_from(line, mode)
+
+  defp strip_yaml_quoted_line(line, {quote, _pending_indent}, mode) when is_binary(quote) do
+    {masked, next_quote} = strip_yaml_quoted_line(line, quote, mode)
+    {masked, {next_quote, nil}}
+  end
+
+  defp strip_yaml_quoted_line(line, {nil, pending_indent}, mode)
+       when is_integer(pending_indent) do
+    if pending_value_ignorable_line?(line),
+      do: {line, {nil, pending_indent}},
+      else: strip_pending_value_line(line, pending_indent, mode)
+  end
+
+  defp strip_yaml_quoted_line(line, {nil, nil}, mode), do: strip_regular_yaml_value(line, mode)
+
+  defp strip_pending_value_line(line, pending_indent, mode) do
+    case pending_yaml_quote_start(line, pending_indent) do
+      {prefix, rest, quote} ->
+        {masked, next_quote} = strip_yaml_quote_value(prefix, rest, quote, :all)
+        {masked, {next_quote, nil}}
+
+      nil ->
+        if pending_yaml_tag_line?(line, pending_indent),
+          do: {line, {nil, line_indent(line)}},
+          else: strip_regular_yaml_value(line, mode)
+    end
+  end
+
+  defp strip_regular_yaml_value(line, mode) do
+    {masked, next_quote} = strip_yaml_quoted_line(line, nil, mode)
+    pending_indent = if is_nil(next_quote), do: yaml_pending_value_indent(line), else: nil
+    {masked, {next_quote, pending_indent}}
+  end
+
+  defp pending_yaml_quote_start(line, pending_indent) do
+    if line_indent(line) > pending_indent do
+      case Regex.run(
+             ~r/\A\s*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]+)*(["'])/,
+             line,
+             return: :index
+           ) do
+        [{_start, _length}, {quote_start, 1}] ->
+          prefix = binary_part(line, 0, quote_start)
+          rest = binary_part(line, quote_start, byte_size(line) - quote_start)
+          {prefix, rest, binary_part(rest, 0, 1)}
+
+        _ ->
+          nil
+      end
+    end
+  end
+
+  defp pending_yaml_tag_line?(line, pending_indent) do
+    line_indent(line) > pending_indent and
+      Regex.match?(~r/\A\s*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]*)+\z/, line)
+  end
+
+  defp pending_value_ignorable_line?(line) do
+    trimmed = String.trim(line)
+    trimmed == "" or String.starts_with?(trimmed, "#")
+  end
+
+  defp yaml_pending_value_indent(line) do
+    case Regex.run(
+           ~r/\A([ \t]*)(?:-[ \t]+)?[^:#\n]+:[ \t]*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]*)*(?:\#[^\r\n]*)?\z/,
+           line
+         ) do
+      [_, indentation] -> String.length(indentation)
+      _ -> nil
+    end
+  end
+
+  defp line_indent(line), do: String.length(line) - String.length(String.trim_leading(line))
 
   defp strip_yaml_quoted_values_from(line, mode) do
     case yaml_value_quote_start(line) do
@@ -738,19 +845,22 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp blank_yaml_scalar(graphemes),
     do: graphemes |> Enum.map_join("", fn _ -> " " end)
 
-  defp strip_block_scalar_line(line, {acc, {scalar_indent, quote}}) do
+  defp strip_block_scalar_line(line, {acc, {scalar_indent, quote, pending_indent}}) do
     indent = String.length(line) - String.length(String.trim_leading(line))
     blank? = String.trim(line) == ""
 
     if is_integer(scalar_indent) and (blank? or indent > scalar_indent) do
-      {["" | acc], {scalar_indent, nil}}
+      {["" | acc], {scalar_indent, nil, nil}}
     else
-      {yaml_line, next_quote} = strip_yaml_quoted_line(line, quote, :multiline)
+      {yaml_line, {next_quote, next_pending_indent}} =
+        strip_yaml_quoted_line(line, {quote, pending_indent}, :multiline)
 
       next_scalar_indent =
-        if is_nil(next_quote) and block_scalar_header?(yaml_line), do: indent, else: nil
+        if is_nil(next_quote) and is_nil(next_pending_indent) and block_scalar_header?(yaml_line),
+          do: indent,
+          else: nil
 
-      {[line | acc], {next_scalar_indent, next_quote}}
+      {[line | acc], {next_scalar_indent, next_quote, next_pending_indent}}
     end
   end
 
