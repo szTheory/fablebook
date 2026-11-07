@@ -100,6 +100,9 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:queue_actionlint_scope, "release-please.yml",
      "concurrency:\n  group: release-please\n  cancel-in-progress: false",
      "concurrency:\n  group: release-please\n  ? queue\n  : max\n  cancel-in-progress: false"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
+     "concurrency:\n  group: release-please\n  ? # explicit key indicator\n    queue # explicit key value\n  # separator comment\n  : max\n  cancel-in-progress: false"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
      "      - run: bin/ci_health --file-regression nightly"},
@@ -470,7 +473,19 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp queue_settings(text) do
-    normalized = Regex.replace(~r/\?\s*["']?queue["']?\s*:/, text, "queue:")
+    explicit_queue_key =
+      ~r/
+      \?
+      [ \t]*
+      (?: \#[^\r\n]* )?
+      (?: \r?\n (?: [ \t]* (?: \#[^\r\n]* )? \r?\n )* [ \t]* )?
+      ["']? queue ["']?
+      [ \t]*
+      (?: \#[^\r\n]* )?
+      (?: \r?\n (?: [ \t]* (?: \#[^\r\n]* )? \r?\n )* [ \t]* )?
+      :/x
+
+    normalized = Regex.replace(explicit_queue_key, text, "queue:")
 
     for line <- lines(normalized),
         Regex.match?(~r/(?:\A\s*|[{,]\s*(?:\?\s*)?|\?\s*)["']?queue["']?\s*:/, line),
