@@ -24,6 +24,9 @@ defmodule Fablebook.Contract.CiShapeTest do
   @gate_needs "    needs: [core, security, nightly]\n"
   @nightly_if "    if: github.event.schedule == '17 3 * * *' || startsWith(github.head_ref, 'release-please--')\n"
   @ci_health_group "group: ci-health-${{ github.workflow }}"
+  @workflow_group ~S/group: ci-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}-${{ github.event.schedule }}/
+  @previous_workflow_group ~S/group: ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event.schedule }}/
+  @workflow_cancel ~S/cancel-in-progress: ${{ github.event_name == 'pull_request' }}/
   @actionlint_queue_ignore ~S/args: -color -ignore ^unexpected\skey\s"queue"\sfor\s"concurrency"\ssection.*$/
   @smoke "      - run: bin/smoke_consumer --path .\n"
 
@@ -68,6 +71,7 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:bypass, "ci.yml", @smoke, "      - run: set +e; bin/smoke_consumer --path .\n"},
     {:bypass, "ci.yml", @nightly_if, "    if: false\n"},
     {:bypass, "ci.yml", @nightly_if, "    if: ${{ false }}\n"},
+    {:workflow_concurrency, "ci.yml", @workflow_group, @previous_workflow_group},
     {:core_mix_ci, "ci.yml", "      - run: mix ci\n", "      - run: mix test\n"},
     {:core_fetch_depth, "ci.yml", "          fetch-depth: 0\n", ""},
     {:event_before, "ci.yml", "  EVENT_BEFORE: ${{ github.event.before }}\n", "  OTHER: x\n"},
@@ -84,6 +88,8 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:ci_health_concurrency, "ci.yml", "queue: max", "queue: single"},
     {:queue_actionlint_ignore, "ci.yml", @actionlint_queue_ignore, "args: -color"},
     {:queue_actionlint_ignore, "ci.yml", @actionlint_queue_ignore, "args: -color -ignore '.*'"},
+    {:queue_actionlint_scope, "release-please.yml", "  group: release-please\n",
+     "  group: release-please\n  queue: invalid\n"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
      "      - run: bin/ci_health --file-regression nightly"},
@@ -240,6 +246,7 @@ defmodule Fablebook.Contract.CiShapeTest do
 
     Enum.flat_map(files, &text_violations/1) ++
       Enum.flat_map(workflows, &timeout_violations/1) ++
+      queue_actionlint_scope_violations(workflows) ++
       ci_violations(files["ci.yml"]) ++
       gate_count_violations(workflows) ++
       check(newlines(files["ci.yml"]) <= 250, {:ci_lines, "ci.yml", newlines(files["ci.yml"])}) ++
@@ -332,7 +339,8 @@ defmodule Fablebook.Contract.CiShapeTest do
     jobs = jobs(text)
     job = &(List.keyfind(jobs, &1, 0, {&1, []}) |> elem(1))
 
-    check(not String.contains?(text, "workflow_call"), {:workflow_call, "ci.yml", nil}) ++
+    workflow_concurrency_violations(text) ++
+      check(not String.contains?(text, "workflow_call"), {:workflow_call, "ci.yml", nil}) ++
       for(
         {line, n} <- Enum.with_index(lines(text), 1),
         bypass?(line),
@@ -410,19 +418,18 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp ci_health_concurrency_violations(text, body) do
-    digest = :crypto.hash(:sha256, text) |> Base.encode16(case: :lower)
-
-    if digest == @legacy_ci_sha256 do
+    if legacy_workflow?(text) do
       []
     else
-      check(serialized_health?(body), {:ci_health_concurrency, "ci-health", nil})
+      check(
+        serialized_health?(body) and queue_settings(text) == ["queue: max"],
+        {:ci_health_concurrency, "ci-health", nil}
+      )
     end
   end
 
   defp actionlint_queue_compat_violations(text, body) do
-    digest = :crypto.hash(:sha256, text) |> Base.encode16(case: :lower)
-
-    if digest == @legacy_ci_sha256 do
+    if legacy_workflow?(text) do
       []
     else
       check(
@@ -435,6 +442,36 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp actionlint_queue_ignore?(step) do
     Enum.any?(step, &String.starts_with?(&1, "uses: docker://rhysd/actionlint@")) and
       @actionlint_queue_ignore in step
+  end
+
+  defp workflow_concurrency_violations(text) do
+    if legacy_workflow?(text) do
+      []
+    else
+      workflow = text |> lines() |> Enum.take_while(&(&1 != "jobs:")) |> Enum.join("\n")
+
+      expected = "concurrency:\n  " <> @workflow_group <> "\n  " <> @workflow_cancel
+
+      check(String.contains?(workflow, expected), {:workflow_concurrency, "workflow", nil})
+    end
+  end
+
+  defp queue_actionlint_scope_violations(workflows) do
+    for {file, text} <- workflows,
+        file != "ci.yml",
+        setting <- queue_settings(text),
+        do: {:queue_actionlint_scope, file, setting}
+  end
+
+  defp queue_settings(text) do
+    for line <- lines(text),
+        Regex.match?(~r/\A\s*["']?queue["']?\s*:/, line),
+        do: String.trim(line)
+  end
+
+  defp legacy_workflow?(text) do
+    digest = :crypto.hash(:sha256, text) |> Base.encode16(case: :lower)
+    digest == @legacy_ci_sha256
   end
 
   defp bypass?(line) do
