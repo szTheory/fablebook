@@ -103,6 +103,12 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:queue_actionlint_scope, "release-please.yml",
      "concurrency:\n  group: release-please\n  cancel-in-progress: false",
      "concurrency:\n  group: release-please\n  ? # explicit key indicator\n    queue # explicit key value\n  # separator comment\n  : max\n  cancel-in-progress: false"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
+     "concurrency: {? \"qu\\u0065ue\": invalid, group: release-please, cancel-in-progress: false}"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
+     "concurrency: {\"qu\\u0065ue\": invalid, group: release-please, cancel-in-progress: false}"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
      "      - run: bin/ci_health --file-regression nightly"},
@@ -473,23 +479,20 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp queue_settings(text) do
-    explicit_queue_key =
-      ~r/
-      \?
-      [ \t]*
-      (?: \#[^\r\n]* )?
-      (?: \r?\n (?: [ \t]* (?: \#[^\r\n]* )? \r?\n )* [ \t]* )?
-      ["']? queue ["']?
-      [ \t]*
-      (?: \#[^\r\n]* )?
-      (?: \r?\n (?: [ \t]* (?: \#[^\r\n]* )? \r?\n )* [ \t]* )?
-      :/x
+    # The actionlint ignore is global; regex normalization cannot decode every YAML key spelling.
+    # Keep non-ci workflow keys literal so an encoded key cannot hide an unsupported queue.
+    cond do
+      Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\?(?:\s|["'])/, text) ->
+        ["explicit YAML mapping key syntax"]
 
-    normalized = Regex.replace(explicit_queue_key, text, "queue:")
+      Regex.match?(~r/"(?:\\.|[^"\\])*\\(?:\\.|[^"\\])*"[ \t]*:/, text) ->
+        ["escaped double-quoted YAML mapping key"]
 
-    for line <- lines(normalized),
-        Regex.match?(~r/(?:\A\s*|[{,]\s*(?:\?\s*)?|\?\s*)["']?queue["']?\s*:/, line),
-        do: String.trim(line)
+      true ->
+        for line <- lines(text),
+            Regex.match?(~r/(?:\A\s*|[{,]\s*)["']?queue["']?\s*:/, line),
+            do: String.trim(line)
+    end
   end
 
   defp bypass?(line) do
