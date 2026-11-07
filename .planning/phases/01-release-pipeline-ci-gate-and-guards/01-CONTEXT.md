@@ -200,7 +200,7 @@ Requirements: REL-01, CI-01, INTENT-01, SEC-02, and SEC-01 in part (properties a
   - **Duration:** `ci-gate.completed_at - run.created_at`. Never use the `/timing` endpoint, which GitHub is closing down.
   - **Statistic:** nearest-rank percentiles. If n is below 10, publish `not-run (n=K)`.
   - **Output:** a comment on one pinned `ci-timing` issue, plus the job summary.
-  - **Breach:** p50 over 7 minutes or p95 over 10 (n ≥ 10) opens or updates `quality-regression`.
+  - **Breach:** p50 over 7 minutes or p95 over 10 (n ≥ 10) opens or updates `ci-performance`; a timing-only overage does not block release or phase closure. Ruleset drift and failing checks still use `quality-regression`. (Amended by INT-20261106-01; ADR 0017.)
   - **Ruleset drift:** the same job asserts that `gh api repos/$R/rules/branches/main` reports exactly `["ci-gate"]`. Drift opens or updates `quality-regression`.
 - **D-21 (owner sign-off): The contract-test rule (Q15).**
   - A test reuses the D-19 seam. If a guard path has status `M` or `D`, the paired paths must not change in the same PR:

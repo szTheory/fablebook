@@ -1,19 +1,19 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 1
-current_phase_name: Release pipeline, CI gate and guards
+current_phase: "01.1"
+current_phase_name: Close phase 1 guard gaps
 status: verifying
-stopped_at: Phase 01.1.1.15 complete, ready to verify Phase 1
-last_updated: "2026-11-05T23:10:15.729Z"
-last_activity: 2026-11-05
-last_activity_desc: Phase 01.1.1.15 complete, transitioned to Phase 1
-state_head: 687ada6ea263eab7b6b3df8e9cc75279277b7aa5
+stopped_at: Phase 01 complete; closeout PR pending merge; Phase 01.1 not started
+last_updated: "2026-11-07T08:33:23.542Z"
+last_activity: 2026-11-07
+last_activity_desc: Phase 01 complete, transitioned to Phase 01.1
+state_head: 41c162ad8d92de5a32d5bb6d460219bdf9f2f8c0
 progress:
   total_phases: 45
-  completed_phases: 1
-  total_plans: 36
-  completed_plans: 31
-  percent: 2
+  completed_phases: 2
+  total_plans: 40
+  completed_plans: 35
+  percent: 4
 ---
 
 # Project State
@@ -23,21 +23,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-04)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.15 — Bound ASN.1 table-wrapper exclusions
+**Current focus:** Phase 01.1 — Close phase 1 guard gaps (not started)
 
 ## Current Position
 
-Phase: 1 — Release pipeline, CI gate and guards
-Plan: 5
-Status: Phase complete — ready for verification
-Last activity: 2026-11-05 — Phase 01.1.1.15 complete, transitioned to Phase 1
+Phase: 01.1 — Close phase 1 guard gaps
+Plan: Not started
+Status: Phase 01 complete — closeout PR pending merge
+Last activity: 2026-11-07 — Phase 01 complete, transitioned to Phase 01.1
 
-Progress: 1/45 phases complete ([░░░░░░░░░░] 2%); 31/36 plans complete ([█████████████████░░░] 86%)
+Progress: 2/45 phases complete ([░░░░░░░░░░] 4%); 35/40 plans complete ([██████████████████░░] 88%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
+- Total plans completed: 33
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -52,6 +52,7 @@ Progress: 1/45 phases complete ([░░░░░░░░░░] 2%); 31/36 plan
 | 01.1.1.13 | 3 | - | - |
 | 01.1.1.14 | 1 | - | - |
 | 01.1.1.15 | 1 | - | - |
+| 01 | 9 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -90,6 +91,10 @@ Progress: 1/45 phases complete ([░░░░░░░░░░] 2%); 31/36 plan
 | Phase 01.1.1.13 P02 | 102min | 2 tasks | 3 files |
 | Phase 01.1.1.13 P03 | 44m | 2 tasks | 7 files |
 | Phase 01.1.1.15 P01 | 124 min | 3 tasks | 5 files |
+| Phase 01 P06 | 50min | 2 tasks | 4 files |
+| Phase 01 P07 | 35min | 2 tasks | 3 files |
+| Phase 01 P08 | 55 | 3 tasks | 4 files |
+| Phase 01 P09 | 43 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -170,6 +175,11 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.15]: Retain an exact asn1ct_check:check/2 tier because its archived source trace reaches stored list_to_atom values.
 - [Phase 01.1.1.15]: Keep the remaining selected wrappers and all 166 outside matches per lane under the unchanged EX-107 disposition.
 - [Phase 01.1.1.15]: Hosted CI is pending an external delivery decision; local checks do not provide a hosted URL.
+- [Phase 01]: Close only the historical CR-01 evidence item; retain canonical Phase 1 verification and parent acceptance as separate gates.
+- [Phase 01]: Keep SEC-01 Pending for Phase 5; the G-01-15 timing-policy gap is closed, while aggregate audits and the Phase 2 gate remain open.
+- [Phase 01]: Keep the goal outcome-based; the original plan explicitly left the user story unauthored, so the contradictory MVP marker was removed without changing the goal, criteria, or requirements.
+- [Phase 01]: All 18 UAT checks pass, G-01-15 is closed, and canonical verification passed 9/9 truths with no remaining gaps or human checks.
+- [Phase 01]: Owner approved a separate contract-compatibility PR before the producer PR because Plan 07 tests assume the old script; this adds one PR and keeps producer changes isolated.
 
 ### Pending Todos
 
@@ -208,8 +218,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-05T22:26:00.243Z
-Stopped at: Phase 01.1.1.15 complete, ready to verify Phase 1
+Last session: 2026-11-07T08:29:25Z
+Stopped at: Phase 01 complete; closeout PR pending merge; Phase 01.1 not started
 
-Next action: Parent reviews and commits the summary/tracking files; then decide whether to trigger hosted CI for tested commit 18619f7.
-Resume file: .planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-01-SUMMARY.md
+Next action: Merge the Phase 01 closeout PR after required checks pass; wait for the owner to advance before starting Phase 01.1.
+Resume file: None

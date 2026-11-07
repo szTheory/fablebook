@@ -186,6 +186,7 @@
   - **Output:** a comment on one pinned `ci-timing` issue, plus the job summary.
   - **Breach:** p50 over 7 minutes or p95 over 10 (n ≥ 10) opens or updates `quality-regression`.
   - **Ruleset drift:** the same job asserts that `gh api repos/$R/rules/branches/main` reports exactly `["ci-gate"]`. Drift opens or updates `quality-regression`.
+  - **Owner amendment:** INT-20261106-01 retains the 420/600-second values as non-blocking performance objectives. Timing-only breaches use `ci-performance`; ruleset drift and genuine failed checks remain `quality-regression`. This supersedes only the original timing-breach routing, not the statistic, sample, or thresholds.
 - **D-21 (owner sign-off): The contract-test rule (Q15).**
   - A test reuses the D-19 seam. If a guard path has status `M` or `D`, the paired paths must not change in the same PR:
 

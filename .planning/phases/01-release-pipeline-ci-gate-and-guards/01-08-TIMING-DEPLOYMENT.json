@@ -1,0 +1,164 @@
+{
+  "schema": "fablebook.ci-timing-deployment.v1",
+  "recorded_at": "2026-11-06T16:05:15Z",
+  "plan": "01-08",
+  "gap_ids": ["G-01-15"],
+  "owner_approved_adjustment": {
+    "decision": "Add a separate contract-compatibility PR before the producer PR.",
+    "reason": "The Plan 07 contract helper assumed the legacy source line and output. The strict producer made seven tests fail, while the reviewed Plan 08 producer PR prohibited test edits.",
+    "result": "An additional test-only PR was merged before the script-only producer PR; implementation and contract paths stayed separate."
+  },
+  "performance_label": {
+    "before": {
+      "present": false,
+      "other_relevant_labels": [
+        {
+          "name": "ci-timing",
+          "color": "0E8A16",
+          "description": "Weekly PR CI timing from ci-health"
+        },
+        {
+          "name": "quality-regression",
+          "color": "B60205",
+          "description": "A CI quality gate regressed; blocks the release"
+        }
+      ]
+    },
+    "created": true,
+    "name": "ci-performance",
+    "color": "1D76DB",
+    "description": "Non-blocking CI feedback-time performance follow-up; timing objectives do not block releases.",
+    "verified_before_producer_pr": true
+  },
+  "deliveries": [
+    {
+      "role": "initial timing contract",
+      "pr_url": "https://github.com/szTheory/fablebook/pull/50",
+      "base_sha": "10e1229e0d7cdc3e5fed1c29d4ee333e19cc96da",
+      "head_sha": "deda55bae24a5560dffd7ed6735e0a23969fd442",
+      "merge_sha": "9a9a80446b2589dc900f20cce492e0661f820c5d",
+      "changed_paths": ["test/contract/ci_health_test.exs"]
+    },
+    {
+      "role": "contract compatibility before producer deployment",
+      "pr_url": "https://github.com/szTheory/fablebook/pull/51",
+      "base_sha": "9a9a80446b2589dc900f20cce492e0661f820c5d",
+      "head_sha": "8fc6fe58d63173c9ab6010be9dd49ab983949af6",
+      "merge_sha": "1f7590aee02228e0cd8cb242486da4c954268ca1",
+      "changed_paths": ["test/contract/ci_health_test.exs"],
+      "ci_run": {
+        "run_number": 175,
+        "run_id": 42245202610,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/42245202610",
+        "checks": {
+          "core": "success",
+          "floor": "success",
+          "dialyzer": "success",
+          "security": "success",
+          "ci-gate": "success",
+          "ci-health": "skipped",
+          "nightly": "skipped"
+        }
+      }
+    },
+    {
+      "role": "producer implementation",
+      "pr_url": "https://github.com/szTheory/fablebook/pull/52",
+      "base_sha": "1f7590aee02228e0cd8cb242486da4c954268ca1",
+      "head_sha": "e87f744334621aec03a3e2233b8be3ddf7451a0d",
+      "merge_sha": "a5de2d0be26bab99e756720be4b3478bcdbb23a9",
+      "changed_paths": ["bin/ci_health"],
+      "reviewed_script_sha256": "a67448fd13c0fc0875a23c72e1d3f5457ceb3b64622fc56cb1efbd4dbc3299a9",
+      "ci_run": {
+        "run_number": 177,
+        "run_id": 42247200617,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/42247200617",
+        "checks": {
+          "core": "success",
+          "floor": "success",
+          "dialyzer": "success",
+          "security": "success",
+          "ci-gate": "success",
+          "ci-health": "skipped",
+          "nightly": "skipped"
+        }
+      }
+    }
+  ],
+  "deployed_main": {
+    "sha": "a5de2d0be26bab99e756720be4b3478bcdbb23a9",
+    "bin_ci_health_sha256": "a67448fd13c0fc0875a23c72e1d3f5457ceb3b64622fc56cb1efbd4dbc3299a9",
+    "matches_reviewed_producer": true,
+    "plan_07_guard_merge_sha": "9a9a80446b2589dc900f20cce492e0661f820c5d",
+    "plan_07_guard_is_ancestor": true
+  },
+  "local_verification": {
+    "runtime_identities": {
+      "core": {
+        "elixir": "1.20.4",
+        "otp": "29.1.2",
+        "versions_file": ".tool-versions"
+      },
+      "floor": {
+        "elixir": "1.18.5",
+        "otp": "27.3.4.9",
+        "versions_file": ".tool-versions.floor"
+      }
+    },
+    "before_producer_merge": [
+      {
+        "state": "legacy producer on main",
+        "command": "bin/lane core test --warnings-as-errors test/contract/ci_health_test.exs test/contract/ci_shape_test.exs test/planning/contract_rule_test.exs test/planning/intent_test.exs",
+        "result": "116 passed"
+      },
+      {
+        "state": "legacy producer on main",
+        "command": "bin/lane floor test --warnings-as-errors test/contract/ci_health_test.exs",
+        "result": "25 passed, 0 failures"
+      },
+      {
+        "state": "temporary intended strict producer patch, before its PR",
+        "command": "same pinned core and floor contract commands",
+        "result": "core 116 passed; floor 25 passed, 0 failures"
+      },
+      {
+        "state": "producer candidate",
+        "command": "bash -n bin/ci_health",
+        "result": "passed"
+      },
+      {
+        "state": "producer candidate",
+        "command": "bin/lane core test --warnings-as-errors test/planning/contract_rule_test.exs test/planning/intent_test.exs",
+        "result": "32 passed"
+      },
+      {
+        "state": "merged producer on main",
+        "command": "bin/lane core test --warnings-as-errors test/contract/ci_health_test.exs test/contract/ci_shape_test.exs",
+        "result": "84 passed"
+      },
+      {
+        "state": "merged producer on main",
+        "command": "bin/lane floor test --warnings-as-errors test/contract/ci_health_test.exs",
+        "result": "25 passed, 0 failures"
+      }
+    ],
+    "mutations": {
+      "producer_red": "A harmless byte change to the legacy producer made the strict timing tests fail as expected because the producer still wrote quality-regression.",
+      "test_compatibility": "The compatibility suite then passed on both the exact legacy producer and a temporary copy of the intended strict producer."
+    }
+  },
+  "issue_migration": {
+    "issue_37": "untouched; Plan 09 owns its full-history classification and any migration",
+    "live_ci_health_invocation": false,
+    "release_workflow_dispatch": false
+  },
+  "review_and_push_checks": {
+    "internal_review": "no significant issues found",
+    "review_comments": 0,
+    "review_threads": 0,
+    "changed_file_privacy_scans": "passed for each separate PR",
+    "commit_authors": "szTheory@users.noreply.github.com"
+  },
+  "next_plan": "01-09",
+  "gap_closed": false
+}
