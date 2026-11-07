@@ -17,7 +17,7 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   @base "test/fixtures/ci_shape/base.yml"
   @sha "3d3c42e5aac5ba805825da76410c181273ba90b1"
-  @legacy_ci_sha256 "549beede06cd46d262676aaef90be107335463434892a44375976b6f1b4e4e14"
+  @legacy_ci "test/fixtures/ci_shape/legacy-ci.yml"
   @long_line "# " <> String.duplicate("x", 120)
   @padding String.duplicate("#\n", 250)
   @extra_job "\njobs:\n  JOB:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 5\n    steps:\n      - run: echo ok\n"
@@ -29,8 +29,6 @@ defmodule Fablebook.Contract.CiShapeTest do
   @workflow_cancel ~S/cancel-in-progress: ${{ github.event_name == 'pull_request' }}/
   @actionlint_queue_ignore ~S/args: -color -ignore ^unexpected\skey\s\x22queue\x22/ <>
                              ~S/\sfor\s\x22concurrency\x22\ssection.*$/
-  @legacy_actionlint_queue_ignore ~S/args: -color -ignore ^unexpected\skey\s"queue"\sfor\s/ <>
-                                    ~S/"concurrency"\ssection.*$/
   @smoke "      - run: bin/smoke_consumer --path .\n"
 
   @mutations [
@@ -108,6 +106,14 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   test "the real .github workflows and setup action pass every rule" do
     assert workflow_violations(real_files()) == []
+  end
+
+  test "restoring the exact legacy CI workflow fails the lock contracts" do
+    rules = real_files() |> Map.put("ci.yml", File.read!(@legacy_ci)) |> fired()
+
+    assert :ci_health_concurrency in rules
+    assert :workflow_concurrency in rules
+    assert :queue_actionlint_ignore in rules
   end
 
   test "a workflow change cannot hide a missing health-run lock" do
@@ -424,42 +430,30 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp ci_health_concurrency_violations(text, body) do
-    if legacy_workflow?(text) do
-      []
-    else
-      check(
-        serialized_health?(body) and queue_settings(text) == ["queue: max"],
-        {:ci_health_concurrency, "ci-health", nil}
-      )
-    end
+    check(
+      serialized_health?(body) and queue_settings(text) == ["queue: max"],
+      {:ci_health_concurrency, "ci-health", nil}
+    )
   end
 
-  defp actionlint_queue_compat_violations(text, body) do
-    if legacy_workflow?(text) do
-      []
-    else
-      check(
-        step?(body, &actionlint_queue_ignore?/1),
-        {:queue_actionlint_ignore, "security", nil}
-      )
-    end
+  defp actionlint_queue_compat_violations(_text, body) do
+    check(
+      step?(body, &actionlint_queue_ignore?/1),
+      {:queue_actionlint_ignore, "security", nil}
+    )
   end
 
   defp actionlint_queue_ignore?(step) do
     Enum.any?(step, &String.starts_with?(&1, "uses: docker://rhysd/actionlint@")) and
-      (@actionlint_queue_ignore in step or @legacy_actionlint_queue_ignore in step)
+      @actionlint_queue_ignore in step
   end
 
   defp workflow_concurrency_violations(text) do
-    if legacy_workflow?(text) do
-      []
-    else
-      workflow = text |> lines() |> Enum.take_while(&(&1 != "jobs:")) |> Enum.join("\n")
+    workflow = text |> lines() |> Enum.take_while(&(&1 != "jobs:")) |> Enum.join("\n")
 
-      expected = "concurrency:\n  " <> @workflow_group <> "\n  " <> @workflow_cancel
+    expected = "concurrency:\n  " <> @workflow_group <> "\n  " <> @workflow_cancel
 
-      check(String.contains?(workflow, expected), {:workflow_concurrency, "workflow", nil})
-    end
+    check(String.contains?(workflow, expected), {:workflow_concurrency, "workflow", nil})
   end
 
   defp queue_actionlint_scope_violations(workflows) do
@@ -473,11 +467,6 @@ defmodule Fablebook.Contract.CiShapeTest do
     for line <- lines(text),
         Regex.match?(~r/(?:\A\s*|[{,]\s*)["']?queue["']?\s*:/, line),
         do: String.trim(line)
-  end
-
-  defp legacy_workflow?(text) do
-    digest = :crypto.hash(:sha256, text) |> Base.encode16(case: :lower)
-    digest == @legacy_ci_sha256
   end
 
   defp bypass?(line) do
