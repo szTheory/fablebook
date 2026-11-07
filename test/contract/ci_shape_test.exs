@@ -24,7 +24,7 @@ defmodule Fablebook.Contract.CiShapeTest do
   @gate_needs "    needs: [core, security, nightly]\n"
   @nightly_if "    if: github.event.schedule == '17 3 * * *' || startsWith(github.head_ref, 'release-please--')\n"
   @ci_health_group "group: ci-health-${{ github.workflow }}"
-  @actionlint_queue_ignore ~s/args: -color -ignore '^unexpected key "queue" for "concurrency" section.*$'/
+  @actionlint_queue_ignore ~S/args: -color -ignore ^unexpected\skey\s"queue"\sfor\s"concurrency"\ssection.*$/
   @smoke "      - run: bin/smoke_consumer --path .\n"
 
   @mutations [
