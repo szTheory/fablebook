@@ -189,6 +189,21 @@ defmodule Fablebook.Contract.CiShapeTest do
     assert workflow_violations(files) == []
   end
 
+  test "workflow fields inside a shell heredoc are not parsed as YAML fields" do
+    files = base_files()
+
+    changed =
+      String.replace(
+        Map.fetch!(files, "ci.yml"),
+        "          echo \"$NEEDS\" | jq -e --arg ref \"$HEAD_REF\" 'to_entries | all(\n",
+        "          cat <<'YAML'\n          uses: owner/action@main\n          paths: [lib]\n          YAML\n          echo \"$NEEDS\" | jq -e --arg ref \"$HEAD_REF\" 'to_entries | all(\n",
+        global: false
+      )
+
+    assert changed != Map.fetch!(files, "ci.yml")
+    assert workflow_violations(Map.put(files, "ci.yml", changed)) == []
+  end
+
   test "YAML-looking alias text inside tagged and untagged block scalars is not a mapping key" do
     files = base_files()
     original = Map.fetch!(files, "hex-publish.yml")
@@ -343,8 +358,8 @@ defmodule Fablebook.Contract.CiShapeTest do
       check(not (yaml_line =~ ~r/(?:\A|:\s+|-\s+)[&*][A-Za-z_]/), {:anchor, at, line}) ++
       check(not String.contains?(yaml_line, "<<:"), {:merge_key, at, line}) ++
       check(String.length(line) <= 120, {:line_length, at, String.length(line)}) ++
-      check(not (line =~ ~r/\A\s*(?:- )?paths(?:-ignore)?:/), {:paths_filter, at, line}) ++
-      image_violations(at, line)
+      check(not (yaml_line =~ ~r/\A\s*(?:- )?paths(?:-ignore)?:/), {:paths_filter, at, line}) ++
+      image_violations(at, yaml_line)
   end
 
   defp image_violations(at, line) do
@@ -355,7 +370,8 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp uses_refs(text) do
-    for line <- lines(text), [_, value] <- [Regex.run(~r/\A\s*(?:- )?uses:(.*)\z/, line)] do
+    for line <- text |> strip_yaml_block_scalar_bodies() |> lines(),
+        [_, value] <- [Regex.run(~r/\A\s*(?:- )?uses:(.*)\z/, line)] do
       case Regex.run(~r/\A\s*(\S+)(?:\s+#.*)?\z/, value) do
         [_, ref] -> ref
         nil -> String.trim(value)
