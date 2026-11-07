@@ -204,6 +204,27 @@ defmodule Fablebook.Contract.CiShapeTest do
     assert workflow_violations(Map.put(files, "ci.yml", changed)) == []
   end
 
+  test "workflow fields inside multiline quoted scalars are not parsed as YAML fields" do
+    files = base_files()
+    original = Map.fetch!(files, "release-please.yml")
+
+    for quote <- ["\"", "'"] do
+      scalar =
+        "concurrency:\n  group: #{quote}build\n    queue: invalid\n    uses: owner/action@main\n    paths: [lib]#{quote}\n  cancel-in-progress: false\n"
+
+      changed =
+        String.replace(
+          original,
+          "concurrency:\n  group: release-please\n  cancel-in-progress: false\n",
+          scalar,
+          global: false
+        )
+
+      assert changed != original
+      assert workflow_violations(Map.put(files, "release-please.yml", changed)) == []
+    end
+  end
+
   test "YAML-looking alias text inside tagged and untagged block scalars is not a mapping key" do
     files = base_files()
     original = Map.fetch!(files, "hex-publish.yml")
@@ -335,7 +356,7 @@ defmodule Fablebook.Contract.CiShapeTest do
 
     yaml_lines =
       text
-      |> strip_yaml_block_scalar_bodies()
+      |> strip_yaml_scalar_bodies()
       |> lines()
       |> Enum.with_index(1)
       |> Map.new(fn {line, n} -> {n, line} end)
@@ -370,7 +391,7 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp uses_refs(text) do
-    for line <- text |> strip_yaml_block_scalar_bodies() |> lines(),
+    for line <- text |> strip_yaml_scalar_bodies() |> lines(),
         [_, value] <- [Regex.run(~r/\A\s*(?:- )?uses:(.*)\z/, line)] do
       case Regex.run(~r/\A\s*(\S+)(?:\s+#.*)?\z/, value) do
         [_, ref] -> ref
@@ -538,7 +559,7 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp queue_settings(text) do
     # The actionlint ignore is global, so reject YAML key syntax the literal scanner cannot decode.
     # Tagged, anchored, aliased, and escaped keys must not hide unsupported queue settings.
-    scan_text = strip_yaml_block_scalar_bodies(text)
+    scan_text = strip_yaml_mapping_value_scalars(text)
 
     cond do
       Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\*[^\s,:{}\[\]]+[ \t]*:/, scan_text) ->
@@ -571,6 +592,108 @@ defmodule Fablebook.Contract.CiShapeTest do
 
     reversed |> Enum.reverse() |> Enum.join("\n")
   end
+
+  # These contracts inspect YAML lines rather than parsed nodes, so quoted value
+  # bodies must be masked without removing their source line boundaries.
+  defp strip_yaml_scalar_bodies(text),
+    do: strip_yaml_quoted_values(strip_yaml_block_scalar_bodies(text), :multiline)
+
+  # Key scans also mask same-line values so embedded comma + queue text cannot be
+  # mistaken for a mapping key.
+  defp strip_yaml_mapping_value_scalars(text),
+    do: strip_yaml_quoted_values(strip_yaml_block_scalar_bodies(text), :all)
+
+  defp strip_yaml_quoted_values(text, mode) do
+    {reversed, _quote} =
+      text
+      |> String.split("\n", trim: false)
+      |> Enum.reduce({[], nil}, fn line, {acc, quote} ->
+        {masked, next_quote} = strip_yaml_quoted_line(line, quote, mode)
+        {[masked | acc], next_quote}
+      end)
+
+    reversed |> Enum.reverse() |> Enum.join("\n")
+  end
+
+  defp strip_yaml_quoted_line(line, quote, mode) when is_binary(quote) do
+    case mask_quoted_continuation(line, quote) do
+      {:open, masked} ->
+        {masked, quote}
+
+      {:closed, masked, tail} ->
+        {tail_masked, next_quote} = strip_yaml_quoted_values_from(tail, mode)
+        {masked <> tail_masked, next_quote}
+    end
+  end
+
+  defp strip_yaml_quoted_line(line, nil, mode),
+    do: strip_yaml_quoted_values_from(line, mode)
+
+  defp strip_yaml_quoted_values_from(line, mode) do
+    case yaml_value_quote_start(line) do
+      nil -> {line, nil}
+      {prefix, rest, quote} -> strip_yaml_quote_value(prefix, rest, quote, mode)
+    end
+  end
+
+  defp strip_yaml_quote_value(prefix, rest, quote, mode) do
+    case mask_quoted_value(rest, quote) do
+      {:open, masked} ->
+        {prefix <> masked, quote}
+
+      {:closed, masked, tail} ->
+        consumed_bytes = byte_size(rest) - byte_size(tail)
+        value = if mode == :multiline, do: binary_part(rest, 0, consumed_bytes), else: masked
+        {tail_masked, next_quote} = strip_yaml_quoted_values_from(tail, mode)
+        {prefix <> value <> tail_masked, next_quote}
+    end
+  end
+
+  defp yaml_value_quote_start(line) do
+    case Regex.run(
+           ~r/(?:\A\s*[^:#\n]+:\s*|\A\s*-\s*|[{,]\s*[^,:{}\[\]]+:\s*|\[\s*)(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]+)*(["'])/,
+           line,
+           return: :index
+         ) do
+      [{_start, _length}, {quote_start, 1}] ->
+        prefix = binary_part(line, 0, quote_start)
+        rest = binary_part(line, quote_start, byte_size(line) - quote_start)
+        {prefix, rest, binary_part(rest, 0, 1)}
+
+      _ ->
+        nil
+    end
+  end
+
+  defp mask_quoted_value(rest, quote) do
+    [^quote | tail] = String.graphemes(rest)
+    consume_quoted_graphemes(tail, quote, [quote])
+  end
+
+  defp mask_quoted_continuation(line, quote) do
+    consume_quoted_graphemes(String.graphemes(line), quote, [])
+  end
+
+  defp consume_quoted_graphemes([], _quote, reversed),
+    do: {:open, blank_yaml_scalar(reversed)}
+
+  defp consume_quoted_graphemes(["\\", next | rest], "\"", reversed),
+    do: consume_quoted_graphemes(rest, "\"", [next, "\\" | reversed])
+
+  defp consume_quoted_graphemes(["\\"], "\"", reversed),
+    do: {:open, blank_yaml_scalar(["\\" | reversed])}
+
+  defp consume_quoted_graphemes(["'", "'" | rest], "'", reversed),
+    do: consume_quoted_graphemes(rest, "'", ["'", "'" | reversed])
+
+  defp consume_quoted_graphemes([quote | rest], quote, reversed),
+    do: {:closed, blank_yaml_scalar([quote | reversed]), Enum.join(rest)}
+
+  defp consume_quoted_graphemes([grapheme | rest], quote, reversed),
+    do: consume_quoted_graphemes(rest, quote, [grapheme | reversed])
+
+  defp blank_yaml_scalar(graphemes),
+    do: graphemes |> Enum.map_join("", fn _ -> " " end)
 
   defp strip_block_scalar_line(line, {acc, scalar_indent}) do
     indent = String.length(line) - String.length(String.trim_leading(line))
