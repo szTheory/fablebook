@@ -189,20 +189,22 @@ defmodule Fablebook.Contract.CiShapeTest do
     assert workflow_violations(files) == []
   end
 
-  test "YAML-looking alias text inside a block scalar is not a mapping key" do
+  test "YAML-looking alias text inside tagged and untagged block scalars is not a mapping key" do
     files = base_files()
     original = Map.fetch!(files, "hex-publish.yml")
 
-    changed =
-      String.replace(
-        original,
-        "        run: |\n          [[ \"$TAG\" =~",
-        "        run: |\n          *queue: shell text\n          [[ \"$TAG\" =~",
-        global: false
-      )
+    for header <- ["        run: |", "        run: !!str |"] do
+      changed =
+        String.replace(
+          original,
+          "        run: |\n          [[ \"$TAG\" =~",
+          "#{header}\n          *queue: shell text\n          [[ \"$TAG\" =~",
+          global: false
+        )
 
-    assert changed != original
-    assert workflow_violations(Map.put(files, "hex-publish.yml", changed)) == []
+      assert changed != original
+      assert workflow_violations(Map.put(files, "hex-publish.yml", changed)) == []
+    end
   end
 
   test "p50 is not a phase name" do
@@ -568,7 +570,14 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   defp block_scalar_header?(line) do
     Regex.match?(
-      ~r/(?:\A|:\s*|-\s*)[|>](?:[+-][1-9]?|[1-9][+-]?)?(?:\s+\#[^\r\n]*)?\s*\z/,
+      ~r/
+        (?:\A|:\s*|-\s*)
+        (?:(?:!!\S+|!\S+|&\S+)[ \t]+)*
+        [|>]
+        (?:[+-][1-9]?|[1-9][+-]?)?
+        (?:\s+\#[^\r\n]*)?
+        \s*\z
+      /x,
       line
     )
   end
