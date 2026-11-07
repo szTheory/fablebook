@@ -161,6 +161,10 @@ jobs:
 
   ci-health:
     if: github.event.schedule == '23 5 * * 1' || github.event_name == 'workflow_dispatch'
+    concurrency:
+      group: ci-health-${{ github.workflow }}
+      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
