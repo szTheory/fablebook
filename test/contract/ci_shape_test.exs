@@ -90,6 +90,9 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:queue_actionlint_ignore, "ci.yml", @actionlint_queue_ignore, "args: -color -ignore '.*'"},
     {:queue_actionlint_scope, "release-please.yml", "  group: release-please\n",
      "  group: release-please\n  queue: invalid\n"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
+     "concurrency: {group: release-please, queue: invalid}"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
      "      - run: bin/ci_health --file-regression nightly"},
@@ -465,7 +468,7 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   defp queue_settings(text) do
     for line <- lines(text),
-        Regex.match?(~r/\A\s*["']?queue["']?\s*:/, line),
+        Regex.match?(~r/(?:\A\s*|[{,]\s*)["']?queue["']?\s*:/, line),
         do: String.trim(line)
   end
 
