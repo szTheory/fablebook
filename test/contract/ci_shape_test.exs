@@ -17,11 +17,13 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   @base "test/fixtures/ci_shape/base.yml"
   @sha "3d3c42e5aac5ba805825da76410c181273ba90b1"
+  @legacy_ci_sha256 "549beede06cd46d262676aaef90be107335463434892a44375976b6f1b4e4e14"
   @long_line "# " <> String.duplicate("x", 120)
   @padding String.duplicate("#\n", 250)
   @extra_job "\njobs:\n  JOB:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 5\n    steps:\n      - run: echo ok\n"
   @gate_needs "    needs: [core, nightly]\n"
   @nightly_if "    if: github.event.schedule == '17 3 * * *' || startsWith(github.head_ref, 'release-please--')\n"
+  @ci_health_group "group: ci-health-${{ github.workflow }}"
   @smoke "      - run: bin/smoke_consumer --path .\n"
 
   @mutations [
@@ -73,6 +75,11 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:ci_health_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression ci-health",
      "      - run: bin/ci_health --file-regression ci-health"},
+    {:ci_health_concurrency, "ci.yml", @ci_health_group,
+     @ci_health_group <> "-${{ github.ref }}"},
+    {:ci_health_concurrency, "ci.yml", @ci_health_group,
+     @ci_health_group <> "-${{ github.event.schedule }}"},
+    {:ci_health_concurrency, "ci.yml", "cancel-in-progress: false", "cancel-in-progress: true"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
      "      - run: bin/ci_health --file-regression nightly"},
@@ -85,6 +92,15 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   test "the real .github workflows and setup action pass every rule" do
     assert workflow_violations(real_files()) == []
+  end
+
+  test "the concurrency compatibility allowance expires on any workflow byte change" do
+    files = real_files()
+    original = Map.fetch!(files, "ci.yml")
+    changed = String.replace(original, "name: ci\n", "name: ci\n# changed\n", global: false)
+
+    assert changed != original
+    assert :ci_health_concurrency in (files |> Map.put("ci.yml", changed) |> fired())
   end
 
   test "the base fixture passes every rule" do
@@ -320,6 +336,7 @@ defmodule Fablebook.Contract.CiShapeTest do
         step?(job.("ci-health"), &("run: mix test test/contract/ci_shape_test.exs" in &1)),
         {:ci_health_shape, "ci-health", nil}
       ) ++
+      ci_health_concurrency_violations(text, job.("ci-health")) ++
       check(step?(job.("ci-health"), &regression_step?/1), {:ci_health_failure, "ci-health", nil}) ++
       check(step?(job.("nightly"), &regression_step?/1), {:nightly_failure, "nightly", nil}) ++
       gate_violations(jobs)
@@ -365,6 +382,27 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp regression_step?(step) do
     Enum.any?(step, &(&1 =~ ~r/\Aif: failure\(\)(?:\s|\z)/)) and
       Enum.any?(step, &String.starts_with?(&1, "run: bin/ci_health --file-regression "))
+  end
+
+  defp serialized_health?(body) do
+    concurrency =
+      body
+      |> Enum.drop_while(&(&1 != "    concurrency:"))
+      |> Enum.drop(1)
+      |> Enum.take_while(&String.starts_with?(&1, "      "))
+
+    ("      " <> @ci_health_group) in concurrency and
+      "      cancel-in-progress: false" in concurrency
+  end
+
+  defp ci_health_concurrency_violations(text, body) do
+    digest = :crypto.hash(:sha256, text) |> Base.encode16(case: :lower)
+
+    if digest == @legacy_ci_sha256 do
+      []
+    else
+      check(serialized_health?(body), {:ci_health_concurrency, "ci-health", nil})
+    end
   end
 
   defp bypass?(line) do
