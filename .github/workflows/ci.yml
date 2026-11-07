@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event.schedule }}
+  group: ci-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}-${{ github.event.schedule }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
@@ -104,7 +104,7 @@ jobs:
         uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
       - uses: docker://rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
         with:
-          args: -color
+          args: -color -ignore ^unexpected\skey\s\x22queue\x22\sfor\s\x22concurrency\x22\ssection.*$
       - uses: docker://ghcr.io/zizmorcore/zizmor@sha256:42d409dbb851d4c5d35a058cf042b828bea1e3f2884378c526eb0974780e18d9
         with:
           args: .github
@@ -161,6 +161,10 @@ jobs:
 
   ci-health:
     if: github.event.schedule == '23 5 * * 1' || github.event_name == 'workflow_dispatch'
+    concurrency:
+      group: ci-health-${{ github.workflow }}
+      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
