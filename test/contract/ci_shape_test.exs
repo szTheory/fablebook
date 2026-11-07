@@ -94,10 +94,18 @@ defmodule Fablebook.Contract.CiShapeTest do
     assert workflow_violations(real_files()) == []
   end
 
-  test "the concurrency compatibility allowance expires on any workflow byte change" do
+  test "a workflow change cannot hide a missing health-run lock" do
     files = real_files()
     original = Map.fetch!(files, "ci.yml")
-    changed = String.replace(original, "name: ci\n", "name: ci\n# changed\n", global: false)
+
+    changed =
+      original
+      |> String.replace(
+        "    concurrency:\n      group: ci-health-${{ github.workflow }}\n      cancel-in-progress: false\n",
+        "",
+        global: false
+      )
+      |> String.replace("name: ci\n", "name: ci\n# changed\n", global: false)
 
     assert changed != original
     assert :ci_health_concurrency in (files |> Map.put("ci.yml", changed) |> fired())
