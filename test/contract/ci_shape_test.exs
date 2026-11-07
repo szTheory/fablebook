@@ -21,9 +21,10 @@ defmodule Fablebook.Contract.CiShapeTest do
   @long_line "# " <> String.duplicate("x", 120)
   @padding String.duplicate("#\n", 250)
   @extra_job "\njobs:\n  JOB:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 5\n    steps:\n      - run: echo ok\n"
-  @gate_needs "    needs: [core, nightly]\n"
+  @gate_needs "    needs: [core, security, nightly]\n"
   @nightly_if "    if: github.event.schedule == '17 3 * * *' || startsWith(github.head_ref, 'release-please--')\n"
   @ci_health_group "group: ci-health-${{ github.workflow }}"
+  @actionlint_queue_ignore ~s/args: -color -ignore '^unexpected key "queue" for "concurrency" section.*$'/
   @smoke "      - run: bin/smoke_consumer --path .\n"
 
   @mutations [
@@ -81,6 +82,8 @@ defmodule Fablebook.Contract.CiShapeTest do
      @ci_health_group <> "-${{ github.event.schedule }}"},
     {:ci_health_concurrency, "ci.yml", "cancel-in-progress: false", "cancel-in-progress: true"},
     {:ci_health_concurrency, "ci.yml", "queue: max", "queue: single"},
+    {:queue_actionlint_ignore, "ci.yml", @actionlint_queue_ignore, "args: -color"},
+    {:queue_actionlint_ignore, "ci.yml", @actionlint_queue_ignore, "args: -color -ignore '.*'"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
      "      - run: bin/ci_health --file-regression nightly"},
@@ -346,6 +349,7 @@ defmodule Fablebook.Contract.CiShapeTest do
         {:ci_health_shape, "ci-health", nil}
       ) ++
       ci_health_concurrency_violations(text, job.("ci-health")) ++
+      actionlint_queue_compat_violations(text, job.("security")) ++
       check(step?(job.("ci-health"), &regression_step?/1), {:ci_health_failure, "ci-health", nil}) ++
       check(step?(job.("nightly"), &regression_step?/1), {:nightly_failure, "nightly", nil}) ++
       gate_violations(jobs)
@@ -413,6 +417,24 @@ defmodule Fablebook.Contract.CiShapeTest do
     else
       check(serialized_health?(body), {:ci_health_concurrency, "ci-health", nil})
     end
+  end
+
+  defp actionlint_queue_compat_violations(text, body) do
+    digest = :crypto.hash(:sha256, text) |> Base.encode16(case: :lower)
+
+    if digest == @legacy_ci_sha256 do
+      []
+    else
+      check(
+        step?(body, &actionlint_queue_ignore?/1),
+        {:queue_actionlint_ignore, "security", nil}
+      )
+    end
+  end
+
+  defp actionlint_queue_ignore?(step) do
+    Enum.any?(step, &String.starts_with?(&1, "uses: docker://rhysd/actionlint@")) and
+      @actionlint_queue_ignore in step
   end
 
   defp bypass?(line) do
