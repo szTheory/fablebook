@@ -80,6 +80,7 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:ci_health_concurrency, "ci.yml", @ci_health_group,
      @ci_health_group <> "-${{ github.event.schedule }}"},
     {:ci_health_concurrency, "ci.yml", "cancel-in-progress: false", "cancel-in-progress: true"},
+    {:ci_health_concurrency, "ci.yml", "queue: max", "queue: single"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
      "      - run: bin/ci_health --file-regression nightly"},
@@ -101,7 +102,7 @@ defmodule Fablebook.Contract.CiShapeTest do
     changed =
       original
       |> String.replace(
-        "    concurrency:\n      group: ci-health-${{ github.workflow }}\n      cancel-in-progress: false\n",
+        "    concurrency:\n      group: ci-health-${{ github.workflow }}\n      cancel-in-progress: false\n      queue: max\n",
         "",
         global: false
       )
@@ -400,7 +401,8 @@ defmodule Fablebook.Contract.CiShapeTest do
       |> Enum.take_while(&String.starts_with?(&1, "      "))
 
     ("      " <> @ci_health_group) in concurrency and
-      "      cancel-in-progress: false" in concurrency
+      "      cancel-in-progress: false" in concurrency and
+      "      queue: max" in concurrency
   end
 
   defp ci_health_concurrency_violations(text, body) do
