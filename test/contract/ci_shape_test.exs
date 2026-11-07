@@ -96,6 +96,9 @@ defmodule Fablebook.Contract.CiShapeTest do
      "concurrency: {group: release-please, queue: invalid}"},
     {:queue_actionlint_scope, "release-please.yml",
      "concurrency:\n  group: release-please\n  cancel-in-progress: false",
+     "concurrency:\n  \"queue\": invalid\n  group: release-please\n  cancel-in-progress: false"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
      "concurrency: {? queue : invalid, group: release-please, cancel-in-progress: false}"},
     {:queue_actionlint_scope, "release-please.yml",
      "concurrency:\n  group: release-please\n  cancel-in-progress: false",
@@ -740,20 +743,31 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp pending_yaml_quote_start(line, pending_indent) do
-    if line_indent(line) > pending_indent do
-      case Regex.run(
-             ~r/\A\s*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]+)*(["'])/,
-             line,
-             return: :index
-           ) do
-        [{_start, _length}, {quote_start, 1}] ->
-          prefix = binary_part(line, 0, quote_start)
-          rest = binary_part(line, quote_start, byte_size(line) - quote_start)
-          {prefix, rest, binary_part(rest, 0, 1)}
+    if line_indent(line) > pending_indent, do: pending_yaml_quote_start(line)
+  end
 
-        _ ->
-          nil
-      end
+  defp pending_yaml_quote_start(line) do
+    case Regex.run(
+           ~r/\A\s*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]+)*(["'])/,
+           line,
+           return: :index
+         ) do
+      [{_start, _length}, {quote_start, 1}] -> pending_yaml_quote_parts(line, quote_start)
+      _ -> nil
+    end
+  end
+
+  defp pending_yaml_quote_parts(line, quote_start) do
+    prefix = binary_part(line, 0, quote_start)
+    rest = binary_part(line, quote_start, byte_size(line) - quote_start)
+    quote = binary_part(rest, 0, 1)
+    if pending_yaml_mapping_key?(rest, quote), do: nil, else: {prefix, rest, quote}
+  end
+
+  defp pending_yaml_mapping_key?(rest, quote) do
+    case mask_quoted_value(rest, quote) do
+      {:closed, _masked, tail} -> Regex.match?(~r/\A[ \t]*:/, tail)
+      {:open, _masked} -> false
     end
   end
 
