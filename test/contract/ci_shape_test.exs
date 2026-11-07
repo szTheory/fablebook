@@ -189,6 +189,22 @@ defmodule Fablebook.Contract.CiShapeTest do
     assert workflow_violations(files) == []
   end
 
+  test "YAML-looking alias text inside a block scalar is not a mapping key" do
+    files = base_files()
+    original = Map.fetch!(files, "hex-publish.yml")
+
+    changed =
+      String.replace(
+        original,
+        "        run: |\n          [[ \"$TAG\" =~",
+        "        run: |\n          *queue: shell text\n          [[ \"$TAG\" =~",
+        global: false
+      )
+
+    assert changed != original
+    assert workflow_violations(Map.put(files, "hex-publish.yml", changed)) == []
+  end
+
   test "p50 is not a phase name" do
     files =
       Map.update!(base_files(), "ci.yml", &String.replace(&1, "name: ci\n", "name: ci p50\n"))
@@ -300,7 +316,16 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp text_violations({file, text}) do
     numbered = text |> lines() |> Enum.with_index(1)
 
-    Enum.flat_map(numbered, &line_violations(file, &1)) ++
+    yaml_lines =
+      text
+      |> strip_yaml_block_scalar_bodies()
+      |> lines()
+      |> Enum.with_index(1)
+      |> Map.new(fn {line, n} -> {n, line} end)
+
+    Enum.flat_map(numbered, fn {line, n} ->
+      line_violations(file, {line, n}, Map.fetch!(yaml_lines, n))
+    end) ++
       for(ref <- uses_refs(text), violation <- uses_violations(file, ref), do: violation) ++
       node_violations(file, text) ++
       for(
@@ -309,12 +334,12 @@ defmodule Fablebook.Contract.CiShapeTest do
       )
   end
 
-  defp line_violations(file, {line, n}) do
+  defp line_violations(file, {line, n}, yaml_line) do
     at = "#{file}:#{n}"
 
     check(not String.contains?(line, "\t"), {:tab, at, line}) ++
-      check(not (line =~ ~r/(?:\A|:\s+|-\s+)[&*][A-Za-z_]/), {:anchor, at, line}) ++
-      check(not String.contains?(line, "<<:"), {:merge_key, at, line}) ++
+      check(not (yaml_line =~ ~r/(?:\A|:\s+|-\s+)[&*][A-Za-z_]/), {:anchor, at, line}) ++
+      check(not String.contains?(yaml_line, "<<:"), {:merge_key, at, line}) ++
       check(String.length(line) <= 120, {:line_length, at, String.length(line)}) ++
       check(not (line =~ ~r/\A\s*(?:- )?paths(?:-ignore)?:/), {:paths_filter, at, line}) ++
       image_violations(at, line)
@@ -495,27 +520,57 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp queue_settings(text) do
     # The actionlint ignore is global, so reject YAML key syntax the literal scanner cannot decode.
     # Tagged, anchored, aliased, and escaped keys must not hide unsupported queue settings.
+    scan_text = strip_yaml_block_scalar_bodies(text)
+
     cond do
-      Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\*[^\s,:{}\[\]]+[ \t]*:/, text) ->
+      Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\*[^\s,:{}\[\]]+[ \t]*:/, scan_text) ->
         ["aliased YAML mapping key syntax"]
 
       Regex.match?(
         ~r/(?:\A|\n|[{,]|-[ \t])\s*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)(?:[ \t]+|\r?\n)[ \t]*(?:\#[^\r\n]*\r?\n[ \t]*)?)+["']?queue["']?[ \t]*:/,
-        text
+        scan_text
       ) ->
         ["tagged YAML mapping key syntax"]
 
-      Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\?(?:\s|["'])/, text) ->
+      Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\?(?:\s|["'])/, scan_text) ->
         ["explicit YAML mapping key syntax"]
 
-      Regex.match?(~r/"(?:\\.|[^"\\])*\\(?:\\.|[^"\\])*"[ \t]*:/, text) ->
+      Regex.match?(~r/"(?:\\.|[^"\\])*\\(?:\\.|[^"\\])*"[ \t]*:/, scan_text) ->
         ["escaped double-quoted YAML mapping key"]
 
       true ->
-        for line <- lines(text),
+        for line <- lines(scan_text),
             Regex.match?(~r/(?:\A\s*|[{,]\s*)["']?queue["']?\s*:/, line),
             do: String.trim(line)
     end
+  end
+
+  defp strip_yaml_block_scalar_bodies(text) do
+    {reversed, _scalar_indent} =
+      text
+      |> String.split("\n", trim: false)
+      |> Enum.reduce({[], nil}, &strip_block_scalar_line/2)
+
+    reversed |> Enum.reverse() |> Enum.join("\n")
+  end
+
+  defp strip_block_scalar_line(line, {acc, scalar_indent}) do
+    indent = String.length(line) - String.length(String.trim_leading(line))
+    blank? = String.trim(line) == ""
+
+    if is_integer(scalar_indent) and (blank? or indent > scalar_indent) do
+      {["" | acc], scalar_indent}
+    else
+      next_scalar_indent = if block_scalar_header?(line), do: indent, else: nil
+      {[line | acc], next_scalar_indent}
+    end
+  end
+
+  defp block_scalar_header?(line) do
+    Regex.match?(
+      ~r/(?:\A|:\s*|-\s*)[|>](?:[+-][1-9]?|[1-9][+-]?)?(?:\s+\#[^\r\n]*)?\s*\z/,
+      line
+    )
   end
 
   defp bypass?(line) do
