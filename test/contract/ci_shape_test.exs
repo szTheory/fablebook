@@ -225,6 +225,45 @@ defmodule Fablebook.Contract.CiShapeTest do
     end
   end
 
+  test "block scalar text inside a multiline quoted scalar does not hide later YAML fields" do
+    files = base_files()
+    original = Map.fetch!(files, "release-please.yml")
+
+    quoted =
+      String.replace(
+        original,
+        "name: release-please\n",
+        "name: \"hello\n  run: |\n    done\"\n",
+        global: false
+      )
+
+    assert quoted != original
+    assert workflow_violations(Map.put(files, "release-please.yml", quoted)) == []
+
+    changed =
+      String.replace(
+        quoted,
+        "  cancel-in-progress: false\n",
+        "  cancel-in-progress: false\n  queue: invalid\n",
+        global: false
+      )
+
+    assert changed != quoted
+    assert fired(Map.put(files, "release-please.yml", changed)) == [:queue_actionlint_scope]
+  end
+
+  test "same-line quoted scalar text is not parsed as anchors or merge keys" do
+    files = base_files()
+    original = Map.fetch!(files, "ci.yml")
+
+    for value <- ["literal: &queue_key", "literal: <<:"] do
+      changed = String.replace(original, "name: ci\n", "name: \"#{value}\"\n", global: false)
+
+      assert changed != original
+      assert workflow_violations(Map.put(files, "ci.yml", changed)) == []
+    end
+  end
+
   test "YAML-looking alias text inside tagged and untagged block scalars is not a mapping key" do
     files = base_files()
     original = Map.fetch!(files, "hex-publish.yml")
@@ -374,10 +413,14 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   defp line_violations(file, {line, n}, yaml_line) do
     at = "#{file}:#{n}"
+    yaml_structure_line = strip_yaml_quoted_values(yaml_line, :all)
 
     check(not String.contains?(line, "\t"), {:tab, at, line}) ++
-      check(not (yaml_line =~ ~r/(?:\A|:\s+|-\s+)[&*][A-Za-z_]/), {:anchor, at, line}) ++
-      check(not String.contains?(yaml_line, "<<:"), {:merge_key, at, line}) ++
+      check(
+        not (yaml_structure_line =~ ~r/(?:\A|:\s+|-\s+)[&*][A-Za-z_]/),
+        {:anchor, at, line}
+      ) ++
+      check(not String.contains?(yaml_structure_line, "<<:"), {:merge_key, at, line}) ++
       check(String.length(line) <= 120, {:line_length, at, String.length(line)}) ++
       check(not (yaml_line =~ ~r/\A\s*(?:- )?paths(?:-ignore)?:/), {:paths_filter, at, line}) ++
       image_violations(at, yaml_line)
@@ -585,10 +628,10 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp strip_yaml_block_scalar_bodies(text) do
-    {reversed, _scalar_indent} =
+    {reversed, {_scalar_indent, _quote}} =
       text
       |> String.split("\n", trim: false)
-      |> Enum.reduce({[], nil}, &strip_block_scalar_line/2)
+      |> Enum.reduce({[], {nil, nil}}, &strip_block_scalar_line/2)
 
     reversed |> Enum.reverse() |> Enum.join("\n")
   end
@@ -695,15 +738,19 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp blank_yaml_scalar(graphemes),
     do: graphemes |> Enum.map_join("", fn _ -> " " end)
 
-  defp strip_block_scalar_line(line, {acc, scalar_indent}) do
+  defp strip_block_scalar_line(line, {acc, {scalar_indent, quote}}) do
     indent = String.length(line) - String.length(String.trim_leading(line))
     blank? = String.trim(line) == ""
 
     if is_integer(scalar_indent) and (blank? or indent > scalar_indent) do
-      {["" | acc], scalar_indent}
+      {["" | acc], {scalar_indent, nil}}
     else
-      next_scalar_indent = if block_scalar_header?(line), do: indent, else: nil
-      {[line | acc], next_scalar_indent}
+      {yaml_line, next_quote} = strip_yaml_quoted_line(line, quote, :multiline)
+
+      next_scalar_indent =
+        if is_nil(next_quote) and block_scalar_header?(yaml_line), do: indent, else: nil
+
+      {[line | acc], {next_scalar_indent, next_quote}}
     end
   end
 
