@@ -104,3 +104,11 @@ All authored threats have dispositions and cited controls or prior acceptances. 
 | Threats found | 46 |
 | Closed | 46 |
 | Open | 0 |
+
+## Security Audit 2026-11-07
+
+| Metric | Count |
+|---|---|
+| Threats found | 0 |
+| Closed | 46 |
+| Open | 0 |

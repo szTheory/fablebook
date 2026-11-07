@@ -1,0 +1,126 @@
+{
+  "schema": "fablebook.ci-timing-contract.v1",
+  "recorded_at": "2026-11-06T15:06:53Z",
+  "plan": "01-07",
+  "gap_ids": ["G-01-15"],
+  "decision": {
+    "source": "INT-20261106-01",
+    "timing_objectives_seconds": {
+      "p50": 420,
+      "p95": 600
+    },
+    "classification": "visible operational feedback objectives; timing-only breaches are not release blockers",
+    "preserved_blockers": [
+      "ruleset drift",
+      "explicit job failures",
+      "security and correctness failures",
+      "release smoke failures"
+    ]
+  },
+  "delivery": {
+    "pr_url": "https://github.com/szTheory/fablebook/pull/50",
+    "pr_number": 50,
+    "title": "test(01-07): separate CI timing performance contract",
+    "state": "merged",
+    "base_branch": "main",
+    "base_sha": "10e1229e0d7cdc3e5fed1c29d4ee333e19cc96da",
+    "head_branch": "ci-performance-contract-stage1",
+    "head_sha": "deda55bae24a5560dffd7ed6735e0a23969fd442",
+    "merge_sha": "9a9a80446b2589dc900f20cce492e0661f820c5d",
+    "changed_paths": ["test/contract/ci_health_test.exs"],
+    "producer_sha256_at_base": "ea0fb3b5584bc5494418b44673b86419e482a329aeca0bcda856912351626324",
+    "producer_changed": false
+  },
+  "hosted_ci": {
+    "final_run": {
+      "run_number": 172,
+      "run_id": 42237252814,
+      "url": "https://github.com/szTheory/fablebook/actions/runs/42237252814",
+      "head_sha": "deda55bae24a5560dffd7ed6735e0a23969fd442",
+      "checks": {
+        "core": "success",
+        "floor": "success",
+        "dialyzer": "success",
+        "security": "success",
+        "ci-gate": "success",
+        "ci-health": "skipped",
+        "nightly": "skipped"
+      }
+    },
+    "earlier_attempt": {
+      "run_id": 42235518903,
+      "url": "https://github.com/szTheory/fablebook/actions/runs/42235518903",
+      "head_sha": "29f290901bd0a56bbe1b579050dd380c3fbda593",
+      "outcome": "core failed strict Credo on Enum.map |> Enum.join in the new test helper; changed to Enum.map_join and reran the full hosted suite",
+      "floor": "success",
+      "dialyzer": "success",
+      "security": "success"
+    }
+  },
+  "local_verification": {
+    "runtime_identities": {
+      "core": {
+        "elixir": "1.20.4",
+        "otp": "29.1.2",
+        "versions_file": ".tool-versions",
+        "lock_sha256": "4638a2d1c25b5be2bfaf6b6a3309e9147612f343aa694d64b2af99cc46f33a85"
+      },
+      "floor": {
+        "elixir": "1.18.5",
+        "otp": "27.3.4.9",
+        "versions_file": ".tool-versions.floor",
+        "lock_sha256": "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847"
+      }
+    },
+    "transcripts": [
+      {
+        "command": "bin/lane core test --warnings-as-errors test/contract/ci_health_test.exs",
+        "result": "25 passed",
+        "elapsed_seconds": 6.2
+      },
+      {
+        "command": "bin/lane floor test --warnings-as-errors test/contract/ci_health_test.exs",
+        "result": "25 passed, 0 failures",
+        "elapsed_seconds": 6.2
+      },
+      {
+        "command": "bin/lane core test --warnings-as-errors test/planning/contract_rule_test.exs test/planning/intent_test.exs",
+        "result": "32 passed",
+        "elapsed_seconds": 9.5
+      },
+      {
+        "command": "mix ci (Elixir 1.20.4 / OTP 29.1.2)",
+        "result": "full alias passed: formatting, dependency checks, compile, Credo, xref, docs, and 359 tests",
+        "elapsed_seconds": 432.9
+      }
+    ],
+    "mutation_controls": [
+      {
+        "test": "a harmless byte change exits the legacy digest branch",
+        "result": "passed; changed script bytes did not receive the historical exception, and the intended ci-performance assertion failed inside assert_raise"
+      },
+      {
+        "test": "an amended producer routed back to quality-regression fails strict classification",
+        "result": "passed; the intended ci-performance classification assertion failed inside assert_raise"
+      },
+      {
+        "test": "a release-guard mutation that blocks ci-performance fails the seam",
+        "result": "passed; the actual guard seam rejected the mutated performance blocker"
+      }
+    ],
+    "transient_test_runner_race": "The first simultaneous local core/floor invocations shared deterministic ExUnit temporary paths and interfered; both processes ended, then sequential lane runs passed. No source change resulted from the collision."
+  },
+  "pre_push_checks": {
+    "commit_author": "szTheory@users.noreply.github.com",
+    "changed_file_privacy_scan": "passed with no personal absolute paths in the sole PR file",
+    "scan_scope_decision": "The whole-repository scan found inherited home-path strings on main. Per the user's instruction, the push proceeded only after the changed-file scan passed; inherited paths were not edited in this contract PR."
+  },
+  "review": {
+    "internal_review": "passed; no significant issues found",
+    "hosted_review_submissions": 0,
+    "hosted_inline_threads": 0,
+    "merge_method": "squash"
+  },
+  "next_plan": "01-08",
+  "gap_closed": false
+}

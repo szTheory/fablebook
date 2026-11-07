@@ -1,0 +1,1100 @@
+{
+  "schema": "fablebook.ci-timing-closure.v1",
+  "recorded_at": "2026-11-06T16:51:15Z",
+  "plan": "01-09",
+  "gap_ids": [
+    "G-01-15"
+  ],
+  "owner_policy": {
+    "intent": "INT-20261106-01",
+    "p50_objective_seconds": 420,
+    "p95_objective_seconds": 600,
+    "timing_overages_block_release_or_phase_closure": false,
+    "correctness_security_ruleset_drift_and_smoke_regressions_remain_blocking": true
+  },
+  "delivery_history": [
+    {
+      "role": "initial timing contract",
+      "pr": 50,
+      "url": "https://github.com/szTheory/fablebook/pull/50",
+      "head_sha": "deda55bae24a5560dffd7ed6735e0a23969fd442",
+      "merge_sha": "9a9a80446b2589dc900f20cce492e0661f820c5d",
+      "changed_paths": [
+        "test/contract/ci_health_test.exs"
+      ],
+      "ci_run_id": 42237252814,
+      "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42237252814",
+      "required_checks": {
+        "core": "success",
+        "floor": "success",
+        "dialyzer": "success",
+        "security": "success",
+        "ci-gate": "success"
+      },
+      "allowed_skips": [
+        "ci-health",
+        "nightly"
+      ]
+    },
+    {
+      "role": "contract compatibility before producer",
+      "pr": 51,
+      "url": "https://github.com/szTheory/fablebook/pull/51",
+      "head_sha": "8fc6fe58d63173c9ab6010be9dd49ab983949af6",
+      "merge_sha": "1f7590aee02228e0cd8cb242486da4c954268ca1",
+      "changed_paths": [
+        "test/contract/ci_health_test.exs"
+      ],
+      "ci_run_id": 42245202610,
+      "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42245202610",
+      "required_checks": {
+        "core": "success",
+        "floor": "success",
+        "dialyzer": "success",
+        "security": "success",
+        "ci-gate": "success"
+      },
+      "allowed_skips": [
+        "ci-health",
+        "nightly"
+      ]
+    },
+    {
+      "role": "producer implementation",
+      "pr": 52,
+      "url": "https://github.com/szTheory/fablebook/pull/52",
+      "head_sha": "e87f744334621aec03a3e2233b8be3ddf7451a0d",
+      "merge_sha": "a5de2d0be26bab99e756720be4b3478bcdbb23a9",
+      "changed_paths": [
+        "bin/ci_health"
+      ],
+      "ci_run_id": 42247200617,
+      "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42247200617",
+      "required_checks": {
+        "core": "success",
+        "floor": "success",
+        "dialyzer": "success",
+        "security": "success",
+        "ci-gate": "success"
+      },
+      "allowed_skips": [
+        "ci-health",
+        "nightly"
+      ]
+    },
+    {
+      "role": "final strict contract after producer",
+      "pr": 53,
+      "url": "https://github.com/szTheory/fablebook/pull/53",
+      "head_sha": "960c50aa43fc326da5288cda01ca3445c78373a4",
+      "merge_sha": "91e08e5d60361e9fd4c32167d2b376ab2237baab",
+      "changed_paths": [
+        "test/contract/ci_health_test.exs"
+      ],
+      "ci_run_id": 42250970487,
+      "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42250970487",
+      "required_checks": {
+        "core": "success",
+        "floor": "success",
+        "dialyzer": "success",
+        "security": "success",
+        "ci-gate": "success"
+      },
+      "allowed_skips": [
+        "ci-health",
+        "nightly"
+      ]
+    }
+  ],
+  "deployed_main": {
+    "revision": "91e08e5d60361e9fd4c32167d2b376ab2237baab",
+    "producer_pr": 52,
+    "producer_revision": "a5de2d0be26bab99e756720be4b3478bcdbb23a9",
+    "bin_ci_health_sha256": "a67448fd13c0fc0875a23c72e1d3f5457ceb3b64622fc56cb1efbd4dbc3299a9",
+    "matches_plan_08_reviewed_producer": true,
+    "strict_contract_pr": 53,
+    "strict_contract_sha256": "374ffda85770f1fd73cb556ca91b2735899cdc2acbb0b18f58f2600cd58bb6cf",
+    "strict_contract_git_blob": "86dc9a44b70aed340ba897c31ee629efd6e81a76",
+    "strict_contract_separate_from_producer": true,
+    "pr_53_merge_ci_green": true
+  },
+  "performance_label": {
+    "name": "ci-performance",
+    "description": "Non-blocking CI feedback-time performance follow-up; timing objectives do not block releases.",
+    "color": "1D76DB",
+    "verified_present_after_migration": true
+  },
+  "live_reporting": {
+    "dry_run": {
+      "started_at": "2026-11-06T16:38:02Z",
+      "repository": "szTheory/fablebook",
+      "head_sha": "91e08e5d60361e9fd4c32167d2b376ab2237baab",
+      "script_sha256": "a67448fd13c0fc0875a23c72e1d3f5457ceb3b64622fc56cb1efbd4dbc3299a9",
+      "summary": "ci-gate on pull_request, attempt 1, last 7 days (n=51): p50 543 s, p95 783 s. Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking. a local run",
+      "sample_query_window": {
+        "created_after": "2026-10-30T16:38:02Z",
+        "first_created_at": "2026-10-30T16:54:07Z",
+        "last_created_at": "2026-11-06T16:17:24Z"
+      },
+      "sample": {
+        "n": 51,
+        "p50_seconds": 543,
+        "p95_seconds": 783
+      },
+      "thresholds_seconds": {
+        "p50": 420,
+        "p95": 600
+      },
+      "intended_issue_labels": [
+        "ci-timing",
+        "ci-performance"
+      ],
+      "ruleset_required_contexts": [
+        "ci-gate"
+      ],
+      "api_audit": {
+        "calls": 53,
+        "responses": 53,
+        "issue_access": false,
+        "quality_regression_access": false
+      },
+      "summary_file": "/private/tmp/fablebook-01-09/dry/summary.md",
+      "output_file": "/private/tmp/fablebook-01-09/dry/output.log",
+      "calls_file": "/private/tmp/fablebook-01-09/dry/calls.jsonl",
+      "sampled_run_provenance": [
+        {
+          "run_id": 41121367683,
+          "created_at": "2026-10-30T20:12:28Z",
+          "conclusion": "failure",
+          "completed_at": "2026-10-30T20:13:33Z",
+          "duration_seconds": 65
+        },
+        {
+          "run_id": 41094042659,
+          "created_at": "2026-10-30T16:54:07Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-30T16:55:31Z",
+          "duration_seconds": 84
+        },
+        {
+          "run_id": 41122893064,
+          "created_at": "2026-10-30T20:24:08Z",
+          "conclusion": "failure",
+          "completed_at": "2026-10-30T20:25:34Z",
+          "duration_seconds": 86
+        },
+        {
+          "run_id": 41125766015,
+          "created_at": "2026-10-30T20:45:46Z",
+          "conclusion": "failure",
+          "completed_at": "2026-10-30T20:47:16Z",
+          "duration_seconds": 90
+        },
+        {
+          "run_id": 41126366054,
+          "created_at": "2026-10-30T20:50:22Z",
+          "conclusion": "failure",
+          "completed_at": "2026-10-30T20:51:56Z",
+          "duration_seconds": 94
+        },
+        {
+          "run_id": 41127014456,
+          "created_at": "2026-10-30T20:55:21Z",
+          "conclusion": "failure",
+          "completed_at": "2026-10-30T20:57:01Z",
+          "duration_seconds": 100
+        },
+        {
+          "run_id": 41110986280,
+          "created_at": "2026-10-30T18:55:24Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-30T18:57:20Z",
+          "duration_seconds": 116
+        },
+        {
+          "run_id": 41378260927,
+          "created_at": "2026-11-02T02:32:18Z",
+          "conclusion": "failure",
+          "completed_at": "2026-11-02T02:34:47Z",
+          "duration_seconds": 149
+        },
+        {
+          "run_id": 41137110455,
+          "created_at": "2026-10-30T22:17:21Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-30T22:21:06Z",
+          "duration_seconds": 225
+        },
+        {
+          "run_id": 41542160381,
+          "created_at": "2026-11-02T23:02:04Z",
+          "conclusion": "failure",
+          "completed_at": "2026-11-02T23:07:22Z",
+          "duration_seconds": 318
+        },
+        {
+          "run_id": 41150169442,
+          "created_at": "2026-10-31T00:26:25Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-31T00:33:57Z",
+          "duration_seconds": 452
+        },
+        {
+          "run_id": 41148392151,
+          "created_at": "2026-10-31T00:07:13Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-31T00:14:47Z",
+          "duration_seconds": 454
+        },
+        {
+          "run_id": 41132579711,
+          "created_at": "2026-10-30T21:38:50Z",
+          "conclusion": "failure",
+          "completed_at": "2026-10-30T21:46:29Z",
+          "duration_seconds": 459
+        },
+        {
+          "run_id": 41146561755,
+          "created_at": "2026-10-30T23:47:47Z",
+          "conclusion": "failure",
+          "completed_at": "2026-10-30T23:55:29Z",
+          "duration_seconds": 462
+        },
+        {
+          "run_id": 41185781708,
+          "created_at": "2026-10-31T08:43:51Z",
+          "conclusion": "failure",
+          "completed_at": "2026-10-31T08:51:35Z",
+          "duration_seconds": 464
+        },
+        {
+          "run_id": 41137949115,
+          "created_at": "2026-10-30T22:24:46Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-30T22:32:35Z",
+          "duration_seconds": 469
+        },
+        {
+          "run_id": 41142407200,
+          "created_at": "2026-10-30T23:06:25Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-30T23:14:21Z",
+          "duration_seconds": 476
+        },
+        {
+          "run_id": 42069574938,
+          "created_at": "2026-11-05T16:56:12Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-05T17:04:17Z",
+          "duration_seconds": 485
+        },
+        {
+          "run_id": 41145682082,
+          "created_at": "2026-10-30T23:38:36Z",
+          "conclusion": "failure",
+          "completed_at": "2026-10-30T23:46:42Z",
+          "duration_seconds": 486
+        },
+        {
+          "run_id": 41190664671,
+          "created_at": "2026-10-31T09:55:52Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-31T10:04:00Z",
+          "duration_seconds": 488
+        },
+        {
+          "run_id": 41376029813,
+          "created_at": "2026-11-02T02:07:47Z",
+          "conclusion": "failure",
+          "completed_at": "2026-11-02T02:15:56Z",
+          "duration_seconds": 489
+        },
+        {
+          "run_id": 41555091248,
+          "created_at": "2026-11-03T00:45:20Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-03T00:53:58Z",
+          "duration_seconds": 518
+        },
+        {
+          "run_id": 41186466695,
+          "created_at": "2026-10-31T08:54:07Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-31T09:02:54Z",
+          "duration_seconds": 527
+        },
+        {
+          "run_id": 41765692284,
+          "created_at": "2026-11-04T03:12:49Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-04T03:21:40Z",
+          "duration_seconds": 531
+        },
+        {
+          "run_id": 42128295268,
+          "created_at": "2026-11-05T23:16:02Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-05T23:25:00Z",
+          "duration_seconds": 538
+        },
+        {
+          "run_id": 41678571723,
+          "created_at": "2026-11-03T16:52:16Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-03T17:01:19Z",
+          "duration_seconds": 543
+        },
+        {
+          "run_id": 41759755986,
+          "created_at": "2026-11-04T02:17:24Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-04T02:26:35Z",
+          "duration_seconds": 551
+        },
+        {
+          "run_id": 41539300307,
+          "created_at": "2026-11-02T22:40:54Z",
+          "conclusion": "failure",
+          "completed_at": "2026-11-02T22:50:08Z",
+          "duration_seconds": 554
+        },
+        {
+          "run_id": 41927116361,
+          "created_at": "2026-11-04T22:39:00Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-04T22:48:20Z",
+          "duration_seconds": 560
+        },
+        {
+          "run_id": 42247200617,
+          "created_at": "2026-11-06T15:53:15Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-06T16:02:38Z",
+          "duration_seconds": 563
+        },
+        {
+          "run_id": 41247169455,
+          "created_at": "2026-10-31T22:13:02Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-31T22:22:26Z",
+          "duration_seconds": 564
+        },
+        {
+          "run_id": 41245783416,
+          "created_at": "2026-10-31T21:54:58Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-31T22:04:22Z",
+          "duration_seconds": 564
+        },
+        {
+          "run_id": 41378431263,
+          "created_at": "2026-11-02T02:34:14Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-02T02:43:52Z",
+          "duration_seconds": 578
+        },
+        {
+          "run_id": 42250970487,
+          "created_at": "2026-11-06T16:17:24Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-06T16:27:03Z",
+          "duration_seconds": 579
+        },
+        {
+          "run_id": 41756795971,
+          "created_at": "2026-11-04T01:50:40Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-04T02:00:20Z",
+          "duration_seconds": 580
+        },
+        {
+          "run_id": 41566832447,
+          "created_at": "2026-11-03T02:33:14Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-03T02:43:03Z",
+          "duration_seconds": 589
+        },
+        {
+          "run_id": 42245202610,
+          "created_at": "2026-11-06T15:40:17Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-06T15:50:07Z",
+          "duration_seconds": 590
+        },
+        {
+          "run_id": 41687916873,
+          "created_at": "2026-11-03T17:49:19Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-03T17:59:14Z",
+          "duration_seconds": 595
+        },
+        {
+          "run_id": 42125073625,
+          "created_at": "2026-11-05T22:52:07Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-05T23:02:04Z",
+          "duration_seconds": 597
+        },
+        {
+          "run_id": 42237252814,
+          "created_at": "2026-11-06T14:48:44Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-06T14:58:45Z",
+          "duration_seconds": 601
+        },
+        {
+          "run_id": 42235518903,
+          "created_at": "2026-11-06T14:37:02Z",
+          "conclusion": "failure",
+          "completed_at": "2026-11-06T14:47:09Z",
+          "duration_seconds": 607
+        },
+        {
+          "run_id": 41667952717,
+          "created_at": "2026-11-03T15:50:06Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-03T16:00:16Z",
+          "duration_seconds": 610
+        },
+        {
+          "run_id": 41249965688,
+          "created_at": "2026-10-31T22:50:37Z",
+          "conclusion": "success",
+          "completed_at": "2026-10-31T23:01:00Z",
+          "duration_seconds": 623
+        },
+        {
+          "run_id": 41682609151,
+          "created_at": "2026-11-03T17:16:23Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-03T17:26:51Z",
+          "duration_seconds": 628
+        },
+        {
+          "run_id": 41540415267,
+          "created_at": "2026-11-02T22:49:04Z",
+          "conclusion": "failure",
+          "completed_at": "2026-11-02T22:59:36Z",
+          "duration_seconds": 632
+        },
+        {
+          "run_id": 41542627355,
+          "created_at": "2026-11-02T23:05:28Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-02T23:16:12Z",
+          "duration_seconds": 644
+        },
+        {
+          "run_id": 42066556655,
+          "created_at": "2026-11-05T16:38:43Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-05T16:49:35Z",
+          "duration_seconds": 652
+        },
+        {
+          "run_id": 41355007460,
+          "created_at": "2026-11-01T22:01:51Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-01T22:14:25Z",
+          "duration_seconds": 754
+        },
+        {
+          "run_id": 41373745318,
+          "created_at": "2026-11-02T01:40:56Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-02T01:53:59Z",
+          "duration_seconds": 783
+        },
+        {
+          "run_id": 41374013697,
+          "created_at": "2026-11-02T01:44:08Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-02T01:57:23Z",
+          "duration_seconds": 795
+        },
+        {
+          "run_id": 41376744055,
+          "created_at": "2026-11-02T02:15:34Z",
+          "conclusion": "success",
+          "completed_at": "2026-11-02T02:28:51Z",
+          "duration_seconds": 797
+        }
+      ]
+    },
+    "normal_run": {
+      "started_at": "2026-11-06T16:40:09Z",
+      "repository": "szTheory/fablebook",
+      "head_sha": "91e08e5d60361e9fd4c32167d2b376ab2237baab",
+      "script_sha256": "a67448fd13c0fc0875a23c72e1d3f5457ceb3b64622fc56cb1efbd4dbc3299a9",
+      "summary": "ci-gate on pull_request, attempt 1, last 7 days (n=51): p50 543 s, p95 783 s. Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking. a local run",
+      "published_comments": [
+        {
+          "issue": 2,
+          "comment_id": 6690105175,
+          "url": "https://github.com/szTheory/fablebook/issues/2#issuecomment-6690105175",
+          "label": "ci-timing"
+        },
+        {
+          "issue": 37,
+          "comment_id": 6690105852,
+          "url": "https://github.com/szTheory/fablebook/issues/37#issuecomment-6690105852",
+          "label": "ci-performance"
+        }
+      ],
+      "api_audit": {
+        "calls": 57,
+        "responses": 57,
+        "all_response_exit_codes_zero": true,
+        "quality_regression_access": false,
+        "workflow_dispatch": false,
+        "release_actions": false
+      },
+      "exit_capture_note": "The script emitted both comment URLs and every wrapped gh call/response succeeded. The parent zsh command attempted to assign the result to its read-only variable named status after the script returned, so its shell reported an error and did not preserve the direct child exit code. No publisher retry was made."
+    }
+  },
+  "release_guard": {
+    "inventory_captured_at": "2026-11-06T16:43:17Z",
+    "workflow_revision": "91e08e5d60361e9fd4c32167d2b376ab2237baab",
+    "source": ".github/workflows/ci.yml release-only guard body",
+    "real_live_issue_inventory": {
+      "ci_performance_open": [
+        37
+      ],
+      "quality_regression_open": []
+    },
+    "writes_intercepted": true,
+    "controls": [
+      {
+        "fixture": "fresh live inventory: issue 37 ci-performance only",
+        "expected": "pass",
+        "exit_code": 0
+      },
+      {
+        "fixture": "synthetic genuine quality-regression only",
+        "expected": "block",
+        "exit_code": 1
+      },
+      {
+        "fixture": "fresh live performance issue plus synthetic quality regression",
+        "expected": "block",
+        "exit_code": 1
+      }
+    ],
+    "commands_observed": [
+      "gh issue list --label quality-regression --state open --json number --jq length"
+    ],
+    "write_commands_observed": 0
+  },
+  "local_verification": {
+    "revision": "91e08e5d60361e9fd4c32167d2b376ab2237baab",
+    "core_command": "MIX_ENV=test bin/lane core test --warnings-as-errors test/contract/ci_health_test.exs test/contract/ci_shape_test.exs test/planning/contract_rule_test.exs test/planning/intent_test.exs",
+    "core_result": "115 passed",
+    "floor_command": "MIX_ENV=test bin/lane floor test --warnings-as-errors test/contract/ci_health_test.exs",
+    "floor_result": "24 passed, 0 failures"
+  },
+  "remaining_phase_boundaries": {
+    "gap_G_01_15": "closed",
+    "canonical_phase_01_verification": "required; not performed by this scoped receipt",
+    "phase_01_complete": false,
+    "sec_01_owner": "Phase 5",
+    "story_beam_caveat_owners": [
+      "Phase 2",
+      "Phase 10"
+    ],
+    "aggregate_guard_audits": "unchanged and remain under their existing owners",
+    "next_action": "$gsd-verify-work 01 / canonical Phase 01 re-verification"
+  },
+  "issue_37": {
+    "before_reviewed_at": "2026-11-06T16:29:47Z",
+    "before_full_snapshot": {
+      "assignees": [],
+      "body": "CI timing over budget (p50 > 420 s or p95 > 600 s): ci-gate on pull_request, attempt 1, last 7 days (n=78): p50 77 s, p95 754 s. https://github.com/szTheory/fablebook/actions/runs/41393964754",
+      "comments": 0,
+      "created_at": "2026-11-02T05:27:06Z",
+      "html_url": "https://github.com/szTheory/fablebook/issues/37",
+      "labels": [
+        "quality-regression"
+      ],
+      "milestone": null,
+      "number": 37,
+      "state": "open",
+      "title": "Quality regression",
+      "updated_at": "2026-11-02T05:27:06Z",
+      "url": "https://api.github.com/repos/szTheory/fablebook/issues/37"
+    },
+    "comments_before": [],
+    "inventories_before": {
+      "ci_performance": [],
+      "quality_regression": [
+        {
+          "body": "CI timing over budget (p50 > 420 s or p95 > 600 s): ci-gate on pull_request, attempt 1, last 7 days (n=78): p50 77 s, p95 754 s. https://github.com/szTheory/fablebook/actions/runs/41393964754",
+          "createdAt": "2026-11-02T05:27:06Z",
+          "labels": [
+            {
+              "id": "LA_kwDOVbKOIM8AAAAC_35ZWQ",
+              "name": "quality-regression",
+              "description": "A CI quality gate regressed; blocks the release",
+              "color": "B60205"
+            }
+          ],
+          "number": 37,
+          "title": "Quality regression",
+          "updatedAt": "2026-11-02T05:27:06Z",
+          "url": "https://github.com/szTheory/fablebook/issues/37"
+        }
+      ]
+    },
+    "immediately_before_mutation_at": "2026-11-06T16:30:47Z",
+    "immediately_before_mutation": {
+      "issue": {
+        "assignees": [],
+        "body": "CI timing over budget (p50 > 420 s or p95 > 600 s): ci-gate on pull_request, attempt 1, last 7 days (n=78): p50 77 s, p95 754 s. https://github.com/szTheory/fablebook/actions/runs/41393964754",
+        "comments": 0,
+        "created_at": "2026-11-02T05:27:06Z",
+        "html_url": "https://github.com/szTheory/fablebook/issues/37",
+        "labels": [
+          "quality-regression"
+        ],
+        "milestone": null,
+        "number": 37,
+        "state": "open",
+        "title": "Quality regression",
+        "updated_at": "2026-11-02T05:27:06Z",
+        "url": "https://api.github.com/repos/szTheory/fablebook/issues/37"
+      },
+      "comments": [],
+      "inventories": {
+        "ci_performance": [],
+        "quality_regression": [
+          {
+            "body": "CI timing over budget (p50 > 420 s or p95 > 600 s): ci-gate on pull_request, attempt 1, last 7 days (n=78): p50 77 s, p95 754 s. https://github.com/szTheory/fablebook/actions/runs/41393964754",
+            "createdAt": "2026-11-02T05:27:06Z",
+            "labels": [
+              {
+                "id": "LA_kwDOVbKOIM8AAAAC_35ZWQ",
+                "name": "quality-regression",
+                "description": "A CI quality gate regressed; blocks the release",
+                "color": "B60205"
+              }
+            ],
+            "number": 37,
+            "title": "Quality regression",
+            "updatedAt": "2026-11-02T05:27:06Z",
+            "url": "https://github.com/szTheory/fablebook/issues/37"
+          }
+        ]
+      }
+    },
+    "after_migration_at": "2026-11-06T16:33:06Z",
+    "after_migration": {
+      "issue": {
+        "assignees": [],
+        "body": "CI timing over budget (p50 > 420 s or p95 > 600 s): ci-gate on pull_request, attempt 1, last 7 days (n=78): p50 77 s, p95 754 s. https://github.com/szTheory/fablebook/actions/runs/41393964754",
+        "comments": 1,
+        "created_at": "2026-11-02T05:27:06Z",
+        "html_url": "https://github.com/szTheory/fablebook/issues/37",
+        "labels": [
+          "ci-performance"
+        ],
+        "milestone": null,
+        "number": 37,
+        "state": "open",
+        "title": "CI feedback-time performance follow-up",
+        "updated_at": "2026-11-06T16:32:51Z",
+        "url": "https://api.github.com/repos/szTheory/fablebook/issues/37"
+      },
+      "comments": [
+        {
+          "id": 6689930213,
+          "node_id": "IC_kwDOVbKOIM8AAAABjsA75Q",
+          "html_url": "https://github.com/szTheory/fablebook/issues/37#issuecomment-6689930213",
+          "user": "szTheory",
+          "created_at": "2026-11-06T16:32:23Z",
+          "updated_at": "2026-11-06T16:32:23Z",
+          "body": "Migration note — 2026-11-06\n\nA full review of this issue's body and comments (none existed at migration time) found only the original timing report from run #41393964754: n=78, p50=77s against the 420s objective, and p95=754s against the 600s objective. A read-only sample computed on 2026-11-06 is n=50, p50=489s, p95=783s; future numeric reports continue on [pinned timing issue #2](https://github.com/szTheory/fablebook/issues/2).\n\nPer owner decision INT-20261106-01, the 420s p50 and 600s p95 objectives remain visible. Timing overages are tracked for follow-up but do not block release or phase closure by themselves. The producer is deployed in [PR #52](https://github.com/szTheory/fablebook/pull/52), and the strict timing contract is in [PR #53](https://github.com/szTheory/fablebook/pull/53).\n\nThis issue remains open for CI feedback-time performance follow-up. The original report and history are preserved; no correctness, security, ruleset-drift, or smoke failure appeared in the issue body or comments.\n"
+        }
+      ],
+      "inventories": {
+        "ci_performance": [
+          {
+            "body": "CI timing over budget (p50 > 420 s or p95 > 600 s): ci-gate on pull_request, attempt 1, last 7 days (n=78): p50 77 s, p95 754 s. https://github.com/szTheory/fablebook/actions/runs/41393964754",
+            "createdAt": "2026-11-02T05:27:06Z",
+            "labels": [
+              {
+                "id": "LA_kwDOVbKOIM8AAAADBeccSA",
+                "name": "ci-performance",
+                "description": "Non-blocking CI feedback-time performance follow-up; timing objectives do not block releases.",
+                "color": "1D76DB"
+              }
+            ],
+            "number": 37,
+            "title": "CI feedback-time performance follow-up",
+            "updatedAt": "2026-11-06T16:32:51Z",
+            "url": "https://github.com/szTheory/fablebook/issues/37"
+          }
+        ],
+        "quality_regression": []
+      }
+    },
+    "after_reporting_at": "2026-11-06T16:49:14Z",
+    "current_issue_after_reporting": {
+      "body": "CI timing over budget (p50 > 420 s or p95 > 600 s): ci-gate on pull_request, attempt 1, last 7 days (n=78): p50 77 s, p95 754 s. https://github.com/szTheory/fablebook/actions/runs/41393964754",
+      "comments": [
+        {
+          "id": "IC_kwDOVbKOIM8AAAABjsA75Q",
+          "author": {
+            "login": "szTheory"
+          },
+          "authorAssociation": "OWNER",
+          "body": "Migration note — 2026-11-06\n\nA full review of this issue's body and comments (none existed at migration time) found only the original timing report from run #41393964754: n=78, p50=77s against the 420s objective, and p95=754s against the 600s objective. A read-only sample computed on 2026-11-06 is n=50, p50=489s, p95=783s; future numeric reports continue on [pinned timing issue #2](https://github.com/szTheory/fablebook/issues/2).\n\nPer owner decision INT-20261106-01, the 420s p50 and 600s p95 objectives remain visible. Timing overages are tracked for follow-up but do not block release or phase closure by themselves. The producer is deployed in [PR #52](https://github.com/szTheory/fablebook/pull/52), and the strict timing contract is in [PR #53](https://github.com/szTheory/fablebook/pull/53).\n\nThis issue remains open for CI feedback-time performance follow-up. The original report and history are preserved; no correctness, security, ruleset-drift, or smoke failure appeared in the issue body or comments.\n",
+          "createdAt": "2026-11-06T16:32:23Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/szTheory/fablebook/issues/37#issuecomment-6689930213",
+          "viewerDidAuthor": true
+        },
+        {
+          "id": "IC_kwDOVbKOIM8AAAABjsLp_A",
+          "author": {
+            "login": "szTheory"
+          },
+          "authorAssociation": "OWNER",
+          "body": "CI timing target breached: ci-gate on pull_request, attempt 1, last 7 days (n=51): p50 543 s, p95 783 s. Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking. a local run",
+          "createdAt": "2026-11-06T16:40:50Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/szTheory/fablebook/issues/37#issuecomment-6690105852",
+          "viewerDidAuthor": true
+        }
+      ],
+      "labels": [
+        {
+          "id": "LA_kwDOVbKOIM8AAAADBeccSA",
+          "name": "ci-performance",
+          "description": "Non-blocking CI feedback-time performance follow-up; timing objectives do not block releases.",
+          "color": "1D76DB"
+        }
+      ],
+      "number": 37,
+      "state": "OPEN",
+      "title": "CI feedback-time performance follow-up",
+      "url": "https://github.com/szTheory/fablebook/issues/37"
+    },
+    "current_comments_after_reporting": [
+      {
+        "url": "https://api.github.com/repos/szTheory/fablebook/issues/comments/6689930213",
+        "html_url": "https://github.com/szTheory/fablebook/issues/37#issuecomment-6689930213",
+        "issue_url": "https://api.github.com/repos/szTheory/fablebook/issues/37",
+        "id": 6689930213,
+        "node_id": "IC_kwDOVbKOIM8AAAABjsA75Q",
+        "user": {
+          "login": "szTheory",
+          "id": 28652,
+          "node_id": "MDQ6VXNlcjI4NjUy",
+          "avatar_url": "https://avatars.githubusercontent.com/u/28652?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/szTheory",
+          "html_url": "https://github.com/szTheory",
+          "followers_url": "https://api.github.com/users/szTheory/followers",
+          "following_url": "https://api.github.com/users/szTheory/following{/other_user}",
+          "gists_url": "https://api.github.com/users/szTheory/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/szTheory/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/szTheory/subscriptions",
+          "organizations_url": "https://api.github.com/users/szTheory/orgs",
+          "repos_url": "https://api.github.com/users/szTheory/repos",
+          "events_url": "https://api.github.com/users/szTheory/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/szTheory/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "created_at": "2026-11-06T16:32:23Z",
+        "updated_at": "2026-11-06T16:32:23Z",
+        "body": "Migration note — 2026-11-06\n\nA full review of this issue's body and comments (none existed at migration time) found only the original timing report from run #41393964754: n=78, p50=77s against the 420s objective, and p95=754s against the 600s objective. A read-only sample computed on 2026-11-06 is n=50, p50=489s, p95=783s; future numeric reports continue on [pinned timing issue #2](https://github.com/szTheory/fablebook/issues/2).\n\nPer owner decision INT-20261106-01, the 420s p50 and 600s p95 objectives remain visible. Timing overages are tracked for follow-up but do not block release or phase closure by themselves. The producer is deployed in [PR #52](https://github.com/szTheory/fablebook/pull/52), and the strict timing contract is in [PR #53](https://github.com/szTheory/fablebook/pull/53).\n\nThis issue remains open for CI feedback-time performance follow-up. The original report and history are preserved; no correctness, security, ruleset-drift, or smoke failure appeared in the issue body or comments.\n",
+        "author_association": "OWNER",
+        "pin": null,
+        "reactions": {
+          "url": "https://api.github.com/repos/szTheory/fablebook/issues/comments/6689930213/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "performed_via_github_app": null,
+        "minimized": null
+      },
+      {
+        "url": "https://api.github.com/repos/szTheory/fablebook/issues/comments/6690105852",
+        "html_url": "https://github.com/szTheory/fablebook/issues/37#issuecomment-6690105852",
+        "issue_url": "https://api.github.com/repos/szTheory/fablebook/issues/37",
+        "id": 6690105852,
+        "node_id": "IC_kwDOVbKOIM8AAAABjsLp_A",
+        "user": {
+          "login": "szTheory",
+          "id": 28652,
+          "node_id": "MDQ6VXNlcjI4NjUy",
+          "avatar_url": "https://avatars.githubusercontent.com/u/28652?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/szTheory",
+          "html_url": "https://github.com/szTheory",
+          "followers_url": "https://api.github.com/users/szTheory/followers",
+          "following_url": "https://api.github.com/users/szTheory/following{/other_user}",
+          "gists_url": "https://api.github.com/users/szTheory/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/szTheory/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/szTheory/subscriptions",
+          "organizations_url": "https://api.github.com/users/szTheory/orgs",
+          "repos_url": "https://api.github.com/users/szTheory/repos",
+          "events_url": "https://api.github.com/users/szTheory/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/szTheory/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "created_at": "2026-11-06T16:40:50Z",
+        "updated_at": "2026-11-06T16:40:50Z",
+        "body": "CI timing target breached: ci-gate on pull_request, attempt 1, last 7 days (n=51): p50 543 s, p95 783 s. Feedback targets: p50 <= 420 s and p95 <= 600 s are non-blocking. a local run",
+        "author_association": "OWNER",
+        "pin": null,
+        "reactions": {
+          "url": "https://api.github.com/repos/szTheory/fablebook/issues/comments/6690105852/reactions",
+          "total_count": 0,
+          "+1": 0,
+          "-1": 0,
+          "laugh": 0,
+          "hooray": 0,
+          "confused": 0,
+          "heart": 0,
+          "rocket": 0,
+          "eyes": 0
+        },
+        "performed_via_github_app": null,
+        "minimized": null
+      }
+    ],
+    "current_open_inventories_captured_at": "2026-11-06T16:43:17Z",
+    "current_open_inventories": {
+      "ci_performance": {
+        "count": 1,
+        "items": [
+          {
+            "labels": [
+              {
+                "id": "LA_kwDOVbKOIM8AAAADBeccSA",
+                "name": "ci-performance",
+                "description": "Non-blocking CI feedback-time performance follow-up; timing objectives do not block releases.",
+                "color": "1D76DB"
+              }
+            ],
+            "number": 37,
+            "title": "CI feedback-time performance follow-up",
+            "url": "https://github.com/szTheory/fablebook/issues/37"
+          }
+        ]
+      },
+      "quality_regression": {
+        "count": 0,
+        "items": []
+      }
+    },
+    "pinned_timing_issue": {
+      "labels": [
+        {
+          "id": "LA_kwDOVbKOIM8AAAAC_35ZqA",
+          "name": "ci-timing",
+          "description": "Weekly PR CI timing from ci-health",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 2,
+      "state": "OPEN",
+      "title": "CI timing",
+      "url": "https://github.com/szTheory/fablebook/issues/2"
+    },
+    "verified_labels": [
+      {
+        "color": "0E8A16",
+        "description": "Weekly PR CI timing from ci-health",
+        "name": "ci-timing"
+      },
+      {
+        "color": "1D76DB",
+        "description": "Non-blocking CI feedback-time performance follow-up; timing objectives do not block releases.",
+        "name": "ci-performance"
+      }
+    ]
+  },
+  "post_decision_ci_feedback_observations": {
+    "measurement": "GitHub Actions workflow createdAt through updatedAt for pull_request runs; includes queue delay",
+    "threshold_seconds": {
+      "p50_objective": 420,
+      "p95_objective": 600
+    },
+    "classification": "Performance observations only. A timing overage does not indicate a quality regression or block release or phase closure when correctness and security checks pass.",
+    "runs": [
+      {
+        "pr": 61,
+        "run_id": 42336375875,
+        "created_at": "2026-11-07T03:58:52Z",
+        "completed_at": "2026-11-07T04:08:51Z",
+        "elapsed_seconds": 599,
+        "required_checks": "passed",
+        "over_600_second_threshold": false,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/61",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42336375875"
+      },
+      {
+        "pr": 62,
+        "run_id": 42337658305,
+        "created_at": "2026-11-07T04:15:43Z",
+        "completed_at": "2026-11-07T04:25:47Z",
+        "elapsed_seconds": 604,
+        "required_checks": "passed",
+        "over_600_second_threshold": true,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/62",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42337658305"
+      },
+      {
+        "pr": 57,
+        "run_id": 42338511766,
+        "created_at": "2026-11-07T04:27:05Z",
+        "completed_at": "2026-11-07T04:37:09Z",
+        "elapsed_seconds": 604,
+        "required_checks": "passed",
+        "over_600_second_threshold": true,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/57",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42338511766"
+      },
+      {
+        "pr": 63,
+        "run_id": 42339453640,
+        "created_at": "2026-11-07T04:40:18Z",
+        "completed_at": "2026-11-07T04:49:31Z",
+        "elapsed_seconds": 553,
+        "required_checks": "passed",
+        "over_600_second_threshold": false,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/63",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42339453640"
+      },
+      {
+        "pr": 64,
+        "run_id": 42340673077,
+        "created_at": "2026-11-07T04:57:50Z",
+        "completed_at": "2026-11-07T05:08:23Z",
+        "elapsed_seconds": 633,
+        "required_checks": "passed",
+        "over_600_second_threshold": true,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/64",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42340673077"
+      },
+      {
+        "pr": 65,
+        "run_id": 42342284917,
+        "created_at": "2026-11-07T05:20:10Z",
+        "completed_at": "2026-11-07T05:29:52Z",
+        "elapsed_seconds": 582,
+        "required_checks": "passed",
+        "over_600_second_threshold": false,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/65",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42342284917"
+      },
+      {
+        "pr": 66,
+        "run_id": 42343412957,
+        "created_at": "2026-11-07T05:35:55Z",
+        "completed_at": "2026-11-07T05:45:45Z",
+        "elapsed_seconds": 590,
+        "required_checks": "passed",
+        "over_600_second_threshold": false,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/66",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42343412957"
+      },
+      {
+        "pr": 67,
+        "run_id": 42344805593,
+        "created_at": "2026-11-07T05:56:22Z",
+        "completed_at": "2026-11-07T06:05:54Z",
+        "elapsed_seconds": 572,
+        "required_checks": "passed",
+        "over_600_second_threshold": false,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/67",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42344805593"
+      },
+      {
+        "pr": 68,
+        "run_id": 42346371314,
+        "created_at": "2026-11-07T06:17:53Z",
+        "completed_at": "2026-11-07T06:28:29Z",
+        "elapsed_seconds": 636,
+        "required_checks": "passed",
+        "over_600_second_threshold": true,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/68",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42346371314"
+      },
+      {
+        "pr": 69,
+        "run_id": 42347924958,
+        "created_at": "2026-11-07T06:38:41Z",
+        "completed_at": "2026-11-07T06:46:22Z",
+        "elapsed_seconds": 461,
+        "required_checks": "passed",
+        "over_600_second_threshold": false,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/69",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42347924958"
+      },
+      {
+        "pr": 70,
+        "run_id": 42348892432,
+        "created_at": "2026-11-07T06:52:39Z",
+        "completed_at": "2026-11-07T07:00:39Z",
+        "elapsed_seconds": 480,
+        "required_checks": "passed",
+        "over_600_second_threshold": false,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/70",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42348892432"
+      },
+      {
+        "pr": 71,
+        "run_id": 42349946002,
+        "created_at": "2026-11-07T07:07:39Z",
+        "completed_at": "2026-11-07T07:18:05Z",
+        "elapsed_seconds": 626,
+        "required_checks": "passed",
+        "over_600_second_threshold": true,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/71",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42349946002"
+      },
+      {
+        "pr": 72,
+        "run_id": 42351719892,
+        "created_at": "2026-11-07T07:32:39Z",
+        "completed_at": "2026-11-07T07:42:16Z",
+        "elapsed_seconds": 577,
+        "required_checks": "passed",
+        "over_600_second_threshold": false,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/72",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42351719892"
+      },
+      {
+        "pr": 73,
+        "run_id": 42354468061,
+        "created_at": "2026-11-07T08:12:18Z",
+        "completed_at": "2026-11-07T08:22:23Z",
+        "elapsed_seconds": 605,
+        "required_checks": "passed",
+        "over_600_second_threshold": true,
+        "pr_url": "https://github.com/szTheory/fablebook/pull/73",
+        "ci_url": "https://github.com/szTheory/fablebook/actions/runs/42354468061"
+      }
+    ],
+    "updated_at": "2026-11-07T08:22:23Z"
+  }
+}

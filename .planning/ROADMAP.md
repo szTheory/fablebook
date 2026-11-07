@@ -8,7 +8,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 
 ## Conventions
 
-- **Phase exit rule (every phase, ADR 0021):** the phase ends in a merged, green PR to main. The evidence is a link to the CI run, not prose. A phase that cannot meet its gates splits; it is never compressed and no gate is lowered. A contract test is never edited in the same PR as the implementation it guards.
+- **Phase exit rule (every phase, ADR 0021):** the phase ends in a merged, green PR to main. The evidence is a link to the CI run, not prose. A phase that cannot meet its gates splits; it is never compressed and no gate is lowered. A contract test is never edited in the same PR as the implementation it guards. CI timing objectives stay visible for optimization but do not block release or phase closure unless an owner decision explicitly designates them as gates. (INT-20261106-01)
 - **Spikes sit first inside the phase that needs them** (Phases 2, 7, 8, 23, 25). If a spike fails, the phase splits. There are no proof-only phases.
 - **Mapping rule:** each v1 requirement is mapped to exactly one phase, the one that delivers its last new mechanism. Earlier phases that deliver part of it say so under **Partial delivery**. A later phase that only feeds new data into an existing mechanism (for example, canon entries appearing in the palette) is named in that phase's criteria and does not change the mapping.
 - **Provisional on:** the phase can be planned on the research's recommended answer, but the owner has not answered the listed open questions (`.planning/intent/OPEN-QUESTIONS.md`, Q7 to Q30). No requirement wording assumes an answer. Q6 is resolved by INT-20261028-16. Q15 (what counts as a contract test) touches every phase that records goldens, snapshots or baselines; until it is answered, plan any contract-test edit as its own PR touching no `lib/`.
@@ -33,7 +33,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - Decimal phases (2.1, 2.2): urgent insertions (marked INSERTED)
 
 **Family 1: Walking skeleton**
-- [ ] **Phase 1: Release pipeline, CI gate and guards** - 0.1.0 published, three workflows with caps, intent test, prod guard, eval and atom bans
+- [x] **Phase 1: Release pipeline, CI gate and guards** - 0.1.0 published, three workflows with caps, intent test, prod guard, eval and atom bans (completed 2026-11-07)
 - [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
 - [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
@@ -104,7 +104,6 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 
 ### Phase 1: Release pipeline, CI gate and guards
 **Goal**: A published 0.1.0 reserves the Hex name, and the guards every later phase relies on (CI caps, intent integrity, the prod guard, the eval and atom bans, the dependency budget) are enforced by CI from the first merge.
-**Mode:** mvp
 **Depends on**: Nothing (first phase)
 **Requirements**: REL-01, CI-01, INTENT-01, SEC-02
 **Partial delivery**: SEC-01 (Credo bans and the `style=` check land here; the properties and mutation-proven tests complete it in Phase 5).
@@ -115,13 +114,27 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
   3. A PR that adds a fourth workflow, grows `ci.yml` past 250 lines, removes the single `ci-gate`, edits an INT source, uses a malformed INT id, or adds a REQ line with no INT or ADR citation fails CI; PR p50 and p95 are published weekly from CI history.
   4. A PR that adds `Code.eval*`, runtime EEx/HEEx compilation, `String.to_atom` on input, a banned dependency in the prod closure, or a file outside the tarball allowlist fails CI.
 **Gap closure:** moved to Phase 01.1 per INT-20261029-01 (criterion 4's atom-ban share and the review's WR items).
-**Plans:** 5/5 plans executed
+**Plans:** 9/9 plans complete
 
 Plans:
+- [x] 01-07-PLAN.md
+- [x] 01-08-PLAN.md
+- [x] 01-09-PLAN.md
+- [x] 01-06-PLAN.md
+
+**Wave 1**
 - [x] 01-01-PLAN.md — Walking skeleton: owner sign-offs, fablebook/2 with the prod guard on both lanes, package docs
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [x] 01-02-PLAN.md — All of `.github/`, release config and scripts; public repo, settings, ruleset; draft PR #1 green
+
+**Wave 3** *(blocked on Wave 2 completion)*
 - [x] 01-03-PLAN.md — Compiled-BEAM and Credo bans, `style=` scan, dependency budget, tarball allowlist
+
+**Wave 4** *(blocked on Wave 3 completion)*
 - [x] 01-04-PLAN.md — Intent, contract-rule and CI-shape guards; diff seam proven in a real repo; test-wiring pins; PR #1 green with every guard
+
+**Wave 5** *(blocked on Wave 4 completion)*
 - [x] 01-05-PLAN.md — Signed ADR amendments, owner diff review and secrets, merge PR #1, D-22 red run, ci-health, publish 0.1.0, rotate key, PR #3 drops release-as with the last SUMMARY
 
 ### Phase 01.1: Close phase 1 guard gaps (INSERTED)
@@ -788,7 +801,7 @@ Phases execute in numeric order: 1 → 2 → 3 → ... → 35 (decimal insertion
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Release pipeline, CI gate and guards | 5/5 | In Progress | - |
+| 1. Release pipeline, CI gate and guards | 9/9 | Complete    | 2026-11-07 |
 | 2. Walking skeleton and runner spike | 0/4 | Not started | - |
 | 3. Story model and catalog | 0/5 | Not started | - |
 | 4. Render seam, rules engine and generated tests | 0/5 | Not started | - |

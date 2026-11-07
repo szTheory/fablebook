@@ -208,7 +208,7 @@ Every item below is a v1.0 commitment.
 - [ ] **QA-05** One regression test per phoenix_storybook footgun listed in CLEARANCE C2. (ADR 0014, INT-20261028-04)
 
 **CI / REL / COMPAT**
-- [ ] **CI-01** Exactly three workflows; `ci.yml` stays ≤250 lines with one required `ci-gate` check. A test enforces these caps. PR p50 ≤ 7 min, measured from CI history. (ADR 0017, INT-20261028-02)
+- [ ] **CI-01** Exactly three workflows; `ci.yml` stays ≤250 lines with one required `ci-gate` check. A test enforces these caps. PR p50 ≤ 7 min is a feedback-time objective measured from CI history; weekly p50/p95 reports keep overages visible without making timing a release or phase-closure gate. (ADR 0017, INT-20261028-02, INT-20261106-01)
 - [ ] **CI-02** Nightly runs the full suite, Firefox/WebKit and the canary. Release PRs run the heavy suite, and any open `quality-regression` issue blocks the release. (ADR 0017, INT-20261028-04)
 - [ ] **REL-01** release-please publishes to Hex via the bootstrap skill. Phase 1 publishes 0.1.0 to reserve the name. Includes a post-publish smoke test, a recovery workflow and an SBOM. (ADR 0017, INT-20261028-01)
 - [ ] **COMPAT-01** Floor: Elixir 1.18 / OTP 27, Phoenix 1.8.9, LiveView 1.2.9 (`mix.floor.lock`). Latest lane: Elixir 1.20 / OTP 29. Canary: LiveView main. The `ComponentInfo` contract test runs on all three. (ADR 0007, ADR 0008, INT-20261028-18)
@@ -293,6 +293,7 @@ Every item below is a v1.0 commitment.
 - **Performance**: Gate on deterministic proxies (scaling ratios, reductions, diff bytes, heap, process count). Track tail latency in `bench/` only, never as a CI gate. (ADR 0015, INT-20261028-01)
 - **CI**:
   - Exactly 3 workflows; `ci.yml` ≤250 lines; one required gate.
+  - Report CI timing objectives; timing-only overages are tracked separately and do not block release or phase closure. Keep correctness, security and release checks unchanged. (ADR 0017, INT-20261106-01)
   - No `paths:` filters on triggers; actions pinned by SHA; `timeout-minutes` on every job.
   - No phase-numbered workflows or `verify.phaseN` tasks.
   - Build from the bootstrap skill's description, not by copying oarlock's current files (they have a PLT cache-key bug and Node scripts).
@@ -314,7 +315,7 @@ Every item below is a v1.0 commitment.
 | Decision | Rationale | Outcome |
 |---|---|---|
 | End GSD flows with the next command; distinguish merge readiness from pending phase observations (INT-20261029-09) | Keep useful work moving and make the next action explicit | Merge green scoped PRs under existing checks; retain scheduled evidence; auto-advance stays off |
-| Automate verification by default; hand off only irreducible checks (INT-20261029-08) | Reduce owner toil and repeated UAT; add CI coverage when it has recurring value | `.planning/VERIFICATION.md`; Phase 1 automation and evidence recorded in `01-UAT.md`; GSD auto-advance stays off |
+| Automate verification by default; hand off only irreducible checks (INT-20261029-08) | Reduce owner toil and repeated UAT; add CI coverage when it has recurring value | `.planning/VERIFICATION.md` maps criteria to evidence, reuses approvals, and requires CI speed reviews to preserve gates; Phase 1 evidence is in `01-UAT.md`; GSD auto-advance stays off |
 | Allow validation-only publication for the named delivery-evidence items (ADR 0026, INT-20261101-01) | PR CI and merge identity cannot be verified before a PR exists or is merged | For Phase 01.1.1.3.1.3 only, publish a draft to collect exact-head CI; merge only after all required checks and markers pass; complete the phase only after independent merge identity verification. Other high findings still block. |
 | Restart numbering at each new milestone (INT-20261101-02) | Deeply nested decimal IDs are difficult to read and manage | After archiving the current milestone, start the next at Phase 1 with `--reset-phase-numbers`; preserve historical IDs and avoid nested decimal insertions. |
 | Stories are compiled `.ex` modules in `storybook/` (ADR 0001) | No eval surface; manifest available in test; colocated hooks work | — Pending |
