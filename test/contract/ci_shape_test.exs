@@ -27,7 +27,10 @@ defmodule Fablebook.Contract.CiShapeTest do
   @workflow_group ~S/group: ci-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}-${{ github.event.schedule }}/
   @previous_workflow_group ~S/group: ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event.schedule }}/
   @workflow_cancel ~S/cancel-in-progress: ${{ github.event_name == 'pull_request' }}/
-  @actionlint_queue_ignore ~S/args: -color -ignore ^unexpected\skey\s"queue"\sfor\s"concurrency"\ssection.*$/
+  @actionlint_queue_ignore ~S/args: -color -ignore ^unexpected\skey\s\x22queue\x22/ <>
+                             ~S/\sfor\s\x22concurrency\x22\ssection.*$/
+  @legacy_actionlint_queue_ignore ~S/args: -color -ignore ^unexpected\skey\s"queue"\sfor\s/ <>
+                                    ~S/"concurrency"\ssection.*$/
   @smoke "      - run: bin/smoke_consumer --path .\n"
 
   @mutations [
@@ -444,7 +447,7 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   defp actionlint_queue_ignore?(step) do
     Enum.any?(step, &String.starts_with?(&1, "uses: docker://rhysd/actionlint@")) and
-      @actionlint_queue_ignore in step
+      (@actionlint_queue_ignore in step or @legacy_actionlint_queue_ignore in step)
   end
 
   defp workflow_concurrency_violations(text) do
