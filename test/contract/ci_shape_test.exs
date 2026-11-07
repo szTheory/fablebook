@@ -118,6 +118,10 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:queue_actionlint_scope, "release-please.yml",
      "concurrency: {!!str # tagged key\n  queue: invalid, group: release-please, cancel-in-progress: false}"},
     {:queue_actionlint_scope, "release-please.yml",
+     "concurrency: {&queue_key queue: invalid, group: release-please, cancel-in-progress: false}"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "queue_key: &queue_key queue\nconcurrency: {*queue_key: invalid, group: release-please, cancel-in-progress: false}"},
+    {:queue_actionlint_scope, "release-please.yml",
      "concurrency: {!<tag:yaml.org,2002:str> queue: invalid, group: release-please, cancel-in-progress: false}"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
@@ -490,10 +494,13 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   defp queue_settings(text) do
     # The actionlint ignore is global, so reject YAML key syntax the literal scanner cannot decode.
-    # Tagged and escaped keys must not hide an unsupported queue setting in another workflow.
+    # Tagged, anchored, aliased, and escaped keys must not hide unsupported queue settings.
     cond do
+      Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\*[^\s,:{}\[\]]+[ \t]*:/, text) ->
+        ["aliased YAML mapping key syntax"]
+
       Regex.match?(
-        ~r/(?:\A|\n|[{,]|-[ \t])\s*(?:(?:!![^\s#]+|![^\s#]+)(?:[ \t]+|\r?\n)[ \t]*(?:\#[^\r\n]*\r?\n[ \t]*)?)+["']?queue["']?[ \t]*:/,
+        ~r/(?:\A|\n|[{,]|-[ \t])\s*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)(?:[ \t]+|\r?\n)[ \t]*(?:\#[^\r\n]*\r?\n[ \t]*)?)+["']?queue["']?[ \t]*:/,
         text
       ) ->
         ["tagged YAML mapping key syntax"]
