@@ -88,3 +88,19 @@ INT-20261028-20 also accepts the non-expiring package-only Hex key. Key scope/re
 | 2026-10-30 | 42 unique (T-01-SC repeated across plans) | 42 within authored scope | 0 | Codex, inline L1 |
 
 All authored threats have dispositions and cited controls or prior acceptances. `threats_open: 0` describes the phase register, not an unconditional security guarantee. Scheduled timing observation and canonical phase execution verification remain separate gates.
+
+## Security Audit 2026-11-06
+
+| Metric | Count |
+|---|---|
+| Threats found | 0 |
+| Closed | 42 |
+| Open | 0 |
+
+## Security Audit 2026-11-07
+
+| Metric | Count |
+|---|---|
+| Threats found | 46 |
+| Closed | 46 |
+| Open | 0 |
