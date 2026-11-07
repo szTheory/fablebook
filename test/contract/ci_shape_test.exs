@@ -109,6 +109,16 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:queue_actionlint_scope, "release-please.yml",
      "concurrency:\n  group: release-please\n  cancel-in-progress: false",
      "concurrency: {\"qu\\u0065ue\": invalid, group: release-please, cancel-in-progress: false}"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
+     "concurrency: {!!str queue: invalid, group: release-please, cancel-in-progress: false}"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
+     "concurrency:\n  group: release-please\n  !!str queue: invalid\n  cancel-in-progress: false"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "concurrency: {!!str # tagged key\n  queue: invalid, group: release-please, cancel-in-progress: false}"},
+    {:queue_actionlint_scope, "release-please.yml",
+     "concurrency: {!<tag:yaml.org,2002:str> queue: invalid, group: release-please, cancel-in-progress: false}"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
      "      - run: bin/ci_health --file-regression nightly"},
@@ -479,9 +489,15 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp queue_settings(text) do
-    # The actionlint ignore is global; regex normalization cannot decode every YAML key spelling.
-    # Keep non-ci workflow keys literal so an encoded key cannot hide an unsupported queue.
+    # The actionlint ignore is global, so reject YAML key syntax the literal scanner cannot decode.
+    # Tagged and escaped keys must not hide an unsupported queue setting in another workflow.
     cond do
+      Regex.match?(
+        ~r/(?:\A|\n|[{,]|-[ \t])\s*(?:(?:!![^\s#]+|![^\s#]+)(?:[ \t]+|\r?\n)[ \t]*(?:\#[^\r\n]*\r?\n[ \t]*)?)+["']?queue["']?[ \t]*:/,
+        text
+      ) ->
+        ["tagged YAML mapping key syntax"]
+
       Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\?(?:\s|["'])/, text) ->
         ["explicit YAML mapping key syntax"]
 
