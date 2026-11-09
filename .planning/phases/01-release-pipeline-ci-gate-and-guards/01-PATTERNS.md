@@ -1,7 +1,7 @@
 # Phase 1: Release pipeline, CI gate and guards - Pattern Map
 
-**Mapped:** 2026-11-05
-**Files analyzed:** 55 file paths/path groups (two fixture families are globs)
+**Mapped:** 2026-11-05  
+**Files analyzed:** 55 file paths/path groups (two fixture families are globs)  
 **Analogs found:** 32 / 35 path groups (55 listed target paths, including fixture globs)
 
 The 2026-10-28 research describes a docs-only repository. The current checkout now contains tracked implementations for most Phase 1 targets. The table treats those as targets and names distinct neighboring files as analogs where possible; it does not count a file as its own analog. Analog paths below were verified with git ls-files -- <path> and are tracked sources.
@@ -172,28 +172,28 @@ No distinct analog: the root README, changelog, usage-rules stub, and the first 
 
 ### Test process boundaries
 
-**Source:** test/support/mix_cmd.ex, lines 4-14.
+**Source:** test/support/mix_cmd.ex, lines 4-14.  
 **Apply to:** nested Mix integration tests and fixture hosts.
 
 Scrub inherited Mix path/build controls, set MIX_ENV explicitly, capture stderr with stdout, and surface command output on assertion failure.
 
 ### Git diff behavior
 
-**Source:** test/support/git_diff.ex, lines 4-18 and 28-60.
+**Source:** test/support/git_diff.ex, lines 4-18 and 28-60.  
 **Apply to:** intent and contract-change rules.
 
 Use the explicit event base, reject invalid or unresolved bases, parse NUL-delimited name-status output, and do not hide Git errors.
 
 ### Contract-test structure
 
-**Source:** test/contract/tarball_test.exs, lines 1-49 and test/contract/ci_health_test.exs, lines 41-58.
+**Source:** test/contract/tarball_test.exs, lines 1-49 and test/contract/ci_health_test.exs, lines 41-58.  
 **Apply to:** all test/contract/ and test/planning/ guard tests.
 
 Prefer async pure tests, add tags only where mix ci needs explicit inclusion, use generated tmp_dir fixtures for integrations, and assert negative cases separately from the real-system positive control.
 
 ### Release and workflow secrets
 
-**Source:** .github/workflows/release-please.yml, lines 7-12 and 29-39; .github/workflows/hex-publish.yml, lines 96-123.
+**Source:** .github/workflows/release-please.yml, lines 7-12 and 29-39; .github/workflows/hex-publish.yml, lines 96-123.  
 **Apply to:** publish workflows.
 
 Pass secrets by explicit name, expose them only to the step that consumes them, use the hex-production environment for publication, and make existing-version recovery compare checksums before skipping or publishing docs.
@@ -212,6 +212,6 @@ Pass secrets by explicit name, expose them only to the step that consumes them, 
 
 ## Metadata
 
-**Analog search scope:** tracked root files, lib/, bin/, credo/, .github/, test/, docs/adr/, and .planning/intent/.
-**Files scanned:** 25 role-relevant implementation/test and planning files inspected for patterns; candidate analog paths were confirmed tracked before inclusion.
+**Analog search scope:** tracked root files, lib/, bin/, credo/, .github/, test/, docs/adr/, and .planning/intent/.  
+**Files scanned:** 25 role-relevant implementation/test and planning files inspected for patterns; candidate analog paths were confirmed tracked before inclusion.  
 **Pattern extraction date:** 2026-11-05

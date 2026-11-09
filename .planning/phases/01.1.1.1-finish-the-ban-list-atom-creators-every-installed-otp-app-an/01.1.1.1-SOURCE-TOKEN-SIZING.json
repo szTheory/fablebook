@@ -1,0 +1,203 @@
+{
+  "kind": "source_bound_sizing_summary",
+  "date": "2026-11-05",
+  "tokenizer": "tiktoken 0.14.0 o200k_base",
+  "token_bound": 100000,
+  "pending_rows": 213,
+  "families": {
+    "runtime_kernel_stdlib": {
+      "core": {
+        "apps": [
+          "erts",
+          "kernel",
+          "stdlib"
+        ],
+        "files": 58,
+        "bytes": 3120404,
+        "tokens": 877329
+      },
+      "floor": {
+        "apps": [
+          "erts",
+          "kernel",
+          "stdlib"
+        ],
+        "files": 57,
+        "bytes": 2952518,
+        "tokens": 830480
+      }
+    },
+    "otp_compiler_parsetools_syntax_asn1": {
+      "core": {
+        "apps": [
+          "asn1",
+          "compiler",
+          "parsetools",
+          "syntax_tools"
+        ],
+        "files": 33,
+        "bytes": 2162162,
+        "tokens": 633966
+      },
+      "floor": {
+        "apps": [
+          "asn1",
+          "compiler",
+          "parsetools",
+          "syntax_tools"
+        ],
+        "files": 33,
+        "bytes": 2063713,
+        "tokens": 606284
+      }
+    },
+    "otp_tools_services": {
+      "core": {
+        "apps": [
+          "dialyzer",
+          "inets",
+          "runtime_tools",
+          "sasl",
+          "ssl",
+          "tools"
+        ],
+        "files": 47,
+        "bytes": 1588737,
+        "tokens": 432680
+      },
+      "floor": {
+        "apps": [
+          "dialyzer",
+          "inets",
+          "runtime_tools",
+          "sasl",
+          "ssl",
+          "tools"
+        ],
+        "files": 46,
+        "bytes": 1549324,
+        "tokens": 423465
+      }
+    },
+    "elixir_and_builtin_apps": {
+      "core": {
+        "apps": [
+          "eex",
+          "elixir",
+          "ex_unit",
+          "iex",
+          "logger"
+        ],
+        "files": 64,
+        "bytes": 2224412,
+        "tokens": 602471
+      },
+      "floor": {
+        "apps": [
+          "eex",
+          "elixir",
+          "ex_unit",
+          "iex",
+          "logger"
+        ],
+        "files": 64,
+        "bytes": 1845142,
+        "tokens": 500013
+      }
+    },
+    "mix_build_config": {
+      "core": {
+        "apps": [
+          "mix"
+        ],
+        "files": 56,
+        "bytes": 618269,
+        "tokens": 158005
+      },
+      "floor": {
+        "apps": [
+          "mix"
+        ],
+        "files": 54,
+        "bytes": 563651,
+        "tokens": 144029
+      }
+    },
+    "phoenix_liveview_plug_wrappers": {
+      "core": {
+        "apps": [
+          "phoenix",
+          "phoenix_html",
+          "phoenix_live_view",
+          "phoenix_pubsub",
+          "phoenix_template",
+          "plug"
+        ],
+        "files": 48,
+        "bytes": 1059683,
+        "tokens": 292487
+      },
+      "floor": {
+        "apps": [
+          "phoenix",
+          "phoenix_html",
+          "phoenix_live_view",
+          "phoenix_pubsub",
+          "phoenix_template",
+          "plug"
+        ],
+        "files": 48,
+        "bytes": 1047624,
+        "tokens": 289660
+      }
+    }
+  },
+  "whole_target_only": {
+    "core": {
+      "files": 306,
+      "bytes": 10773667,
+      "tokens": 2996938
+    },
+    "floor": {
+      "files": 302,
+      "bytes": 10021972,
+      "tokens": 2793931
+    }
+  },
+  "candidate_EX-165": {
+    "row_id": "EX-165",
+    "matched_mfas": {
+      "core": [
+        "leex:file/1",
+        "leex:file/2"
+      ],
+      "floor": [
+        "leex:file/1",
+        "leex:file/2"
+      ]
+    },
+    "source_files_per_lane": 3,
+    "source_file_identities": [
+      "parsetools/src/leex.erl",
+      "mix/lib/mix/tasks/compile.leex.ex",
+      "mix/lib/mix/compilers/erlang.ex"
+    ],
+    "tokens": {
+      "core": 30349,
+      "floor": 30037,
+      "both_lanes_source_tokens": 60386
+    },
+    "bytes": {
+      "core": 102015,
+      "floor": 100828
+    },
+    "planning_note": "3 exact source files in each lane; six lane-specific file identities total. Splitting lane review across two tasks keeps each task at 3 files. Tier/fixture implementation and repo context are additional planning input."
+  },
+  "lower_bound_phase_equivalents": {
+    "core_target_tokens_at_100k": 30,
+    "floor_target_tokens_at_100k": 28,
+    "by_candidate_family_sum_core": 33,
+    "by_candidate_family_sum_floor": 32,
+    "caveat": "target-only lower bound; meaningful caller/delegate traces, repeated audit metadata, implementation, verification and review time add cost; one core/floor file erlang.erl exceeds 100k tokens alone and must be split into traceable function subrecords or line-bounded source evidence"
+  }
+}

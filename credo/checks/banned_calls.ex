@@ -185,6 +185,8 @@ defmodule Fablebook.Credo.BannedCalls do
           {:merl, :_, :_},
           {:asn1ct, :_, :_},
           {:asn1ct_check, :check, 2},
+          {:asn1ct_parser2, :parse, 2},
+          {:asn1ct_tok, :file, 1},
           {:qlc, :string_to_handle, :_},
           {:c, :erlangrc, :_},
           {:shell, :start, :_},

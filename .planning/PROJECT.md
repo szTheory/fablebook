@@ -16,7 +16,8 @@ If everything else fails, a scenario must still render with production fidelity 
 
 ### Validated
 
-(None yet. Ship to validate.)
+- ✓ **SEC-02** In prod the router macro raises a `CompileError`, with no override in 1.0. Stories and canon never compile in prod. The CI prod build asserts there are no Fablebook routes and no story beams. — Phase 01.1 (ADR 0006)
+- ✓ **REL-01** release-please publishes to Hex via the bootstrap skill. Phase 1 publishes 0.1.0 to reserve the name. Includes a post-publish smoke test, a recovery workflow and an SBOM. — Phase 01.1 (ADR 0017, INT-20261028-01)
 
 ### Active
 
@@ -157,7 +158,6 @@ Every item below is a v1.0 commitment.
 
 **SEC: security**
 - [ ] **SEC-01** No `Code.eval*`, no runtime EEx/HEEx compilation, and no `String.to_atom` on input. Credo bans these, and properties plus mutation-proven tests confirm it. (ADR 0004, INT-20261028-01)
-- [ ] **SEC-02** In prod the router macro raises a `CompileError`, with no override in 1.0. Stories and canon never compile in prod. The CI prod build asserts there are no Fablebook routes and no story beams. (ADR 0006)
 - [ ] **SEC-03** CSP nonces everywhere (`csp_nonce_assign_key`). No `eval` or `new Function`. Iframe sandbox attributes and `frame-ancestors 'self'`. (ADR 0005)
 - [ ] **SEC-04** Bundle redaction strips paths, env values, hosts, secret-shaped strings and session/CSRF tokens. A `redact:` hook is available. (ADR 0010)
 - [ ] **SEC-05** Size caps per control type (`:state_too_large`), path containment for `--out` and the editor (`:path_rejected`), and descriptions/Markdown escaped by default. (ADR 0004)
@@ -210,7 +210,6 @@ Every item below is a v1.0 commitment.
 **CI / REL / COMPAT**
 - [ ] **CI-01** Exactly three workflows; `ci.yml` stays ≤250 lines with one required `ci-gate` check. A test enforces these caps. PR p50 ≤ 7 min is a feedback-time objective measured from CI history; weekly p50/p95 reports keep overages visible without making timing a release or phase-closure gate. (ADR 0017, INT-20261028-02, INT-20261106-01)
 - [ ] **CI-02** Nightly runs the full suite, Firefox/WebKit and the canary. Release PRs run the heavy suite, and any open `quality-regression` issue blocks the release. (ADR 0017, INT-20261028-04)
-- [ ] **REL-01** release-please publishes to Hex via the bootstrap skill. Phase 1 publishes 0.1.0 to reserve the name. Includes a post-publish smoke test, a recovery workflow and an SBOM. (ADR 0017, INT-20261028-01)
 - [ ] **COMPAT-01** Floor: Elixir 1.18 / OTP 27, Phoenix 1.8.9, LiveView 1.2.9 (`mix.floor.lock`). Latest lane: Elixir 1.20 / OTP 29. Canary: LiveView main. The `ComponentInfo` contract test runs on all three. (ADR 0007, ADR 0008, INT-20261028-18)
 
 **INTENT**
@@ -314,6 +313,7 @@ Every item below is a v1.0 commitment.
 
 | Decision | Rationale | Outcome |
 |---|---|---|
+| Verify Hex docs recovery locally when the published release already has docs (Phase 01.1, INT-20261108-01) | Do not alter a public package just to manufacture a missing-docs test case | Fake API contract cases cover docs absent and present; the real docs generator passed `--dry-run` without uploading |
 | End GSD flows with the next command; distinguish merge readiness from pending phase observations (INT-20261029-09) | Keep useful work moving and make the next action explicit | Merge green scoped PRs under existing checks; retain scheduled evidence; auto-advance stays off |
 | Automate verification by default; hand off only irreducible checks (INT-20261029-08) | Reduce owner toil and repeated UAT; add CI coverage when it has recurring value | `.planning/VERIFICATION.md` maps criteria to evidence, reuses approvals, and requires CI speed reviews to preserve gates; Phase 1 evidence is in `01-UAT.md`; GSD auto-advance stays off |
 | Allow validation-only publication for the named delivery-evidence items (ADR 0026, INT-20261101-01) | PR CI and merge identity cannot be verified before a PR exists or is merged | For Phase 01.1.1.3.1.3 only, publish a draft to collect exact-head CI; merge only after all required checks and markers pass; complete the phase only after independent merge identity verification. Other high findings still block. |
@@ -423,4 +423,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-04 after Phase 01.1.1.13; the Phase 01.1.1.1 aggregate remains open*
+*Last updated: 2026-11-08 after Phase 01.1; the Phase 01.1.1.1 aggregate remains open*

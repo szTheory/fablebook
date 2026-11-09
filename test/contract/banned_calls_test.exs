@@ -183,6 +183,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:merl, :_, :_},
     {:asn1ct, :_, :_},
     {:asn1ct_check, :check, 2},
+    {:asn1ct_parser2, :parse, 2},
+    {:asn1ct_tok, :file, 1},
     {:qlc, :string_to_handle, :_},
     {:c, :erlangrc, :_},
     {:shell, :start, :_},
@@ -726,6 +728,63 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
 
     assert credo_issues("Regex.compile(pattern)", "asn1ct_check_benign.ex") == []
+  end
+
+  @tag :tmp_dir
+  test "parser and tokenizer atom-creation fronts are caught through uncalled direct, capture and apply bodies",
+       %{
+         tmp_dir: dir
+       } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    fronts = [
+      {{:asn1ct_parser2, :parse, 2}, "file, tokens", "file, tokens", "parser"},
+      {{:asn1ct_tok, :file, 1}, "file", "file", "tokenizer"}
+    ]
+
+    for {mfa, args, apply_args, name} <- fronts do
+      {module, function, arity} = mfa
+      assert mfa in @mfa_tier, "#{inspect(mfa)} is missing its exact guard tier"
+
+      for form <- [:direct, :capture, :apply] do
+        body =
+          case form do
+            :direct ->
+              "def probe(#{args}), do: :#{module}.#{function}(#{args})"
+
+            :capture ->
+              "def probe, do: &:#{module}.#{function}/#{arity}"
+
+            :apply ->
+              "def probe(#{args}), do: apply(:#{module}, :#{function}, [#{apply_args}])"
+          end
+
+        source = """
+        defmodule Fablebook.GuardFixture.Asn1#{Macro.camelize(name)}#{Macro.camelize(to_string(form))} do
+          #{body}
+        end
+        """
+
+        filename = "asn1_#{name}_#{form}.ex"
+        path = Path.join(dir, filename)
+        File.write!(path, source)
+
+        assert credo_issues(source, filename) != [], "Credo missed #{form} for #{inspect(mfa)}"
+        [beam] = compile!([path], dir, true)
+        assert {:ok, scan} = BeamWalker.scan(beam)
+
+        assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+               "BEAM walker missed #{form} for #{inspect(mfa)}"
+
+        without_front = Enum.reject(@mfa_tier, &(&1 == mfa))
+
+        refute Enum.any?(hits(scan, without_front), &mfa_hit?(&1, mfa)),
+               "#{form} hit remained after removing only #{inspect(mfa)}"
+      end
+    end
+
+    assert credo_issues("Regex.compile(pattern)", "asn1_parser_tokenizer_benign.ex") == []
   end
 
   @tag :tmp_dir

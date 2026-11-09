@@ -34,12 +34,13 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 
 **Family 1: Walking skeleton**
 - [x] **Phase 1: Release pipeline, CI gate and guards** - 0.1.0 published, three workflows with caps, intent test, prod guard, eval and atom bans (completed 2026-11-07)
-- [ ] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded
+- [x] **Phase 01.1: Close phase 1 guard gaps** (INSERTED) - atom and code-loading ban bypasses closed, hex-publish hardened, SEC-02 recorded (completed 2026-11-08)
 - [x] **Phase 01.1.1: Close the eval and code-loading ban list** (INSERTED) - sweep-derived eval, compile-and-load and native-load tier over the whole dev code path, deps included, plus the call-name over-catch fix (CR-02, re-homed from 01.1 per INT-20261029-03; the `__info__` arity skip, quoted and module-body pair-tier calls, and the Credo wording (CR-04, VR-01, WR-11, truth 6, re-homed per INT-20261029-04)) (completed 2026-10-29)
 - [ ] **Phase 01.1.1.1: Finish the ban list** (INSERTED) - every atom creator whatever its name, every installed OTP app swept, and every sweep exclusion audited to a true cited reason (open items transferred from 01.1.1 per INT-20261029-02)
 - [x] **Phase 01.1.1.13: Close CN-001 and CN-004 source-authority gaps** (bounded delivery complete 2026-11-04; Phase 01.1.1.1 aggregate remains open)
 - [x] **Phase 01.1.1.14: Bound Leex caller-chosen atom creation** (completed 2026-11-05)
 - [x] **Phase 01.1.1.15: Bound ASN.1 table-wrapper exclusions** (INSERTED) - source-backed disposition for the bounded EX-107 ASN.1 table-wrapper slice; parent aggregate remains open (completed 2026-11-05)
+- [ ] **Phase 01.1.1.16: Bound ASN.1 parser and tokenizer exclusions** (INSERTED)
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -148,7 +149,7 @@ Plans:
   3. `hex-publish.yml` refuses a tag whose commit is not on main, a recovery run after a docs-only failure uploads the docs, and `HEX_API_KEY` reaches only the steps that use it (WR-05 workflow half, WR-06, IN-04).
   4. SEC-02 shows Complete with its CI run link, owner questions Q35 to Q37 are recorded, and the remaining info findings are tracked; the first PR touches no `lib/` or `.github/` file, the second no `test/contract/` or `test/planning/` file, and both are merged green.
 **Gap closure (re-verification):** CR-04, VR-01 and truth 6 moved to Phase 01.1.1 per INT-20261029-04 (5-plan cap and ADR 0021 review cap reached).
-**Plans:** 5/5 plans executed (3 gap-closure plans from 01.1-VERIFICATION)
+**Plans:** 5/5 plans complete (3 gap-closure plans from 01.1-VERIFICATION)
 
 Plans:
 **Wave 1**
@@ -210,25 +211,25 @@ Plans:
   4. If a newly judged front door is one that `lib/` already calls (for example `Macro.expand/2` at `lib/fablebook/router.ex:35`), work stops and the case is reported. The front door is never weakened or excluded. Resolving it needs an owner-recorded decision: either an ADR-backed allowlist entry or a `lib/` change in its own PR.
   5. The Credo explanation no longer lists the two open items. Every changed claim maps to a fixture or a strictness row, and a human wording check is recorded before merge.
   6. Each PR is contract-test-only (no `lib/`, `.github/` or `mix.exs`) and merged green with a CI run link.
-**Plans:** 5 plans
+**Plans:** 5 historical plans — Plan 01 halted with its tracer preserved; Plans 02–05 superseded by the approved same-level re-scope.
 
 Sequential scoped PRs; each depends on the previous green merge.
 
 Plans:
 **Wave 1**
-- [ ] 01.1.1.1-01-PLAN.md — Exact-source evidence, confirmed caller-text/file creators, and owner AST policy gate
+- [ ] 01.1.1.1-01-PLAN.md — Exact-source evidence, confirmed caller-text/file creators, and owner AST policy gate (halted after task 01-01; summary retained)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01.1.1.1-02-PLAN.md — Every installed OTP app/BEAM, Common Test/debugger fronts, and call-name/boundary audit
+- [ ] 01.1.1.1-02-PLAN.md — Every installed OTP app/BEAM, Common Test/debugger fronts, and call-name/boundary audit (superseded by approved re-scope)
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01.1.1.1-03-PLAN.md — General exclusion semantic audit EX-001 through EX-091 with source and removal proof
+- [ ] 01.1.1.1-03-PLAN.md — General exclusion semantic audit EX-001 through EX-091 with source and removal proof (superseded by approved re-scope)
 
 **Wave 4** *(blocked on Wave 3 completion)*
-- [ ] 01.1.1.1-04-PLAN.md — General exclusion semantic audit EX-092 through EX-182 with source and removal proof
+- [ ] 01.1.1.1-04-PLAN.md — General exclusion semantic audit EX-092 through EX-182 with source and removal proof (superseded by approved re-scope)
 
 **Wave 5** *(blocked on Wave 4 completion)*
-- [ ] 01.1.1.1-05-PLAN.md — Complete audit gates, changed Credo wording approval, and green-merge evidence
+- [ ] 01.1.1.1-05-PLAN.md — Complete audit gates, changed Credo wording approval, and green-merge evidence (superseded by approved re-scope)
 
 **Cross-cutting constraints:**
 - SC1 / D-01–D-03: caller-text/file creators exposed by this audit are caught with compile-only fixtures in both guards; existing-atom bans stay.
@@ -290,6 +291,23 @@ Plans:
   5. Delivery remains contract/test/evidence-only, passes required core/floor checks, and records a CI link at the tested revision. No whole-table closure, SEC-01 completion, parent phase completion, or Phase 2 start is claimed.
 **Plans:** 1/1 plans complete (planned by GSD)
 - [x] 01.1.1.15-01-PLAN.md
+
+### Phase 01.1.1.16: Bound ASN.1 parser and tokenizer exclusions (INSERTED)
+
+**Goal:** Establish an exact-source disposition for the parser/tokenizer slice of EX-107 on the core and floor lanes. Preserve the complete EX-107 identity and every other matched function; determine from the exact parser, tokenizer, and caller paths whether the four selected MFAs can create atoms from caller-chosen input.
+**Requirements**: None completed here (SEC-01 remains assigned to Phase 5)
+**Depends on:** Phase 01.1.1.15
+**Success Criteria** (what must be TRUE):
+  1. The complete current EX-107 core and floor match sets remain equal to their authoritative sets; the four selected MFAs per lane are represented losslessly and every other match remains pending.
+  2. Exact core/floor `asn1ct_parser2.erl` and `asn1ct_tok.erl` sources are added to the approved offline archive with verified hashes. Existing `asn1ct.erl` caller sources are revalidated against their already archived identities.
+  3. The four exact caller edges from `asn1ct` are reconciled on both lanes, including `scan_pass/1`, `set_scan_parse_pass/1`, `set_scan_parse_pass_1/2`, and `parse_pass/1`; the complete parser/tokenizer files are traced through any relevant delegates.
+  4. Each selected function receives a source-backed lane disposition. Any removed matcher has an individual, non-vacuous removal witness on each applicable lane; no result is generalized to the remaining EX-107 matches.
+  5. Contract controls preserve the complete row union and bounded sub-scope on both lanes without executing the audited ASN.1 functions or changing production code.
+  6. Delivery remains contract/test/evidence-only, passes the required core/floor checks, and records CI at the tested revision. The parent aggregate, SEC-01, and Phase 2 gates remain open.
+**Plans:** 1/1 plans executed
+
+Plans:
+- [x] 01.1.1.16-01-PLAN.md
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.

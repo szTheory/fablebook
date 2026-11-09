@@ -35,7 +35,7 @@
 | `nightly` | in `ci-gate`'s `needs`; skipped on ordinary PRs, required on release PRs | — |
 | `ci-gate` | `if: always()`; fails unless every job in its `needs` succeeded (skipped counts as failure, except `nightly` outside `release-please--` heads); the **only required check** | — |
 
-- **PR wall-clock target:** p50 ≤ 7 min, p95 ≤ 10 min.
+- **PR wall-clock objectives:** p50 ≤ 7 min, p95 ≤ 10 min. The weekly report keeps these visible as feedback-time targets; a timing-only overage is tracked as `ci-performance`, not `quality-regression`, and does not block a release. (INT-20261106-01)
 - **Agent merges** follow the all-checks merge rule: every check passes, only `nightly` and `ci-health` may be skipped, and `core`, `floor`, `dialyzer`, `security` and `ci-gate` are present and passing. The ruleset keeps one required check.
 
 ### Nightly, dispatch and release
@@ -47,7 +47,7 @@
   - Muex and the bench weekly.
 
   A failure opens or updates **one** `quality-regression` issue.
-- **`ci-health`** (weekly cron and dispatch; the only schedule-only job): posts PR p50/p95 on the pinned `ci-timing` issue, asserts the ruleset requires exactly `["ci-gate"]`, and re-runs the CI-shape test from main. Any failing step opens or updates `quality-regression`.
+- **`ci-health`** (weekly cron and dispatch; the only schedule-only job): posts PR p50/p95 on the pinned `ci-timing` issue, asserts the ruleset requires exactly `["ci-gate"]`, and re-runs the CI-shape test from main. Timing overages open or update `ci-performance`; ruleset drift or a failing check opens or updates `quality-regression`.
 - **Release PR** (`head_ref` starts with `release-please--`): runs the nightly suite and is gated on it. Any open `quality-regression` issue blocks the release.
 - **Release pipeline:**
   - release-please (elixir, `include-v-in-tag`, manifest `0.0.0`, `release-as: 0.1.0` for the first release only) runs with the fine-grained PAT `RELEASE_PLEASE_TOKEN` and no `GITHUB_TOKEN` fallback, because a `GITHUB_TOKEN` PR never triggers `ci.yml`.
@@ -69,5 +69,6 @@
 - **Security job (D-18, D-27):** `hex.audit`, dependency-review, actionlint and zizmor; `deps.audit` is dropped. (INT-20261028-18)
 - **Job set (D-30, Pitfall 8 reading):** core, floor (with no-optional-deps folded in), dialyzer, security, nightly (in `ci-gate`'s `needs`, skipped allowed except on `release-please--` heads), ci-gate, and ci-health as the only schedule-only job; e2e arrives by changing `ci-gate`'s `needs`. (INT-20261028-18)
 - **ci-health and nightly (D-20):** ci-health also re-runs the CI-shape test from main and files `quality-regression` when any step fails; nightly runs on its cron and on dispatch and files `quality-regression` on failure. (INT-20261028-18)
+- **Timing objective and release handling:** retain the 420-second p50 and 600-second p95 targets as non-blocking CI feedback-time objectives. A timing-only breach is tracked under `ci-performance`; only correctness, security, ruleset, or release-pipeline regressions use `quality-regression` and block release. (INT-20261106-01)
 - **Merges (T-01-37):** agent merges follow the all-checks merge rule while the ruleset keeps one required check. The residual risk of a PR that neuters the core and floor test steps and ci-health's shape step is owner-accepted. (INT-20261028-18)
 - **Reusable calls (Pitfall 7 reading):** the D-17 ban on `uses: ./.github/workflows/` applies to `ci.yml`; `release-please.yml` may call exactly `hex-publish.yml`. (INT-20261028-18)

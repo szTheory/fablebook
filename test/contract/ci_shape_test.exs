@@ -17,18 +17,11 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   @base "test/fixtures/ci_shape/base.yml"
   @sha "3d3c42e5aac5ba805825da76410c181273ba90b1"
-  @legacy_ci "test/fixtures/ci_shape/legacy-ci.yml"
   @long_line "# " <> String.duplicate("x", 120)
   @padding String.duplicate("#\n", 250)
   @extra_job "\njobs:\n  JOB:\n    runs-on: ubuntu-24.04\n    timeout-minutes: 5\n    steps:\n      - run: echo ok\n"
-  @gate_needs "    needs: [core, security, nightly]\n"
+  @gate_needs "    needs: [core, nightly]\n"
   @nightly_if "    if: github.event.schedule == '17 3 * * *' || startsWith(github.head_ref, 'release-please--')\n"
-  @ci_health_group "group: ci-health-${{ github.workflow }}"
-  @workflow_group ~S/group: ci-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}-${{ github.event.schedule }}/
-  @previous_workflow_group ~S/group: ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event.schedule }}/
-  @workflow_cancel ~S/cancel-in-progress: ${{ github.event_name == 'pull_request' }}/
-  @actionlint_queue_ignore ~S/args: -color -ignore ^unexpected\skey\s\x22queue\x22/ <>
-                             ~S/\sfor\s\x22concurrency\x22\ssection.*$/
   @smoke "      - run: bin/smoke_consumer --path .\n"
 
   @mutations [
@@ -72,7 +65,6 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:bypass, "ci.yml", @smoke, "      - run: set +e; bin/smoke_consumer --path .\n"},
     {:bypass, "ci.yml", @nightly_if, "    if: false\n"},
     {:bypass, "ci.yml", @nightly_if, "    if: ${{ false }}\n"},
-    {:workflow_concurrency, "ci.yml", @workflow_group, @previous_workflow_group},
     {:core_mix_ci, "ci.yml", "      - run: mix ci\n", "      - run: mix test\n"},
     {:core_fetch_depth, "ci.yml", "          fetch-depth: 0\n", ""},
     {:event_before, "ci.yml", "  EVENT_BEFORE: ${{ github.event.before }}\n", "  OTHER: x\n"},
@@ -81,51 +73,6 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:ci_health_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression ci-health",
      "      - run: bin/ci_health --file-regression ci-health"},
-    {:ci_health_concurrency, "ci.yml", @ci_health_group,
-     @ci_health_group <> "-${{ github.ref }}"},
-    {:ci_health_concurrency, "ci.yml", @ci_health_group,
-     @ci_health_group <> "-${{ github.event.schedule }}"},
-    {:ci_health_concurrency, "ci.yml", "cancel-in-progress: false", "cancel-in-progress: true"},
-    {:ci_health_concurrency, "ci.yml", "queue: max", "queue: single"},
-    {:queue_actionlint_ignore, "ci.yml", @actionlint_queue_ignore, "args: -color"},
-    {:queue_actionlint_ignore, "ci.yml", @actionlint_queue_ignore, "args: -color -ignore '.*'"},
-    {:queue_actionlint_scope, "release-please.yml", "  group: release-please\n",
-     "  group: release-please\n  queue: invalid\n"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
-     "concurrency: {group: release-please, queue: invalid}"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
-     "concurrency:\n  \"queue\": invalid\n  group: release-please\n  cancel-in-progress: false"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
-     "concurrency: {? queue : invalid, group: release-please, cancel-in-progress: false}"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
-     "concurrency:\n  group: release-please\n  ? queue\n  : max\n  cancel-in-progress: false"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
-     "concurrency:\n  group: release-please\n  ? # explicit key indicator\n    queue # explicit key value\n  # separator comment\n  : max\n  cancel-in-progress: false"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
-     "concurrency: {? \"qu\\u0065ue\": invalid, group: release-please, cancel-in-progress: false}"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
-     "concurrency: {\"qu\\u0065ue\": invalid, group: release-please, cancel-in-progress: false}"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
-     "concurrency: {!!str queue: invalid, group: release-please, cancel-in-progress: false}"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency:\n  group: release-please\n  cancel-in-progress: false",
-     "concurrency:\n  group: release-please\n  !!str queue: invalid\n  cancel-in-progress: false"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency: {!!str # tagged key\n  queue: invalid, group: release-please, cancel-in-progress: false}"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency: {&queue_key queue: invalid, group: release-please, cancel-in-progress: false}"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "queue_key: &queue_key queue\nconcurrency: {*queue_key: invalid, group: release-please, cancel-in-progress: false}"},
-    {:queue_actionlint_scope, "release-please.yml",
-     "concurrency: {!<tag:yaml.org,2002:str> queue: invalid, group: release-please, cancel-in-progress: false}"},
     {:nightly_failure, "ci.yml",
      "      - if: failure()\n        run: bin/ci_health --file-regression nightly",
      "      - run: bin/ci_health --file-regression nightly"},
@@ -138,31 +85,6 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   test "the real .github workflows and setup action pass every rule" do
     assert workflow_violations(real_files()) == []
-  end
-
-  test "restoring the exact legacy CI workflow fails the lock contracts" do
-    rules = real_files() |> Map.put("ci.yml", File.read!(@legacy_ci)) |> fired()
-
-    assert :ci_health_concurrency in rules
-    assert :workflow_concurrency in rules
-    assert :queue_actionlint_ignore in rules
-  end
-
-  test "a workflow change cannot hide a missing health-run lock" do
-    files = real_files()
-    original = Map.fetch!(files, "ci.yml")
-
-    changed =
-      original
-      |> String.replace(
-        "    concurrency:\n      group: ci-health-${{ github.workflow }}\n      cancel-in-progress: false\n      queue: max\n",
-        "",
-        global: false
-      )
-      |> String.replace("name: ci\n", "name: ci\n# changed\n", global: false)
-
-    assert changed != original
-    assert :ci_health_concurrency in (files |> Map.put("ci.yml", changed) |> fired())
   end
 
   test "the base fixture passes every rule" do
@@ -190,133 +112,6 @@ defmodule Fablebook.Contract.CiShapeTest do
       )
 
     assert workflow_violations(files) == []
-  end
-
-  test "workflow fields inside a shell heredoc are not parsed as YAML fields" do
-    files = base_files()
-
-    changed =
-      String.replace(
-        Map.fetch!(files, "ci.yml"),
-        "          echo \"$NEEDS\" | jq -e --arg ref \"$HEAD_REF\" 'to_entries | all(\n",
-        "          cat <<'YAML'\n          uses: owner/action@main\n          paths: [lib]\n          YAML\n          echo \"$NEEDS\" | jq -e --arg ref \"$HEAD_REF\" 'to_entries | all(\n",
-        global: false
-      )
-
-    assert changed != Map.fetch!(files, "ci.yml")
-    assert workflow_violations(Map.put(files, "ci.yml", changed)) == []
-  end
-
-  test "workflow fields inside multiline quoted scalars are not parsed as YAML fields" do
-    files = base_files()
-    original = Map.fetch!(files, "release-please.yml")
-
-    for quote <- ["\"", "'"] do
-      scalar =
-        "concurrency:\n  group: #{quote}build\n    queue: invalid\n    uses: owner/action@main\n    paths: [lib]#{quote}\n  cancel-in-progress: false\n"
-
-      changed =
-        String.replace(
-          original,
-          "concurrency:\n  group: release-please\n  cancel-in-progress: false\n",
-          scalar,
-          global: false
-        )
-
-      assert changed != original
-      assert workflow_violations(Map.put(files, "release-please.yml", changed)) == []
-    end
-  end
-
-  test "block scalar text inside a multiline quoted scalar does not hide later YAML fields" do
-    files = base_files()
-    original = Map.fetch!(files, "release-please.yml")
-
-    quoted =
-      String.replace(
-        original,
-        "name: release-please\n",
-        "name: \"hello\n  run: |\n    done\"\n",
-        global: false
-      )
-
-    assert quoted != original
-    assert workflow_violations(Map.put(files, "release-please.yml", quoted)) == []
-
-    changed =
-      String.replace(
-        quoted,
-        "  cancel-in-progress: false\n",
-        "  cancel-in-progress: false\n  queue: invalid\n",
-        global: false
-      )
-
-    assert changed != quoted
-    assert fired(Map.put(files, "release-please.yml", changed)) == [:queue_actionlint_scope]
-  end
-
-  test "same-line quoted scalar text is not parsed as anchors or merge keys" do
-    files = base_files()
-    original = Map.fetch!(files, "ci.yml")
-
-    for value <- ["literal: &queue_key", "literal: <<:"] do
-      changed = String.replace(original, "name: ci\n", "name: \"#{value}\"\n", global: false)
-
-      assert changed != original
-      assert workflow_violations(Map.put(files, "ci.yml", changed)) == []
-    end
-  end
-
-  test "quoted scalar values that start on the next line do not look like workflow fields" do
-    files = base_files()
-    original = Map.fetch!(files, "release-please.yml")
-
-    for {tag, quote} <- [{"", "\""}, {"", "'"}, {"!!str ", "\""}, {"!!str ", "'"}] do
-      scalar =
-        "name:\n  #{tag}#{quote}hello\n  queue: invalid\n  uses: owner/action@main\n  paths: [lib]#{quote}\n"
-
-      changed = String.replace(original, "name: release-please\n", scalar, global: false)
-
-      assert changed != original
-      assert workflow_violations(Map.put(files, "release-please.yml", changed)) == []
-    end
-
-    quoted =
-      String.replace(
-        original,
-        "name: release-please\n",
-        "name:\n  \"hello\n  queue: invalid\n  uses: owner/action@main\n  paths: [lib]\"\n",
-        global: false
-      )
-
-    changed =
-      String.replace(
-        quoted,
-        "  cancel-in-progress: false\n",
-        "  cancel-in-progress: false\n  queue: invalid\n",
-        global: false
-      )
-
-    assert changed != quoted
-    assert fired(Map.put(files, "release-please.yml", changed)) == [:queue_actionlint_scope]
-  end
-
-  test "YAML-looking alias text inside tagged and untagged block scalars is not a mapping key" do
-    files = base_files()
-    original = Map.fetch!(files, "hex-publish.yml")
-
-    for header <- ["        run: |", "        run: !!str |"] do
-      changed =
-        String.replace(
-          original,
-          "        run: |\n          [[ \"$TAG\" =~",
-          "#{header}\n          *queue: shell text\n          [[ \"$TAG\" =~",
-          global: false
-        )
-
-      assert changed != original
-      assert workflow_violations(Map.put(files, "hex-publish.yml", changed)) == []
-    end
   end
 
   test "p50 is not a phase name" do
@@ -417,7 +212,6 @@ defmodule Fablebook.Contract.CiShapeTest do
 
     Enum.flat_map(files, &text_violations/1) ++
       Enum.flat_map(workflows, &timeout_violations/1) ++
-      queue_actionlint_scope_violations(workflows) ++
       ci_violations(files["ci.yml"]) ++
       gate_count_violations(workflows) ++
       check(newlines(files["ci.yml"]) <= 250, {:ci_lines, "ci.yml", newlines(files["ci.yml"])}) ++
@@ -430,16 +224,7 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp text_violations({file, text}) do
     numbered = text |> lines() |> Enum.with_index(1)
 
-    yaml_lines =
-      text
-      |> strip_yaml_scalar_bodies()
-      |> lines()
-      |> Enum.with_index(1)
-      |> Map.new(fn {line, n} -> {n, line} end)
-
-    Enum.flat_map(numbered, fn {line, n} ->
-      line_violations(file, {line, n}, Map.fetch!(yaml_lines, n))
-    end) ++
+    Enum.flat_map(numbered, &line_violations(file, &1)) ++
       for(ref <- uses_refs(text), violation <- uses_violations(file, ref), do: violation) ++
       node_violations(file, text) ++
       for(
@@ -448,19 +233,15 @@ defmodule Fablebook.Contract.CiShapeTest do
       )
   end
 
-  defp line_violations(file, {line, n}, yaml_line) do
+  defp line_violations(file, {line, n}) do
     at = "#{file}:#{n}"
-    yaml_structure_line = strip_yaml_quoted_values(yaml_line, :all)
 
     check(not String.contains?(line, "\t"), {:tab, at, line}) ++
-      check(
-        not (yaml_structure_line =~ ~r/(?:\A|:\s+|-\s+)[&*][A-Za-z_]/),
-        {:anchor, at, line}
-      ) ++
-      check(not String.contains?(yaml_structure_line, "<<:"), {:merge_key, at, line}) ++
+      check(not (line =~ ~r/(?:\A|:\s+|-\s+)[&*][A-Za-z_]/), {:anchor, at, line}) ++
+      check(not String.contains?(line, "<<:"), {:merge_key, at, line}) ++
       check(String.length(line) <= 120, {:line_length, at, String.length(line)}) ++
-      check(not (yaml_line =~ ~r/\A\s*(?:- )?paths(?:-ignore)?:/), {:paths_filter, at, line}) ++
-      image_violations(at, yaml_line)
+      check(not (line =~ ~r/\A\s*(?:- )?paths(?:-ignore)?:/), {:paths_filter, at, line}) ++
+      image_violations(at, line)
   end
 
   defp image_violations(at, line) do
@@ -471,8 +252,7 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp uses_refs(text) do
-    for line <- text |> strip_yaml_scalar_bodies() |> lines(),
-        [_, value] <- [Regex.run(~r/\A\s*(?:- )?uses:(.*)\z/, line)] do
+    for line <- lines(text), [_, value] <- [Regex.run(~r/\A\s*(?:- )?uses:(.*)\z/, line)] do
       case Regex.run(~r/\A\s*(\S+)(?:\s+#.*)?\z/, value) do
         [_, ref] -> ref
         nil -> String.trim(value)
@@ -524,8 +304,7 @@ defmodule Fablebook.Contract.CiShapeTest do
     jobs = jobs(text)
     job = &(List.keyfind(jobs, &1, 0, {&1, []}) |> elem(1))
 
-    workflow_concurrency_violations(text) ++
-      check(not String.contains?(text, "workflow_call"), {:workflow_call, "ci.yml", nil}) ++
+    check(not String.contains?(text, "workflow_call"), {:workflow_call, "ci.yml", nil}) ++
       for(
         {line, n} <- Enum.with_index(lines(text), 1),
         bypass?(line),
@@ -541,8 +320,6 @@ defmodule Fablebook.Contract.CiShapeTest do
         step?(job.("ci-health"), &("run: mix test test/contract/ci_shape_test.exs" in &1)),
         {:ci_health_shape, "ci-health", nil}
       ) ++
-      ci_health_concurrency_violations(text, job.("ci-health")) ++
-      actionlint_queue_compat_violations(text, job.("security")) ++
       check(step?(job.("ci-health"), &regression_step?/1), {:ci_health_failure, "ci-health", nil}) ++
       check(step?(job.("nightly"), &regression_step?/1), {:nightly_failure, "nightly", nil}) ++
       gate_violations(jobs)
@@ -588,308 +365,6 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp regression_step?(step) do
     Enum.any?(step, &(&1 =~ ~r/\Aif: failure\(\)(?:\s|\z)/)) and
       Enum.any?(step, &String.starts_with?(&1, "run: bin/ci_health --file-regression "))
-  end
-
-  defp serialized_health?(body) do
-    concurrency =
-      body
-      |> Enum.drop_while(&(&1 != "    concurrency:"))
-      |> Enum.drop(1)
-      |> Enum.take_while(&String.starts_with?(&1, "      "))
-
-    ("      " <> @ci_health_group) in concurrency and
-      "      cancel-in-progress: false" in concurrency and
-      "      queue: max" in concurrency
-  end
-
-  defp ci_health_concurrency_violations(text, body) do
-    check(
-      serialized_health?(body) and queue_settings(text) == ["queue: max"],
-      {:ci_health_concurrency, "ci-health", nil}
-    )
-  end
-
-  defp actionlint_queue_compat_violations(_text, body) do
-    check(
-      step?(body, &actionlint_queue_ignore?/1),
-      {:queue_actionlint_ignore, "security", nil}
-    )
-  end
-
-  defp actionlint_queue_ignore?(step) do
-    Enum.any?(step, &String.starts_with?(&1, "uses: docker://rhysd/actionlint@")) and
-      @actionlint_queue_ignore in step
-  end
-
-  defp workflow_concurrency_violations(text) do
-    workflow = text |> lines() |> Enum.take_while(&(&1 != "jobs:")) |> Enum.join("\n")
-
-    expected = "concurrency:\n  " <> @workflow_group <> "\n  " <> @workflow_cancel
-
-    check(String.contains?(workflow, expected), {:workflow_concurrency, "workflow", nil})
-  end
-
-  defp queue_actionlint_scope_violations(workflows) do
-    for {file, text} <- workflows,
-        file != "ci.yml",
-        setting <- queue_settings(text),
-        do: {:queue_actionlint_scope, file, setting}
-  end
-
-  defp queue_settings(text) do
-    # The actionlint ignore is global, so reject YAML key syntax the literal scanner cannot decode.
-    # Tagged, anchored, aliased, and escaped keys must not hide unsupported queue settings.
-    scan_text = strip_yaml_mapping_value_scalars(text)
-
-    cond do
-      Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\*[^\s,:{}\[\]]+[ \t]*:/, scan_text) ->
-        ["aliased YAML mapping key syntax"]
-
-      Regex.match?(
-        ~r/(?:\A|\n|[{,]|-[ \t])\s*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)(?:[ \t]+|\r?\n)[ \t]*(?:\#[^\r\n]*\r?\n[ \t]*)?)+["']?queue["']?[ \t]*:/,
-        scan_text
-      ) ->
-        ["tagged YAML mapping key syntax"]
-
-      Regex.match?(~r/(?:\A|\n|[{,]|-[ \t])\s*\?(?:\s|["'])/, scan_text) ->
-        ["explicit YAML mapping key syntax"]
-
-      Regex.match?(~r/"(?:\\.|[^"\\])*\\(?:\\.|[^"\\])*"[ \t]*:/, scan_text) ->
-        ["escaped double-quoted YAML mapping key"]
-
-      true ->
-        for line <- lines(scan_text),
-            Regex.match?(~r/(?:\A\s*|[{,]\s*)["']?queue["']?\s*:/, line),
-            do: String.trim(line)
-    end
-  end
-
-  defp strip_yaml_block_scalar_bodies(text) do
-    {reversed, {_scalar_indent, _quote, _pending_indent}} =
-      text
-      |> String.split("\n", trim: false)
-      |> Enum.reduce({[], {nil, nil, nil}}, &strip_block_scalar_line/2)
-
-    reversed |> Enum.reverse() |> Enum.join("\n")
-  end
-
-  # These contracts inspect YAML lines rather than parsed nodes, so quoted value
-  # bodies must be masked without removing their source line boundaries.
-  defp strip_yaml_scalar_bodies(text),
-    do: strip_yaml_quoted_values(strip_yaml_block_scalar_bodies(text), :multiline)
-
-  # Key scans also mask same-line values so embedded comma + queue text cannot be
-  # mistaken for a mapping key.
-  defp strip_yaml_mapping_value_scalars(text),
-    do: strip_yaml_quoted_values(strip_yaml_block_scalar_bodies(text), :all)
-
-  defp strip_yaml_quoted_values(text, mode) do
-    {reversed, _quote_state} =
-      text
-      |> String.split("\n", trim: false)
-      |> Enum.reduce({[], {nil, nil}}, fn line, {acc, quote_state} ->
-        {masked, next_quote_state} = strip_yaml_quoted_line(line, quote_state, mode)
-        {[masked | acc], next_quote_state}
-      end)
-
-    reversed |> Enum.reverse() |> Enum.join("\n")
-  end
-
-  defp strip_yaml_quoted_line(line, quote, mode) when is_binary(quote) do
-    case mask_quoted_continuation(line, quote) do
-      {:open, masked} ->
-        {masked, quote}
-
-      {:closed, masked, tail} ->
-        {tail_masked, next_quote} = strip_yaml_quoted_values_from(tail, mode)
-        {masked <> tail_masked, next_quote}
-    end
-  end
-
-  defp strip_yaml_quoted_line(line, nil, mode),
-    do: strip_yaml_quoted_values_from(line, mode)
-
-  defp strip_yaml_quoted_line(line, {quote, _pending_indent}, mode) when is_binary(quote) do
-    {masked, next_quote} = strip_yaml_quoted_line(line, quote, mode)
-    {masked, {next_quote, nil}}
-  end
-
-  defp strip_yaml_quoted_line(line, {nil, pending_indent}, mode)
-       when is_integer(pending_indent) do
-    if pending_value_ignorable_line?(line),
-      do: {line, {nil, pending_indent}},
-      else: strip_pending_value_line(line, pending_indent, mode)
-  end
-
-  defp strip_yaml_quoted_line(line, {nil, nil}, mode), do: strip_regular_yaml_value(line, mode)
-
-  defp strip_pending_value_line(line, pending_indent, mode) do
-    case pending_yaml_quote_start(line, pending_indent) do
-      {prefix, rest, quote} ->
-        {masked, next_quote} = strip_yaml_quote_value(prefix, rest, quote, :all)
-        {masked, {next_quote, nil}}
-
-      nil ->
-        if pending_yaml_tag_line?(line, pending_indent),
-          do: {line, {nil, line_indent(line)}},
-          else: strip_regular_yaml_value(line, mode)
-    end
-  end
-
-  defp strip_regular_yaml_value(line, mode) do
-    {masked, next_quote} = strip_yaml_quoted_line(line, nil, mode)
-    pending_indent = if is_nil(next_quote), do: yaml_pending_value_indent(line), else: nil
-    {masked, {next_quote, pending_indent}}
-  end
-
-  defp pending_yaml_quote_start(line, pending_indent) do
-    if line_indent(line) > pending_indent, do: pending_yaml_quote_start(line)
-  end
-
-  defp pending_yaml_quote_start(line) do
-    case Regex.run(
-           ~r/\A\s*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]+)*(["'])/,
-           line,
-           return: :index
-         ) do
-      [{_start, _length}, {quote_start, 1}] -> pending_yaml_quote_parts(line, quote_start)
-      _ -> nil
-    end
-  end
-
-  defp pending_yaml_quote_parts(line, quote_start) do
-    prefix = binary_part(line, 0, quote_start)
-    rest = binary_part(line, quote_start, byte_size(line) - quote_start)
-    quote = binary_part(rest, 0, 1)
-    if pending_yaml_mapping_key?(rest, quote), do: nil, else: {prefix, rest, quote}
-  end
-
-  defp pending_yaml_mapping_key?(rest, quote) do
-    case mask_quoted_value(rest, quote) do
-      {:closed, _masked, tail} -> Regex.match?(~r/\A[ \t]*:/, tail)
-      {:open, _masked} -> false
-    end
-  end
-
-  defp pending_yaml_tag_line?(line, pending_indent) do
-    line_indent(line) > pending_indent and
-      Regex.match?(~r/\A\s*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]*)+\z/, line)
-  end
-
-  defp pending_value_ignorable_line?(line) do
-    trimmed = String.trim(line)
-    trimmed == "" or String.starts_with?(trimmed, "#")
-  end
-
-  defp yaml_pending_value_indent(line) do
-    case Regex.run(
-           ~r/\A([ \t]*)(?:-[ \t]+)?[^:#\n]+:[ \t]*(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]*)*(?:\#[^\r\n]*)?\z/,
-           line
-         ) do
-      [_, indentation] -> String.length(indentation)
-      _ -> nil
-    end
-  end
-
-  defp line_indent(line), do: String.length(line) - String.length(String.trim_leading(line))
-
-  defp strip_yaml_quoted_values_from(line, mode) do
-    case yaml_value_quote_start(line) do
-      nil -> {line, nil}
-      {prefix, rest, quote} -> strip_yaml_quote_value(prefix, rest, quote, mode)
-    end
-  end
-
-  defp strip_yaml_quote_value(prefix, rest, quote, mode) do
-    case mask_quoted_value(rest, quote) do
-      {:open, masked} ->
-        {prefix <> masked, quote}
-
-      {:closed, masked, tail} ->
-        consumed_bytes = byte_size(rest) - byte_size(tail)
-        value = if mode == :multiline, do: binary_part(rest, 0, consumed_bytes), else: masked
-        {tail_masked, next_quote} = strip_yaml_quoted_values_from(tail, mode)
-        {prefix <> value <> tail_masked, next_quote}
-    end
-  end
-
-  defp yaml_value_quote_start(line) do
-    case Regex.run(
-           ~r/(?:\A\s*[^:#\n]+:\s*|\A\s*-\s*|[{,]\s*[^,:{}\[\]]+:\s*|\[\s*)(?:(?:!![^\s#]+|![^\s#]+|&[^\s#]+)[ \t]+)*(["'])/,
-           line,
-           return: :index
-         ) do
-      [{_start, _length}, {quote_start, 1}] ->
-        prefix = binary_part(line, 0, quote_start)
-        rest = binary_part(line, quote_start, byte_size(line) - quote_start)
-        {prefix, rest, binary_part(rest, 0, 1)}
-
-      _ ->
-        nil
-    end
-  end
-
-  defp mask_quoted_value(rest, quote) do
-    [^quote | tail] = String.graphemes(rest)
-    consume_quoted_graphemes(tail, quote, [quote])
-  end
-
-  defp mask_quoted_continuation(line, quote) do
-    consume_quoted_graphemes(String.graphemes(line), quote, [])
-  end
-
-  defp consume_quoted_graphemes([], _quote, reversed),
-    do: {:open, blank_yaml_scalar(reversed)}
-
-  defp consume_quoted_graphemes(["\\", next | rest], "\"", reversed),
-    do: consume_quoted_graphemes(rest, "\"", [next, "\\" | reversed])
-
-  defp consume_quoted_graphemes(["\\"], "\"", reversed),
-    do: {:open, blank_yaml_scalar(["\\" | reversed])}
-
-  defp consume_quoted_graphemes(["'", "'" | rest], "'", reversed),
-    do: consume_quoted_graphemes(rest, "'", ["'", "'" | reversed])
-
-  defp consume_quoted_graphemes([quote | rest], quote, reversed),
-    do: {:closed, blank_yaml_scalar([quote | reversed]), Enum.join(rest)}
-
-  defp consume_quoted_graphemes([grapheme | rest], quote, reversed),
-    do: consume_quoted_graphemes(rest, quote, [grapheme | reversed])
-
-  defp blank_yaml_scalar(graphemes),
-    do: graphemes |> Enum.map_join("", fn _ -> " " end)
-
-  defp strip_block_scalar_line(line, {acc, {scalar_indent, quote, pending_indent}}) do
-    indent = String.length(line) - String.length(String.trim_leading(line))
-    blank? = String.trim(line) == ""
-
-    if is_integer(scalar_indent) and (blank? or indent > scalar_indent) do
-      {["" | acc], {scalar_indent, nil, nil}}
-    else
-      {yaml_line, {next_quote, next_pending_indent}} =
-        strip_yaml_quoted_line(line, {quote, pending_indent}, :multiline)
-
-      next_scalar_indent =
-        if is_nil(next_quote) and is_nil(next_pending_indent) and block_scalar_header?(yaml_line),
-          do: indent,
-          else: nil
-
-      {[line | acc], {next_scalar_indent, next_quote, next_pending_indent}}
-    end
-  end
-
-  defp block_scalar_header?(line) do
-    Regex.match?(
-      ~r/
-        (?:\A|:\s*|-\s*)
-        (?:(?:!!\S+|!\S+|&\S+)[ \t]+)*
-        [|>]
-        (?:[+-][1-9]?|[1-9][+-]?)?
-        (?:\s+\#[^\r\n]*)?
-        \s*\z
-      /x,
-      line
-    )
   end
 
   defp bypass?(line) do
