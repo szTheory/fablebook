@@ -1,17 +1,17 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.16
-current_phase_name: Bound ASN.1 parser and tokenizer exclusions
-status: verifying
-stopped_at: Completed 01.1.1.16-01-PLAN.md
-last_updated: "2026-11-09T04:11:08.026Z"
-last_activity: 2026-11-08
-last_activity_desc: Phase 01.1.1.16 planning complete — 1 plan ready
-state_head: 57d4a6be8a945345122c9fac9194739d2abff122
+current_phase: 01.1.1.1
+current_phase_name: "Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons"
+status: executing
+stopped_at: Phase 01.1.1.16 complete, ready to execute Phase 01.1.1.1
+last_updated: "2026-11-09T16:26:16.405Z"
+last_activity: 2026-11-09
+last_activity_desc: Phase 01.1.1.16 complete, transitioned to Phase 01.1.1.1
+state_head: c12b65ff7afd2b85ef132f24709ea54159a64cc3
 progress:
   total_phases: 46
   completed_phases: 2
-  total_plans: 37
+  total_plans: 41
   completed_plans: 37
   percent: 4
 ---
@@ -27,17 +27,17 @@ See: .planning/PROJECT.md (updated 2026-11-08)
 
 ## Current Position
 
-Phase: 01.1.1.16 (Bound ASN.1 parser and tokenizer exclusions) — READY TO EXECUTE
-Plan: 01 of 1 (ready to execute)
-Status: Phase complete — ready for verification
-Last activity: 2026-11-08 — Phase 01.1.1.16 planning complete — 1 plan ready
+Phase: 01.1.1.1 — Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons
+Plan: 2
+Status: Ready to execute
+Last activity: 2026-11-09 — Phase 01.1.1.16 complete, transitioned to Phase 01.1.1.1
 
 Progress: 2/46 phases complete ([░░░░░░░░░░] 4%); 36/37 live plans summarized ([█████████░] 97%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 38
+- Total plans completed: 39
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -54,6 +54,7 @@ Progress: 2/46 phases complete ([░░░░░░░░░░] 4%); 36/37 live
 | 01.1.1.15 | 1 | - | - |
 | 01 | 9 | - | - |
 | 01.1 | 5 | - | - |
+| 01.1.1.16 | 1 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -227,7 +228,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-11-09T04:11:07.746Z
-Stopped at: Completed 01.1.1.16-01-PLAN.md
+Stopped at: Phase 01.1.1.16 complete, ready to execute Phase 01.1.1.1
 
 Next action: After `/clear`, run `$gsd-resume-work`, then `$gsd-execute-phase 01.1.1.16`. Keep the parent aggregate and Phase 2 gate open, retain SEC-01 ownership in Phase 5, and do not run `$gsd-execute-phase 01.1.1.1`, whose Plan 01 is halted and Plans 02–05 are superseded.
 Resume file: None

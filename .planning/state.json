@@ -6,7 +6,7 @@
     {
       "number": "1",
       "name": "Release pipeline, CI gate and guards",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "number": "2",
@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-progress --next",
+    "command": "$gsd-progress --next",
     "label": "Advance to the next step",
-    "reason": "Phase 1 of 45 · 2% · executing"
+    "reason": "Phase 4 of 46 · 4% · executing"
   },
-  "updated_at": "2026-11-06T17:02:46.396Z"
+  "updated_at": "2026-11-09T16:26:16.421Z"
 }

@@ -40,7 +40,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [x] **Phase 01.1.1.13: Close CN-001 and CN-004 source-authority gaps** (bounded delivery complete 2026-11-04; Phase 01.1.1.1 aggregate remains open)
 - [x] **Phase 01.1.1.14: Bound Leex caller-chosen atom creation** (completed 2026-11-05)
 - [x] **Phase 01.1.1.15: Bound ASN.1 table-wrapper exclusions** (INSERTED) - source-backed disposition for the bounded EX-107 ASN.1 table-wrapper slice; parent aggregate remains open (completed 2026-11-05)
-- [ ] **Phase 01.1.1.16: Bound ASN.1 parser and tokenizer exclusions** (INSERTED)
+- [x] **Phase 01.1.1.16: Bound ASN.1 parser and tokenizer exclusions** (INSERTED) (completed 2026-11-09)
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -304,7 +304,7 @@ Plans:
   4. Each selected function receives a source-backed lane disposition. Any removed matcher has an individual, non-vacuous removal witness on each applicable lane; no result is generalized to the remaining EX-107 matches.
   5. Contract controls preserve the complete row union and bounded sub-scope on both lanes without executing the audited ASN.1 functions or changing production code.
   6. Delivery remains contract/test/evidence-only, passes the required core/floor checks, and records CI at the tested revision. The parent aggregate, SEC-01, and Phase 2 gates remain open.
-**Plans:** 1/1 plans executed
+**Plans:** 1/1 plans complete
 
 Plans:
 - [x] 01.1.1.16-01-PLAN.md
