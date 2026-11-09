@@ -57,6 +57,547 @@ defmodule Fablebook.Test.DebuggerPendingOwnership do
   end
 end
 
+defmodule Fablebook.Test.ParserTokenizerEvidence do
+  @moduledoc false
+
+  @core_started_at "2026-11-09T02:40:15Z"
+  @core_completed_at "2026-11-09T02:41:36Z"
+  @floor_started_at "2026-11-09T03:06:46Z"
+  @floor_completed_at "2026-11-09T03:07:28Z"
+  @core_hashes %{
+    "asn1/src/asn1ct_parser2.erl" =>
+      "9542877f5446e3a38fff2c892b67f19d52075bd4c05c6b43dc7b46fbf159cfb4",
+    "asn1/src/asn1ct_tok.erl" =>
+      "4ec523645deaacaf4452cc443ceb27c217b6a6dd6ba63eeaa771c5e4cce58222",
+    "asn1/src/asn1ct.erl" => "c6d680ca6798f80e60c71a5f234d82c1d0c3505ef72fdd6ca320393c2b89df54"
+  }
+  @core_bytes %{
+    "asn1/src/asn1ct_parser2.erl" => 73_086,
+    "asn1/src/asn1ct_tok.erl" => 11_657
+  }
+  @floor_hashes %{
+    "asn1/src/asn1ct_parser2.erl" =>
+      "7fddafa8be67b9388e42e4f1332f93ace5d0607d8090f308b35df4acc9b8fb30",
+    "asn1/src/asn1ct_tok.erl" =>
+      "4d8bde4d0da13582c1da72d235168521d2ebdbdd98b41635edece96afe5a1bf2"
+  }
+
+  def records do
+    [
+      %{
+        lane: "core",
+        method: :source_only,
+        started_at: @core_started_at,
+        completed_at: @core_completed_at,
+        elapsed_seconds: 81,
+        reviews: [
+          review(
+            {:asn1ct_parser2, :parse, 2},
+            "asn1/src/asn1ct_parser2.erl",
+            1..2309,
+            [
+              {"asn1/src/asn1ct_parser2.erl:38", "try do_parse(Tokens0) of"},
+              {"asn1/src/asn1ct_parser2.erl:43", "handle_parse_error(File0, Fun())"},
+              {"asn1/src/asn1ct_parser2.erl:45", "handle_parse_error(File0, Tokens)"},
+              {"asn1/src/asn1ct_parser2.erl:64", "parse_error(Tokens2)"},
+              {"asn1/src/asn1ct_parser2.erl:2283", "list_to_atom([$&|atom_to_list(FieldName)])"},
+              {"asn1/src/asn1ct_parser2.erl:2285", "list_to_atom([$&|atom_to_list(FieldName)])"}
+            ],
+            "The tokenizer derives tokens from file contents and parse/2 retains an error path that converts a field reference into a new atom. Its input is caller-chosen ASN.1 text, so the selected MFA reaches atom creation."
+          ),
+          review(
+            {:asn1ct_parser2, :format_error, 1},
+            "asn1/src/asn1ct_parser2.erl",
+            1..2309,
+            [{"asn1/src/asn1ct_parser2.erl:75", "io_lib:format"}],
+            "format_error/1 only formats the supplied syntax error token; it does not convert text into atoms. This MFA is selected as part of the exact EX-107 slice but is a no-sink disposition."
+          ),
+          review(
+            {:asn1ct_tok, :file, 1},
+            "asn1/src/asn1ct_tok.erl",
+            1..376,
+            [
+              {"asn1/src/asn1ct_tok.erl:33", "file:open(File0, [read])"},
+              {"asn1/src/asn1ct_tok.erl:38", "process(Stream, 1, [])"},
+              {"asn1/src/asn1ct_tok.erl:48", "io:get_line(Stream, '')"},
+              {"asn1/src/asn1ct_tok.erl:54", "tokenise(Stream, L, Lno0, [])"},
+              {"asn1/src/asn1ct_tok.erl:76", "get_name(T, [H])"},
+              {"asn1/src/asn1ct_tok.erl:79", "get_name(T, [H])"},
+              {"asn1/src/asn1ct_tok.erl:146", "typereference,Lno,X"},
+              {"asn1/src/asn1ct_tok.erl:153", "identifier,Lno,X"},
+              {"asn1/src/asn1ct_tok.erl:163", "list_to_atom([H])"},
+              {"asn1/src/asn1ct_tok.erl:188", "list_to_atom(lists:reverse(Acc))"},
+              {"asn1/src/asn1ct_tok.erl:191", "list_to_atom(lists:reverse(Acc))"},
+              {"asn1/src/asn1ct_tok.erl:197", "list_to_atom(lists:reverse(Acc))"},
+              {"asn1/src/asn1ct_tok.erl:200", "list_to_atom(lists:reverse(Acc))"}
+            ],
+            "file/1 reads the caller-selected ASN.1 source file, tokenise/4 routes identifier and punctuation characters through list_to_atom/1, and get_name/2 atomizes the lexed name. Caller-controlled file text reaches atom creation."
+          ),
+          review(
+            {:asn1ct_tok, :format_error, 1},
+            "asn1/src/asn1ct_tok.erl",
+            1..376,
+            [{"asn1/src/asn1ct_tok.erl:69", "io_lib:format"}],
+            "format_error/1 formats fixed lexical errors or the supplied error term and has no atom conversion path. This MFA remains selected for a source-backed no-sink disposition."
+          )
+        ],
+        caller_edges: [
+          edge(
+            {:asn1ct, :scan_pass, 1},
+            {:asn1ct_tok, :file, 1},
+            "asn1/src/asn1ct.erl:384",
+            "asn1ct_tok:file(File)"
+          ),
+          edge(
+            {:asn1ct, :set_scan_parse_pass_1, 2},
+            {:asn1ct_tok, :file, 1},
+            "asn1/src/asn1ct.erl:401",
+            "asn1ct_tok:file(F)"
+          ),
+          edge(
+            {:asn1ct, :set_scan_parse_pass_1, 2},
+            {:asn1ct_parser2, :parse, 2},
+            "asn1/src/asn1ct.erl:405",
+            "asn1ct_parser2:parse(File, Tokens)"
+          ),
+          edge(
+            {:asn1ct, :parse_pass, 1},
+            {:asn1ct_parser2, :parse, 2},
+            "asn1/src/asn1ct.erl:415",
+            "asn1ct_parser2:parse(File, Tokens)"
+          )
+        ],
+        wrapper: %{
+          caller: {:asn1ct, :set_scan_parse_pass, 1},
+          target: {:asn1ct, :set_scan_parse_pass_1, 2},
+          citations: [{"asn1/src/asn1ct.erl:393", "set_scan_parse_pass_1(Files, St)"}]
+        }
+      },
+      %{
+        lane: "floor",
+        method: :source_only,
+        started_at: @floor_started_at,
+        completed_at: @floor_completed_at,
+        elapsed_seconds: 42,
+        reviews: [
+          floor_review(
+            {:asn1ct_parser2, :parse, 2},
+            "asn1/src/asn1ct_parser2.erl",
+            1..2305,
+            [
+              {"asn1/src/asn1ct_parser2.erl:34", "try do_parse(Tokens0) of"},
+              {"asn1/src/asn1ct_parser2.erl:39", "handle_parse_error(File0, Fun())"},
+              {"asn1/src/asn1ct_parser2.erl:41", "handle_parse_error(File0, Tokens)"},
+              {"asn1/src/asn1ct_parser2.erl:60", "parse_error(Tokens2)"},
+              {"asn1/src/asn1ct_parser2.erl:2279", "list_to_atom([$&|atom_to_list(FieldName)])"},
+              {"asn1/src/asn1ct_parser2.erl:2281", "list_to_atom([$&|atom_to_list(FieldName)])"}
+            ],
+            "The exact floor parser routes tokenizer-derived tokens through do_parse/1 and returns malformed token failures through handle_parse_error/2. Both field-reference branches in get_token/1 convert the token field name to an ampersand-prefixed atom; caller-chosen ASN.1 text reaches that path.",
+            72_969
+          ),
+          floor_review(
+            {:asn1ct_parser2, :format_error, 1},
+            "asn1/src/asn1ct_parser2.erl",
+            1..2305,
+            [
+              {"asn1/src/asn1ct_parser2.erl:71", "io_lib:format"}
+            ],
+            "The floor format_error/1 clauses only format the supplied syntax token and introduce no atom conversion.",
+            72_969
+          ),
+          floor_review(
+            {:asn1ct_tok, :file, 1},
+            "asn1/src/asn1ct_tok.erl",
+            1..372,
+            [
+              {"asn1/src/asn1ct_tok.erl:29", "file:open(File0, [read])"},
+              {"asn1/src/asn1ct_tok.erl:34", "process(Stream, 1, [])"},
+              {"asn1/src/asn1ct_tok.erl:44", "io:get_line(Stream, '')"},
+              {"asn1/src/asn1ct_tok.erl:50", "tokenise(Stream, L, Lno0, [])"},
+              {"asn1/src/asn1ct_tok.erl:72", "get_name(T, [H])"},
+              {"asn1/src/asn1ct_tok.erl:75", "get_name(T, [H])"},
+              {"asn1/src/asn1ct_tok.erl:142", "typereference,Lno,X"},
+              {"asn1/src/asn1ct_tok.erl:149", "identifier,Lno,X"},
+              {"asn1/src/asn1ct_tok.erl:159", "list_to_atom([H])"},
+              {"asn1/src/asn1ct_tok.erl:184", "list_to_atom(lists:reverse(Acc))"},
+              {"asn1/src/asn1ct_tok.erl:187", "list_to_atom(lists:reverse(Acc))"},
+              {"asn1/src/asn1ct_tok.erl:193", "list_to_atom(lists:reverse(Acc))"},
+              {"asn1/src/asn1ct_tok.erl:196", "list_to_atom(lists:reverse(Acc))"}
+            ],
+            "The floor file/1 reads caller-selected ASN.1 text. Its exact tokenise/4 and get_name/2 branches mirror core and convert caller-derived identifiers and generic punctuation to atoms. This conclusion is separately pinned to floor bytes and was reached by comparing each complete source; no tokenizer operation was invoked.",
+            11_540
+          ),
+          floor_review(
+            {:asn1ct_tok, :format_error, 1},
+            "asn1/src/asn1ct_tok.erl",
+            1..372,
+            [
+              {"asn1/src/asn1ct_tok.erl:65", "io_lib:format"}
+            ],
+            "The floor format_error/1 clauses return fixed lexical messages or format an error term; they do not atomize caller text.",
+            11_540
+          )
+        ],
+        caller_edges: [
+          edge(
+            {:asn1ct, :scan_pass, 1},
+            {:asn1ct_tok, :file, 1},
+            "asn1/src/asn1ct.erl:379",
+            "asn1ct_tok:file(File)"
+          ),
+          edge(
+            {:asn1ct, :set_scan_parse_pass_1, 2},
+            {:asn1ct_tok, :file, 1},
+            "asn1/src/asn1ct.erl:396",
+            "asn1ct_tok:file(F)"
+          ),
+          edge(
+            {:asn1ct, :set_scan_parse_pass_1, 2},
+            {:asn1ct_parser2, :parse, 2},
+            "asn1/src/asn1ct.erl:400",
+            "asn1ct_parser2:parse(File, Tokens)"
+          ),
+          edge(
+            {:asn1ct, :parse_pass, 1},
+            {:asn1ct_parser2, :parse, 2},
+            "asn1/src/asn1ct.erl:410",
+            "asn1ct_parser2:parse(File, Tokens)"
+          )
+        ],
+        wrapper: %{
+          caller: {:asn1ct, :set_scan_parse_pass, 1},
+          target: {:asn1ct, :set_scan_parse_pass_1, 2},
+          citations: [{"asn1/src/asn1ct.erl:388", "set_scan_parse_pass_1(Files, St)"}]
+        }
+      }
+    ]
+  end
+
+  defp review(mfa, source_path, range, citations, rationale) do
+    disposition = disposition_for(mfa)
+
+    %{
+      mfa: mfa,
+      source_path: source_path,
+      sha256: Map.fetch!(@core_hashes, source_path),
+      bytes: Map.fetch!(@core_bytes, source_path),
+      method: :source_only,
+      reviewed_ranges: [range],
+      citations: citations,
+      started_at: @core_started_at,
+      completed_at: @core_completed_at,
+      elapsed_seconds: 81,
+      disposition: disposition,
+      removal_witness: if(disposition == :tier, do: :individual_mfa, else: :specific_exclusion),
+      rationale: rationale
+    }
+  end
+
+  defp floor_review(mfa, source_path, range, citations, rationale, bytes) do
+    disposition = disposition_for(mfa)
+
+    %{
+      mfa: mfa,
+      source_path: source_path,
+      sha256: Map.fetch!(@floor_hashes, source_path),
+      bytes: bytes,
+      method: :source_only,
+      reviewed_ranges: [range],
+      citations: citations,
+      started_at: @floor_started_at,
+      completed_at: @floor_completed_at,
+      elapsed_seconds: 42,
+      disposition: disposition,
+      removal_witness: if(disposition == :tier, do: :individual_mfa, else: :specific_exclusion),
+      rationale: rationale
+    }
+  end
+
+  defp disposition_for({_module, function, _arity}) when function in [:parse, :file], do: :tier
+  defp disposition_for({_module, :format_error, 1}), do: :pure_data
+
+  defp edge(caller, target, citation, expected),
+    do: %{caller: caller, target: target, citations: [{citation, expected}]}
+end
+
+defmodule Fablebook.Contract.ParserTokenizerEvidenceTest do
+  use ExUnit.Case, async: false
+
+  alias Fablebook.Test.ParserTokenizerEvidence
+  alias Fablebook.Test.SweepEvidence
+
+  @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
+  @core_sources %{
+    "asn1/src/asn1ct_parser2.erl" => {
+      73_086,
+      "9542877f5446e3a38fff2c892b67f19d52075bd4c05c6b43dc7b46fbf159cfb4"
+    },
+    "asn1/src/asn1ct_tok.erl" => {
+      11_657,
+      "4ec523645deaacaf4452cc443ceb27c217b6a6dd6ba63eeaa771c5e4cce58222"
+    }
+  }
+  @floor_sources %{
+    "asn1/src/asn1ct_parser2.erl" => {
+      72_969,
+      "7fddafa8be67b9388e42e4f1332f93ace5d0607d8090f308b35df4acc9b8fb30"
+    },
+    "asn1/src/asn1ct_tok.erl" => {
+      11_540,
+      "4d8bde4d0da13582c1da72d235168521d2ebdbdd98b41635edece96afe5a1bf2"
+    }
+  }
+
+  @core_reviewed_ranges %{
+    "asn1/src/asn1ct_parser2.erl" => 1..2309,
+    "asn1/src/asn1ct_tok.erl" => 1..376
+  }
+
+  @core_mfas [
+    {:asn1ct_parser2, :parse, 2},
+    {:asn1ct_parser2, :format_error, 1},
+    {:asn1ct_tok, :file, 1},
+    {:asn1ct_tok, :format_error, 1}
+  ]
+
+  @core_edges [
+    {{:asn1ct, :scan_pass, 1}, {:asn1ct_tok, :file, 1}},
+    {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_tok, :file, 1}},
+    {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_parser2, :parse, 2}},
+    {{:asn1ct, :parse_pass, 1}, {:asn1ct_parser2, :parse, 2}}
+  ]
+
+  @tag :parser_tokenizer_011116
+  test "core parser and tokenizer identities resolve through the existing archive" do
+    evidence = archive_only_evidence!("core")
+
+    for {path, {bytes, sha256}} <- @core_sources do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    assert Enum.any?(ParserTokenizerEvidence.records(), &(&1.lane == "core")),
+           "the core parser/tokenizer source-only review record is missing"
+  end
+
+  @tag :parser_tokenizer_011116
+  test "floor parser and tokenizer identities resolve through the existing archive" do
+    evidence = archive_only_evidence!("floor")
+
+    for {path, {bytes, sha256}} <- @floor_sources do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    assert Enum.any?(ParserTokenizerEvidence.records(), &(&1.lane == "floor")),
+           "the floor parser/tokenizer source-only review record is missing"
+  end
+
+  @tag :parser_tokenizer_011116
+  test "core review records cover the selected functions with complete source-only traces" do
+    record = lane_record!("core")
+    evidence = archive_only_evidence!("core")
+    assert_valid_lane_record!(record, evidence)
+
+    assert MapSet.new(Enum.map(record.reviews, & &1.mfa)) == MapSet.new(@core_mfas)
+
+    assert MapSet.new(Enum.map(record.caller_edges, &{&1.caller, &1.target})) ==
+             MapSet.new(@core_edges)
+  end
+
+  @tag :parser_tokenizer_011116
+  test "core caller wrapper context stays separate from the four direct graph edges" do
+    record = lane_record!("core")
+    evidence = archive_only_evidence!("core")
+
+    assert MapSet.new(Enum.map(record.caller_edges, &{&1.caller, &1.target})) ==
+             MapSet.new(@core_edges)
+
+    assert record.wrapper.caller == {:asn1ct, :set_scan_parse_pass, 1}
+    assert record.wrapper.target == {:asn1ct, :set_scan_parse_pass_1, 2}
+    assert record.wrapper.citations != []
+
+    for {citation, expected} <- record.wrapper.citations do
+      assert SweepEvidence.resolve!(evidence, citation).text =~ expected
+    end
+  end
+
+  @tag :parser_tokenizer_011116
+  test "core review integrity rejects omitted records, edges, citations and invalid intervals" do
+    record = lane_record!("core")
+    evidence = archive_only_evidence!("core")
+    assert_valid_lane_record!(record, evidence)
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_valid_lane_record!(%{record | reviews: tl(record.reviews)}, evidence)
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_valid_lane_record!(%{record | caller_edges: tl(record.caller_edges)}, evidence)
+    end
+
+    [review | rest] = record.reviews
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_valid_lane_record!(%{record | reviews: [%{review | citations: []} | rest]}, evidence)
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_valid_lane_record!(
+        %{record | reviews: [%{review | elapsed_seconds: 0} | rest]},
+        evidence
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_valid_lane_record!(
+        %{record | reviews: [%{review | sha256: String.duplicate("0", 64)} | rest]},
+        evidence
+      )
+    end
+
+    assert_raise KeyError, fn ->
+      assert_valid_lane_record!(
+        %{record | reviews: [%{review | source_path: "asn1/src/unbound.erl"} | rest]},
+        evidence
+      )
+    end
+  end
+
+  @tag :parser_tokenizer_011116
+  test "floor review records cover the selected functions with exact source-only traces" do
+    record = lane_record!("floor")
+    evidence = archive_only_evidence!("floor")
+    assert_valid_lane_record!(record, evidence)
+
+    assert MapSet.new(Enum.map(record.reviews, & &1.mfa)) == MapSet.new(@core_mfas)
+
+    assert MapSet.new(Enum.map(record.caller_edges, &{&1.caller, &1.target})) ==
+             MapSet.new(@core_edges)
+  end
+
+  @tag :parser_tokenizer_011116
+  test "floor caller wrapper citations remain outside the direct edge inventory" do
+    record = lane_record!("floor")
+    evidence = archive_only_evidence!("floor")
+
+    assert MapSet.new(Enum.map(record.caller_edges, &{&1.caller, &1.target})) ==
+             MapSet.new(@core_edges)
+
+    assert record.wrapper.caller == {:asn1ct, :set_scan_parse_pass, 1}
+    assert record.wrapper.target == {:asn1ct, :set_scan_parse_pass_1, 2}
+    assert record.wrapper.citations != []
+
+    for {citation, expected} <- record.wrapper.citations do
+      assert SweepEvidence.resolve!(evidence, citation).text =~ expected
+    end
+  end
+
+  @tag :parser_tokenizer_011116
+  test "core and floor review records provide four explicit bounded dispositions" do
+    expected = %{
+      {:asn1ct_parser2, :parse, 2} => {:tier, :individual_mfa},
+      {:asn1ct_parser2, :format_error, 1} => {:pure_data, :specific_exclusion},
+      {:asn1ct_tok, :file, 1} => {:tier, :individual_mfa},
+      {:asn1ct_tok, :format_error, 1} => {:pure_data, :specific_exclusion}
+    }
+
+    for lane <- ["core", "floor"] do
+      record = lane_record!(lane)
+
+      actual =
+        Map.new(record.reviews, fn review ->
+          {review.mfa, {Map.fetch!(review, :disposition), Map.fetch!(review, :removal_witness)}}
+        end)
+
+      assert actual == expected,
+             "#{lane} review records must carry one source-backed disposition and witness for each selected MFA"
+    end
+  end
+
+  defp archive_only_evidence!(lane) do
+    evidence = SweepEvidence.load_archive!(@archive, SweepEvidence.archive_sha256())
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    Map.merge(evidence, %{
+      lane: %{name: lane},
+      installed: %{"asn1" => Path.join(evidence.archive_root, "missing-asn1")}
+    })
+  end
+
+  defp lane_record!(lane) do
+    Enum.find(ParserTokenizerEvidence.records(), &(&1.lane == lane)) ||
+      flunk("#{lane} parser/tokenizer review record is missing")
+  end
+
+  defp assert_valid_lane_record!(record, evidence) do
+    assert record.method == :source_only
+    assert record.lane in ["core", "floor"]
+    assert record.started_at < record.completed_at
+    assert record.elapsed_seconds > 0
+    {:ok, record_started, 0} = DateTime.from_iso8601(record.started_at)
+    {:ok, record_completed, 0} = DateTime.from_iso8601(record.completed_at)
+    assert DateTime.diff(record_completed, record_started, :second) == record.elapsed_seconds
+    assert MapSet.new(Enum.map(record.reviews, & &1.mfa)) == MapSet.new(@core_mfas)
+
+    assert MapSet.new(Enum.map(record.caller_edges, &{&1.caller, &1.target})) ==
+             MapSet.new(@core_edges)
+
+    Enum.each(record.reviews, &assert_valid_review_record!(record, &1, evidence))
+
+    for edge <- record.caller_edges do
+      assert edge.citations != []
+
+      for {citation, expected} <- edge.citations do
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected
+      end
+    end
+  end
+
+  defp assert_valid_review_record!(record, review, evidence) do
+    assert review.method == :source_only
+
+    expected_range =
+      case {record.lane, review.source_path} do
+        {"floor", "asn1/src/asn1ct_parser2.erl"} -> 1..2305
+        {"floor", "asn1/src/asn1ct_tok.erl"} -> 1..372
+        {"core", path} -> Map.fetch!(@core_reviewed_ranges, path)
+      end
+
+    assert review.reviewed_ranges == [expected_range]
+    assert review.citations != []
+    sources = if record.lane == "core", do: @core_sources, else: @floor_sources
+    assert review.sha256 == Map.fetch!(sources, review.source_path) |> elem(1)
+    assert review.started_at < review.completed_at
+    assert review.elapsed_seconds > 0
+    {:ok, review_started, 0} = DateTime.from_iso8601(review.started_at)
+    {:ok, review_completed, 0} = DateTime.from_iso8601(review.completed_at)
+    assert DateTime.diff(review_completed, review_started, :second) == review.elapsed_seconds
+    assert review.rationale != ""
+    expected_disposition = if elem(review.mfa, 1) == :format_error, do: :pure_data, else: :tier
+    assert review.disposition == expected_disposition
+
+    expected_witness =
+      if expected_disposition == :tier, do: :individual_mfa, else: :specific_exclusion
+
+    assert review.removal_witness == expected_witness
+
+    for {citation, expected} <- review.citations do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.sha256 == review.sha256
+      assert source.text =~ expected
+      assert File.stat!(source.path).size == review.bytes
+    end
+  end
+end
+
 defmodule Fablebook.Contract.TierSweepTest do
   use ExUnit.Case, async: false
 
@@ -65,6 +606,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   alias Fablebook.Test.DebuggerPendingOwnership
   alias Fablebook.Test.DebuggerSettings
   alias Fablebook.Test.InstalledOtp
+  alias Fablebook.Test.ParserTokenizerEvidence
   alias Fablebook.Test.SweepEvidence
   @compile {:no_warn_undefined, :xref}
 
@@ -2890,6 +3432,22 @@ defmodule Fablebook.Contract.TierSweepTest do
   @asn1_check_mfa {:asn1ct_check, :check, 2}
   @asn1_insert_once_mfa {:asn1ct_gen, :insert_once, 2}
   @asn1_expected_selected_mfas @asn1_table_mfas ++ [@asn1_check_mfa, @asn1_insert_once_mfa]
+  @parser_tokenizer_mfas [
+    {:asn1ct_parser2, :parse, 2},
+    {:asn1ct_parser2, :format_error, 1},
+    {:asn1ct_tok, :file, 1},
+    {:asn1ct_tok, :format_error, 1}
+  ]
+  @parser_tokenizer_exclusions_by_lane %{
+    "core" => [
+      {{:asn1ct_parser2, [:format_error]}, :pure_data, ["asn1/src/asn1ct_parser2.erl:75"]},
+      {{:asn1ct_tok, [:format_error]}, :pure_data, ["asn1/src/asn1ct_tok.erl:69"]}
+    ],
+    "floor" => [
+      {{:asn1ct_parser2, [:format_error]}, :pure_data, ["asn1/src/asn1ct_parser2.erl:71"]},
+      {{:asn1ct_tok, [:format_error]}, :pure_data, ["asn1/src/asn1ct_tok.erl:65"]}
+    ]
+  }
   @asn1_expected_direct_edges [
     {{:asn1ct, :check_tagdefault, 1}, {:asn1ct_table, :new, 1}},
     {{:asn1ct, :compile_pass, 1}, {:asn1ct_table, :delete, 1}},
@@ -4184,7 +4742,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
     assert SweepEvidence.archive_sha256() ==
-             "4e0bfe99985d6be92d8dfddf26ca8a7d935234d338b5d43bb2c2f3c860987778"
+             "8c79cca599d9dbff75c6e4ce604c3384c6b019e2b6c1500da6dbf985cb78e66d"
 
     lane = evidence.lane.name
 
@@ -7013,6 +7571,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     tier = BannedCalls.banned_mfas()
 
     assert_asn1_table_audit!(ctx.graph, evidence, ledger, tier)
+    assert_asn1_parser_tokenizer_audit!(ctx.graph, evidence, ledger, tier)
   end
 
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
@@ -10372,6 +10931,49 @@ defmodule Fablebook.Contract.TierSweepTest do
     pending = MapSet.difference(lane_matches, selected)
     assert MapSet.size(pending) == 166
 
+    parser_tokenizer_selected =
+      MapSet.new([
+        "asn1ct_parser2:parse/2",
+        "asn1ct_parser2:format_error/1",
+        "asn1ct_tok:file/1",
+        "asn1ct_tok:format_error/1"
+      ])
+
+    assert MapSet.subset?(parser_tokenizer_selected, lane_matches),
+           "EX-107/#{lane} is missing a selected parser/tokenizer export"
+
+    assert MapSet.size(MapSet.difference(lane_matches, parser_tokenizer_selected)) == 173,
+           "EX-107/#{lane} parser/tokenizer slice must preserve the other 173 matches"
+
+    scoped_parser_edges =
+      graph.full_edges
+      |> Enum.filter(fn
+        {_caller, {module, function}} ->
+          {module, function} in [
+            {:asn1ct_parser2, :parse},
+            {:asn1ct_parser2, :format_error},
+            {:asn1ct_tok, :file},
+            {:asn1ct_tok, :format_error}
+          ]
+
+        _edge ->
+          false
+      end)
+      |> MapSet.new()
+
+    expected_parser_edges =
+      MapSet.new([
+        {{:asn1ct, :scan_pass, 1}, {:asn1ct_tok, :file}},
+        {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_tok, :file}},
+        {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_parser2, :parse}},
+        {{:asn1ct, :parse_pass, 1}, {:asn1ct_parser2, :parse}}
+      ])
+
+    assert scoped_parser_edges == expected_parser_edges,
+           "EX-107/#{lane} parser/tokenizer incoming edge set differs from the four reviewed caller edges; " <>
+             "missing=#{inspect(MapSet.difference(expected_parser_edges, scoped_parser_edges))}; " <>
+             "unexpected=#{inspect(MapSet.difference(scoped_parser_edges, expected_parser_edges))}"
+
     direct_edges =
       graph.full_edges
       |> Enum.filter(fn
@@ -10466,6 +11068,215 @@ defmodule Fablebook.Contract.TierSweepTest do
            "removing the exact check/2 matcher must remove its active guard disposition"
 
     assert [mfa_string!(@asn1_check_mfa)] == ["asn1ct_check:check/2"]
+  end
+
+  defp assert_asn1_parser_tokenizer_audit!(graph, evidence, ledger, tier) do
+    lane = evidence.lane.name
+    row = Enum.find(ledger.exclusions, &(&1.id == "EX-107"))
+    assert row != nil, "the original EX-107 identity is missing"
+    assert row.original_entry_raw == "{{:prefix, \":asn1ct_\"}, :compiler_pass}"
+    assert row.semantic_status == :pending
+    assert row.owner == "01.1.1.4"
+
+    record = Enum.find(ParserTokenizerEvidence.records(), &(&1.lane == lane))
+    assert record != nil, "#{lane} parser/tokenizer evidence record is missing"
+    assert_parser_tokenizer_record!(record)
+
+    archive_only = %{
+      evidence
+      | installed:
+          Map.put(evidence.installed, "asn1", Path.join(evidence.archive_root, "missing-asn1"))
+    }
+
+    assert_parser_source_reviews!(record, evidence, archive_only, lane)
+    assert_parser_record_edges!(record, lane)
+    assert_parser_graph_edges!(graph, lane)
+
+    selected_exclusions =
+      Enum.reject(@exclusions, fn
+        {{:prefix, ":asn1ct_"}, :compiler_pass} -> true
+        _ -> false
+      end) ++ Map.fetch!(@parser_tokenizer_exclusions_by_lane, lane)
+
+    assert_parser_dispositions!(record, tier, selected_exclusions, lane)
+    assert_parser_caller_citations!(record, evidence, archive_only, lane)
+    assert_parser_omission_controls!(record)
+  end
+
+  defp assert_parser_source_reviews!(record, evidence, archive_only, lane) do
+    for review <- record.reviews do
+      [source_row] =
+        Enum.filter(evidence.manifest["files"], &(&1["path"] == "#{lane}/#{review.source_path}"))
+
+      assert review.sha256 == source_row["sha256"]
+      assert review.bytes == source_row["bytes"]
+
+      for {citation, expected} <- review.citations do
+        source = SweepEvidence.resolve!(archive_only, citation)
+        assert source.origin == :archive, citation
+        assert source.sha256 == review.sha256, citation
+        assert source.text =~ expected, citation
+      end
+    end
+  end
+
+  defp assert_parser_record_edges!(record, lane) do
+    expected =
+      MapSet.new([
+        {{:asn1ct, :scan_pass, 1}, {:asn1ct_tok, :file, 1}},
+        {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_tok, :file, 1}},
+        {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_parser2, :parse, 2}},
+        {{:asn1ct, :parse_pass, 1}, {:asn1ct_parser2, :parse, 2}}
+      ])
+
+    actual = MapSet.new(Enum.map(record.caller_edges, &{&1.caller, &1.target}))
+
+    assert actual == expected,
+           "EX-107/#{lane} review record must contain the four direct caller edges"
+  end
+
+  defp assert_parser_graph_edges!(graph, lane) do
+    expected =
+      MapSet.new([
+        {{:asn1ct, :scan_pass, 1}, {:asn1ct_tok, :file}},
+        {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_tok, :file}},
+        {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_parser2, :parse}},
+        {{:asn1ct, :parse_pass, 1}, {:asn1ct_parser2, :parse}}
+      ])
+
+    actual =
+      graph.full_edges
+      |> Enum.filter(fn
+        {_caller, {module, function}} ->
+          {module, function} in [
+            {:asn1ct_parser2, :parse},
+            {:asn1ct_parser2, :format_error},
+            {:asn1ct_tok, :file},
+            {:asn1ct_tok, :format_error}
+          ]
+
+        _ ->
+          false
+      end)
+      |> MapSet.new()
+
+    assert actual == expected,
+           "EX-107/#{lane} parser/tokenizer incoming edges differ; missing=#{inspect(MapSet.difference(expected, actual))}; unexpected=#{inspect(MapSet.difference(actual, expected))}"
+  end
+
+  defp assert_parser_dispositions!(record, tier, exclusions, lane) do
+    Enum.each(record.reviews, &assert_parser_disposition!(&1, tier, exclusions, lane))
+  end
+
+  defp assert_parser_disposition!(review, tier, exclusions, lane) do
+    mfa = review.mfa
+    expected = if elem(mfa, 1) == :format_error, do: :pure_data, else: :tier
+    assert review.disposition == expected
+    assert disposition(mfa, tier, BannedCalls.banned_names(), exclusions) == expected
+
+    if expected == :tier do
+      assert mfa in tier
+      without_mfa = Enum.reject(tier, &(&1 == mfa))
+
+      assert disposition(mfa, without_mfa, BannedCalls.banned_names(), exclusions) == nil,
+             "removing only #{inspect(mfa)} must remove its #{lane} guard disposition"
+
+      assert review.removal_witness == :individual_mfa
+    else
+      assert review.removal_witness == :specific_exclusion
+      exclusion = Enum.find(exclusions, &parser_exclusion_for?(&1, mfa))
+      assert exclusion != nil
+      without_exclusion = List.delete(exclusions, exclusion)
+
+      assert disposition(mfa, tier, BannedCalls.banned_names(), without_exclusion) == nil,
+             "removing only the #{lane} #{inspect(mfa)} exclusion must expose the selected function"
+    end
+  end
+
+  defp parser_exclusion_for?(
+         {{module, functions}, _reason, _citations},
+         {module, function, _arity}
+       ),
+       do: function in functions
+
+  defp parser_exclusion_for?(_exclusion, _mfa), do: false
+
+  defp assert_parser_caller_citations!(record, evidence, archive_only, lane) do
+    caller_row =
+      Enum.find(evidence.manifest["files"], &(&1["path"] == "#{lane}/asn1/src/asn1ct.erl"))
+
+    for {citation, expected} <- record.wrapper.citations do
+      source = SweepEvidence.resolve!(archive_only, citation)
+      assert source.origin == :archive
+      assert source.sha256 == caller_row["sha256"]
+      assert source.text =~ expected
+    end
+
+    for edge <- record.caller_edges, {citation, expected} <- edge.citations do
+      source = SweepEvidence.resolve!(archive_only, citation)
+      assert source.origin == :archive
+      assert source.sha256 == caller_row["sha256"]
+      assert source.text =~ expected
+    end
+  end
+
+  defp assert_parser_omission_controls!(record) do
+    for index <- 0..3 do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_parser_tokenizer_record!(%{
+          record
+          | reviews: List.delete_at(record.reviews, index)
+        })
+      end
+
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_parser_tokenizer_record!(%{
+          record
+          | caller_edges: List.delete_at(record.caller_edges, index)
+        })
+      end
+    end
+
+    [first_review | remaining_reviews] = record.reviews
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_parser_tokenizer_record!(%{
+        record
+        | reviews: [%{first_review | citations: []} | remaining_reviews]
+      })
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_parser_tokenizer_record!(%{
+        record
+        | reviews: [%{first_review | removal_witness: nil} | remaining_reviews]
+      })
+    end
+  end
+
+  defp assert_parser_tokenizer_record!(record) do
+    assert record.method == :source_only
+    assert record.lane in ["core", "floor"]
+    assert MapSet.new(Enum.map(record.reviews, & &1.mfa)) == MapSet.new(@parser_tokenizer_mfas)
+
+    assert MapSet.new(Enum.map(record.caller_edges, &{&1.caller, &1.target})) ==
+             MapSet.new([
+               {{:asn1ct, :scan_pass, 1}, {:asn1ct_tok, :file, 1}},
+               {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_tok, :file, 1}},
+               {{:asn1ct, :set_scan_parse_pass_1, 2}, {:asn1ct_parser2, :parse, 2}},
+               {{:asn1ct, :parse_pass, 1}, {:asn1ct_parser2, :parse, 2}}
+             ])
+
+    for review <- record.reviews do
+      assert review.method == :source_only
+      assert review.citations != []
+      assert review.reviewed_ranges != []
+      assert review.removal_witness in [:individual_mfa, :specific_exclusion]
+      expected_disposition = if elem(review.mfa, 1) == :format_error, do: :pure_data, else: :tier
+      assert review.disposition == expected_disposition
+    end
+
+    for edge <- record.caller_edges, do: assert(edge.citations != [])
   end
 
   defp asn1_original_match?({module, _function, _arity}),

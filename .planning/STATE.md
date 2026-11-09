@@ -1,18 +1,18 @@
 ---
 gsd_state_version: "1.0"
-current_phase: "01.1"
-current_phase_name: Close phase 1 guard gaps
-status: verifying
-stopped_at: Phase 01 complete; closeout PR pending merge; Phase 01.1 not started
-last_updated: "2026-11-07T08:33:23.542Z"
-last_activity: 2026-11-07
-last_activity_desc: Phase 01 complete, transitioned to Phase 01.1
-state_head: 41c162ad8d92de5a32d5bb6d460219bdf9f2f8c0
+current_phase: 01.1.1.1
+current_phase_name: "Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons"
+status: executing
+stopped_at: Phase 01.1.1.16 complete, ready to execute Phase 01.1.1.1
+last_updated: "2026-11-09T16:26:16.405Z"
+last_activity: 2026-11-09
+last_activity_desc: Phase 01.1.1.16 complete, transitioned to Phase 01.1.1.1
+state_head: c12b65ff7afd2b85ef132f24709ea54159a64cc3
 progress:
-  total_phases: 45
+  total_phases: 46
   completed_phases: 2
-  total_plans: 40
-  completed_plans: 35
+  total_plans: 41
+  completed_plans: 37
   percent: 4
 ---
 
@@ -20,24 +20,24 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-11-04)
+See: .planning/PROJECT.md (updated 2026-11-08)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1 — Close phase 1 guard gaps (not started)
+**Current focus:** Phase 01.1.1.16 is complete. The parent Phase 01.1.1.1 aggregate remains open and needs a fresh plan; its old Plan 01 is halted and Plans 02–05 are superseded. Keep Phase 2 gated and SEC-01 with Phase 5.
 
 ## Current Position
 
-Phase: 01.1 — Close phase 1 guard gaps
-Plan: Not started
-Status: Phase 01 complete — closeout PR pending merge
-Last activity: 2026-11-07 — Phase 01 complete, transitioned to Phase 01.1
+Phase: 01.1.1.1 — Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons (open aggregate; replan required)
+Plan: None — prior Plan 01 is halted and Plans 02–05 are superseded
+Status: Awaiting replan; Phase 01.1.1.16 is complete
+Last activity: 2026-11-09 — Phase 01.1.1.16 complete, transitioned to Phase 01.1.1.1
 
-Progress: 2/45 phases complete ([░░░░░░░░░░] 4%); 35/40 plans complete ([██████████████████░░] 88%)
+Progress: 2/46 phases complete ([░░░░░░░░░░] 4%); 36/37 live plans summarized ([█████████░] 97%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 33
+- Total plans completed: 39
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -53,6 +53,8 @@ Progress: 2/45 phases complete ([░░░░░░░░░░] 4%); 35/40 plan
 | 01.1.1.14 | 1 | - | - |
 | 01.1.1.15 | 1 | - | - |
 | 01 | 9 | - | - |
+| 01.1 | 5 | - | - |
+| 01.1.1.16 | 1 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -95,6 +97,7 @@ Progress: 2/45 phases complete ([░░░░░░░░░░] 4%); 35/40 plan
 | Phase 01 P07 | 35min | 2 tasks | 3 files |
 | Phase 01 P08 | 55 | 3 tasks | 4 files |
 | Phase 01 P09 | 43 | 3 tasks | 8 files |
+| Phase 01.1.1.16 P01 | 93m | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -123,6 +126,7 @@ Recent decisions affecting current work:
 - [Phase 01.1]: The MFA existence test loads :xmerl via Mix.ensure_application!/1 because Mix prunes the code path; mix.exs unchanged
 - [Phase 01.1]: hex-production v* deployment policy stays until the owner answers Q37 (D-14 names main plus v*)
 - [Phase 01.1]: Recovery publishes docs only when the release exists with a matching checksum and has_docs false; mismatch or other status fails closed
+- [Phase 01.1]: Verify docs recovery with local fake API cases and a no-upload docs dry-run when the public release already has docs
 - [Phase 01.1]: WR-01, WR-04 and the WR-05 settings half are owner questions Q36, Q35, Q37, not implemented
 - [Phase 01.1]: SEC-01 stays Pending (Phase 5); 01.1-03 advances only its static-ban share
 - [Phase 01.1]: CR-02 (truth 7), T-01.1-25 and T-01.1-28 transferred to Phase 01.1.1 per INT-20261029-03; @mfa_tier stays at 45
@@ -160,10 +164,10 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.6]: Retain CN-003 as a narrow build-time colocated-asset compile-name row; keep the exact guard front as a separate enforcement dependency. — Core and floor source/BEAM evidence agree, and a tier-removal witness shows the row catches the current match if the exact guard entry is removed. The project lib scan is clean.
 - [Phase 01.1.1.6]: Record the missing direct Mix compiler task source as an explicit CN-003 authority gap. — The full graph proves the sole direct caller in both lanes and compile/0 accepts no caller arguments, while the approved archive omits the caller task source; internal path/module inputs are traced from Application/Mix config and output subdirectories.
 - [Phase 01.1.1.6]: Keep CN-004 source-authority open — The approved exact-source archive omits Phoenix.Router.build_pipes/2 and Phoenix.plug_init_mode/0. Without those caller inputs, compile/runtime init-mode selection is not fully established and a retained or removed disposition would be premature.
-- [Phase 01.1.1.6]: Keep the overlapping expansion and Macro caller-AST judgments with Phase 01.1.1.4 — CN-004 compile/3 overlaps the existing blanket :expansion exclusion, and this plan does not own the project-authored Macro caller-AST judgment or final Credo wording. Preserve that exclusion without broadening it.
+- [Phase 01.1.1.6]: Keep the broader expansion and Macro caller-AST judgments with their existing owner; this bounded plan does not own the project-authored judgment or final Credo wording. Preserve the exclusion without broadening it.
 - [Phase 01.1.1.6]: Tie CN-004's compiler-lowered atom creation to the exact independent guard entry — Elixir lowers String.to_atom/1 to :erlang.binary_to_atom/1 in the compiled BEAM. The uncalled contract probe verifies that exact :binary_to_atom name-tier hit and proves that removing the matching tier entry removes the hit.
 - [Phase 01.1.1.13]: CN-001 keeps its original identity and maps to the source-backed Mix project-build carrier; core carrier-loss coverage is non-vacuous and floor absence is inventory-proven.
-- [Phase 01.1.1.13]: Preserve the Phase 01.1.1.5 calibration archive digest as historical evidence while current archive checks use the extended archive digest.
+- [Phase 01.1.1.13]: Preserve the historical calibration archive digest while current archive checks use the extended archive digest.
 - [Phase 01.1.1.13]: Preserve CN-004 identity and map its exact live Plug.Builder.compile/3 match to independently sourced exact boundary coverage, without judging the broader expansion owner.
 - [Phase 01.1.1.13]: Keep Phoenix.Router.pipeline/2 as a separate source-only quoted callsite, distinct from direct compiled callers.
 - [Phase 01.1.1.13]: Pin core/floor Phoenix source records independently, including both equal-byte Phoenix config rows.
@@ -175,11 +179,15 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.15]: Retain an exact asn1ct_check:check/2 tier because its archived source trace reaches stored list_to_atom values.
 - [Phase 01.1.1.15]: Keep the remaining selected wrappers and all 166 outside matches per lane under the unchanged EX-107 disposition.
 - [Phase 01.1.1.15]: Hosted CI is pending an external delivery decision; local checks do not provide a hosted URL.
+- [Phase 01.1.1.16]: Allocate only the four-MFA-per-lane parser/tokenizer slice after exact source and time sizing; preserve EX-107's complete row identity and all remaining matches.
 - [Phase 01]: Close only the historical CR-01 evidence item; retain canonical Phase 1 verification and parent acceptance as separate gates.
 - [Phase 01]: Keep SEC-01 Pending for Phase 5; the G-01-15 timing-policy gap is closed, while aggregate audits and the Phase 2 gate remain open.
 - [Phase 01]: Keep the goal outcome-based; the original plan explicitly left the user story unauthored, so the contradictory MVP marker was removed without changing the goal, criteria, or requirements.
 - [Phase 01]: All 18 UAT checks pass, G-01-15 is closed, and canonical verification passed 9/9 truths with no remaining gaps or human checks.
 - [Phase 01]: Owner approved a separate contract-compatibility PR before the producer PR because Plan 07 tests assume the old script; this adds one PR and keeps producer changes isolated.
+- [Phase 01.1.1.16]: Keep EX-107 identity, owner, pending status, and complete match sets; select only four parser/tokenizer MFAs per lane and retain the other 173.
+- [Phase 01.1.1.16]: Keep parse/2 and file/1 as exact tiers; retain format_error/1 as narrow pure-data exclusions with individual witnesses.
+- [Phase 01.1.1.16]: Hosted CI remains open because the branch was not published; SEC-01 stays with Phase 5 and the Phase 2 gate stays open.
 
 ### Pending Todos
 
@@ -191,7 +199,7 @@ None yet.
 
 - [Phase 01.1.1.1 planning]: The owner approved same-level re-scope. All matched target source paths for the 213 pending exclusions are now hash-verified and token-sized: 306 core files / 2,996,938 `o200k_base` tokens; 302 floor files / 2,793,931. Meaningful caller/delegate sources and working-time fit still need bounded allocations. Phase 01.1.1.14 is the first source-sized candidate (EX-165 Leex, 60,386 source tokens across both lanes). Keep the aggregate and Phase 2 gates open, SEC-01 with Phase 5, and historical plans blocked; continue splitting and sizing without dropping any row or match.
 
-- [Parent verification debt]: Phase 1 and 01.1 reports remain gaps_found; phase.complete routed to Phase 1 for re-verification. Do not mark either parent complete from the child report.
+- [Phase 01 / 01.1 verification]: Phase 01 and Phase 01.1 are passed and complete. Phase 01.1 verifies 18/18 must-haves and 23/23 UAT checks; both live GitHub tag checks rejected off-main refs, and local contract tests plus a no-upload dry-run verified docs recovery. No Hex upload was needed.
 - [Phase 01.1.1.1]: Parser disposition, unswept installed OTP apps/debugger remainder, and full carried-exclusion audit remain open per INT-20261029-02.
 - [Phase 01.1.1.3.1.1 documentation]: ROADMAP says Plans 01–04 executed, PR #31 merged, and verification passed, but the Plan 04 SUMMARY and phase VERIFICATION artifacts are absent. Treat this as documentation reconciliation; do not rerun the merged plan.
 
@@ -207,6 +215,7 @@ None yet.
 - Phase 01.1.1.1 inserted after Phase 01.1.1: Finish the ban list: open items transferred from 01.1.1 at planning (INT-20261029-02) (URGENT)
 - Phase numbering: keep existing dotted IDs stable as historical ownership and evidence references. After archiving the current milestone, start the next milestone at Phase 1 with `$gsd-new-milestone --reset-phase-numbers` (INT-20261101-02). Do not add further nested decimal insertions.
 - Phase 01.1.1.15 inserted after Phase 01.1.1.14: Bound ASN.1 table-wrapper disposition for EX-107; owner authorized a same-level sibling phase (URGENT)
+- Phase 01.1.1.16 inserted after Phase 01.1.1.15: Bound ASN.1 parser and tokenizer exclusions (URGENT)
 
 ## Deferred Items
 
@@ -218,8 +227,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-07T08:29:25Z
-Stopped at: Phase 01 complete; closeout PR pending merge; Phase 01.1 not started
+Last session: 2026-11-09T04:11:07.746Z
+Stopped at: Phase 01.1.1.16 complete; parent Phase 01.1.1.1 remains open and requires replanning
 
-Next action: Merge the Phase 01 closeout PR after required checks pass; wait for the owner to advance before starting Phase 01.1.
+Next action: After `/clear`, run `$gsd-resume-work`, then replan Phase 01.1.1.1 before any execution. Do not execute its halted or superseded plans. Keep the Phase 2 gate open and SEC-01 ownership in Phase 5.
 Resume file: None

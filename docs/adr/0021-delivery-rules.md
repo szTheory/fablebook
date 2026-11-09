@@ -31,3 +31,4 @@ The owner's retrospectives show the same failures repeatedly:
 
 ## Amendments (release pipeline sign-off, 2026-10-28)
 - **Contract-test definition (D-21, Q15):** the guard-path table above defines the rule, enforced over the D-19 diff seam; `A` is allowed; recorded outputs wait for goldens and then use a `Recorded-Output-Change:` trailer. (INT-20261028-18)
+- **CI timing objectives:** p50/p95 feedback-time targets are reported and reviewed, but timing-only overages do not block release or phase closure; correctness, security, compatibility and release checks remain gates. (INT-20261106-01)

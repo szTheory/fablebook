@@ -11,22 +11,10 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: ci-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}-${{ github.event.schedule }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 env:
   EVENT_BEFORE: ${{ github.event.before }}
 
 jobs:
-  security:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: docker://rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
-        with:
-          args: -color -ignore ^unexpected\skey\s\x22queue\x22\sfor\s\x22concurrency\x22\ssection.*$
-
   core:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -52,7 +40,7 @@ jobs:
 
   ci-gate:
     if: always()
-    needs: [core, security, nightly]
+    needs: [core, nightly]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -66,10 +54,6 @@ jobs:
 
   ci-health:
     if: github.event.schedule == '23 5 * * 1'
-    concurrency:
-      group: ci-health-${{ github.workflow }}
-      cancel-in-progress: false
-      queue: max
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:

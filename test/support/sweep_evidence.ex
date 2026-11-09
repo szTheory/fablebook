@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "4e0bfe99985d6be92d8dfddf26ca8a7d935234d338b5d43bb2c2f3c860987778"
+  @archive_sha "8c79cca599d9dbff75c6e4ce604c3384c6b019e2b6c1500da6dbf985cb78e66d"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -88,6 +88,16 @@ defmodule Fablebook.Test.SweepEvidence do
       1_986,
       "031275fc12cd8cae17944a8b9dda857d40d87d272c82591304863c896fc6cf7f"
     },
+    {"core", "asn1/src/asn1ct_parser2.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_parser2.erl",
+      73_086,
+      "9542877f5446e3a38fff2c892b67f19d52075bd4c05c6b43dc7b46fbf159cfb4"
+    },
+    {"core", "asn1/src/asn1ct_tok.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_tok.erl",
+      11_657,
+      "4ec523645deaacaf4452cc443ceb27c217b6a6dd6ba63eeaa771c5e4cce58222"
+    },
     {"floor", "asn1/src/asn1ct.erl"} => {
       "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct.erl",
       75_395,
@@ -107,9 +117,19 @@ defmodule Fablebook.Test.SweepEvidence do
       "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_table.erl",
       1_944,
       "cc26687a7002adc3d12225abbd0d802fe39ea27b0ff55e26805e32771d249749"
+    },
+    {"floor", "asn1/src/asn1ct_parser2.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_parser2.erl",
+      72_969,
+      "7fddafa8be67b9388e42e4f1332f93ace5d0607d8090f308b35df4acc9b8fb30"
+    },
+    {"floor", "asn1/src/asn1ct_tok.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_tok.erl",
+      11_540,
+      "4d8bde4d0da13582c1da72d235168521d2ebdbdd98b41635edece96afe5a1bf2"
     }
   }
-  @asn1_source_names ~w(asn1/src/asn1ct.erl asn1/src/asn1ct_check.erl asn1/src/asn1ct_gen.erl asn1/src/asn1ct_table.erl)
+  @asn1_source_names ~w(asn1/src/asn1ct.erl asn1/src/asn1ct_check.erl asn1/src/asn1ct_gen.erl asn1/src/asn1ct_table.erl asn1/src/asn1ct_parser2.erl asn1/src/asn1ct_tok.erl)
   @elixir_apps [:elixir, :eex, :mix, :iex, :logger, :ex_unit]
 
   def lane! do

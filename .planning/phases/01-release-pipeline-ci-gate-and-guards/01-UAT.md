@@ -3,7 +3,7 @@ status: complete
 phase: 01-release-pipeline-ci-gate-and-guards
 source: [01-01-SUMMARY.md, 01-02-SUMMARY.md, 01-03-SUMMARY.md, 01-04-SUMMARY.md, 01-05-SUMMARY.md, 01-VERIFICATION.md]
 started: 2026-10-30T02:19:42Z
-updated: 2026-11-07T08:29:25Z
+updated: 2026-11-06T16:51:15Z
 intent: INT-20261029-08
 ---
 
@@ -164,7 +164,7 @@ Historical SUMMARY coverage blocks were classified with the current CLI; `01-COV
 - OPEN-QUESTIONS Q35, Q36 and Q37 remain existing owner decisions; Q37 is distinct from GitHub issue #37. This session neither resolves nor duplicates those prompts.
 - Broader parser, unswept OTP and exclusion work is already owned by Phase 01.1.1.1, and complete SEC-01 properties by Phase 5. Do not replan those as new Phase 1 gaps.
 - Package key scope/revocation and signed amendments have prior owner evidence. Do not repeat completed approvals without a material change.
-- The original 01-VERIFICATION.md body remains historical. G-01-15 is closed by plans 01-07/08/09; canonical full Phase 01 verification is recorded separately below. This UAT does not imply milestone completion.
+- The original 01-VERIFICATION.md body remains historical. G-01-15 is now closed by plans 01-07/08/09; canonical full Phase 01 verification is still required, and this UAT does not imply the phase or milestone is complete.
 
 ## Automated continuation
 
@@ -221,7 +221,3 @@ Issue #37's full pre-migration record showed only the original timing report and
 The actual main release-guard body passes with the saved live performance-only inventory and blocks synthetic genuine-quality and mixed inventories; its fake `gh` accepts only read-only list calls. Focused core and floor contracts pass on deployed main.
 
 This scoped reconciliation closes only G-01-15. It does not complete canonical Phase 01 verification or change SEC-01 ownership (Phase 5), story-beam caveat ownership (Phases 2/10), aggregate guard audits, or the open Phase 2 gate. Canonical Phase 01 re-verification remains the next action.
-
-## Canonical Phase 01 verification (2026-11-07)
-
-The canonical report in `01-VERIFICATION.md` passed 9/9 roadmap-derived truths and 31/31 trackable decisions, with no gaps, regressions, or human checks. All 18 UAT checks pass. Phase 01 is complete; Phase 01.1 has not started.

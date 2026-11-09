@@ -1,0 +1,107 @@
+{
+  "schema": "fablebook.phase-delivery.v1",
+  "phase": "01.1.1.13",
+  "plan": "03",
+  "status": "merged",
+  "tested_head": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a",
+  "tested_base": "e91581fe0ec6aa811744a22024c2e5107c0ddddb",
+  "branch": "gsd/phase-01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps",
+  "pr_url": "https://github.com/szTheory/fablebook/pull/47",
+  "merge_sha": "fb4d1cf05b992b13396ee7fba5b881237c87bdd9",
+  "ci_run_id": 41927116361,
+  "ci_run_url": "https://github.com/szTheory/fablebook/actions/runs/41927116361",
+  "scope": {
+    "changed_paths": [
+      ".planning/ROADMAP.md",
+      ".planning/STATE.md",
+      ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-REPLAN-RECOMMENDATION.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-01-PLAN.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-01-SUMMARY.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-02-PLAN.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-02-SUMMARY.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-03-01-RED-EVIDENCE.json",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-03-PLAN.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-CONTEXT.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-PATTERNS.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-PLANNING-SCOPE.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-RESEARCH.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-REVIEW.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-SECURITY.md",
+      ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-VALIDATION.md",
+      ".planning/state.json",
+      "test/contract/tier_sweep_test.exs",
+      "test/fixtures/guards/exact_sources.tar.gz",
+      "test/support/exunit_tap_formatter.ex",
+      "test/support/sweep_evidence.ex",
+      "test/test_helper.exs"
+    ],
+    "forbidden_paths_changed": false
+  },
+  "local_gates": [
+    {
+      "command": "MIX_ENV=test bin/lane core mix ci",
+      "status": "passed",
+      "result": "343 tests passed",
+      "lane_identity": {"elixir": "1.20.4", "otp": "29.1.2", "lock_sha256": "4638a2d1c25b5be2bfaf6b6a3309e9147612f343aa694d64b2af99cc46f33a85"}
+    },
+    {
+      "command": "MIX_ENV=test bin/lane floor mix compile --warnings-as-errors",
+      "status": "passed",
+      "lane_identity": {"elixir": "1.18.5", "otp": "27.3.4.9", "lock_sha256": "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847"}
+    },
+    {
+      "command": "MIX_ENV=test bin/lane floor mix compile --no-optional-deps --warnings-as-errors --force",
+      "status": "passed",
+      "lane_identity": {"elixir": "1.18.5", "otp": "27.3.4.9", "lock_sha256": "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847"}
+    },
+    {
+      "command": "MIX_ENV=test bin/lane floor mix test --warnings-as-errors --include prod_guard",
+      "status": "passed",
+      "result": "343 tests, 0 failures, 4 excluded",
+      "lane_identity": {"elixir": "1.18.5", "otp": "27.3.4.9", "lock_sha256": "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847"}
+    },
+    {
+      "command": "MIX_ENV=test bin/lane core test --warnings-as-errors test/contract/tier_sweep_test.exs test/contract/banned_calls_test.exs",
+      "status": "passed",
+      "result": "178 tests, 0 failures"
+    },
+    {
+      "command": "MIX_ENV=test bin/lane floor test --warnings-as-errors test/contract/tier_sweep_test.exs test/contract/banned_calls_test.exs",
+      "status": "passed",
+      "result": "178 tests, 0 failures"
+    },
+    {
+      "command": "bin/lane core mix credo --strict",
+      "status": "passed",
+      "result": "no issues"
+    }
+  ],
+  "github": {
+    "repository": "szTheory/fablebook",
+    "pr_number": 47,
+    "pr_url": "https://github.com/szTheory/fablebook/pull/47",
+    "pr_state": "MERGED",
+    "base_sha": "e91581fe0ec6aa811744a22024c2e5107c0ddddb",
+    "head_sha": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a",
+    "merge_sha": "fb4d1cf05b992b13396ee7fba5b881237c87bdd9",
+    "merged_at": "2026-11-04T22:48:50Z",
+    "merge_method": "squash",
+    "ci_run_id": 41927116361,
+    "ci_run_url": "https://github.com/szTheory/fablebook/actions/runs/41927116361",
+    "ci_run_head_sha": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a",
+    "check_run_total": 7,
+    "required_checks": [
+      {"name": "core", "head_sha": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a", "conclusion": "success", "url": "https://github.com/szTheory/fablebook/actions/runs/41927116361/job/126914283002"},
+      {"name": "floor", "head_sha": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a", "conclusion": "success", "url": "https://github.com/szTheory/fablebook/actions/runs/41927116361/job/126914283594"},
+      {"name": "dialyzer", "head_sha": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a", "conclusion": "success", "url": "https://github.com/szTheory/fablebook/actions/runs/41927116361/job/126914283602"},
+      {"name": "security", "head_sha": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a", "conclusion": "success", "url": "https://github.com/szTheory/fablebook/actions/runs/41927116361/job/126914283584"},
+      {"name": "ci-gate", "head_sha": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a", "conclusion": "success", "url": "https://github.com/szTheory/fablebook/actions/runs/41927116361/job/126918865905"}
+    ],
+    "allowed_skips": [
+      {"name": "nightly", "head_sha": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a", "conclusion": "skipped", "url": "https://github.com/szTheory/fablebook/actions/runs/41927116361/job/126914285006"},
+      {"name": "ci-health", "head_sha": "c868f7482b8258b5d6cdd232d16fbafcc55c7a8a", "conclusion": "skipped", "url": "https://github.com/szTheory/fablebook/actions/runs/41927116361/job/126914285197"}
+    ],
+    "review_decision": "no review requested; no submitted review"
+  },
+  "merge_ancestry": "verified: merge_sha is an ancestor of freshly fetched origin/main"
+}
