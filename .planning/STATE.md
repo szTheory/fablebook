@@ -23,13 +23,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-08)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.16 — execute the bounded ASN.1 parser/tokenizer slice. The parent Phase 01.1.1.1 aggregate remains open; its old Plan 01 is halted and Plans 02–05 are superseded.
+**Current focus:** Phase 01.1.1.16 is complete. The parent Phase 01.1.1.1 aggregate remains open and needs a fresh plan; its old Plan 01 is halted and Plans 02–05 are superseded. Keep Phase 2 gated and SEC-01 with Phase 5.
 
 ## Current Position
 
-Phase: 01.1.1.1 — Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons
-Plan: 2
-Status: Ready to execute
+Phase: 01.1.1.1 — Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons (open aggregate; replan required)
+Plan: None — prior Plan 01 is halted and Plans 02–05 are superseded
+Status: Awaiting replan; Phase 01.1.1.16 is complete
 Last activity: 2026-11-09 — Phase 01.1.1.16 complete, transitioned to Phase 01.1.1.1
 
 Progress: 2/46 phases complete ([░░░░░░░░░░] 4%); 36/37 live plans summarized ([█████████░] 97%)
@@ -228,7 +228,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-11-09T04:11:07.746Z
-Stopped at: Phase 01.1.1.16 complete, ready to execute Phase 01.1.1.1
+Stopped at: Phase 01.1.1.16 complete; parent Phase 01.1.1.1 remains open and requires replanning
 
-Next action: After `/clear`, run `$gsd-resume-work`, then `$gsd-execute-phase 01.1.1.16`. Keep the parent aggregate and Phase 2 gate open, retain SEC-01 ownership in Phase 5, and do not run `$gsd-execute-phase 01.1.1.1`, whose Plan 01 is halted and Plans 02–05 are superseded.
+Next action: After `/clear`, run `$gsd-resume-work`, then replan Phase 01.1.1.1 before any execution. Do not execute its halted or superseded plans. Keep the Phase 2 gate open and SEC-01 ownership in Phase 5.
 Resume file: None
