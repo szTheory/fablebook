@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "gh pr merge 79 --squash",
-    "label": "Owner merge decision for green Phase 01.1.1.18 PR",
-    "reason": "Phase 01.1.1.18 implementation, local checks, reviews, hosted CI and independent goal verification passed; PR #79 awaits the owner merge decision. Do not merge without owner authorization or advance to Phase 2."
+    "command": "/gsd-progress --forensic",
+    "label": "Choose the next bounded source-audit slice after Phase 01.1.1.18",
+    "reason": "Phase 01.1.1.18 complete: owner-approved PR #79 squash-merged after green candidate CI and passing independent goal verification; stopped at the selected phase boundary. Parent aggregate remains open; historical plans stay stopped, SEC-01 stays Pending for Phase 5 and Phase 2 remains gated."
   },
-  "updated_at": "2026-11-10T20:36:05+00:00"
+  "updated_at": "2026-11-10T21:08:34+00:00"
 }

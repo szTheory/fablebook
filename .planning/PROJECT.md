@@ -313,6 +313,7 @@ Every item below is a v1.0 commitment.
 
 | Decision | Rationale | Outcome |
 |---|---|---|
+| Source-bind the bounded ASN.1 generator-dispatch slice (Phase 01.1.1.18) | Distinguish caller-prefix atom creation from existing-atom lookup and fixed literal data using independent exact-lane reviews | Two mirrored static patterns cover three exports; individual exclusions, source/caller controls and candidate CI passed in merged PR #79. Upstream internal-IR Prefix provenance stays an explicit evidence limit; SEC-01 remains with Phase 5. |
 | Verify Hex docs recovery locally when the published release already has docs (Phase 01.1, INT-20261108-01) | Do not alter a public package just to manufacture a missing-docs test case | Fake API contract cases cover docs absent and present; the real docs generator passed `--dry-run` without uploading |
 | End GSD flows with the next command; distinguish merge readiness from pending phase observations (INT-20261029-09) | Keep useful work moving and make the next action explicit | Merge green scoped PRs under existing checks; retain scheduled evidence; auto-advance stays off |
 | Automate verification by default; hand off only irreducible checks (INT-20261029-08) | Reduce owner toil and repeated UAT; add CI coverage when it has recurring value | `.planning/VERIFICATION.md` maps criteria to evidence, reuses approvals, and requires CI speed reviews to preserve gates; Phase 1 evidence is in `01-UAT.md`; GSD auto-advance stays off |
@@ -424,4 +425,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-10 after Phase 01.1.1.17; the Phase 01.1.1.1 aggregate remains open*
+*Last updated: 2026-11-10 after Phase 01.1.1.18; the Phase 01.1.1.1 aggregate remains open*
