@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "6d260ab9d82f1500e1bed3ebbcb727d02f0848e7568ed048f60f60967db66e5a"
+  @archive_sha "195349ca555328994cfe7f50161863e0f2a8e9ebf07fb143cf8ea681bb2a18f8"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -92,6 +92,11 @@ defmodule Fablebook.Test.SweepEvidence do
       "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_gen_ber_bin_v2.erl",
       53554,
       "ae135c8071bd88d8bee431428876501d00cf0970eb1c8b0f159116c51a99cab1"
+    },
+    {"floor", "asn1/src/asn1ct_gen_ber_bin_v2.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_gen_ber_bin_v2.erl",
+      53437,
+      "d873b9136aa2bd97f975f0a7c0e0c4aa8e6e024ba27edc007dc044b1afdd4ba1"
     },
     {"core", "asn1/src/asn1ct_func.erl"} => {
       "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_func.erl",
@@ -1012,6 +1017,107 @@ defmodule Fablebook.Test.GeneratorDispatchCallerAEvidence do
 
   defp review(source_path, lines, citations, finding) do
     %{source_path: source_path, reviewed_lines: lines, citations: citations, finding: finding}
+  end
+end
+
+defmodule Fablebook.Test.GeneratorDispatchFloorCallerAEvidence do
+  @moduledoc false
+
+  @started_at "2026-11-10T18:36:24Z"
+  @completed_at "2026-11-10T18:41:20Z"
+  @exact_sources [
+    {"asn1/src/asn1ct_func.erl", 4347,
+     "5487ba870e7c265cd7fe41761f1c5c528385d164faa07df15858fe48e2d21ebf"},
+    {"asn1/src/asn1ct_constructed_ber_bin_v2.erl", 49_528,
+     "a173873d7d7a3082cd77ec8caac860b64f421bda2a91a9166845710e69bc97f5"},
+    {"asn1/src/asn1ct_constructed_per.erl", 68_908,
+     "0e732766bf11e1e5bc73e79f8529b91eb065efba34fe0d6e29b323e778dbba5c"},
+    {"asn1/src/asn1ct_gen.erl", 53_892,
+     "894e107c632b9361d9c1c70614dd60db2638333fdc152336f11b6d2ab3b9abef"},
+    {"asn1/src/asn1ct_gen_ber_bin_v2.erl", 53_437,
+     "d873b9136aa2bd97f975f0a7c0e0c4aa8e6e024ba27edc007dc044b1afdd4ba1"}
+  ]
+
+  def record do
+    %{
+      lane: "floor",
+      original_id: "EX-107",
+      owner: "01.1.1.4",
+      semantic_status: :pending,
+      method: :source_only,
+      started_at: @started_at,
+      completed_at: @completed_at,
+      elapsed_seconds: elapsed_seconds(),
+      exact_sources: @exact_sources,
+      reviews: [
+        review("asn1/src/asn1ct_constructed_ber_bin_v2.erl", [61..165, 578..605, 1294..1382, 1492..1493], [
+          {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:147", "asn1ct_func:need({ber,dynamicsort_SET_components,1})"},
+          {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:591", "asn1ct_func:need({ber,dynamicsort_SETOF,1})"},
+          {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:1363", "mkfuncname(TopType,Cname,WhatKind,Prefix,Suffix)"},
+          {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:1493", "asn1ct_func:call(ber, F, Args)"}
+        ], "The allocated clauses build decoder names from compiler type/name fields and emit them as generated source. The wrapper routes generated calls to asn1ct_func:call/3 with fixed module atom ber; its fixed dynamicsort MFA requests are table lookups. No atom constructor is present in these reviewed clauses."),
+        review("asn1/src/asn1ct_constructed_per.erl", [564..585, 622..660, 743..787, 1300..1342], [
+          {"asn1/src/asn1ct_constructed_per.erl:575", "erlang:md5(term_to_binary({decode,ObjSet,RestFieldNames"},
+          {"asn1/src/asn1ct_constructed_per.erl:577", "Gen = fun(_Fd, N) ->"},
+          {"asn1/src/asn1ct_constructed_per.erl:582", "Prefix = lists:concat([\"dec_os_\",Name])"},
+          {"asn1/src/asn1ct_constructed_per.erl:583", "asn1ct_func:call_gen(Prefix, Key, Gen)"},
+          {"asn1/src/asn1ct_constructed_per.erl:629", "Prefix = \"dec_outlined_\""},
+          {"asn1/src/asn1ct_constructed_per.erl:634", "asn1ct_func:call_gen(Prefix, Key, Gen)"},
+          {"asn1/src/asn1ct_constructed_per.erl:751", "asn1ct_func:call_gen(\"dec_components\", Key, Gen)"},
+          {"asn1/src/asn1ct_constructed_per.erl:764", "asn1ct_func:call_gen(\"dec_fragment\", Key, Gen)"},
+          {"asn1/src/asn1ct_constructed_per.erl:784", "asn1ct_func:call_gen(\"dec_components\", Key, Gen)"},
+          {"asn1/src/asn1ct_constructed_per.erl:1327", "asn1ct_func:call(Mod, skipextensions,"}
+        ], "Four local call_gen/3 closures use fixed prefixes and cache keys from generator definitions, except gen_dec_open_type/5, which passes dec_os_ ++ the Name argument. That caller-derived compiler metadata reaches the target atom builder; this task does not trace Name's producer to an external trust boundary and makes no user-controlled-input claim. The local callbacks emit generated function source. The skipextensions route uses a fixed function atom and a module selected from fixed PER alignment atoms."),
+        review("asn1/src/asn1ct_gen.erl", [59..93, 741..895, 1072..1104], [
+          {"asn1/src/asn1ct_gen.erl:75", "asn1ct_func:start_link()"},
+          {"asn1/src/asn1ct_gen.erl:88", "asn1ct_func:generate(Fd)"},
+          {"asn1/src/asn1ct_gen.erl:763", "asn1ct_func:need({per,complete,1})"},
+          {"asn1/src/asn1ct_gen.erl:849", "asn1ct_func:need({ber,ber_decode_nif,1})"},
+          {"asn1/src/asn1ct_gen.erl:1085", "do_emit({call,M,F,A}) ->"},
+          {"asn1/src/asn1ct_gen.erl:1087", "asn1ct_func:need(MFA)"}
+        ], "pgen/3 brackets source generation with fixed server startup and data emission. Dispatcher branches request fixed helper MFAs from the RTT table. do_emit/1 receives an internal call tuple with existing module/function atoms, checks that MFA, then serializes a source call; emitted text is not converted back into an atom here."),
+        review("asn1/src/asn1ct_gen_ber_bin_v2.erl", [93..108, 1591..1593], [
+          {"asn1/src/asn1ct_gen_ber_bin_v2.erl:97", "suppress({M,F,_}=MFA, Args) ->"},
+          {"asn1/src/asn1ct_gen_ber_bin_v2.erl:98", "asn1ct_func:is_used(MFA)"},
+          {"asn1/src/asn1ct_gen_ber_bin_v2.erl:102", ~S/emit(["    _ = ",{call,M,F,Args},com,nl])/},
+          {"asn1/src/asn1ct_gen_ber_bin_v2.erl:1592", "asn1ct_func:call(ber, F, Args)"}
+        ], "suppress/2 checks a structured MFA against the fixed used set and, on a hit, places existing M/F atoms in the generated-call tuple. Its call/2 wrapper passes the fixed ber module atom. This path does not intern names derived from caller strings.")
+      ],
+      incoming_edges: incoming_edges()
+    }
+  end
+
+  def incoming_edges do
+    [
+      edge({:asn1ct_constructed_ber_bin_v2, :call, 2}, {:asn1ct_func, :call, 3}, [{"asn1/src/asn1ct_constructed_ber_bin_v2.erl:1493", "asn1ct_func:call(ber, F, Args)"}]),
+      edge({:asn1ct_constructed_ber_bin_v2, :gen_dec_call1, 7}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_constructed_ber_bin_v2.erl:1374", "asn1ct_func:need({ber,match_tags,2})"}]),
+      edge({:asn1ct_constructed_ber_bin_v2, :gen_encode_sequence, 3}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_constructed_ber_bin_v2.erl:147", "asn1ct_func:need({ber,dynamicsort_SET_components,1})"}]),
+      edge({:asn1ct_constructed_ber_bin_v2, :gen_encode_sof_components, 4}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_constructed_ber_bin_v2.erl:591", "asn1ct_func:need({ber,dynamicsort_SETOF,1})"}]),
+      edge({:asn1ct_constructed_per, :gen_dec_open_type, 5}, {:asn1ct_func, :call_gen, 3}, [{"asn1/src/asn1ct_constructed_per.erl:583", "asn1ct_func:call_gen(Prefix, Key, Gen)"}]),
+      edge({:asn1ct_constructed_per, :dec_objset_2, 4}, {:asn1ct_func, :call_gen, 3}, [{"asn1/src/asn1ct_constructed_per.erl:634", "asn1ct_func:call_gen(Prefix, Key, Gen)"}]),
+      edge({:asn1ct_constructed_per, :do_gen_decode_fragmented, 4}, {:asn1ct_func, :call_gen, 3}, [{"asn1/src/asn1ct_constructed_per.erl:751", "asn1ct_func:call_gen(\"dec_components\", Key, Gen)"}]),
+      edge({:asn1ct_constructed_per, :do_gen_dec_fragmented_1, 6}, {:asn1ct_func, :call_gen, 3}, [{"asn1/src/asn1ct_constructed_per.erl:764", "asn1ct_func:call_gen(\"dec_fragment\", Key, Gen)"}]),
+      edge({:asn1ct_constructed_per, :do_gen_decode_sof_plain, 5}, {:asn1ct_func, :call_gen, 3}, [{"asn1/src/asn1ct_constructed_per.erl:784", "asn1ct_func:call_gen(\"dec_components\", Key, Gen)"}]),
+      edge({:asn1ct_constructed_per, :gen_dec_components_call, 6}, {:asn1ct_func, :call, 3}, [{"asn1/src/asn1ct_constructed_per.erl:1327", "asn1ct_func:call(Mod, skipextensions,"}]),
+      edge({:asn1ct_gen, :pgen, 3}, {:asn1ct_func, :start_link, 0}, [{"asn1/src/asn1ct_gen.erl:75", "asn1ct_func:start_link()"}]),
+      edge({:asn1ct_gen, :pgen, 3}, {:asn1ct_func, :generate, 1}, [{"asn1/src/asn1ct_gen.erl:88", "asn1ct_func:generate(Fd)"}]),
+      edge({:asn1ct_gen, :pgen_dispatcher, 2}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_gen.erl:763", "asn1ct_func:need({per,complete,1})"}, {"asn1/src/asn1ct_gen.erl:770", "asn1ct_func:need({uper,complete_NFP,1})"}, {"asn1/src/asn1ct_gen.erl:773", "asn1ct_func:need({uper,complete,1})"}]),
+      edge({:asn1ct_gen, :pgen_dispatcher_decode, 3}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_gen.erl:849", "asn1ct_func:need({ber,ber_decode_nif,1})"}, {"asn1/src/asn1ct_gen.erl:852", "asn1ct_func:need({ber,ber_decode_nif,1})"}]),
+      edge({:asn1ct_gen_ber_bin_v2, :call, 2}, {:asn1ct_func, :call, 3}, [{"asn1/src/asn1ct_gen_ber_bin_v2.erl:1592", "asn1ct_func:call(ber, F, Args)"}]),
+      edge({:asn1ct_gen_ber_bin_v2, :suppress, 2}, {:asn1ct_func, :is_used, 1}, [{"asn1/src/asn1ct_gen_ber_bin_v2.erl:98", "asn1ct_func:is_used(MFA)"}])
+    ]
+  end
+
+  defp review(source_path, reviewed_lines, citations, finding) do
+    %{source_path: source_path, reviewed_lines: reviewed_lines, citations: citations, finding: finding}
+  end
+
+  defp edge(caller, callee, citations), do: %{caller: caller, callee: callee, citations: citations}
+
+  defp elapsed_seconds do
+    {:ok, started, _offset} = DateTime.from_iso8601(@started_at)
+    {:ok, completed, _offset} = DateTime.from_iso8601(@completed_at)
+    DateTime.diff(completed, started)
   end
 end
 

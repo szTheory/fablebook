@@ -62,6 +62,7 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
 
   alias Fablebook.Test.GeneratorDispatchCoreEvidence
   alias Fablebook.Test.GeneratorDispatchFloorEvidence
+  alias Fablebook.Test.GeneratorDispatchFloorCallerAEvidence
   alias Fablebook.Test.GeneratorDispatchCallerAEvidence
   alias Fablebook.Test.GeneratorDispatchCallerBEvidence
   alias Fablebook.Test.SweepEvidence
@@ -289,6 +290,45 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
 
     truncated = String.trim_trailing(body) |> then(&binary_part(&1, 0, byte_size(&1) - 2))
     refute Regex.match?(grammar, truncated)
+  end
+
+  @tag :generator_dispatch_011118
+  test "floor caller batch A identities, generated-call traces and direct edges resolve from the exact archive" do
+    evidence = archive_only_evidence!("floor")
+    record = GeneratorDispatchFloorCallerAEvidence.record()
+
+    assert record.original_id == "EX-107"
+    assert record.semantic_status == :pending
+    assert length(record.exact_sources) == 5
+    assert length(record.reviews) == 4
+    assert length(record.incoming_edges) == 16
+
+    for {path, bytes, sha256} <- record.exact_sources do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    for review <- record.reviews do
+      assert String.length(review.finding) > 120
+
+      for {citation, expected} <- review.citations do
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected, citation
+      end
+    end
+
+    for edge <- record.incoming_edges, {citation, expected} <- edge.citations do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+    end
+
+    [per_review] = Enum.filter(record.reviews, &(&1.source_path == "asn1/src/asn1ct_constructed_per.erl"))
+    assert String.contains?(per_review.finding, "caller-derived compiler metadata")
+    assert String.contains?(per_review.finding, "no user-controlled-input claim")
   end
 
 
