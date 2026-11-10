@@ -93,6 +93,10 @@ defmodule Fablebook.Contract.HexPublishTest do
   @built "${{ needs.build.outputs.sha }}"
   @lanes "    # lanes\n"
   @smoke_setup "      - uses: ./.github/actions/setup\n        with:\n          lane:"
+  @publish_environment "hex-production"
+  @release_test_command "mix test --only release --only prod_guard"
+  @prepublish_smoke_command "bin/smoke_consumer --path unpacked"
+  @smoke_command ~s(bin/smoke_consumer --hex "$V" --checksum "$SHA256")
 
   @mutations [
     {:ancestry, "ref: refs/tags/${{ inputs.tag }}", "ref: ${{ inputs.tag }}"},
@@ -150,12 +154,31 @@ defmodule Fablebook.Contract.HexPublishTest do
     {:secret_scope, "    env:\n      SHA256:", "    env:\n      #{@key_env}\n      SHA256:"},
     {:secret_scope, "          MIX_ENV: test\n",
      "          MIX_ENV: test\n          #{@key_env}\n"},
+    {:finalize_gate, "  finalize:\n    needs: smoke\n",
+     "  finalize:\n    needs: smoke\n    if: always()\n"},
+    {:smoke_gate, "  smoke:\n    needs: [build, publish]\n",
+     "  smoke:\n    needs: [build, publish]\n    if: false\n"},
+    {:smoke_step_gate, "      - run: #{@smoke_command}\n",
+     "      - if: false\n        run: #{@smoke_command}\n"},
+    {:smoke_step_gate, "      - run: #{@smoke_command}\n",
+     "      - run: #{@smoke_command}\n        if: false\n"},
+    {:publish_environment, "    environment: #{@publish_environment}\n", ""},
+    {:smoke_command, " --checksum \"$SHA256\"", ""},
+    {:release_tests, @release_test_command, "mix test --only release"},
+    {:prepublish_smoke, "run: #{@prepublish_smoke_command}", "run: true"},
+    {:smoke_matrix, "lane: [latest, floor]", "lane: [latest]"},
+    {:smoke_lane, "lane: ${{ matrix.lane }}", "lane: latest"},
+    {:smoke_env,
+     "    env:\n      V: ${{ needs.build.outputs.version }}\n      SHA256: ${{ needs.build.outputs.sha256 }}",
+     "    env:\n      V: ${{ github.ref_name }}\n      SHA256: ${{ needs.build.outputs.sha256 }}"},
+    {:smoke_env,
+     "    env:\n      V: ${{ needs.build.outputs.version }}\n      SHA256: ${{ needs.build.outputs.sha256 }}\n",
+     "    env:\n      V: ${{ needs.build.outputs.version }}\n"},
     {:cache, "cache: 'false'", "cache: 'true'"},
     {:run_expression, ~s("fablebook-$V.tar"),
      ~s("fablebook-${{ steps.tag.outputs.version }}.tar")},
     {:run_expression, ~s(release edit "$TAG"), ~s(release edit "${{ inputs.tag }}")}
   ]
-
   setup %{tmp_dir: dir} do
     bin = Path.join(dir, "bin")
     File.mkdir_p!(bin)
@@ -200,6 +223,7 @@ defmodule Fablebook.Contract.HexPublishTest do
     reordered = move_root_env_after_jobs(workflow())
 
     assert reordered != workflow()
+    refute "  MIX_ENV: dev" in job(reordered, "finalize")
     assert release_gate_violations(reordered, dir) == []
     assert recovery_violations(reordered, dir) == []
     assert hygiene_violations(reordered) == []
@@ -266,7 +290,80 @@ defmodule Fablebook.Contract.HexPublishTest do
   defp graph_violations(text),
     do:
       step_if_violations(text) ++
-        job_graph_violations(text) ++ checkout_violations(text) ++ step_count_violations(text)
+        job_graph_violations(text) ++
+        checkout_violations(text) ++
+        step_count_violations(text) ++
+        release_execution_violations(text)
+
+  defp release_execution_violations(text) do
+    smoke = job(text, "smoke")
+    smoke_steps = job_steps(text, "smoke")
+    build_steps = job_steps(text, "build")
+    finalize = job(text, "finalize")
+    publish = job(text, "publish")
+    smoke_checkout = Enum.find(smoke_steps, [], &checkout?/1)
+    smoke_setup = Enum.find(smoke_steps, [], &("uses: ./.github/actions/setup" in normalized(&1)))
+    smoke_command = Enum.find(smoke_steps, [], &(script(&1) =~ "bin/smoke_consumer --hex"))
+
+    failure_report =
+      Enum.find(smoke_steps, [], &(script(&1) =~ "bin/ci_health --file-regression"))
+
+    release_tests = Enum.find(build_steps, [], &(script(&1) =~ "mix test"))
+    unpack_step = Enum.find_index(build_steps, &(script(&1) =~ "mix hex.build --unpack"))
+
+    prepublish_smoke =
+      if is_nil(unpack_step), do: [], else: Enum.at(build_steps, unpack_step + 1, [])
+
+    matrix_lanes = Enum.find(smoke, &String.starts_with?(&1, "        lane:"))
+
+    required_smoke_steps = [
+      {:checkout, smoke_checkout},
+      {:setup, smoke_setup},
+      {:consumer, smoke_command}
+    ]
+
+    check(key(finalize, "if") == nil, {:finalize_gate, key(finalize, "if")}) ++
+      check(key(smoke, "if") == nil, {:smoke_gate, key(smoke, "if")}) ++
+      for(
+        {name, step} <- required_smoke_steps,
+        step == [] or
+          Enum.any?(step, &String.starts_with?(&1, ["      - if:", "        if:"])),
+        do: {:smoke_step_gate, name}
+      ) ++
+      check(
+        key(publish, "environment") == @publish_environment,
+        {:publish_environment, key(publish, "environment")}
+      ) ++
+      check(
+        String.trim(script(release_tests)) == @release_test_command,
+        {:release_tests, String.trim(script(release_tests))}
+      ) ++
+      check(
+        String.trim(script(prepublish_smoke)) == @prepublish_smoke_command,
+        {:prepublish_smoke, String.trim(script(prepublish_smoke))}
+      ) ++
+      check(
+        String.trim(script(smoke_command)) == @smoke_command,
+        {:smoke_command, String.trim(script(smoke_command))}
+      ) ++
+      check(
+        failure_report != [] and "if: failure()" in normalized(failure_report),
+        {:smoke_failure_report, normalized(failure_report)}
+      ) ++
+      check(matrix_lanes == "        lane: [latest, floor]", {:smoke_matrix, matrix_lanes}) ++
+      check(
+        "lane: ${{ matrix.lane }}" in normalized(smoke_setup),
+        {:smoke_lane, normalized(smoke_setup)}
+      ) ++
+      check(
+        job_env(smoke, "V") == "${{ needs.build.outputs.version }}",
+        {:smoke_env, :version, job_env(smoke, "V")}
+      ) ++
+      check(
+        job_env(smoke, "SHA256") == "${{ needs.build.outputs.sha256 }}",
+        {:smoke_env, :checksum, job_env(smoke, "SHA256")}
+      )
+  end
 
   defp step_if_violations(text) do
     gated = text |> job_steps("publish") |> Enum.filter(&(id(&1) == "hex" or key_check?(&1)))
@@ -686,6 +783,29 @@ defmodule Fablebook.Contract.HexPublishTest do
   end
 
   defp action(step), do: Enum.find(normalized(step), &String.starts_with?(&1, ["uses:", "run:"]))
+
+  defp job_env(body, name) do
+    case Enum.drop_while(body, &(&1 != "    env:")) do
+      ["    env:" | rest] ->
+        job_env_value(rest, name)
+
+      _ ->
+        nil
+    end
+  end
+
+  defp job_env_value(lines, name) do
+    lines
+    |> Enum.take_while(&String.starts_with?(&1, "      "))
+    |> Enum.find_value(&job_env_line_value(&1, name))
+  end
+
+  defp job_env_line_value(line, name) do
+    prefix = "      #{name}:"
+
+    if String.starts_with?(line, prefix),
+      do: String.trim_leading(String.replace_prefix(line, prefix, ""))
+  end
 
   defp key(body, name) do
     prefix = "    #{name}:"
