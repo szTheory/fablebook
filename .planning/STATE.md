@@ -2,11 +2,11 @@
 gsd_state_version: "1.0"
 current_phase: 01.1.1.18
 current_phase_name: Bound ASN.1 generator-dispatch exclusions (INSERTED)
-status: blocked
-stopped_at: Phase 01.1.1.18 Plan 01 Task 1 halted: GenServer callback source spans need bounded re-sizing under D-15; Plan 02 blocked.
-last_updated: "2026-11-10T17:21:35+00:00"
+status: executing
+stopped_at: Phase 01.1.1.18 source allocation repaired and independently checked; executing core Plan01 of three sequential plans.
+last_updated: "2026-11-10T17:53:19+00:00"
 last_activity: 2026-11-10
-last_activity_desc: Phase 01.1.1.18 Plan 01 Task 1 halted: GenServer callback source spans need bounded re-sizing under D-15; Plan 02 blocked.
+last_activity_desc: Phase 01.1.1.18 source allocation repaired and independently checked; executing core Plan01 of three sequential plans.
 state_head: 40bdd440483bdd06438b6293866adf2aa7924629
 progress:
   total_phases: 48
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 
 ## Current Position
 
-Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions (INSERTED)) — BLOCKED FOR SOURCE RE-SIZING
-Plan: 01 Task 1 halted; no tasks complete
-Status: Blocked — source allocation correction pending
-Last activity: 2026-11-10 — Phase 01.1.1.18 Plan 01 Task 1 halted: GenServer callback source spans need bounded re-sizing under D-15; Plan 02 blocked.
+Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions (INSERTED)) — EXECUTING
+Plan: 01 of3; no source tasks complete
+Status: Executing — approved allocation correction passed independent check
+Last activity: 2026-11-10 — Phase 01.1.1.18 source allocation repaired and independently checked; executing core Plan01 of three sequential plans.
 
 Progress: 2/47 phases complete ([░░░░░░░░░░] 4%); 38/42 total plans summarized ([█████████░] 90%)
 
@@ -235,7 +235,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-11-10T16:29:21Z
-Stopped at: Phase 01.1.1.18 Plan 01 Task 1 halted: GenServer callback source spans need bounded re-sizing under D-15; Plan 02 blocked.
+Stopped at: Phase 01.1.1.18 source allocation repaired and independently checked; executing core Plan01 of three sequential plans.
 
-Next action: $gsd-plan-phase 01.1.1.18 — after owner authorization, correct the connected GenServer source allocation and re-check both plans before resuming execution. See 01.1.1.18-EXECUTION-STOP.md; preserve the halted summary until the revised plans explicitly resolve its cause.
+Next action: $gsd-execute-phase 01.1.1.18 — execute corrected Plans01/02/03 in order; keep parent aggregate open, SEC-01 with Phase5 and Phase2 gated.
 Resume file: None
