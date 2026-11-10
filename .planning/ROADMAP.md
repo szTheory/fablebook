@@ -340,7 +340,7 @@ Plans:
   4. Contract controls preserve the complete EX-107 row and lane match sets without invoking audited functions or atom sinks, changing production behavior, or claiming runtime atom safety.
   5. Required core and floor checks pass and hosted CI receipts identify the reviewed candidate revision.
   6. The remaining EX-107 matches stay pending; the parent aggregate stays open, SEC-01 remains assigned to Phase 5, and Phase 2 remains gated.
-**Plans:** 2/3 plans complete (core/floor source review summarized; integration and delivery pending)
+**Plans:** 3/3 plans complete (source reviews, integration and required candidate checks passed; final goal verification and merge remain)
 
 Plans:
 **Wave 1**
@@ -350,7 +350,7 @@ Plans:
 - [x] 01.1.1.18-02-PLAN.md
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01.1.1.18-03-PLAN.md
+- [x] 01.1.1.18-03-PLAN.md
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
