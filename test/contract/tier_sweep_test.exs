@@ -60,12 +60,12 @@ end
 defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
   use ExUnit.Case, async: false
 
-  alias Fablebook.Test.GeneratorDispatchCoreEvidence
-  alias Fablebook.Test.GeneratorDispatchFloorEvidence
-  alias Fablebook.Test.GeneratorDispatchFloorCallerAEvidence
-  alias Fablebook.Test.GeneratorDispatchFloorCallerBEvidence
   alias Fablebook.Test.GeneratorDispatchCallerAEvidence
   alias Fablebook.Test.GeneratorDispatchCallerBEvidence
+  alias Fablebook.Test.GeneratorDispatchCoreEvidence
+  alias Fablebook.Test.GeneratorDispatchFloorCallerAEvidence
+  alias Fablebook.Test.GeneratorDispatchFloorCallerBEvidence
+  alias Fablebook.Test.GeneratorDispatchFloorEvidence
   alias Fablebook.Test.SweepEvidence
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
@@ -12088,8 +12088,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert support.semantic_status == row.semantic_status
 
     selected_records = support.selected_function_evidence
-    assert selected == MapSet.new(Enum.map(selected_records, &mfa_string!(&1.mfa)))
-    assert length(selected_records) == 11
+    assert_generator_dispatch_selection!(selected_records, selected)
 
     dispositions = GeneratorDispatchIntegrationEvidence.dispositions()
 
@@ -12104,20 +12103,53 @@ defmodule Fablebook.Contract.TierSweepTest do
           |> Map.put("stdlib", Path.join(evidence.archive_root, "missing-stdlib"))
     }
 
+    assert_generator_dispatch_sources!(archive_only, [support, caller_a, caller_b], lane)
+
+    assert_generator_dispatch_reviews!(
+      archive_only,
+      selected_records,
+      caller_a.reviews ++ caller_b.reviews,
+      lane
+    )
+
+    {edges, actual_edges} = assert_generator_dispatch_edges!(graph, record, archive_only, lane)
+    assert_generator_dispatch_tampering!(archive_only, edges, lane)
+    {guarded, safe_exclusion} = assert_generator_dispatch_guards!(graph, tier, lane)
+    assert_generator_dispatch_lib_scope!(graph, guarded)
+    assert_generator_dispatch_fixed!(selected_mfas, tier, safe_exclusion, lane)
+
+    assert_generator_dispatch_omissions!(
+      selected_records,
+      selected,
+      edges,
+      actual_edges,
+      archive_only,
+      lane
+    )
+  end
+
+  defp assert_generator_dispatch_selection!(records, selected) do
+    assert selected == MapSet.new(Enum.map(records, &mfa_string!(&1.mfa)))
+    assert length(records) == 11
+  end
+
+  defp assert_generator_dispatch_sources!(archive_only, records, lane) do
     assert_raise SweepEvidence.Error, ~r/archive_digest/, fn ->
       archive = Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
       SweepEvidence.load_archive!(archive, String.duplicate("0", 64))
     end
 
     sources =
-      [support, caller_a, caller_b]
+      records
       |> Enum.flat_map(& &1.exact_sources)
       |> Enum.uniq_by(&elem(&1, 0))
 
     assert length(sources) == 13
 
     for {path, bytes, sha256} <- sources do
-      [source_row] = Enum.filter(evidence.manifest["files"], &(&1["path"] == "#{lane}/#{path}"))
+      [source_row] =
+        Enum.filter(archive_only.manifest["files"], &(&1["path"] == "#{lane}/#{path}"))
+
       assert source_row["bytes"] == bytes
       assert source_row["sha256"] == sha256
       source = SweepEvidence.resolve!(archive_only, path <> ":1")
@@ -12125,33 +12157,40 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert source.sha256 == sha256
       assert File.stat!(source.path).size == bytes
     end
+  end
 
+  defp assert_generator_dispatch_reviews!(archive_only, selected_records, reviews, lane) do
     for function <- selected_records do
-      assert function.citations != [], "#{lane} #{inspect(function.mfa)} has no source citation"
-
-      for {citation, expected} <- function.citations do
-        source = SweepEvidence.resolve!(archive_only, citation)
-        assert source.origin == :archive
-        assert source.text =~ expected, citation
-      end
-
       assert String.length(function.trace) > 100
+
+      assert_generator_dispatch_citations!(
+        archive_only,
+        function.citations,
+        "#{lane} #{inspect(function.mfa)}"
+      )
     end
 
-    for review <- caller_a.reviews ++ caller_b.reviews do
-      assert review.citations != [], "#{lane} #{review.source_path} has no source citation"
-
-      for {citation, expected} <- review.citations do
-        source = SweepEvidence.resolve!(archive_only, citation)
-        assert source.origin == :archive
-        assert source.text =~ expected, citation
-      end
+    for review <- reviews do
+      assert_generator_dispatch_citations!(
+        archive_only,
+        review.citations,
+        "#{lane} #{review.source_path}"
+      )
     end
+  end
 
+  defp assert_generator_dispatch_citations!(archive_only, citations, description) do
+    assert citations != [], "#{description} has no source citation"
+
+    for {citation, expected} <- citations do
+      source = SweepEvidence.resolve!(archive_only, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+    end
+  end
+
+  defp assert_generator_dispatch_edges!(graph, record, archive_only, lane) do
     edges = GeneratorDispatchIntegrationEvidence.all_edges(record)
-    assert length(edges) == 28
-    assert MapSet.size(MapSet.new(edges, &{&1.caller, &1.callee})) == 28
-    assert Enum.all?(edges, &(&1.citations != []))
 
     actual_edges =
       graph.full_edges
@@ -12168,37 +12207,52 @@ defmodule Fablebook.Contract.TierSweepTest do
       end)
       |> MapSet.new()
 
+    assert_generator_dispatch_edges_match!(actual_edges, edges, lane)
+
+    for edge <- edges do
+      assert_generator_dispatch_citations!(archive_only, edge.citations, "#{lane} incoming edge")
+    end
+
+    {edges, actual_edges}
+  end
+
+  defp assert_generator_dispatch_edges_match!(actual_edges, edges, lane) do
+    assert length(edges) == 28
+    assert MapSet.size(MapSet.new(edges, &{&1.caller, &1.callee})) == 28
+    assert Enum.all?(edges, &(&1.citations != []))
+
     expected_edges = MapSet.new(edges, &{&1.caller, {elem(&1.callee, 0), elem(&1.callee, 1)}})
 
     assert actual_edges == expected_edges,
            "EX-107/#{lane} generator-dispatch edge graph changed; missing=#{inspect(MapSet.difference(expected_edges, actual_edges))}; unexpected=#{inspect(MapSet.difference(actual_edges, expected_edges))}"
+  end
 
-    for edge <- edges do
-      assert edge.citations != [], "EX-107/#{lane} has an incoming edge without a source citation"
-
-      for {citation, expected} <- edge.citations do
-        source = SweepEvidence.resolve!(archive_only, citation)
-        assert source.origin == :archive
-        assert source.text =~ expected, citation
-      end
-    end
-
+  defp assert_generator_dispatch_tampering!(archive_only, edges, lane) do
     {tamper_citation, _expected} = hd(hd(edges).citations)
     tampered_path = hd(String.split(tamper_citation, ":"))
 
-    tampered_manifest =
-      Map.update!(archive_only.manifest, "files", fn rows ->
-        Enum.map(rows, fn row ->
-          if row["path"] == "#{lane}/#{tampered_path}",
-            do: Map.put(row, "sha256", String.duplicate("0", 64)),
-            else: row
-        end)
-      end)
+    expected_path = "#{lane}/#{tampered_path}"
+
+    rows =
+      Enum.map(
+        archive_only.manifest["files"],
+        &tamper_generator_dispatch_digest(&1, expected_path)
+      )
+
+    tampered_manifest = Map.put(archive_only.manifest, "files", rows)
 
     assert_raise SweepEvidence.Error, ~r/source_digest/, fn ->
       SweepEvidence.resolve!(%{archive_only | manifest: tampered_manifest}, tamper_citation)
     end
+  end
 
+  defp tamper_generator_dispatch_digest(row, expected_path) do
+    if row["path"] == expected_path,
+      do: Map.put(row, "sha256", String.duplicate("0", 64)),
+      else: row
+  end
+
+  defp assert_generator_dispatch_guards!(graph, tier, lane) do
     guarded = GeneratorDispatchIntegrationEvidence.guarded_mfas()
     guard_patterns = GeneratorDispatchIntegrationEvidence.guard_patterns()
 
@@ -12247,18 +12301,26 @@ defmodule Fablebook.Contract.TierSweepTest do
              "removing the active guard and EX-107 fallback must expose #{lane} #{inspect(mfa)}"
     end
 
+    {guarded, safe_exclusion}
+  end
+
+  defp assert_generator_dispatch_lib_scope!(graph, guarded) do
+    guarded_names = Enum.map(guarded, &elem(&1, 1))
+
     lib_front_calls =
       Enum.filter(graph.full_edges, fn
         {{module, _function, _arity}, {target, function}} ->
           String.starts_with?(Atom.to_string(module), "Elixir.Fablebook.") and
-            target == :asn1ct_func and function in Enum.map(guarded, &elem(&1, 1))
+            target == :asn1ct_func and function in guarded_names
 
         _edge ->
           false
       end)
 
     assert lib_front_calls == [], "D-11 collision: lib/ calls an active ASN.1 generator front"
+  end
 
+  defp assert_generator_dispatch_fixed!(selected_mfas, tier, safe_exclusion, lane) do
     for mfa <- GeneratorDispatchIntegrationEvidence.fixed_exclusions() do
       assert mfa in selected_mfas
       assert mfa not in tier
@@ -12272,15 +12334,26 @@ defmodule Fablebook.Contract.TierSweepTest do
              ) == nil,
              "removing EX-107's retained exclusion must expose #{inspect(mfa)} in #{lane}"
     end
+  end
 
+  defp assert_generator_dispatch_omissions!(
+         records,
+         selected,
+         edges,
+         actual_edges,
+         archive_only,
+         lane
+       ) do
     assert_raise ExUnit.AssertionError, fn ->
-      assert MapSet.new(Enum.map(List.delete(selected_records, hd(selected_records)), & &1.mfa)) ==
-               selected
+      assert_generator_dispatch_selection!(tl(records), selected)
     end
 
     assert_raise ExUnit.AssertionError, fn ->
-      assert MapSet.new(Enum.map(List.delete(edges, hd(edges)), &{&1.caller, &1.callee})) ==
-               MapSet.new(edges, &{&1.caller, &1.callee})
+      assert_generator_dispatch_edges_match!(actual_edges, tl(edges), lane)
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_generator_dispatch_citations!(archive_only, [], "#{lane} omitted citation")
     end
   end
 
