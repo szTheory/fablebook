@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "7f4f14ed041d68c4ac50d41a414201b13a9f68992bd9890d54d565349ae51669"
+  @archive_sha "03594dbb973f52328b076baf71fb025366d8c0bc885612f60d86f7e169ed3ca2"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -68,6 +68,11 @@ defmodule Fablebook.Test.SweepEvidence do
     }
   }
   @asn1_source_identities %{
+    {"core", "asn1/src/asn1ct_func.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_func.erl",
+      4465,
+      "da8b3b3e951120b1cdbd0622b72d698bd3103c92341d42ba4c6556388818e753"
+    },
     {"core", "asn1/src/asn1ct.erl"} => {
       "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct.erl",
       75_577,
@@ -129,7 +134,7 @@ defmodule Fablebook.Test.SweepEvidence do
       "4d8bde4d0da13582c1da72d235168521d2ebdbdd98b41635edece96afe5a1bf2"
     }
   }
-  @asn1_source_names ~w(asn1/src/asn1ct.erl asn1/src/asn1ct_check.erl asn1/src/asn1ct_gen.erl asn1/src/asn1ct_table.erl asn1/src/asn1ct_parser2.erl asn1/src/asn1ct_tok.erl)
+  @asn1_source_names ~w(asn1/src/asn1ct.erl asn1/src/asn1ct_check.erl asn1/src/asn1ct_gen.erl asn1/src/asn1ct_table.erl asn1/src/asn1ct_parser2.erl asn1/src/asn1ct_tok.erl asn1/src/asn1ct_func.erl)
   @asn1_external_transform_names ~w(asn1/src/asn1ct_eval_ext.erl asn1/src/asn1ct_constructed_ber_bin_v2.erl asn1/src/asn1ct_constructed_per.erl asn1/src/asn1ct_value.erl asn1/src/asn1ct_rtt.erl)
   @asn1_external_transform_identities %{
     {"core", "asn1/src/asn1ct_eval_ext.erl"} =>
@@ -552,4 +557,75 @@ defmodule Fablebook.Test.SweepEvidence do
 
   defp digest(data), do: :crypto.hash(:sha256, data) |> Base.encode16(case: :lower)
   defp fail!(reason, detail), do: raise(Error, reason: reason, detail: detail)
+end
+
+defmodule Fablebook.Test.GeneratorDispatchCoreEvidence do
+  @moduledoc false
+
+  @core_started_at "2026-11-10T17:55:07Z"
+  @core_completed_at "2026-11-10T18:01:39Z"
+
+  def records do
+    [
+      %{
+        lane: "core",
+        original_id: "EX-107",
+        owner: "01.1.1.4",
+        semantic_status: :pending,
+        method: :source_only,
+        started_at: @core_started_at,
+        completed_at: @core_completed_at,
+        elapsed_seconds: 392,
+        exact_sources: [
+          {"asn1/src/asn1ct_func.erl", 4465,
+           "da8b3b3e951120b1cdbd0622b72d698bd3103c92341d42ba4c6556388818e753"},
+          {"stdlib/src/gen_server.erl", 114_546,
+           "45e1cea8e87a49c8f6cec49ec50e082dde6690c3696f9e67de376947fc8f34a3"},
+          {"stdlib/src/gen.erl", 27_099,
+           "b828697b055865df24aad48ec4cd7f23821fa54a7aa2baa0408a444a5d0d04be"},
+          {"stdlib/src/proc_lib.erl", 57_067,
+           "a8fc8e94f9ad47ace46cd204fc5eb6fd227c09787f3be906d80d2e4547e6a8c5"},
+          {"asn1/src/asn1ct_rtt.erl", 135_654,
+           "dbdbad10a9af2d46dd617315ef63e226f8425de0ad64a3446058200980d67374"}
+        ],
+        reviews: [
+          review({:asn1ct_func, :start_link, 0}, "asn1/src/asn1ct_func.erl", 29..34,
+            ["asn1/src/asn1ct_func.erl:29", "asn1/src/asn1ct_func.erl:30"],
+            "start_link/0 passes the fixed module atom and empty arguments/options to gen_server:start_link/3, then stores only the returned pid in the process dictionary. The constructor does not read ASN.1 source text or create callback module names.")
+        ],
+        callback_trace: [
+          {"stdlib/src/gen_server.erl:1028", "gen:start(?MODULE, link, Module, Args, Options)"},
+          {"stdlib/src/gen.erl:120", "do_spawn(GenMod, LinkP, Mod, Args, Options)"},
+          {"stdlib/src/proc_lib.erl:511", "start_link(M,F,A,Timeout,SpawnOpts)"},
+          {"stdlib/src/gen_server.erl:2361", "handle_call     = fun Mod:handle_call/3"},
+          {"stdlib/src/gen_server.erl:2362", "handle_cast     = fun Mod:handle_cast/2"},
+          {"stdlib/src/gen_server.erl:2373", "decode_msg(#server_data"},
+          {"stdlib/src/gen_server.erl:2498", "handle_msg(ServerData, State, {'$gen_call', From, Msg})"},
+          {"stdlib/src/gen_server.erl:2520", "handle_msg(ServerData, State, Msg)"},
+          {"stdlib/src/gen_server.erl:2478", "try_terminate(#server_data{module = Mod}"},
+          {"stdlib/src/gen_server.erl:1850", "reply(Client, Reply)"}
+        ],
+        selected_function_traces: [
+          {:asn1ct_func, :need, 1,
+           "need/1 exempts only fixed binary and erlang module atoms; every other MFA is checked by asn1ct_rtt:assert_defined/1 before the fixed {need,MFA} cast. The function does not derive an atom from MFA fields."},
+          {:asn1ct_func, :handle_cast, 2,
+           "The {need,MFA} callback adds the MFA and its dependencies to the used set through pull_in_deps/2 and asn1ct_rtt:dependencies/1."},
+          {:asn1ct_func, :generate, 1,
+           "generate/1 obtains the fixed code/0 literal data, intersects it with the used MFA set, serializes selected function data, and writes it to the supplied file descriptor. This is static data selection, not execution of generated functions."},
+          {:asn1ct_func, :handle_call, 3,
+           "get_gen receives caller-origin Prefix, Key and GenFun in a fixed request tuple. A new name is built as list_to_atom(Prefix ++ integer_to_list(Gc)); the exact caller-controlled prefix therefore reaches atom creation. Key controls cache reuse and GenFun is stored as a callback for later generator-side execution. This remains an interim active atom-creation finding pending Plan 03 guard reconciliation."}
+        ]
+      }
+    ]
+  end
+
+  defp review(mfa, source_path, lines, citations, finding) do
+    %{
+      mfa: mfa,
+      source_path: source_path,
+      lines: lines,
+      citations: citations,
+      finding: finding
+    }
+  end
 end

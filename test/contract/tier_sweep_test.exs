@@ -57,6 +57,88 @@ defmodule Fablebook.Test.DebuggerPendingOwnership do
   end
 end
 
+defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
+  use ExUnit.Case, async: false
+
+  alias Fablebook.Test.GeneratorDispatchCoreEvidence
+  alias Fablebook.Test.SweepEvidence
+
+  @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
+  @sources %{
+    "asn1/src/asn1ct_func.erl" => {4465, "da8b3b3e951120b1cdbd0622b72d698bd3103c92341d42ba4c6556388818e753"},
+    "stdlib/src/gen_server.erl" => {114_546, "45e1cea8e87a49c8f6cec49ec50e082dde6690c3696f9e67de376947fc8f34a3"},
+    "stdlib/src/gen.erl" => {27_099, "b828697b055865df24aad48ec4cd7f23821fa54a7aa2baa0408a444a5d0d04be"},
+    "stdlib/src/proc_lib.erl" => {57_067, "a8fc8e94f9ad47ace46cd204fc5eb6fd227c09787f3be906d80d2e4547e6a8c5"},
+    "asn1/src/asn1ct_rtt.erl" => {135_654, "dbdbad10a9af2d46dd617315ef63e226f8425de0ad64a3446058200980d67374"}
+  }
+
+  @tag :generator_dispatch_011118
+  test "core support identities and callback trace resolve from the exact archive" do
+    evidence = archive_only_evidence!()
+    [record] = GeneratorDispatchCoreEvidence.records()
+
+    assert record.original_id == "EX-107"
+    assert record.semantic_status == :pending
+    assert length(record.exact_sources) == 5
+
+    for {path, {bytes, sha256}} <- @sources do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    for {citation, expected} <- record.callback_trace do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected
+    end
+  end
+
+  @tag :generator_dispatch_011118
+  test "the complete core RTT code/0 body is literal table data and rejects altered shapes" do
+    evidence = archive_only_evidence!()
+    source = SweepEvidence.resolve!(evidence, "asn1/src/asn1ct_rtt.erl:542")
+    bytes = File.read!(source.path)
+    body = rtt_body!(bytes)
+    grammar = rtt_grammar()
+
+    assert Regex.match?(grammar, body)
+    assert length(Regex.scan(Regex.compile!(row_pattern()), body)) == 258
+
+    refute Regex.match?(grammar, String.replace(body, "<<\"", "<<integer_to_binary(1)>>", global: false))
+    refute Regex.match?(grammar, String.replace(body, "{{ber,ber_encode,1}", "{{erlang,apply(),1}", global: false))
+
+    refute Regex.match?(grammar, body <> " erlang:halt().")
+    truncated = String.trim_trailing(body) |> then(&binary_part(&1, 0, byte_size(&1) - 2))
+    refute Regex.match?(grammar, truncated)
+  end
+
+  defp rtt_body!(bytes) do
+    [_, body] = Regex.run(~r/\ncode\(\) ->\n([\s\S]*)\z/, bytes)
+    body
+  end
+
+  defp rtt_grammar do
+    row = row_pattern()
+    Regex.compile!("\\A\\s*\\[#{row}(?:,\\s*#{row})*\\]\\.\\s*\\z")
+  end
+
+  defp row_pattern do
+    ~S/\{\{[a-z][A-Za-z0-9_]*,[a-z][A-Za-z0-9_]*,[0-9]+\},\s*<<"(?:[^"\\]|\\.)*">>\}/
+  end
+
+  defp archive_only_evidence! do
+    archive = SweepEvidence.load_archive!(@archive, SweepEvidence.archive_sha256())
+    on_exit(fn -> File.rm_rf!(archive.archive_root) end)
+
+    Map.merge(archive, %{
+      lane: %{name: "core"},
+      installed: Map.new(~w(asn1 stdlib), &{&1, Path.join(archive.archive_root, "missing-#{&1}")})
+    })
+  end
+end
+
 defmodule Fablebook.Test.ExternalTransformEvidence do
   @moduledoc false
 
