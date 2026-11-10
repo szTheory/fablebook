@@ -61,6 +61,7 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
   use ExUnit.Case, async: false
 
   alias Fablebook.Test.GeneratorDispatchCoreEvidence
+  alias Fablebook.Test.GeneratorDispatchCallerAEvidence
   alias Fablebook.Test.SweepEvidence
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
@@ -112,6 +113,34 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
     refute Regex.match?(grammar, body <> " erlang:halt().")
     truncated = String.trim_trailing(body) |> then(&binary_part(&1, 0, byte_size(&1) - 2))
     refute Regex.match?(grammar, truncated)
+  end
+
+  @tag :generator_dispatch_011118
+  test "core caller batch A sources and generated-call traces resolve from the exact archive" do
+    evidence = archive_only_evidence!()
+    record = GeneratorDispatchCallerAEvidence.record()
+
+    assert record.original_id == "EX-107"
+    assert record.semantic_status == :pending
+    assert length(record.exact_sources) == 5
+    assert length(record.reviews) == 4
+
+    for {path, bytes, sha256} <- record.exact_sources do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    for review <- record.reviews do
+      assert String.length(review.finding) > 120
+
+      for {citation, expected} <- review.citations do
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected, citation
+      end
+    end
   end
 
   defp rtt_body!(bytes) do

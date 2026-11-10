@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "03594dbb973f52328b076baf71fb025366d8c0bc885612f60d86f7e169ed3ca2"
+  @archive_sha "3631554726b6f7e9b15ce9cd99bf8dcebce1183451a257422fe510f3d4a08af1"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -68,6 +68,11 @@ defmodule Fablebook.Test.SweepEvidence do
     }
   }
   @asn1_source_identities %{
+    {"core", "asn1/src/asn1ct_gen_ber_bin_v2.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_gen_ber_bin_v2.erl",
+      53554,
+      "ae135c8071bd88d8bee431428876501d00cf0970eb1c8b0f159116c51a99cab1"
+    },
     {"core", "asn1/src/asn1ct_func.erl"} => {
       "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_func.erl",
       4465,
@@ -134,7 +139,7 @@ defmodule Fablebook.Test.SweepEvidence do
       "4d8bde4d0da13582c1da72d235168521d2ebdbdd98b41635edece96afe5a1bf2"
     }
   }
-  @asn1_source_names ~w(asn1/src/asn1ct.erl asn1/src/asn1ct_check.erl asn1/src/asn1ct_gen.erl asn1/src/asn1ct_table.erl asn1/src/asn1ct_parser2.erl asn1/src/asn1ct_tok.erl asn1/src/asn1ct_func.erl)
+  @asn1_source_names ~w(asn1/src/asn1ct.erl asn1/src/asn1ct_check.erl asn1/src/asn1ct_gen.erl asn1/src/asn1ct_table.erl asn1/src/asn1ct_parser2.erl asn1/src/asn1ct_tok.erl asn1/src/asn1ct_func.erl asn1/src/asn1ct_gen_ber_bin_v2.erl)
   @asn1_external_transform_names ~w(asn1/src/asn1ct_eval_ext.erl asn1/src/asn1ct_constructed_ber_bin_v2.erl asn1/src/asn1ct_constructed_per.erl asn1/src/asn1ct_value.erl asn1/src/asn1ct_rtt.erl)
   @asn1_external_transform_identities %{
     {"core", "asn1/src/asn1ct_eval_ext.erl"} =>
@@ -627,5 +632,93 @@ defmodule Fablebook.Test.GeneratorDispatchCoreEvidence do
       citations: citations,
       finding: finding
     }
+  end
+end
+
+defmodule Fablebook.Test.GeneratorDispatchCallerAEvidence do
+  @moduledoc false
+
+  @started_at "2026-11-10T18:03:55Z"
+  @completed_at "2026-11-10T18:07:21Z"
+
+  def record do
+    %{
+      lane: "core",
+      original_id: "EX-107",
+      owner: "01.1.1.4",
+      semantic_status: :pending,
+      method: :source_only,
+      started_at: @started_at,
+      completed_at: @completed_at,
+      elapsed_seconds: 206,
+      exact_sources: [
+        {"asn1/src/asn1ct_func.erl", 4465,
+         "da8b3b3e951120b1cdbd0622b72d698bd3103c92341d42ba4c6556388818e753"},
+        {"asn1/src/asn1ct_constructed_ber_bin_v2.erl", 49_717,
+         "ecb21fb22cf3c5607fff6d49aba5b81a7aed3cc33114fb19c11fea5440699e54"},
+        {"asn1/src/asn1ct_constructed_per.erl", 68_996,
+         "581c66a8c24f1994679ced99693e37ae4e7bbdd4c15d75b8e22244a81ed76d60"},
+        {"asn1/src/asn1ct_gen.erl", 54_635,
+         "435cfc5de920ed0e9b7c9368c039de71968daf319bb1b214bff790edd49a4014"},
+        {"asn1/src/asn1ct_gen_ber_bin_v2.erl", 53_554,
+         "ae135c8071bd88d8bee431428876501d00cf0970eb1c8b0f159116c51a99cab1"}
+      ],
+      reviews: [
+        review(
+          "asn1/src/asn1ct_constructed_ber_bin_v2.erl",
+          [65..169, 585..618, 1304..1399, 1502..1503],
+          [
+            {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:151", "need({ber,dynamicsort_SET_components,1})"},
+            {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:167", "call(encode_tags, [\"TagIn\",\"BytesSoFar\",\"LenSoFar\"])"},
+            {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:1503", "asn1ct_func:call(ber, F, Args)"}
+          ],
+          "The complete allocated construction/dispatch spans route the local call/2 wrapper to asn1ct_func:call/3 with the fixed ber module and a generator-selected function/argument list. Its visible dynamic name path derives DecFunName from compiler type/name metadata through mkfuncname and emits it as source; no atom constructor appears in these clauses. The explicitly needed dynamicsort helper is a fixed MFA checked through the target table. This source supports a generated-call trace, not a new atom-sink finding."
+        ),
+        review(
+          "asn1/src/asn1ct_constructed_per.erl",
+          [568..589, 626..664, 747..791, 1304..1346],
+          [
+            {"asn1/src/asn1ct_constructed_per.erl:579", "erlang:md5(term_to_binary({decode,ObjSet,RestFieldNames"},
+            {"asn1/src/asn1ct_constructed_per.erl:581", "Gen = fun(_Fd, N) ->"},
+            {"asn1/src/asn1ct_constructed_per.erl:586", "Prefix = lists:concat([\"dec_os_\",Name])"},
+            {"asn1/src/asn1ct_constructed_per.erl:587", "asn1ct_func:call_gen(Prefix, Key, Gen)"},
+            {"asn1/src/asn1ct_constructed_per.erl:634", "Key = {dec_outlined,Def}"},
+            {"asn1/src/asn1ct_constructed_per.erl:638", "asn1ct_func:call_gen(Prefix, Key, Gen)"},
+            {"asn1/src/asn1ct_constructed_per.erl:755", "asn1ct_func:call_gen(\"dec_components\", Key, Gen)"},
+            {"asn1/src/asn1ct_constructed_per.erl:768", "asn1ct_func:call_gen(\"dec_fragment\", Key, Gen)"},
+            {"asn1/src/asn1ct_constructed_per.erl:788", "asn1ct_func:call_gen(\"dec_components\", Key, Gen)"},
+            {"asn1/src/asn1ct_constructed_per.erl:1331", "asn1ct_func:call(Mod, skipextensions,"}
+          ],
+          "All four call_gen/3 sites construct local GenFun closures and use generated schema/type structures in cache keys. The prefixes are fixed literals except dec_os_ ++ Name, where Name comes from compiler object-set/type metadata. The closure captures compiler definitions and emits generated source using the callback-supplied function name; it does not execute the generated function here. Prefix input reaches the target's atom-building branch, so dec_os_ names remain a caller-derived atom-creation candidate for Plan 03 reconciliation. call(Mod,skipextensions,...) carries a fixed enum-derived module and fixed function name; it reaches need/1 table checking, not atom construction."
+        ),
+        review(
+          "asn1/src/asn1ct_gen.erl",
+          [63..97, 745..899, 1085..1117],
+          [
+            {"asn1/src/asn1ct_gen.erl:79", "asn1ct_func:start_link()"},
+            {"asn1/src/asn1ct_gen.erl:92", "asn1ct_func:generate(Fd)"},
+            {"asn1/src/asn1ct_gen.erl:1098", "do_emit({call,M,F,A}) ->"},
+            {"asn1/src/asn1ct_gen.erl:1099", "MFA = {M,F,length(A)}"},
+            {"asn1/src/asn1ct_gen.erl:1100", "asn1ct_func:need(MFA)"}
+          ],
+          "pgen/3 brackets source generation with the fixed server start/generate calls. do_emit/1 accepts an internal {call,M,F,A} emission tuple, constructs its MFA from those existing atom fields and argument count, and asks need/1 to confirm the MFA is in the fixed RTT table before emitting the call text. This is generated-call metadata and existing-atom lookup; it does not create an atom from the emitted text."
+        ),
+        review(
+          "asn1/src/asn1ct_gen_ber_bin_v2.erl",
+          [97..112, 1595..1597],
+          [
+            {"asn1/src/asn1ct_gen_ber_bin_v2.erl:101", "suppress({M,F,_}=MFA, Args) ->"},
+            {"asn1/src/asn1ct_gen_ber_bin_v2.erl:102", "asn1ct_func:is_used(MFA)"},
+            {"asn1/src/asn1ct_gen_ber_bin_v2.erl:106", ~S/emit(["    _ = ",{call,M,F,Args},com,nl])/},
+            {"asn1/src/asn1ct_gen_ber_bin_v2.erl:1596", "asn1ct_func:call(ber, F, Args)"}
+          ],
+          "suppress/2 receives an already structured MFA and creates only source strings for positional tuple access. If the fixed record says the MFA is used, it places the existing M and F atoms into the generator emission tuple; its call/2 bridge to the target fixes module ber. No caller string is converted into an atom in this path."
+        )
+      ]
+    }
+  end
+
+  defp review(source_path, lines, citations, finding) do
+    %{source_path: source_path, reviewed_lines: lines, citations: citations, finding: finding}
   end
 end
