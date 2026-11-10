@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "8c79cca599d9dbff75c6e4ce604c3384c6b019e2b6c1500da6dbf985cb78e66d"
+  @archive_sha "d2e9e651978825b154857ea0eeaca3a1d8e014d906b2a7fd6a13f4301a3c67d3"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -130,6 +130,14 @@ defmodule Fablebook.Test.SweepEvidence do
     }
   }
   @asn1_source_names ~w(asn1/src/asn1ct.erl asn1/src/asn1ct_check.erl asn1/src/asn1ct_gen.erl asn1/src/asn1ct_table.erl asn1/src/asn1ct_parser2.erl asn1/src/asn1ct_tok.erl)
+  @asn1_external_transform_names ~w(asn1/src/asn1ct_eval_ext.erl asn1/src/asn1ct_constructed_ber_bin_v2.erl asn1/src/asn1ct_constructed_per.erl asn1/src/asn1ct_value.erl asn1/src/asn1ct_rtt.erl)
+  @asn1_external_transform_identities %{
+    {"core", "asn1/src/asn1ct_eval_ext.erl"} => {2092, "c2fddfd1f6091b225ae4f6eadda70b789927e9476a916ec960e6a64a2e6504ae"},
+    {"core", "asn1/src/asn1ct_constructed_ber_bin_v2.erl"} => {49717, "ecb21fb22cf3c5607fff6d49aba5b81a7aed3cc33114fb19c11fea5440699e54"},
+    {"core", "asn1/src/asn1ct_constructed_per.erl"} => {68996, "581c66a8c24f1994679ced99693e37ae4e7bbdd4c15d75b8e22244a81ed76d60"},
+    {"core", "asn1/src/asn1ct_value.erl"} => {12384, "48db2e0d04491968b79ed91b7641c968c541f8917225f00e277627d38ea67b0f"},
+    {"core", "asn1/src/asn1ct_rtt.erl"} => {135654, "dbdbad10a9af2d46dd617315ef63e226f8425de0ad64a3446058200980d67374"}
+  }
   @elixir_apps [:elixir, :eex, :mix, :iex, :logger, :ex_unit]
 
   def lane! do
@@ -301,6 +309,7 @@ defmodule Fablebook.Test.SweepEvidence do
     validate_cn004_source_identity!(row)
     validate_leex_source_identity!(row)
     validate_asn1_source_identity!(row)
+    validate_asn1_external_transform_identity!(row)
     data = Map.fetch!(files, path)
 
     if byte_size(data) != row["bytes"] or digest(data) != row["sha256"],
@@ -382,6 +391,26 @@ defmodule Fablebook.Test.SweepEvidence do
       found = Enum.any?(records, &(&1["lane"] == lane and &1["source_path"] == source_path))
       unless found, do: fail!(:source_identity, {lane, source_path, :missing})
     end)
+  end
+
+  defp validate_asn1_external_transform_identity!(row) do
+    identity = {row["lane"], row["source_path"]}
+    actual = {row["bytes"], row["sha256"]}
+
+    case Map.fetch(@asn1_external_transform_identities, identity) do
+      {:ok, ^actual} ->
+        if row["path"] == row["lane"] <> "/" <> row["source_path"],
+          do: :ok,
+          else: fail!(:source_identity, {row, :external_transform_path})
+
+      {:ok, expected} ->
+        fail!(:source_identity, {row, expected})
+
+      :error ->
+        if row["source_path"] in @asn1_external_transform_names,
+          do: fail!(:source_identity, {row, :unexpected_external_transform_lane_or_path}),
+          else: :ok
+    end
   end
 
   defp extract_files!(files) do
