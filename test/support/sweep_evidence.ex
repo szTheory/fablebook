@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "d2e9e651978825b154857ea0eeaca3a1d8e014d906b2a7fd6a13f4301a3c67d3"
+  @archive_sha "7f4f14ed041d68c4ac50d41a414201b13a9f68992bd9890d54d565349ae51669"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -136,7 +136,12 @@ defmodule Fablebook.Test.SweepEvidence do
     {"core", "asn1/src/asn1ct_constructed_ber_bin_v2.erl"} => {49717, "ecb21fb22cf3c5607fff6d49aba5b81a7aed3cc33114fb19c11fea5440699e54"},
     {"core", "asn1/src/asn1ct_constructed_per.erl"} => {68996, "581c66a8c24f1994679ced99693e37ae4e7bbdd4c15d75b8e22244a81ed76d60"},
     {"core", "asn1/src/asn1ct_value.erl"} => {12384, "48db2e0d04491968b79ed91b7641c968c541f8917225f00e277627d38ea67b0f"},
-    {"core", "asn1/src/asn1ct_rtt.erl"} => {135654, "dbdbad10a9af2d46dd617315ef63e226f8425de0ad64a3446058200980d67374"}
+    {"core", "asn1/src/asn1ct_rtt.erl"} => {135654, "dbdbad10a9af2d46dd617315ef63e226f8425de0ad64a3446058200980d67374"},
+    {"floor", "asn1/src/asn1ct_eval_ext.erl"} => {2092, "c2fddfd1f6091b225ae4f6eadda70b789927e9476a916ec960e6a64a2e6504ae"},
+    {"floor", "asn1/src/asn1ct_constructed_ber_bin_v2.erl"} => {49528, "a173873d7d7a3082cd77ec8caac860b64f421bda2a91a9166845710e69bc97f5"},
+    {"floor", "asn1/src/asn1ct_constructed_per.erl"} => {68908, "0e732766bf11e1e5bc73e79f8529b91eb065efba34fe0d6e29b323e778dbba5c"},
+    {"floor", "asn1/src/asn1ct_value.erl"} => {12270, "771476506bfa10fae9db6a2476bf5487df9ee69030b8b6791473f3bf273608c3"},
+    {"floor", "asn1/src/asn1ct_rtt.erl"} => {134820, "828cdca9f7ac0d4e6d867d712b0e991c94fa46665e17e360196aa39c89305d9d"}
   }
   @elixir_apps [:elixir, :eex, :mix, :iex, :logger, :ex_unit]
 
@@ -279,6 +284,7 @@ defmodule Fablebook.Test.SweepEvidence do
 
     Enum.each(records, &validate_record!(&1, files))
     validate_asn1_inventory!(records)
+    validate_asn1_external_transform_inventory!(records)
   end
 
   defp validate_lock_manifest!(locks) do
@@ -411,6 +417,13 @@ defmodule Fablebook.Test.SweepEvidence do
           do: fail!(:source_identity, {row, :unexpected_external_transform_lane_or_path}),
           else: :ok
     end
+  end
+
+  defp validate_asn1_external_transform_inventory!(records) do
+    Enum.each(@asn1_external_transform_identities, fn {{lane, source_path}, _identity} ->
+      if not Enum.any?(records, &(&1["lane"] == lane and &1["source_path"] == source_path)),
+        do: fail!(:source_identity, {lane, source_path, :missing})
+    end)
   end
 
   defp extract_files!(files) do
