@@ -146,6 +146,10 @@ defmodule Fablebook.Test.ExternalTransformEvidence do
         {"asn1/src/asn1ct_constructed_per.erl:458", "dec_external(#gen{pack=map}, _Typename)"},
         {"asn1/src/asn1ct_constructed_per.erl:466", "{call,ext,transform_to_EXTERNAL1994_maps"}
       ],
+      pre_generated_atom_evidence: [
+        {"asn1/src/asn1ct_constructed_per.erl:450",
+         "RecordName = list_to_atom(record_name(Gen, Typename)),"}
+      ],
       dynamic_dispatch_evidence: [
         {"asn1/src/asn1ct_value.erl:70", "Typename == ['EXTERNAL']"},
         {"asn1/src/asn1ct_value.erl:72", "T = case M:maps() of"},
@@ -219,6 +223,10 @@ defmodule Fablebook.Test.ExternalTransformEvidence do
         {"asn1/src/asn1ct_constructed_per.erl:451", "{call,ext,transform_to_EXTERNAL1994"},
         {"asn1/src/asn1ct_constructed_per.erl:454", "dec_external(#gen{pack=map}, _Typename)"},
         {"asn1/src/asn1ct_constructed_per.erl:462", "{call,ext,transform_to_EXTERNAL1994_maps"}
+      ],
+      pre_generated_atom_evidence: [
+        {"asn1/src/asn1ct_constructed_per.erl:446",
+         "RecordName = list_to_atom(record_name(Gen, Typename)),"}
       ],
       dynamic_dispatch_evidence: [
         {"asn1/src/asn1ct_value.erl:66", "Typename == ['EXTERNAL']"},
@@ -378,6 +386,7 @@ defmodule Fablebook.Contract.ExternalTransformEvidenceTest do
 
     for evidence_group <- [
           record.generated_call_evidence,
+          record.pre_generated_atom_evidence,
           record.dynamic_dispatch_evidence,
           record.runtime_template_evidence
         ],
@@ -430,6 +439,7 @@ defmodule Fablebook.Contract.ExternalTransformEvidenceTest do
 
     for evidence_group <- [
           record.generated_call_evidence,
+          record.pre_generated_atom_evidence,
           record.dynamic_dispatch_evidence,
           record.runtime_template_evidence
         ],
@@ -11586,6 +11596,25 @@ defmodule Fablebook.Contract.TierSweepTest do
       end)
       |> MapSet.new()
 
+    expected_pre_generated_atom_citation =
+      if lane == "core",
+        do:
+          {"asn1/src/asn1ct_constructed_per.erl:450",
+           "RecordName = list_to_atom(record_name(Gen, Typename)),"},
+        else:
+          {"asn1/src/asn1ct_constructed_per.erl:446",
+           "RecordName = list_to_atom(record_name(Gen, Typename)),"}
+
+    assert record.pre_generated_atom_evidence == [expected_pre_generated_atom_citation]
+
+    for {citation, expected} <- record.pre_generated_atom_evidence do
+      source = SweepEvidence.resolve!(archive_only, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+      identity = Map.fetch!(identities, source_path(citation))
+      assert source.sha256 == elem(identity, 1), citation
+    end
+
     assert generated_callers ==
              MapSet.new([
                "asn1/src/asn1ct_constructed_ber_bin_v2.erl",
@@ -11684,6 +11713,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
 
     assert length(record.generated_call_evidence) == 8
+    assert length(record.pre_generated_atom_evidence) == 1
     assert length(record.dynamic_dispatch_evidence) == 3
     assert length(record.runtime_template_evidence) == 6
   end
@@ -11695,6 +11725,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     for field <- [
           :generated_call_evidence,
+          :pre_generated_atom_evidence,
           :dynamic_dispatch_evidence,
           :runtime_template_evidence
         ] do
