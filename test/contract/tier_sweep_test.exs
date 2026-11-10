@@ -57,6 +57,423 @@ defmodule Fablebook.Test.DebuggerPendingOwnership do
   end
 end
 
+defmodule Fablebook.Test.ExternalTransformEvidence do
+  @moduledoc false
+
+  @core_started_at "2026-11-10T04:54:12Z"
+  @core_completed_at "2026-11-10T04:59:24Z"
+  @core_identities %{
+    "asn1/src/asn1ct_eval_ext.erl" =>
+      {2092, "c2fddfd1f6091b225ae4f6eadda70b789927e9476a916ec960e6a64a2e6504ae"},
+    "asn1/src/asn1ct_constructed_ber_bin_v2.erl" =>
+      {49_717, "ecb21fb22cf3c5607fff6d49aba5b81a7aed3cc33114fb19c11fea5440699e54"},
+    "asn1/src/asn1ct_constructed_per.erl" =>
+      {68_996, "581c66a8c24f1994679ced99693e37ae4e7bbdd4c15d75b8e22244a81ed76d60"},
+    "asn1/src/asn1ct_value.erl" =>
+      {12_384, "48db2e0d04491968b79ed91b7641c968c541f8917225f00e277627d38ea67b0f"},
+    "asn1/src/asn1ct_rtt.erl" =>
+      {135_654, "dbdbad10a9af2d46dd617315ef63e226f8425de0ad64a3446058200980d67374"}
+  }
+  @floor_identities %{
+    "asn1/src/asn1ct_eval_ext.erl" =>
+      {2092, "c2fddfd1f6091b225ae4f6eadda70b789927e9476a916ec960e6a64a2e6504ae"},
+    "asn1/src/asn1ct_constructed_ber_bin_v2.erl" =>
+      {49_528, "a173873d7d7a3082cd77ec8caac860b64f421bda2a91a9166845710e69bc97f5"},
+    "asn1/src/asn1ct_constructed_per.erl" =>
+      {68_908, "0e732766bf11e1e5bc73e79f8529b91eb065efba34fe0d6e29b323e778dbba5c"},
+    "asn1/src/asn1ct_value.erl" =>
+      {12_270, "771476506bfa10fae9db6a2476bf5487df9ee69030b8b6791473f3bf273608c3"},
+    "asn1/src/asn1ct_rtt.erl" =>
+      {134_820, "828cdca9f7ac0d4e6d867d712b0e991c94fa46665e17e360196aa39c89305d9d"}
+  }
+  @helpers [
+    {:asn1ct_eval_ext, :transform_to_EXTERNAL1994, 1},
+    {:asn1ct_eval_ext, :transform_to_EXTERNAL1994_maps, 1}
+  ]
+
+  def lane_record("core") do
+    %{
+      lane: "core",
+      original_id: "EX-107",
+      original_entry_raw: "{{:prefix, \":asn1ct_\"}, :compiler_pass}",
+      owner: "01.1.1.4",
+      semantic_status: :pending,
+      selected_mfas: @helpers,
+      caller_input_trace:
+        "BER and PER dec_external/2 generate calls using fixed record fields or fixed map keys. At runtime the decoded EXTERNAL data is passed to one of two fixed helpers; from_type/3 selects a helper name only from M:maps(). The helpers return tuple/map values without atom constructors. The PER generator's list_to_atom(record_name(Gen, Typename)) constructs a schema-derived record tag before emitting the call and does not consume the decoded payload.",
+      method: :source_only,
+      started_at: @core_started_at,
+      completed_at: @core_completed_at,
+      elapsed_seconds: 312,
+      reviews: [
+        review(
+          {:asn1ct_eval_ext, :transform_to_EXTERNAL1994, 1},
+          "asn1/src/asn1ct_eval_ext.erl",
+          10..29,
+          [
+            {"asn1/src/asn1ct_eval_ext.erl:10", "transform_to_EXTERNAL1994("},
+            {"asn1/src/asn1ct_eval_ext.erl:24", "case Encoding of"},
+            {"asn1/src/asn1ct_eval_ext.erl:25", "when is_list(Val); is_binary(Val)"},
+            {"asn1/src/asn1ct_eval_ext.erl:28", "V"}
+          ],
+          "The complete helper only reshapes the already decoded EXTERNAL record and returns the original value outside its octet-aligned list/binary clause. Its fields are values copied into a tuple; it calls no atom constructor and has no path from caller-selected payload to atom creation."
+        ),
+        review(
+          {:asn1ct_eval_ext, :transform_to_EXTERNAL1994_maps, 1},
+          "asn1/src/asn1ct_eval_ext.erl",
+          31..62,
+          [
+            {"asn1/src/asn1ct_eval_ext.erl:31", "transform_to_EXTERNAL1994_maps(V0)"},
+            {"asn1/src/asn1ct_eval_ext.erl:46", "case V0 of"},
+            {"asn1/src/asn1ct_eval_ext.erl:49", "identification => Identification"},
+            {"asn1/src/asn1ct_eval_ext.erl:57", "#"},
+            {"asn1/src/asn1ct_eval_ext.erl:60", "V =/= asn1_NOVALUE"}
+          ],
+          "The complete map helper copies fixed keys and caller-provided values into a result map, filtering the fixed asn1_NOVALUE sentinel. The dynamic selection chooses this fixed helper name from M:maps(); the supplied decoded fields are never converted into atoms."
+        )
+      ],
+      generated_call_evidence: [
+        {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:314",
+         "dec_external(#gen{pack=record}, RecordName)"},
+        {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:318", "{call,ext,transform_to_EXTERNAL1994"},
+        {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:320",
+         "dec_external(#gen{pack=map}, _RecordName)"},
+        {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:328",
+         "{call,ext,transform_to_EXTERNAL1994_maps"},
+        {"asn1/src/asn1ct_constructed_per.erl:449",
+         "dec_external(#gen{pack=record}=Gen, Typename)"},
+        {"asn1/src/asn1ct_constructed_per.erl:455", "{call,ext,transform_to_EXTERNAL1994"},
+        {"asn1/src/asn1ct_constructed_per.erl:458", "dec_external(#gen{pack=map}, _Typename)"},
+        {"asn1/src/asn1ct_constructed_per.erl:466", "{call,ext,transform_to_EXTERNAL1994_maps"}
+      ],
+      pre_generated_atom_evidence: [
+        {"asn1/src/asn1ct_constructed_per.erl:450",
+         "RecordName = list_to_atom(record_name(Gen, Typename)),"}
+      ],
+      dynamic_dispatch_evidence: [
+        {"asn1/src/asn1ct_value.erl:70", "Typename == ['EXTERNAL']"},
+        {"asn1/src/asn1ct_value.erl:72", "T = case M:maps() of"},
+        {"asn1/src/asn1ct_value.erl:76", "asn1ct_eval_ext:T(Val)"}
+      ],
+      runtime_template_evidence: [
+        {"asn1/src/asn1ct_rtt.erl:76",
+         "assert_defined({ext,transform_to_EXTERNAL1994,1}) -> ok;"},
+        {"asn1/src/asn1ct_rtt.erl:77",
+         "assert_defined({ext,transform_to_EXTERNAL1994_maps,1}) -> ok;"},
+        {"asn1/src/asn1ct_rtt.erl:811", "{{ext,transform_to_EXTERNAL1994,1},"},
+        {"asn1/src/asn1ct_rtt.erl:812", "transform_to_EXTERNAL1994({'EXTERNAL'"},
+        {"asn1/src/asn1ct_rtt.erl:813", "{{ext,transform_to_EXTERNAL1994_maps,1},"},
+        {"asn1/src/asn1ct_rtt.erl:814", "transform_to_EXTERNAL1994_maps(V0) ->"}
+      ],
+      ordinary_xref: :no_incoming_edges_is_not_semantic_evidence
+    }
+  end
+
+  def lane_record("floor") do
+    %{
+      lane: "floor",
+      original_id: "EX-107",
+      original_entry_raw: "{{:prefix, \":asn1ct_\"}, :compiler_pass}",
+      owner: "01.1.1.4",
+      semantic_status: :pending,
+      selected_mfas: @helpers,
+      caller_input_trace:
+        "Floor BER and PER dec_external/2 generate calls using fixed record fields or fixed map keys. At runtime decoded EXTERNAL data is passed to a fixed helper; from_type/3 selects the helper only from M:maps(). Neither complete helper has an atom constructor. Floor PER's list_to_atom(record_name(Gen, Typename)) builds a schema-derived record tag before emitting the call and is independent of the decoded payload.",
+      method: :source_only,
+      started_at: "2026-11-10T05:00:43Z",
+      completed_at: "2026-11-10T05:04:29Z",
+      elapsed_seconds: 226,
+      reviews: [
+        floor_review(
+          {:asn1ct_eval_ext, :transform_to_EXTERNAL1994, 1},
+          "asn1/src/asn1ct_eval_ext.erl",
+          10..29,
+          [
+            {"asn1/src/asn1ct_eval_ext.erl:10", "transform_to_EXTERNAL1994("},
+            {"asn1/src/asn1ct_eval_ext.erl:24", "case Encoding of"},
+            {"asn1/src/asn1ct_eval_ext.erl:25", "when is_list(Val); is_binary(Val)"},
+            {"asn1/src/asn1ct_eval_ext.erl:28", "V"}
+          ],
+          "The complete floor helper independently confirms a fixed tuple reshape of decoded EXTERNAL values. Only an octet-aligned list or binary takes the transformed branch; all other inputs return V. Neither branch constructs an atom or feeds a caller value to an atom constructor."
+        ),
+        floor_review(
+          {:asn1ct_eval_ext, :transform_to_EXTERNAL1994_maps, 1},
+          "asn1/src/asn1ct_eval_ext.erl",
+          31..62,
+          [
+            {"asn1/src/asn1ct_eval_ext.erl:31", "transform_to_EXTERNAL1994_maps(V0)"},
+            {"asn1/src/asn1ct_eval_ext.erl:46", "case V0 of"},
+            {"asn1/src/asn1ct_eval_ext.erl:49", "identification => Identification"},
+            {"asn1/src/asn1ct_eval_ext.erl:57", "#"},
+            {"asn1/src/asn1ct_eval_ext.erl:60", "V =/= asn1_NOVALUE"}
+          ],
+          "The complete floor map helper copies decoded values under fixed keys and removes only the fixed asn1_NOVALUE value. The runtime dynamic call receives the helper selected by M:maps(), so payload values cannot select a helper name or reach atom creation."
+        )
+      ],
+      generated_call_evidence: [
+        {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:309",
+         "dec_external(#gen{pack=record}, RecordName)"},
+        {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:313", "{call,ext,transform_to_EXTERNAL1994"},
+        {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:315",
+         "dec_external(#gen{pack=map}, _RecordName)"},
+        {"asn1/src/asn1ct_constructed_ber_bin_v2.erl:323",
+         "{call,ext,transform_to_EXTERNAL1994_maps"},
+        {"asn1/src/asn1ct_constructed_per.erl:445",
+         "dec_external(#gen{pack=record}=Gen, Typename)"},
+        {"asn1/src/asn1ct_constructed_per.erl:451", "{call,ext,transform_to_EXTERNAL1994"},
+        {"asn1/src/asn1ct_constructed_per.erl:454", "dec_external(#gen{pack=map}, _Typename)"},
+        {"asn1/src/asn1ct_constructed_per.erl:462", "{call,ext,transform_to_EXTERNAL1994_maps"}
+      ],
+      pre_generated_atom_evidence: [
+        {"asn1/src/asn1ct_constructed_per.erl:446",
+         "RecordName = list_to_atom(record_name(Gen, Typename)),"}
+      ],
+      dynamic_dispatch_evidence: [
+        {"asn1/src/asn1ct_value.erl:66", "Typename == ['EXTERNAL']"},
+        {"asn1/src/asn1ct_value.erl:68", "T = case M:maps() of"},
+        {"asn1/src/asn1ct_value.erl:72", "asn1ct_eval_ext:T(Val)"}
+      ],
+      runtime_template_evidence: [
+        {"asn1/src/asn1ct_rtt.erl:76",
+         "assert_defined({ext,transform_to_EXTERNAL1994,1}) -> ok;"},
+        {"asn1/src/asn1ct_rtt.erl:77",
+         "assert_defined({ext,transform_to_EXTERNAL1994_maps,1}) -> ok;"},
+        {"asn1/src/asn1ct_rtt.erl:799", "{{ext,transform_to_EXTERNAL1994,1},"},
+        {"asn1/src/asn1ct_rtt.erl:800", "transform_to_EXTERNAL1994({'EXTERNAL'"},
+        {"asn1/src/asn1ct_rtt.erl:801", "{{ext,transform_to_EXTERNAL1994_maps,1},"},
+        {"asn1/src/asn1ct_rtt.erl:802", "transform_to_EXTERNAL1994_maps(V0) ->"}
+      ],
+      ordinary_xref: :no_incoming_edges_is_not_semantic_evidence,
+      lane_differences: [
+        "BER and PER record/map emission have shifted lines; floor builds map initialization with lists:zip while core uses its lane-specific parallel-list comprehension.",
+        "PER record generation calls list_to_atom(record_name(Gen, Typename)) before emitting the helper call. This is schema-derived record construction in the generator, not a payload-to-atom operation inside either selected helper."
+      ]
+    }
+  end
+
+  def helper_mfas, do: @helpers
+  def core_identities, do: @core_identities
+  def floor_identities, do: @floor_identities
+
+  defp review(mfa, path, range, citations, rationale) do
+    {bytes, sha256} = Map.fetch!(@core_identities, path)
+
+    %{
+      mfa: mfa,
+      source_path: path,
+      sha256: sha256,
+      bytes: bytes,
+      method: :source_only,
+      reviewed_ranges: [range],
+      citations: citations,
+      started_at: @core_started_at,
+      completed_at: @core_completed_at,
+      elapsed_seconds: 312,
+      disposition: :fixed_shape_data_transform,
+      removal_witness: :individual_exact_exclusion,
+      rationale: rationale
+    }
+  end
+
+  defp floor_review(mfa, path, range, citations, rationale) do
+    {bytes, sha256} = Map.fetch!(@floor_identities, path)
+
+    %{
+      mfa: mfa,
+      source_path: path,
+      sha256: sha256,
+      bytes: bytes,
+      method: :source_only,
+      reviewed_ranges: [range],
+      citations: citations,
+      started_at: "2026-11-10T05:00:43Z",
+      completed_at: "2026-11-10T05:04:29Z",
+      elapsed_seconds: 226,
+      disposition: :fixed_shape_data_transform,
+      removal_witness: :individual_exact_exclusion,
+      rationale: rationale
+    }
+  end
+end
+
+defmodule Fablebook.Contract.ExternalTransformEvidenceTest do
+  use ExUnit.Case, async: false
+
+  alias Fablebook.Test.ExternalTransformEvidence
+  alias Fablebook.Test.SweepEvidence
+
+  @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
+
+  @tag :external_transform_011117
+  test "core exact ASN.1 sources resolve only from the approved archive" do
+    evidence = archive_only_evidence!("core")
+
+    assert Map.keys(ExternalTransformEvidence.core_identities()) |> MapSet.new() ==
+             MapSet.new([
+               "asn1/src/asn1ct_eval_ext.erl",
+               "asn1/src/asn1ct_constructed_ber_bin_v2.erl",
+               "asn1/src/asn1ct_constructed_per.erl",
+               "asn1/src/asn1ct_value.erl",
+               "asn1/src/asn1ct_rtt.erl"
+             ])
+
+    for {path, {bytes, sha256}} <- ExternalTransformEvidence.core_identities() do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+  end
+
+  @tag :external_transform_011117
+  test "floor exact ASN.1 sources resolve independently from the approved archive" do
+    evidence = archive_only_evidence!("floor")
+
+    for {path, {bytes, sha256}} <- ExternalTransformEvidence.floor_identities() do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+      assert source.path =~ "/floor/"
+    end
+
+    assert map_size(ExternalTransformEvidence.floor_identities()) == 5
+  end
+
+  @tag :external_transform_011117
+  test "core helper reviews cite complete helpers and distinct generated, dynamic, and template paths" do
+    record = ExternalTransformEvidence.lane_record("core")
+    evidence = archive_only_evidence!("core")
+
+    assert record.method == :source_only
+    assert_interval!(record)
+
+    assert MapSet.new(Enum.map(record.reviews, & &1.mfa)) ==
+             MapSet.new(ExternalTransformEvidence.helper_mfas())
+
+    for review <- record.reviews do
+      assert review.reviewed_ranges != []
+      assert review.disposition == :fixed_shape_data_transform
+      assert String.length(review.rationale) > 100
+
+      assert review.bytes ==
+               elem(
+                 Map.fetch!(ExternalTransformEvidence.core_identities(), review.source_path),
+                 0
+               )
+
+      for {citation, expected} <- review.citations do
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.origin == :archive
+        assert source.sha256 == review.sha256
+        assert source.text =~ expected, citation
+      end
+    end
+
+    assert Enum.any?(record.generated_call_evidence, &String.contains?(elem(&1, 1), "{call,ext,"))
+
+    assert Enum.any?(
+             record.dynamic_dispatch_evidence,
+             &String.contains?(elem(&1, 1), "asn1ct_eval_ext:T(Val)")
+           )
+
+    assert Enum.any?(
+             record.runtime_template_evidence,
+             &String.contains?(elem(&1, 1), "assert_defined")
+           )
+
+    assert record.ordinary_xref == :no_incoming_edges_is_not_semantic_evidence
+
+    for evidence_group <- [
+          record.generated_call_evidence,
+          record.pre_generated_atom_evidence,
+          record.dynamic_dispatch_evidence,
+          record.runtime_template_evidence
+        ],
+        {citation, expected} <- evidence_group do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+    end
+  end
+
+  @tag :external_transform_011117
+  test "floor helper reviews use floor citations and preserve generated, dynamic, and template evidence" do
+    record = ExternalTransformEvidence.lane_record("floor")
+    evidence = archive_only_evidence!("floor")
+
+    assert record.lane == "floor"
+    assert record.method == :source_only
+    assert_interval!(record)
+
+    assert MapSet.new(Enum.map(record.reviews, & &1.mfa)) ==
+             MapSet.new(ExternalTransformEvidence.helper_mfas())
+
+    for review <- record.reviews do
+      assert review.source_path == "asn1/src/asn1ct_eval_ext.erl"
+
+      assert review.sha256 ==
+               elem(
+                 Map.fetch!(ExternalTransformEvidence.floor_identities(), review.source_path),
+                 1
+               )
+
+      assert review.bytes ==
+               elem(
+                 Map.fetch!(ExternalTransformEvidence.floor_identities(), review.source_path),
+                 0
+               )
+
+      assert review.disposition == :fixed_shape_data_transform
+      assert String.length(review.rationale) > 100
+
+      for {citation, expected} <- review.citations do
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.origin == :archive
+        assert source.sha256 == review.sha256
+        assert source.text =~ expected, citation
+      end
+    end
+
+    assert record.lane_differences != []
+
+    for evidence_group <- [
+          record.generated_call_evidence,
+          record.pre_generated_atom_evidence,
+          record.dynamic_dispatch_evidence,
+          record.runtime_template_evidence
+        ],
+        {citation, expected} <- evidence_group do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+    end
+  end
+
+  defp archive_only_evidence!(lane) do
+    evidence = SweepEvidence.load_archive!(@archive, SweepEvidence.archive_sha256())
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+
+    Map.merge(evidence, %{
+      lane: %{name: lane},
+      installed: %{"asn1" => Path.join(evidence.archive_root, "missing-asn1")}
+    })
+  end
+
+  defp assert_interval!(record) do
+    assert record.started_at < record.completed_at
+    {:ok, started, 0} = DateTime.from_iso8601(record.started_at)
+    {:ok, completed, 0} = DateTime.from_iso8601(record.completed_at)
+    assert DateTime.diff(completed, started, :second) == record.elapsed_seconds
+
+    for review <- record.reviews do
+      assert review.started_at == record.started_at
+      assert review.completed_at == record.completed_at
+      assert review.elapsed_seconds == record.elapsed_seconds
+    end
+  end
+end
+
 defmodule Fablebook.Test.ParserTokenizerEvidence do
   @moduledoc false
 
@@ -605,6 +1022,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   alias Fablebook.Test.BeamWalker
   alias Fablebook.Test.DebuggerPendingOwnership
   alias Fablebook.Test.DebuggerSettings
+  alias Fablebook.Test.ExternalTransformEvidence
   alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.ParserTokenizerEvidence
   alias Fablebook.Test.SweepEvidence
@@ -3431,7 +3849,13 @@ defmodule Fablebook.Contract.TierSweepTest do
   ]
   @asn1_check_mfa {:asn1ct_check, :check, 2}
   @asn1_insert_once_mfa {:asn1ct_gen, :insert_once, 2}
-  @asn1_expected_selected_mfas @asn1_table_mfas ++ [@asn1_check_mfa, @asn1_insert_once_mfa]
+  @asn1_external_transform_mfas [
+    {:asn1ct_eval_ext, :transform_to_EXTERNAL1994, 1},
+    {:asn1ct_eval_ext, :transform_to_EXTERNAL1994_maps, 1}
+  ]
+  @asn1_expected_selected_mfas @asn1_table_mfas ++
+                                 [@asn1_check_mfa, @asn1_insert_once_mfa] ++
+                                 @asn1_external_transform_mfas
   @parser_tokenizer_mfas [
     {:asn1ct_parser2, :parse, 2},
     {:asn1ct_parser2, :format_error, 1},
@@ -4742,7 +5166,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
     assert SweepEvidence.archive_sha256() ==
-             "8c79cca599d9dbff75c6e4ce604c3384c6b019e2b6c1500da6dbf985cb78e66d"
+             "7f4f14ed041d68c4ac50d41a414201b13a9f68992bd9890d54d565349ae51669"
 
     lane = evidence.lane.name
 
@@ -7572,6 +7996,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_asn1_table_audit!(ctx.graph, evidence, ledger, tier)
     assert_asn1_parser_tokenizer_audit!(ctx.graph, evidence, ledger, tier)
+    assert_asn1_external_transform_audit!(ctx.graph, evidence, ledger, tier)
   end
 
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
@@ -10926,10 +11351,19 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert MapSet.size(lane_matches) == 177
 
     selected = MapSet.new(Enum.map(@asn1_expected_selected_mfas, &mfa_string!/1))
-    assert MapSet.size(selected) == 11
+    assert MapSet.size(selected) == 13
     assert MapSet.subset?(selected, lane_matches)
     pending = MapSet.difference(lane_matches, selected)
-    assert MapSet.size(pending) == 166
+    assert MapSet.size(pending) == 164
+
+    external_transform_selected =
+      MapSet.new(Enum.map(@asn1_external_transform_mfas, &mfa_string!/1))
+
+    assert MapSet.subset?(external_transform_selected, lane_matches),
+           "EX-107/#{lane} is missing one of the exact external-transform selections"
+
+    assert MapSet.size(MapSet.difference(lane_matches, external_transform_selected)) == 175,
+           "EX-107/#{lane} external-transform slice must preserve the other 175 matches"
 
     parser_tokenizer_selected =
       MapSet.new([
@@ -11102,6 +11536,265 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_parser_caller_citations!(record, evidence, archive_only, lane)
     assert_parser_omission_controls!(record)
   end
+
+  defp assert_asn1_external_transform_audit!(graph, evidence, ledger, tier) do
+    lane = evidence.lane.name
+    row = Enum.find(ledger.exclusions, &(&1.id == "EX-107"))
+    assert row != nil, "the original EX-107 identity is missing"
+    assert row.original_entry_raw == "{{:prefix, \":asn1ct_\"}, :compiler_pass}"
+    assert row.semantic_status == :pending
+    assert row.owner == "01.1.1.4"
+
+    lane_matches = Map.fetch!(row.lane_matches, lane) |> MapSet.new()
+
+    assert MapSet.subset?(
+             MapSet.new(Enum.map(@asn1_external_transform_mfas, &mfa_string!/1)),
+             lane_matches
+           )
+
+    record = ExternalTransformEvidence.lane_record(lane)
+    assert_external_transform_record!(record)
+    assert record.original_id == "EX-107"
+    assert record.original_entry_raw == row.original_entry_raw
+    assert record.owner == row.owner
+    assert record.semantic_status == row.semantic_status
+    assert MapSet.new(record.selected_mfas) == MapSet.new(@asn1_external_transform_mfas)
+    assert String.length(record.caller_input_trace) > 200
+
+    archive_only = %{
+      evidence
+      | installed:
+          Map.put(evidence.installed, "asn1", Path.join(evidence.archive_root, "missing-asn1"))
+    }
+
+    identities =
+      if lane == "core",
+        do: ExternalTransformEvidence.core_identities(),
+        else: ExternalTransformEvidence.floor_identities()
+
+    for {path, {bytes, sha256}} <- identities do
+      [source_row] =
+        Enum.filter(evidence.manifest["files"], &(&1["path"] == "#{lane}/#{path}"))
+
+      assert source_row["bytes"] == bytes
+      assert source_row["sha256"] == sha256
+      source = SweepEvidence.resolve!(archive_only, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    generated_callers =
+      record.generated_call_evidence
+      |> Enum.map(fn {citation, expected} ->
+        source = SweepEvidence.resolve!(archive_only, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected, citation
+        identity = Map.fetch!(identities, source_path(citation))
+        assert source.sha256 == elem(identity, 1), citation
+        source_path(citation)
+      end)
+      |> MapSet.new()
+
+    expected_pre_generated_atom_citation =
+      if lane == "core",
+        do:
+          {"asn1/src/asn1ct_constructed_per.erl:450",
+           "RecordName = list_to_atom(record_name(Gen, Typename)),"},
+        else:
+          {"asn1/src/asn1ct_constructed_per.erl:446",
+           "RecordName = list_to_atom(record_name(Gen, Typename)),"}
+
+    assert record.pre_generated_atom_evidence == [expected_pre_generated_atom_citation]
+
+    for {citation, expected} <- record.pre_generated_atom_evidence do
+      source = SweepEvidence.resolve!(archive_only, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+      identity = Map.fetch!(identities, source_path(citation))
+      assert source.sha256 == elem(identity, 1), citation
+    end
+
+    assert generated_callers ==
+             MapSet.new([
+               "asn1/src/asn1ct_constructed_ber_bin_v2.erl",
+               "asn1/src/asn1ct_constructed_per.erl"
+             ])
+
+    for group <- [record.dynamic_dispatch_evidence, record.runtime_template_evidence],
+        {citation, expected} <- group do
+      source = SweepEvidence.resolve!(archive_only, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+      identity = Map.fetch!(identities, source_path(citation))
+      assert source.sha256 == elem(identity, 1), citation
+    end
+
+    xref_incoming =
+      graph.full_edges
+      |> Enum.filter(fn
+        {_caller, {:asn1ct_eval_ext, function}} ->
+          function in [:transform_to_EXTERNAL1994, :transform_to_EXTERNAL1994_maps]
+
+        _edge ->
+          false
+      end)
+      |> MapSet.new()
+
+    assert xref_incoming == MapSet.new(),
+           "EX-107/#{lane} ordinary Xref edges changed; source-generated and dynamic paths remain separately cited"
+
+    assert record.ordinary_xref == :no_incoming_edges_is_not_semantic_evidence
+
+    Enum.each(record.reviews, fn review ->
+      mfa = review.mfa
+      assert review.disposition == :fixed_shape_data_transform
+      assert review.removal_witness == :individual_exact_exclusion
+
+      assert mfa not in tier,
+             "#{inspect(mfa)} is not source-justified as an active atom-creation guard"
+
+      exclusion = {
+        {:mfa, mfa},
+        :pure_data,
+        Enum.map(review.citations, &elem(&1, 0))
+      }
+
+      exclusions = [exclusion]
+      assert disposition(mfa, tier, BannedCalls.banned_names(), exclusions) == :pure_data
+
+      assert disposition(
+               mfa,
+               tier,
+               BannedCalls.banned_names(),
+               List.delete(exclusions, exclusion)
+             ) == nil,
+             "removing only the #{lane} #{inspect(mfa)} exclusion must remove its disposition"
+    end)
+
+    assert_external_transform_omission_controls!(record, archive_only)
+  end
+
+  defp assert_external_transform_record!(record) do
+    assert record.method == :source_only
+    assert record.lane in ["core", "floor"]
+    assert record.original_id == "EX-107"
+    assert record.original_entry_raw == "{{:prefix, \":asn1ct_\"}, :compiler_pass}"
+    assert record.owner == "01.1.1.4"
+    assert record.semantic_status == :pending
+    assert String.length(record.caller_input_trace) > 200
+    assert MapSet.new(record.selected_mfas) == MapSet.new(@asn1_external_transform_mfas)
+
+    assert MapSet.new(Enum.map(record.reviews, & &1.mfa)) ==
+             MapSet.new(@asn1_external_transform_mfas)
+
+    identities =
+      if record.lane == "core",
+        do: ExternalTransformEvidence.core_identities(),
+        else: ExternalTransformEvidence.floor_identities()
+
+    assert map_size(identities) == 5
+    assert length(record.reviews) == 2
+
+    for review <- record.reviews do
+      {expected_bytes, expected_sha256} = Map.fetch!(identities, review.source_path)
+      assert review.method == :source_only
+      assert review.bytes == expected_bytes
+      assert review.sha256 == expected_sha256
+      assert review.reviewed_ranges != []
+
+      expected_citation_count =
+        if elem(review.mfa, 1) == :transform_to_EXTERNAL1994, do: 4, else: 5
+
+      assert length(review.citations) == expected_citation_count
+      assert review.disposition == :fixed_shape_data_transform
+      assert review.removal_witness == :individual_exact_exclusion
+      assert String.length(review.rationale) > 100
+    end
+
+    assert length(record.generated_call_evidence) == 8
+    assert length(record.pre_generated_atom_evidence) == 1
+    assert length(record.dynamic_dispatch_evidence) == 3
+    assert length(record.runtime_template_evidence) == 6
+  end
+
+  defp assert_external_transform_omission_controls!(record, archive_only) do
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_external_transform_record!(%{record | reviews: tl(record.reviews)})
+    end
+
+    for field <- [
+          :generated_call_evidence,
+          :pre_generated_atom_evidence,
+          :dynamic_dispatch_evidence,
+          :runtime_template_evidence
+        ] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_external_transform_record!(Map.put(record, field, []))
+      end
+
+      Enum.each(Map.fetch!(record, field), &assert_evidence_item_omission!(record, field, &1))
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_external_transform_record!(%{record | selected_mfas: [hd(record.selected_mfas)]})
+    end
+
+    assert_review_omission_controls!(record)
+
+    citation = hd(hd(record.reviews).citations) |> elem(0)
+    path = source_path(citation)
+
+    manifest =
+      Map.update!(archive_only.manifest, "files", fn rows ->
+        Enum.reject(rows, &(&1["lane"] == record.lane and &1["source_path"] == path))
+      end)
+
+    assert_raise SweepEvidence.Error, ~r/missing_source/, fn ->
+      SweepEvidence.resolve!(%{archive_only | manifest: manifest}, citation)
+    end
+
+    assert_raise SweepEvidence.Error, ~r/archive_digest/, fn ->
+      SweepEvidence.load_archive!(
+        Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__),
+        String.duplicate("0", 64)
+      )
+    end
+  end
+
+  defp assert_evidence_item_omission!(record, field, item) do
+    assert_raise ExUnit.AssertionError, fn ->
+      assert_external_transform_record!(Map.update!(record, field, &List.delete(&1, item)))
+    end
+  end
+
+  defp assert_review_omission_controls!(record) do
+    for {review, index} <- Enum.with_index(record.reviews) do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_external_transform_record!(%{
+          record
+          | reviews: List.delete_at(record.reviews, index)
+        })
+      end
+
+      for citation <- review.citations do
+        assert_citation_omission!(record, review, index, citation)
+      end
+    end
+  end
+
+  defp assert_citation_omission!(record, review, index, citation) do
+    assert_raise ExUnit.AssertionError, fn ->
+      changed_review = %{review | citations: List.delete(review.citations, citation)}
+
+      assert_external_transform_record!(%{
+        record
+        | reviews: List.replace_at(record.reviews, index, changed_review)
+      })
+    end
+  end
+
+  defp source_path(citation), do: citation |> String.split(":") |> hd()
 
   defp assert_parser_source_reviews!(record, evidence, archive_only, lane) do
     for review <- record.reviews do
