@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-progress --forensic",
-    "label": "Choose the next bounded source-audit slice after Phase 01.1.1.18",
-    "reason": "Phase 01.1.1.18 complete: owner-approved PR #79 squash-merged after green candidate CI and passing independent goal verification; stopped at the selected phase boundary. Parent aggregate remains open; historical plans stay stopped, SEC-01 stays Pending for Phase 5 and Phase 2 remains gated."
+    "command": "/gsd-quick \"Harden the release-workflow contracts for the UAT audit findings; keep workflow and lib files unchanged\"",
+    "label": "Automate the remaining release-contract hardening",
+    "reason": "UAT audit reconciled stale records and reproduced undetected workflow mutations locally. Six groups remain; no human UAT or new phase is needed for the contract-only recommendation. Parent aggregate and Phase 2 gates remain."
   },
-  "updated_at": "2026-11-10T21:08:34+00:00"
+  "updated_at": "2026-11-10T21:25:20+00:00"
 }

@@ -152,7 +152,7 @@ human_actions: 0
 
 ## Gaps
 
-- None. G-01-15 is closed by the separated contract and producer PRs, verified issue migration, live report, and real release-guard controls in 01-09-TIMING-CLOSURE.json.
+None. G-01-15 is closed by the separated contract and producer PRs, verified issue migration, live report, and real release-guard controls in 01-09-TIMING-CLOSURE.json.
 
 ## Reconciliation and reuse
 
