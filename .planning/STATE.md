@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.18
 current_phase_name: Bound ASN.1 generator-dispatch exclusions (INSERTED)
 status: executing
-stopped_at: Phase 01.1.1.18 source plans, local checks, independent reviews and hosted PR #79 CI passed; final goal verification and merge remain.
-last_updated: "2026-11-10T20:28:18+00:00"
+stopped_at: Phase 01.1.1.18 implementation, local checks, reviews, hosted CI and independent goal verification passed; PR #79 awaits the owner merge decision.
+last_updated: "2026-11-10T20:36:05+00:00"
 last_activity: 2026-11-10
-last_activity_desc: Phase 01.1.1.18 source plans, local checks, independent reviews and hosted PR #79 CI passed; final goal verification and merge remain.
+last_activity_desc: Phase 01.1.1.18 implementation, local checks, reviews, hosted CI and independent goal verification passed; PR #79 awaits the owner merge decision.
 state_head: 40bdd440483bdd06438b6293866adf2aa7924629
 progress:
   total_phases: 48
@@ -31,8 +31,8 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 
 Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions (INSERTED)) — EXECUTING
 Plan: 03 of 3 complete; required local and hosted candidate checks passed
-Status: Executing — implementation and candidate validation passed; final goal verification and merge remain
-Last activity: 2026-11-10 — Phase 01.1.1.18 source plans, local checks, independent reviews and hosted PR #79 CI passed; final goal verification and merge remain.
+Status: Awaiting merge decision — all selected-phase pre-merge work passed; phase remains open until PR #79 is merged
+Last activity: 2026-11-10 — Phase 01.1.1.18 implementation, local checks, reviews, hosted CI and independent goal verification passed; PR #79 awaits the owner merge decision.
 
 Progress: 2/47 phases complete ([░░░░░░░░░░] 4%); 38/42 total plans summarized ([█████████░] 90%)
 
@@ -235,7 +235,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-11-10T16:29:21Z
-Stopped at: Phase 01.1.1.18 core/floor source plans and local candidate checks passed; PR #79 hosted CI and final goal verification remain pending.
+Stopped at: Phase 01.1.1.18 implementation, local checks, reviews, hosted CI and independent goal verification passed; PR #79 awaits the owner merge decision.
 
-Next action: $gsd-execute-phase 01.1.1.18 — finish final goal verification and the PR #79 merge boundary; keep the parent aggregate open, SEC-01 with Phase 5 and Phase 2 gated.
+Next action: gh pr merge 79 --squash — merge the green reviewed candidate after the owner approves, then finish only Phase 01.1.1.18 bookkeeping. Parent aggregate stays open, SEC-01 stays with Phase 5 and Phase 2 stays gated.
 Resume file: None

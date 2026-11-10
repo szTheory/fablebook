@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-execute-phase 01.1.1.18",
-    "label": "Finish final goal verification and PR #79 merge boundary",
-    "reason": "Phase 01.1.1.18 source plans, local checks, independent reviews and hosted PR #79 CI passed; final goal verification and merge remain. Parent aggregate remains open and Phase 2 gated."
+    "command": "gh pr merge 79 --squash",
+    "label": "Owner merge decision for green Phase 01.1.1.18 PR",
+    "reason": "Phase 01.1.1.18 implementation, local checks, reviews, hosted CI and independent goal verification passed; PR #79 awaits the owner merge decision. Do not merge without owner authorization or advance to Phase 2."
   },
-  "updated_at": "2026-11-10T20:28:18+00:00"
+  "updated_at": "2026-11-10T20:36:05+00:00"
 }

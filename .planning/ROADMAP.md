@@ -340,7 +340,7 @@ Plans:
   4. Contract controls preserve the complete EX-107 row and lane match sets without invoking audited functions or atom sinks, changing production behavior, or claiming runtime atom safety.
   5. Required core and floor checks pass and hosted CI receipts identify the reviewed candidate revision.
   6. The remaining EX-107 matches stay pending; the parent aggregate stays open, SEC-01 remains assigned to Phase 5, and Phase 2 remains gated.
-**Plans:** 3/3 plans complete (source reviews, integration and required candidate checks passed; final goal verification and merge remain)
+**Plans:** 3/3 plans complete (source reviews, integration, required candidate checks and final goal verification passed; PR #79 merge remains)
 
 Plans:
 **Wave 1**
