@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 14 of 48 · 4% · executing"
+    "command": "/gsd-plan-phase 01.1.1.18",
+    "label": "Correct the bounded callback source allocation after authorization",
+    "reason": "Execution halted under D-15; no tasks complete; Plan 02 blocked"
   },
-  "updated_at": "2026-11-10T16:25:56.954Z"
+  "updated_at": "2026-11-10T17:21:55.950+00:00"
 }
