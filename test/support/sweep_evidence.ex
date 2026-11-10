@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "6dd746627cf1208996d2eba86073fb464beab2f5b15a9562e57f35d798da7cd1"
+  @archive_sha "6d260ab9d82f1500e1bed3ebbcb727d02f0848e7568ed048f60f60967db66e5a"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -98,6 +98,11 @@ defmodule Fablebook.Test.SweepEvidence do
       4465,
       "da8b3b3e951120b1cdbd0622b72d698bd3103c92341d42ba4c6556388818e753"
     },
+    {"floor", "asn1/src/asn1ct_func.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_func.erl",
+      4347,
+      "5487ba870e7c265cd7fe41761f1c5c528385d164faa07df15858fe48e2d21ebf"
+    },
     {"core", "asn1/src/asn1ct.erl"} => {
       "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct.erl",
       75_577,
@@ -161,6 +166,23 @@ defmodule Fablebook.Test.SweepEvidence do
   }
   @asn1_source_names ~w(asn1/src/asn1ct.erl asn1/src/asn1ct_check.erl asn1/src/asn1ct_gen.erl asn1/src/asn1ct_table.erl asn1/src/asn1ct_parser2.erl asn1/src/asn1ct_tok.erl asn1/src/asn1ct_func.erl asn1/src/asn1ct_gen_ber_bin_v2.erl asn1/src/asn1ct_gen_check.erl asn1/src/asn1ct_gen_jer.erl asn1/src/asn1ct_gen_per.erl asn1/src/asn1ct_imm.erl)
   @asn1_external_transform_names ~w(asn1/src/asn1ct_eval_ext.erl asn1/src/asn1ct_constructed_ber_bin_v2.erl asn1/src/asn1ct_constructed_per.erl asn1/src/asn1ct_value.erl asn1/src/asn1ct_rtt.erl)
+  @generator_dispatch_support_identities %{
+    {"floor", "stdlib/src/gen_server.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/gen_server.erl",
+      111_386,
+      "5adbf93c85a5950a91977dd0ee681412f37ad90392568e4aaaf927e3953c06f0"
+    },
+    {"floor", "stdlib/src/gen.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/gen.erl",
+      27_057,
+      "bf25bd7350ed20be1b5b4e1bbd7fe1776c2ca5ba9a0ae3558df57ede2af7d680"
+    },
+    {"floor", "stdlib/src/proc_lib.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/stdlib/src/proc_lib.erl",
+      56_739,
+      "fb4906c7cee60766e096682240e87881e766b8455fec09f38ee6728e513c1995"
+    }
+  }
   @asn1_external_transform_identities %{
     {"core", "asn1/src/asn1ct_eval_ext.erl"} =>
       {2092, "c2fddfd1f6091b225ae4f6eadda70b789927e9476a916ec960e6a64a2e6504ae"},
@@ -325,6 +347,7 @@ defmodule Fablebook.Test.SweepEvidence do
     Enum.each(records, &validate_record!(&1, files))
     validate_asn1_inventory!(records)
     validate_asn1_external_transform_inventory!(records)
+    validate_generator_dispatch_support_inventory!(records)
   end
 
   defp validate_lock_manifest!(locks) do
@@ -356,6 +379,7 @@ defmodule Fablebook.Test.SweepEvidence do
     validate_leex_source_identity!(row)
     validate_asn1_source_identity!(row)
     validate_asn1_external_transform_identity!(row)
+    validate_generator_dispatch_support_identity!(row)
     data = Map.fetch!(files, path)
 
     if byte_size(data) != row["bytes"] or digest(data) != row["sha256"],
@@ -462,6 +486,31 @@ defmodule Fablebook.Test.SweepEvidence do
   defp validate_asn1_external_transform_inventory!(records) do
     Enum.each(@asn1_external_transform_identities, fn {{lane, source_path}, _identity} ->
       if not Enum.any?(records, &(&1["lane"] == lane and &1["source_path"] == source_path)),
+        do: fail!(:source_identity, {lane, source_path, :missing})
+    end)
+  end
+
+  defp validate_generator_dispatch_support_identity!(row) do
+    identity = {row["lane"], row["source_path"]}
+    actual = {row["url"], row["bytes"], row["sha256"]}
+
+    case Map.fetch(@generator_dispatch_support_identities, identity) do
+      {:ok, ^actual} ->
+        if row["path"] == row["lane"] <> "/" <> row["source_path"],
+          do: :ok,
+          else: fail!(:source_identity, {row, :generator_dispatch_support_path})
+
+      {:ok, expected} ->
+        fail!(:source_identity, {row, expected})
+
+      :error ->
+        :ok
+    end
+  end
+
+  defp validate_generator_dispatch_support_inventory!(records) do
+    Enum.each(@generator_dispatch_support_identities, fn {{lane, source_path}, _identity} ->
+      unless Enum.any?(records, &(&1["lane"] == lane and &1["source_path"] == source_path)),
         do: fail!(:source_identity, {lane, source_path, :missing})
     end)
   end
@@ -691,6 +740,190 @@ defmodule Fablebook.Test.GeneratorDispatchCoreEvidence do
 
   defp function_evidence(mfa, interim_disposition, citations, trace) do
     %{mfa: mfa, interim_disposition: interim_disposition, citations: citations, trace: trace}
+  end
+end
+
+defmodule Fablebook.Test.GeneratorDispatchFloorEvidence do
+  @moduledoc false
+
+  @started_at "2026-11-10T18:22:34Z"
+  @completed_at "2026-11-10T18:35:13Z"
+  @exact_sources [
+    {"asn1/src/asn1ct_func.erl", 4347,
+     "5487ba870e7c265cd7fe41761f1c5c528385d164faa07df15858fe48e2d21ebf"},
+    {"stdlib/src/gen_server.erl", 111_386,
+     "5adbf93c85a5950a91977dd0ee681412f37ad90392568e4aaaf927e3953c06f0"},
+    {"stdlib/src/gen.erl", 27_057,
+     "bf25bd7350ed20be1b5b4e1bbd7fe1776c2ca5ba9a0ae3558df57ede2af7d680"},
+    {"stdlib/src/proc_lib.erl", 56_739,
+     "fb4906c7cee60766e096682240e87881e766b8455fec09f38ee6728e513c1995"},
+    {"asn1/src/asn1ct_rtt.erl", 134_820,
+     "828cdca9f7ac0d4e6d867d712b0e991c94fa46665e17e360196aa39c89305d9d"}
+  ]
+
+  def record do
+    %{
+      lane: "floor",
+      original_id: "EX-107",
+      owner: "01.1.1.4",
+      semantic_status: :pending,
+      method: :source_only,
+      started_at: @started_at,
+      completed_at: @completed_at,
+      elapsed_seconds: elapsed_seconds(),
+      exact_sources: @exact_sources,
+      selected_function_evidence: selected_function_evidence(),
+      callback_trace: [
+        {"stdlib/src/gen_server.erl:949", "gen:start(?MODULE, link, Module, Args, Options)"},
+        {"stdlib/src/gen.erl:124", "do_spawn(GenMod, link, Mod, Args, Options) ->"},
+        {"stdlib/src/gen.erl:126", "proc_lib:start_link(?MODULE, init_it,"},
+        {"stdlib/src/proc_lib.erl:507", "start_link(M,F,A,Timeout,SpawnOpts)"},
+        {"stdlib/src/proc_lib.erl:265", "erlang:spawn_opt(?MODULE, init_p"},
+        {"stdlib/src/proc_lib.erl:322", "init_p(Parent, Ancestors, M, F, A)"},
+        {"stdlib/src/proc_lib.erl:327", "init_p_do_apply(M, F, A) ->"},
+        {"stdlib/src/gen_server.erl:2279", "handle_call = fun Mod:handle_call/3"},
+        {"stdlib/src/gen_server.erl:2280", "handle_cast = fun Mod:handle_cast/2"},
+        {"stdlib/src/gen_server.erl:2268", "Msg = receive"},
+        {"stdlib/src/gen_server.erl:2292", "decode_msg(Msg, Parent, Name, State, CbCache"},
+        {"stdlib/src/gen_server.erl:2328", "try_dispatch({'$gen_cast', Msg}, CbCache, State)"},
+        {"stdlib/src/gen_server.erl:2409", "handle_msg({'$gen_call', From, Msg}, Parent"},
+        {"stdlib/src/gen_server.erl:1771", "reply(Client, Reply) ->"},
+        {"stdlib/src/gen_server.erl:2389", "try_terminate(Mod, Reason, State) ->"},
+        {"stdlib/src/proc_lib.erl:671", "init_ack(Parent, Return) ->"}
+      ],
+      rtt_literal_body: %{
+        start_line: 534,
+        end_line: 1039,
+        bytes: 112_537,
+        sha256: "816ef1ae1981656ec27e35dd52d2f1307249004964b56a50ce81740fc5c8d211",
+        rows: 254,
+        grammar: :pass,
+        controls: [:computed_payload, :expression_in_mfa, :trailing_code, :truncation]
+      }
+    }
+  end
+
+  defp selected_function_evidence do
+    [
+      function(
+        {:asn1ct_func, :start_link, 0},
+        :fixed_callback_start,
+        [
+          {"asn1/src/asn1ct_func.erl:28", "start_link() ->"},
+          {"asn1/src/asn1ct_func.erl:29", "gen_server:start_link(?MODULE, [], [])"}
+        ],
+        "Starts the fixed asn1ct_func callback module with empty arguments and options, then stores only the returned process identifier under the fixed module key."
+      ),
+      function(
+        {:asn1ct_func, :call, 3},
+        :existing_atom_lookup_and_codegen,
+        [
+          {"asn1/src/asn1ct_func.erl:33", "call(M, F, Args) ->"},
+          {"asn1/src/asn1ct_func.erl:35", "MFA = {M,F,A}"},
+          {"asn1/src/asn1ct_func.erl:36", "need(MFA)"},
+          {"asn1/src/asn1ct_func.erl:41", "asn1ct_gen:emit"}
+        ],
+        "Forms an MFA from existing module/function values and argument count, checks the fixed RTT table, then emits call text. This path does not convert source text to atoms."
+      ),
+      function(
+        {:asn1ct_func, :need, 1},
+        :existing_atom_lookup,
+        [
+          {"asn1/src/asn1ct_func.erl:44", "need({binary,_,_}) ->"},
+          {"asn1/src/asn1ct_func.erl:46", "need({erlang,_,_}) ->"},
+          {"asn1/src/asn1ct_func.erl:48", "need(MFA) ->"},
+          {"asn1/src/asn1ct_func.erl:49", "asn1ct_rtt:assert_defined(MFA)"}
+        ],
+        "Only fixed binary and erlang module exceptions bypass the exact RTT lookup; the ordinary path checks an already formed MFA and sends a fixed need request."
+      ),
+      function(
+        {:asn1ct_func, :call_gen, 3},
+        :caller_prefix_forwarded,
+        [
+          {"asn1/src/asn1ct_func.erl:56", "call_gen(Prefix, Key, Gen)"},
+          {"asn1/src/asn1ct_func.erl:57", "req({gen_func,Prefix,Key,Gen})"}
+        ],
+        "Forwards Prefix, cache Key and an arity-two generator closure in a fixed request tuple. The wrapper does not atomize the prefix; caller-origin details are assigned to the next caller-review task."
+      ),
+      function(
+        {:asn1ct_func, :call_gen, 4},
+        :caller_prefix_forwarded,
+        [
+          {"asn1/src/asn1ct_func.erl:52", "call_gen(Prefix, Key, Gen, Args)"},
+          {"asn1/src/asn1ct_func.erl:53", "req({gen_func,Prefix,Key,Gen})"},
+          {"asn1/src/asn1ct_func.erl:54", "asn1ct_gen:emit"}
+        ],
+        "Uses the same request path and serializes the returned function name into generated source. Prefix provenance is deferred to the caller task."
+      ),
+      function(
+        {:asn1ct_func, :generate, 1},
+        :fixed_data_selection,
+        [
+          {"asn1/src/asn1ct_func.erl:59", "generate(Fd) ->"},
+          {"asn1/src/asn1ct_func.erl:64", "asn1ct_rtt:code()"},
+          {"asn1/src/asn1ct_func.erl:67", "file:write(Fd, Funcs)"}
+        ],
+        "Selects fixed RTT literal rows using the accumulated MFA set and writes selected source data to the descriptor. The generated text is not interpreted or compiled here."
+      ),
+      function(
+        {:asn1ct_func, :is_used, 1},
+        :existing_atom_lookup,
+        [
+          {"asn1/src/asn1ct_func.erl:69",
+           "is_used({M,F,A}=MFA) when is_atom(M), is_atom(F), is_integer(A) ->"},
+          {"asn1/src/asn1ct_func.erl:70", "req({is_used,MFA})"}
+        ],
+        "Requires module and function atoms plus an integer arity before asking the server for membership; it performs no name conversion."
+      ),
+      function(
+        {:asn1ct_func, :init, 1},
+        :fixed_state_initialization,
+        [
+          {"asn1/src/asn1ct_func.erl:86", "init([]) ->"},
+          {"asn1/src/asn1ct_func.erl:87", "used=gb_sets:empty(),gen=gb_trees:empty()"}
+        ],
+        "Initializes empty used-function and generated-function structures with the fixed default counter, independent of source input."
+      ),
+      function(
+        {:asn1ct_func, :handle_call, 3},
+        :active_dynamic_atom_creation_candidate,
+        [
+          {"asn1/src/asn1ct_func.erl:104", "handle_call({gen_func,Prefix,Key,GenFun}"},
+          {"asn1/src/asn1ct_func.erl:107", "Name = list_to_atom(Prefix ++ integer_to_list(Gc0))"},
+          {"asn1/src/asn1ct_func.erl:109", "gb_trees:insert(Key, {Name,GenFun}, G0)"}
+        ],
+        "On a cache miss, interns the request Prefix with a fixed decimal counter and stores the resulting atom with its callback under Key. Prefix caller provenance is not decided in the support task; this remains an active atom-creation candidate for the caller batches and Plan 03."
+      ),
+      function(
+        {:asn1ct_func, :handle_cast, 2},
+        :fixed_data_dependency_expansion,
+        [
+          {"asn1/src/asn1ct_func.erl:90", "handle_cast({need,MFA}"},
+          {"asn1/src/asn1ct_func.erl:93", "pull_in_deps(gb_sets:singleton(MFA), Used0)"},
+          {"asn1/src/asn1ct_func.erl:132", "asn1ct_rtt:dependencies(MFA)"}
+        ],
+        "Adds the requested existing MFA and its fixed-table dependency closure to the used set. It does not derive atoms from request text."
+      ),
+      function(
+        {:asn1ct_func, :terminate, 2},
+        :no_sink,
+        [
+          {"asn1/src/asn1ct_func.erl:118", "terminate(_, _) ->"},
+          {"asn1/src/asn1ct_func.erl:119", "ok."}
+        ],
+        "Normal termination returns ok without reading source values, invoking request callbacks, or creating atoms."
+      )
+    ]
+  end
+
+  defp function(mfa, interim_disposition, citations, trace) do
+    %{mfa: mfa, interim_disposition: interim_disposition, citations: citations, trace: trace}
+  end
+
+  defp elapsed_seconds do
+    {:ok, started, _offset} = DateTime.from_iso8601(@started_at)
+    {:ok, completed, _offset} = DateTime.from_iso8601(@completed_at)
+    DateTime.diff(completed, started)
   end
 end
 

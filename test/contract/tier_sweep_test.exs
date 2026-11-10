@@ -61,6 +61,7 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
   use ExUnit.Case, async: false
 
   alias Fablebook.Test.GeneratorDispatchCoreEvidence
+  alias Fablebook.Test.GeneratorDispatchFloorEvidence
   alias Fablebook.Test.GeneratorDispatchCallerAEvidence
   alias Fablebook.Test.GeneratorDispatchCallerBEvidence
   alias Fablebook.Test.SweepEvidence
@@ -214,6 +215,83 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
     end
   end
 
+  @tag :generator_dispatch_011118
+  test "floor support identities, callback path and all selected-function traces resolve from the exact archive" do
+    evidence = archive_only_evidence!("floor")
+    record = GeneratorDispatchFloorEvidence.record()
+
+    assert record.original_id == "EX-107"
+    assert record.semantic_status == :pending
+    assert length(record.exact_sources) == 5
+    assert length(record.selected_function_evidence) == 11
+
+    for {path, bytes, sha256} <- record.exact_sources do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    for {citation, expected} <- record.callback_trace do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+    end
+
+    for function <- record.selected_function_evidence,
+        {citation, expected} <- function.citations do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+      assert String.length(function.trace) > 100
+    end
+
+    assert Enum.count(
+             record.selected_function_evidence,
+             &(&1.interim_disposition == :active_dynamic_atom_creation_candidate)
+           ) == 1
+  end
+
+  @tag :generator_dispatch_011118
+  test "the complete floor RTT code/0 body is literal table data and rejects altered shapes" do
+    evidence = archive_only_evidence!("floor")
+    source = SweepEvidence.resolve!(evidence, "asn1/src/asn1ct_rtt.erl:534")
+    body = rtt_body!(File.read!(source.path))
+    grammar = rtt_grammar()
+
+    [record] = [
+      GeneratorDispatchFloorEvidence.record()
+    ]
+
+    assert record.rtt_literal_body == %{
+             start_line: 534,
+             end_line: 1039,
+             bytes: byte_size(body),
+             sha256: :crypto.hash(:sha256, body) |> Base.encode16(case: :lower),
+             rows: 254,
+             grammar: :pass,
+             controls: [:computed_payload, :expression_in_mfa, :trailing_code, :truncation]
+           }
+
+    assert Regex.match?(grammar, body)
+    assert length(Regex.scan(Regex.compile!(row_pattern()), body)) == 254
+
+    computed_payload = String.replace(body, <<"<<\"">>, "<<integer_to_binary(1)>>", global: false)
+
+    expression_in_mfa =
+      String.replace(body, "{{ber,ber_decode_erlang,1}", "{{erlang,apply(),1}", global: false)
+
+    assert computed_payload != body
+    assert expression_in_mfa != body
+    refute Regex.match?(grammar, computed_payload)
+    refute Regex.match?(grammar, expression_in_mfa)
+    refute Regex.match?(grammar, body <> " erlang:halt().")
+
+    truncated = String.trim_trailing(body) |> then(&binary_part(&1, 0, byte_size(&1) - 2))
+    refute Regex.match?(grammar, truncated)
+  end
+
+
   defp rtt_body!(bytes) do
     [_, body] = Regex.run(~r/\ncode\(\) ->\n([\s\S]*)\z/, bytes)
     body
@@ -228,12 +306,12 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
     ~S/\{\{[a-z][A-Za-z0-9_]*,[a-z][A-Za-z0-9_]*,[0-9]+\},\s*<<"(?:[^"\\]|\\.)*">>\}/
   end
 
-  defp archive_only_evidence! do
+  defp archive_only_evidence!(lane \\ "core") do
     archive = SweepEvidence.load_archive!(@archive, SweepEvidence.archive_sha256())
     on_exit(fn -> File.rm_rf!(archive.archive_root) end)
 
     Map.merge(archive, %{
-      lane: %{name: "core"},
+      lane: %{name: lane},
       installed: Map.new(~w(asn1 stdlib), &{&1, Path.join(archive.archive_root, "missing-#{&1}")})
     })
   end
