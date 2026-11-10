@@ -16,8 +16,37 @@ defmodule Fablebook.Contract.HexPublishTest do
   @tarball_sum Base.encode16(:crypto.hash(:sha256, @tarball), case: :lower)
 
   @git_env [{"GIT_DIR", nil}, {"GIT_WORK_TREE", nil}, {"GIT_INDEX_FILE", nil}]
-  @identity ~w(-c user.name=fixture -c user.email=fixture@localhost
+  @identity ~w(-c user.name=fixture -c user.email=fixture-identity
                -c commit.gpgsign=false -c tag.gpgsign=false)
+  @runner_shell System.get_env("PATH", "")
+                |> String.split(":")
+                |> Kernel.++(["/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin"])
+                |> Enum.uniq()
+                |> Enum.map(&Path.join(&1, "bash"))
+                |> Enum.filter(fn path ->
+                  case File.stat(path) do
+                    {:ok, %{type: :regular, mode: mode}} -> Bitwise.band(mode, 0o111) > 0
+                    _ -> false
+                  end
+                end)
+                |> Enum.find_value(fn path ->
+                  case System.cmd(path, ["--version"]) do
+                    {output, 0} ->
+                      case Regex.run(~r/GNU bash, version ([0-9]+\.[0-9]+\.[0-9]+)/, output) do
+                        [_, version] ->
+                          if String.to_integer(version |> String.split(".") |> hd()) >= 5,
+                            do: {path, version}
+
+                        _ ->
+                          nil
+                      end
+
+                    _ ->
+                      nil
+                  end
+                end) || raise("release contract tests require Bash 5 or newer")
+  @runner_bash elem(@runner_shell, 0)
+  @runner_bash_version elem(@runner_shell, 1)
 
   @curl ~S"""
   #!/bin/sh
@@ -38,7 +67,7 @@ defmodule Fablebook.Contract.HexPublishTest do
       shift
     done
   fi
-  printf '%s' "${TAG#v}"
+  printf '%s' "$PROJECT_VERSION"
   """
 
   @hex_cases [
@@ -73,6 +102,10 @@ defmodule Fablebook.Contract.HexPublishTest do
     {:ancestry, ~s(is not on main"\n            exit 1\n), ~s(is not on main"\n)},
     {:ancestry, "if ! git merge-base",
      "if git rev-parse -q --verify origin/main && ! git merge-base"},
+    {:ancestry, ~s(if ! git merge-base --is-ancestor "$sha" origin/main; then),
+     ~s(git merge-base --is-ancestor "$sha" origin/main | cat\n          if false; then)},
+    {:tag_pattern, "          [[ \"$TAG\" =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+$ ]]\n", ""},
+    {:tag_version, "          test \"$TAG\" = \"v$v\"\n", ""},
     {:ancestry_order, {:move, "      - id: ref", "      - run: mix local.hex 2.6.0 --force"}},
     {:ancestry_order, {:move, "      - id: sbom", "      - id: tag"}},
     {:publish_gate, "    needs: build\n", "    needs: build\n    if: always()\n"},
@@ -138,6 +171,10 @@ defmodule Fablebook.Contract.HexPublishTest do
   test "the pre-test gate passes only the tag's own commit, and only when it is on origin/main",
        %{tmp_dir: dir} do
     assert release_gate_violations(workflow(), dir) == []
+  end
+
+  test "workflow scripts run with Bash 5 or newer" do
+    assert String.to_integer(@runner_bash_version |> String.split(".") |> hd()) >= 5
   end
 
   test "recovery publishes the package, only the docs or nothing, and fails closed otherwise",
@@ -260,14 +297,20 @@ defmodule Fablebook.Contract.HexPublishTest do
     {repo, [one, two, three]} = repo!(Path.join(dir, "repo"))
 
     checkout!(repo, ref, "v1.0.0")
-    same_name = gate_run(scripts, dir, repo, "v1.0.0")
+    same_name = gate_run(scripts, dir, repo, "v1.0.0", "1.0.0")
     checkout!(repo, ref, "v1.0.1")
-    local_main = gate_run(scripts, dir, repo, "v1.0.1")
+    local_main = gate_run(scripts, dir, repo, "v1.0.1", "1.0.1")
     git!(repo, ["checkout", "-q", "--detach", three])
-    moved = gate_run(scripts, dir, repo, "v1.0.0")
+    moved = gate_run(scripts, dir, repo, "v1.0.0", "1.0.0")
     git!(repo, ~w(update-ref -d refs/remotes/origin/main))
     checkout!(repo, ref, "v1.0.0")
-    no_main = gate_run(scripts, dir, repo, "v1.0.0")
+    no_main = gate_run(scripts, dir, repo, "v1.0.0", "1.0.0")
+    git!(repo, ["update-ref", "refs/remotes/origin/main", one])
+    git!(repo, @identity ++ ["tag", "v1.0.0-beta", one])
+    checkout_tag!(repo, "v1.0.0-beta")
+    invalid_shape = gate_run(scripts, dir, repo, "v1.0.0-beta", "1.0.0-beta")
+    checkout_tag!(repo, "v1.0.0")
+    wrong_version = gate_run(scripts, dir, repo, "v1.0.0", "9.9.9")
 
     cases = [
       {"tag on main beside a same-named branch", same_name,
@@ -282,11 +325,36 @@ defmodule Fablebook.Contract.HexPublishTest do
          errors: ["::error::the checkout is not the commit v1.0.0 names"]
        }},
       {"no origin/main", no_main,
-       %{exit: 1, head: one, output: "", errors: ["::error::v1.0.0 is not on main"]}}
+       %{exit: 1, head: one, output: "", errors: ["::error::v1.0.0 is not on main"]}},
+      {"invalid tag shape on main", invalid_shape, %{exit: 1, head: one, output: "", errors: []}},
+      {"project version differs from tag", wrong_version,
+       %{exit: 1, head: one, output: "sha=#{one}\n", errors: []}}
     ]
 
-    mismatches(:ancestry, for({name, {run, _}, expected} <- cases, do: {name, run, expected})) ++
-      for {name, {%{exit: 0}, false}, _} <- cases, do: {:ancestry, name, :built_commit_off_main}
+    ancestry_cases =
+      for {name, {result, on_main}, expected} <- Enum.take(cases, 4) do
+        {name, result, expected, on_main}
+      end
+
+    ancestry_results =
+      Enum.flat_map(ancestry_cases, fn {name, result, expected, on_main} ->
+        mismatches(:ancestry, [{name, result, expected}]) ++
+          if(result.exit == 0 and not on_main,
+            do: [{:ancestry, name, :built_commit_off_main}],
+            else: []
+          )
+      end)
+
+    pattern_expected = %{exit: 1, head: one, output: "", errors: []}
+    version_expected = %{exit: 1, head: one, output: "sha=#{one}\n", errors: []}
+
+    ancestry_results ++
+      mismatches(:tag_pattern, [
+        {"invalid tag shape on main", elem(invalid_shape, 0), pattern_expected}
+      ]) ++
+      mismatches(:tag_version, [
+        {"project version differs from tag", elem(wrong_version, 0), version_expected}
+      ])
   end
 
   defp pre_test(build) do
@@ -297,7 +365,7 @@ defmodule Fablebook.Contract.HexPublishTest do
   end
 
   defp checkout!(repo, "refs/tags/${{ inputs.tag }}", tag),
-    do: git!(repo, ["checkout", "-q", "--detach", "refs/tags/" <> tag])
+    do: checkout_tag!(repo, tag)
 
   defp checkout!(repo, "${{ inputs.tag }}", tag) do
     branch = "refs/remotes/origin/" <> tag
@@ -307,12 +375,17 @@ defmodule Fablebook.Contract.HexPublishTest do
       else: git!(repo, ["checkout", "-q", "--detach", "refs/tags/" <> tag])
   end
 
-  defp gate_run(scripts, dir, repo, tag) do
+  defp checkout_tag!(repo, tag),
+    do: git!(repo, ["checkout", "-q", "--detach", "refs/tags/" <> tag])
+
+  defp gate_run(scripts, dir, repo, tag, project_version) do
     File.rm(Path.join(repo, "output"))
 
     {code, log} =
       Enum.reduce_while(scripts, {0, ""}, fn script, {_, log} ->
-        {code, more, _} = run(dir, repo, script, [{"TAG", tag}])
+        {code, more, _} =
+          run(dir, repo, script, [{"TAG", tag}, {"PROJECT_VERSION", project_version}])
+
         {if(code == 0, do: :cont, else: :halt), {code, log <> more}}
       end)
 
@@ -444,7 +517,7 @@ defmodule Fablebook.Contract.HexPublishTest do
     path = Path.join(dir, "bin") <> ":" <> System.get_env("PATH")
 
     {log, code} =
-      System.cmd("bash", ~w(--noprofile --norc -eo pipefail step.sh),
+      System.cmd(@runner_bash, ~w(-e step.sh),
         cd: cwd,
         env: @git_env ++ [{"PATH", path}, {"GITHUB_OUTPUT", output} | env],
         stderr_to_stdout: true
