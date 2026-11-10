@@ -70,11 +70,16 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
   @sources %{
-    "asn1/src/asn1ct_func.erl" => {4465, "da8b3b3e951120b1cdbd0622b72d698bd3103c92341d42ba4c6556388818e753"},
-    "stdlib/src/gen_server.erl" => {114_546, "45e1cea8e87a49c8f6cec49ec50e082dde6690c3696f9e67de376947fc8f34a3"},
-    "stdlib/src/gen.erl" => {27_099, "b828697b055865df24aad48ec4cd7f23821fa54a7aa2baa0408a444a5d0d04be"},
-    "stdlib/src/proc_lib.erl" => {57_067, "a8fc8e94f9ad47ace46cd204fc5eb6fd227c09787f3be906d80d2e4547e6a8c5"},
-    "asn1/src/asn1ct_rtt.erl" => {135_654, "dbdbad10a9af2d46dd617315ef63e226f8425de0ad64a3446058200980d67374"}
+    "asn1/src/asn1ct_func.erl" =>
+      {4465, "da8b3b3e951120b1cdbd0622b72d698bd3103c92341d42ba4c6556388818e753"},
+    "stdlib/src/gen_server.erl" =>
+      {114_546, "45e1cea8e87a49c8f6cec49ec50e082dde6690c3696f9e67de376947fc8f34a3"},
+    "stdlib/src/gen.erl" =>
+      {27_099, "b828697b055865df24aad48ec4cd7f23821fa54a7aa2baa0408a444a5d0d04be"},
+    "stdlib/src/proc_lib.erl" =>
+      {57_067, "a8fc8e94f9ad47ace46cd204fc5eb6fd227c09787f3be906d80d2e4547e6a8c5"},
+    "asn1/src/asn1ct_rtt.erl" =>
+      {135_654, "dbdbad10a9af2d46dd617315ef63e226f8425de0ad64a3446058200980d67374"}
   }
 
   @tag :generator_dispatch_011118
@@ -111,8 +116,15 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
     assert Regex.match?(grammar, body)
     assert length(Regex.scan(Regex.compile!(row_pattern()), body)) == 258
 
-    refute Regex.match?(grammar, String.replace(body, "<<\"", "<<integer_to_binary(1)>>", global: false))
-    refute Regex.match?(grammar, String.replace(body, "{{ber,ber_encode,1}", "{{erlang,apply(),1}", global: false))
+    refute Regex.match?(
+             grammar,
+             String.replace(body, "<<\"", "<<integer_to_binary(1)>>", global: false)
+           )
+
+    refute Regex.match?(
+             grammar,
+             String.replace(body, "{{ber,ber_encode,1}", "{{erlang,apply(),1}", global: false)
+           )
 
     refute Regex.match?(grammar, body <> " erlang:halt().")
     truncated = String.trim_trailing(body) |> then(&binary_part(&1, 0, byte_size(&1) - 2))
@@ -199,7 +211,11 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
       assert String.length(function.trace) > 100
     end
 
-    assert Enum.count(core.selected_function_evidence, &(&1.interim_disposition == :active_dynamic_atom_creation_candidate)) == 1
+    assert Enum.count(
+             core.selected_function_evidence,
+             &(&1.interim_disposition == :active_dynamic_atom_creation_candidate)
+           ) == 1
+
     assert length(record.incoming_edges) == 28
 
     external_callers =
@@ -327,7 +343,9 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
       assert source.text =~ expected, citation
     end
 
-    [per_review] = Enum.filter(record.reviews, &(&1.source_path == "asn1/src/asn1ct_constructed_per.erl"))
+    [per_review] =
+      Enum.filter(record.reviews, &(&1.source_path == "asn1/src/asn1ct_constructed_per.erl"))
+
     assert String.contains?(per_review.finding, "caller-derived compiler metadata")
     assert String.contains?(per_review.finding, "no user-controlled-input claim")
   end
@@ -377,7 +395,6 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
       assert source.text =~ expected, citation
     end
   end
-
 
   defp rtt_body!(bytes) do
     [_, body] = Regex.run(~r/\ncode\(\) ->\n([\s\S]*)\z/, bytes)
@@ -1370,6 +1387,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   alias Fablebook.Test.DebuggerPendingOwnership
   alias Fablebook.Test.DebuggerSettings
   alias Fablebook.Test.ExternalTransformEvidence
+  alias Fablebook.Test.GeneratorDispatchIntegrationEvidence
   alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.ParserTokenizerEvidence
   alias Fablebook.Test.SweepEvidence
@@ -5513,7 +5531,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
     assert SweepEvidence.archive_sha256() ==
-             "7f4f14ed041d68c4ac50d41a414201b13a9f68992bd9890d54d565349ae51669"
+             "9a49947455b5d4697f8fd122f0e6d92c7b94dba4641aba6c7e1ca4b0c400315d"
 
     lane = evidence.lane.name
 
@@ -8335,6 +8353,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :generator_dispatch_011118
   test "EX-107 keeps its full lane unions while tracing the bounded ASN.1 table slice", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
@@ -8344,6 +8363,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_asn1_table_audit!(ctx.graph, evidence, ledger, tier)
     assert_asn1_parser_tokenizer_audit!(ctx.graph, evidence, ledger, tier)
     assert_asn1_external_transform_audit!(ctx.graph, evidence, ledger, tier)
+    assert_asn1_generator_dispatch_audit!(ctx.graph, evidence, ledger, tier)
   end
 
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
@@ -12020,6 +12040,248 @@ defmodule Fablebook.Contract.TierSweepTest do
     end)
 
     assert_external_transform_omission_controls!(record, archive_only)
+  end
+
+  defp assert_asn1_generator_dispatch_audit!(graph, evidence, ledger, tier) do
+    lane = evidence.lane.name
+
+    [record] =
+      Enum.filter(GeneratorDispatchIntegrationEvidence.lane_records(), &(&1.lane == lane))
+
+    row = Enum.find(ledger.exclusions, &(&1.id == "EX-107"))
+    assert row != nil
+    assert row.original_entry_raw == "{{:prefix, \":asn1ct_\"}, :compiler_pass}"
+    assert row.semantic_status == :pending
+    assert row.owner == "01.1.1.4"
+
+    lane_matches = Map.fetch!(row.lane_matches, lane) |> MapSet.new()
+
+    live_matches =
+      graph.full_exported
+      |> Enum.filter(&asn1_original_match?/1)
+      |> Enum.reject(fn {_module, function, _arity} -> function in [:module_info, :__info__] end)
+      |> Enum.map(&mfa_string!/1)
+      |> MapSet.new()
+
+    assert live_matches == lane_matches,
+           "EX-107/#{lane} differs from the complete live lane match set"
+
+    assert MapSet.size(lane_matches) == 177
+
+    selected_mfas = GeneratorDispatchIntegrationEvidence.selected_mfas()
+
+    selected =
+      selected_mfas
+      |> Enum.map(&mfa_string!/1)
+      |> MapSet.new()
+
+    assert MapSet.size(selected) == 11
+    assert MapSet.subset?(selected, lane_matches)
+    assert MapSet.size(MapSet.difference(lane_matches, selected)) == 166
+
+    support = record.support
+    caller_a = record.caller_a
+    caller_b = record.caller_b
+    assert support.lane == lane
+    assert support.original_id == "EX-107"
+    assert support.owner == row.owner
+    assert support.semantic_status == row.semantic_status
+
+    selected_records = support.selected_function_evidence
+    assert selected == MapSet.new(Enum.map(selected_records, &mfa_string!(&1.mfa)))
+    assert length(selected_records) == 11
+
+    dispositions = GeneratorDispatchIntegrationEvidence.dispositions()
+
+    assert MapSet.new(Map.keys(dispositions)) ==
+             MapSet.new(GeneratorDispatchIntegrationEvidence.selected_mfas())
+
+    archive_only = %{
+      evidence
+      | installed:
+          evidence.installed
+          |> Map.put("asn1", Path.join(evidence.archive_root, "missing-asn1"))
+          |> Map.put("stdlib", Path.join(evidence.archive_root, "missing-stdlib"))
+    }
+
+    assert_raise SweepEvidence.Error, ~r/archive_digest/, fn ->
+      archive = Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
+      SweepEvidence.load_archive!(archive, String.duplicate("0", 64))
+    end
+
+    sources =
+      [support, caller_a, caller_b]
+      |> Enum.flat_map(& &1.exact_sources)
+      |> Enum.uniq_by(&elem(&1, 0))
+
+    assert length(sources) == 13
+
+    for {path, bytes, sha256} <- sources do
+      [source_row] = Enum.filter(evidence.manifest["files"], &(&1["path"] == "#{lane}/#{path}"))
+      assert source_row["bytes"] == bytes
+      assert source_row["sha256"] == sha256
+      source = SweepEvidence.resolve!(archive_only, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    for function <- selected_records do
+      assert function.citations != [], "#{lane} #{inspect(function.mfa)} has no source citation"
+
+      for {citation, expected} <- function.citations do
+        source = SweepEvidence.resolve!(archive_only, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected, citation
+      end
+
+      assert String.length(function.trace) > 100
+    end
+
+    for review <- caller_a.reviews ++ caller_b.reviews do
+      assert review.citations != [], "#{lane} #{review.source_path} has no source citation"
+
+      for {citation, expected} <- review.citations do
+        source = SweepEvidence.resolve!(archive_only, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected, citation
+      end
+    end
+
+    edges = GeneratorDispatchIntegrationEvidence.all_edges(record)
+    assert length(edges) == 28
+    assert MapSet.size(MapSet.new(edges, &{&1.caller, &1.callee})) == 28
+    assert Enum.all?(edges, &(&1.citations != []))
+
+    actual_edges =
+      graph.full_edges
+      |> Enum.filter(fn
+        {_caller, {module, function}} ->
+          module == :asn1ct_func and
+            function in Enum.map(
+              GeneratorDispatchIntegrationEvidence.selected_mfas(),
+              &elem(&1, 1)
+            )
+
+        _edge ->
+          false
+      end)
+      |> MapSet.new()
+
+    expected_edges = MapSet.new(edges, &{&1.caller, {elem(&1.callee, 0), elem(&1.callee, 1)}})
+
+    assert actual_edges == expected_edges,
+           "EX-107/#{lane} generator-dispatch edge graph changed; missing=#{inspect(MapSet.difference(expected_edges, actual_edges))}; unexpected=#{inspect(MapSet.difference(actual_edges, expected_edges))}"
+
+    for edge <- edges do
+      assert edge.citations != [], "EX-107/#{lane} has an incoming edge without a source citation"
+
+      for {citation, expected} <- edge.citations do
+        source = SweepEvidence.resolve!(archive_only, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected, citation
+      end
+    end
+
+    {tamper_citation, _expected} = hd(hd(edges).citations)
+    tampered_path = hd(String.split(tamper_citation, ":"))
+
+    tampered_manifest =
+      Map.update!(archive_only.manifest, "files", fn rows ->
+        Enum.map(rows, fn row ->
+          if row["path"] == "#{lane}/#{tampered_path}",
+            do: Map.put(row, "sha256", String.duplicate("0", 64)),
+            else: row
+        end)
+      end)
+
+    assert_raise SweepEvidence.Error, ~r/source_digest/, fn ->
+      SweepEvidence.resolve!(%{archive_only | manifest: tampered_manifest}, tamper_citation)
+    end
+
+    guarded = GeneratorDispatchIntegrationEvidence.guarded_mfas()
+    guard_patterns = GeneratorDispatchIntegrationEvidence.guard_patterns()
+
+    assert MapSet.new(guarded) ==
+             MapSet.new(
+               Enum.filter(graph.full_exported, fn {module, function, _arity} ->
+                 module == :asn1ct_func and function in [:call_gen, :handle_call]
+               end)
+             )
+
+    assert MapSet.new(guard_patterns) ==
+             MapSet.new([{:asn1ct_func, :call_gen, :_}, {:asn1ct_func, :handle_call, 3}])
+
+    assert MapSet.new(guarded) ==
+             MapSet.new([
+               {:asn1ct_func, :call_gen, 3},
+               {:asn1ct_func, :call_gen, 4},
+               {:asn1ct_func, :handle_call, 3}
+             ])
+
+    safe_exclusion = Enum.find(@exclusions, &(&1 == {{:prefix, ":asn1ct_"}, :compiler_pass}))
+    assert safe_exclusion != nil
+
+    for mfa <- guarded do
+      pattern =
+        Enum.find(guard_patterns, fn {module, function, arity} ->
+          module == elem(mfa, 0) and function == elem(mfa, 1) and arity in [:_, elem(mfa, 2)]
+        end)
+
+      assert pattern != nil
+      assert pattern in tier
+      assert pattern in BannedCalls.banned_mfas()
+
+      without_guard = Enum.reject(tier, &(&1 == pattern))
+
+      assert disposition(mfa, without_guard, BannedCalls.banned_names(), @exclusions) ==
+               :compiler_pass,
+             "EX-107's pending exclusion should be the only fallback after removing #{inspect(pattern)}"
+
+      assert disposition(
+               mfa,
+               without_guard,
+               BannedCalls.banned_names(),
+               List.delete(@exclusions, safe_exclusion)
+             ) == nil,
+             "removing the active guard and EX-107 fallback must expose #{lane} #{inspect(mfa)}"
+    end
+
+    lib_front_calls =
+      Enum.filter(graph.full_edges, fn
+        {{module, _function, _arity}, {target, function}} ->
+          String.starts_with?(Atom.to_string(module), "Elixir.Fablebook.") and
+            target == :asn1ct_func and function in Enum.map(guarded, &elem(&1, 1))
+
+        _edge ->
+          false
+      end)
+
+    assert lib_front_calls == [], "D-11 collision: lib/ calls an active ASN.1 generator front"
+
+    for mfa <- GeneratorDispatchIntegrationEvidence.fixed_exclusions() do
+      assert mfa in selected_mfas
+      assert mfa not in tier
+      assert disposition(mfa, tier, BannedCalls.banned_names(), @exclusions) == :compiler_pass
+
+      assert disposition(
+               mfa,
+               tier,
+               BannedCalls.banned_names(),
+               List.delete(@exclusions, safe_exclusion)
+             ) == nil,
+             "removing EX-107's retained exclusion must expose #{inspect(mfa)} in #{lane}"
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert MapSet.new(Enum.map(List.delete(selected_records, hd(selected_records)), & &1.mfa)) ==
+               selected
+    end
+
+    assert_raise ExUnit.AssertionError, fn ->
+      assert MapSet.new(Enum.map(List.delete(edges, hd(edges)), &{&1.caller, &1.callee})) ==
+               MapSet.new(edges, &{&1.caller, &1.callee})
+    end
   end
 
   defp assert_external_transform_record!(record) do

@@ -182,6 +182,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
     {:cover, :compile, :_},
     {:merl, :_, :_},
     {:asn1ct, :_, :_},
+    {:asn1ct_func, :call_gen, :_},
+    {:asn1ct_func, :handle_call, 3},
     {:asn1ct_check, :check, 2},
     {:asn1ct_parser2, :parse, 2},
     {:asn1ct_tok, :file, 1},
@@ -728,6 +730,64 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
 
     assert credo_issues("Regex.compile(pattern)", "asn1ct_check_benign.ex") == []
+  end
+
+  @tag :tmp_dir
+  test "ASN.1 generator prefix fronts are caught through uncalled direct, capture and apply bodies",
+       %{
+         tmp_dir: dir
+       } do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    fronts = [
+      {{:asn1ct_func, :call_gen, 3}, "prefix, key, generator", "prefix, key, generator", "three"},
+      {{:asn1ct_func, :call_gen, 4}, "prefix, key, generator, args",
+       "prefix, key, generator, args", "four"},
+      {{:asn1ct_func, :handle_call, 3}, "message, from, state", "message, from, state",
+       "callback"}
+    ]
+
+    for {{module, function, arity} = mfa, args, apply_args, name} <- fronts do
+      guard_pattern = if function == :call_gen, do: {module, function, :_}, else: mfa
+      assert guard_pattern in @mfa_tier
+      assert guard_pattern in BannedCalls.banned_mfas()
+
+      for form <- [:direct, :capture, :apply] do
+        body =
+          case form do
+            :direct -> "def probe(#{args}), do: :#{module}.#{function}(#{args})"
+            :capture -> "def probe, do: &:#{module}.#{function}/#{arity}"
+            :apply -> "def probe(#{args}), do: apply(:#{module}, :#{function}, [#{apply_args}])"
+          end
+
+        source = """
+        defmodule Fablebook.GuardFixture.Asn1Generator#{name}#{Macro.camelize(to_string(form))} do
+          #{body}
+        end
+        """
+
+        filename = "asn1_generator_#{name}_#{form}.ex"
+        path = Path.join(dir, filename)
+        File.write!(path, source)
+
+        assert credo_issues(source, filename) != [], "Credo missed #{form} for #{inspect(mfa)}"
+
+        [beam] = compile!([path], dir, true)
+        assert {:ok, scan} = BeamWalker.scan(beam)
+
+        assert Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+               "BEAM missed #{form} for #{inspect(mfa)}"
+
+        without_front = Enum.reject(@mfa_tier, &(&1 == guard_pattern))
+        remaining_hits = Enum.filter(hits(scan, without_front), &mfa_hit?(&1, mfa))
+
+        assert remaining_hits == [],
+               "#{form} probe remained after removing exact tier entry for #{inspect(mfa)}: #{inspect(remaining_hits)}"
+      end
+    end
+
+    assert credo_issues("Regex.compile(pattern)", "asn1_generator_benign.ex") == []
   end
 
   @tag :tmp_dir
