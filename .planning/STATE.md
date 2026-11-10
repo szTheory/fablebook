@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.18
 current_phase_name: Bound ASN.1 generator-dispatch exclusions
 status: complete
-stopped_at: "Cross-phase UAT audit complete: two resolved records closed, one parser false positive removed, six open groups retained; Phase 01.1.1.18 remains complete and main CI passed."
-last_updated: "2026-11-10T21:25:20+00:00"
+stopped_at: "Release-contract hardening implemented and reviewed; full local core/floor checks passed. Hosted candidate CI and the owner merge boundary remain; Phase 01.1.1.18 stays complete."
+last_updated: "2026-11-10T23:54:44+00:00"
 last_activity: 2026-11-10
-last_activity_desc: "Cross-phase UAT audit complete: two resolved records closed, one parser false positive removed, six open groups retained; Phase 01.1.1.18 remains complete and main CI passed."
+last_activity_desc: "Release-contract hardening implemented and reviewed; full local core/floor checks passed. Hosted candidate CI and the owner merge boundary remain; Phase 01.1.1.18 stays complete."
 state_head: f3d1af6011d207d4b2ae950141da1946202d3b48
 progress:
   total_phases: 48
@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions) — COMPLETE
 Plan: 3 of 3 complete
 Status: Complete — PR #79 squash-merged with all required candidate checks green
-Last activity: 2026-11-10 — Cross-phase UAT audit complete: two resolved records closed, one parser false positive removed, six open groups retained; Phase 01.1.1.18 remains complete and main CI passed.
+Last activity: 2026-11-10 — Release-contract hardening implemented and reviewed; full local core/floor checks passed. Hosted candidate CI and the owner merge boundary remain; Phase 01.1.1.18 stays complete.
 
 Selected phase: 3/3 plans, goal verification passed, merged green PR. Historical aggregate counters remain qualified by the phase HEALTH report and are not authority to resume blocked parent plans or Phase 2.
 
@@ -235,8 +235,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-10T21:25:20+00:00
-Stopped at: Cross-phase UAT audit complete: two resolved records closed, one parser false positive removed, six open groups retained; Phase 01.1.1.18 remains complete and main CI passed.
+Last session: 2026-11-10T23:54:44+00:00
+Stopped at: Release-contract hardening implemented and reviewed; full local core/floor checks passed. Hosted candidate CI and the owner merge boundary remain; Phase 01.1.1.18 stays complete.
 
-Next action: $gsd-quick "Harden the release-workflow contracts for the UAT audit findings; keep workflow and lib files unchanged" — implement the highest-priority automated hardening in a separate contract-only delivery. No new task has started; parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
+Next action: publish the reviewed quick-task candidate and obtain required hosted CI receipts. Parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
 Resume file: None

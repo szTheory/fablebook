@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-quick \"Harden the release-workflow contracts for the UAT audit findings; keep workflow and lib files unchanged\"",
-    "label": "Automate the remaining release-contract hardening",
-    "reason": "UAT audit reconciled stale records and reproduced undetected workflow mutations locally. Six groups remain; no human UAT or new phase is needed for the contract-only recommendation. Parent aggregate and Phase 2 gates remain."
+    "command": "gh pr checks --required",
+    "label": "Obtain hosted CI for the reviewed release-contract candidate",
+    "reason": "Full local core and floor checks passed; publish the candidate under standing authorization, then observe all required hosted results before the owner merge boundary. Parent and Phase 2 gates remain."
   },
-  "updated_at": "2026-11-10T21:25:20+00:00"
+  "updated_at": "2026-11-10T23:54:44+00:00"
 }
