@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 ## Current Position
 
 Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions (INSERTED)) — EXECUTING
-Plan: 01 of3; no source tasks complete
+Plan: 02 of3; core source Plan01 completed and summarized
 Status: Executing — approved allocation correction passed independent check
 Last activity: 2026-11-10 — Phase 01.1.1.18 source allocation repaired and independently checked; executing core Plan01 of three sequential plans.
 
