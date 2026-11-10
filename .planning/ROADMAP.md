@@ -42,6 +42,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [x] **Phase 01.1.1.15: Bound ASN.1 table-wrapper exclusions** (INSERTED) - source-backed disposition for the bounded EX-107 ASN.1 table-wrapper slice; parent aggregate remains open (completed 2026-11-05)
 - [x] **Phase 01.1.1.16: Bound ASN.1 parser and tokenizer exclusions** (INSERTED) (completed 2026-11-09)
 - [x] **Phase 01.1.1.17: Bound ASN.1 external-transform exclusions** (completed 2026-11-10)
+- [ ] **Phase 01.1.1.18: Bound ASN.1 generator-dispatch exclusions**
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -326,6 +327,27 @@ Plans:
 
 Plans:
 - [x] 01.1.1.17-01-PLAN.md
+
+### Phase 01.1.1.18: Bound ASN.1 generator-dispatch exclusions (INSERTED)
+
+**Goal:** Establish source-backed dispositions for the eleven selected ASN.1 generator-dispatch matches in EX-107 on the core and floor lanes, preserving the original row identity and every other match.
+**Requirements**: None completed here (SEC-01 remains assigned to Phase 5)
+**Depends on:** Phase 01.1.1.17
+**Success Criteria** (what must be TRUE):
+  1. EX-107 retains its complete current core and floor match sets; only the eleven selected generator-dispatch matches receive a disposition in this slice, and all other matches remain pending.
+  2. The ten exact lane-specific source identities per lane are bound in the approved offline archive, and citations resolve against the correct lane bytes and spans.
+  3. Exact generated callers and the `gen_server` callback-dispatch path are reviewed on both lanes. Each selected match receives a source-backed lane disposition; any removed matcher has an individual, non-vacuous removal witness on each applicable lane. A graph edge alone is not a disposition.
+  4. Contract controls preserve the complete EX-107 row and lane match sets without invoking audited functions or atom sinks, changing production behavior, or claiming runtime atom safety.
+  5. Required core and floor checks pass and hosted CI receipts identify the reviewed candidate revision.
+  6. The remaining EX-107 matches stay pending; the parent aggregate stays open, SEC-01 remains assigned to Phase 5, and Phase 2 remains gated.
+**Plans:** 0/2 plans executed
+
+Plans:
+**Wave 1**
+- [ ] 01.1.1.18-01-PLAN.md
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01.1.1.18-02-PLAN.md
 
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
