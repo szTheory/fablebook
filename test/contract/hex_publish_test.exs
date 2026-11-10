@@ -46,7 +46,6 @@ defmodule Fablebook.Contract.HexPublishTest do
                   end
                 end) || raise("release contract tests require Bash 5 or newer")
   @runner_bash elem(@runner_shell, 0)
-  @runner_bash_version elem(@runner_shell, 1)
 
   @curl ~S"""
   #!/bin/sh
@@ -147,6 +146,7 @@ defmodule Fablebook.Contract.HexPublishTest do
      @lanes <>
        @smoke_setup <> " ${{ matrix.lane }}\n          mix-env: dev\n          cache: 'true'"},
     {:secret_scope, "  MIX_ENV: dev\n", "  MIX_ENV: dev\n  #{@key_env}\n"},
+    {:secret_scope, {:root_env_after_jobs_secret, @key_env}},
     {:secret_scope, "    env:\n      SHA256:", "    env:\n      #{@key_env}\n      SHA256:"},
     {:secret_scope, "          MIX_ENV: test\n",
      "          MIX_ENV: test\n          #{@key_env}\n"},
@@ -173,10 +173,6 @@ defmodule Fablebook.Contract.HexPublishTest do
     assert release_gate_violations(workflow(), dir) == []
   end
 
-  test "workflow scripts run with Bash 5 or newer" do
-    assert String.to_integer(@runner_bash_version |> String.split(".") |> hd()) >= 5
-  end
-
   test "recovery publishes the package, only the docs or nothing, and fails closed otherwise",
        %{tmp_dir: dir} do
     assert recovery_violations(workflow(), dir) == []
@@ -200,6 +196,16 @@ defmodule Fablebook.Contract.HexPublishTest do
     assert graph_violations(commented) == []
   end
 
+  test "moving the root env block after jobs preserves all verdicts", %{tmp_dir: dir} do
+    reordered = move_root_env_after_jobs(workflow())
+
+    assert reordered != workflow()
+    assert release_gate_violations(reordered, dir) == []
+    assert recovery_violations(reordered, dir) == []
+    assert hygiene_violations(reordered) == []
+    assert graph_violations(reordered) == []
+  end
+
   for {mutation, i} <- Enum.with_index(@mutations, 1) do
     @tag mutation: mutation, rule: elem(mutation, 0)
     test "mutation #{i} fires exactly #{elem(mutation, 0)}", %{tmp_dir: dir} = tags do
@@ -211,7 +217,22 @@ defmodule Fablebook.Contract.HexPublishTest do
   end
 
   defp mutate(text, {_rule, {:move, first, before}}), do: move_step(text, first, before)
+
+  defp mutate(text, {_rule, {:root_env_after_jobs_secret, secret}}) do
+    text
+    |> move_root_env_after_jobs()
+    |> String.replace("  MIX_ENV: dev\n", "  MIX_ENV: dev\n  #{secret}\n", global: false)
+  end
+
   defp mutate(text, {_rule, from, to}), do: String.replace(text, from, to, global: false)
+
+  defp move_root_env_after_jobs(text) do
+    {before, ["env:" | rest]} = text |> lines() |> Enum.split_while(&(&1 != "env:"))
+    {env, after_env} = Enum.split_while(rest, &(not top_level_header?(&1)))
+    Enum.join(before ++ after_env ++ ["env:" | env], "\n")
+  end
+
+  defp top_level_header?(line), do: line =~ ~r/\A[^\s#][^:]*:\s*\z/
 
   defp move_step(text, first, before) do
     {pre, ["  build:" | rest]} = text |> lines() |> Enum.split_while(&(&1 != "  build:"))
@@ -467,6 +488,7 @@ defmodule Fablebook.Contract.HexPublishTest do
     {preamble, _} = text |> lines() |> Enum.split_while(&(&1 != "jobs:"))
     jobs = jobs(text)
     declared = Enum.filter(preamble, &secret?/1)
+    root_secrets = text |> root_env() |> Enum.filter(&secret?/1)
 
     holders =
       for {id, body} <- jobs,
@@ -475,6 +497,7 @@ defmodule Fablebook.Contract.HexPublishTest do
           do: {id, holder(step)}
 
     check(declared == @declared, {:secret_scope, declared}) ++
+      check(root_secrets == [], {:secret_scope, :root_env, root_secrets}) ++
       for(
         {id, body} <- jobs,
         line <- body |> split_steps() |> elem(0),
@@ -485,6 +508,13 @@ defmodule Fablebook.Contract.HexPublishTest do
         holders == [{"publish", :key_check}, {"publish", :publish}],
         {:secret_scope, holders}
       )
+  end
+
+  defp root_env(text) do
+    case Enum.drop_while(lines(text), &(&1 != "env:")) do
+      ["env:" | rest] -> Enum.take_while(rest, &(not top_level_header?(&1)))
+      _ -> []
+    end
   end
 
   defp holder(step) do
