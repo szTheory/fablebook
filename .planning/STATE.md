@@ -1,18 +1,18 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.1
-current_phase_name: "Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons"
-status: executing
-stopped_at: Phase 01.1.1.16 complete, ready to execute Phase 01.1.1.1
-last_updated: "2026-11-09T16:26:16.405Z"
-last_activity: 2026-11-09
-last_activity_desc: Phase 01.1.1.16 complete, transitioned to Phase 01.1.1.1
-state_head: c12b65ff7afd2b85ef132f24709ea54159a64cc3
+current_phase: 01.1.1.17
+current_phase_name: "Bound ASN.1 external-transform exclusions"
+status: verifying
+stopped_at: Phase 01.1.1.17 local checks and review complete; hosted receipt pending
+last_updated: "2026-11-10T06:38:18Z"
+last_activity: 2026-11-10
+last_activity_desc: Phase 01.1.1.17 local validation passed and review is clean; hosted delivery is underway
+state_head: 298aec660bdb58e94ac4151d8eb6cab32950fb84
 progress:
-  total_phases: 46
+  total_phases: 47
   completed_phases: 2
-  total_plans: 41
-  completed_plans: 37
+  total_plans: 42
+  completed_plans: 38
   percent: 4
 ---
 
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-08)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.16 is complete. The parent Phase 01.1.1.1 aggregate remains open and needs a fresh plan; its old Plan 01 is halted and Plans 02–05 are superseded. Keep Phase 2 gated and SEC-01 with Phase 5.
+**Current focus:** Phase 01.1.1.17 — Bound ASN.1 external-transform exclusions. The parent Phase 01.1.1.1 aggregate remains open; keep Phase 2 gated and SEC-01 with Phase 5.
 
 ## Current Position
 
-Phase: 01.1.1.1 — Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons (open aggregate; replan required)
-Plan: None — prior Plan 01 is halted and Plans 02–05 are superseded
-Status: Awaiting replan; Phase 01.1.1.16 is complete
-Last activity: 2026-11-09 — Phase 01.1.1.16 complete, transitioned to Phase 01.1.1.1
+Phase: 01.1.1.17 — Bound ASN.1 external-transform exclusions
+Plan: 01.1.1.17-01 of 1 — execution complete
+Status: Verifying; hosted candidate receipt remains open
+Last activity: 2026-11-10 — local phase checks passed and WR-01 was resolved; delivery candidate is being prepared
 
-Progress: 2/46 phases complete ([░░░░░░░░░░] 4%); 36/37 live plans summarized ([█████████░] 97%)
+Progress: 2/47 phases complete ([░░░░░░░░░░] 4%); 38/42 total plans summarized ([█████████░] 90%)
 
 ## Performance Metrics
 
