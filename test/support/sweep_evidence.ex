@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "195349ca555328994cfe7f50161863e0f2a8e9ebf07fb143cf8ea681bb2a18f8"
+  @archive_sha "9a49947455b5d4697f8fd122f0e6d92c7b94dba4641aba6c7e1ca4b0c400315d"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -73,20 +73,40 @@ defmodule Fablebook.Test.SweepEvidence do
       10779,
       "334d7db4ab13c40f51fcfca8d0862d90c39e57d15bdf5eaf37f698aa4fa7f07b"
     },
+    {"floor", "asn1/src/asn1ct_gen_check.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_gen_check.erl",
+      10737,
+      "80be7185dd900a3b2b890153379ff713a47079fa216aef69b224837f38b3f1b4"
+    },
     {"core", "asn1/src/asn1ct_gen_jer.erl"} => {
       "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_gen_jer.erl",
       21571,
       "52037ca2e912292971faf5862786f94de7d815910a8545c0f23179d660bae1a0"
+    },
+    {"floor", "asn1/src/asn1ct_gen_jer.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_gen_jer.erl",
+      21380,
+      "5cb747179c6210bfc21d61805708447fca2888e50ef4c6b188a44f0ac2ed1319"
     },
     {"core", "asn1/src/asn1ct_gen_per.erl"} => {
       "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_gen_per.erl",
       14985,
       "f122289b606aff8c26a978a4a61793b5613ae7f712e86e58e3f53d5dcbdd5068"
     },
+    {"floor", "asn1/src/asn1ct_gen_per.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_gen_per.erl",
+      14868,
+      "568dcc2ff43db91e1c6d94d902be06f71696cca02cddcb9cb6b652813552355a"
+    },
     {"core", "asn1/src/asn1ct_imm.erl"} => {
       "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_imm.erl",
       87381,
       "ff6c00798a44156ca6c42e134036b014db34de63e855eef4471587c14bb01ed7"
+    },
+    {"floor", "asn1/src/asn1ct_imm.erl"} => {
+      "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/asn1/src/asn1ct_imm.erl",
+      87339,
+      "975f8bcf64f4719571e2b49037a6500b7661ed2ee6197d003fdbae98c0d143ca"
     },
     {"core", "asn1/src/asn1ct_gen_ber_bin_v2.erl"} => {
       "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/asn1/src/asn1ct_gen_ber_bin_v2.erl",
@@ -1103,9 +1123,107 @@ defmodule Fablebook.Test.GeneratorDispatchFloorCallerAEvidence do
       edge({:asn1ct_gen, :pgen, 3}, {:asn1ct_func, :generate, 1}, [{"asn1/src/asn1ct_gen.erl:88", "asn1ct_func:generate(Fd)"}]),
       edge({:asn1ct_gen, :pgen_dispatcher, 2}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_gen.erl:763", "asn1ct_func:need({per,complete,1})"}, {"asn1/src/asn1ct_gen.erl:770", "asn1ct_func:need({uper,complete_NFP,1})"}, {"asn1/src/asn1ct_gen.erl:773", "asn1ct_func:need({uper,complete,1})"}]),
       edge({:asn1ct_gen, :pgen_dispatcher_decode, 3}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_gen.erl:849", "asn1ct_func:need({ber,ber_decode_nif,1})"}, {"asn1/src/asn1ct_gen.erl:852", "asn1ct_func:need({ber,ber_decode_nif,1})"}]),
+      edge({:asn1ct_gen, :do_emit, 1}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_gen.erl:1087", "asn1ct_func:need(MFA)"}]),
       edge({:asn1ct_gen_ber_bin_v2, :call, 2}, {:asn1ct_func, :call, 3}, [{"asn1/src/asn1ct_gen_ber_bin_v2.erl:1592", "asn1ct_func:call(ber, F, Args)"}]),
       edge({:asn1ct_gen_ber_bin_v2, :suppress, 2}, {:asn1ct_func, :is_used, 1}, [{"asn1/src/asn1ct_gen_ber_bin_v2.erl:98", "asn1ct_func:is_used(MFA)"}])
     ]
+  end
+
+  defp review(source_path, reviewed_lines, citations, finding) do
+    %{source_path: source_path, reviewed_lines: reviewed_lines, citations: citations, finding: finding}
+  end
+
+  defp edge(caller, callee, citations), do: %{caller: caller, callee: callee, citations: citations}
+
+  defp elapsed_seconds do
+    {:ok, started, _offset} = DateTime.from_iso8601(@started_at)
+    {:ok, completed, _offset} = DateTime.from_iso8601(@completed_at)
+    DateTime.diff(completed, started)
+  end
+end
+
+defmodule Fablebook.Test.GeneratorDispatchFloorCallerBEvidence do
+  @moduledoc false
+
+  alias Fablebook.Test.GeneratorDispatchFloorEvidence
+  alias Fablebook.Test.GeneratorDispatchFloorCallerAEvidence
+
+  @started_at "2026-11-10T18:42:52Z"
+  @completed_at "2026-11-10T18:48:32Z"
+  @exact_sources [
+    {"asn1/src/asn1ct_func.erl", 4347,
+     "5487ba870e7c265cd7fe41761f1c5c528385d164faa07df15858fe48e2d21ebf"},
+    {"asn1/src/asn1ct_gen_check.erl", 10737,
+     "80be7185dd900a3b2b890153379ff713a47079fa216aef69b224837f38b3f1b4"},
+    {"asn1/src/asn1ct_gen_jer.erl", 21380,
+     "5cb747179c6210bfc21d61805708447fca2888e50ef4c6b188a44f0ac2ed1319"},
+    {"asn1/src/asn1ct_gen_per.erl", 14868,
+     "568dcc2ff43db91e1c6d94d902be06f71696cca02cddcb9cb6b652813552355a"},
+    {"asn1/src/asn1ct_imm.erl", 87339,
+     "975f8bcf64f4719571e2b49037a6500b7661ed2ee6197d003fdbae98c0d143ca"}
+  ]
+
+  def record do
+    %{
+      lane: "floor",
+      original_id: "EX-107",
+      owner: "01.1.1.4",
+      semantic_status: :pending,
+      method: :source_only,
+      started_at: @started_at,
+      completed_at: @completed_at,
+      elapsed_seconds: elapsed_seconds(),
+      exact_sources: @exact_sources,
+      selected_function_evidence: GeneratorDispatchFloorEvidence.record().selected_function_evidence,
+      reviews: [
+        review("asn1/src/asn1ct_gen_check.erl", [30..40, 62..130, 146..200, 338..340], [
+          {"asn1/src/asn1ct_gen_check.erl:36", "asn1ct_func:call_gen(\"is_default_\", Key, DoGen, [Value])"},
+          {"asn1/src/asn1ct_gen_check.erl:75", "need(check_legacy_bitstring, 2)"},
+          {"asn1/src/asn1ct_gen_check.erl:84", "need(check_int, 3)"},
+          {"asn1/src/asn1ct_gen_check.erl:111", "asn1ct_func:call_gen(\"is_default_choice\", Key, DoGen)"},
+          {"asn1/src/asn1ct_gen_check.erl:160", "asn1ct_func:call_gen(\"is_default_cs_\", Key, DoGen)"},
+          {"asn1/src/asn1ct_gen_check.erl:179", "asn1ct_func:call_gen(\"is_default_cs_\", Key, DoGen)"},
+          {"asn1/src/asn1ct_gen_check.erl:197", "asn1ct_func:call_gen(\"is_default_sof\", Key, DoGen)"},
+          {"asn1/src/asn1ct_gen_check.erl:339", "asn1ct_func:need({check,F,A})"}
+        ], "All generated function prefixes in the allocated clauses are fixed strings. Keys and local closures capture ASN.1 type/default data and serialize comparison source; the Value is a function argument, not part of the generated atom prefix. need/2 combines an existing helper-function atom with fixed module check for the RTT membership request."),
+        review("asn1/src/asn1ct_gen_jer.erl", [353..365], [
+          {"asn1/src/asn1ct_gen_jer.erl:354", "asn1ct_func:is_used(MFA)"},
+          {"asn1/src/asn1ct_gen_jer.erl:359", ~S/emit(["    _ = ",{call,M,F,Args},com,nl])/}
+        ], "suppress/1 queries membership using the structured MFA it receives, then emits a call record containing existing M/F atoms and positional argument text. No string-to-atom operation is in the allocated path."),
+        review("asn1/src/asn1ct_gen_per.erl", [55..65], [
+          {"asn1/src/asn1ct_gen_per.erl:56", "asn1ct_func:is_used(MFA)"},
+          {"asn1/src/asn1ct_gen_per.erl:63", ~S/emit(["    _ = ",{call,M,F,Args},com,nl])/}
+        ], "The PER suppress path shares JER's fixed membership check and serializes the existing M/F atoms into generated source. It does not convert names from strings."),
+        review("asn1/src/asn1ct_imm.erl", [468..490, 505..538, 2365..2452], [
+          {"asn1/src/asn1ct_imm.erl:522", "asn1ct_func:call(per_common,"},
+          {"asn1/src/asn1ct_imm.erl:2394", "enc_cg({call,M,F,As0}) ->"},
+          {"asn1/src/asn1ct_imm.erl:2396", "asn1ct_func:call(M, F, As)"},
+          {"asn1/src/asn1ct_imm.erl:2401", "enc_cg({call_gen,Prefix,Key,Gen,_,As0}) ->"},
+          {"asn1/src/asn1ct_imm.erl:2403", "asn1ct_func:call_gen(Prefix, Key, Gen, As)"}
+        ], "dec_string/4 builds a local closure for the fixed per_common:decode_fragmented MFA and carries it in intermediate representation. enc_cg/1 forwards pre-existing M/F atoms through call/3, and forwards an IR-supplied Prefix/Key/Gen tuple through call_gen/4. That Prefix producer is outside the allocated spans, so its origin remains unresolved; it reaches the target atom builder, but no user-controlled-input claim is made.")
+      ],
+      incoming_edges: complete_incoming_edges()
+    }
+  end
+
+  def complete_incoming_edges do
+    caller_a = GeneratorDispatchFloorCallerAEvidence.record().incoming_edges
+
+    caller_b = [
+      edge({:asn1ct_gen_check, :do_gen, 3}, {:asn1ct_func, :call_gen, 3}, [{"asn1/src/asn1ct_gen_check.erl:111", "asn1ct_func:call_gen(\"is_default_choice\", Key, DoGen)"}]),
+      edge({:asn1ct_gen_check, :do_seq_set, 3}, {:asn1ct_func, :call_gen, 3}, [{"asn1/src/asn1ct_gen_check.erl:160", "asn1ct_func:call_gen(\"is_default_cs_\", Key, DoGen)"}, {"asn1/src/asn1ct_gen_check.erl:179", "asn1ct_func:call_gen(\"is_default_cs_\", Key, DoGen)"}]),
+      edge({:asn1ct_gen_check, :do_sof, 3}, {:asn1ct_func, :call_gen, 3}, [{"asn1/src/asn1ct_gen_check.erl:197", "asn1ct_func:call_gen(\"is_default_sof\", Key, DoGen)"}]),
+      edge({:asn1ct_gen_check, :emit, 4}, {:asn1ct_func, :call_gen, 4}, [{"asn1/src/asn1ct_gen_check.erl:36", "asn1ct_func:call_gen(\"is_default_\", Key, DoGen, [Value])"}]),
+      edge({:asn1ct_gen_check, :need, 2}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_gen_check.erl:339", "asn1ct_func:need({check,F,A})"}]),
+      edge({:asn1ct_gen_jer, :suppress, 1}, {:asn1ct_func, :is_used, 1}, [{"asn1/src/asn1ct_gen_jer.erl:354", "asn1ct_func:is_used(MFA)"}]),
+      edge({:asn1ct_gen_per, :suppress, 1}, {:asn1ct_func, :is_used, 1}, [{"asn1/src/asn1ct_gen_per.erl:56", "asn1ct_func:is_used(MFA)"}]),
+      edge({:asn1ct_imm, :dec_string, 4}, {:asn1ct_func, :call, 3}, [{"asn1/src/asn1ct_imm.erl:522", "asn1ct_func:call(per_common"}]),
+      edge({:asn1ct_imm, :enc_cg, 1}, {:asn1ct_func, :call, 3}, [{"asn1/src/asn1ct_imm.erl:2396", "asn1ct_func:call(M, F, As)"}]),
+      edge({:asn1ct_imm, :enc_cg, 1}, {:asn1ct_func, :call_gen, 4}, [{"asn1/src/asn1ct_imm.erl:2403", "asn1ct_func:call_gen(Prefix, Key, Gen, As)"}]),
+      edge({:asn1ct_func, :call, 3}, {:asn1ct_func, :need, 1}, [{"asn1/src/asn1ct_func.erl:36", "need(MFA)"}])
+    ]
+
+    caller_a ++ caller_b
   end
 
   defp review(source_path, reviewed_lines, citations, finding) do

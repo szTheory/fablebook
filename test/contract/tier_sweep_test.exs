@@ -63,6 +63,7 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
   alias Fablebook.Test.GeneratorDispatchCoreEvidence
   alias Fablebook.Test.GeneratorDispatchFloorEvidence
   alias Fablebook.Test.GeneratorDispatchFloorCallerAEvidence
+  alias Fablebook.Test.GeneratorDispatchFloorCallerBEvidence
   alias Fablebook.Test.GeneratorDispatchCallerAEvidence
   alias Fablebook.Test.GeneratorDispatchCallerBEvidence
   alias Fablebook.Test.SweepEvidence
@@ -301,7 +302,7 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
     assert record.semantic_status == :pending
     assert length(record.exact_sources) == 5
     assert length(record.reviews) == 4
-    assert length(record.incoming_edges) == 16
+    assert length(record.incoming_edges) == 17
 
     for {path, bytes, sha256} <- record.exact_sources do
       source = SweepEvidence.resolve!(evidence, path <> ":1")
@@ -329,6 +330,52 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
     [per_review] = Enum.filter(record.reviews, &(&1.source_path == "asn1/src/asn1ct_constructed_per.erl"))
     assert String.contains?(per_review.finding, "caller-derived compiler metadata")
     assert String.contains?(per_review.finding, "no user-controlled-input claim")
+  end
+
+  @tag :generator_dispatch_011118
+  test "floor caller batch B completes all eleven findings and the exact 28-edge caller graph" do
+    evidence = archive_only_evidence!("floor")
+    record = GeneratorDispatchFloorCallerBEvidence.record()
+    support = GeneratorDispatchFloorEvidence.record()
+    caller_a = GeneratorDispatchFloorCallerAEvidence.record()
+
+    assert record.original_id == "EX-107"
+    assert record.owner == "01.1.1.4"
+    assert record.semantic_status == :pending
+    assert length(record.exact_sources) == 5
+    assert length(record.reviews) == 4
+    assert length(record.selected_function_evidence) == 11
+
+    all_sources = [support, caller_a, record] |> Enum.flat_map(& &1.exact_sources)
+    assert MapSet.size(MapSet.new(all_sources, &elem(&1, 0))) == 13
+
+    for {path, bytes, sha256} <- record.exact_sources do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    for review <- record.reviews do
+      assert String.length(review.finding) > 120
+
+      for {citation, expected} <- review.citations do
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected, citation
+      end
+    end
+
+    assert length(record.incoming_edges) == 28
+    external_edges = Enum.reject(record.incoming_edges, &match?({:asn1ct_func, _, _}, &1.caller))
+    assert length(external_edges) == 27
+    assert MapSet.size(MapSet.new(external_edges, & &1.caller)) == 25
+
+    for edge <- record.incoming_edges, {citation, expected} <- edge.citations do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+    end
   end
 
 
