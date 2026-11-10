@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 14 of 48 · 4% · executing"
+    "command": "/gsd-execute-phase 01.1.1.18",
+    "label": "Execute the independently checked three-plan source slice",
+    "reason": "Allocation stop resolved by approved connected sizing; no source tasks complete"
   },
-  "updated_at": "2026-11-10T16:25:56.954Z"
+  "updated_at": "2026-11-10T17:53:19+00:00"
 }

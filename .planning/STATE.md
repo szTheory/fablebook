@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.18
 current_phase_name: Bound ASN.1 generator-dispatch exclusions (INSERTED)
 status: executing
-stopped_at: Phase 01.1.1.18 planned; both plans passed independent review and all decision/coverage gates.
-last_updated: "2026-11-10T16:29:22.480Z"
+stopped_at: Phase 01.1.1.18 source allocation repaired and independently checked; executing core Plan01 of three sequential plans.
+last_updated: "2026-11-10T17:53:19+00:00"
 last_activity: 2026-11-10
-last_activity_desc: Phase 01.1.1.17 merged green and verified; Phase 01.1.1.1 is ready to plan
+last_activity_desc: Phase 01.1.1.18 source allocation repaired and independently checked; executing core Plan01 of three sequential plans.
 state_head: 40bdd440483bdd06438b6293866adf2aa7924629
 progress:
   total_phases: 48
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 
 ## Current Position
 
-Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions (INSERTED)) — READY TO EXECUTE
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-11-10 — Phase 01.1.1.17 merged green and verified; Phase 01.1.1.1 is ready to plan
+Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions (INSERTED)) — EXECUTING
+Plan: 03 of3; core and floor source plans completed and summarized
+Status: Executing — approved allocation correction passed independent check
+Last activity: 2026-11-10 — Phase 01.1.1.18 source allocation repaired and independently checked; executing core Plan01 of three sequential plans.
 
 Progress: 2/47 phases complete ([░░░░░░░░░░] 4%); 38/42 total plans summarized ([█████████░] 90%)
 
@@ -235,7 +235,7 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-11-10T16:29:21Z
-Stopped at: Phase 01.1.1.18 planned; both plans passed independent review and all decision/coverage gates.
+Stopped at: Phase 01.1.1.18 source allocation repaired and independently checked; executing core Plan01 of three sequential plans.
 
-Next action: $gsd-execute-phase 01.1.1.18 — execute its two plans in order after the planning candidate is merged.
+Next action: $gsd-execute-phase 01.1.1.18 — execute corrected Plans01/02/03 in order; keep parent aggregate open, SEC-01 with Phase5 and Phase2 gated.
 Resume file: None
