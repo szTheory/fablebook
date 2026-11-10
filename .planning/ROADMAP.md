@@ -310,6 +310,23 @@ Plans:
 Plans:
 - [x] 01.1.1.16-01-PLAN.md
 
+### Phase 01.1.1.17: Bound ASN.1 external-transform exclusions (INSERTED)
+
+**Goal:** Establish a source-backed disposition for the two EX-107 ASN.1 external-transform helpers on the core and floor lanes, preserving the original row and all matches outside this slice.
+**Requirements:** None completed here (SEC-01 remains assigned to Phase 5)
+**Depends on:** Phase 01.1.1.16
+**Success Criteria:**
+  1. Preserve the complete current EX-107 match set on both lanes and select only the two named helpers for this slice.
+  2. Bind five exact lane-specific sources per lane into the approved offline archive with immutable identities and cited lines.
+  3. Reconcile generated calls, dynamic helper selection, and runtime templates from exact source; ordinary Xref absence is not caller evidence.
+  4. Record lane-specific dispositions from complete helper and caller paths and retain non-vacuous individual matcher witnesses.
+  5. Preserve the full row and slice on both lanes without invoking audited functions or changing production behavior.
+  6. Keep required local and hosted checks tied to the reviewed candidate; leave the parent aggregate, SEC-01, and Phase 2 open.
+**Plans:** 1/1 plans executed
+
+Plans:
+- [x] 01.1.1.17-01-PLAN.md
+
 ### Phase 2: Walking skeleton and runner spike
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
 **Mode:** mvp

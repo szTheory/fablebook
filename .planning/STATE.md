@@ -98,6 +98,7 @@ Progress: 2/47 phases complete ([░░░░░░░░░░] 4%); 38/42 tota
 | Phase 01 P08 | 55 | 3 tasks | 4 files |
 | Phase 01 P09 | 43 | 3 tasks | 8 files |
 | Phase 01.1.1.16 P01 | 93m | 3 tasks | 5 files |
+| Phase 01.1.1.17 P01 | 1h 7m 19s | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -188,6 +189,8 @@ Recent decisions affecting current work:
 - [Phase 01.1.1.16]: Keep EX-107 identity, owner, pending status, and complete match sets; select only four parser/tokenizer MFAs per lane and retain the other 173.
 - [Phase 01.1.1.16]: Keep parse/2 and file/1 as exact tiers; retain format_error/1 as narrow pure-data exclusions with individual witnesses.
 - [Phase 01.1.1.16]: Hosted CI remains open because the branch was not published; SEC-01 stays with Phase 5 and the Phase 2 gate stays open.
+- [Phase 01.1.1.17]: Both selected helpers are fixed-shape data transforms; source evidence does not justify an active atom-creation tier or probe.
+- [Phase 01.1.1.17]: Preserve EX-107's pending remainder, the parent aggregate, Phase 5 SEC-01, and the Phase 2 gate.
 
 ### Pending Todos
 
@@ -227,8 +230,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-09T04:11:07.746Z
-Stopped at: Phase 01.1.1.16 complete; parent Phase 01.1.1.1 remains open and requires replanning
+Last session: 2026-11-10T06:38:18Z
+Stopped at: Phase 01.1.1.17 local checks and review are complete; hosted delivery is being prepared
 
-Next action: After `/clear`, run `$gsd-resume-work`, then replan Phase 01.1.1.1 before any execution. Do not execute its halted or superseded plans. Keep the Phase 2 gate open and SEC-01 ownership in Phase 5.
+Next action: Publish the isolated Phase 01.1.1.17 candidate and collect its hosted checks, then finish phase verification. Keep the parent aggregate, Phase 2 gate, and Phase 5 SEC-01 ownership open.
 Resume file: None
