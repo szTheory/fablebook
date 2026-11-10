@@ -62,6 +62,7 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
 
   alias Fablebook.Test.GeneratorDispatchCoreEvidence
   alias Fablebook.Test.GeneratorDispatchCallerAEvidence
+  alias Fablebook.Test.GeneratorDispatchCallerBEvidence
   alias Fablebook.Test.SweepEvidence
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
@@ -140,6 +141,76 @@ defmodule Fablebook.Contract.GeneratorDispatchCoreEvidenceTest do
         assert source.origin == :archive
         assert source.text =~ expected, citation
       end
+    end
+  end
+
+  @tag :generator_dispatch_011118
+  test "core caller batch B completes selected-MFA and full direct-edge evidence" do
+    evidence = archive_only_evidence!()
+    record = GeneratorDispatchCallerBEvidence.record()
+    [core] = GeneratorDispatchCoreEvidence.records()
+
+    assert length(record.exact_sources) == 5
+    assert length(record.reviews) == 4
+    assert length(core.selected_function_evidence) == 11
+
+    expected_mfas =
+      MapSet.new([
+        {:asn1ct_func, :call, 3},
+        {:asn1ct_func, :call_gen, 3},
+        {:asn1ct_func, :call_gen, 4},
+        {:asn1ct_func, :generate, 1},
+        {:asn1ct_func, :handle_call, 3},
+        {:asn1ct_func, :handle_cast, 2},
+        {:asn1ct_func, :init, 1},
+        {:asn1ct_func, :is_used, 1},
+        {:asn1ct_func, :need, 1},
+        {:asn1ct_func, :start_link, 0},
+        {:asn1ct_func, :terminate, 2}
+      ])
+
+    assert MapSet.new(core.selected_function_evidence, & &1.mfa) == expected_mfas
+
+    for {path, bytes, sha256} <- record.exact_sources do
+      source = SweepEvidence.resolve!(evidence, path <> ":1")
+      assert source.origin == :archive
+      assert source.sha256 == sha256
+      assert File.stat!(source.path).size == bytes
+    end
+
+    for review <- record.reviews do
+      assert String.length(review.finding) > 120
+
+      for {citation, expected} <- review.citations do
+        source = SweepEvidence.resolve!(evidence, citation)
+        assert source.origin == :archive
+        assert source.text =~ expected, citation
+      end
+    end
+
+    for function <- core.selected_function_evidence,
+        {citation, expected} <- function.citations do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
+      assert String.length(function.trace) > 100
+    end
+
+    assert Enum.count(core.selected_function_evidence, &(&1.interim_disposition == :active_dynamic_atom_creation_candidate)) == 1
+    assert length(record.incoming_edges) == 28
+
+    external_callers =
+      record.incoming_edges
+      |> Enum.map(& &1.caller)
+      |> Enum.reject(&match?({:asn1ct_func, _, _}, &1))
+      |> MapSet.new()
+
+    assert MapSet.size(external_callers) == 25
+
+    for edge <- record.incoming_edges, {citation, expected} <- edge.citations do
+      source = SweepEvidence.resolve!(evidence, citation)
+      assert source.origin == :archive
+      assert source.text =~ expected, citation
     end
   end
 
