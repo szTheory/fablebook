@@ -41,7 +41,7 @@ Fablebook goes from an empty repo to a 1.0 that clears `.planning/intent/CLEARAN
 - [x] **Phase 01.1.1.14: Bound Leex caller-chosen atom creation** (completed 2026-11-05)
 - [x] **Phase 01.1.1.15: Bound ASN.1 table-wrapper exclusions** (INSERTED) - source-backed disposition for the bounded EX-107 ASN.1 table-wrapper slice; parent aggregate remains open (completed 2026-11-05)
 - [x] **Phase 01.1.1.16: Bound ASN.1 parser and tokenizer exclusions** (INSERTED) (completed 2026-11-09)
-- [ ] **Phase 01.1.1.17: Bound ASN.1 external-transform exclusions**
+- [x] **Phase 01.1.1.17: Bound ASN.1 external-transform exclusions** (completed 2026-11-10)
 - [ ] **Phase 2: Walking skeleton and runner spike** - one story rendering in two host apps, one guarded visual check, runner criteria answered
 
 **Family 2: Story model and catalog**
@@ -322,7 +322,7 @@ Plans:
   4. Record lane-specific dispositions from complete helper and caller paths and retain non-vacuous individual matcher witnesses.
   5. Preserve the full row and slice on both lanes without invoking audited functions or changing production behavior.
   6. Keep required local and hosted checks tied to the reviewed candidate; leave the parent aggregate, SEC-01, and Phase 2 open.
-**Plans:** 1/1 plans executed
+**Plans:** 1/1 plans complete
 
 Plans:
 - [x] 01.1.1.17-01-PLAN.md

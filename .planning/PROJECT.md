@@ -343,6 +343,7 @@ Every item below is a v1.0 commitment.
 | Absolute Elixir module names bypass local alias expansion (01.1.1-REVIEW CR-01) | A local alias must not hide a root-qualified quoted call | Fixed in PR #20; source-only fixture and direct/apply/benign controls pass on both lanes |
 | Keep CN-001 and CN-004 identities while closing their bounded source-authority gaps (Phase 01.1.1.13) | Existing ledger rows remain the authority; closures need complete exact-lane source and caller evidence | Both rows have integrated core/floor evidence and applicable coverage controls; the broader exclusion audit and Phase 01.1.1.1 aggregate remain open |
 | Keep CN-004's exact `Plug.Builder.compile/3` coverage separate from broader expansion ownership (Phase 01.1.1.13) | The source-backed boundary is in scope, while the broad expansion and Macro caller-AST decisions belong to existing owners | The exact live match maps to independent boundary coverage; broader expansion policy was left unchanged |
+| Review ASN.1 external-transform helpers from lane-specific source and their caller paths (Phase 01.1.1.17) | An Xref edge alone cannot determine whether caller-controlled input reaches atom creation | Both selected EX-107 helpers are fixed-shape data transforms; no atom-creation tier was added, and all remaining EX-107 matches stay pending |
 | Bind delivery evidence to a clean tested candidate (Phase 01.1.1.13) | Local lane results and required CI must identify the same reviewed commit | PR #47 merged after exact-head checks; the test-only TAP formatter is opt-in, and no aggregate, SEC-01, or Phase 2 gate was closed |
 
 ## Roadmap constraints (for the roadmapper)
@@ -423,4 +424,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-08 after Phase 01.1; the Phase 01.1.1.1 aggregate remains open*
+*Last updated: 2026-11-10 after Phase 01.1.1.17; the Phase 01.1.1.1 aggregate remains open*

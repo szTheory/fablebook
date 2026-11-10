@@ -1,13 +1,13 @@
 ---
 gsd_state_version: "1.0"
-current_phase: 01.1.1.17
-current_phase_name: "Bound ASN.1 external-transform exclusions"
-status: verifying
-stopped_at: Phase 01.1.1.17 local checks and review complete; hosted receipt pending
-last_updated: "2026-11-10T06:38:18Z"
+current_phase: 01.1.1.1
+current_phase_name: "Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons"
+status: planning
+stopped_at: Phase 01.1.1.17 merged and verified; ready to plan Phase 01.1.1.1
+last_updated: "2026-11-10T15:00:08.713Z"
 last_activity: 2026-11-10
-last_activity_desc: Phase 01.1.1.17 local validation passed and review is clean; hosted delivery is underway
-state_head: 298aec660bdb58e94ac4151d8eb6cab32950fb84
+last_activity_desc: Phase 01.1.1.17 merged green and verified; Phase 01.1.1.1 is ready to plan
+state_head: d8e807b2ebf30c457ccdee0bf39edc0b9d5412f7
 progress:
   total_phases: 47
   completed_phases: 2
@@ -20,24 +20,24 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-11-08)
+See: .planning/PROJECT.md (updated 2026-11-10)
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 01.1.1.17 — Bound ASN.1 external-transform exclusions. The parent Phase 01.1.1.1 aggregate remains open; keep Phase 2 gated and SEC-01 with Phase 5.
+**Current focus:** Phase 01.1.1.1 — review remaining obligations and plan the next bounded source slice; keep Phase 2 gated and SEC-01 with Phase 5
 
 ## Current Position
 
-Phase: 01.1.1.17 — Bound ASN.1 external-transform exclusions
-Plan: 01.1.1.17-01 of 1 — execution complete
-Status: Verifying; hosted candidate receipt remains open
-Last activity: 2026-11-10 — local phase checks passed and WR-01 was resolved; delivery candidate is being prepared
+Phase: 01.1.1.1 — Finish the ban list: atom creators, every installed OTP app, and true exclusion reasons
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-11-10 — Phase 01.1.1.17 merged green and verified; Phase 01.1.1.1 is ready to plan
 
 Progress: 2/47 phases complete ([░░░░░░░░░░] 4%); 38/42 total plans summarized ([█████████░] 90%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 39
+- Total plans completed: 40
 - Average duration: 34.2 min
 - Total execution time: 8.6 hours
 
@@ -55,6 +55,7 @@ Progress: 2/47 phases complete ([░░░░░░░░░░] 4%); 38/42 tota
 | 01 | 9 | - | - |
 | 01.1 | 5 | - | - |
 | 01.1.1.16 | 1 | - | - |
+| 01.1.1.17 | 1 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: 16, 32, 73, 167, 28 min
@@ -230,8 +231,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-10T06:38:18Z
-Stopped at: Phase 01.1.1.17 local checks and review are complete; hosted delivery is being prepared
+Last session: 2026-11-10T14:57:29Z
+Stopped at: Phase 01.1.1.17 merged and verified; ready to plan Phase 01.1.1.1
 
-Next action: Publish the isolated Phase 01.1.1.17 candidate and collect its hosted checks, then finish phase verification. Keep the parent aggregate, Phase 2 gate, and Phase 5 SEC-01 ownership open.
+Next action: Review the remaining Phase 01.1.1.1 obligations against delivered work, then plan the next bounded source slice. Keep historical plans 01–05 blocked; preserve complete EX rows and matches; Phase 2 remains gated and SEC-01 remains with Phase 5.
 Resume file: None
