@@ -1,19 +1,19 @@
 # Fablebook brand source intake
 
-**Status:** Source pinned for future planning. The owner explicitly chose to wait for version 2.1 and keep the intake and assets staged; no brand has been applied. See [INT-20261111-07](../intent/sources/2026-11-11-07-fablebook-brand-version-hold.md). Guard Phase 1 continues independently.
+**Status:** Version **2.1** is now pinned and read in full. The owner's version-wait condition is satisfied; assets remain staged and unapplied. [INT-20261111-07](../intent/sources/2026-11-11-07-fablebook-brand-version-hold.md) records the earlier wait, and [INT-20261111-08](../intent/sources/2026-11-11-08-fablebook-brand-refresh.md) records the requested refresh and observed result. Guard Phase 1 continues independently.
 
 ## Provenance
 
 - Source repository: https://github.com/szTheory/fablebook-brand
-- Observed upstream main commit: 5a13d2f32db0783bd7eebaa416d53b0701288a67 (2026-11-11)
-- Source-reported version: **2.0** in BRAND.md, brand.json, and assets/README.md.
-- The owner expected version 2.1. Upstream main still reports 2.0, so 2.0 is the pinned evidence and 2.1 remains unresolved. Do not apply assets or copy book text until the version is reconciled.
+- Observed upstream main commit: b2e3441218f9d62f857ab9ff7b4b62fdc320078c (2026-11-11)
+- Source-reported version: **2.1** in BRAND.md, brand.json, and assets/README.md.
+- The initial snapshot at 5a13d2f32db0783bd7eebaa416d53b0701288a67 reported 2.0. After the owner requested another upstream check, main advanced and a fresh clean clone reported 2.1. Preserve that history; the version discrepancy is resolved.
 - SHA-256:
-  - BRAND.md: 1715a945b89bddd625a24daa1d6559ffea26c9974e6219821b2c4d997aa02074
-  - brand.json: 173dbee5c20de8e6c3998c9b499b86ebb2c3eeb94cef92d2f6a5aa38777e35c6
-  - tokens.json: ed7170d1283b5454496425f80d89b57e5285ea790b7a385a6998555eed8a34dd
-  - assets/index.html: 53f72c190dea689134fb8ca4cdde121ee6731575f451af073e871d3492fd8b58
-  - assets/README.md: 6b2882477c8a489ce2556c462b9e305eeb2ea75386aad3b4d2da94a0711fba80
+  - BRAND.md: 53b44841ec996b6c0259c8e8b7082074eca027bb29a3ea1f087c4518f1bac531
+  - brand.json: 099a4e5148b5d2547be2c2df770bdd9ef0ed9dbfb0519ce8691c71798209a461
+  - tokens.json: f2c57533d887363b696cce51ca85228f8ddb2e0409fe145fd7636608ae441992
+  - assets/index.html: 96a1cef92f95f83ffee9e69d90b57acf9d359224ab34fa5af7760a27d287f5c2
+  - assets/README.md: c5224237274b4ddda385132433ab574408d4b14600d1c7079c89fcd86b8c0c3b
 
 The local source checkout is ignored and is not part of the product. This reference uses only the upstream URL and immutable commit; it does not direct readers to a local clone. The book is captured as a summary, not copied into this repository.
 
@@ -51,7 +51,7 @@ The supplied handoff reports that the owner glanced over the book rather than co
 | Color and motion | Neutral chrome and instant canvas swaps are in [ADR 0013](../../docs/adr/0013-workbench-ux.md) and [UX-DESIGN.md](../../docs/research/UX-DESIGN.md). | Book recommends app-owned canvas colors, gilt only on docs/logo/social, Ink/Vellum current-scenario ribbon, instant page/scenario navigation, 120 ms ease-out catalog interaction, unchanged component motion and no sound. | Map these to the existing chrome rules without changing component behavior. Keep any separate panel timing decision explicit. |
 | Contrast claims | The existing chrome guidance is in [UX-DESIGN.md](../../docs/research/UX-DESIGN.md). | The book limits its ratios to the eight named contrast pairs. | Do not infer whole-product accessibility or contrast clearance from the listed pair ratios. |
 | Marketing claims | Future promises appear in [FABLEBOOK-SEED.md](../../FABLEBOOK-SEED.md) and [.planning/references/PRODUCT-REQUIREMENTS.md](PRODUCT-REQUIREMENTS.md). | Owner says to state shipped facts only. | Verify claims against implementation and acceptance evidence before using them in README, docs, package listings or social copy. |
-| Logo and assets | The source lists filenames and use cases in BRAND.md and assets/README.md; this checkout has no brand asset destination tree. | Owner asks that assets follow the book, but source version is unresolved. | No tracked copies were made. Resolve the version, rights and destination path in the future surface-owning phase. |
+| Logo and assets | The source lists filenames and use cases in BRAND.md and assets/README.md; this checkout has no brand asset destination tree. | Owner asks that assets follow the book; the 2.1 source is now available, but it supplies no repository destination paths. | No tracked copies were made. Map destinations in the future surface-owning phase and record the asset rights limits before publication. |
 
 ## Asset and review limits
 
@@ -64,6 +64,10 @@ Assets are kept in ignored local staging with a destination map for review only.
 Before any future edit to README, docs, catalog chrome, package listing or social card:
 
 1. Read this intake and the source files at the pinned upstream commit.
-2. Reconcile the expected 2.1 version with the observed 2.0 source.
+2. Use the verified 2.1 source; preserve the older observation as history rather than reopening the resolved version issue.
 3. Surface product-model conflicts; map the actual destination and record rights limits relevant to any assets being published. Do not require unrelated terminology decisions merely to perform a safe factual edit.
 4. Use only shipped, evidenced claims and preserve the owner's settled decisions above.
+
+## Version 2.1 refresh
+
+Compared with the initial 2.0 source, 2.1 removes the Coverage/Preview subgroup headings from the marker page. Gap and Waived are flat chips; Edited remains round and outlined. Token values and the 31 staged logo, icon, social and font asset files are unchanged. Token/asset-guide version metadata changed. Both source revisions remain clean in ignored local storage; product code references neither clone. No version clarification message is needed.
