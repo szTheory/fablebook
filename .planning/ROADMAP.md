@@ -1,6 +1,6 @@
 # Roadmap: v0.2 Guard coverage recovery
 
-**Status:** Active planning baseline; PR #83 is merged and its required candidate/main CI passed. The owner-requested planning lifecycle repair is in progress before scope selection. INT-20261111-01 authorizes the numbering/milestone reset; implementation remains a separate phase boundary.
+**Status:** Active. EX-010 is selected under INT-20261111-05 and Phase 1 has three reviewed serial plans. Source discovery and planning checks passed; implementation has not started. The numbering reset and planning lifecycle repair are delivered.
 
 ## Milestone
 
@@ -25,13 +25,21 @@ One source-connected guard increment, independently sized and delivered with the
   3. Selected dispositions have complete source authority and individual lane witnesses; static compile-only controls reject deliberate violations and retain benign controls without invoking audited APIs.
   4. Existing required local checks/review/hosted core and floor receipts pass on the reviewed candidate; contract guards do not change beside lib or workflow implementation.
   5. Only selected coverage advances. The aggregate, installed-wide remainder, SEC-01 properties, source/collision safety stops and walking-skeleton gate remain explicit until their own acceptance passes.
-**Plans:** Not planned. Scope selection/discussion is next; no ready implementation or guessed source membership is claimed.
+**Plans:** 3 plans, 0 completed. Core exact-source evidence, independent floor evidence, then integration/candidate validation. Actual delivery follows all truthful summaries, technical verification, ship preflight and the owner-approved merge; no phase completion before its observed delivery receipt.
+**Wave 1**
+- [ ] 01-01-PLAN.md
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01-02-PLAN.md
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 01-03-PLAN.md
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |---|---|---|---|
-| 1. Bounded guard continuation | 0/0 | Not started | - |
+| 1. Bounded guard continuation | 0/3 | Planned     | - |
 
 ## Numbering and gate policy
 

@@ -1,6 +1,6 @@
 # Requirements: v0.2 Guard coverage recovery
 
-**Status:** Planning baseline; the migration PR is the activation boundary. Scoped to one independently sized source-connected guard increment. The complete product commitment and original statuses remain in references/PRODUCT-REQUIREMENTS.md and the unchanged legacy archive.
+**Status:** Active milestone; Phase 1 is planned and implementation has not started. Scoped to the selected EX-010 source-connected guard increment. All requirements remain pending until their execution and actual delivery proof passes. The complete product commitment and original statuses remain in references/PRODUCT-REQUIREMENTS.md and the unchanged legacy archive.
 
 ## v0.2 requirements
 
