@@ -8367,8 +8367,79 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :inets_trace_core_source
-  test "EX-010 has a registered source-backed core review record" do
-    assert Code.ensure_loaded?(Fablebook.Test.InetsTraceCoreEvidence)
+  test "EX-010 records exact core source evidence without closing callback ownership", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    record = Fablebook.Test.InetsTraceCoreEvidence.record()
+    ledger = original_identity_ledger!()
+    original = Enum.find(ledger.exclusions, &(&1.id == "EX-010"))
+
+    assert record.lane == "core"
+    assert record.original_id == original.id
+    assert record.owner == original.owner
+    assert record.semantic_status == original.semantic_status
+    assert record.owner == "01.1.1.4"
+    assert record.semantic_status == :pending
+    assert original.original_matcher_raw =~ "enable_trace"
+    assert Enum.map(record.selected_function_evidence, & &1.mfa) == record.matched_mfas
+    assert MapSet.new(record.matched_mfas) |> MapSet.subset?(ctx.graph.full_exported)
+    assert record.remainder_mfas == []
+    assert record.incoming_edges == []
+
+    expected_delegates = [
+      {{:inets, :enable_trace, 2}, {:inets_trace, :enable, 2}},
+      {{:inets, :enable_trace, 3}, {:inets_trace, :enable, 3}}
+    ]
+
+    assert Enum.map(record.delegate_edges, &{&1.caller, &1.callee}) == expected_delegates
+
+    graph_delegates =
+      MapSet.new(expected_delegates, fn {caller, {module, function, _arity}} ->
+        {caller, {module, function}}
+      end)
+
+    assert graph_delegates |> MapSet.subset?(MapSet.new(ctx.graph.full_edges))
+
+    exact_sources =
+      Map.new(record.exact_sources, fn {path, bytes, sha} -> {path, {bytes, sha}} end)
+
+    assert map_size(exact_sources) == 3
+
+    archive_only = %{
+      evidence
+      | installed:
+          evidence.installed
+          |> Map.put("inets", Path.join(evidence.archive_root, "missing-inets"))
+          |> Map.put("runtime_tools", Path.join(evidence.archive_root, "missing-runtime-tools"))
+    }
+
+    for review <- record.reviews do
+      {bytes, sha} = Map.fetch!(exact_sources, review.source_path)
+      assert {review.bytes, review.sha256} == {bytes, sha}
+      assert review.reviewed_lines == 1..Range.size(review.reviewed_lines)
+
+      source_row =
+        Enum.find(evidence.manifest["files"], fn row ->
+          row["lane"] == record.lane and row["source_path"] == review.source_path
+        end)
+
+      assert source_row["status"] == "present"
+      assert {source_row["bytes"], source_row["sha256"]} == {bytes, sha}
+
+      for {citation, _source_line} <- review.citations do
+        resolved = SweepEvidence.resolve!(archive_only, citation)
+        assert resolved.origin == :archive
+        assert resolved.sha256 == sha
+        assert resolved.line in review.reviewed_lines
+      end
+    end
+
+    assert Enum.all?(record.selected_function_evidence, fn selected ->
+             selected.disposition == :retained_callback_front_pending_integration and
+               is_binary(selected.callback_boundary) and byte_size(selected.callback_boundary) > 0 and
+               is_binary(selected.fixed_native_boundary) and
+               byte_size(selected.fixed_native_boundary) > 0
+           end)
   end
 
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
