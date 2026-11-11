@@ -1388,6 +1388,8 @@ defmodule Fablebook.Contract.TierSweepTest do
   alias Fablebook.Test.DebuggerSettings
   alias Fablebook.Test.ExternalTransformEvidence
   alias Fablebook.Test.GeneratorDispatchIntegrationEvidence
+  alias Fablebook.Test.InetsTraceCoreEvidence
+  alias Fablebook.Test.InetsTraceFloorEvidence
   alias Fablebook.Test.InetsTraceIntegrationEvidence
   alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.ParserTokenizerEvidence
@@ -1403,7 +1405,6 @@ defmodule Fablebook.Contract.TierSweepTest do
     runtime_tools sasl dialyzer xmerl os_mon
   )a
   @inets_trace_core_mfas [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}]
-  @inets_trace_core_url "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/inets/src/inets_app/inets_trace.erl"
   @elixir_apps [:elixir, :eex, :mix, :iex, :logger, :ex_unit]
   @floor_roots ~w(phoenix phoenix_live_view phoenix_html telemetry nimble_options)
   @reasons %{
@@ -8378,18 +8379,18 @@ defmodule Fablebook.Contract.TierSweepTest do
     integration = Fablebook.Test.InetsTraceIntegrationEvidence
     assert Code.ensure_loaded?(integration), "missing integrated EX-010 static dispositions"
 
-    assert apply(integration, :selected_mfas, []) == [
+    assert integration.selected_mfas() == [
              {:inets, :enable_trace, 2},
              {:inets, :enable_trace, 3}
            ]
 
-    assert apply(integration, :dispositions, []) == %{
+    assert integration.dispositions() == %{
              {:inets, :enable_trace, 2} => :retained_callback_front,
              {:inets, :enable_trace, 3} => :retained_callback_front
            }
 
-    assert apply(integration, :guard_patterns, []) == []
-    assert Enum.map(apply(integration, :lane_records, []), & &1.lane) == ["core", "floor"]
+    assert integration.guard_patterns() == []
+    assert Enum.map(integration.lane_records(), & &1.lane) == ["core", "floor"]
   end
 
   @tag :inets_trace_integration
@@ -8400,6 +8401,10 @@ defmodule Fablebook.Contract.TierSweepTest do
     tier = BannedCalls.banned_mfas()
     records = InetsTraceIntegrationEvidence.lane_records()
     assert_inets_trace_audit!(ctx.graph, evidence, ledger, tier)
+
+    assert_raise ExUnit.AssertionError, ~r/retention rationale changed/, fn ->
+      assert_inets_trace_basis!("The caller code is runtime safe and proves SEC-01 complete.")
+    end
 
     permuted_records =
       records
@@ -8553,7 +8558,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   test "EX-010 records exact core source evidence without closing callback ownership", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
-    record = Fablebook.Test.InetsTraceCoreEvidence.record()
+    record = InetsTraceCoreEvidence.record()
     ledger = original_identity_ledger!()
     original = Enum.find(ledger.exclusions, &(&1.id == "EX-010"))
 
@@ -8645,7 +8650,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   test "EX-010 records exact floor source evidence without closing callback ownership", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
-    record = Fablebook.Test.InetsTraceFloorEvidence.record()
+    record = InetsTraceFloorEvidence.record()
     ledger = original_identity_ledger!()
     original = Enum.find(ledger.exclusions, &(&1.id == "EX-010"))
 
@@ -8761,7 +8766,7 @@ defmodule Fablebook.Contract.TierSweepTest do
        %{tmp_dir: dir} = ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
-    record = Fablebook.Test.InetsTraceFloorEvidence.record()
+    record = InetsTraceFloorEvidence.record()
 
     archive_only = %{
       evidence
@@ -8900,7 +8905,7 @@ defmodule Fablebook.Contract.TierSweepTest do
        %{tmp_dir: dir} = ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
-    record = Fablebook.Test.InetsTraceCoreEvidence.record()
+    record = InetsTraceCoreEvidence.record()
 
     archive_only = %{
       evidence
@@ -16919,7 +16924,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert InetsTraceIntegrationEvidence.dispositions() ==
              Map.new(selected, &{&1, :retained_callback_front})
 
-    assert InetsTraceIntegrationEvidence.retention_basis() =~ "caller code"
+    assert_inets_trace_basis!(InetsTraceIntegrationEvidence.retention_basis())
 
     assert InetsTraceIntegrationEvidence.limits() == [
              :dynamic_callers_unproven,
@@ -16932,6 +16937,15 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_inets_trace_guards!(graph, tier, @exclusions)
     :ok
+  end
+
+  defp assert_inets_trace_basis!(basis) do
+    assert basis ==
+             "Both exact lanes forward level, destination and validated service to fixed tracing operations. " <>
+               "The function destination is caller code invoked by dbg, not caller text evaluated by this path; " <>
+               "the native trace driver name is fixed. Retain the original matcher for both callback fronts " <>
+               "without adding an evaluator or atom-creation guard.",
+           "reviewed EX-010 retention rationale changed"
   end
 
   defp assert_inets_trace_partition!(graph, record, selected) do
@@ -17119,7 +17133,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp assert_inets_trace_floor_sources!(record, graph, evidence, archive_only) do
-    canonical = Fablebook.Test.InetsTraceFloorEvidence.record()
+    canonical = InetsTraceFloorEvidence.record()
     ledger = original_identity_ledger!()
     original = Enum.find(ledger.exclusions, &(&1.id == "EX-010"))
     assert evidence.lane.name == "floor"
@@ -17258,7 +17272,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp assert_inets_trace_core_evidence!(record, graph, evidence, archive_only) do
-    canonical = Fablebook.Test.InetsTraceCoreEvidence.record()
+    canonical = InetsTraceCoreEvidence.record()
     ledger = original_identity_ledger!()
     original = Enum.find(ledger.exclusions, &(&1.id == "EX-010"))
 
@@ -17425,12 +17439,8 @@ defmodule Fablebook.Contract.TierSweepTest do
       [source_row] = source_rows
 
       expected_url =
-        if source_path == "inets/src/inets_app/inets_trace.erl" do
-          @inets_trace_core_url
-        else
-          "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/" <>
-            source_path
-        end
+        "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/" <>
+          source_path
 
       manifest_identity =
         Map.take(source_row, ["lane", "status", "path", "url", "bytes", "sha256"])
@@ -17489,34 +17499,16 @@ defmodule Fablebook.Contract.TierSweepTest do
     archive = Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
     {:ok, files} = :erl_tar.extract(String.to_charlist(archive), [:compressed, :memory])
     trace_path = ~c"core/inets/src/inets_app/inets_trace.erl"
-    {^trace_path, trace_bytes} = Enum.find(files, fn {name, _bytes} -> name == trace_path end)
+    {^trace_path, _trace_bytes} = Enum.find(files, fn {name, _bytes} -> name == trace_path end)
 
-    for {name, transform_row, relocate_source, expected_reason} <- [
+    for {name, transform_row, expected_reason} <- [
           {"wrong-ref",
            fn row -> Map.put(row, "url", "https://example.invalid/altered-source.erl") end,
-           fn entries, _bytes -> entries end, :source_identity},
-          {"wrong-lane", fn row -> %{row | "lane" => "floor"} end,
-           fn entries, _bytes -> entries end, :source_root}
+           :source_identity},
+          {"wrong-lane", fn row -> %{row | "lane" => "floor"} end, :source_root}
         ] do
       transformed_entries =
-        Enum.map(files, fn
-          {~c"manifest.json", data} ->
-            manifest = JSON.decode!(data)
-
-            rows =
-              Enum.map(manifest["files"], fn row ->
-                if row["lane"] == "core" and
-                     row["source_path"] == "inets/src/inets_app/inets_trace.erl",
-                   do: transform_row.(row),
-                   else: row
-              end)
-
-            {~c"manifest.json", JSON.encode!(Map.put(manifest, "files", rows))}
-
-          entry ->
-            entry
-        end)
-        |> then(&relocate_source.(&1, trace_bytes))
+        mutate_floor_inets_manifest(files, &mutate_inets_trace_rows(&1, "core", transform_row))
 
       path = Path.join(dir, "inets-trace-#{name}.tar.gz")
       :ok = :erl_tar.create(String.to_charlist(path), transformed_entries, [:compressed])
@@ -17568,14 +17560,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       ],
       fn {name, mutate_row} ->
         entries =
-          mutate_floor_inets_manifest(files, fn rows ->
-            Enum.map(rows, fn row ->
-              if row["lane"] == "floor" and
-                   row["source_path"] == "inets/src/inets_app/inets_trace.erl",
-                 do: mutate_row.(row),
-                 else: row
-            end)
-          end)
+          mutate_floor_inets_manifest(files, &mutate_inets_trace_rows(&1, "floor", mutate_row))
 
         assert_floor_archive_rejected!(dir, name, entries, :source_identity)
       end
@@ -17612,6 +17597,14 @@ defmodule Fablebook.Contract.TierSweepTest do
       duplicate_row,
       :manifest_duplicate
     )
+  end
+
+  defp mutate_inets_trace_rows(rows, lane, mutate_row) do
+    Enum.map(rows, fn row ->
+      if row["lane"] == lane and row["source_path"] == "inets/src/inets_app/inets_trace.erl",
+        do: mutate_row.(row),
+        else: row
+    end)
   end
 
   defp mutate_floor_inets_manifest(entries, mutate_rows) do

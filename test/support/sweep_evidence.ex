@@ -1630,7 +1630,6 @@ defmodule Fablebook.Test.InetsTraceCoreEvidence do
       selected_function_evidence: [
         function_evidence(
           {:inets, :enable_trace, 2},
-          :retained_callback_front_pending_integration,
           [
             {"inets/src/inets_app/inets.erl:503", "inets_trace:enable(Level, Dest)"},
             {"inets/src/inets_app/inets_trace.erl:65", "enable(Level, Dest)"},
@@ -1648,7 +1647,6 @@ defmodule Fablebook.Test.InetsTraceCoreEvidence do
         ),
         function_evidence(
           {:inets, :enable_trace, 3},
-          :retained_callback_front_pending_integration,
           [
             {"inets/src/inets_app/inets.erl:505", "inets_trace:enable(Level, Dest, Service)"},
             {"inets/src/inets_app/inets_trace.erl:68", "enable(Level, Dest, Service)"},
@@ -1727,7 +1725,6 @@ defmodule Fablebook.Test.InetsTraceCoreEvidence do
 
   defp function_evidence(
          mfa,
-         disposition,
          citations,
          input_trace,
          destination_dispatch,
@@ -1744,7 +1741,7 @@ defmodule Fablebook.Test.InetsTraceCoreEvidence do
       service_validation: service_validation,
       callback_boundary: callback_boundary,
       fixed_native_boundary: fixed_native_boundary,
-      disposition: disposition,
+      disposition: :retained_callback_front_pending_integration,
       finding: finding
     }
   end
@@ -1921,6 +1918,9 @@ end
 defmodule Fablebook.Test.InetsTraceIntegrationEvidence do
   @moduledoc false
 
+  alias Fablebook.Test.InetsTraceCoreEvidence
+  alias Fablebook.Test.InetsTraceFloorEvidence
+
   @selected_mfas [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}]
   @dispositions Map.new(@selected_mfas, &{&1, :retained_callback_front})
 
@@ -1930,8 +1930,8 @@ defmodule Fablebook.Test.InetsTraceIntegrationEvidence do
 
   def lane_records do
     [
-      Fablebook.Test.InetsTraceCoreEvidence.record(),
-      Fablebook.Test.InetsTraceFloorEvidence.record()
+      InetsTraceCoreEvidence.record(),
+      InetsTraceFloorEvidence.record()
     ]
   end
 

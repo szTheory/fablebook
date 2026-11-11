@@ -5,6 +5,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
   alias Credo.Test.CheckRunner
   alias Fablebook.Credo.BannedCalls
   alias Fablebook.Test.BeamWalker
+  alias Fablebook.Test.InetsTraceFloorEvidence
   alias Fablebook.Test.InstalledOtp
 
   Code.ensure_loaded?(BannedCalls) ||
@@ -766,7 +767,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
 
-    record = Fablebook.Test.InetsTraceFloorEvidence.record()
+    record = InetsTraceFloorEvidence.record()
     assert record.lane == "floor"
     selected = Enum.map(record.selected_function_evidence, & &1.mfa)
     assert selected == [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}]
