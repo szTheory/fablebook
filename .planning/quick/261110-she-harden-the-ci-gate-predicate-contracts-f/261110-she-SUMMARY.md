@@ -71,3 +71,19 @@ Fresh main source SHA-256 is `15286b846642249b66a056e1171736427817ae5f4c011e35e4
 The CI-gate UAT group is closed; four unrelated groups remain. The [post-merge main run](https://github.com/szTheory/fablebook/actions/runs/42947113449) is in progress and is not a passing receipt yet. Merge/closure bookkeeping is saved locally for the next substantive push; no extra receipt-only run is triggered. The primary/recovery worktrees, parent source-size stops, SEC-01 Phase 5 ownership and Phase 2 gate remain.
 
 Next command: `gh run watch 42947113449 --exit-status` — observe post-merge main CI. No owner action is required to let that automation finish; no new phase or release is started.
+
+## Post-merge main observation complete
+
+The [main run](https://github.com/szTheory/fablebook/actions/runs/42947113449) passed on merge commit `79e1a4ffdb7634c9d0d9c8d43e352e1b3daf030a`. All required jobs succeeded; scheduled-only jobs were correctly skipped. This supersedes the in-progress observation above.
+
+| Job | Result | Duration |
+|---|---|---|
+| core | success | 537s |
+| floor | success | 600s |
+| dialyzer | success | 20s |
+| security | success | 30s |
+| ci-gate | success | 2s |
+
+Core and floor overlap; tests continue to dominate, with short existing setup and run-to-run variation. No repeatable quality-preserving workflow shortcut is established by this observation. No new run or workflow change is warranted. Merge and its post-merge observation are complete. Four unrelated UAT groups and the parent/Phase 2 gates remain. Logistify intake is on main; source brand assets remain untouched and unapplied. Final receipts stay local for the next substantive push.
+
+Next command: `$gsd-progress --forensic` — review remaining work before selecting another task or phase. No owner action is required for this completed delivery.

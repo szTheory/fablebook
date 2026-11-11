@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "gh run watch 42947113449 --exit-status",
-    "label": "Observe post-merge main CI",
-    "reason": "PR #81 was approved and squash-merged after all required candidate checks passed. CI-gate debt is closed; four groups remain. Logistify intake is on main; original assets are unapplied. Main automation is running; no owner action is required. Parent and Phase 2 gates remain."
+    "command": "/gsd-progress --forensic",
+    "label": "Review remaining work after the completed green merge",
+    "reason": "PR #81 and post-merge main CI are complete and passed; Logistify Phase 17 intake is on main. Four unrelated UAT groups and the parent/Phase 2 gates remain. Selecting another task or phase is a separate boundary."
   },
-  "updated_at": "2026-11-11T02:37:13+00:00"
+  "updated_at": "2026-11-11T02:50:46+00:00"
 }
