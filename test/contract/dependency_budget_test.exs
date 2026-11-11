@@ -52,19 +52,16 @@ defmodule Fablebook.Contract.DependencyBudgetTest do
     assert banned_in(closure) == ["yaml_elixir", "yamerl"]
   end
 
+  @tag :floor
   test "the floor lane loads exactly the floor versions named in mix.exs" do
-    if System.get_env("FABLEBOOK_FLOOR") do
-      deps = Mix.Project.config()[:deps]
+    deps = Mix.Project.config()[:deps]
 
-      for app <- [:phoenix, :phoenix_live_view] do
-        {^app, requirement} = List.keyfind(deps, app, 0)
-        [floor] = Regex.run(~r/\d+\.\d+\.\d+/, requirement)
-        Application.load(app)
+    for app <- [:phoenix, :phoenix_live_view] do
+      {^app, requirement} = List.keyfind(deps, app, 0)
+      [floor] = Regex.run(~r/\d+\.\d+\.\d+/, requirement)
+      Application.load(app)
 
-        assert Application.spec(app, :vsn) == String.to_charlist(floor)
-      end
-    else
-      IO.puts("floor-version check: not-run (FABLEBOOK_FLOOR unset)")
+      assert Application.spec(app, :vsn) == String.to_charlist(floor)
     end
   end
 

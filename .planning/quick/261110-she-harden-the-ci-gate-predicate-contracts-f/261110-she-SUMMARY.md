@@ -1,7 +1,8 @@
 ---
 phase: quick-261110-she
 plan: "01"
-status: in-progress
+status: complete
+delivery_status: merged
 source_commit: 97aa76973eed7c9f2e5268bec4b249ad497237db
 source_sha256: 15286b846642249b66a056e1171736427817ae5f4c011e35e4fcc598a4465b1c
 requirements_completed: []
@@ -33,7 +34,7 @@ Focused floor validation proves compatibility of the pure contract helper before
 
 Planning intent/contract-rule checks passed after the brand intake and quick-record edits (19 tests; `planning-final.log`). The phase 01.1.1.18 verification fingerprint still returns passed.
 
-All raw logs/probes are in ignored `_build/quick-261110-she/`. The protected .github/lib/dependency/lockfile diff is empty. Hosted candidate checks and owner merge remain pending. Final receipt-only updates will stay local for the next substantive push, with live CI linked from the PR.
+All raw logs/probes are in ignored `_build/quick-261110-she/`. The protected .github/lib/dependency/lockfile diff is empty. [PR #81](https://github.com/szTheory/fablebook/pull/81) at candidate `5a1a0183f190d412b762d2154e51b530088bc9e6` passed all required [hosted CI](https://github.com/szTheory/fablebook/actions/runs/42944194233): core, floor, Dialyzer, security and ci-gate. Scheduled-only jobs were correctly skipped. Full hosted core/floor provide complete green suite receipts on the reviewed source; the native timeout remains separately recorded, with its successful unchanged isolated retest. GitHub reports a clean, mergeable PR. Owner merge remains pending. Final receipt-only updates will stay local for the next substantive push, with live CI linked from the PR.
 
 ## Preserved scope
 
@@ -44,3 +45,45 @@ Default quick mode ran planning/execution inline under the skill adapter's autom
 ## Additional owner-requested planning capture
 
 A background GPT-6 Luna worker read the owner-provided Logistify source and wrote a compact [Phase 17 reference](../../references/logistify-brand-intake.md), a dormant seed, owner excerpts and a PROJECT pointer. Root checked the three source hashes, corrected excerpt fidelity and scope wording, and committed the capture separately. Source assets remain uncommitted in the preserved primary checkout; no brand, schema mapping, file move or Phase 17 implementation was applied. This separate capture was explicitly requested during the quick task and is not part of its implementation-source scope.
+
+## Final hosted receipt and feedback time
+
+| Job | Result | Duration | Receipt |
+|---|---|---|---|
+| core | success | 443s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130272912357) |
+| floor | success | 728s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130272912429) |
+| dialyzer | success | 22s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130272912578) |
+| security | success | 28s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130272912087) |
+| ci-gate | success | 3s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130277626913) |
+
+Core and floor overlapped. Core's CI step took 425s, floor's test step 702s and setup 12s/13s. Previous PR job totals were 460s/639s; the following main totals were 585s/537s. Tests dominate, with substantial duration variation and already short cached setup. No repeatable quality-preserving workflow shortcut is established; do not add speculative caches/concurrency/dependencies or weaken gates. Timing objectives remain non-blocking feedback.
+
+Final hosted receipts and quick-task completion bookkeeping stay local for the next substantive push, avoiding another receipt-only run. The CI-gate audit group remains a landing requirement until PR #81 merges; four unrelated UAT groups retain their owners. Logistify capture is stored in the reviewed candidate, linked from PROJECT, and has not applied or moved original assets.
+
+Next command: `gh pr merge 81 --squash --match-head-commit 5a1a0183f190d412b762d2154e51b530088bc9e6` — owner-authorized merge of the reviewed green candidate. Parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
+
+## Approved merge closure
+
+[INT-20261110-09](../../intent/sources/2026-11-10-09-approve-ci-gate-contract-merge.md) records the owner's approval. [PR #81](https://github.com/szTheory/fablebook/pull/81) was squash-merged at `2026-11-11T02:35:52Z`, commit `79e1a4ffdb7634c9d0d9c8d43e352e1b3daf030a`, with expected head `5a1a0183f190d412b762d2154e51b530088bc9e6` enforced. Required candidate CI passed before merge. The preceding pending-merge statements are historical snapshots.
+
+Fresh main source SHA-256 is `15286b846642249b66a056e1171736427817ae5f4c011e35e4fcc598a4465b1c`, matching every final contract receipt. The pre-merge base-to-main workflow, library, dependencies and lockfiles have no diff. Logistify's reference, owner excerpts, seed and PROJECT pointer also match the reviewed candidate and are now on main; original book assets remain untouched and unapplied.
+
+The CI-gate UAT group is closed; four unrelated groups remain. The [post-merge main run](https://github.com/szTheory/fablebook/actions/runs/42947113449) is in progress and is not a passing receipt yet. Merge/closure bookkeeping is saved locally for the next substantive push; no extra receipt-only run is triggered. The primary/recovery worktrees, parent source-size stops, SEC-01 Phase 5 ownership and Phase 2 gate remain.
+
+Next command: `gh run watch 42947113449 --exit-status` — observe post-merge main CI. No owner action is required to let that automation finish; no new phase or release is started.
+
+## Post-merge main observation complete
+
+The [main run](https://github.com/szTheory/fablebook/actions/runs/42947113449) passed on merge commit `79e1a4ffdb7634c9d0d9c8d43e352e1b3daf030a`. All required jobs succeeded; scheduled-only jobs were correctly skipped. This supersedes the in-progress observation above.
+
+| Job | Result | Duration |
+|---|---|---|
+| core | success | 537s |
+| floor | success | 600s |
+| dialyzer | success | 20s |
+| security | success | 30s |
+| ci-gate | success | 2s |
+
+Core and floor overlap; tests continue to dominate, with short existing setup and run-to-run variation. No repeatable quality-preserving workflow shortcut is established by this observation. No new run or workflow change is warranted. Merge and its post-merge observation are complete. Four unrelated UAT groups and the parent/Phase 2 gates remain. Logistify intake is on main; source brand assets remain untouched and unapplied. Final receipts stay local for the next substantive push.
+
+Next command: `$gsd-progress --forensic` — review remaining work before selecting another task or phase. No owner action is required for this completed delivery.
