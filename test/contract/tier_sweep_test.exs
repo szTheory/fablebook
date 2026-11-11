@@ -7824,7 +7824,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     phase_dir =
       Path.join(
         root,
-        ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration"
+        ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration"
       )
 
     calibration_path = Path.join(phase_dir, "01.1.1.5-CALIBRATION.md")
@@ -11080,7 +11080,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp debugger_parent_owner_records! do
     ledger_path =
       Path.expand(
-        "../../.planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz",
+        "../../.planning/milestones/v0.1-phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz",
         __DIR__
       )
 
@@ -13302,7 +13302,8 @@ defmodule Fablebook.Contract.TierSweepTest do
       Path.join([
         root,
         ".planning",
-        "phases",
+        "milestones",
+        "v0.1-phases",
         "01.1.1.5-complete-atom-creator-fronts-and-audit-calibration",
         "01.1.1.5-ORIGINAL-IDENTITY-SOURCE.txt"
       ])
@@ -13311,7 +13312,8 @@ defmodule Fablebook.Contract.TierSweepTest do
       Path.join([
         root,
         ".planning",
-        "phases",
+        "milestones",
+        "v0.1-phases",
         "01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an",
         "01.1.1.1-AUDIT-BUDGET.json"
       ])
@@ -15514,7 +15516,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     budget_path =
       Path.join(
         root,
-        ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json"
+        ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json"
       )
 
     budget_path |> File.read!() |> JSON.decode!()
@@ -15732,7 +15734,12 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp assert_review_summary_path!(review_path, root) do
-    summary_reference = String.split(review_path, "#", parts: 2) |> hd()
+    summary_reference =
+      review_path
+      |> String.split("#", parts: 2)
+      |> hd()
+      |> String.replace_prefix(".planning/phases/", ".planning/milestones/v0.1-phases/")
+
     summary_absolute = Path.expand(summary_reference, root)
     assert summary_absolute == Path.join(root, summary_reference)
     assert {:ok, %{type: :regular}} = File.lstat(summary_absolute)

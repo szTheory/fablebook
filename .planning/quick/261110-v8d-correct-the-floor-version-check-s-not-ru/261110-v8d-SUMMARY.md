@@ -1,8 +1,8 @@
 ---
 phase: quick-261110-v8d
 plan: "01"
-status: incomplete
-delivery_status: awaiting-hosted-ci
+status: complete
+delivery_status: merged
 source_commit: 5fa9f080372fffc39485a77d00ce8d40c02fcdd9
 requirements_completed: []
 ---
@@ -48,6 +48,54 @@ A diagnostic TAP attempt with warnings-as-errors aborted after execution because
 
 Fresh main remains the PR #81 squash merge. Four verified documentation-only receipt commits accompany this substantive change. Default quick planning/execution ran inline under the automatic-spawn restriction; supported worktree creation does not claim harness isolation. API detection is negative, assumption-delta is typed phase_unresolved, no schema path applies and the plan records its threat model. Optional discussion/research/checker/verifier were omitted by default quick mode.
 
-Required hosted candidate checks and owner merge are pending. No quick completion row or UAT closure is claimed yet. Four UAT groups retain their current count until landing, and the other three owners remain unchanged. Phase 01.1.1.18 stays complete; the parent source-audit stop, SEC-01 Pending with Phase 5 and Phase 2 gate remain. Brand source assets and original/recovery checkouts are untouched; no Phase 17 implementation or publication occurs.
+Required hosted candidate checks have passed and the quick completion row is recorded. Owner merge remains pending; no UAT landing closure is claimed yet. Four UAT groups retain their current count until landing, and the other three owners remain unchanged. Phase 01.1.1.18 stays complete; the parent source-audit stop, SEC-01 Pending with Phase 5 and Phase 2 gate remain. Brand source assets and original/recovery checkouts are untouched; no Phase 17 implementation or publication occurs.
 
-Next action: publish this reviewed/tested candidate under standing authorization and obtain required hosted receipts. Owner handles merge after the concrete green PR is ready.
+The reviewed/tested candidate was published under standing authorization. Owner handles merge; the required hosted receipt is below.
+
+## Final hosted receipt and owner boundary
+
+[PR #82](https://github.com/szTheory/fablebook/pull/82), head `95ba228ef33c3b88fda61ffebed30958d1be5927`, passed all required [hosted CI](https://github.com/szTheory/fablebook/actions/runs/42954945700). Full core/floor, Dialyzer, security and ci-gate succeeded; scheduled-only nightly and ci-health were correctly skipped. Read-only run metadata confirms the pull_request event and exact reviewed head. GitHub reports the PR clean and mergeable. Source bytes still match the identities above; no code changed after local checks. This is candidate completion, not a merged-main claim.
+
+| Job | Result | Duration | Receipt |
+|---|---|---|---|
+| core | success | 553s | [job](https://github.com/szTheory/fablebook/actions/runs/42954945700/job/130307704030) |
+| floor | success | 599s | [job](https://github.com/szTheory/fablebook/actions/runs/42954945700/job/130307704268) |
+| dialyzer | success | 22s | [job](https://github.com/szTheory/fablebook/actions/runs/42954945700/job/130307704297) |
+| security | success | 27s | [job](https://github.com/szTheory/fablebook/actions/runs/42954945700/job/130307704312) |
+| ci-gate | success | 4s | [job](https://github.com/szTheory/fablebook/actions/runs/42954945700/job/130311089514) |
+
+Core and floor overlapped. Core's mix-ci step took 536s and floor tests 574s; setup was 10s/11s. The run entered execution in its creation second. Recent preceding candidate/main core/floor totals were 443s/728s and 537s/600s; this run is 553s/599s. Tests dominate, with substantial run variation and short cached setup. No repeatable quality-preserving workflow shortcut is established. Preserve the existing timing objectives as feedback and every required gate; no extra run, speculative cache, concurrency or dependency change is warranted. This task has changed no workflow bytes.
+
+The connector's optional full core-log download exceeded its transport frame limit; job/run metadata independently supplies the successful hosted receipts and timings. No suite or CI retry was triggered to work around that read-only tooling limitation.
+
+Final receipt-only SUMMARY/STATE/audit updates are committed locally for the next substantive push, avoiding an identical hosted run. Live green CI is linked from the PR. The UAT audit still counts four groups until owner merge; the other three owners remain unchanged. The completed Phase 01.1.1.18 verification fingerprint still returns passed. Parent source-size stops, SEC-01 Phase 5 ownership, Phase 2 gate and the unapplied brand source remain preserved. No owner UAT is needed.
+
+Next command, after owner approval: `gh pr merge 82 --squash --match-head-commit 95ba228ef33c3b88fda61ffebed30958d1be5927` — merge the reviewed green candidate. The quick workflow says "User handles merge/rebase afterward"; this is the remaining owner boundary. No next phase starts automatically.
+
+## Approved merge closure
+
+[INT-20261110-11](../../intent/sources/2026-11-10-11-approve-floor-reporting-merge.md) records the owner's approval. [PR #82](https://github.com/szTheory/fablebook/pull/82) was squash-merged at `2026-11-11T04:01:22Z`, commit `0b028db2a933f407d9a75b2fd938200dd7a4e961`. The merge API enforced reviewed head `95ba228ef33c3b88fda61ffebed30958d1be5927`; all required candidate checks had passed. Earlier pending-owner statements are historical snapshots.
+
+A fresh fetch verifies main's four source files against the reviewed candidate and the digests above. The pre-merge-base-to-main workflow/library/dependency/lockfile diff is empty. The floor-reporting UAT group is resolved in its canonical deferred record; three unrelated groups retain their owners. Parent source-size stops, SEC-01 Phase 5 ownership and Phase 2 gate remain; brand assets and original/recovery checkouts are untouched.
+
+The separate [main CI run](https://github.com/szTheory/fablebook/actions/runs/42956492952) is in progress, not a passing receipt yet. Final closure/receipt bookkeeping stays local for the next substantive push; no receipt-only run is triggered.
+
+Next command: `gh run watch 42956492952 --exit-status` — observe post-merge main CI. No owner action is needed while it runs; no new phase or release is started.
+
+## Post-merge main observation complete
+
+The [main run](https://github.com/szTheory/fablebook/actions/runs/42956492952) passed on squash merge `0b028db2a933f407d9a75b2fd938200dd7a4e961`. Core, floor, Dialyzer, security and ci-gate all succeeded; scheduled-only nightly and ci-health were correctly skipped. Read-only run metadata confirms the push event and exact merge revision. This supersedes the in-progress observation above. Owner-approved merge and its required CI observation are complete.
+
+| Job | Result | Duration | Receipt |
+|---|---|---|---|
+| dialyzer | success | 30s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130312729051) |
+| floor | success | 654s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130312729392) |
+| security | success | 34s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130312729528) |
+| core | success | 442s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130312729565) |
+| ci-gate | success | 3s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130316605568) |
+
+Core/floor overlapped. Core's CI step took 425s; floor tests took 625s. Setup was 10s/15s, with existing caches. Candidate core/floor totals were 553s/599s versus main's 442s/654s. Current and recent history continue to show test-time variation, not a repeatable safe step removal or setup shortcut. Preserve gates and non-blocking timing objectives; no workflow edit, speculative cache/concurrency/dependency change or extra CI run is warranted.
+
+Merge-closure intent/contract-rule checks passed (32 tests, `merge-planning.log`), and the canonical UAT audit reports three remaining groups with zero parse gaps. Their existing owners are unchanged. Phase 01.1.1.18 remains verified complete; parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain. Brand assets and original/recovery checkouts remain untouched. Final documentation-only receipts are saved locally for the next substantive push, avoiding an identical hosted run.
+
+Next command: `$gsd-progress --forensic` — review remaining work before selecting a separate task or phase. No owner action is needed for this completed merge and CI observation.
