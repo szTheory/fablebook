@@ -11,4 +11,4 @@ The observed tracking/routing defects and each repair in REPORT.md have local po
 
 This report proves the planning repair scope only. It does not close guard-aggregate, complete guard Phase 1, establish installed-wide source coverage, accept a visual baseline, unblock the product milestone, satisfy SEC-01 properties, authorize a release or install an engine hook. Historical verification remains historical. Act was unavailable due the existing parser limitation, not a local Actions pass.
 
-PR #84 is ready for the owner's merge decision. After approved landing, `$gsd-discuss-phase 1` selects a bounded implementation scope. No automatic phase advancement is enabled.
+Owner-approved PR #84 is squash-merged. Its required candidate and post-merge main CI passed, and fresh main matches the complete reviewed tree. DELIVERY.json binds the approval, merge, jobs and main-based recovery checkout. The merge boundary is complete. The owner may run `$gsd-discuss-phase 1` to select a bounded implementation scope; no automatic phase advancement is enabled.

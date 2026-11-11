@@ -5,8 +5,8 @@ milestone_name: Guard coverage recovery
 current_phase: 1
 current_phase_name: Bounded guard continuation
 status: planning
-stopped_at: "PR #84 approved and squash-merged. Fresh main matches the reviewed candidate; monitoring main CI. Guard Phase 1 remains unstarted."
-last_updated: "2026-11-11T16:46:48+00:00"
+stopped_at: "Planning repairs delivered in approved PR #84; required candidate and main CI passed. Ready to discuss bounded guard Phase 1; implementation remains unstarted."
+last_updated: "2026-11-11T16:57:54+00:00"
 last_activity: 2026-11-11
 progress:
   total_phases: 1
@@ -30,8 +30,8 @@ See PROJECT.md, ROADMAP.md and migrations/2026-11-11-milestone-reset/README.md.
 Milestone: v0.2 Guard coverage recovery — PLANNING — NOT STARTED
 Phase: 1 of 1 — Bounded guard continuation
 Plan: Not planned
-Status: Planning repair merged; main CI in progress; Phase 1 unstarted
-Last activity: 2026-11-11 — Approved PR #84 merged; main tree matches the green reviewed candidate. Agent monitors existing main CI.
+Status: Planning repairs delivered; candidate and main CI passed; guard Phase 1 unstarted
+Last activity: 2026-11-11 — Approved PR #84 merged; required main CI 43061493617 passed. Clean main-based checkout and saved receipts are ready for Phase 1 discussion.
 
 ## Decisions and gates
 
@@ -56,11 +56,11 @@ PR #82 is squash-merged; required candidate and post-merge main CI passed. The r
 
 ## Session Continuity
 
-Working checkout: `.claude/worktrees/agent-planning-health-261111` on `worktree-agent-planning-health-261111`, based on merged PR #83. The dirty primary checkout is preserved; its local recovery pointer identifies this candidate.
+Working checkout: `.claude/worktrees/agent-planning-main-261111` on `worktree-agent-planning-main-261111`, based directly on the approved PR #84 main merge. Verified local receipt/approval commits are carried forward. The dirty primary checkout and old PR worktree remain preserved; their recovery pointers identify this clean baseline.
 
-Last session: 2026-11-11T16:46:48+00:00
-Stopped at: PR #84 approved and merged; main CI in progress. No owner action is needed during monitoring.
-Next action: Agent monitors main CI 43061493617 and records its result. After verification, `$gsd-discuss-phase 1` selects the next bounded guard scope at its separate phase boundary; do not start implementation or require another status-only pass.
+Last session: 2026-11-11T16:57:54+00:00
+Stopped at: Planning repair delivery complete; no owner action remains for this merge. Guard Phase 1 is unstarted and needs bounded scope selection.
+Next action: Owner runs `$gsd-discuss-phase 1` when ready to select the bounded guard scope. Agent uses the clean main-based checkout and per-stage preflight; preserve all safety/product gates and do not restart completed work or require another status-only pass.
 Resume file: None
 
 ## Migration delivery receipt
@@ -71,6 +71,8 @@ PR #83 is squash-merged; required candidate CI 43040038122 and post-merge main C
 
 See audits/2026-11-11-planning-health/ and references/PLANNING-LIFECYCLE.md. Repairs cover stale routes/seeds, the generated cache, future prerequisites, bounded milestone exits and delivery-aware reentry prevention. The complete guard aggregate remains open; Walking skeleton is blocked and SEC-01 remains Pending with its future owner. This repair does not deliver v0.2 Phase 1. No product/guard implementation starts without its scope boundary.
 
-PR #84 candidate CI 43054428068 passed at the reviewed source; audits/2026-11-11-planning-health/DELIVERY.json records the exact merge command and remaining owner decision. Final receipt-only bookkeeping is local for the next substantive push; the remote candidate remains the green head.
+PR #84 candidate CI 43054428068 passed at the reviewed source; audits/2026-11-11-planning-health/DELIVERY.json records the reviewed head, owner approval, actual merge and main CI status. Final receipt-only bookkeeping is local for the next substantive push; the remote candidate remains the green head.
 
-INT-20261111-04 approves the PR #84 squash merge. Fresh main matches the complete reviewed tree; main CI 43061493617 is being monitored, not yet a passed receipt. No phase implementation delivery is recorded by this maintenance merge.
+INT-20261111-04 approves the PR #84 squash merge. Fresh main matches the complete reviewed tree; required main CI 43061493617 passed at the verified merge. No phase implementation delivery is recorded by this maintenance merge.
+
+Planning repair delivery is complete. Full candidate and main core/floor/Dialyzer/security/ci-gate passed; scope and receipts are in audits/2026-11-11-planning-health/DELIVERY.json. The maintenance merge does not close the guard aggregate or deliver Phase 1. No further merge approval or status command is needed.
