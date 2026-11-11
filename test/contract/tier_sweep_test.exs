@@ -8582,6 +8582,15 @@ defmodule Fablebook.Contract.TierSweepTest do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     record = Fablebook.Test.InetsTraceFloorEvidence.record()
+
+    archive_only = %{
+      evidence
+      | installed:
+          evidence.installed
+          |> Map.put("inets", Path.join(evidence.archive_root, "missing-inets"))
+          |> Map.put("runtime_tools", Path.join(evidence.archive_root, "missing-runtime-tools"))
+    }
+
     assert_inets_trace_floor_witnesses!(record, ctx.graph)
     assert dir != nil
 
@@ -8625,11 +8634,83 @@ defmodule Fablebook.Contract.TierSweepTest do
       )
     end
 
+    assert_raise ExUnit.AssertionError, ~r/floor review citation evidence changed/, fn ->
+      assert_inets_trace_floor_sources!(
+        %{record | reviews: tl(record.reviews)},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/floor review citation evidence changed/, fn ->
+      assert_inets_trace_floor_sources!(
+        %{record | reviews: record.reviews ++ [hd(record.reviews)]},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/floor exact source identities changed/, fn ->
+      assert_inets_trace_floor_sources!(
+        %{record | exact_sources: tl(record.exact_sources)},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/floor exact source identities changed/, fn ->
+      assert_inets_trace_floor_sources!(
+        %{record | exact_sources: record.exact_sources ++ [hd(record.exact_sources)]},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    [first_review | other_reviews] = record.reviews
+    [first_citation | other_citations] = first_review.citations
+
+    assert_raise ExUnit.AssertionError, ~r/floor review citation evidence changed/, fn ->
+      altered_review = %{
+        first_review
+        | citations: [{elem(first_citation, 0), "unsupported cited body"} | other_citations]
+      }
+
+      assert_inets_trace_floor_sources!(
+        %{record | reviews: [altered_review | other_reviews]},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    [first_finding | other_findings] = record.selected_function_evidence
+    [first_citation | other_citations] = first_finding.citations
+
+    assert_raise ExUnit.AssertionError, ~r/floor selected source findings changed/, fn ->
+      altered_finding = %{
+        first_finding
+        | citations: [{elem(first_citation, 0), "unsupported cited body"} | other_citations]
+      }
+
+      assert_inets_trace_floor_sources!(
+        %{record | selected_function_evidence: [altered_finding | other_findings]},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
     exact_overlap = {{:mfa, hd(record.matched_mfas)}, :injected_overlap, []}
 
     assert_raise ExUnit.AssertionError, ~r/EX-010 overlap set changed/, fn ->
       assert_inets_trace_floor_witnesses!(record, ctx.graph, @exclusions ++ [exact_overlap])
     end
+
+    assert_inets_trace_floor_archive_negatives!(dir)
   end
 
   @tag :inets_trace_core_only
@@ -16746,7 +16827,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert record.selected_function_evidence == canonical.selected_function_evidence,
            "floor selected source findings changed"
 
-    assert record.reviews == canonical.reviews
+    assert record.reviews == canonical.reviews,
+           "floor review citation evidence changed"
 
     assert record.exact_sources == canonical.exact_sources,
            "floor exact source identities changed"
@@ -17139,6 +17221,105 @@ defmodule Fablebook.Contract.TierSweepTest do
     digest = :crypto.hash(:sha256, File.read!(path)) |> Base.encode16(case: :lower)
     error = assert_raise SweepEvidence.Error, fn -> SweepEvidence.load_archive!(path, digest) end
     assert error.reason == :manifest_inventory
+  end
+
+  defp assert_inets_trace_floor_archive_negatives!(dir) do
+    archive = Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
+    {:ok, files} = :erl_tar.extract(String.to_charlist(archive), [:compressed, :memory])
+    floor_path = ~c"floor/inets/src/inets_app/inets_trace.erl"
+    core_path = ~c"core/inets/src/inets_app/inets_trace.erl"
+    {^floor_path, _floor_bytes} = Enum.find(files, fn {name, _} -> name == floor_path end)
+    {^core_path, core_bytes} = Enum.find(files, fn {name, _} -> name == core_path end)
+
+    assert_floor_archive_rejected!(
+      dir,
+      "missing-floor-member",
+      Enum.reject(files, fn {name, _} -> name == floor_path end),
+      :manifest_inventory
+    )
+
+    substituted =
+      Enum.map(files, fn
+        {^floor_path, _floor_bytes} -> {floor_path, core_bytes}
+        entry -> entry
+      end)
+
+    assert_floor_archive_rejected!(dir, "core-bytes-in-floor-slot", substituted, :source_digest)
+
+    Enum.each(
+      [
+        {"floor-wrong-ref",
+         fn row -> Map.put(row, "url", "https://example.invalid/wrong.erl") end},
+        {"floor-wrong-size", fn row -> Map.update!(row, "bytes", &(&1 + 1)) end},
+        {"floor-wrong-hash", fn row -> Map.put(row, "sha256", String.duplicate("0", 64)) end}
+      ],
+      fn {name, mutate_row} ->
+        entries =
+          mutate_floor_inets_manifest(files, fn rows ->
+            Enum.map(rows, fn row ->
+              if row["lane"] == "floor" and
+                   row["source_path"] == "inets/src/inets_app/inets_trace.erl",
+                 do: mutate_row.(row),
+                 else: row
+            end)
+          end)
+
+        assert_floor_archive_rejected!(dir, name, entries, :source_identity)
+      end
+    )
+
+    missing_row =
+      mutate_floor_inets_manifest(files, fn rows ->
+        Enum.reject(rows, fn row ->
+          row["lane"] == "floor" and row["source_path"] == "inets/src/inets_app/inets_trace.erl"
+        end)
+      end)
+
+    assert_floor_archive_rejected!(
+      dir,
+      "missing-floor-source-record",
+      missing_row,
+      :manifest_inventory
+    )
+
+    duplicate_row =
+      mutate_floor_inets_manifest(files, fn rows ->
+        row =
+          Enum.find(rows, fn row ->
+            row["lane"] == "floor" and
+              row["source_path"] == "inets/src/inets_app/inets_trace.erl"
+          end)
+
+        rows ++ [row]
+      end)
+
+    assert_floor_archive_rejected!(
+      dir,
+      "duplicate-floor-source-record",
+      duplicate_row,
+      :manifest_duplicate
+    )
+  end
+
+  defp mutate_floor_inets_manifest(entries, mutate_rows) do
+    Enum.map(entries, fn
+      {~c"manifest.json", data} ->
+        manifest = JSON.decode!(data)
+        rows = mutate_rows.(manifest["files"])
+        {~c"manifest.json", JSON.encode!(Map.put(manifest, "files", rows))}
+
+      entry ->
+        entry
+    end)
+  end
+
+  defp assert_floor_archive_rejected!(dir, name, entries, expected_reason) do
+    path = Path.join(dir, "inets-trace-#{name}.tar.gz")
+    :ok = :erl_tar.create(String.to_charlist(path), entries, [:compressed])
+    digest = :crypto.hash(:sha256, File.read!(path)) |> Base.encode16(case: :lower)
+
+    error = assert_raise SweepEvidence.Error, fn -> SweepEvidence.load_archive!(path, digest) end
+    assert error.reason == expected_reason
   end
 
   defp mfa_string!({module, function, arity}) do
