@@ -5,9 +5,11 @@ milestone_name: Guard coverage recovery
 current_phase: 1
 current_phase_name: Bounded guard continuation
 status: planning
-stopped_at: "Planning repairs delivered in approved PR #84; required candidate and main CI passed. Ready to discuss bounded guard Phase 1; implementation remains unstarted."
-last_updated: "2026-11-11T16:57:54+00:00"
+stopped_at: "Phase 1 context gathered: EX-010 selected under INT-20261111-05; source binding, exact connected scope and effort fit pending before executable planning. No implementation started."
+last_updated: "2026-11-11T17:26:28.580Z"
 last_activity: 2026-11-11
+last_activity_desc: Owner selected the bounded inets tracing-entry row; context and preliminary provenance captured; source binding and sizing remain pending.
+state_head: 1cf7deb3ecd4be8e4d3abfc7fa94a4ab8c97b974
 progress:
   total_phases: 1
   completed_phases: 0
@@ -29,9 +31,9 @@ See PROJECT.md, ROADMAP.md and migrations/2026-11-11-milestone-reset/README.md.
 
 Milestone: v0.2 Guard coverage recovery — PLANNING — NOT STARTED
 Phase: 1 of 1 — Bounded guard continuation
-Plan: Not planned
-Status: Planning repairs delivered; candidate and main CI passed; guard Phase 1 unstarted
-Last activity: 2026-11-11 — Approved PR #84 merged; required main CI 43061493617 passed. Clean main-based checkout and saved receipts are ready for Phase 1 discussion.
+Plan: Not planned; EX-010 selected under INT-20261111-05
+Status: planning
+Last activity: 2026-11-11 — Owner selected the bounded inets tracing-entry row; context and preliminary provenance captured; source binding and sizing remain pending.
 
 ## Decisions and gates
 
@@ -58,10 +60,13 @@ PR #82 is squash-merged; required candidate and post-merge main CI passed. The r
 
 Working checkout: `.claude/worktrees/agent-planning-main-261111` on `worktree-agent-planning-main-261111`, based directly on the approved PR #84 main merge. Verified local receipt/approval commits are carried forward. The dirty primary checkout and old PR worktree remain preserved; their recovery pointers identify this clean baseline.
 
-Last session: 2026-11-11T16:57:54+00:00
-Stopped at: Planning repair delivery complete; no owner action remains for this merge. Guard Phase 1 is unstarted and needs bounded scope selection.
-Next action: Owner runs `$gsd-discuss-phase 1` when ready to select the bounded guard scope. Agent uses the clean main-based checkout and per-stage preflight; preserve all safety/product gates and do not restart completed work or require another status-only pass.
-Resume file: None
+Last session: 2026-11-11T17:26:28.558Z
+
+Stopped at: Phase 1 context gathered: EX-010 selected under INT-20261111-05; source binding, exact connected scope and effort fit pending before executable planning. No implementation started.
+
+Next action: Owner may run $gsd-plan-phase 1; agent researches exact source binding, connected membership/complement and effort fit before writing executable plans. No implementation or automatic follow-on is authorized.
+
+Resume file: .planning/phases/01-bounded-guard-continuation/01-CONTEXT.md
 
 ## Migration delivery receipt
 

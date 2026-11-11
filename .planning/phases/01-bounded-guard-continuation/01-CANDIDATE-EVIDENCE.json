@@ -1,0 +1,203 @@
+{
+  "schema": "fablebook.guard-candidate-provenance/1",
+  "date": "2026-11-11",
+  "milestone": "v0.2",
+  "phase": "1",
+  "original_id": "EX-010",
+  "intent": "INT-20261111-05",
+  "status": "selected for research; source/semantic/effort certification pending",
+  "authority_limit": "Narrow discovery snapshot of preserved uncommitted metadata; not a replacement audit ledger, current live inventory, verified source binding, semantic verdict or executable plan.",
+  "source_inputs": [
+    {
+      "checkout": "preserved primary checkout; uncommitted candidate",
+      "path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-REVIEW-CALIBRATION.md",
+      "sha256": "28007abfe39e371ba3bdd485b1a0dd404c519a1ab98b23ce66586183f7ac4aed"
+    },
+    {
+      "checkout": "preserved primary checkout; uncommitted candidate",
+      "path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-REVIEW-UNITS.jsonl.gz",
+      "sha256": "0b0e14e20772c778a2de1cd52f26475e553d1df99bbeccaa24aec9e2cfff644d"
+    },
+    {
+      "checkout": "preserved primary checkout; uncommitted candidate",
+      "path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-ROW-NEIGHBORHOODS-CORE.jsonl.gz",
+      "sha256": "3f8ed5c72ba3f0f554aa6d2f1900625c14edcb51b7084986dcc800d360dea46b"
+    },
+    {
+      "checkout": "preserved primary checkout; uncommitted candidate",
+      "path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-ROW-NEIGHBORHOODS-FLOOR.jsonl.gz",
+      "sha256": "23a6c08c371c2dd96ba5d6f0eb2f2413b7636c36550dcc27de2c6afa63b05eed"
+    }
+  ],
+  "runtime_observations": {
+    "core": {
+      "otp": "29.1.2",
+      "otp_ref": "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"
+    },
+    "floor": {
+      "otp": "27.3.4.9",
+      "otp_ref": "4aa809ae4eb4a20ad89c23837376acf179877f39"
+    }
+  },
+  "source_identities": [
+    {
+      "lane": "core",
+      "source_path": "inets/src/inets_app/inets.erl",
+      "sha256": "18d0c8091e7c9ce34fad897734c1b4105fd8c19d0912da28a32856664c760f00",
+      "source_bytes": 18519,
+      "full_file_tokens": 4188
+    },
+    {
+      "lane": "floor",
+      "source_path": "inets/src/inets_app/inets.erl",
+      "sha256": "d8786fea1edde0d055e7198cdb279e9a1999daa070d4dc229f3ec66b75e8bd5e",
+      "source_bytes": 18409,
+      "full_file_tokens": 4154
+    },
+    {
+      "lane": "core",
+      "source_path": "inets/src/inets_app/inets_trace.erl",
+      "sha256": "1f67a0bda05227eddd8ffb4909ec8a31465ef2d8582e0ff9ff5d2b72638c7599",
+      "source_bytes": 11112,
+      "full_file_tokens": 2810
+    },
+    {
+      "lane": "floor",
+      "source_path": "inets/src/inets_app/inets_trace.erl",
+      "sha256": "3e03ac1b03d2a01e7ddb1b1e29543e632aa3a63e16aa1f5a8c19ba935ae4dffd",
+      "source_bytes": 11073,
+      "full_file_tokens": 2801
+    }
+  ],
+  "historical_full_file_source_tokens": 13953,
+  "tokenizer_observation": "tiktoken 0.14.0 o200k_base in preserved source-unit metadata; no tokenizer dependency added or new tokenization run",
+  "row_neighborhoods": {
+    "core": {
+      "allocation_status": "discovery_upper_bound_only_all_direct_edges_not_semantic_source_assignment",
+      "direct_callee_modules": [
+        [
+          "inets",
+          "inets_trace"
+        ]
+      ],
+      "direct_caller_modules": [],
+      "incoming_edge_count": 0,
+      "kind": "row_module_neighborhood",
+      "matched_mfa_count": 2,
+      "matched_mfas": [
+        {
+          "app": "inets",
+          "arity": 2,
+          "function": "enable_trace",
+          "module": "inets"
+        },
+        {
+          "app": "inets",
+          "arity": 3,
+          "function": "enable_trace",
+          "module": "inets"
+        }
+      ],
+      "matcher": "{:inets, [:enable_trace]}",
+      "one_hop_resolved_file_count": 2,
+      "one_hop_resolved_source_bytes": 29631,
+      "one_hop_source_files": [
+        {
+          "app": "inets",
+          "bytes": 18519,
+          "sha256": "18d0c8091e7c9ce34fad897734c1b4105fd8c19d0912da28a32856664c760f00",
+          "source_path": "inets/src/inets_app/inets.erl"
+        },
+        {
+          "app": "inets",
+          "bytes": 11112,
+          "sha256": "1f67a0bda05227eddd8ffb4909ec8a31465ef2d8582e0ff9ff5d2b72638c7599",
+          "source_path": "inets/src/inets_app/inets_trace.erl"
+        }
+      ],
+      "one_hop_unresolved_modules": [],
+      "outgoing_edge_count": 2,
+      "row_id": "EX-010",
+      "target_app": "inets",
+      "target_module": "inets",
+      "target_source": {
+        "app": "inets",
+        "archive_status": "present",
+        "bytes": 18519,
+        "module": "inets",
+        "sha256": "18d0c8091e7c9ce34fad897734c1b4105fd8c19d0912da28a32856664c760f00",
+        "source_path": "inets/src/inets_app/inets.erl",
+        "status": "exact_local_source"
+      }
+    },
+    "floor": {
+      "allocation_status": "discovery_upper_bound_only_all_direct_edges_not_semantic_source_assignment",
+      "direct_callee_modules": [
+        [
+          "inets",
+          "inets_trace"
+        ]
+      ],
+      "direct_caller_modules": [],
+      "incoming_edge_count": 0,
+      "kind": "row_module_neighborhood",
+      "matched_mfa_count": 2,
+      "matched_mfas": [
+        {
+          "app": "inets",
+          "arity": 2,
+          "function": "enable_trace",
+          "module": "inets"
+        },
+        {
+          "app": "inets",
+          "arity": 3,
+          "function": "enable_trace",
+          "module": "inets"
+        }
+      ],
+      "matcher": "{:inets, [:enable_trace]}",
+      "one_hop_resolved_file_count": 2,
+      "one_hop_resolved_source_bytes": 29482,
+      "one_hop_source_files": [
+        {
+          "app": "inets",
+          "bytes": 18409,
+          "sha256": "d8786fea1edde0d055e7198cdb279e9a1999daa070d4dc229f3ec66b75e8bd5e",
+          "source_path": "inets/src/inets_app/inets.erl"
+        },
+        {
+          "app": "inets",
+          "bytes": 11073,
+          "sha256": "3e03ac1b03d2a01e7ddb1b1e29543e632aa3a63e16aa1f5a8c19ba935ae4dffd",
+          "source_path": "inets/src/inets_app/inets_trace.erl"
+        }
+      ],
+      "one_hop_unresolved_modules": [],
+      "outgoing_edge_count": 2,
+      "row_id": "EX-010",
+      "target_app": "inets",
+      "target_module": "inets",
+      "target_source": {
+        "app": "inets",
+        "archive_status": "present",
+        "bytes": 18409,
+        "module": "inets",
+        "sha256": "d8786fea1edde0d055e7198cdb279e9a1999daa070d4dc229f3ec66b75e8bd5e",
+        "source_path": "inets/src/inets_app/inets.erl",
+        "status": "exact_local_source"
+      }
+    }
+  },
+  "direct_delegates": [
+    "inets_trace:enable/2",
+    "inets_trace:enable/3"
+  ],
+  "limitations": [
+    "Recorded zero incoming direct xref edges does not establish absence of dynamic callers.",
+    "inets.erl is in the existing exact-source archive; inets_trace.erl still needs exact provenance validation and archive binding.",
+    "Local source snapshot path/availability is unknown.",
+    "Full connected semantic-source scope, live selected/complement equality and implementation/review/verification effort are not yet certified.",
+    "EX-011 and other rows sharing source remain separately owned; no semantic verdict from the pilot is promoted."
+  ]
+}
