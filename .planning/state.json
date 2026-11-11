@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "gh pr merge 80 --squash --match-head-commit 22c24b6a5a3d55c3fd2468b7c983a0cc563af7c0",
-    "label": "Owner merge of the reviewed green release-contract PR",
-    "reason": "Quick task implementation, review, full local lanes and required hosted checks passed. Merge remains the owner boundary; release landing debt stays open until merged. Parent and Phase 2 gates remain."
+    "command": "gh run watch 42931152814 --exit-status",
+    "label": "Observe post-merge main CI",
+    "reason": "PR #80 was approved and squash-merged after all required candidate checks passed. Main automation is running; no owner action is required. Five unrelated UAT groups and the parent/Phase 2 gates remain."
   },
-  "updated_at": "2026-11-11T00:13:01+00:00"
+  "updated_at": "2026-11-11T00:25:50+00:00"
 }

@@ -2,7 +2,7 @@
 phase: quick-261110-nhq
 plan: "01"
 status: complete
-delivery_status: ready-for-owner-merge
+delivery_status: merged
 source_commit: 08857f4c68e2c10d90ccef786df0d124c26e4b9a
 source_sha256: 9354a54779c5b2a67978f2bcc25bbcdd7c03083097e57d6b958d9a4fb5bcf736
 requirements_completed: []
@@ -63,3 +63,11 @@ Core and floor overlapped. Core's CI step took 443s, floor's test step 613s, and
 The final receipt and quick-task completion bookkeeping are held locally for the next substantive push, and linked from the PR, avoiding another receipt-only CI run. No further source edit followed validation. The audit keeps the release-hardening landing requirement outstanding until the owner merges PR #80; the other five groups stay open.
 
 Next command: `gh pr merge 80 --squash --match-head-commit 22c24b6a5a3d55c3fd2468b7c983a0cc563af7c0` — owner-authorized merge of the reviewed green candidate. Do not start another phase or release.
+
+## Approved merge closure
+
+Owner authorization is recorded in [INT-20261110-06](../../intent/sources/2026-11-10-06-approve-release-contract-merge.md). [PR #80](https://github.com/szTheory/fablebook/pull/80) was squash-merged at `2026-11-11T00:24:51Z`, merge commit `ea2b09914512b9059be951157e0f1b4cd7d91007`, with the expected reviewed head enforced by the merge API. All required candidate jobs had passed in [42927843212](https://github.com/szTheory/fablebook/actions/runs/42927843212). The earlier pending-merge statements above describe the pre-approval receipt.
+
+A fresh fetch confirms main's release-contract digest matches the tested `9354a54779c5b2a67978f2bcc25bbcdd7c03083097e57d6b958d9a4fb5bcf736`; the workflow, library, dependencies and lockfiles remain unchanged. The [post-merge main run](https://github.com/szTheory/fablebook/actions/runs/42931152814) is in progress and is not claimed as passed. The release-contract audit group is resolved by this merged green candidate; five unrelated groups remain. No new phase or release is started.
+
+Closure bookkeeping stays local for the next substantive push. Original/recovery worktrees remain preserved. Next command: `gh run watch 42931152814 --exit-status` — observe the separate post-merge main CI. No owner action is required to let that automation finish.
