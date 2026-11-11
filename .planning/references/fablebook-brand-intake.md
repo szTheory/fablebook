@@ -1,6 +1,6 @@
 # Fablebook brand source intake
 
-**Status:** Source pinned for future planning. The expected source version is unresolved; no brand has been applied.
+**Status:** Source pinned for future planning. The owner explicitly chose to wait for version 2.1 and keep the intake and assets staged; no brand has been applied. See [INT-20261111-07](../intent/sources/2026-11-11-07-fablebook-brand-version-hold.md). Guard Phase 1 continues independently.
 
 ## Provenance
 

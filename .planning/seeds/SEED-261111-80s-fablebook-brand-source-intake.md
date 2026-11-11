@@ -35,3 +35,5 @@ The provenance, owner direction and conflicts are captured. The eventual impleme
 ## Notes
 
 Read the upstream source at its pinned repository commit; do not treat a local copy as product content. Keep source recommendations distinct from owner decisions, verify every product claim against shipped behavior, and do not copy assets until the version, rights and destination are resolved.
+
+Owner decision INT-20261111-07: wait for 2.1 and keep the intake and assets staged. This hold does not pause guard Phase 1.
