@@ -1,7 +1,7 @@
 {
   "schema": "fablebook.planning-repair-delivery/1",
   "scope": "planning-lifecycle-repair",
-  "status": "awaiting-owner-merge",
+  "status": "merged-main-ci-pending",
   "pr": "https://github.com/szTheory/fablebook/pull/84",
   "reviewed_head": "885c6374fe99e88de7ae35913ed58d5e0612823c",
   "base": "42eed41986476e40c2d291685df7f1b245b61ca0",
@@ -57,11 +57,20 @@
   },
   "mergeable": true,
   "mergeable_state": "clean",
-  "observed_at": "2026-11-11T16:17:22+00:00",
+  "observed_at": "2026-11-11T16:46:48+00:00",
   "phase_implementation_started": false,
   "aggregate_gate": "open",
-  "next_owner_action": "Decide whether to squash-merge PR 84.",
+  "next_owner_action": null,
   "after_merge": "$gsd-discuss-phase 1 selects the exact bounded guard scope; no automatic implementation.",
   "bookkeeping": "Final receipt retained locally for next substantive push; remote source head stays the tested candidate to avoid identical receipt-only CI.",
-  "merge_command_after_approval": "gh pr merge 84 --squash --match-head-commit 885c6374fe99e88de7ae35913ed58d5e0612823c"
+  "merge_command_after_approval": "gh pr merge 84 --squash --match-head-commit 885c6374fe99e88de7ae35913ed58d5e0612823c",
+  "approval": "INT-20261111-04",
+  "merge_commit": "1fb61faf700db5398d3174d94a967a9199b89a85",
+  "main_tree_matches_reviewed_candidate": true,
+  "main_ci": {
+    "url": "https://github.com/szTheory/fablebook/actions/runs/43061493617",
+    "head": "1fb61faf700db5398d3174d94a967a9199b89a85",
+    "status": "in_progress"
+  },
+  "next_agent_action": "Monitor the existing main CI; retain final receipt without a receipt-only push."
 }
