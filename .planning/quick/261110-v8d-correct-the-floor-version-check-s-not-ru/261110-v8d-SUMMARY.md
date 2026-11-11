@@ -81,3 +81,21 @@ A fresh fetch verifies main's four source files against the reviewed candidate a
 The separate [main CI run](https://github.com/szTheory/fablebook/actions/runs/42956492952) is in progress, not a passing receipt yet. Final closure/receipt bookkeeping stays local for the next substantive push; no receipt-only run is triggered.
 
 Next command: `gh run watch 42956492952 --exit-status` — observe post-merge main CI. No owner action is needed while it runs; no new phase or release is started.
+
+## Post-merge main observation complete
+
+The [main run](https://github.com/szTheory/fablebook/actions/runs/42956492952) passed on squash merge `0b028db2a933f407d9a75b2fd938200dd7a4e961`. Core, floor, Dialyzer, security and ci-gate all succeeded; scheduled-only nightly and ci-health were correctly skipped. Read-only run metadata confirms the push event and exact merge revision. This supersedes the in-progress observation above. Owner-approved merge and its required CI observation are complete.
+
+| Job | Result | Duration | Receipt |
+|---|---|---|---|
+| dialyzer | success | 30s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130312729051) |
+| floor | success | 654s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130312729392) |
+| security | success | 34s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130312729528) |
+| core | success | 442s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130312729565) |
+| ci-gate | success | 3s | [job](https://github.com/szTheory/fablebook/actions/runs/42956492952/job/130316605568) |
+
+Core/floor overlapped. Core's CI step took 425s; floor tests took 625s. Setup was 10s/15s, with existing caches. Candidate core/floor totals were 553s/599s versus main's 442s/654s. Current and recent history continue to show test-time variation, not a repeatable safe step removal or setup shortcut. Preserve gates and non-blocking timing objectives; no workflow edit, speculative cache/concurrency/dependency change or extra CI run is warranted.
+
+Merge-closure intent/contract-rule checks passed (32 tests, `merge-planning.log`), and the canonical UAT audit reports three remaining groups with zero parse gaps. Their existing owners are unchanged. Phase 01.1.1.18 remains verified complete; parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain. Brand assets and original/recovery checkouts remain untouched. Final documentation-only receipts are saved locally for the next substantive push, avoiding an identical hosted run.
+
+Next command: `$gsd-progress --forensic` — review remaining work before selecting a separate task or phase. No owner action is needed for this completed merge and CI observation.
