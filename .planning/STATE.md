@@ -5,16 +5,16 @@ milestone_name: Guard coverage recovery
 current_phase: 1
 current_phase_name: Bounded guard continuation
 status: executing
-stopped_at: Completed 01-01-PLAN.md; next run Plan 01-02
-last_updated: "2026-11-11T21:47:12.851Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-11-11T22:39:04.603Z"
 last_activity: 2026-11-11
-last_activity_desc: Plan 01 core source evidence completed; Plan 02 floor review is next.
-state_head: 420dd57a21769c6c332a9a67389092b02556c0cf
+last_activity_desc: Plan 02 floor source evidence and controls completed; Plan 03 integration is next.
+state_head: c18e16700f4121bfc962599e5acc3e934bcac685
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -31,9 +31,9 @@ See PROJECT.md, ROADMAP.md and migrations/2026-11-11-milestone-reset/README.md.
 
 Milestone: v0.2 Guard coverage recovery — EXECUTING — NOT DELIVERED
 Phase: 1 (Bounded guard continuation) — EXECUTING
-Plan: 2 of 3
-Status: Plan 01 complete; Plan 02 is next
-Last activity: 2026-11-11 — Plan 01 core source evidence completed; Plan 02 floor review is next.
+Plan: 3 of 3
+Status: Plans 01 and 02 complete; Plan 03 is next
+Last activity: 2026-11-11 — Plan 02 floor source evidence and controls completed; Plan 03 integration is next.
 
 ## Decisions and gates
 
@@ -58,15 +58,15 @@ PR #82 is squash-merged; required candidate and post-merge main CI passed. The r
 
 ## Session Continuity
 
-Working checkout: `.claude/worktrees/agent-planning-main-261111` on `gsd/phase-1-bounded-guard-continuation`, based directly on the approved PR #84 main merge. Plan 01 is complete; continue serially with Plan 02 in this pinned checkout. The dirty primary checkout and old PR worktree remain preserved.
+Working checkout: `.claude/worktrees/agent-planning-main-261111` on `gsd/phase-1-bounded-guard-continuation`, based directly on the approved PR #84 main merge. Plans 01 and 02 are complete; continue serially with Plan 03 in this pinned checkout. The dirty primary checkout and old PR worktree remain preserved.
 
-Last session: 2026-11-11T21:47:12.827Z
+Last session: 2026-11-11T22:39:04.589Z
 
-Stopped at: Completed 01-01-PLAN.md; next run Plan 01-02
+Stopped at: Completed 01-02-PLAN.md
 
-Next action: Execute Plan 01-02 after its own preflight and source-fit checks. Plan 01-03 follows only after Plan 02. All summaries precede phase verify/ship; approved merge and delivery receipt remain required before phase completion. No automatic later phase.
+Next action: Execute Plan 01-03 only after its own preflight and source-fit checks. Phase verification, ship preflight, approved merge, and delivery receipt remain required before phase completion. No automatic later phase.
 
-Resume file: .planning/phases/01-bounded-guard-continuation/01-02-PLAN.md
+Resume file: .planning/phases/01-bounded-guard-continuation/01-03-PLAN.md
 
 ## Migration delivery receipt
 
@@ -87,8 +87,12 @@ Planning repair delivery is complete. Full candidate and main core/floor/Dialyze
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 01 P01 | 89m | 2 tasks | 4 files |
+| Phase 01 P02 | 40min | 2 tasks | 5 files |
 
 ## Decisions
 
 - [Phase 01]: Keep EX-010 pending and checker status candidate-only until independent floor and integration work.
 - [Phase 01]: Preserve the dynamic-caller and caller-supplied callback limits; graph membership is not runtime proof.
+- [Phase 01]: Keep EX-010 pending and checker status candidate-only; the floor source review does not decide integration or runtime safety.
+- [Phase 01]: Resolve the identical source path separately by lane so core citations cannot be supplied by floor bytes or vice versa.
+- [Phase 01]: Run the two core-only EX-010 tests on the core lane and exclude only those tagged tests from the floor lane.
