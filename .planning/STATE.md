@@ -5,8 +5,8 @@ milestone_name: Guard coverage recovery
 current_phase: 1
 current_phase_name: Bounded guard continuation
 status: planning
-stopped_at: "Phase 1 scope and estimates are not selected; no implementation starts."
-last_updated: "2026-11-11T14:23:45.740145+00:00"
+stopped_at: "PR #83 merged with green candidate and main CI. Owner-requested planning lifecycle repairs are under validation; Phase 1 remains unstarted."
+last_updated: "2026-11-11T16:01:47+00:00"
 last_activity: 2026-11-11
 progress:
   total_phases: 1
@@ -30,8 +30,8 @@ See PROJECT.md, ROADMAP.md and migrations/2026-11-11-milestone-reset/README.md.
 Milestone: v0.2 Guard coverage recovery — PLANNING — NOT STARTED
 Phase: 1 of 1 — Bounded guard continuation
 Plan: Not planned
-Status: Awaiting source-scope discussion; no implementation plan
-Last activity: 2026-11-11 — Prepared the owner-requested numbering/milestone reset; no implementation started.
+Status: Planning health/repair audit in progress; Phase 1 unstarted
+Last activity: 2026-11-11 — Audited planning lifecycle and added recurrence checks; validating the repair candidate before owner review.
 
 ## Decisions and gates
 
@@ -56,7 +56,17 @@ PR #82 is squash-merged; required candidate and post-merge main CI passed. The r
 
 ## Session Continuity
 
+Working checkout: `.claude/worktrees/agent-planning-health-261111` on `worktree-agent-planning-health-261111`, based on merged PR #83. The dirty primary checkout is preserved; its local recovery pointer identifies this candidate.
+
 Last session: 2026-11-11T14:23:45.740145+00:00
-Stopped at: Phase 1 scope and estimates are not selected. No implementation started.
-Next action after migration approval: $gsd-discuss-phase 1 — establish the exact bounded source scope and estimates before planning.
+Stopped at: PR #83 merged with green candidate and main CI. Owner-requested planning lifecycle repairs are under validation; Phase 1 remains unstarted.
+Next action: Continue the authorized planning health/repair audit. No owner action is needed while checks and repairs proceed; do not start Phase 1 implementation.
 Resume file: None
+
+## Migration delivery receipt
+
+PR #83 is squash-merged; required candidate CI 43040038122 and post-merge main CI 43042576747 passed. See migrations/2026-11-11-milestone-reset/README.md. The active roadmap has only Phase 1; the next implementation scope remains unselected.
+
+## Planning health repair
+
+See audits/2026-11-11-planning-health/ and references/PLANNING-LIFECYCLE.md. Repairs cover stale routes/seeds, the generated cache, future prerequisites, bounded milestone exits and delivery-aware reentry prevention. The complete guard aggregate remains open; Walking skeleton is blocked and SEC-01 remains Pending with its future owner. This repair does not deliver v0.2 Phase 1. No product/guard implementation starts without its scope boundary.

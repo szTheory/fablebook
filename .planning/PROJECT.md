@@ -20,6 +20,8 @@ Planning reset under INT-20261111-01. Deliver one bounded guard increment with o
 
 ## Requirements
 
+The lists below summarize the wider v1 product vision; they are not the active milestone scope or a live progress ledger. Use REQUIREMENTS.md for current acceptance and references/PRODUCT-REQUIREMENTS.md for carried product status/citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
+
 ### Validated
 
 - ✓ **SEC-02** In prod the router macro raises a `CompileError`, with no override in 1.0. Stories and canon never compile in prod. The CI prod build asserts there are no Fablebook routes and no story beams. — Phase 01.1 (ADR 0006)
@@ -307,7 +309,7 @@ Every item below is a v1.0 commitment.
   - ≤5 plans per phase, about ≤3 days each. Every phase ends in a merged, green PR to main. Push on day 1.
   - No proof-only phases. Review loops are capped at 2.
   - A contract test is never edited in the same PR as the implementation it guards.
-  - Restart phase numbering at 1 for the next milestone with `$gsd-new-milestone --reset-phase-numbers` after archiving this milestone. Keep existing IDs stable; avoid nested decimal insertions. (INT-20261101-02)
+  - Use sequential integer phases, restarting at 1 for each bounded milestone. The approved fail-forward reset is already active; do not wait for the full old product cycle. Preserve historical IDs in the archive and unfinished acceptance in the carry-forward register. (INT-20261101-02, INT-20261111-01)
   - Clearance is a soak checked at the milestone audit, not a phase.
   (ADR 0021, INT-20261028-02, INT-20261028-03)
 - **Honesty**: Report only what a tool or a human actually verified. A check that didn't run is `not-run`, never `pass`. (ADR 0010, INT-20261028-01)
@@ -324,7 +326,7 @@ Every item below is a v1.0 commitment.
 | End GSD flows with the next command; distinguish merge readiness from pending phase observations (INT-20261029-09) | Keep useful work moving and make the next action explicit | Merge green scoped PRs under existing checks; retain scheduled evidence; auto-advance stays off |
 | Automate verification by default; hand off only irreducible checks (INT-20261029-08) | Reduce owner toil and repeated UAT; add CI coverage when it has recurring value | `.planning/VERIFICATION.md` maps criteria to evidence, reuses approvals, and requires CI speed reviews to preserve gates; Phase 1 evidence is in `01-UAT.md`; GSD auto-advance stays off |
 | Allow validation-only publication for the named delivery-evidence items (ADR 0026, INT-20261101-01) | PR CI and merge identity cannot be verified before a PR exists or is merged | For Phase 01.1.1.3.1.3 only, publish a draft to collect exact-head CI; merge only after all required checks and markers pass; complete the phase only after independent merge identity verification. Other high findings still block. |
-| Restart numbering at each new milestone (INT-20261101-02) | Deeply nested decimal IDs are difficult to read and manage | After archiving the current milestone, start the next at Phase 1 with `--reset-phase-numbers`; preserve historical IDs and avoid nested decimal insertions. |
+| Reset and split the oversized roadmap (INT-20261101-02, INT-20261111-01) | Deeply nested IDs and a whole-product milestone obscured bounded progress | PR #83 activates v0.2 / Phase 1; the old cycle is superseded/incomplete, future product owners are mapped separately, and every later bounded milestone restarts at Phase 1. |
 | Stories are compiled `.ex` modules in `storybook/` (ADR 0001) | No eval surface; manifest available in test; colocated hooks work | — Pending |
 | Scenarios are functions; slots are never strings (ADR 0002) | The string round-trip caused the incumbent's root bugs and its CVE | — Pending |
 | Iframe canvas through the host's pipeline and root layout (ADR 0003) | Fidelity is the product; it removes CSS and hook isolation problems | — Pending |
@@ -336,7 +338,7 @@ Every item below is a v1.0 commitment.
 | Manifest yes; MCP and plugin API not in 1.0 (ADR 0009) | Avoids Storybook's addon breakage | — Pending |
 | The LLM context bundle is core (ADR 0010) | The owner's main motivation | — Pending |
 | phoenix_test_playwright with a reversal trigger (ADR 0011) | One ExUnit runner; both options spiked in phase 1 | — Pending |
-| Canon in `design/` as Markdown plus DTCG (ADR 0012) | Interop with abracabrand, impeccable and LLMs; no YAML dependency | — Pending |
+| Canon in `design/` as Markdown plus DTCG (ADR 0012) | Interop with external brand-book sources and LLMs; no YAML dependency | — Pending |
 | Workbench UX (ADR 0013) | Clearer than Storybook | — Pending |
 | Deterministic performance proxies (ADR 0015) | Tail latency on shared runners is noise | — Pending |
 | Three workflows, one gate (ADR 0017) | CI bloat was the owner's biggest velocity tax | — Pending |
@@ -344,7 +346,7 @@ Every item below is a v1.0 commitment.
 | Motion is a first-class lane (ADR 0025) | The owner's top UX priority; prior tools leave motion as a blind spot | — Pending |
 | Static export in v1.x; render seam now (ADR 0022) | Keeps the 1.0 design uncompromised | — Pending |
 | Four tiers Primitive…Screen; "Scenario" (ADR 0023) | One clear question per tier; "variant" collides with `attr :variant` | — Pending |
-| Split rule beats "8–12 phases": about 35 sequential phases under the 12 family headings, with research's ordering moves (INT-20261028-16, OPEN-QUESTIONS Q6) | Research found 8 of 12 families exceed the 5-plan cap; the split rule is non-negotiable | — Pending |
+| Preserve research ordering and the five-plan cap (INT-20261028-16, INT-20261111-01, OPEN-QUESTIONS Q6) | The original 35-phase cycle was too broad; acceptance must survive smaller milestones | The single-cycle packaging is superseded; 34 future phases retain explicit owners across 12 future milestones. |
 | Mirrored source and BEAM guard tiers with derived reachability and boundary contracts (ADR 0004, INT-20261029-04) | Quoted and module-body calls need source inspection; generated probes and both-lane sweeps keep tier entries live | Verified in Phase 01.1.1, PRs #15–#20; SEC-01 remains Pending for Phase 5 |
 | Parser disposition, unswept OTP apps, and carried-exclusion audit remain separate owned work (INT-20261029-02) | Keep the scoped phase complete without claiming the transferred guarantees | Open in Phase 01.1.1.1; accepted computed-dispatch and write-then-load residuals retain the Phase 5 backstop |
 | Absolute Elixir module names bypass local alias expansion (01.1.1-REVIEW CR-01) | A local alias must not hide a root-qualified quoted call | Fixed in PR #20; source-only fixture and direct/apply/benign controls pass on both lanes |
@@ -355,7 +357,7 @@ Every item below is a v1.0 commitment.
 
 ## Roadmap constraints (for the roadmapper)
 
-These are ordering and scope constraints, not a fixed structure. They fit `Fine` granularity: 12 phases, each with at most 5 plans and each ending in a merged green PR. **Split any phase that would need more than 5 plans; never compress one.**
+The numbered list below is the historical product-family outline, not active phase numbering or a request to repeat delivered bootstrap work. Current bounded milestones and prerequisites are in references/PRODUCT-ROADMAP.md and PHASE-MAP.json. Every active phase retains the five-plan cap and ends in a merged green PR. **Split any phase that would need more than 5 plans; never compress one.** (INT-20261111-01)
 
 1. **Walking skeleton**
    - Bootstrap via the skill and publish 0.1.0.

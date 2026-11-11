@@ -1,6 +1,6 @@
 # Logistify brand book intake
 
-This is a compact, source-grounded reference for Phase 17 planning. The original v1.0 book and structured exports are the provenance sources for this intake; they are not yet applied Fablebook canon. This file records useful decisions, source locations, and open limits without copying the whole book.
+This is a compact, source-grounded reference for Design canon and adopter Books / Phase 4 (legacy Phase 17) planning. The original v1.0 book and structured exports are the provenance sources for this intake; they are not yet applied Fablebook canon. This file records useful decisions, source locations, and open limits without copying the whole book.
 
 ## Capture status
 
@@ -65,5 +65,9 @@ Keep these explicit rather than silently treating them as accepted product polic
 ## Related planning records
 
 - Owner intent: `.planning/intent/sources/2026-11-10-08-logistify-brand-intake.md` (`INT-20261110-08`).
-- Phase context: `.planning/ROADMAP.md`, Phase 17; canon contract: `docs/adr/0012-canon-format.md`.
+- Phase context: `.planning/references/PRODUCT-ROADMAP.md`, Design canon and adopter Books / Phase 4 (legacy Phase 17); canon contract: `docs/adr/0012-canon-format.md`.
 - Seed: `.planning/seeds/SEED-261110-iry-logistify-phase17-brand-intake.md`.
+
+## Current routing after the milestone reset
+
+INT-20261111-01 maps legacy Phase 17 to the future Design canon and adopter Books milestone (`design-canon`), local Phase 4. The seed now carries that exact address; PROJECT points here before canon authoring. Legacy IDs above retain their original provenance. No source asset, schema mapping, implementation, review decision or publishing state changes.

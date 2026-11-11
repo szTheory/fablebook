@@ -55,7 +55,7 @@ Legacy Phase 2. Future, not activated.
 
 **Goal**: One compiled story renders end to end in a plain host app and in an adversarial one, a first visual check runs under every baseline guard, and the browser-runner question (Q1) is answered by evidence.
 **Mode:** mvp
-**Depends on**: Phase 01.1.1.1, Phase 01.1.1.13
+**Depends on**: The open guard-aggregate gate carried from legacy Phase 01.1.1.1, plus the delivered legacy Phase 01.1.1.13 receipt. These are archived evidence/gate references, not active phase IDs.
 **Requirements**: None completed here (a vertical slice and a spike; see Partial delivery).
 **Partial delivery**: QA-04 (skeleton `hosts/operator`, completes in Canvas fidelity and installer core / Phase 3), VIS-01 and VIS-02 (guards, complete in Checks and visual regression / Phase 2), CANVAS-01 and SEC-03 (nonce CSP exercised, complete in Canvas fidelity and installer core / Phase 1).
 **Provisional on:** Q9

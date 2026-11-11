@@ -1,8 +1,10 @@
 # Roadmap: v0.2 Guard coverage recovery
 
-**Status:** Planning baseline; the migration PR is the activation boundary. INT-20261111-01 authorizes the numbering/milestone reset; implementation remains a separate phase boundary.
+**Status:** Active planning baseline; PR #83 is merged and its required candidate/main CI passed. The owner-requested planning lifecycle repair is in progress before scope selection. INT-20261111-01 authorizes the numbering/milestone reset; implementation remains a separate phase boundary.
 
 ## Milestone
+
+**Milestone key:** guard-recovery
 
 One source-connected guard increment, independently sized and delivered with the existing quality gates. The next scope must be selected from preserved evidence before a plan is written. Finishing this milestone does not claim the full remaining audit or unlock the walking skeleton. The complete future product is in references/PRODUCT-ROADMAP.md; the superseded cycle is in MILESTONES.md.
 

@@ -1,7 +1,7 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.2",
+  "milestone": "v0.2 — Guard coverage recovery",
   "phases": [
     {
       "number": "1",
@@ -10,9 +10,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-discuss-phase 1",
-    "label": "After migration approval, scope the next bounded guard slice",
-    "reason": "The reset candidate archives incomplete history honestly and preserves every stop. No implementation starts until the new roadmap and bounded scope are approved."
+    "command": "$gsd-progress --next",
+    "label": "Advance to the next step (plan phase 1)",
+    "reason": "Phase 1 of 1 — needs a plan"
   },
-  "updated_at": "2026-11-11T14:18:56.307696+00:00"
+  "updated_at": "2026-11-11T16:01:47.684Z"
 }

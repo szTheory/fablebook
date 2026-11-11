@@ -1,6 +1,5 @@
 {
   "schema": "fablebook.phase-address-map/1",
-  "active_milestone": "v0.2",
   "future_phases": [
     {
       "legacy_phase": "2",
@@ -8,7 +7,11 @@
       "milestone_name": "Walking skeleton",
       "phase": 1,
       "name": "Walking skeleton and runner spike",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "legacy:01.1.1.1",
+        "legacy:01.1.1.13"
+      ]
     },
     {
       "legacy_phase": "3",
@@ -16,7 +19,10 @@
       "milestone_name": "Story model and render seam",
       "phase": 1,
       "name": "Story model and catalog",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "walking-skeleton:1"
+      ]
     },
     {
       "legacy_phase": "4",
@@ -24,7 +30,10 @@
       "milestone_name": "Story model and render seam",
       "phase": 2,
       "name": "Render seam, rules engine and generated tests",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "story-model:1"
+      ]
     },
     {
       "legacy_phase": "5",
@@ -32,7 +41,10 @@
       "milestone_name": "Controls and first bundle",
       "phase": 1,
       "name": "Controls and URL state",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "story-model:2"
+      ]
     },
     {
       "legacy_phase": "6",
@@ -40,7 +52,11 @@
       "milestone_name": "Controls and first bundle",
       "phase": 2,
       "name": "Thin bundle slice",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "story-model:2",
+        "controls-bundle:1"
+      ]
     },
     {
       "legacy_phase": "7",
@@ -48,7 +64,10 @@
       "milestone_name": "Canvas fidelity and installer core",
       "phase": 1,
       "name": "Canvas isolation and containment",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "controls-bundle:1"
+      ]
     },
     {
       "legacy_phase": "8",
@@ -56,7 +75,10 @@
       "milestone_name": "Canvas fidelity and installer core",
       "phase": 2,
       "name": "Canvas diagnostics, hot reload and Globals",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "canvas-fidelity:1"
+      ]
     },
     {
       "legacy_phase": "9",
@@ -64,7 +86,10 @@
       "milestone_name": "Canvas fidelity and installer core",
       "phase": 3,
       "name": "Operator host, fidelity receipt and real components",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "canvas-fidelity:2"
+      ]
     },
     {
       "legacy_phase": "10",
@@ -72,7 +97,10 @@
       "milestone_name": "Canvas fidelity and installer core",
       "phase": 4,
       "name": "Installer core",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "canvas-fidelity:3"
+      ]
     },
     {
       "legacy_phase": "11",
@@ -80,7 +108,11 @@
       "milestone_name": "Workbench UX",
       "phase": 1,
       "name": "Chrome shell, sidebar, story page and grid",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "canvas-fidelity:1",
+        "canvas-fidelity:4"
+      ]
     },
     {
       "legacy_phase": "12",
@@ -88,7 +120,10 @@
       "milestone_name": "Workbench UX",
       "phase": 2,
       "name": "Inspector, toolbar, palette and keyboard",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "workbench:1"
+      ]
     },
     {
       "legacy_phase": "13",
@@ -96,7 +131,10 @@
       "milestone_name": "Workbench UX",
       "phase": 3,
       "name": "Mobile layout, QR, microcopy, Compare by Globals and Diagnostics",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "workbench:2"
+      ]
     },
     {
       "legacy_phase": "14",
@@ -104,7 +142,10 @@
       "milestone_name": "Design canon and adopter Books",
       "phase": 1,
       "name": "Canon core",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "story-model:2"
+      ]
     },
     {
       "legacy_phase": "15",
@@ -112,7 +153,11 @@
       "milestone_name": "Design canon and adopter Books",
       "phase": 2,
       "name": "Foundations, Themes, Directions, citations, coverage and To review",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "workbench:1",
+        "design-canon:1"
+      ]
     },
     {
       "legacy_phase": "16",
@@ -120,7 +165,11 @@
       "milestone_name": "Design canon and adopter Books",
       "phase": 3,
       "name": "Canon lints, tokens task and DESIGN.md",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "design-canon:1",
+        "design-canon:2"
+      ]
     },
     {
       "legacy_phase": "17",
@@ -128,7 +177,10 @@
       "milestone_name": "Design canon and adopter Books",
       "phase": 4,
       "name": "Content track I - Fablebook brand book and the Logistify family",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "design-canon:3"
+      ]
     },
     {
       "legacy_phase": "18",
@@ -136,7 +188,10 @@
       "milestone_name": "Design canon and adopter Books",
       "phase": 5,
       "name": "Content track II - Chatly and Clinicly",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "design-canon:4"
+      ]
     },
     {
       "legacy_phase": "19",
@@ -144,7 +199,13 @@
       "milestone_name": "Design canon and adopter Books",
       "phase": 6,
       "name": "Bundle core with canon",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "controls-bundle:2",
+        "design-canon:1",
+        "design-canon:4",
+        "design-canon:5"
+      ]
     },
     {
       "legacy_phase": "20",
@@ -152,7 +213,12 @@
       "milestone_name": "Checks and visual regression",
       "phase": 1,
       "name": "Probe, Evidence and the Checks tab",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "canvas-fidelity:2",
+        "workbench:1",
+        "workbench:2"
+      ]
     },
     {
       "legacy_phase": "21",
@@ -160,7 +226,11 @@
       "milestone_name": "Checks and visual regression",
       "phase": 2,
       "name": "Capture and visual baselines",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "walking-skeleton:1",
+        "checks-capture:1"
+      ]
     },
     {
       "legacy_phase": "22",
@@ -168,7 +238,12 @@
       "milestone_name": "Checks and visual regression",
       "phase": 3,
       "name": "Sweep, Ratchet and verdicts",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "design-canon:2",
+        "checks-capture:1",
+        "checks-capture:2"
+      ]
     },
     {
       "legacy_phase": "23",
@@ -176,7 +251,11 @@
       "milestone_name": "Checks and visual regression",
       "phase": 4,
       "name": "UX checks I - interaction states, forms, layout shift, RTL",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "checks-capture:1",
+        "checks-capture:2"
+      ]
     },
     {
       "legacy_phase": "24",
@@ -184,7 +263,12 @@
       "milestone_name": "Checks and visual regression",
       "phase": 5,
       "name": "UX checks II, journeys and design.json",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "design-canon:2",
+        "checks-capture:2",
+        "checks-capture:4"
+      ]
     },
     {
       "legacy_phase": "25",
@@ -192,7 +276,11 @@
       "milestone_name": "Motion",
       "phase": 1,
       "name": "Motion spike, time shim and Motion panel",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "canvas-fidelity:2",
+        "workbench:2"
+      ]
     },
     {
       "legacy_phase": "26",
@@ -200,7 +288,12 @@
       "milestone_name": "Motion",
       "phase": 2,
       "name": "Motion tokens, checks and CI lane",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "design-canon:1",
+        "checks-capture:2",
+        "motion:1"
+      ]
     },
     {
       "legacy_phase": "27",
@@ -208,7 +301,12 @@
       "milestone_name": "LLM context bundles",
       "phase": 1,
       "name": "Bundle browser tier and allocator",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "design-canon:6",
+        "checks-capture:1",
+        "checks-capture:2"
+      ]
     },
     {
       "legacy_phase": "28",
@@ -216,7 +314,11 @@
       "milestone_name": "LLM context bundles",
       "phase": 2,
       "name": "Focus framework, review focuses and gen.screens",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "design-canon:2",
+        "llm-bundles:1"
+      ]
     },
     {
       "legacy_phase": "29",
@@ -224,7 +326,13 @@
       "milestone_name": "LLM context bundles",
       "phase": 3,
       "name": "Compare, journey and motion focuses",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "checks-capture:3",
+        "checks-capture:5",
+        "motion:2",
+        "llm-bundles:2"
+      ]
     },
     {
       "legacy_phase": "30",
@@ -232,7 +340,11 @@
       "milestone_name": "Installer and DX",
       "phase": 1,
       "name": "Generators, doctor shell and migrator",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "canvas-fidelity:4",
+        "llm-bundles:3"
+      ]
     },
     {
       "legacy_phase": "31",
@@ -240,7 +352,11 @@
       "milestone_name": "Installer and DX",
       "phase": 2,
       "name": "Image export, Docker demo and string check",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "design-canon:5",
+        "checks-capture:2"
+      ]
     },
     {
       "legacy_phase": "32",
@@ -248,7 +364,11 @@
       "milestone_name": "Installer and DX",
       "phase": 3,
       "name": "Guides, docs brand and compatibility",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "installer-dx:1",
+        "installer-dx:2"
+      ]
     },
     {
       "legacy_phase": "33",
@@ -256,7 +376,10 @@
       "milestone_name": "Hardening and remaining twins",
       "phase": 1,
       "name": "Hardening",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "installer-dx:3"
+      ]
     },
     {
       "legacy_phase": "34",
@@ -264,7 +387,10 @@
       "milestone_name": "Hardening and remaining twins",
       "phase": 2,
       "name": "Finanza and Shopadelic twins",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "checks-capture:3"
+      ]
     },
     {
       "legacy_phase": "35",
@@ -272,7 +398,21 @@
       "milestone_name": "Dogfood setup",
       "phase": 1,
       "name": "Dogfood setup",
-      "status": "future-pending"
+      "status": "future-pending",
+      "depends_on": [
+        "installer-dx:1",
+        "hardening:2"
+      ]
     }
-  ]
+  ],
+  "created_for_milestone": "v0.2",
+  "legacy_dependencies": {
+    "legacy:01.1.1.1": {
+      "gate": "guard-aggregate",
+      "evidence": ".planning/migrations/2026-11-11-milestone-reset/CARRY-FORWARD.md"
+    },
+    "legacy:01.1.1.13": {
+      "evidence": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-DELIVERY.json"
+    }
+  }
 }

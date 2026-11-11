@@ -1,0 +1,13 @@
+{
+  "fixture_only": true,
+  "before": {
+    "verification": "passed",
+    "recommended_current": null,
+    "state_current": 2
+  },
+  "after": {
+    "verification": "stale",
+    "recommended_current": "01",
+    "state_current": 2
+  }
+}
