@@ -23,6 +23,10 @@
 
 ## IN-03: The ci-gate step check is substring-only
 
+status: resolved
+
+Closure 2026-11-10: [PR #81](https://github.com/szTheory/fablebook/pull/81) merged the scoped canonical-command/environment guard and rejected mutations with all required [candidate CI](https://github.com/szTheory/fablebook/actions/runs/42944194233) passed. Both real/base workflows and benign comment/blank/env-order controls pass on core/floor. The workflow and library are unchanged. Historical findings below are retained; only the CI-gate contract group is closed.
+
 - **Where:** `test/contract/ci_shape_test.exs:351-358`, `gate_step?/1`.
 - **Seen:** Phase 1 review (01-REVIEW IN-03). It only requires `toJSON(needs)`, `jq -e`, `nightly` and `release-please--` somewhere in the step, so a gate rewritten to `any(...)` or one that checks only `.core` still passes.
 - **Fix direction:**

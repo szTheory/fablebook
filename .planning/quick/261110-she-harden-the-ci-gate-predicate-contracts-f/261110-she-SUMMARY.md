@@ -2,7 +2,7 @@
 phase: quick-261110-she
 plan: "01"
 status: complete
-delivery_status: ready-for-owner-merge
+delivery_status: merged
 source_commit: 97aa76973eed7c9f2e5268bec4b249ad497237db
 source_sha256: 15286b846642249b66a056e1171736427817ae5f4c011e35e4fcc598a4465b1c
 requirements_completed: []
@@ -61,3 +61,13 @@ Core and floor overlapped. Core's CI step took 425s, floor's test step 702s and 
 Final hosted receipts and quick-task completion bookkeeping stay local for the next substantive push, avoiding another receipt-only run. The CI-gate audit group remains a landing requirement until PR #81 merges; four unrelated UAT groups retain their owners. Logistify capture is stored in the reviewed candidate, linked from PROJECT, and has not applied or moved original assets.
 
 Next command: `gh pr merge 81 --squash --match-head-commit 5a1a0183f190d412b762d2154e51b530088bc9e6` — owner-authorized merge of the reviewed green candidate. Parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
+
+## Approved merge closure
+
+[INT-20261110-09](../../intent/sources/2026-11-10-09-approve-ci-gate-contract-merge.md) records the owner's approval. [PR #81](https://github.com/szTheory/fablebook/pull/81) was squash-merged at `2026-11-11T02:35:52Z`, commit `79e1a4ffdb7634c9d0d9c8d43e352e1b3daf030a`, with expected head `5a1a0183f190d412b762d2154e51b530088bc9e6` enforced. Required candidate CI passed before merge. The preceding pending-merge statements are historical snapshots.
+
+Fresh main source SHA-256 is `15286b846642249b66a056e1171736427817ae5f4c011e35e4fcc598a4465b1c`, matching every final contract receipt. The pre-merge base-to-main workflow, library, dependencies and lockfiles have no diff. Logistify's reference, owner excerpts, seed and PROJECT pointer also match the reviewed candidate and are now on main; original book assets remain untouched and unapplied.
+
+The CI-gate UAT group is closed; four unrelated groups remain. The [post-merge main run](https://github.com/szTheory/fablebook/actions/runs/42947113449) is in progress and is not a passing receipt yet. Merge/closure bookkeeping is saved locally for the next substantive push; no extra receipt-only run is triggered. The primary/recovery worktrees, parent source-size stops, SEC-01 Phase 5 ownership and Phase 2 gate remain.
+
+Next command: `gh run watch 42947113449 --exit-status` — observe post-merge main CI. No owner action is required to let that automation finish; no new phase or release is started.

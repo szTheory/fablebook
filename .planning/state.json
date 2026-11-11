@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "gh pr merge 81 --squash --match-head-commit 5a1a0183f190d412b762d2154e51b530088bc9e6",
-    "label": "Owner merge of the reviewed green CI-gate contract PR",
-    "reason": "Scoped core/floor tests, review, planning checks and all required hosted jobs passed. The unchanged native timeout passed isolated retest; its full command failure remains recorded. Logistify intake is captured. Parent and Phase 2 gates remain."
+    "command": "gh run watch 42947113449 --exit-status",
+    "label": "Observe post-merge main CI",
+    "reason": "PR #81 was approved and squash-merged after all required candidate checks passed. CI-gate debt is closed; four groups remain. Logistify intake is on main; original assets are unapplied. Main automation is running; no owner action is required. Parent and Phase 2 gates remain."
   },
-  "updated_at": "2026-11-11T02:25:37+00:00"
+  "updated_at": "2026-11-11T02:37:13+00:00"
 }
