@@ -52,6 +52,10 @@ Audit 2026-11-10: current build steps validate the tag commit and origin/main an
 
 ## hex_publish_test.exs hardening (01.1 re-verification, review iteration 2)
 
+status: resolved
+
+Closure 2026-11-10: quick task 261110-nhq hardened the release contracts in merged [PR #80](https://github.com/szTheory/fablebook/pull/80), with required [candidate CI](https://github.com/szTheory/fablebook/actions/runs/42927843212) passed. Independent tag/version/ancestry fixtures, runner-equivalent shell, after-jobs secret traversal, execution/environment/test/smoke controls, and rejected mutations pass on both pinned lanes. Workflow and library bytes are unchanged. Historical findings below are retained as provenance; this closes only their release-contract hardening group.
+
 - **Where:** `test/contract/hex_publish_test.exs`.
 - **Seen:** 01.1-REVIEW iteration 2 and 01.1-VERIFICATION (2026-10-29T15:52:44Z).
   - WR-06: the step harness runs `bash --noprofile --norc -eo pipefail` (:447), the runner runs plain steps as `bash -e {0}`. A `| cat` on the ancestry line passes the five behavioural tests while `bash -e` passes an off-main sha. Reproduced by the verifier.
