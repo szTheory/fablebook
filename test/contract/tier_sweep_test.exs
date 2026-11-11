@@ -8574,6 +8574,27 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert ex011.semantic_status == :pending
   end
 
+  @tag :inets_trace_floor_controls
+  @tag :tmp_dir
+  test "EX-010 floor findings have individual exclusion-removal witnesses",
+       %{tmp_dir: dir} = ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    record = Fablebook.Test.InetsTraceFloorEvidence.record()
+    assert MapSet.new(record.matched_mfas) |> MapSet.subset?(ctx.graph.full_exported)
+    assert dir != nil
+
+    assert record.individual_exclusion_witnesses ==
+             Enum.map(record.matched_mfas, fn mfa ->
+               %{
+                 mfa: mfa,
+                 original_matcher: {{:inets, [:enable_trace]}, :own_native},
+                 removed_matcher_exposes_mfa: true,
+                 overlapping_matchers: []
+               }
+             end)
+  end
+
   @tag :inets_trace_core_controls
   @tag :tmp_dir
   test "EX-010 integrity rejects changed graph, source, citation and semantic evidence",
