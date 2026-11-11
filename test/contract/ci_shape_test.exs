@@ -13,7 +13,7 @@ defmodule Fablebook.Contract.CiShapeTest do
   @schedule_only ~w(ci-health)
   @allowed_reusable %{"release-please.yml" => "./.github/workflows/hex-publish.yml"}
   @ci_test_step "test --warnings-as-errors --include prod_guard --include release"
-  @allowed_excludes [:prod_guard, :release, :git_diff]
+  @allowed_excludes [:prod_guard, :release, :git_diff, :floor]
 
   @base "test/fixtures/ci_shape/base.yml"
   @sha "3d3c42e5aac5ba805825da76410c181273ba90b1"
@@ -203,7 +203,13 @@ defmodule Fablebook.Contract.CiShapeTest do
     config = Mix.Project.config()
     task_names = if File.dir?("lib/mix/tasks"), do: File.ls!("lib/mix/tasks"), else: []
 
-    assert wiring_violations(config, ExUnit.configuration(), ci?()) == []
+    assert wiring_violations(
+             config,
+             ExUnit.configuration(),
+             ci?(),
+             System.get_env("FABLEBOOK_FLOOR") != nil
+           ) == []
+
     assert Enum.filter(task_names, &phase?/1) == []
   end
 
@@ -254,6 +260,14 @@ defmodule Fablebook.Contract.CiShapeTest do
   test "excluding :git_diff while CI is set fails" do
     assert fired_wiring(wiring_config(), [exclude: [:git_diff]], true) == [:git_diff_excluded]
     assert fired_wiring(wiring_config(), [exclude: [:git_diff]], false) == []
+  end
+
+  test "floor exclusion is allowed only outside the selected floor lane" do
+    for ci? <- [false, true] do
+      assert fired_wiring(wiring_config(), [exclude: [:floor]], ci?, false) == []
+      assert fired_wiring(wiring_config(), [exclude: [:floor]], ci?, true) == [:floor_excluded]
+      assert fired_wiring(wiring_config(), [exclude: [:prod_guard, :release]], ci?, true) == []
+    end
   end
 
   defp workflow_violations(files) do
@@ -509,7 +523,7 @@ defmodule Fablebook.Contract.CiShapeTest do
     )
   end
 
-  defp wiring_violations(config, exunit, ci?) do
+  defp wiring_violations(config, exunit, ci?, floor?) do
     aliases = Keyword.get(config, :aliases, [])
     filters = Keyword.get(config, :test_ignore_filters, [])
     excludes = Enum.map(Keyword.get(exunit, :exclude, []), &tag_name/1)
@@ -545,6 +559,10 @@ defmodule Fablebook.Contract.CiShapeTest do
       check(
         not (ci? and :git_diff in excludes),
         {:git_diff_excluded, "test_helper.exs", :git_diff}
+      ) ++
+      check(
+        not (floor? and :floor in excludes),
+        {:floor_excluded, "test_helper.exs", :floor}
       )
   end
 
@@ -571,8 +589,13 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   defp fired(files), do: files |> workflow_violations() |> Enum.map(&elem(&1, 0)) |> Enum.uniq()
 
-  defp fired_wiring(config, exunit \\ [exclude: [:prod_guard, :release]], ci? \\ false) do
-    config |> wiring_violations(exunit, ci?) |> Enum.map(&elem(&1, 0)) |> Enum.uniq()
+  defp fired_wiring(
+         config,
+         exunit \\ [exclude: [:prod_guard, :release]],
+         ci? \\ false,
+         floor? \\ false
+       ) do
+    config |> wiring_violations(exunit, ci?, floor?) |> Enum.map(&elem(&1, 0)) |> Enum.uniq()
   end
 
   defp wiring_config do
