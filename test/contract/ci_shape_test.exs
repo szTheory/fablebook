@@ -23,6 +23,16 @@ defmodule Fablebook.Contract.CiShapeTest do
   @gate_needs "    needs: [core, nightly]\n"
   @nightly_if "    if: github.event.schedule == '17 3 * * *' || startsWith(github.head_ref, 'release-please--')\n"
   @smoke "      - run: bin/smoke_consumer --path .\n"
+  @ci_gate_env [
+    "env:",
+    "NEEDS: ${{ toJSON(needs) }}",
+    "HEAD_REF: ${{ github.head_ref }}"
+  ]
+  @ci_gate_script [
+    "echo \"$NEEDS\" | jq -e --arg ref \"$HEAD_REF\" 'to_entries | all(",
+    ".value.result == \"success\" or",
+    "(.key == \"nightly\" and .value.result == \"skipped\" and ($ref | startswith(\"release-please--\") | not)))'"
+  ]
 
   @mutations [
     {:tab, "ci.yml", "name: ci\n", "name:\tci\n"},
@@ -58,6 +68,16 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:ci_gate_needs, "ci.yml", @gate_needs, "    needs: [core, nightly, ci-health]\n"},
     {:ci_gate_step, "ci.yml", "${{ toJSON(needs) }}", "${{ needs.core.result }}"},
     {:ci_gate_step, "ci.yml", "jq -e ", "jq "},
+    {:ci_gate_step, "ci.yml", "to_entries | all(", "to_entries | any("},
+    {:ci_gate_step, "ci.yml", "to_entries | all(",
+     "to_entries |\n            map(select(.key == \"core\")) | all("},
+    {:ci_gate_step, "ci.yml", "(.key == \"nightly\" and", "(.key == \"nightly\" or"},
+    {:ci_gate_step, "ci.yml", "($ref | startswith(\"release-please--\") | not)",
+     "(true or\n             ($ref | startswith(\"release-please--\") | not))"},
+    {:ci_gate_step, "ci.yml", "HEAD_REF: ${{ github.head_ref }}",
+     "HEAD_REF: ${{ github.ref_name }}"},
+    {:ci_gate_step, "ci.yml", Enum.join(@ci_gate_script, "\n            "),
+     "# jq -e nightly release-please--\n          true"},
     {:bypass, "ci.yml", "    timeout-minutes: 15\n",
      "    timeout-minutes: 15\n    continue-on-error: true\n"},
     {:bypass, "ci.yml", @smoke, "      - run: bin/smoke_consumer --path . || true\n"},
@@ -89,6 +109,33 @@ defmodule Fablebook.Contract.CiShapeTest do
 
   test "the base fixture passes every rule" do
     assert workflow_violations(base_files()) == []
+  end
+
+  test "gate env key order does not change the verdict" do
+    for files <- [base_files(), real_files()] do
+      original = files["ci.yml"]
+      from = "NEEDS: ${{ toJSON(needs) }}\n          HEAD_REF: ${{ github.head_ref }}"
+      to = "HEAD_REF: ${{ github.head_ref }}\n          NEEDS: ${{ toJSON(needs) }}"
+      mutated = String.replace(original, from, to, global: false)
+
+      assert mutated != original
+      assert workflow_violations(Map.put(files, "ci.yml", mutated)) == []
+    end
+  end
+
+  test "gate comments and blank lines do not change the verdict" do
+    for files <- [base_files(), real_files()] do
+      original = files["ci.yml"]
+      from = "        run: |\n          echo \"$NEEDS\""
+
+      to =
+        "        # gate policy\n        run: |\n          # required results\n\n          echo \"$NEEDS\""
+
+      mutated = String.replace(original, from, to, global: false)
+
+      assert mutated != original
+      assert workflow_violations(Map.put(files, "ci.yml", mutated)) == []
+    end
   end
 
   for {{rule, target, from, to}, i} <- Enum.with_index(@mutations, 1) do
@@ -349,12 +396,12 @@ defmodule Fablebook.Contract.CiShapeTest do
   end
 
   defp gate_step?(step) do
-    text = Enum.join(step, "\n")
+    {env, script} =
+      step
+      |> Enum.reject(&(&1 == "" or String.starts_with?(&1, "#")))
+      |> Enum.split_while(&(&1 != "run: |"))
 
-    Enum.all?(
-      ["toJSON(needs)", "jq -e", "nightly", "release-please--"],
-      &String.contains?(text, &1)
-    )
+    Enum.sort(env) == Enum.sort(@ci_gate_env) and script == ["run: |" | @ci_gate_script]
   end
 
   defp full_checkout?(step) do
