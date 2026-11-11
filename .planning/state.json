@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "gh pr checks --required",
-    "label": "Obtain hosted CI for the reviewed release-contract candidate",
-    "reason": "Full local core and floor checks passed; publish the candidate under standing authorization, then observe all required hosted results before the owner merge boundary. Parent and Phase 2 gates remain."
+    "command": "gh pr merge 80 --squash --match-head-commit 22c24b6a5a3d55c3fd2468b7c983a0cc563af7c0",
+    "label": "Owner merge of the reviewed green release-contract PR",
+    "reason": "Quick task implementation, review, full local lanes and required hosted checks passed. Merge remains the owner boundary; release landing debt stays open until merged. Parent and Phase 2 gates remain."
   },
-  "updated_at": "2026-11-10T23:54:44+00:00"
+  "updated_at": "2026-11-11T00:13:01+00:00"
 }

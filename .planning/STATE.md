@@ -3,11 +3,11 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.18
 current_phase_name: Bound ASN.1 generator-dispatch exclusions
 status: complete
-stopped_at: "Release-contract hardening implemented and reviewed; full local core/floor checks passed. Hosted candidate CI and the owner merge boundary remain; Phase 01.1.1.18 stays complete."
-last_updated: "2026-11-10T23:54:44+00:00"
+stopped_at: "Completed quick task 261110-nhq: release-contract hardening reviewed with full local and required hosted checks passed; PR #80 awaits owner merge. Phase 01.1.1.18 stays complete."
+last_updated: "2026-11-11T00:12:29.016Z"
 last_activity: 2026-11-10
-last_activity_desc: "Release-contract hardening implemented and reviewed; full local core/floor checks passed. Hosted candidate CI and the owner merge boundary remain; Phase 01.1.1.18 stays complete."
-state_head: f3d1af6011d207d4b2ae950141da1946202d3b48
+last_activity_desc: "Completed quick task 261110-nhq: release-contract hardening reviewed with full local and required hosted checks passed; PR #80 awaits owner merge. Phase 01.1.1.18 stays complete."
+state_head: 22c24b6a5a3d55c3fd2468b7c983a0cc563af7c0
 progress:
   total_phases: 48
   completed_phases: 2
@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions) — COMPLETE
 Plan: 3 of 3 complete
 Status: Complete — PR #79 squash-merged with all required candidate checks green
-Last activity: 2026-11-10 — Release-contract hardening implemented and reviewed; full local core/floor checks passed. Hosted candidate CI and the owner merge boundary remain; Phase 01.1.1.18 stays complete.
+Last activity: 2026-11-10 — Completed quick task 261110-nhq: release-contract hardening reviewed with full local and required hosted checks passed; PR #80 awaits owner merge. Phase 01.1.1.18 stays complete.
 
 Selected phase: 3/3 plans, goal verification passed, merged green PR. Historical aggregate counters remain qualified by the phase HEALTH report and are not authority to resume blocked parent plans or Phase 2.
 
@@ -216,6 +216,12 @@ None yet.
 - [Phase 17 and 18]: depend on abracabrand's two-session process; keep the minimal-token fallback so the phase can merge.
 - [Phases 2 and 18]: neither completes a requirement on its own (a vertical slice and a content track); they feed QA-04, VIS-01/02 and QA-06.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 261110-nhq | Harden the release-workflow contracts for the UAT audit findings; keep workflow and lib files unchanged | 2026-11-10 | 22c24b6 | [261110-nhq-harden-the-release-workflow-contracts-fo](./quick/261110-nhq-harden-the-release-workflow-contracts-fo/) |
+
 ### Roadmap Evolution
 
 - Phase 01.1 inserted after Phase 1: Close phase 1 guard gaps (atom-ban bypass, code loading, hex-publish hardening); split per INT-20261029-01 to keep the 5-plan cap (URGENT)
@@ -235,8 +241,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-10T23:54:44+00:00
-Stopped at: Release-contract hardening implemented and reviewed; full local core/floor checks passed. Hosted candidate CI and the owner merge boundary remain; Phase 01.1.1.18 stays complete.
+Last session: 2026-11-11T00:13:01+00:00
+Stopped at: Completed quick task 261110-nhq: release-contract hardening reviewed with full local and required hosted checks passed; PR #80 awaits owner merge. Phase 01.1.1.18 stays complete.
 
-Next action: publish the reviewed quick-task candidate and obtain required hosted CI receipts. Parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
+Next action: owner approves and squash-merges PR #80, whose required CI passed. Parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
 Resume file: None

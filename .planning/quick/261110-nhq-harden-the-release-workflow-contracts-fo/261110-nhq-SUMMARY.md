@@ -1,7 +1,8 @@
 ---
 phase: quick-261110-nhq
 plan: "01"
-status: in-progress
+status: complete
+delivery_status: ready-for-owner-merge
 source_commit: 08857f4c68e2c10d90ccef786df0d124c26e4b9a
 source_sha256: 9354a54779c5b2a67978f2bcc25bbcdd7c03083097e57d6b958d9a4fb5bcf736
 requirements_completed: []
@@ -35,8 +36,30 @@ Full native core CI passed (398 tests; exit 0, 673.61 seconds). Floor compile an
 
 After the delivery-record edits, the planning intent/contract-rule checks passed (19 tests). `git diff --check origin/main` is clean. The protected-tree diff is empty. Phase 01.1.1.18's independent verification fingerprint still returns passed. [Inline review](261110-nhq-REVIEW.md) found no blocking correctness or security findings in one pass. No package publication, release dispatch, messaging, package installation or audited ASN.1 execution was used for this hardening.
 
-Hosted candidate checks remain pending. Required core, floor, dialyzer, security and ci-gate results must be green on the published candidate; local checks do not replace them. Merge is a separate owner boundary under the quick workflow.
+[PR #80](https://github.com/szTheory/fablebook/pull/80) publishes candidate `22c24b6a5a3d55c3fd2468b7c983a0cc563af7c0`. The source digest is unchanged from all local receipts. [Required hosted CI passed](https://github.com/szTheory/fablebook/actions/runs/42927843212) on that exact candidate: core, floor, dialyzer, security and ci-gate all succeeded. Scheduled-only nightly and ci-health jobs were correctly skipped. GitHub reports the PR mergeable with a clean merge state. Merge remains the owner boundary under the quick workflow; this summary does not claim it happened.
 
 ## Preserved boundaries
 
 Only the release-contract UAT group is in scope. The other five UAT groups retain their owners. The parent source-audit stop remains unresolved, SEC-01 remains Pending with Phase 5, and Phase 2 stays gated. No roadmap phase or requirement is completed by this quick task. The original dirty checkout and recovery worktrees are preserved.
+
+## Hosted trigger observation
+
+After opening the PR, both the connector and direct Actions API reported no workflow run for its branch/head; Actions permissions report enabled. The PR also continued to report unknown mergeability and no check rollup. One close/reopen through the GitHub CLI refreshed the normal pull-request trigger without changing the candidate, dispatching a workflow, invoking scheduled reporting or pushing an empty commit. This observation is not a CI pass.
+
+The original trigger arrived late, and reopening was premature. Two runs materialized for the same candidate: [42927626866](https://github.com/szTheory/fablebook/actions/runs/42927626866) was superseded by [42927843212](https://github.com/szTheory/fablebook/actions/runs/42927843212). The first run's gate log explicitly contains cancelled core/floor prerequisites and successful security/dialyzer; its gate failed correctly. It is not a passing receipt or a code failure. The latest run is authoritative. Do not refresh a new PR merely because initial API queries return no checks: first inspect the workflow/PR state and allow for trigger propagation; avoid creating duplicate runs without evidence of a missing event. No further trigger or rerun was issued.
+
+## Final hosted receipt and feedback time
+
+| Job | Result | Duration | Receipt |
+|---|---|---|---|
+| core | success | 460s | [job](https://github.com/szTheory/fablebook/actions/runs/42927843212/job/130219018915) |
+| floor | success | 639s | [job](https://github.com/szTheory/fablebook/actions/runs/42927843212/job/130219018859) |
+| dialyzer | success | 23s | [job](https://github.com/szTheory/fablebook/actions/runs/42927843212/job/130219018774) |
+| security | success | 32s | [job](https://github.com/szTheory/fablebook/actions/runs/42927843212/job/130219018428) |
+| ci-gate | success | 2s | [job](https://github.com/szTheory/fablebook/actions/runs/42927843212/job/130223868922) |
+
+Core and floor overlapped. Core's CI step took 443s, floor's test step 613s, and setup 9s/12s. The preceding PR's job totals were 589s/595s and the following main run's 511s/606s. Variation across these runs does not establish an avoidable serial dependency, absent cache or removable required check. Tests dominate; no evidence-supported workflow shortcut is established within this contract-only scope. Timing remains feedback, not a new release gate.
+
+The final receipt and quick-task completion bookkeeping are held locally for the next substantive push, and linked from the PR, avoiding another receipt-only CI run. No further source edit followed validation. The audit keeps the release-hardening landing requirement outstanding until the owner merges PR #80; the other five groups stay open.
+
+Next command: `gh pr merge 80 --squash --match-head-commit 22c24b6a5a3d55c3fd2468b7c983a0cc563af7c0` — owner-authorized merge of the reviewed green candidate. Do not start another phase or release.
