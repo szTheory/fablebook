@@ -1,0 +1,1915 @@
+{
+  "schema": "fablebook.planning-archive/1",
+  "status": "superseded-incomplete",
+  "legacy_cycle": "v0.1",
+  "files": [
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-01-PLAN.md",
+      "sha256": "b99892f97e68030879b5c59ab5bc85afe62c90fb62d1b415763abc579a53d3e5",
+      "bytes": 36125
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-01-SUMMARY.md",
+      "sha256": "97defb12046fad6239159bbe2ea4853b7ee759a35713db7bb913fd173932819c",
+      "bytes": 9875
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-02-PLAN.md",
+      "sha256": "f1cb037c4c2dd13f81f709cc11aac410f76e355558184eca51b1dec64d3e9bf0",
+      "bytes": 41446
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-02-SUMMARY.md",
+      "sha256": "ff1d965237e177771c87f5a532d1e468055fc8aeb363eb90e4595192b9fffe04",
+      "bytes": 12685
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-03-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-03-PLAN.md",
+      "sha256": "0f4f13e75c88666eb9b5fcdaf8d22e3dac980d03e1aa73dad83798ac8b33cf30",
+      "bytes": 25703
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-03-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-03-SUMMARY.md",
+      "sha256": "049a38ddc5d2f1f59b4d4fab17335dbdf4ed7a946ee99fdd9191bc731db2682a",
+      "bytes": 12695
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-04-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-04-PLAN.md",
+      "sha256": "9b669553ceb02cd0c7ca382d61bfe4be991bb27aa9d191c5bd2325df2d249cd9",
+      "bytes": 32731
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-04-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-04-SUMMARY.md",
+      "sha256": "d39b783a796049099076578e8112ddc710727c2c72e0857d98f8b7469cdf48e8",
+      "bytes": 12651
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-05-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-05-PLAN.md",
+      "sha256": "4c1627b43dddc1ccb6182ca3ce8a48dd3efdc2c4df7792da253f512f28db7a05",
+      "bytes": 41077
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-05-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-05-SUMMARY.md",
+      "sha256": "3e183fc5a1f0990971cbfc476224890b5fa680e8cc825b1325c1ed0a3eda9dee",
+      "bytes": 16127
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-06-ATOM-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-06-ATOM-EVIDENCE.json",
+      "sha256": "f12941476b9d4ee2657dd0e2fffa72e7bd5c4bfab332254808c0a51d03f5a84d",
+      "bytes": 75037
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-06-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-06-PLAN.md",
+      "sha256": "1a31da47f51ac1904113dfd7aebce8d5f917a4e9400c84acaf9e782b0598244c",
+      "bytes": 34982
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-06-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-06-SUMMARY.md",
+      "sha256": "587f8ba004d660ac655b12c4d08531500234876af6c7fbe1d15dd7af746279f0",
+      "bytes": 6761
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-07-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-07-PLAN.md",
+      "sha256": "a69fa401d8540ea73b87b9e410e0f1fd9d7662e3b72218f6170b40a87600780b",
+      "bytes": 15944
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-07-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-07-SUMMARY.md",
+      "sha256": "2b79960f9b280a010abbaf41d3c98b2069f35443d85c986c4db4f0df1324c6c1",
+      "bytes": 2389
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-07-TIMING-CONTRACT.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-07-TIMING-CONTRACT.json",
+      "sha256": "efaeb8e39e829124336e958f255c93ba0531ee2bcc3816114dbcc29a29aaf90b",
+      "bytes": 5010
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-08-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-08-PLAN.md",
+      "sha256": "54bc2c33119e1bee8a3724109243e55afc43cd7b58e9b5b010cd8477270a7ba7",
+      "bytes": 14984
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-08-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-08-SUMMARY.md",
+      "sha256": "fa31ba5a9ed56ba5e765b48f814251d462e7767474e4a39ccdd3800e6f64a158",
+      "bytes": 2533
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-08-TIMING-DEPLOYMENT.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-08-TIMING-DEPLOYMENT.json",
+      "sha256": "df76332651610eea856a28c26ba23f80f59a93276d279763517ef47e9074602a",
+      "bytes": 6320
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-09-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-09-PLAN.md",
+      "sha256": "f3a45103d07acf14726e4e6d65d46f010e3de5dbe003de801d418b3d83fabd8e",
+      "bytes": 17953
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-09-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-09-SUMMARY.md",
+      "sha256": "33c02d7953ddc79b5e706499197b2ed09dcc1ff87a3e106f431530147e8045f6",
+      "bytes": 7615
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-09-TIMING-CLOSURE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-09-TIMING-CLOSURE.json",
+      "sha256": "e1ef22ec85dedf9099b6a583ad39ac1704693a378172620a6e6e7fae00b59f06",
+      "bytes": 36566
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-CI-HEALTH-MUTATIONS.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-CI-HEALTH-MUTATIONS.json",
+      "sha256": "00bcd2a249c142c9692b2cb8344478ae98916b553a949e57ccf51efe0f3361ff",
+      "bytes": 289
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-CONTEXT.md",
+      "sha256": "5c0eb62918db680e0d1180e5e57f5f517f6bdae3f9bd096e229e26af3e26624a",
+      "bytes": 30669
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-COVERAGE-CLASSIFICATION.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-COVERAGE-CLASSIFICATION.json",
+      "sha256": "7cc3190319cac49a7247e66489d77e95e144e607a6c16b7f4922215231994842",
+      "bytes": 1979
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-DISCUSSION-LOG.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-DISCUSSION-LOG.md",
+      "sha256": "70b4289c13e0fd1df2e5cfeade6c07dd1bd78a8603d6d46e4a39d1237078677c",
+      "bytes": 5490
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-LIVE-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-LIVE-EVIDENCE.json",
+      "sha256": "c26a86c2175467273069f58660d17e7cce1feaf2d4bc83068301b4efc1db41f6",
+      "bytes": 5160
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-PATTERNS.md",
+      "sha256": "7d9cc38886ae2770e376b3dc643cf48ef576e8812e923d66777eedb73af49253",
+      "bytes": 17148
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-RESEARCH.md",
+      "sha256": "d797be6954388e8766d31b3dfff71f061052738b60d268708479aba15c47e7e7",
+      "bytes": 107149
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-REVIEW-DISPOSITION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-REVIEW-DISPOSITION.md",
+      "sha256": "6538aad364a8ee5cc20fe4e325e85419bca2e032f6a4d23b793afb11ec25a091",
+      "bytes": 971
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-REVIEW.md",
+      "sha256": "cd3ae84e60f2db9013701cc44ae18cb404fd901e381a4b63bcb406b965330db9",
+      "bytes": 4981
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-SECURITY.md",
+      "sha256": "6a5a776923fff9de6e69a6f35512928b275a3354e4eb67067c0a3a30bf1681c5",
+      "bytes": 14629
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-UAT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-UAT.md",
+      "sha256": "e5bcf2f68b41e21f9a83c1ab8e785a2cb4c8d8810ebee9136d80942a1074c380",
+      "bytes": 18044
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-UI-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-UI-REVIEW.md",
+      "sha256": "e9c8d0381e925145ba5a0156eb3e38491325245696e073e78e86c65130c5b2c7",
+      "bytes": 574
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-VALIDATION.md",
+      "sha256": "70f9c80f1628112f75069727ae2cfc4b4e30aea173d2b7694356ce8779cb2c70",
+      "bytes": 7202
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/01-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-VERIFICATION.md",
+      "sha256": "9c65cb782c79185e3191019da74169572c5e5aa1085a57380e122d4991656f9b",
+      "bytes": 12962
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/COVERAGE.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/COVERAGE.md",
+      "sha256": "748dff32f2320291c0f59218ed08cb2b8883ec72b428c568935ec6513449a015",
+      "bytes": 148
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/SKELETON.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/SKELETON.md",
+      "sha256": "d21989ee44ee5682560c404ed12960ac2b78d6e441b09fe7eb244ab8ddd16ac1",
+      "bytes": 5034
+    },
+    {
+      "original_path": ".planning/phases/01-release-pipeline-ci-gate-and-guards/deferred-items.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/deferred-items.md",
+      "sha256": "e25f8966d9378ca7914d5d3e55fb86cd2df7ccc766a33b7c94efdedf9bda7a50",
+      "bytes": 1359
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/.gitkeep",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-01-PLAN.md",
+      "sha256": "def2ac5acea5a48b3d6bf0a2a7db3740c6f790acfe071873e14c8b50f9eaacf8",
+      "bytes": 43351
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-01-SUMMARY.md",
+      "sha256": "6687a84cc2615797228270a0aff4a070e8b5e194dedf92485cb8016f510b423f",
+      "bytes": 14650
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-02-PLAN.md",
+      "sha256": "6f684383899cdd4454a7d791817d3432320ef949fb0670bac6d64f2634b3032d",
+      "bytes": 31217
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-02-SUMMARY.md",
+      "sha256": "7f76fb4d80b6a016172ff492fd0f52c7f79203c61e80582499e21f347bc42ce3",
+      "bytes": 9537
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-03-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-03-PLAN.md",
+      "sha256": "847e9ae69369486f54cd85a0e416690873d279e94d84f89d7558e8f66103b1f7",
+      "bytes": 64108
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-03-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-03-SUMMARY.md",
+      "sha256": "762be4cf3c09db999e46beee7a94b01c945ce8fb650bf31b00e7713d95ebe2e2",
+      "bytes": 17287
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-04-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-04-PLAN.md",
+      "sha256": "9cb5c18fd1003a7932f8a1165253a6155e188b449092535519fb02d1a77e6f4f",
+      "bytes": 29995
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-04-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-04-SUMMARY.md",
+      "sha256": "a0f2a8adf0dab107f9b6b5a9c81089d6a7f2f076c4b8175fec7f6775e64e818d",
+      "bytes": 12374
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-05-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-05-PLAN.md",
+      "sha256": "322c1ec127be53ce16b791b4a9847f1b981c285e98aae0cdff7a4d04daac8d02",
+      "bytes": 34828
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-05-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-05-SUMMARY.md",
+      "sha256": "6691cbb96eb1d3002e374d9dc9658517bf78bf04e1fae670a0b859894761d9f7",
+      "bytes": 16954
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-REVIEW-DISPOSITION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-REVIEW-DISPOSITION.md",
+      "sha256": "73acbd993e6e2ae260f36e6b0148ce465cd2f6a7d7ea6caddb42f3ab1a4c9eaf",
+      "bytes": 4324
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-REVIEW.md",
+      "sha256": "53c89d416b9d7f3626af4df9e70a6cf4128a00e0109ab9028b75b0a623f32ff7",
+      "bytes": 39790
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-SECURITY.md",
+      "sha256": "11ecb01ec05d8fe6d4883ae5d978196d7e98de7093dc481f8d9a9d780a8c5a56",
+      "bytes": 14874
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-UAT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-UAT.md",
+      "sha256": "ccc7816e609a127e4c54797cc38aa919c60d42fec198d55192116c99810b16f3",
+      "bytes": 12642
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-UI-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-UI-REVIEW.md",
+      "sha256": "886b6a430790666c8b4516216880cef838a2692e66263af28a6ee469eb63e45e",
+      "bytes": 4927
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-VALIDATION.md",
+      "sha256": "cec2b371f13c806106bb71b85f4d59428daf59e98e14de5ef54501a5a210dbe3",
+      "bytes": 11255
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/01.1-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/01.1-VERIFICATION.md",
+      "sha256": "808361e8c7f964b24f2f60a860ef885ef860f67e131dea6f3561bcbe06ccd066",
+      "bytes": 15244
+    },
+    {
+      "original_path": ".planning/phases/01.1-close-phase-1-guard-gaps/deferred-items.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1-close-phase-1-guard-gaps/deferred-items.md",
+      "sha256": "4c309fd464bdecf9d99fe0e7189100e7b2b0880962d36579de347666a98e4df9",
+      "bytes": 8202
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-01-PLAN.md",
+      "sha256": "b25c27cab1a373dac299f9a051d5e0a319ff6bba122cf512657ec0299bd368c9",
+      "bytes": 57395
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-01-SUMMARY.md",
+      "sha256": "1ef642038b720a32e1677a3d9431ee32a9d2aae4c3b70af4248d587211e43920",
+      "bytes": 34312
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-PLAN.md",
+      "sha256": "d53dba771429a6003658b7b7c8dcfb8dad22ebfcc8542f8270cfab54977ddaad",
+      "bytes": 71263
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-SUMMARY.md",
+      "sha256": "94c0672f3d90e6f0b44cd271329ea25f02b1ee601cd298fb5b9e86daa84397c2",
+      "bytes": 57473
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-task1-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-task1-red.json",
+      "sha256": "cdb0138cd6396f85b38bdd755f2ec257e906039ed83a0f444d007b13951443ba",
+      "bytes": 6627
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-task2-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-task2-red.json",
+      "sha256": "4d32e744bc0ccd439a80e6e1bf69e8ef7d4920ad440e2510c46a3bad241df513",
+      "bytes": 12484
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-task3-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-02-task3-red.json",
+      "sha256": "197ff065a3cd2bd8302c05864bc15822afca9b98aa77c072a3b052b60ea2c930",
+      "bytes": 7288
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-03-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-03-PLAN.md",
+      "sha256": "011c6d98fb917bddd39742933ed666fa552dd4f72f50e9d45e5ab139918174af",
+      "bytes": 51351
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-03-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-03-SUMMARY.md",
+      "sha256": "f4f0cbdd18a387ba14d35ccc3d2401447adad55efdcbc7636f2dc07b878a9fef",
+      "bytes": 26380
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-03-task1-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-03-task1-red.json",
+      "sha256": "ae2a5ad3cb814dd23374e44e802c29b33692d70484cf18018721031bb0988c00",
+      "bytes": 9904
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-03-task2-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-03-task2-red.json",
+      "sha256": "fdfd9f0f0cbec5a9843d91f407ce8c1001635b0b386afb6703b79acaf5441da0",
+      "bytes": 1953
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-04-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-04-PLAN.md",
+      "sha256": "7b9b578a0af43978467eee493e462dcfb2e5d8a2013b48d9f31011ae1994c2fe",
+      "bytes": 41481
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-04-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-04-SUMMARY.md",
+      "sha256": "b388603e8a65f2d3153b9f9e5318c47d803c504a9df8d2b8ae338ae3880f98fb",
+      "bytes": 25000
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-04-task1-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-04-task1-red.json",
+      "sha256": "ed69061e095ab50faf601e98363d13c315774fc0f0653a553ccebd47f3d58c9b",
+      "bytes": 1550
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-04-task2-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-04-task2-red.json",
+      "sha256": "7c1fe673da5b8209a1adf5c0492a034c28e66214e08639949f5e0aeb5744e9c7",
+      "bytes": 1472
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-05-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-05-PLAN.md",
+      "sha256": "eb7c1aa6c5560b815628dc4c0f244681eba76b561ec5deb9bfd2cd1c0bc9b2a2",
+      "bytes": 42363
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-05-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-05-SUMMARY.md",
+      "sha256": "3add00a1332ff7e60e976f995209a6356b2c79d7c5530867fdc3121df23f18b9",
+      "bytes": 15892
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-05-task1-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-05-task1-red.json",
+      "sha256": "10ad952a931cfa59487a5a4644eb34e144e6942c263bcc86f6bda19144370728",
+      "bytes": 6282
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-05-task2-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-05-task2-red.json",
+      "sha256": "5d4f0aff9cf37db16b5c3cd3b132c9eeaafd4271784a74a6bd750f0c1f82733a",
+      "bytes": 6405
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-EXECUTION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-EXECUTION.md",
+      "sha256": "2c773a7ee175024203b637d8b11d3dda421f2ab7cb04c951d2523526364cc2a9",
+      "bytes": 2384
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-PATTERNS.md",
+      "sha256": "4c3e3575b87d7e829adc81b466422db2ac17d322f19f67018c01ffba8f7b3abf",
+      "bytes": 33978
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-RESEARCH.md",
+      "sha256": "68aae76bb246217f2fc8effcf25da196828a79da191703e5c4694c13e7302eb8",
+      "bytes": 65341
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-REVIEW-DISPOSITION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-REVIEW-DISPOSITION.md",
+      "sha256": "11302fe18b5d3b1931184194d6298a9c3dac4b48ea6e9d1edbe45ebabc40d350",
+      "bytes": 1183
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-REVIEW-FIX.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-REVIEW-FIX.md",
+      "sha256": "617be67a277bcc7fe3c54726b88eed7fbfdf94b61135326b699495f8fffaad44",
+      "bytes": 1328
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-REVIEW.md",
+      "sha256": "5b83296912ac78193213469c3cc3286c3a273d0fef6f4ff84e2c032fbf233f06",
+      "bytes": 5094
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-SECURITY.md",
+      "sha256": "a29fcb891c4b8ff1831c6bd4ca8d408965fa37c0c964099c527089d3d73b43ca",
+      "bytes": 15767
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-UI-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-UI-REVIEW.md",
+      "sha256": "3229f0187c4797e2325eff9db801445a0a9bd9e1e6b0b99492ba3b0a8a7adab5",
+      "bytes": 3547
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-VALIDATION.md",
+      "sha256": "e10a5088518abb0776a24cfb14a383a48f206f1fdacd624b2f5f9e5eacaa493d",
+      "bytes": 11768
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-VERIFICATION.md",
+      "sha256": "a09af4d4f71ba1d6f8c4b7d1b722ac86b1c72f3f783067fa8394d979992f18ba",
+      "bytes": 18382
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-review-cr01-red.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/01.1.1-review-cr01-red.json",
+      "sha256": "770c900139434393b851870c39ca0177349266447f39c549aac7652f4372adea",
+      "bytes": 6168
+    },
+    {
+      "original_path": ".planning/phases/01.1.1-close-the-eval-and-code-loading-ban-list/README.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1-close-the-eval-and-code-loading-ban-list/README.md",
+      "sha256": "2320e404a73e5b8fa554a3848f1da9deec695166558d38bcf8435b348b10879c",
+      "bytes": 7638
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.continue-here.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.continue-here.md",
+      "sha256": "ed61791ed0647cbed3d4693d1e5257545b32772d174affb20ae8de01f3999a39",
+      "bytes": 8817
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.gitkeep",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-01-PLAN.md",
+      "sha256": "ed62554d19658469ca1cc235abef16fbab992439f073c7dc39a005ba8ac8bff8",
+      "bytes": 19724
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-01-SUMMARY.md",
+      "sha256": "f4cbdfe08f4004df1d39ece989c7ceccf0ad99cbf0f6533bdc0592d0d2773005",
+      "bytes": 8371
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-02-PLAN.md",
+      "sha256": "2ed1771d8e221e30a6f7df74bad0f60b9845d68c0aaa2b54265184c353373dec",
+      "bytes": 17180
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-03-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-03-PLAN.md",
+      "sha256": "dbe0d63f45588359e05a517dc975cbb2c948efb1a3d9d773dc5a2a0754ddac0c",
+      "bytes": 24760
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-04-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-04-PLAN.md",
+      "sha256": "20b3674c0dc6638a92e0c63017a23cba1dbad5caa240e53e80e147d387e0ad65",
+      "bytes": 24810
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-05-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-05-PLAN.md",
+      "sha256": "b63d5894a7de8f8c32dea74a2a26114f711bb53c0e19e344cb7ba5b3fd042e13",
+      "bytes": 21718
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json",
+      "sha256": "c25de2e909b972d308a4c28820e99ae7731b78edfdbdcb941c2eb1b77c506aa0",
+      "bytes": 739744
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.md",
+      "sha256": "4ed31ae4d2fa8557d95c69f2ce71c13c45828504ab80c61dca204b6c52d4ac66",
+      "bytes": 6345
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-CONTEXT.md",
+      "sha256": "14007d2059556ff453c9a98135dba5a6b3a4c5f9130a85e3633503e56beec070",
+      "bytes": 24898
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-CURRENT-SIZING-CORE.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-CURRENT-SIZING-CORE.jsonl.gz",
+      "sha256": "8bf95f884745a19aa50e0cccf6261459ebd2091de3cba155146674936367ab9c",
+      "bytes": 405819
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-CURRENT-SIZING-FLOOR.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-CURRENT-SIZING-FLOOR.jsonl.gz",
+      "sha256": "8bfc6f58582296aa7e5ea1d5aefb7a7ae828f63f285eb57d8a008e51629fa479",
+      "bytes": 384623
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-DISCUSSION-LOG.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-DISCUSSION-LOG.md",
+      "sha256": "c58a620a6d7723c9aa332ef49275bd9034df4587f1ab7dae332c2644054d6bda",
+      "bytes": 11568
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-EX-107-ASN1-GENERATOR-DISPATCH-LEAF-SIZING.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-EX-107-ASN1-GENERATOR-DISPATCH-LEAF-SIZING.md",
+      "sha256": "ef1fc3ef848c4234f96b3460eea8d61202e7c7b001f9bdd7e9649dad5343e1c1",
+      "bytes": 15613
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-EX-107-ASN1-PARSER-LEAF-SIZING.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-EX-107-ASN1-PARSER-LEAF-SIZING.md",
+      "sha256": "646a917737549898d86a7f9a1748f7f8efb61ee36796762b0fecf63acab69dde",
+      "bytes": 5658
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-EX-107-ASN1-TABLE-LEAF-SIZING.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-EX-107-ASN1-TABLE-LEAF-SIZING.md",
+      "sha256": "3ee8db2d98c092f3885326b9dde63b2791a08180c6cbcb18743cf65ba64f6b27",
+      "bytes": 6422
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-PATTERNS.md",
+      "sha256": "4ed246265a854b54a2eecdd0340a6f44915e4bf88b26cda11c4c33ab022a2747",
+      "bytes": 15646
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-REPLAN-RECOMMENDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-REPLAN-RECOMMENDATION.md",
+      "sha256": "f09bc00581368d801b8b9ca3593225aaac24e598cb7bb6ee7397111f4de98d5f",
+      "bytes": 17182
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-RESEARCH.md",
+      "sha256": "91aa8a08a42479729379a3adfe11306a4ec4697b8904c69f3455dd4dec09d024",
+      "bytes": 84325
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-ROW-NEIGHBORHOODS-CORE.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-ROW-NEIGHBORHOODS-CORE.jsonl.gz",
+      "sha256": "4ccb1e20d9c49c2d75d50b504cd618023a3353058065999ef70f2227ac57fda1",
+      "bytes": 249133
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-ROW-NEIGHBORHOODS-FLOOR.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-ROW-NEIGHBORHOODS-FLOOR.jsonl.gz",
+      "sha256": "d7d29be1ef366d7f62f915da6bb8dc28aad7626ca871852b3c0c961b7f8425fa",
+      "bytes": 240323
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-MANIFEST.proposed.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-MANIFEST.proposed.json",
+      "sha256": "ab936086aee5086bc28c61c2916a0ad0a4f1184ac7c32f252c48ca27b56d3738",
+      "bytes": 86061
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-PROPOSAL.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-PROPOSAL.md",
+      "sha256": "0a7158558ca4bd72600ef85451d0db719c55e965874f7cbe6e7a80b651872d13",
+      "bytes": 8076
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-RECOVERY-CORE.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-RECOVERY-CORE.jsonl.gz",
+      "sha256": "855467273aca85f6fe3f0beaa78d467a60de05d6b4a75369940786f65d9b077e",
+      "bytes": 5252
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-RECOVERY-FLOOR.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-RECOVERY-FLOOR.jsonl.gz",
+      "sha256": "64dd45fc89d2db2422e2ed92bd8716144dcda8030bc756d73c1700487cb97af0",
+      "bytes": 5339
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-TOKEN-SIZING.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-SOURCE-TOKEN-SIZING.json",
+      "sha256": "3238c60cbb44d77461e6879a4fbcb0ebf138cc51489c6c0b45ca7fa65718c643",
+      "bytes": 4527
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-TARGET-TOKENS-CORE.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-TARGET-TOKENS-CORE.jsonl.gz",
+      "sha256": "605a7435b6f9a39afebb8cfd688a8c05630bc28edaa0a1f4daff93f308eaa5b7",
+      "bytes": 18315
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-TARGET-TOKENS-FLOOR.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-TARGET-TOKENS-FLOOR.jsonl.gz",
+      "sha256": "9d1fcdd0e4a74f7c07c86fdd854910d4f20c1b2c8c7908a824f47d33ec921d9a",
+      "bytes": 18139
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-VALIDATION.md",
+      "sha256": "0b65061ff590bd18452fbee4dd17d2b212281000b7b0fe09da5fd59c3fa2d3bd",
+      "bytes": 9610
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.12-add-mirrored-guard-coverage-for-confirmed-call-name-fronts/01.1.1.12-SCOPE-DECISION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.12-add-mirrored-guard-coverage-for-confirmed-call-name-fronts/01.1.1.12-SCOPE-DECISION.md",
+      "sha256": "41584673a54c7f2206c9539a52b7ada243d0d81ca0cab6fd651e1ce5a21c28f4",
+      "bytes": 3697
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-01-PLAN.md",
+      "sha256": "e7e48d3c9ecf3d83ab263e9f26650d7375b9f523e9b74ada2f62ce7528a43e87",
+      "bytes": 19041
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-01-SUMMARY.md",
+      "sha256": "cf1d0ce0ceb15c41f8ef98fb07ac3dc4e32749931786ec411bbd8c1d0ade677d",
+      "bytes": 10448
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-02-PLAN.md",
+      "sha256": "8716662aa14201f018233f026a43fdc28a22d56919317d60cd05d6544df1ceca",
+      "bytes": 19334
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-02-SUMMARY.md",
+      "sha256": "c21703582b14c0e6211cfe8c157ba610fb95ec7804301e16b629d43e1d9eaa03",
+      "bytes": 10145
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-03-01-RED-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-03-01-RED-EVIDENCE.json",
+      "sha256": "624a2de7c200f1c581fc938a19649abf9fb2f91ef51837220d735cb94115a146",
+      "bytes": 11411
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-03-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-03-PLAN.md",
+      "sha256": "48f6fbf79a193820e60934c75edc350481c1529c801aa9f5164ec779c4b3d7b9",
+      "bytes": 26533
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-03-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-03-SUMMARY.md",
+      "sha256": "921f2579e2140237aa9b3add1740c7c47d416b54c77c6e1e1d8dbfb99561d1e0",
+      "bytes": 9641
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-CONTEXT.md",
+      "sha256": "7bcd2df8741ee62e9837095f5f6bf1ebad536bfb6a759597019d3212e4d52d98",
+      "bytes": 5743
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-DELIVERY.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-DELIVERY.json",
+      "sha256": "4ccda47417cfc5916b7493f43ed5aa556af0e7e38faf567aa49875dd53c30c2c",
+      "bytes": 6408
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-PATTERNS.md",
+      "sha256": "dca3259d208d341c6741ad89ad7f2cc3529cf4ceae7bbda42454eb3e3e2b1b19",
+      "bytes": 11847
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-PLANNING-SCOPE.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-PLANNING-SCOPE.md",
+      "sha256": "aa4d683a90fa75d0a5d30b13432ee7542347fad93d770a82488b0fbe80c5cf29",
+      "bytes": 12652
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-RESEARCH.md",
+      "sha256": "5b76d5d83190d0f9c3d40b5156dab94f352bfacca227d425c000051106adff94",
+      "bytes": 28641
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-REVIEW.md",
+      "sha256": "1273dbf53fb26fa10dd9815853f27725752049e95ef601eb90e1f501293fe0c1",
+      "bytes": 1157
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-SECURITY.md",
+      "sha256": "af7f94c1e8a1d05887bd9b6fb8274dc2120b19f5aa3243f35096e61191eb3718",
+      "bytes": 8801
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-UI-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-UI-REVIEW.md",
+      "sha256": "8f62e59932b27b9f9f4268c69fe6f24b319c198012eeb9f343de398cc621471c",
+      "bytes": 5878
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-VALIDATION.md",
+      "sha256": "f8c7f970f28026c1c023d3c71dc67c41cff9f043ca6c6c41e1c05c86a4115194",
+      "bytes": 5955
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.13-close-cn-001-and-cn-004-source-authority-gaps/01.1.1.13-VERIFICATION.md",
+      "sha256": "ff02f522e89bcfd6c08bbaf15d717ae2edcb00c0022a16b501a9beaf2e5da3c1",
+      "bytes": 13568
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-01-PLAN.md",
+      "sha256": "2b6c3fe79a54cb4a693a12b105631e2529f4859ddcd157db8bb93004b3006f2b",
+      "bytes": 21154
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-01-SUMMARY.md",
+      "sha256": "59a2ae8b87a8ed2026077a1f930c72431610d790b3cafe48344eb2a7ee154dc9",
+      "bytes": 13748
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-CONTEXT.md",
+      "sha256": "f2456110cbb2f2d5e8ff348b9fbb0f5b29993996f41215b1845aae5325f0b400",
+      "bytes": 5602
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-DISCUSSION-LOG.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-DISCUSSION-LOG.md",
+      "sha256": "2a38b7222e06bd2525624d15b07a2754dd3452594c8c6a7ec6467784d5592fd0",
+      "bytes": 1647
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-RESEARCH.md",
+      "sha256": "3d7eec07e2a6e59debc6bdc8c66ebc0998d3c190a8ed8d0590bdd1e2d279eb28",
+      "bytes": 22313
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-REVIEW.md",
+      "sha256": "2b46d4a5ec5a34cf1b9f3fb43e8ce910aa2065e17f8cc782f8886e432cedcb2f",
+      "bytes": 1948
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-SECURITY.md",
+      "sha256": "aed06cc74e0c542b34a2a24b3fff59b57448f6429ddf5fa3aaa6d03a1a5efeef",
+      "bytes": 4860
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-UI-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-UI-REVIEW.md",
+      "sha256": "8c6b7d6f4508015d640e457d56e6f235621c20f428779172bf21522dde55bb1b",
+      "bytes": 4140
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-VALIDATION.md",
+      "sha256": "705463c23a1ec781f7b6f79758684c1da39bfebffd8c5b2d65583989dbb80e2e",
+      "bytes": 4890
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.14-bound-leex-caller-chosen-atom-creation/01.1.1.14-VERIFICATION.md",
+      "sha256": "4dd3b0d60d24454794550a8410fd19638e66a4a0f0c35202b7881ba1768435ef",
+      "bytes": 11191
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-01-PLAN.md",
+      "sha256": "45fca8377dfc6787630416e0f6b4c2a11cfacab305d30ddc90ccf2ecdf6a6e5e",
+      "bytes": 25729
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-01-SUMMARY.md",
+      "sha256": "d2da880dad01e83169aa0dfa164d16eaaef3288b57384643838fe5ff1990ad28",
+      "bytes": 15276
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-CONTEXT.md",
+      "sha256": "068f896d983243414aeea813b46140089c2f8736275df3b51ba662590a61e337",
+      "bytes": 9382
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-DISCUSSION-LOG.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-DISCUSSION-LOG.md",
+      "sha256": "ba42e7895e9363c2b2f3ac536bf9b5ef7f342e634fb52d5771a5d853cc84e6ae",
+      "bytes": 817
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-PATTERNS.md",
+      "sha256": "8588573c92352fb3e2653f8661ecbcc970d46b5fb767b9ea01c1483d6fa19623",
+      "bytes": 5811
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-RESEARCH.md",
+      "sha256": "0f991ab3a77407727a173fc12b0c4f94691038f2e4771a66a9e8d909f0f09deb",
+      "bytes": 12434
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-REVIEW.md",
+      "sha256": "a95b7db33ecf925b7f3caba5fbd48c7ca5793c99cc45384699b20dc98a2636da",
+      "bytes": 1344
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-SECURITY.md",
+      "sha256": "7f61906572d5e0934c342939cc83930d4be1eb6cb0f0c9558a38cdf06095a55a",
+      "bytes": 3576
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-UI-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-UI-REVIEW.md",
+      "sha256": "90eea8d3b0ec8573aa24dcb26ccc94452dcb6412c612aca73ab481eeed881fee",
+      "bytes": 4036
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-VALIDATION.md",
+      "sha256": "2abd31f705df749ab749619c86daba75079bcfaa02a859abecec610c16b777ce",
+      "bytes": 6288
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.15-bound-asn1-table-wrapper-exclusions/01.1.1.15-VERIFICATION.md",
+      "sha256": "d14187291af711e7d9c9b1b462068cfafda83f17cb9c6dbe82dfe4d2fe5ee675",
+      "bytes": 10514
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-01-PLAN.md",
+      "sha256": "2eb3cfa26c6210d5fd5101970ccc7c36af8e3e89096da789ae74dc16aaa9037d",
+      "bytes": 57881
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-01-SUMMARY.md",
+      "sha256": "b6c2c677482c8c24c783d9917769bac11be29836274a306f2be4b4c4bff2425f",
+      "bytes": 8747
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-PATTERNS.md",
+      "sha256": "8973eec47aaefc751117ef9112641734bd06d01e96dfb7868e5bab60ff16a0dd",
+      "bytes": 9875
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-RESEARCH.md",
+      "sha256": "209ea6987a0b8b7fa14efee750cd3819cb4169d84e59542f0eb5fcbb3a3d8ee3",
+      "bytes": 23111
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-REVIEW.md",
+      "sha256": "a9b987839826e8ad4a56d1e6a3f17ad5f064824ab831f891f0165529caf469d5",
+      "bytes": 1127
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-SECURITY.md",
+      "sha256": "e91d175f735aa965359680c5ed37e3f8e5f30f23918b5492d54712c3bac439a0",
+      "bytes": 4228
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-VALIDATION.md",
+      "sha256": "f8dd771703095902a7b72b2af76191e3b93ddf87a597ce565eae8c38cacf89c6",
+      "bytes": 14454
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.16-bound-asn-1-parser-and-tokenizer-exclusions/01.1.1.16-VERIFICATION.md",
+      "sha256": "b590198354b36a89c56da1739ca8e7b2ad12e4f2b95f14f0b272337aba6e2444",
+      "bytes": 11971
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-01-PLAN.md",
+      "sha256": "f8c7073bb317bac1726fb5c1d6b130a5e15d4348fe3f65dd49b3a5ee1744fab0",
+      "bytes": 26989
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-01-SUMMARY.md",
+      "sha256": "697eee5c097e494eaee0f42d343fb9305fd89a9a92ac553e53d402a9f4da0fb7",
+      "bytes": 7129
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-CONTEXT.md",
+      "sha256": "3818f390bd2d4ad225ba269d8802381f01dd364a37e63cbd764c3de2de606b23",
+      "bytes": 5786
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-PATTERNS.md",
+      "sha256": "a903bcefd027819efbbe1fd2147ce93b804cd561f5bd87a26ed3920336bc618d",
+      "bytes": 9051
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-RESEARCH.md",
+      "sha256": "9af116ffb9bd90002c787da99c6af2ea8e8d2b7c7d434323a485f2a3ab26f6fa",
+      "bytes": 36020
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-REVIEW.md",
+      "sha256": "6c27cb26f7796e9af3c2183e93b46d1f5eb20fb402d59cb9ef93af514a6943bc",
+      "bytes": 984
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-SECURITY.md",
+      "sha256": "caccb8df704f7855f430044f128de16bb33f9cc23209fd1f9f6c19c140d75fe0",
+      "bytes": 4265
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-VALIDATION.md",
+      "sha256": "0269ac0ae04045f2402ffcca8b17683d0931a69ee43dd29fdd14438bb6feea91",
+      "bytes": 6619
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.17-bound-asn-1-external-transform-exclusions/01.1.1.17-VERIFICATION.md",
+      "sha256": "489e7a9f33dc1a8b5012e01665ae5e9bdcd44bb312e9da06c286f471aee45ff0",
+      "bytes": 9456
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/.gitkeep",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-01-PLAN.md",
+      "sha256": "da6482bb6cf4a4a21a74d8446fb28728cfb9c9aff5db435be8324365a1a449b2",
+      "bytes": 16397
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-01-SUMMARY.md",
+      "sha256": "bcf194032d1749fbc88beacab72a274b1fed259f12e76b0cc83c4df4ff68f9a4",
+      "bytes": 5994
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-02-PLAN.md",
+      "sha256": "1e0f5c8f069eccd2dd4daeb8b3c75818982c279c17ac15c1d8e9fdf2c1fc9934",
+      "bytes": 16530
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-02-SUMMARY.md",
+      "sha256": "d91fe33dd72e757b36da55f3586bd57ac12c5f63cf96c7314ba486cdd1fd2df7",
+      "bytes": 6283
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-03-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-03-PLAN.md",
+      "sha256": "fdb19a25a07150b945672066ebca906dc1cd818de8421a5d09c0da0effed6c77",
+      "bytes": 11750
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-03-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-03-SUMMARY.md",
+      "sha256": "a86bea1be0e271d030cf372fba23adf5a7bd00ca8d315c657752bb09cc92d9ce",
+      "bytes": 10618
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-CHECK.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-CHECK.md",
+      "sha256": "78de80a20a8bcaa85fff515b7defdd6f4ad3f00dde3aa048ae5d0bd826a56643",
+      "bytes": 7395
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-CONTEXT.md",
+      "sha256": "14b3a6766c2b82bc1e370096a9651a7f7d2b7b0c153a4203addb96bcf1bd1118",
+      "bytes": 7076
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-DELIVERY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-DELIVERY.md",
+      "sha256": "12baaa91975ca75e0a00091214e8776371b38e6b282022ced156024d1a500887",
+      "bytes": 4636
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-EXECUTION-STOP.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-EXECUTION-STOP.md",
+      "sha256": "995922327524898af387b80dbf6758642d8934907ebede7933a53b5741e5101a",
+      "bytes": 8783
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-HEALTH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-HEALTH.md",
+      "sha256": "d4c520ebefe860a6ca1c2970e6a19f538555f89604bbeb1e22400fb4d80b4f49",
+      "bytes": 2642
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-MERGE.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-MERGE.md",
+      "sha256": "40666131f4ef73a1eb572b57cdabb3fc836448ce9d618a74eb422310b175d40c",
+      "bytes": 3150
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-PATTERNS.md",
+      "sha256": "270d03cd8ad571eb68f715de28be1cb21f2a2deaf2c5db4c19d1b7dfba9dc3c6",
+      "bytes": 9681
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-RESEARCH.md",
+      "sha256": "e1268db1ddf4ea1a8ba82054235e3a302db28526f27ff9924d5ce056656f092e",
+      "bytes": 23431
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-REVIEW-DISPOSITION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-REVIEW-DISPOSITION.md",
+      "sha256": "5194651e0beebd83d49a2f0f6b0859cccb2ad7e50593fa0a469e09a4315250da",
+      "bytes": 372
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-REVIEW.md",
+      "sha256": "03aa64edf91d2bbe90d6781b5de1d2e9ea45a9f585aa0f078d075532d7079a61",
+      "bytes": 1511
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-SECURITY.md",
+      "sha256": "3042c0edbc9cca33e4c7b1feb197f954f15d3d35bafe397afef6b4d436634c79",
+      "bytes": 4877
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-UI-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-UI-REVIEW.md",
+      "sha256": "4492419ff05b42fdff57c0eb74657c07480a1486b6504bde368ef04cdd50b404",
+      "bytes": 520
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-VALIDATION.md",
+      "sha256": "9a8fa468a6ac94ac3723fcc31b4e727239b373b1321f65fb55c748cba4e8e41f",
+      "bytes": 6919
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/01.1.1.18-VERIFICATION.md",
+      "sha256": "9138bb1a070f1857c190d8a35db0d9ddf765b4a5c31acbc3fafd23a6efd0f65b",
+      "bytes": 13393
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/history/01.1.1.18-01-HALTED-20261110.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.18-bound-asn-1-generator-dispatch-exclusions/history/01.1.1.18-01-HALTED-20261110.md",
+      "sha256": "3bad44305102768ea22448d9d73184a441383857d9227fd570aa2587f8ad3582",
+      "bytes": 1830
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-INVENTORY-core.jsonl",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-INVENTORY-core.jsonl",
+      "sha256": "0e779f95fc1f785d8a2c22f3be8bce720de0914bb63bbf38c4178fc132d8488a",
+      "bytes": 60409485
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-INVENTORY-floor.jsonl",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.2-installed-otp-inventory-and-common-test-guard-slice/01.1.1.2-INVENTORY-floor.jsonl",
+      "sha256": "30529300db0b9f022e51c263da23368ac7ec752c2152a07bf53a7172a31f4ab6",
+      "bytes": 54850048
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-INVENTORY-core.jsonl",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-INVENTORY-core.jsonl",
+      "sha256": "7dde5d78ae2626ec9441af9aafea3111fcaec426482ffa762675cd35c545ebd0",
+      "bytes": 60432683
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-INVENTORY-floor.jsonl",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-INVENTORY-floor.jsonl",
+      "sha256": "437105398cc35314fe92e2d7dafce33d0b67c59bd47f85708470049c55a69b74",
+      "bytes": 54873206
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/01.1.1.3-OWNERSHIP.jsonl.gz",
+      "sha256": "bd0796639c7ed76a2e312153e7f4a7e9224c4a8ecec7326475aecc55c275521d",
+      "bytes": 2818803
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/ownership.py",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil/ownership.py",
+      "sha256": "97c1d5bbef21fad02dcfc722263650e0472d1e4d64f445ce97640b3bc80cb9c8",
+      "bytes": 66349
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-OWNERSHIP.jsonl.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-OWNERSHIP.jsonl.gz",
+      "sha256": "acaddff10636c1b6afa27c05da4c0d6a86e83eebaf86e2a1dd1cf77b58b86d19",
+      "bytes": 334770
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-PARTITION.json.gz",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-PARTITION.json.gz",
+      "sha256": "b8846eeb93f0de3fa85a2c0dcd3dc881e4fbd376bef21be5b3c55c8675004372",
+      "bytes": 123146
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-SOURCE-CANDIDATE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-SOURCE-CANDIDATE.json",
+      "sha256": "a47c1c0d7f8e3b003964af5e55675dad96d562b0700f1c6aec183f54d86caaa6",
+      "bytes": 3792
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-SOURCE-DECISION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-SOURCE-DECISION.md",
+      "sha256": "f199d81b9c52eca49e5630fdddba5a8c40277ec20d1a17964ad7c10defa9a59a",
+      "bytes": 1647
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/adopt.py",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/adopt.py",
+      "sha256": "ea489bd9e329ba1db191a83c3cc67e637cbc7cea8a9554662bee92ee9979f7be",
+      "bytes": 7779
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/preflight.py",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/preflight.py",
+      "sha256": "203bdc2e7e945da249fed5d68c21683f154aaef0bc0d3499a8a2cf17520aef37",
+      "bytes": 13638
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-01-01-RED-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-01-01-RED-EVIDENCE.json",
+      "sha256": "435580b0c005227bda4ddf0ff1b61c3e48023656212f9aa37a77324cc75c5aa4",
+      "bytes": 8042
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-01-PLAN.md",
+      "sha256": "223b8a2be01a916c4601fb4bdd5e5dd17016bcda68de2ddb6143ed795051e1e8",
+      "bytes": 15060
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-01-SUMMARY.md",
+      "sha256": "3e3950fcfcc84b5a8a2a83ff51692c68c29fec2dc4d5e75b49dd3275f12dc264",
+      "bytes": 7801
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-02-PLAN.md",
+      "sha256": "0ec8a79a510f45f241ed137f9fe90f21dd1feb5966f03f220d90e4d27430a9c0",
+      "bytes": 18814
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-02-SUMMARY.md",
+      "sha256": "0483b3a8b7726308bcc36a3eb40b337ec1601715eaccd8fa8f08024a1e47cdc7",
+      "bytes": 10012
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-03-01-RED-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-03-01-RED-EVIDENCE.json",
+      "sha256": "49d4d9dc914b8b1ba5c3f528813ddfaf99eb3f41c37ca87a6fb612a783a523e4",
+      "bytes": 5597
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-03-02-RED-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-03-02-RED-EVIDENCE.json",
+      "sha256": "e89917a85e2dbce0290381b647218bf60cd3ee995d450d2e2821476ad550eda9",
+      "bytes": 6141
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-03-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-03-PLAN.md",
+      "sha256": "157397f460c2fc1eb3ce0ee10d326b2051e4a024ea8688e2b38a240cfdf56928",
+      "bytes": 17565
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-03-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-03-SUMMARY.md",
+      "sha256": "8d74d3f73c3d9033ddd161a4acad24032e989d99aba5e90784cab594609cde79",
+      "bytes": 9356
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-04-AMENDMENT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-04-AMENDMENT.md",
+      "sha256": "3453d2c1c9e3d2510aceea48b316671f2da798a211bcf78a79f24876d4bb1dd9",
+      "bytes": 4955
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-04-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-04-PLAN.md",
+      "sha256": "fc031ebdfaf4319ddd37a7e7343d6a92bc732f5a79043984898c06151ba18896",
+      "bytes": 21021
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-PATTERNS.md",
+      "sha256": "69e608c1865f643e7618a3713b67f8ce00419c4264ed5942b2d386626c127b05",
+      "bytes": 10004
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-PLAN-CHECK.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-PLAN-CHECK.md",
+      "sha256": "18e3f7d63c6b9aefc9913b66347caa301e1ed7ff072e3c9be4ca0cb2b8e64fcf",
+      "bytes": 3142
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-PLANNING-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-PLANNING-VERIFICATION.md",
+      "sha256": "f1f5ac14bf2a405488209a890a6b30e3f76d459fb287ab08e550426972a869fc",
+      "bytes": 7729
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-REVIEW.md",
+      "sha256": "714db85cda8189dab828e1563ffd21386e2ab822f53b2a3838118ec660950f63",
+      "bytes": 5418
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-SETTINGS-AUDIT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-SETTINGS-AUDIT.md",
+      "sha256": "065186ca09cb5c5c81853a458cd7e162e677193c8a8b7585267a5806c4efe91c",
+      "bytes": 23978
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/01.1.1.3.1.1-VALIDATION.md",
+      "sha256": "7790036814895e05aa50ae32e725d85fcdcb011901e71fb6c889a0a59142efe2",
+      "bytes": 7557
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/installed.py",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.1-debugger-saved-settings-replay-and-deferred-callback-guards/installed.py",
+      "sha256": "4e953fe3acdb22076acbb283027fe8af2291b8e1c5b7ec0f6deecf623e8c4bce",
+      "bytes": 153294
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01-01-RED-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01-01-RED-EVIDENCE.json",
+      "sha256": "35b676b41e907babdf926595b7cd22514d602494ede7888fd94d865acbdb5e95",
+      "bytes": 965
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01-02-RED-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01-02-RED-EVIDENCE.json",
+      "sha256": "63d55557d5ec38bcca5c153b2b6a61362ae97a31d1bfa74d702e3c5a8ee8b6c2",
+      "bytes": 1295
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-01-SUMMARY.md",
+      "sha256": "3fb0fea6655ec02726ae496fcac38801c0e7b1c5e58161ca0cf67b6528fe4c1e",
+      "bytes": 7548
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-02-SUMMARY.md",
+      "sha256": "5b214219d8e170d5e52ddd5dca11e2d2048023ade86219eef1f84904789a06f2",
+      "bytes": 8956
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-03-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-03-SUMMARY.md",
+      "sha256": "3a3e12140883e9ae354f55abceeb7354c03e3c87feffa96212624f5b567a578c",
+      "bytes": 10563
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-04-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-04-SUMMARY.md",
+      "sha256": "a4e3cdce6a57cf40aceacf738f87f7d6d3b67cbf3a28e89dee25f0489943d065",
+      "bytes": 8372
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-05-01-RED-EVIDENCE-core.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-05-01-RED-EVIDENCE-core.json",
+      "sha256": "35c1dd53d8e3c719b6862da286aba71c3ca4d5f62e1532fa6682a380339a67d5",
+      "bytes": 972
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-CONTEXT.md",
+      "sha256": "c80c70a035b597a1cc0c9d2d56fcb8b3de6aedbae3f83ca86afb3f8ac16f5e4b",
+      "bytes": 10628
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-DISCUSSION-LOG.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-DISCUSSION-LOG.md",
+      "sha256": "29b84bf4380ad82c7629047361c2853e5e51e2f4fa0b60e8ea832e146689015b",
+      "bytes": 3813
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-REMAINDER-AUDIT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-REMAINDER-AUDIT.md",
+      "sha256": "126b0dfa647cc02d0025f4834c239ddc771b2f266b00ee6d8b7dbeafb5d857a8",
+      "bytes": 61945
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-REVIEW.md",
+      "sha256": "983eb716f7970c8d7b535daca4da4415f6bb387a106afa52466a5da73b873eb6",
+      "bytes": 2666
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-SECURITY.md",
+      "sha256": "48bd37eee8f364618f1dc734e787cff4ba31e89d27a03d4524cf2f34b7554e87",
+      "bytes": 2568
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-SOURCE-AUDIT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-SOURCE-AUDIT.md",
+      "sha256": "075261ab2c89dc93fdffe053ed5661245d57358f4cca0fca522073cefae906ae",
+      "bytes": 16383
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/01.1.1.3.1.2-VALIDATION.md",
+      "sha256": "43de6dd6d3392dba444e10b12c630f98396ca0d8d9eed3f0dff2811c5aee6892",
+      "bytes": 8712
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/02-01-RED-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/02-01-RED-EVIDENCE.json",
+      "sha256": "6d4f3097e7d0d6d860c95a64318550b5a7a6af10590e928c989c577d7cece755",
+      "bytes": 1558
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/02-02-RED-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/02-02-RED-EVIDENCE.json",
+      "sha256": "ffff1a236b4b444d4ea5e1b33c240b9f487a4a2e4be419ae77d750e6f7f32fde",
+      "bytes": 8519
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/03-01-RED-EVIDENCE-core.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/03-01-RED-EVIDENCE-core.json",
+      "sha256": "b8bc3917eb4c71c3ff65260e030d554a2e8257854801359d4a85847addc40382",
+      "bytes": 6577
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/03-01-RED-EVIDENCE-floor.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/03-01-RED-EVIDENCE-floor.json",
+      "sha256": "56f670bb20e5274f5e68333cad7f99a3ed4c2675c8855c051023656a4052c157",
+      "bytes": 6698
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/03-02-RED-EVIDENCE-core.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.2-debugger-trace-breakpoint-monitor-and-interpreter-remainder/03-02-RED-EVIDENCE-core.json",
+      "sha256": "ed0032779cc0e4ca50cd22b2f46e0645c612c18ae95b88545d1d0cf63ac4c37e",
+      "bytes": 7082
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-01-PLAN.md",
+      "sha256": "5e5e56804550fc219a70072a58745468a8893a9c27dcb47c0de30a18db1bbeb7",
+      "bytes": 16023
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-01-SUMMARY.md",
+      "sha256": "efa3eaa6481a9fca2c485b137a25d4a8c46596f7fecde2ee173f75b5840ae6cf",
+      "bytes": 2290
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-02-PLAN.md",
+      "sha256": "0019025ddd76cf69e264716a70a63c6b977fae0f1e4dcecbfba50b0c5b3fb669",
+      "bytes": 20528
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-02-SUMMARY.md",
+      "sha256": "96a1a211c5bf49e2d5be63a5eeb4afa902e07875c1e3744bf275453894cbb362",
+      "bytes": 1588
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-ACCEPTANCE.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-ACCEPTANCE.md",
+      "sha256": "1aba3ed29211776c63bd87e634322937f1d50afc4d676ce8cacf74d9cafc54c6",
+      "bytes": 18840
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-CONTEXT.md",
+      "sha256": "3bb898d8efc46a39c14dbdb3f6432486aeb96e7ab20c1be55b7261684487f344",
+      "bytes": 8600
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-DELIVERY.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-DELIVERY.json",
+      "sha256": "a846d488f13aa6e5d42bbb612bb5e7316d75e04a29b08f999e2d559b1383ed3a",
+      "bytes": 26445
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-DISCUSSION-LOG.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-DISCUSSION-LOG.md",
+      "sha256": "230dfd86b3030077b126577a7ea2d2745bb6069cb27189396fc8b9995173b446",
+      "bytes": 2864
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-GATE-CORRECTION-PROPOSAL.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-GATE-CORRECTION-PROPOSAL.md",
+      "sha256": "bdc480a3eb479c758711845b5c94b8d735f33d7054cad10bd78539bec6b038cf",
+      "bytes": 2883
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-PATTERNS.md",
+      "sha256": "1ea1f36ef188b9c5844e93c3a665cba4fce7bddb2b9a37bb1c37e843bfa39a36",
+      "bytes": 8581
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-RESEARCH.md",
+      "sha256": "a0628107f3b32afb265a266998f1578d54979700b9caff2484658e65073194f8",
+      "bytes": 22520
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-REVIEW.md",
+      "sha256": "150a9347cb4fda44fa72919362a70076867451c913a6409ed5241f83d65c0700",
+      "bytes": 3617
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-SECURITY.md",
+      "sha256": "db67e9a12e5c90986aa22917f1544ac9dc1f17aaa57fc609450e03d34d04b1a6",
+      "bytes": 5131
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-SOURCE-AUDIT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-SOURCE-AUDIT.md",
+      "sha256": "89fc1e4b5858e8b788b8e0c411a784ecc56a5a9259b6dd68c55919c05e089e30",
+      "bytes": 7097
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.3.1.3-debugger-installed-wide-acceptance/01.1.1.3.1.3-VALIDATION.md",
+      "sha256": "327accdb82d6605d22ed4341d7abac4604dfd9e384c25cfd9b0964919bb5bb5c",
+      "bytes": 11562
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.4-complete-the-remaining-ban-list-semantic-audit-and-closure/01.1.1.4-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.4-complete-the-remaining-ban-list-semantic-audit-and-closure/01.1.1.4-CONTEXT.md",
+      "sha256": "f8a66392be7d38a03abf5b3fbef8be5b3b003795357712e9e60ae4a0257c3846",
+      "bytes": 10496
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.4-complete-the-remaining-ban-list-semantic-audit-and-closure/01.1.1.4-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.4-complete-the-remaining-ban-list-semantic-audit-and-closure/01.1.1.4-PATTERNS.md",
+      "sha256": "50e5451974abd843b25bb7207ef7d1509ad5598a6e984f0d11139632d3f0b2e5",
+      "bytes": 13699
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.4-complete-the-remaining-ban-list-semantic-audit-and-closure/01.1.1.4-PLANNING-OUTCOME.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.4-complete-the-remaining-ban-list-semantic-audit-and-closure/01.1.1.4-PLANNING-OUTCOME.md",
+      "sha256": "f5c89e88a50c45f60bcc0f92c6fe7cba7d051ebdabd757f9b0affcaee9b33a52",
+      "bytes": 11865
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.4-complete-the-remaining-ban-list-semantic-audit-and-closure/01.1.1.4-PLANNING-SCOPE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.4-complete-the-remaining-ban-list-semantic-audit-and-closure/01.1.1.4-PLANNING-SCOPE.json",
+      "sha256": "8cc16dd399e05f552721229210d6855199137c973109da734bc8ea9495935b5a",
+      "bytes": 55586
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/.continue-here.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/.continue-here.md",
+      "sha256": "c9ab7d544cafef48b684746fb0999fe5cf78131a26379c059462aa54b9f51790",
+      "bytes": 10336
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/.gitkeep",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-01-PLAN.md",
+      "sha256": "380fda7a56605aa222fe616f4dcc3ed6eea25f18eb17551ffdec44ffce1b2a21",
+      "bytes": 16405
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-01-SUMMARY.md",
+      "sha256": "c4be85512b66e3f334c3b15d3effd613cec5537dd9af2aaac5dc97d31d199f24",
+      "bytes": 5006
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-02-PLAN.md",
+      "sha256": "a86fcc4c5736ac62c236a72e251e5dbe27a846d99e0456df8c2b5d42093561ea",
+      "bytes": 17281
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-02-SUMMARY.md",
+      "sha256": "663aad1a3bd8b0d0b0a3fe9461f1c1af09fceed3509a5cbe5a5a0c8f7b591d95",
+      "bytes": 6896
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-03-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-03-PLAN.md",
+      "sha256": "0cd4eb7df096f810cb9313a57145a5e5d1cf60ee81512a8aa0c05e695c6b3116",
+      "bytes": 23105
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-03-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-03-SUMMARY.md",
+      "sha256": "18834c4734a2d471b0a54d9a9bb5692377d7af7e8eb4cf67327bbbf3562e0e0a",
+      "bytes": 8313
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-04-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-04-PLAN.md",
+      "sha256": "3ed5cb8513c3b0fae1a8a75398bd151b3316135c9bdfa7a3977b875021ee8c08",
+      "bytes": 46609
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-04-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-04-SUMMARY.md",
+      "sha256": "559ac116eb5cb8852f46f0a1bc79d3574737319644a2d72d0b08aa274994d193",
+      "bytes": 3000
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-CACHE-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-CACHE-RESEARCH.md",
+      "sha256": "7ebe4375208371556527daace1c9583cbb6e4e39aae34cc2f77e8d25be0dbd9c",
+      "bytes": 3273
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-CALIBRATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-CALIBRATION.md",
+      "sha256": "6ca0125bde5612e0a40e00f9f79c2f1062e85d675c14163fbad0cfc1900a8a16",
+      "bytes": 48981
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-CHECK.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-CHECK.md",
+      "sha256": "be4c7e0b1651d08cc801b79134692c64045a060370342fb996b28d285355309a",
+      "bytes": 4608
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-CONTEXT.md",
+      "sha256": "2871e14ad84e733333f5284b1e0de9f4d4c4b904b70f1989078c794e4f8bb1c9",
+      "bytes": 6744
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-DELIVERY.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-DELIVERY.json",
+      "sha256": "0c66b5703fe2edd2f7603c4db1f299ecb65255a6cf50cf7db257a0404f9758a7",
+      "bytes": 3424
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-LEARNINGS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-LEARNINGS.md",
+      "sha256": "a15a834a59f0496a1cda767362916a67be82af20ac3c6b212e77b0a618bef144",
+      "bytes": 4959
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-ORIGINAL-IDENTITY-SOURCE.txt",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-ORIGINAL-IDENTITY-SOURCE.txt",
+      "sha256": "913068aad01c7034ed9ab1bae9c6a4522dbcd2246264e8d62e3054b05cba5049",
+      "bytes": 33534
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-PATTERNS.md",
+      "sha256": "36845b32eed00d55880300d36463c7670b5064b47a132c42e909172c3311226b",
+      "bytes": 15069
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-RESEARCH.md",
+      "sha256": "8b8bace5db64dc29f21804de66afec7c4c9d46471b584c0406e0a835b61ae861",
+      "bytes": 30771
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-REVIEW-DISPOSITION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-REVIEW-DISPOSITION.md",
+      "sha256": "f4466622a85bba7f2f1fd1071c8df821a9650d191a330b10fdd00bdb65fd8fa8",
+      "bytes": 373
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-REVIEW.md",
+      "sha256": "2e57244bfde316e7ee9b71400a7e30937affca917345d3f7f5299fc30e122d36",
+      "bytes": 1312
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-SECURITY.md",
+      "sha256": "924c2d310040ff94edc98ed71c5723b2966988d93a1dd1786cd988f529983f42",
+      "bytes": 4384
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-VALIDATION.md",
+      "sha256": "9a789f1a61283a467c6cbee70cb7f9e5b067a1ce27cd075beb7a91412a6a7d64",
+      "bytes": 36168
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-VERIFICATION.md",
+      "sha256": "d7226b30fa5088f3d36cac2d0fa6e6ee7a8bfdd60c1470677dae52aaddaa6bd1",
+      "bytes": 3335
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/verify_delivery.py",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/verify_delivery.py",
+      "sha256": "2a52388fb2369d4c405e0f8b0bf715b90e7870dcdba1ad16bcfae737754a3b35",
+      "bytes": 30193
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/.gitkeep",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-01-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-01-PLAN.md",
+      "sha256": "9ee05de77086f0b2b6ba572866883a4375869f98308cfa0be089dfdf94fad8b0",
+      "bytes": 13879
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-01-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-01-SUMMARY.md",
+      "sha256": "f4626646351ae9fa981d63fe7254ef47c79ec702622a208c3397bc4507259123",
+      "bytes": 7375
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-02-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-02-PLAN.md",
+      "sha256": "3acb739e150ddee5a1844337b628d445c074d2104ae4ace9b3567365ec9831b7",
+      "bytes": 13794
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-02-RED-EVIDENCE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-02-RED-EVIDENCE.json",
+      "sha256": "0e8e1158cd7d7dad3733bf828e4763bd1a53f35e59005ca0d5f58d40327f6747",
+      "bytes": 997
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-02-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-02-SUMMARY.md",
+      "sha256": "399a682910974f90b92c70d49b41e309edac511a837ca715b3a48260230ffa75",
+      "bytes": 8126
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-03-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-03-PLAN.md",
+      "sha256": "6b2e96449eb0badfaaf940390a529ba89f3d3c184834c7133e060bfa7fd4c48a",
+      "bytes": 12893
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-03-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-03-SUMMARY.md",
+      "sha256": "1acecf206cd3b020a2f6d6f146fd7f795c7dc41a227b838398429451ce2e3474",
+      "bytes": 7430
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-04-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-04-PLAN.md",
+      "sha256": "9ab6d0766eaee8f3923a56d6ef93ae6ea8787b62261e37fa74bc392b92c16542",
+      "bytes": 12852
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-04-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-04-SUMMARY.md",
+      "sha256": "7c994d46795960518dd047e98f18fdf8f3b3b9d5c8fdde151a510d4800f51370",
+      "bytes": 7492
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-05-PLAN.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-05-PLAN.md",
+      "sha256": "722c2938d2e22a75664f5995e1cdaddd3e24af18c9d33c5a85946e12cfc55704",
+      "bytes": 25423
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-05-SUMMARY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-05-SUMMARY.md",
+      "sha256": "1f414a2ac02943b55b8b9ae8eead25d88a1c2f20770c81f85d1f7a0daffa7c0d",
+      "bytes": 8727
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-CONTEXT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-CONTEXT.md",
+      "sha256": "923b7935da2c7c9089d875f7560b84f2687921f9f94a9dfd43f4f25e646a992f",
+      "bytes": 10736
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-COVERAGE-AUDIT.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-COVERAGE-AUDIT.md",
+      "sha256": "7783de27a77b135f4414872a72d76d90686a10242e05979deb9a7f4cebfe8f60",
+      "bytes": 6444
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-DELIVERY.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-DELIVERY.json",
+      "sha256": "50ef275f164d5e7407aa1aee3bf0fdba2db802af9cf2a181e0361b05d858e546",
+      "bytes": 9016
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-DISCUSSION-LOG.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-DISCUSSION-LOG.md",
+      "sha256": "41b0a82298a686c3ee41f3773c027a7e039787ec7f52616d412e7ae224e28d30",
+      "bytes": 1590
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-PATTERNS.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-PATTERNS.md",
+      "sha256": "7176ce85713f39228ec8e4816a3f43b3bf83907d41c2de1aeedd5caf040eb1ba",
+      "bytes": 11512
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-PLANNING-SCOPE.json",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-PLANNING-SCOPE.json",
+      "sha256": "c1c30e8dd139b10d9538ef2ab414cc3bd09d6ebf11e88de7de0e0585b443a9a9",
+      "bytes": 46664
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-RESEARCH.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-RESEARCH.md",
+      "sha256": "0a2b0cbec8ed726a8b74c9af464990981968faf6fc83f45ba7494ce5eaca5956",
+      "bytes": 39797
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-REVIEW-DISPOSITION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-REVIEW-DISPOSITION.md",
+      "sha256": "84fa88c67d1d2d4366d225b6b4dacff904f7c2447e749da8ee506ca951c3b2fa",
+      "bytes": 251
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-REVIEW.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-REVIEW.md",
+      "sha256": "e1d5a4973b5e6a30d4da9b4afeef3c3a608aef0c1c0a6485eaae67eedef09edd",
+      "bytes": 1026
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-SCOPE-DECISION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-SCOPE-DECISION.md",
+      "sha256": "1ec53e588e1567b1d2547c6e8e7ef3b9a673a66c7b06bc65e1fa8324cc566708",
+      "bytes": 11972
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-SECURITY.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-SECURITY.md",
+      "sha256": "a47270f2c3c8a8be74b910e0dd04f391d9ba927b990239b4b0d246f8a1f0e4b5",
+      "bytes": 4596
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-VALIDATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-VALIDATION.md",
+      "sha256": "b9f6ec16ad59515d062fde098afb116bdf0a4ab0069690ebb1976134d3627fae",
+      "bytes": 5596
+    },
+    {
+      "original_path": ".planning/phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-VERIFICATION.md",
+      "archive_path": ".planning/milestones/v0.1-phases/01.1.1.6-audit-remaining-ban-list-call-name-exclusions/01.1.1.6-VERIFICATION.md",
+      "sha256": "17562e089977eff6c5567b299f1d9c3a1fd964c954f83538f49ef75f19136a40",
+      "bytes": 10395
+    },
+    {
+      "original_path": ".planning/ROADMAP.md",
+      "archive_path": ".planning/milestones/v0.1-ROADMAP.md",
+      "sha256": "30f2c7e01d76cd95a93efa80f0e0cdac422ab3dddb2c607600bc50952d3a0f43",
+      "bytes": 93889
+    },
+    {
+      "original_path": ".planning/REQUIREMENTS.md",
+      "archive_path": ".planning/milestones/v0.1-REQUIREMENTS.md",
+      "sha256": "ca2f06434f4e6fbdac251ffc111552dcf2d17f3651fef9fb70d96c16d2e2b470",
+      "bytes": 38316
+    },
+    {
+      "original_path": ".planning/STATE.md",
+      "archive_path": ".planning/milestones/v0.1-STATE.md",
+      "sha256": "bbef23859f5688ef50a5db51652c422c3d3f43662d06166098a423ac4d93c06d",
+      "bytes": 23094
+    }
+  ]
+}

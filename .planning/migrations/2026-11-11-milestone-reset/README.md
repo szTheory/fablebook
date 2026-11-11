@@ -1,0 +1,54 @@
+# Milestone and phase numbering reset
+
+**Status:** Candidate under validation, not merged or approved for phase implementation.
+
+The owner requested fail-forward recovery and smaller milestones (INT-20261111-01). The old reset resolution waited for the whole product roadmap to finish. Nested inserted phases and stale fingerprints then kept the generic router pointing at old, deliberately stopped work. The primary checkout also remains on an old branch with uncommitted work. A status command cannot fix those conditions.
+
+## Concrete result
+
+- Archive the formerly unversioned cycle as v0.1 with status SUPERSEDED — INCOMPLETE. Do not run milestone.complete, which would label this whole cycle shipped.
+- Use supported state.milestone-switch and phases.clear --confirm --archive-version v0.1. Every moved file is bound by ARCHIVE-MANIFEST.json; original ROADMAP, REQUIREMENTS and STATE are preserved byte-for-byte. No force flag or deletion is used.
+- Propose v0.2 Guard coverage recovery with one ordinary Phase 1 delivering the next independently sized guard increment. Exact membership and effort must be settled before any PLAN. No old halted plan is resumed.
+- Preserve the 34 future product phases in twelve future milestone groups, each starting at Phase 1. references/PRODUCT-REQUIREMENTS.md preserves every original ID, citation and status; PHASE-MAP.json maps each old integer phase 2–35 to one future owner. Future versions are assigned on activation.
+- Keep the full guard aggregate, source limits, installed-wide remainder, collision stops, future SEC-01 property owner, walking-skeleton start gate and three UAT groups in CARRY-FORWARD.md. Completing one increment does not remove those gates.
+- Update only physical read paths in tier_sweep_test.exs and debugger_settings.ex. Stored source IDs, ownership, provenance/review strings, snapshot bytes and assertions remain unchanged. No lib, workflow, dependency, lockfile or production behavior change is included.
+- Record the owner's correction in AGENTS.md: integer phases, bounded milestones, and concrete next actions instead of repeated status commands.
+
+## Preserved working copies
+
+The migration uses a fresh worktree from the PR #82 main merge and carries three verified planning-only completion receipts. Original/recovery checkouts and the primary's uncommitted artifacts and brand assets remain untouched. The supported worktree helper required an initialized manifest before creation; its first read-only refusal made no worktree, and initialization/creation then succeeded. No harness agent isolation or independent subagent review is claimed.
+
+Do not switch/reset/stash/clean the dirty primary checkout as a shortcut. A new session must reconcile its branch against merged main and use the current reviewed checkout. Adoption of the migration on main is a separate owner merge boundary.
+
+## Verification
+
+Read-only structural proof: `python3 .planning/migrations/2026-11-11-milestone-reset/verify.py`. It verifies archive bytes, all original requirement IDs/statuses/citations, future addresses and the sole active integer phase. Focused core/floor evidence consumers, format/compile/Credo/planning checks and required hosted CI are recorded below as they finish. Run these before presenting the candidate as ready. A source-sized implementation plan, product readiness, whole-audit completion and archived stale-report refresh are not claimed.
+
+## Next action
+
+After owner approval and migration landing: $gsd-discuss-phase 1 — select the exact source-connected next slice and check inherited size/effort limits before planning. No phase implementation starts automatically.
+
+## Local primary-checkout recovery pointer
+
+An additive local AGENTS.md pointer directs future sessions away from the preserved old branch and toward the current reviewed planning checkout. Its pre-existing bytes are unchanged, verified by a prefix check and before/after hashes in ignored _build/milestone-reset-20261111/primary-agent-pointer.json. It is not committed with unrelated primary changes. No primary source, artifact, brand file or Git branch is reset, stashed, switched, removed or overwritten. The generic durable numbering/action preference is included in this PR's AGENTS.md.
+
+## Local validation receipt
+
+All commands used pinned local lanes, locked caches and background/piped execution. Native Mix operations ran sequentially. Raw receipts are in ignored _build/milestone-reset-20261111/.
+
+| Check | Result |
+|---|---|
+| `python3 .planning/migrations/2026-11-11-milestone-reset/verify.py` | 318 archived files byte-identical; all 129 original requirement checked states/citations preserved; every legacy future phase 2–35 mapped exactly once; new local numbering contiguous per milestone; active v0.2 / Phase 1 only. |
+| Focused core evidence consumers with warnings-as-errors | 6 passed, 88 excluded; 158.1s. `core-evidence-consumers-final.log`. |
+| Same focused consumers on floor with warnings-as-errors | 6 passed, 88 excluded; 174.1s. `floor-evidence-consumers.log`. |
+| Planning intent / contract-rule checks | 32 passed; `planning-final.log`. |
+| Format, both pinned compile checks with warnings-as-errors, strict Credo | Passed; no Credo issues. `format-final.log`, `compile-core.log`, `compile-floor.log`, `credo.log`. |
+| OpenGSD progress / roadmap | One active phase; new milestone v0.2; next phase 1. No old unmatched parent plans in the active route. |
+| Health | Zero errors and zero undeclared-phase warnings. Seven preserved-worktree warnings and three pre-existing noncanonical-file warnings remain; do not delete history to remove them. `health-final.json`. |
+| Cross-phase UAT | Three archived groups remain visible, zero current parse gaps; their future owners and gates are explicit in CARRY-FORWARD.md. |
+| `act pull_request -W .github/workflows/ci.yml --dryrun` | Existing concurrency.queue parser rejection, exit 1, before jobs. Unavailable local Actions validation, not a pass. No workflow change or retry. |
+| Protected source diff | lib, workflows, bin producers, dependencies, lockfiles and Credo configuration unchanged. |
+
+The first focused source run failed in setup because moved physical paths differed from recorded logical authority. Stored metadata stayed unchanged; the expected historical-reference conversion fixed it. That invalid run is retained separately, not relabelled green. The first planning run caught noncanonical colon syntax in the new requirements; the new text was corrected and the unchanged planning guard then passed. Full hosted core/floor/Dialyzer/security/ci-gate remain required for the final candidate; no native whole-suite repeat is needed for this physical-read-path migration after the focused integration consumers pass.
+
+[Inline review](REVIEW.md) covers the complete source delta, preserved metadata and requirements/gates. Required hosted checks and owner merge remain pending. No new implementation phase starts automatically.

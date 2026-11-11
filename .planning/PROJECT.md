@@ -12,7 +12,11 @@ Fablebook is a Storybook-style workbench for Phoenix LiveView. It renders every 
 
 If everything else fails, a scenario must still render with production fidelity and export an accurate context bundle. The owner keeps using phoenix_storybook until Fablebook clears `.planning/intent/CLEARANCE.md`. (INT-20261028-04)
 
-**Phase 17 input:** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
+**Design canon milestone / Phase 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
+
+## Current Milestone: v0.2 Guard coverage recovery
+
+Planning reset under INT-20261111-01. Deliver one bounded guard increment with ordinary Phase 1, preserving the full unfinished aggregate and all gates. The full product requirement register is references/PRODUCT-REQUIREMENTS.md; future bounded milestones and old-to-new addresses are in references/PRODUCT-ROADMAP.md. The old unversioned cycle is archived as v0.1, explicitly superseded and incomplete. No product implementation or release is started by this reset.
 
 ## Requirements
 
@@ -427,4 +431,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-10 after Phase 01.1.1.18; the Phase 01.1.1.1 aggregate remains open*
+*Last updated: 2026-11-11 for owner-requested milestone/phase numbering recovery; all unfinished acceptance remains carried forward.*

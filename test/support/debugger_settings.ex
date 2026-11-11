@@ -13,9 +13,9 @@ defmodule Fablebook.Test.DebuggerSettings do
   @remainder_owner "01.1.1.3.1.2"
   @delegation_children [@owner, @remainder_owner]
   @delegation_schema "fablebook.debugger-settings-delegation.v1"
-  @delegation_dir ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou"
+  @delegation_dir ".planning/milestones/v0.1-phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou"
   @delegation_file "01.1.1.3.1-OWNERSHIP.jsonl.gz"
-  @parent_ledger_dir ".planning/phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil"
+  @parent_ledger_dir ".planning/milestones/v0.1-phases/01.1.1.3-installed-otp-front-door-coverage-in-calibrated-source-famil"
   @parent_ledger_file "01.1.1.3-OWNERSHIP.jsonl.gz"
   @partition_file "01.1.1.3.1-PARTITION.json.gz"
   @candidate_file "01.1.1.3.1-SOURCE-CANDIDATE.json"
@@ -3372,7 +3372,7 @@ defmodule Fablebook.Test.DebuggerSettings do
     decision = read_regular_file!(decision_path, "approved source decision")
 
     require_ownership!(
-      metadata["historical_authority"] == Path.relative_to(parent_path, root),
+      metadata["historical_authority"] == original_planning_reference(parent_path, root),
       "effective delegation historical authority path changed"
     )
 
@@ -3387,7 +3387,7 @@ defmodule Fablebook.Test.DebuggerSettings do
     )
 
     require_ownership!(
-      metadata["source_decision"] == Path.relative_to(decision_path, root),
+      metadata["source_decision"] == original_planning_reference(decision_path, root),
       "effective delegation source decision path changed"
     )
 
@@ -6167,11 +6167,17 @@ defmodule Fablebook.Test.DebuggerSettings do
       get_in(link, ["evidence", "route_changed"]) == true
   end
 
+  defp original_planning_reference(path, root) do
+    path
+    |> Path.relative_to(root)
+    |> String.replace_prefix(".planning/milestones/v0.1-phases/", ".planning/phases/")
+  end
+
   defp assert_root_ledger!(root_records, lane) do
     ledger =
       Path.join(
         File.cwd!(),
-        ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-OWNERSHIP.jsonl.gz"
+        ".planning/milestones/v0.1-phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-OWNERSHIP.jsonl.gz"
       )
 
     entries =
@@ -6217,7 +6223,7 @@ defmodule Fablebook.Test.DebuggerSettings do
     ledger =
       Path.join(
         File.cwd!(),
-        ".planning/phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-OWNERSHIP.jsonl.gz"
+        ".planning/milestones/v0.1-phases/01.1.1.3.1-debugger-remaining-settings-trace-breakpoint-and-monitor-rou/01.1.1.3.1-OWNERSHIP.jsonl.gz"
       )
 
     entries =
