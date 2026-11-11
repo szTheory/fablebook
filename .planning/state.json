@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-execute-phase 01.1.1.18",
-    "label": "Execute the independently checked three-plan source slice",
-    "reason": "Allocation stop resolved by approved connected sizing; no source tasks complete"
+    "command": "gh pr checks --required",
+    "label": "Obtain hosted CI for the reviewed release-contract candidate",
+    "reason": "Full local core and floor checks passed; publish the candidate under standing authorization, then observe all required hosted results before the owner merge boundary. Parent and Phase 2 gates remain."
   },
-  "updated_at": "2026-11-10T17:53:19+00:00"
+  "updated_at": "2026-11-10T23:54:44+00:00"
 }

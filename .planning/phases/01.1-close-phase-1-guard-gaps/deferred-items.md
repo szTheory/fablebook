@@ -39,6 +39,10 @@
 
 ## WR-05 follow-up: tag code runs before the main-only check fails
 
+status: resolved
+
+Audit 2026-11-10: current build steps validate the tag commit and origin/main ancestry before local setup. Merged PR #12 and the two later off-main live runs are recorded in 01.1-VERIFICATION.md; those runs stopped before setup/build/publish/smoke/finalize. Current release-contract baseline also accepts the unchanged workflow. This does not close the distinct harness and omission weaknesses below.
+
 - **Where:** `.github/workflows/hex-publish.yml`, build job, the steps before `tag`.
 - **Seen:** Phase 01.1 Nyquist audit (2026-10-29). Checkout uses `ref: inputs.tag`, so `./.github/actions/setup` and its `mix deps.get` come from the tag's own commit and run with the build job's `contents: write` token before the ancestry check fails the job. Dispatching already needs write access, and `HEX_API_KEY` exists only in the `publish` job, so this is not a privilege escalation. `test/contract/hex_publish_test.exs` does not claim to cover it.
 - **Fix direction:**

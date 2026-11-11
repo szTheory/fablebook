@@ -16,8 +16,36 @@ defmodule Fablebook.Contract.HexPublishTest do
   @tarball_sum Base.encode16(:crypto.hash(:sha256, @tarball), case: :lower)
 
   @git_env [{"GIT_DIR", nil}, {"GIT_WORK_TREE", nil}, {"GIT_INDEX_FILE", nil}]
-  @identity ~w(-c user.name=fixture -c user.email=fixture@localhost
+  @identity ~w(-c user.name=fixture -c user.email=fixture-identity
                -c commit.gpgsign=false -c tag.gpgsign=false)
+  @runner_shell System.get_env("PATH", "")
+                |> String.split(":")
+                |> Kernel.++(["/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin"])
+                |> Enum.uniq()
+                |> Enum.map(&Path.join(&1, "bash"))
+                |> Enum.filter(fn path ->
+                  case File.stat(path) do
+                    {:ok, %{type: :regular, mode: mode}} -> Bitwise.band(mode, 0o111) > 0
+                    _ -> false
+                  end
+                end)
+                |> Enum.find_value(fn path ->
+                  case System.cmd(path, ["--version"]) do
+                    {output, 0} ->
+                      case Regex.run(~r/GNU bash, version ([0-9]+\.[0-9]+\.[0-9]+)/, output) do
+                        [_, version] ->
+                          if String.to_integer(version |> String.split(".") |> hd()) >= 5,
+                            do: {path, version}
+
+                        _ ->
+                          nil
+                      end
+
+                    _ ->
+                      nil
+                  end
+                end) || raise("release contract tests require Bash 5 or newer")
+  @runner_bash elem(@runner_shell, 0)
 
   @curl ~S"""
   #!/bin/sh
@@ -38,7 +66,7 @@ defmodule Fablebook.Contract.HexPublishTest do
       shift
     done
   fi
-  printf '%s' "${TAG#v}"
+  printf '%s' "$PROJECT_VERSION"
   """
 
   @hex_cases [
@@ -65,6 +93,10 @@ defmodule Fablebook.Contract.HexPublishTest do
   @built "${{ needs.build.outputs.sha }}"
   @lanes "    # lanes\n"
   @smoke_setup "      - uses: ./.github/actions/setup\n        with:\n          lane:"
+  @publish_environment "hex-production"
+  @release_test_command "mix test --only release --only prod_guard"
+  @prepublish_smoke_command "bin/smoke_consumer --path unpacked"
+  @smoke_command ~s(bin/smoke_consumer --hex "$V" --checksum "$SHA256")
 
   @mutations [
     {:ancestry, "ref: refs/tags/${{ inputs.tag }}", "ref: ${{ inputs.tag }}"},
@@ -73,6 +105,10 @@ defmodule Fablebook.Contract.HexPublishTest do
     {:ancestry, ~s(is not on main"\n            exit 1\n), ~s(is not on main"\n)},
     {:ancestry, "if ! git merge-base",
      "if git rev-parse -q --verify origin/main && ! git merge-base"},
+    {:ancestry, ~s(if ! git merge-base --is-ancestor "$sha" origin/main; then),
+     ~s(git merge-base --is-ancestor "$sha" origin/main | cat\n          if false; then)},
+    {:tag_pattern, "          [[ \"$TAG\" =~ ^v[0-9]+\\.[0-9]+\\.[0-9]+$ ]]\n", ""},
+    {:tag_version, "          test \"$TAG\" = \"v$v\"\n", ""},
     {:ancestry_order, {:move, "      - id: ref", "      - run: mix local.hex 2.6.0 --force"}},
     {:ancestry_order, {:move, "      - id: sbom", "      - id: tag"}},
     {:publish_gate, "    needs: build\n", "    needs: build\n    if: always()\n"},
@@ -114,15 +150,35 @@ defmodule Fablebook.Contract.HexPublishTest do
      @lanes <>
        @smoke_setup <> " ${{ matrix.lane }}\n          mix-env: dev\n          cache: 'true'"},
     {:secret_scope, "  MIX_ENV: dev\n", "  MIX_ENV: dev\n  #{@key_env}\n"},
+    {:secret_scope, {:root_env_after_jobs_secret, @key_env}},
     {:secret_scope, "    env:\n      SHA256:", "    env:\n      #{@key_env}\n      SHA256:"},
     {:secret_scope, "          MIX_ENV: test\n",
      "          MIX_ENV: test\n          #{@key_env}\n"},
+    {:finalize_gate, "  finalize:\n    needs: smoke\n",
+     "  finalize:\n    needs: smoke\n    if: always()\n"},
+    {:smoke_gate, "  smoke:\n    needs: [build, publish]\n",
+     "  smoke:\n    needs: [build, publish]\n    if: false\n"},
+    {:smoke_step_gate, "      - run: #{@smoke_command}\n",
+     "      - if: false\n        run: #{@smoke_command}\n"},
+    {:smoke_step_gate, "      - run: #{@smoke_command}\n",
+     "      - run: #{@smoke_command}\n        if: false\n"},
+    {:publish_environment, "    environment: #{@publish_environment}\n", ""},
+    {:smoke_command, " --checksum \"$SHA256\"", ""},
+    {:release_tests, @release_test_command, "mix test --only release"},
+    {:prepublish_smoke, "run: #{@prepublish_smoke_command}", "run: true"},
+    {:smoke_matrix, "lane: [latest, floor]", "lane: [latest]"},
+    {:smoke_lane, "lane: ${{ matrix.lane }}", "lane: latest"},
+    {:smoke_env,
+     "    env:\n      V: ${{ needs.build.outputs.version }}\n      SHA256: ${{ needs.build.outputs.sha256 }}",
+     "    env:\n      V: ${{ github.ref_name }}\n      SHA256: ${{ needs.build.outputs.sha256 }}"},
+    {:smoke_env,
+     "    env:\n      V: ${{ needs.build.outputs.version }}\n      SHA256: ${{ needs.build.outputs.sha256 }}\n",
+     "    env:\n      V: ${{ needs.build.outputs.version }}\n"},
     {:cache, "cache: 'false'", "cache: 'true'"},
     {:run_expression, ~s("fablebook-$V.tar"),
      ~s("fablebook-${{ steps.tag.outputs.version }}.tar")},
     {:run_expression, ~s(release edit "$TAG"), ~s(release edit "${{ inputs.tag }}")}
   ]
-
   setup %{tmp_dir: dir} do
     bin = Path.join(dir, "bin")
     File.mkdir_p!(bin)
@@ -163,6 +219,17 @@ defmodule Fablebook.Contract.HexPublishTest do
     assert graph_violations(commented) == []
   end
 
+  test "moving the root env block after jobs preserves all verdicts", %{tmp_dir: dir} do
+    reordered = move_root_env_after_jobs(workflow())
+
+    assert reordered != workflow()
+    refute "  MIX_ENV: dev" in job(reordered, "finalize")
+    assert release_gate_violations(reordered, dir) == []
+    assert recovery_violations(reordered, dir) == []
+    assert hygiene_violations(reordered) == []
+    assert graph_violations(reordered) == []
+  end
+
   for {mutation, i} <- Enum.with_index(@mutations, 1) do
     @tag mutation: mutation, rule: elem(mutation, 0)
     test "mutation #{i} fires exactly #{elem(mutation, 0)}", %{tmp_dir: dir} = tags do
@@ -174,7 +241,22 @@ defmodule Fablebook.Contract.HexPublishTest do
   end
 
   defp mutate(text, {_rule, {:move, first, before}}), do: move_step(text, first, before)
+
+  defp mutate(text, {_rule, {:root_env_after_jobs_secret, secret}}) do
+    text
+    |> move_root_env_after_jobs()
+    |> String.replace("  MIX_ENV: dev\n", "  MIX_ENV: dev\n  #{secret}\n", global: false)
+  end
+
   defp mutate(text, {_rule, from, to}), do: String.replace(text, from, to, global: false)
+
+  defp move_root_env_after_jobs(text) do
+    {before, ["env:" | rest]} = text |> lines() |> Enum.split_while(&(&1 != "env:"))
+    {env, after_env} = Enum.split_while(rest, &(not top_level_header?(&1)))
+    Enum.join(before ++ after_env ++ ["env:" | env], "\n")
+  end
+
+  defp top_level_header?(line), do: line =~ ~r/\A[^\s#][^:]*:\s*\z/
 
   defp move_step(text, first, before) do
     {pre, ["  build:" | rest]} = text |> lines() |> Enum.split_while(&(&1 != "  build:"))
@@ -208,7 +290,80 @@ defmodule Fablebook.Contract.HexPublishTest do
   defp graph_violations(text),
     do:
       step_if_violations(text) ++
-        job_graph_violations(text) ++ checkout_violations(text) ++ step_count_violations(text)
+        job_graph_violations(text) ++
+        checkout_violations(text) ++
+        step_count_violations(text) ++
+        release_execution_violations(text)
+
+  defp release_execution_violations(text) do
+    smoke = job(text, "smoke")
+    smoke_steps = job_steps(text, "smoke")
+    build_steps = job_steps(text, "build")
+    finalize = job(text, "finalize")
+    publish = job(text, "publish")
+    smoke_checkout = Enum.find(smoke_steps, [], &checkout?/1)
+    smoke_setup = Enum.find(smoke_steps, [], &("uses: ./.github/actions/setup" in normalized(&1)))
+    smoke_command = Enum.find(smoke_steps, [], &(script(&1) =~ "bin/smoke_consumer --hex"))
+
+    failure_report =
+      Enum.find(smoke_steps, [], &(script(&1) =~ "bin/ci_health --file-regression"))
+
+    release_tests = Enum.find(build_steps, [], &(script(&1) =~ "mix test"))
+    unpack_step = Enum.find_index(build_steps, &(script(&1) =~ "mix hex.build --unpack"))
+
+    prepublish_smoke =
+      if is_nil(unpack_step), do: [], else: Enum.at(build_steps, unpack_step + 1, [])
+
+    matrix_lanes = Enum.find(smoke, &String.starts_with?(&1, "        lane:"))
+
+    required_smoke_steps = [
+      {:checkout, smoke_checkout},
+      {:setup, smoke_setup},
+      {:consumer, smoke_command}
+    ]
+
+    check(key(finalize, "if") == nil, {:finalize_gate, key(finalize, "if")}) ++
+      check(key(smoke, "if") == nil, {:smoke_gate, key(smoke, "if")}) ++
+      for(
+        {name, step} <- required_smoke_steps,
+        step == [] or
+          Enum.any?(step, &String.starts_with?(&1, ["      - if:", "        if:"])),
+        do: {:smoke_step_gate, name}
+      ) ++
+      check(
+        key(publish, "environment") == @publish_environment,
+        {:publish_environment, key(publish, "environment")}
+      ) ++
+      check(
+        String.trim(script(release_tests)) == @release_test_command,
+        {:release_tests, String.trim(script(release_tests))}
+      ) ++
+      check(
+        String.trim(script(prepublish_smoke)) == @prepublish_smoke_command,
+        {:prepublish_smoke, String.trim(script(prepublish_smoke))}
+      ) ++
+      check(
+        String.trim(script(smoke_command)) == @smoke_command,
+        {:smoke_command, String.trim(script(smoke_command))}
+      ) ++
+      check(
+        failure_report != [] and "if: failure()" in normalized(failure_report),
+        {:smoke_failure_report, normalized(failure_report)}
+      ) ++
+      check(matrix_lanes == "        lane: [latest, floor]", {:smoke_matrix, matrix_lanes}) ++
+      check(
+        "lane: ${{ matrix.lane }}" in normalized(smoke_setup),
+        {:smoke_lane, normalized(smoke_setup)}
+      ) ++
+      check(
+        job_env(smoke, "V") == "${{ needs.build.outputs.version }}",
+        {:smoke_env, :version, job_env(smoke, "V")}
+      ) ++
+      check(
+        job_env(smoke, "SHA256") == "${{ needs.build.outputs.sha256 }}",
+        {:smoke_env, :checksum, job_env(smoke, "SHA256")}
+      )
+  end
 
   defp step_if_violations(text) do
     gated = text |> job_steps("publish") |> Enum.filter(&(id(&1) == "hex" or key_check?(&1)))
@@ -260,14 +415,20 @@ defmodule Fablebook.Contract.HexPublishTest do
     {repo, [one, two, three]} = repo!(Path.join(dir, "repo"))
 
     checkout!(repo, ref, "v1.0.0")
-    same_name = gate_run(scripts, dir, repo, "v1.0.0")
+    same_name = gate_run(scripts, dir, repo, "v1.0.0", "1.0.0")
     checkout!(repo, ref, "v1.0.1")
-    local_main = gate_run(scripts, dir, repo, "v1.0.1")
+    local_main = gate_run(scripts, dir, repo, "v1.0.1", "1.0.1")
     git!(repo, ["checkout", "-q", "--detach", three])
-    moved = gate_run(scripts, dir, repo, "v1.0.0")
+    moved = gate_run(scripts, dir, repo, "v1.0.0", "1.0.0")
     git!(repo, ~w(update-ref -d refs/remotes/origin/main))
     checkout!(repo, ref, "v1.0.0")
-    no_main = gate_run(scripts, dir, repo, "v1.0.0")
+    no_main = gate_run(scripts, dir, repo, "v1.0.0", "1.0.0")
+    git!(repo, ["update-ref", "refs/remotes/origin/main", one])
+    git!(repo, @identity ++ ["tag", "v1.0.0-beta", one])
+    checkout_tag!(repo, "v1.0.0-beta")
+    invalid_shape = gate_run(scripts, dir, repo, "v1.0.0-beta", "1.0.0-beta")
+    checkout_tag!(repo, "v1.0.0")
+    wrong_version = gate_run(scripts, dir, repo, "v1.0.0", "9.9.9")
 
     cases = [
       {"tag on main beside a same-named branch", same_name,
@@ -282,11 +443,36 @@ defmodule Fablebook.Contract.HexPublishTest do
          errors: ["::error::the checkout is not the commit v1.0.0 names"]
        }},
       {"no origin/main", no_main,
-       %{exit: 1, head: one, output: "", errors: ["::error::v1.0.0 is not on main"]}}
+       %{exit: 1, head: one, output: "", errors: ["::error::v1.0.0 is not on main"]}},
+      {"invalid tag shape on main", invalid_shape, %{exit: 1, head: one, output: "", errors: []}},
+      {"project version differs from tag", wrong_version,
+       %{exit: 1, head: one, output: "sha=#{one}\n", errors: []}}
     ]
 
-    mismatches(:ancestry, for({name, {run, _}, expected} <- cases, do: {name, run, expected})) ++
-      for {name, {%{exit: 0}, false}, _} <- cases, do: {:ancestry, name, :built_commit_off_main}
+    ancestry_cases =
+      for {name, {result, on_main}, expected} <- Enum.take(cases, 4) do
+        {name, result, expected, on_main}
+      end
+
+    ancestry_results =
+      Enum.flat_map(ancestry_cases, fn {name, result, expected, on_main} ->
+        mismatches(:ancestry, [{name, result, expected}]) ++
+          if(result.exit == 0 and not on_main,
+            do: [{:ancestry, name, :built_commit_off_main}],
+            else: []
+          )
+      end)
+
+    pattern_expected = %{exit: 1, head: one, output: "", errors: []}
+    version_expected = %{exit: 1, head: one, output: "sha=#{one}\n", errors: []}
+
+    ancestry_results ++
+      mismatches(:tag_pattern, [
+        {"invalid tag shape on main", elem(invalid_shape, 0), pattern_expected}
+      ]) ++
+      mismatches(:tag_version, [
+        {"project version differs from tag", elem(wrong_version, 0), version_expected}
+      ])
   end
 
   defp pre_test(build) do
@@ -297,7 +483,7 @@ defmodule Fablebook.Contract.HexPublishTest do
   end
 
   defp checkout!(repo, "refs/tags/${{ inputs.tag }}", tag),
-    do: git!(repo, ["checkout", "-q", "--detach", "refs/tags/" <> tag])
+    do: checkout_tag!(repo, tag)
 
   defp checkout!(repo, "${{ inputs.tag }}", tag) do
     branch = "refs/remotes/origin/" <> tag
@@ -307,12 +493,17 @@ defmodule Fablebook.Contract.HexPublishTest do
       else: git!(repo, ["checkout", "-q", "--detach", "refs/tags/" <> tag])
   end
 
-  defp gate_run(scripts, dir, repo, tag) do
+  defp checkout_tag!(repo, tag),
+    do: git!(repo, ["checkout", "-q", "--detach", "refs/tags/" <> tag])
+
+  defp gate_run(scripts, dir, repo, tag, project_version) do
     File.rm(Path.join(repo, "output"))
 
     {code, log} =
       Enum.reduce_while(scripts, {0, ""}, fn script, {_, log} ->
-        {code, more, _} = run(dir, repo, script, [{"TAG", tag}])
+        {code, more, _} =
+          run(dir, repo, script, [{"TAG", tag}, {"PROJECT_VERSION", project_version}])
+
         {if(code == 0, do: :cont, else: :halt), {code, log <> more}}
       end)
 
@@ -394,6 +585,7 @@ defmodule Fablebook.Contract.HexPublishTest do
     {preamble, _} = text |> lines() |> Enum.split_while(&(&1 != "jobs:"))
     jobs = jobs(text)
     declared = Enum.filter(preamble, &secret?/1)
+    root_secrets = text |> root_env() |> Enum.filter(&secret?/1)
 
     holders =
       for {id, body} <- jobs,
@@ -402,6 +594,7 @@ defmodule Fablebook.Contract.HexPublishTest do
           do: {id, holder(step)}
 
     check(declared == @declared, {:secret_scope, declared}) ++
+      check(root_secrets == [], {:secret_scope, :root_env, root_secrets}) ++
       for(
         {id, body} <- jobs,
         line <- body |> split_steps() |> elem(0),
@@ -412,6 +605,13 @@ defmodule Fablebook.Contract.HexPublishTest do
         holders == [{"publish", :key_check}, {"publish", :publish}],
         {:secret_scope, holders}
       )
+  end
+
+  defp root_env(text) do
+    case Enum.drop_while(lines(text), &(&1 != "env:")) do
+      ["env:" | rest] -> Enum.take_while(rest, &(not top_level_header?(&1)))
+      _ -> []
+    end
   end
 
   defp holder(step) do
@@ -444,7 +644,7 @@ defmodule Fablebook.Contract.HexPublishTest do
     path = Path.join(dir, "bin") <> ":" <> System.get_env("PATH")
 
     {log, code} =
-      System.cmd("bash", ~w(--noprofile --norc -eo pipefail step.sh),
+      System.cmd(@runner_bash, ~w(-e step.sh),
         cd: cwd,
         env: @git_env ++ [{"PATH", path}, {"GITHUB_OUTPUT", output} | env],
         stderr_to_stdout: true
@@ -583,6 +783,29 @@ defmodule Fablebook.Contract.HexPublishTest do
   end
 
   defp action(step), do: Enum.find(normalized(step), &String.starts_with?(&1, ["uses:", "run:"]))
+
+  defp job_env(body, name) do
+    case Enum.drop_while(body, &(&1 != "    env:")) do
+      ["    env:" | rest] ->
+        job_env_value(rest, name)
+
+      _ ->
+        nil
+    end
+  end
+
+  defp job_env_value(lines, name) do
+    lines
+    |> Enum.take_while(&String.starts_with?(&1, "      "))
+    |> Enum.find_value(&job_env_line_value(&1, name))
+  end
+
+  defp job_env_line_value(line, name) do
+    prefix = "      #{name}:"
+
+    if String.starts_with?(line, prefix),
+      do: String.trim_leading(String.replace_prefix(line, prefix, ""))
+  end
 
   defp key(body, name) do
     prefix = "    #{name}:"
