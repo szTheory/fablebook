@@ -71,3 +71,19 @@ Owner authorization is recorded in [INT-20261110-06](../../intent/sources/2026-1
 A fresh fetch confirms main's release-contract digest matches the tested `9354a54779c5b2a67978f2bcc25bbcdd7c03083097e57d6b958d9a4fb5bcf736`; the workflow, library, dependencies and lockfiles remain unchanged. The [post-merge main run](https://github.com/szTheory/fablebook/actions/runs/42931152814) is in progress and is not claimed as passed. The release-contract audit group is resolved by this merged green candidate; five unrelated groups remain. No new phase or release is started.
 
 Closure bookkeeping stays local for the next substantive push. Original/recovery worktrees remain preserved. Next command: `gh run watch 42931152814 --exit-status` — observe the separate post-merge main CI. No owner action is required to let that automation finish.
+
+## Post-merge main CI complete
+
+The [main run](https://github.com/szTheory/fablebook/actions/runs/42931152814) passed on merge commit `ea2b09914512b9059be951157e0f1b4cd7d91007`; all five required jobs succeeded. Scheduled-only jobs were correctly skipped. This supersedes the in-progress observation above.
+
+| Job | Result | Duration |
+|---|---|---|
+| core | success | 585s |
+| floor | success | 537s |
+| dialyzer | success | 25s |
+| security | success | 33s |
+| ci-gate | success | 4s |
+
+Core and floor overlapped; setup and test steps remain the same as the reviewed candidate. This run does not establish a new quality-preserving workflow shortcut; no workflow change or extra run is warranted. The merged quick task and its post-merge observation are complete. Five unrelated UAT groups, the parent source-audit stop, SEC-01 Phase 5 ownership and the Phase 2 gate remain. Final receipts stay local for the next substantive push.
+
+Next command: `$gsd-progress --forensic` — review remaining work before choosing another bounded task or phase. No owner action is needed for the completed merge.

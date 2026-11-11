@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "gh run watch 42931152814 --exit-status",
-    "label": "Observe post-merge main CI",
-    "reason": "PR #80 was approved and squash-merged after all required candidate checks passed. Main automation is running; no owner action is required. Five unrelated UAT groups and the parent/Phase 2 gates remain."
+    "command": "/gsd-progress --forensic",
+    "label": "Review remaining work after the completed green merge",
+    "reason": "PR #80 and post-merge main CI are complete and passed. Five unrelated UAT groups and the parent/Phase 2 gates remain. Selecting another task or phase is a separate boundary."
   },
-  "updated_at": "2026-11-11T00:25:50+00:00"
+  "updated_at": "2026-11-11T01:19:35+00:00"
 }
