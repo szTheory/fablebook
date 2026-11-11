@@ -8368,6 +8368,25 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_asn1_generator_dispatch_audit!(ctx.graph, evidence, ledger, tier)
   end
 
+  @tag :inets_trace_integration
+  test "EX-010 integrates both independently reviewed lanes with final static dispositions" do
+    integration = Fablebook.Test.InetsTraceIntegrationEvidence
+    assert Code.ensure_loaded?(integration), "missing integrated EX-010 static dispositions"
+
+    assert apply(integration, :selected_mfas, []) == [
+             {:inets, :enable_trace, 2},
+             {:inets, :enable_trace, 3}
+           ]
+
+    assert apply(integration, :dispositions, []) == %{
+             {:inets, :enable_trace, 2} => :retained_callback_front,
+             {:inets, :enable_trace, 3} => :retained_callback_front
+           }
+
+    assert apply(integration, :guard_patterns, []) == []
+    assert Enum.map(apply(integration, :lane_records, []), & &1.lane) == ["core", "floor"]
+  end
+
   @tag :inets_trace_core_only
   @tag :inets_trace_core_source
   test "EX-010 records exact core source evidence without closing callback ownership", ctx do
