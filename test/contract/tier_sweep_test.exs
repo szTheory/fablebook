@@ -8442,6 +8442,12 @@ defmodule Fablebook.Contract.TierSweepTest do
            end)
   end
 
+  @tag :inets_trace_core_controls
+  test "EX-010 identifies the core record as a provisional candidate-only contract" do
+    record = Fablebook.Test.InetsTraceCoreEvidence.record()
+    assert Map.get(record, :checker_status) == :candidate_only
+  end
+
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
