@@ -8460,6 +8460,12 @@ defmodule Fablebook.Contract.TierSweepTest do
            end)
   end
 
+  @tag :inets_trace_floor_source
+  test "EX-010 records exact floor source evidence without closing callback ownership" do
+    record = Fablebook.Test.InetsTraceFloorEvidence.record()
+    assert record.lane == "floor"
+  end
+
   @tag :inets_trace_core_controls
   @tag :tmp_dir
   test "EX-010 integrity rejects changed graph, source, citation and semantic evidence",
