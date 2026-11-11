@@ -69,6 +69,8 @@ defmodule Fablebook.Contract.CiShapeTest do
     {:ci_gate_step, "ci.yml", "${{ toJSON(needs) }}", "${{ needs.core.result }}"},
     {:ci_gate_step, "ci.yml", "jq -e ", "jq "},
     {:ci_gate_step, "ci.yml", "to_entries | all(", "to_entries | any("},
+    {:ci_gate_step, "ci.yml", "to_entries | all(\n",
+     "to_entries | all(\n            #' | cat; echo '\n"},
     {:ci_gate_step, "ci.yml", "to_entries | all(",
      "to_entries |\n            map(select(.key == \"core\")) | all("},
     {:ci_gate_step, "ci.yml", "(.key == \"nightly\" and", "(.key == \"nightly\" or"},
@@ -398,11 +400,17 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp gate_step?(step) do
     {env, script} =
       step
-      |> Enum.reject(&(&1 == "" or String.starts_with?(&1, "#")))
+      |> Enum.reject(&(&1 == ""))
       |> Enum.split_while(&(&1 != "run: |"))
 
-    Enum.sort(env) == Enum.sort(@ci_gate_env) and script == ["run: |" | @ci_gate_script]
+    env = Enum.reject(env, &String.starts_with?(&1, "#"))
+    Enum.sort(env) == Enum.sort(@ci_gate_env) and gate_script?(script)
   end
+
+  defp gate_script?(["run: |" | script]),
+    do: Enum.drop_while(script, &String.starts_with?(&1, "#")) == @ci_gate_script
+
+  defp gate_script?(_), do: false
 
   defp full_checkout?(step) do
     Enum.any?(step, &String.starts_with?(&1, "uses: actions/checkout@")) and
