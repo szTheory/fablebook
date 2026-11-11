@@ -72,3 +72,9 @@ The archived bytes and original requirement statuses/citations still match the r
 Migration implementation/verification is complete in the candidate. Owner merge is the activation boundary for the new roadmap; the guard phase itself is not started, source membership/effort is not invented and no original gate is removed. Final receipt-only updates are committed locally for the next substantive push, avoiding an identical CI run. The live green receipt is linked from the PR.
 
 Next command after owner approval: `gh pr merge 83 --squash --match-head-commit 431747bca47ab59a5ab80427a990d0a56da8a88e` — activate the reviewed planning reset. After landing, `$gsd-discuss-phase 1` scopes the next bounded guard increment. Do not send the owner back through another status-only loop.
+
+## Approved activation
+
+Owner approval is recorded in INT-20261111-02. [PR #83](https://github.com/szTheory/fablebook/pull/83) was squash-merged as `42eed41986476e40c2d291685df7f1b245b61ca0`, enforcing expected head `431747bca47ab59a5ab80427a990d0a56da8a88e`. All required candidate checks passed. Fresh main matches the reviewed source, active roadmap/requirements and instructions. Earlier pending-owner statements are historical snapshots.
+
+v0.2 and its ordinary Phase 1 are now the active planning structure. The phase is unstarted; exact source scope/estimates have not been selected. The owner then requested a full planning health/repair audit to prevent state loss and repeated audit loops. That repair is the current authorized work; no guard implementation starts. The separate [main CI](https://github.com/szTheory/fablebook/actions/runs/43042576747) is in progress, not yet a passing receipt.

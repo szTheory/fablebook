@@ -10,9 +10,9 @@
     }
   ],
   "next": {
-    "command": "gh pr merge 83 --squash --match-head-commit 431747bca47ab59a5ab80427a990d0a56da8a88e",
-    "label": "Owner approval: activate the verified milestone/numbering reset",
-    "reason": "PR #83 passed all required hosted checks. Merge activates the new roadmap; then discuss Phase 1 scope. All original acceptance and safety/product gates remain."
+    "command": "/gsd-health --repair",
+    "label": "Continue the owner-authorized full planning audit and repairs",
+    "reason": "Migration PR #83 is merged. Phase 1 remains unstarted while lifecycle state/routing and future milestone handoffs are checked."
   },
-  "updated_at": "2026-11-11T14:48:11.652987+00:00"
+  "updated_at": "2026-11-11T15:03:54.147160+00:00"
 }
