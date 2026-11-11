@@ -13,7 +13,7 @@ defmodule Fablebook.Contract.CiShapeTest do
   @schedule_only ~w(ci-health)
   @allowed_reusable %{"release-please.yml" => "./.github/workflows/hex-publish.yml"}
   @ci_test_step "test --warnings-as-errors --include prod_guard --include release"
-  @allowed_excludes [:prod_guard, :release, :git_diff, :floor]
+  @allowed_excludes [:prod_guard, :release, :git_diff, :floor, :core]
 
   @base "test/fixtures/ci_shape/base.yml"
   @sha "3d3c42e5aac5ba805825da76410c181273ba90b1"
@@ -267,6 +267,24 @@ defmodule Fablebook.Contract.CiShapeTest do
       assert fired_wiring(wiring_config(), [exclude: [:floor]], ci?, false) == []
       assert fired_wiring(wiring_config(), [exclude: [:floor]], ci?, true) == [:floor_excluded]
       assert fired_wiring(wiring_config(), [exclude: [:prod_guard, :release]], ci?, true) == []
+    end
+  end
+
+  test "core exclusion is allowed only on the selected floor lane" do
+    for ci? <- [false, true] do
+      assert fired_wiring(wiring_config(), [exclude: [:core]], ci?, true) == []
+      assert fired_wiring(wiring_config(), [exclude: [:core]], ci?, false) == [:core_excluded]
+    end
+  end
+
+  test "lane exclusions do not permit unrelated test exclusions" do
+    for ci? <- [false, true] do
+      assert fired_wiring(wiring_config(), [exclude: [:core, :slow]], ci?, true) == [:excludes]
+      assert fired_wiring(wiring_config(), [exclude: [:floor, :slow]], ci?, false) == [:excludes]
+
+      assert fired_wiring(wiring_config(), [exclude: [:inets_trace_core_only]], ci?, true) == [
+               :excludes
+             ]
     end
   end
 
@@ -563,6 +581,10 @@ defmodule Fablebook.Contract.CiShapeTest do
       check(
         not (floor? and :floor in excludes),
         {:floor_excluded, "test_helper.exs", :floor}
+      ) ++
+      check(
+        not (not floor? and :core in excludes),
+        {:core_excluded, "test_helper.exs", :core}
       )
   end
 

@@ -8553,7 +8553,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
-  @tag :inets_trace_core_only
+  @tag :core
   @tag :inets_trace_core_source
   test "EX-010 records exact core source evidence without closing callback ownership", ctx do
     evidence = SweepEvidence.source_roots!()
@@ -8900,7 +8900,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_inets_trace_floor_archive_negatives!(dir)
   end
 
-  @tag :inets_trace_core_only
+  @tag :core
   @tag :inets_trace_core_controls
   @tag :tmp_dir
   test "EX-010 integrity rejects changed graph, source, citation and semantic evidence",
