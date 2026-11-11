@@ -3,11 +3,11 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.18
 current_phase_name: Bound ASN.1 generator-dispatch exclusions
 status: complete
-stopped_at: "CI-gate contract hardening reviewed; focused core/floor checks passed, unchanged native timeout passed isolated retest. Hosted candidate checks remain. Logistify Phase 17 intake captured."
-last_updated: "2026-11-11T02:09:00+00:00"
+stopped_at: "Completed CI-gate contract hardening; PR #81 reviewed with all required hosted checks passed, awaiting owner merge. Logistify Phase 17 intake captured with provenance."
+last_updated: "2026-11-11T02:25:37+00:00"
 last_activity: 2026-11-10
-last_activity_desc: "CI-gate contract hardening reviewed; focused core/floor checks passed, unchanged native timeout passed isolated retest. Hosted candidate checks remain. Logistify Phase 17 intake captured."
-state_head: "ea2b09914512b9059be951157e0f1b4cd7d91007"
+last_activity_desc: "Completed CI-gate contract hardening; PR #81 reviewed with all required hosted checks passed, awaiting owner merge. Logistify Phase 17 intake captured with provenance."
+state_head: "5a1a0183f190d412b762d2154e51b530088bc9e6"
 progress:
   total_phases: 48
   completed_phases: 2
@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions) — COMPLETE
 Plan: 3 of 3 complete
 Status: Complete — PR #79 squash-merged with all required candidate checks green
-Last activity: 2026-11-10 — CI-gate contract hardening reviewed; focused core/floor checks passed, unchanged native timeout passed isolated retest. Hosted candidate checks remain. Logistify Phase 17 intake captured.
+Last activity: 2026-11-10 — Completed CI-gate contract hardening; PR #81 reviewed with all required hosted checks passed, awaiting owner merge. Logistify Phase 17 intake captured with provenance.
 
 Selected phase: 3/3 plans, goal verification passed, merged green PR. Historical aggregate counters remain qualified by the phase HEALTH report and are not authority to resume blocked parent plans or Phase 2.
 
@@ -221,6 +221,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 261110-nhq | Harden the release-workflow contracts for the UAT audit findings; keep workflow and lib files unchanged | 2026-11-10 | 22c24b6 | [261110-nhq-harden-the-release-workflow-contracts-fo](./quick/261110-nhq-harden-the-release-workflow-contracts-fo/) |
+| 261110-she | Harden the ci-gate predicate contracts for the UAT audit finding; keep workflow and lib files unchanged | 2026-11-10 | 5a1a018 | [261110-she-harden-the-ci-gate-predicate-contracts-f](./quick/261110-she-harden-the-ci-gate-predicate-contracts-f/) |
 
 ### Roadmap Evolution
 
@@ -241,8 +242,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-11T02:09:00+00:00
-Stopped at: CI-gate contract hardening reviewed; focused core/floor checks passed, unchanged native timeout passed isolated retest. Hosted candidate checks remain. Logistify Phase 17 intake captured.
+Last session: 2026-11-11T02:25:37+00:00
+Stopped at: Completed CI-gate contract hardening; PR #81 reviewed with all required hosted checks passed, awaiting owner merge. Logistify Phase 17 intake captured with provenance.
 
-Next action: publish the reviewed CI-gate quick-task candidate and obtain required hosted checks. Parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
+Next action: owner approves squash merge of PR #81. All required candidate checks passed. Parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
 Resume file: None

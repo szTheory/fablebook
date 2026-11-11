@@ -1,7 +1,8 @@
 ---
 phase: quick-261110-she
 plan: "01"
-status: in-progress
+status: complete
+delivery_status: ready-for-owner-merge
 source_commit: 97aa76973eed7c9f2e5268bec4b249ad497237db
 source_sha256: 15286b846642249b66a056e1171736427817ae5f4c011e35e4fcc598a4465b1c
 requirements_completed: []
@@ -33,7 +34,7 @@ Focused floor validation proves compatibility of the pure contract helper before
 
 Planning intent/contract-rule checks passed after the brand intake and quick-record edits (19 tests; `planning-final.log`). The phase 01.1.1.18 verification fingerprint still returns passed.
 
-All raw logs/probes are in ignored `_build/quick-261110-she/`. The protected .github/lib/dependency/lockfile diff is empty. Hosted candidate checks and owner merge remain pending. Final receipt-only updates will stay local for the next substantive push, with live CI linked from the PR.
+All raw logs/probes are in ignored `_build/quick-261110-she/`. The protected .github/lib/dependency/lockfile diff is empty. [PR #81](https://github.com/szTheory/fablebook/pull/81) at candidate `5a1a0183f190d412b762d2154e51b530088bc9e6` passed all required [hosted CI](https://github.com/szTheory/fablebook/actions/runs/42944194233): core, floor, Dialyzer, security and ci-gate. Scheduled-only jobs were correctly skipped. Full hosted core/floor provide complete green suite receipts on the reviewed source; the native timeout remains separately recorded, with its successful unchanged isolated retest. GitHub reports a clean, mergeable PR. Owner merge remains pending. Final receipt-only updates will stay local for the next substantive push, with live CI linked from the PR.
 
 ## Preserved scope
 
@@ -44,3 +45,19 @@ Default quick mode ran planning/execution inline under the skill adapter's autom
 ## Additional owner-requested planning capture
 
 A background GPT-6 Luna worker read the owner-provided Logistify source and wrote a compact [Phase 17 reference](../../references/logistify-brand-intake.md), a dormant seed, owner excerpts and a PROJECT pointer. Root checked the three source hashes, corrected excerpt fidelity and scope wording, and committed the capture separately. Source assets remain uncommitted in the preserved primary checkout; no brand, schema mapping, file move or Phase 17 implementation was applied. This separate capture was explicitly requested during the quick task and is not part of its implementation-source scope.
+
+## Final hosted receipt and feedback time
+
+| Job | Result | Duration | Receipt |
+|---|---|---|---|
+| core | success | 443s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130272912357) |
+| floor | success | 728s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130272912429) |
+| dialyzer | success | 22s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130272912578) |
+| security | success | 28s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130272912087) |
+| ci-gate | success | 3s | [job](https://github.com/szTheory/fablebook/actions/runs/42944194233/job/130277626913) |
+
+Core and floor overlapped. Core's CI step took 425s, floor's test step 702s and setup 12s/13s. Previous PR job totals were 460s/639s; the following main totals were 585s/537s. Tests dominate, with substantial duration variation and already short cached setup. No repeatable quality-preserving workflow shortcut is established; do not add speculative caches/concurrency/dependencies or weaken gates. Timing objectives remain non-blocking feedback.
+
+Final hosted receipts and quick-task completion bookkeeping stay local for the next substantive push, avoiding another receipt-only run. The CI-gate audit group remains a landing requirement until PR #81 merges; four unrelated UAT groups retain their owners. Logistify capture is stored in the reviewed candidate, linked from PROJECT, and has not applied or moved original assets.
+
+Next command: `gh pr merge 81 --squash --match-head-commit 5a1a0183f190d412b762d2154e51b530088bc9e6` — owner-authorized merge of the reviewed green candidate. Parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.

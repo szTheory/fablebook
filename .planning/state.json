@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "gh pr checks --required",
-    "label": "Obtain required hosted CI for the CI-gate contract candidate",
-    "reason": "Affected core/floor tests and review passed; the unrelated native timeout passed unchanged isolated retest. Publish the reviewed candidate, then require full hosted core/floor/Dialyzer/security/ci-gate. Parent and Phase 2 gates remain."
+    "command": "gh pr merge 81 --squash --match-head-commit 5a1a0183f190d412b762d2154e51b530088bc9e6",
+    "label": "Owner merge of the reviewed green CI-gate contract PR",
+    "reason": "Scoped core/floor tests, review, planning checks and all required hosted jobs passed. The unchanged native timeout passed isolated retest; its full command failure remains recorded. Logistify intake is captured. Parent and Phase 2 gates remain."
   },
-  "updated_at": "2026-11-11T02:09:00+00:00"
+  "updated_at": "2026-11-11T02:25:37+00:00"
 }
