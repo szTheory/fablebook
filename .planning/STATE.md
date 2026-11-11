@@ -5,8 +5,8 @@ milestone_name: Guard coverage recovery
 current_phase: 1
 current_phase_name: Bounded guard continuation
 status: planning
-stopped_at: "Phase 1 scope and estimates are not selected; no implementation starts."
-last_updated: "2026-11-11T14:23:45.740145+00:00"
+stopped_at: "Planning reset candidate PR #83 passed all required hosted checks; owner merge activates v0.2 / Phase 1. No guard implementation or gate removal is authorized by this delivery."
+last_updated: "2026-11-11T14:48:11.652987+00:00"
 last_activity: 2026-11-11
 progress:
   total_phases: 1
@@ -30,7 +30,7 @@ See PROJECT.md, ROADMAP.md and migrations/2026-11-11-milestone-reset/README.md.
 Milestone: v0.2 Guard coverage recovery — PLANNING — NOT STARTED
 Phase: 1 of 1 — Bounded guard continuation
 Plan: Not planned
-Status: Awaiting source-scope discussion; no implementation plan
+Status: Migration verified; owner merge pending, then source-scope discussion
 Last activity: 2026-11-11 — Prepared the owner-requested numbering/milestone reset; no implementation started.
 
 ## Decisions and gates
@@ -57,6 +57,10 @@ PR #82 is squash-merged; required candidate and post-merge main CI passed. The r
 ## Session Continuity
 
 Last session: 2026-11-11T14:23:45.740145+00:00
-Stopped at: Phase 1 scope and estimates are not selected. No implementation started.
-Next action after migration approval: $gsd-discuss-phase 1 — establish the exact bounded source scope and estimates before planning.
+Stopped at: Planning reset candidate PR #83 passed all required hosted checks; owner merge activates v0.2 / Phase 1. No guard implementation or gate removal is authorized by this delivery.
+Next action after owner approval: gh pr merge 83 --squash --match-head-commit 431747bca47ab59a5ab80427a990d0a56da8a88e — activate the reviewed migration. After landing: $gsd-discuss-phase 1 — select the bounded source scope before planning.
 Resume file: None
+
+## Migration delivery receipt
+
+PR #83 is green and mergeable; full required CI run 43040038122 passed on the reviewed head. See migrations/2026-11-11-milestone-reset/README.md. The active roadmap has only Phase 1; the next implementation scope remains unselected.

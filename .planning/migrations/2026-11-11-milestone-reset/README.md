@@ -16,7 +16,7 @@ The owner requested fail-forward recovery and smaller milestones (INT-20261111-0
 
 ## Preserved working copies
 
-The migration uses a fresh worktree from the PR #82 main merge and carries three verified planning-only completion receipts. Original/recovery checkouts and the primary's uncommitted artifacts and brand assets remain untouched. The supported worktree helper required an initialized manifest before creation; its first read-only refusal made no worktree, and initialization/creation then succeeded. No harness agent isolation or independent subagent review is claimed.
+The migration uses a fresh worktree from the PR #82 main merge and carries three verified planning-only completion receipts. Existing primary/recovery source, artifacts and brand files remain unchanged; the only primary-checkout addition is the local AGENTS recovery pointer described below. The supported worktree helper required an initialized manifest before creation; its first read-only refusal made no worktree, and initialization/creation then succeeded. No harness agent isolation or independent subagent review is claimed.
 
 Do not switch/reset/stash/clean the dirty primary checkout as a shortcut. A new session must reconcile its branch against merged main and use the current reviewed checkout. Adoption of the migration on main is a separate owner merge boundary.
 
@@ -52,3 +52,23 @@ All commands used pinned local lanes, locked caches and background/piped executi
 The first focused source run failed in setup because moved physical paths differed from recorded logical authority. Stored metadata stayed unchanged; the expected historical-reference conversion fixed it. That invalid run is retained separately, not relabelled green. The first planning run caught noncanonical colon syntax in the new requirements; the new text was corrected and the unchanged planning guard then passed. Full hosted core/floor/Dialyzer/security/ci-gate remain required for the final candidate; no native whole-suite repeat is needed for this physical-read-path migration after the focused integration consumers pass.
 
 [Inline review](REVIEW.md) covers the complete source delta, preserved metadata and requirements/gates. Required hosted checks and owner merge remain pending. No new implementation phase starts automatically.
+
+## Final hosted candidate receipt
+
+[PR #83](https://github.com/szTheory/fablebook/pull/83), reviewed head `431747bca47ab59a5ab80427a990d0a56da8a88e`, passed all required [hosted CI](https://github.com/szTheory/fablebook/actions/runs/43040038122). Full core/floor, Dialyzer, security and ci-gate succeeded; scheduled-only nightly/ci-health were correctly skipped. Read-only run metadata confirms the pull_request event and exact reviewed head. GitHub reports clean and mergeable. The preceding pending-hosted statements are local-validation snapshots, superseded by this receipt.
+
+| Job | Result | Duration | Receipt |
+|---|---|---|---|
+| dialyzer | success | 23s | [job](https://github.com/szTheory/fablebook/actions/runs/43040038122/job/130589056205) |
+| floor | success | 599s | [job](https://github.com/szTheory/fablebook/actions/runs/43040038122/job/130589056520) |
+| core | success | 571s | [job](https://github.com/szTheory/fablebook/actions/runs/43040038122/job/130589056689) |
+| security | success | 38s | [job](https://github.com/szTheory/fablebook/actions/runs/43040038122/job/130589056775) |
+| ci-gate | success | 4s | [job](https://github.com/szTheory/fablebook/actions/runs/43040038122/job/130594743401) |
+
+Core and floor overlapped. Core's CI step took 553s and floor tests 575s, with setup 12s/10s. Preceding floor-reporting candidate totals were 553s/599s and its main totals 442s/654s; this candidate is 571s/599s. Current history still shows test-time variation and short cached setup. No repeatable quality-preserving workflow shortcut is established; preserve gates and non-blocking timing objectives. No extra run, cache, concurrency, dependency or workflow change is warranted.
+
+The archived bytes and original requirement statuses/citations still match the read-only verifier after all edits. No source changed after local validation. The full hosted checks establish compatibility of the evidence relocation under the existing gates. Current progress has one active ordinary phase; health has zero errors/undeclared-phase warnings, retaining only preserved-worktree and pre-existing-file warnings. Three archived UAT groups remain visible and explicitly owned in CARRY-FORWARD.md.
+
+Migration implementation/verification is complete in the candidate. Owner merge is the activation boundary for the new roadmap; the guard phase itself is not started, source membership/effort is not invented and no original gate is removed. Final receipt-only updates are committed locally for the next substantive push, avoiding an identical CI run. The live green receipt is linked from the PR.
+
+Next command after owner approval: `gh pr merge 83 --squash --match-head-commit 431747bca47ab59a5ab80427a990d0a56da8a88e` — activate the reviewed planning reset. After landing, `$gsd-discuss-phase 1` scopes the next bounded guard increment. Do not send the owner back through another status-only loop.
