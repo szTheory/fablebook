@@ -8368,6 +8368,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_asn1_generator_dispatch_audit!(ctx.graph, evidence, ledger, tier)
   end
 
+  @tag :inets_trace_core_only
   @tag :inets_trace_core_source
   test "EX-010 records exact core source evidence without closing callback ownership", ctx do
     evidence = SweepEvidence.source_roots!()
@@ -8581,20 +8582,57 @@ defmodule Fablebook.Contract.TierSweepTest do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     record = Fablebook.Test.InetsTraceFloorEvidence.record()
-    assert MapSet.new(record.matched_mfas) |> MapSet.subset?(ctx.graph.full_exported)
+    assert_inets_trace_floor_witnesses!(record, ctx.graph)
     assert dir != nil
 
-    assert record.individual_exclusion_witnesses ==
-             Enum.map(record.matched_mfas, fn mfa ->
-               %{
-                 mfa: mfa,
-                 original_matcher: {{:inets, [:enable_trace]}, :own_native},
-                 removed_matcher_exposes_mfa: true,
-                 overlapping_matchers: []
-               }
-             end)
+    permuted_graph = %{ctx.graph | full_exported: Enum.reverse(ctx.graph.full_exported)}
+    assert :ok == assert_inets_trace_floor_witnesses!(record, permuted_graph)
+
+    assert_raise ExUnit.AssertionError, ~r/floor matcher witness lane changed/, fn ->
+      assert_inets_trace_floor_witnesses!(%{record | lane: "core"}, ctx.graph)
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/complete live matcher set changed/, fn ->
+      assert_inets_trace_floor_witnesses!(
+        %{record | matched_mfas: tl(record.matched_mfas)},
+        ctx.graph
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/floor selected matcher identity\/order changed/, fn ->
+      assert_inets_trace_floor_witnesses!(
+        %{record | matched_mfas: Enum.reverse(record.matched_mfas)},
+        ctx.graph
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/duplicate floor matcher MFA/, fn ->
+      assert_inets_trace_floor_witnesses!(
+        %{record | matched_mfas: record.matched_mfas ++ [hd(record.matched_mfas)]},
+        ctx.graph
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/individual removal witness evidence changed/, fn ->
+      [first | rest] = record.individual_exclusion_witnesses
+
+      assert_inets_trace_floor_witnesses!(
+        %{
+          record
+          | individual_exclusion_witnesses: [%{first | removed_matcher_exposes_mfa: false} | rest]
+        },
+        ctx.graph
+      )
+    end
+
+    exact_overlap = {{:mfa, hd(record.matched_mfas)}, :injected_overlap, []}
+
+    assert_raise ExUnit.AssertionError, ~r/EX-010 overlap set changed/, fn ->
+      assert_inets_trace_floor_witnesses!(record, ctx.graph, @exclusions ++ [exact_overlap])
+    end
   end
 
+  @tag :inets_trace_core_only
   @tag :inets_trace_core_controls
   @tag :tmp_dir
   test "EX-010 integrity rejects changed graph, source, citation and semantic evidence",
@@ -16579,6 +16617,114 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp exclusion_record_matches_mfa?(_record, _mfa), do: false
 
+  defp assert_inets_trace_floor_witnesses!(record, graph, exclusions \\ @exclusions) do
+    original = {{:inets, [:enable_trace]}, :own_native}
+    assert record.lane == "floor", "floor matcher witness lane changed"
+    assert original in exclusions
+
+    selected_mfas = Enum.map(record.selected_function_evidence, & &1.mfa)
+
+    actual_matches =
+      graph.full_exported
+      |> Enum.filter(&call_name_exclusion_match?({:inets, [:enable_trace]}, &1))
+      |> Enum.uniq()
+      |> Enum.sort()
+
+    assert length(record.matched_mfas) == MapSet.size(MapSet.new(record.matched_mfas)),
+           "duplicate floor matcher MFA"
+
+    assert Enum.sort(record.matched_mfas) == actual_matches,
+           "complete live matcher set changed"
+
+    assert record.matched_mfas == selected_mfas,
+           "floor selected matcher identity/order changed"
+
+    actual_overlaps =
+      Enum.filter(exclusions, fn exclusion ->
+        Enum.any?(selected_mfas, &exclusion_record_matches_mfa?(exclusion, &1))
+      end)
+
+    assert actual_overlaps == [original], "EX-010 overlap set changed"
+
+    call_name_overlaps =
+      Enum.filter(@call_name_exclusions, fn {matcher, _reason, _citations} ->
+        Enum.any?(selected_mfas, &call_name_exclusion_match?(matcher, &1))
+      end)
+
+    boundary_overlaps =
+      Enum.filter(@boundary_exclusions, fn {matcher, _reason, _citations} ->
+        Enum.any?(selected_mfas, &boundary_match?(matcher, &1))
+      end)
+
+    assert call_name_overlaps == [], "EX-010 overlaps a call-name exclusion"
+    assert boundary_overlaps == [], "EX-010 overlaps a boundary exclusion"
+
+    without_original = List.delete(exclusions, original)
+
+    witnesses =
+      Enum.map(selected_mfas, fn mfa ->
+        assert call_name_exclusion_match?({:inets, [:enable_trace]}, mfa)
+
+        remaining_overlaps =
+          Enum.filter(without_original, &exclusion_record_matches_mfa?(&1, mfa))
+
+        call_name_overlaps =
+          Enum.filter(@call_name_exclusions, fn {matcher, _reason, _citations} ->
+            call_name_exclusion_match?(matcher, mfa)
+          end)
+
+        boundary_overlaps =
+          Enum.filter(@boundary_exclusions, fn {matcher, _reason, _citations} ->
+            boundary_match?(matcher, mfa)
+          end)
+
+        overlaps = remaining_overlaps ++ call_name_overlaps ++ boundary_overlaps
+
+        assert overlaps == [],
+               "removing only EX-010 must expose #{inspect(mfa)}; overlap=#{inspect(overlaps)}"
+
+        %{
+          mfa: mfa,
+          original_matcher: original,
+          removed_matcher_exposes_mfa: not Enum.any?(overlaps),
+          overlapping_matchers: overlaps
+        }
+      end)
+
+    assert record.individual_exclusion_witnesses == witnesses,
+           "individual removal witness evidence changed"
+
+    :ok
+  end
+
+  defp assert_inets_trace_floor_membership!(record, graph) do
+    selected_mfas = Enum.map(record.selected_function_evidence, & &1.mfa)
+
+    actual_matches =
+      graph.full_exported
+      |> Enum.filter(&call_name_exclusion_match?({:inets, [:enable_trace]}, &1))
+      |> Enum.uniq()
+      |> Enum.sort()
+
+    assert selected_mfas == record.matched_mfas, "floor live matcher coverage changed"
+
+    assert record.matched_mfas == selected_mfas ++ record.remainder_mfas,
+           "floor selected/remainder partition changed"
+
+    assert length(record.matched_mfas) == MapSet.size(MapSet.new(record.matched_mfas)),
+           "floor matcher evidence contains duplicate MFAs"
+
+    assert record.matched_mfas == actual_matches,
+           "live floor EX-010 matcher coverage changed"
+
+    selected_set = MapSet.new(selected_mfas)
+    remainder_set = MapSet.new(record.remainder_mfas)
+    assert MapSet.disjoint?(selected_set, remainder_set)
+    assert record.remainder_mfas == actual_matches -- selected_mfas
+
+    selected_mfas
+  end
+
   defp assert_inets_trace_floor_sources!(record, graph, evidence, archive_only) do
     canonical = Fablebook.Test.InetsTraceFloorEvidence.record()
     ledger = original_identity_ledger!()
@@ -16605,28 +16751,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert record.exact_sources == canonical.exact_sources,
            "floor exact source identities changed"
 
-    selected_mfas = Enum.map(record.selected_function_evidence, & &1.mfa)
-
-    actual_matches =
-      graph.full_exported
-      |> Enum.filter(&call_name_exclusion_match?({:inets, [:enable_trace]}, &1))
-      |> Enum.uniq()
-      |> Enum.sort()
-
-    assert selected_mfas == record.matched_mfas, "floor live matcher coverage changed"
-
-    assert record.matched_mfas == selected_mfas ++ record.remainder_mfas,
-           "floor selected/remainder partition changed"
-
-    assert length(record.matched_mfas) == MapSet.size(MapSet.new(record.matched_mfas))
-
-    assert record.matched_mfas == actual_matches,
-           "live floor EX-010 matcher coverage changed"
-
-    selected_set = MapSet.new(selected_mfas)
-    remainder_set = MapSet.new(record.remainder_mfas)
-    assert MapSet.disjoint?(selected_set, remainder_set)
-    assert record.remainder_mfas == actual_matches -- selected_mfas
+    selected_mfas = assert_inets_trace_floor_membership!(record, graph)
 
     actual_incoming =
       graph.full_edges
@@ -16971,16 +17096,12 @@ defmodule Fablebook.Contract.TierSweepTest do
     trace_path = ~c"core/inets/src/inets_app/inets_trace.erl"
     {^trace_path, trace_bytes} = Enum.find(files, fn {name, _bytes} -> name == trace_path end)
 
-    for {name, transform_row, relocate_source} <- [
+    for {name, transform_row, relocate_source, expected_reason} <- [
           {"wrong-ref",
            fn row -> Map.put(row, "url", "https://example.invalid/altered-source.erl") end,
-           fn entries, _bytes -> entries end},
-          {"wrong-lane",
-           fn row -> %{row | "lane" => "floor", "path" => "floor/" <> row["source_path"]} end,
-           fn entries, bytes ->
-             Enum.reject(entries, fn {path, _} -> path == trace_path end) ++
-               [{~c"floor/inets/src/inets_app/inets_trace.erl", bytes}]
-           end}
+           fn entries, _bytes -> entries end, :source_identity},
+          {"wrong-lane", fn row -> %{row | "lane" => "floor"} end,
+           fn entries, _bytes -> entries end, :source_root}
         ] do
       transformed_entries =
         Enum.map(files, fn
@@ -16989,9 +17110,10 @@ defmodule Fablebook.Contract.TierSweepTest do
 
             rows =
               Enum.map(manifest["files"], fn row ->
-                if row["source_path"] == "inets/src/inets_app/inets_trace.erl",
-                  do: transform_row.(row),
-                  else: row
+                if row["lane"] == "core" and
+                     row["source_path"] == "inets/src/inets_app/inets_trace.erl",
+                   do: transform_row.(row),
+                   else: row
               end)
 
             {~c"manifest.json", JSON.encode!(Map.put(manifest, "files", rows))}
@@ -17008,7 +17130,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       error =
         assert_raise SweepEvidence.Error, fn -> SweepEvidence.load_archive!(path, digest) end
 
-      assert error.reason == :source_identity
+      assert error.reason == expected_reason
     end
 
     missing_entry = Enum.reject(files, fn {path, _bytes} -> path == trace_path end)

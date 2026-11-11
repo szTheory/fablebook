@@ -1839,6 +1839,20 @@ defmodule Fablebook.Test.InetsTraceFloorEvidence do
         }
       ],
       matched_mfas: [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}],
+      individual_exclusion_witnesses: [
+        %{
+          mfa: {:inets, :enable_trace, 2},
+          original_matcher: {{:inets, [:enable_trace]}, :own_native},
+          removed_matcher_exposes_mfa: true,
+          overlapping_matchers: []
+        },
+        %{
+          mfa: {:inets, :enable_trace, 3},
+          original_matcher: {{:inets, [:enable_trace]}, :own_native},
+          removed_matcher_exposes_mfa: true,
+          overlapping_matchers: []
+        }
+      ],
       remainder_mfas: [],
       incoming_edges: [],
       delegate_edges: [
