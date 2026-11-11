@@ -8366,6 +8366,11 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_asn1_generator_dispatch_audit!(ctx.graph, evidence, ledger, tier)
   end
 
+  @tag :inets_trace_core_source
+  test "EX-010 has a registered source-backed core review record" do
+    assert Code.ensure_loaded?(Fablebook.Test.InetsTraceCoreEvidence)
+  end
+
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
