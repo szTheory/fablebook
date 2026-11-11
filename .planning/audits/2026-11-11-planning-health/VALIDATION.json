@@ -97,7 +97,18 @@
       "result": "installed parser rejects existing concurrency.queue before jobs; no retry/workflow mutation"
     }
   ],
-  "hosted_candidate": "pending",
+  "hosted_candidate": {
+    "status": "passed",
+    "head": "885c6374fe99e88de7ae35913ed58d5e0612823c",
+    "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068",
+    "required_jobs": [
+      "core",
+      "floor",
+      "dialyzer",
+      "security",
+      "ci-gate"
+    ]
+  },
   "limits": [
     "Metadata preflight supplements core freshness/review/CI checks; not an engine hook.",
     "No guard/product phase implementation or full aggregate completion."

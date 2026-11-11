@@ -1,0 +1,67 @@
+{
+  "schema": "fablebook.planning-repair-delivery/1",
+  "scope": "planning-lifecycle-repair",
+  "status": "awaiting-owner-merge",
+  "pr": "https://github.com/szTheory/fablebook/pull/84",
+  "reviewed_head": "885c6374fe99e88de7ae35913ed58d5e0612823c",
+  "base": "42eed41986476e40c2d291685df7f1b245b61ca0",
+  "ci": {
+    "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068",
+    "event": "pull_request",
+    "head": "885c6374fe99e88de7ae35913ed58d5e0612823c",
+    "status": "success",
+    "jobs": [
+      {
+        "name": "dialyzer",
+        "conclusion": "success",
+        "seconds": 19,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639963746"
+      },
+      {
+        "name": "floor",
+        "conclusion": "success",
+        "seconds": 689,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639964114"
+      },
+      {
+        "name": "security",
+        "conclusion": "success",
+        "seconds": 31,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639964162"
+      },
+      {
+        "name": "core",
+        "conclusion": "success",
+        "seconds": 593,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639964302"
+      },
+      {
+        "name": "ci-health",
+        "conclusion": "skipped",
+        "seconds": 0,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639966256"
+      },
+      {
+        "name": "nightly",
+        "conclusion": "skipped",
+        "seconds": 0,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639966844"
+      },
+      {
+        "name": "ci-gate",
+        "conclusion": "success",
+        "seconds": 3,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130646809579"
+      }
+    ]
+  },
+  "mergeable": true,
+  "mergeable_state": "clean",
+  "observed_at": "2026-11-11T16:17:22+00:00",
+  "phase_implementation_started": false,
+  "aggregate_gate": "open",
+  "next_owner_action": "Decide whether to squash-merge PR 84.",
+  "after_merge": "$gsd-discuss-phase 1 selects the exact bounded guard scope; no automatic implementation.",
+  "bookkeeping": "Final receipt retained locally for next substantive push; remote source head stays the tested candidate to avoid identical receipt-only CI.",
+  "merge_command_after_approval": "gh pr merge 84 --squash --match-head-commit 885c6374fe99e88de7ae35913ed58d5e0612823c"
+}
