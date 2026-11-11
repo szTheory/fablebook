@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-progress --forensic",
-    "label": "Review remaining work after the completed green merge",
-    "reason": "PR #81 and post-merge main CI are complete and passed; Logistify Phase 17 intake is on main. Four unrelated UAT groups and the parent/Phase 2 gates remain. Selecting another task or phase is a separate boundary."
+    "command": "gh pr merge 82 --squash --match-head-commit 95ba228ef33c3b88fda61ffebed30958d1be5927",
+    "label": "Owner approval: merge the green floor-reporting candidate",
+    "reason": "PR #82 passed required full hosted checks. Quick task complete; owner merge remains. Four UAT groups stay open pending landing; parent stop, SEC-01 Phase 5 ownership and Phase 2 gate remain."
   },
-  "updated_at": "2026-11-11T02:50:46+00:00"
+  "updated_at": "2026-11-11T03:58:57.190166+00:00"
 }
