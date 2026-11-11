@@ -12,6 +12,8 @@ Fablebook is a Storybook-style workbench for Phoenix LiveView. It renders every 
 
 If everything else fails, a scenario must still render with production fidelity and export an accurate context bundle. The owner keeps using phoenix_storybook until Fablebook clears `.planning/intent/CLEARANCE.md`. (INT-20261028-04)
 
+**Phase 17 input:** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
+
 ## Requirements
 
 ### Validated
