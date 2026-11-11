@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-progress --forensic",
-    "label": "Review remaining work after the completed green merge",
-    "reason": "PR #80 and post-merge main CI are complete and passed. Five unrelated UAT groups and the parent/Phase 2 gates remain. Selecting another task or phase is a separate boundary."
+    "command": "gh pr checks --required",
+    "label": "Obtain required hosted CI for the CI-gate contract candidate",
+    "reason": "Affected core/floor tests and review passed; the unrelated native timeout passed unchanged isolated retest. Publish the reviewed candidate, then require full hosted core/floor/Dialyzer/security/ci-gate. Parent and Phase 2 gates remain."
   },
-  "updated_at": "2026-11-11T01:19:35+00:00"
+  "updated_at": "2026-11-11T02:09:00+00:00"
 }

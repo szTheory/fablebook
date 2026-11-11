@@ -1,6 +1,6 @@
 # Logistify brand book intake
 
-This is a compact, source-grounded reference for Phase 17 planning. The original v1.0 book and structured exports remain authoritative; this file records the useful decisions, source locations, and open limits without copying the whole book.
+This is a compact, source-grounded reference for Phase 17 planning. The original v1.0 book and structured exports are the provenance sources for this intake; they are not yet applied Fablebook canon. This file records useful decisions, source locations, and open limits without copying the whole book.
 
 ## Capture status
 
@@ -36,10 +36,10 @@ The local HTML text was inspected without opening a browser or executing scripts
 ### Voice, terms, and product recommendations
 
 - Copy names the real shipment, stop, time zone, quantity, and next step. Avoid excited error copy or vague promises. Key terms include shipment, stop, route, assignment, delivery window, delivered, failed, proof of delivery, recipient, shipper, carrier, and pallet. `BRAND.md` Voice and Key terms; `brand.json` `/voice`.
-- The console recommendation is a dense board with 32 px rows, 13 px text, keyboard navigation, and bulk actions. The portal is calmer, with 48 px rows and 15 px text. The driver app is one stop at a time in a 440 px phone layout, with 56 px targets and text no smaller than 16 px. These are recommendations, not current product facts. `BRAND.md` Operator console, Shipper portal, Driver app; `brand.json` `/products`.
+- The console recommendation is a dense board with 32 px rows, 13 px text, J/K/X keyboard navigation, and bulk actions. The portal is calmer, with 48 px rows and 15 px text. The driver app is one stop at a time in a 440 px PWA phone layout, with 56 px targets and text no smaller than 16 px. These are recommendations, not current product facts. `BRAND.md` Operator console, Shipper portal, Driver app; `brand.json` `/products`.
 - Plan an “every state” page per Book covering empty, loading, error, long labels, many, boundaries, and bulk/action cases. Use these as candidate scenarios to map later; they are not already Fablebook Scenarios. German and French strings are layout samples, not translations or proof of localization. `BRAND.md` product “every state” sections and Shipper portal; `brand.json` `/states`, `/products/portal`.
 - Motion references are 100/150/200/250 ms with Enter `cubic-bezier(0.2, 0.7, 0.3, 1)` and Exit `cubic-bezier(0.4, 0, 1, 1)`. The book rules out bounce, overshoot, loops, pulses, and pending spinners. `BRAND.md` Product motion; `brand.json` `/motion/product`; `tokens.json` `/motion/duration`, `/motion/easing`.
-- The logo sting accompanies the identity animation. The three product cues are positive confirmations only, never errors, failures, or warnings. Driver cues have an off switch and honor silent mode; the console cue is off by default. The owner says they have not picked the cue defaults by ear. Sound was synthesized and measured, but not auditioned in real rooms or vehicles. `BRAND.md` Sonic identity; `brand.json` `/sound/sounds`, `/sound/rules`.
+- The logo sting accompanies the identity animation. The three product cues are positive confirmations only, never errors, failures, or warnings; provide an off switch. Driver cues have an off switch and honor silent mode; the console cue is off by default. The owner says they have not picked the cue defaults by ear. Sound was synthesized and measured, but not auditioned in real rooms or vehicles. `BRAND.md` Sonic identity; `brand.json` `/sound/sounds`, `/sound/rules`.
 - Imagery uses daylight freight photographs with a cool, restrained grade and no overlays. The inventory has 77 files across logos, icons, fonts, six credited photos, motion, social, and sound. Font license files are present; the six photo entries carry author, license, and source checksums. Reuse of the full asset set beyond this demonstration remains undecided. `BRAND.md` Imagery and Brand assets; `brand.json` `/imagery/photographs`, `/files`; the asset README files above.
 
 ## Open review points to carry into Phase 17

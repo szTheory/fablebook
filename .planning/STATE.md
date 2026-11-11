@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 current_phase: 01.1.1.18
 current_phase_name: Bound ASN.1 generator-dispatch exclusions
 status: complete
-stopped_at: "Release-contract quick task merged and complete; required candidate and post-merge main checks passed. Five unrelated UAT groups remain; Phase 2 stays gated."
-last_updated: "2026-11-11T01:19:35+00:00"
+stopped_at: "CI-gate contract hardening reviewed; focused core/floor checks passed, unchanged native timeout passed isolated retest. Hosted candidate checks remain. Logistify Phase 17 intake captured."
+last_updated: "2026-11-11T02:09:00+00:00"
 last_activity: 2026-11-10
-last_activity_desc: "Release-contract quick task merged and complete; required candidate and post-merge main checks passed. Five unrelated UAT groups remain; Phase 2 stays gated."
+last_activity_desc: "CI-gate contract hardening reviewed; focused core/floor checks passed, unchanged native timeout passed isolated retest. Hosted candidate checks remain. Logistify Phase 17 intake captured."
 state_head: "ea2b09914512b9059be951157e0f1b4cd7d91007"
 progress:
   total_phases: 48
@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 Phase: 01.1.1.18 (Bound ASN.1 generator-dispatch exclusions) — COMPLETE
 Plan: 3 of 3 complete
 Status: Complete — PR #79 squash-merged with all required candidate checks green
-Last activity: 2026-11-10 — Release-contract quick task merged and complete; required candidate and post-merge main checks passed. Five unrelated UAT groups remain; Phase 2 stays gated.
+Last activity: 2026-11-10 — CI-gate contract hardening reviewed; focused core/floor checks passed, unchanged native timeout passed isolated retest. Hosted candidate checks remain. Logistify Phase 17 intake captured.
 
 Selected phase: 3/3 plans, goal verification passed, merged green PR. Historical aggregate counters remain qualified by the phase HEALTH report and are not authority to resume blocked parent plans or Phase 2.
 
@@ -241,8 +241,8 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-11-11T01:19:35+00:00
-Stopped at: Release-contract quick task merged and complete; required candidate and post-merge main checks passed. Five unrelated UAT groups remain; Phase 2 stays gated.
+Last session: 2026-11-11T02:09:00+00:00
+Stopped at: CI-gate contract hardening reviewed; focused core/floor checks passed, unchanged native timeout passed isolated retest. Hosted candidate checks remain. Logistify Phase 17 intake captured.
 
-Next action: $gsd-progress --forensic — review remaining work before selecting another bounded task or phase. No action is required for the completed merge. Parent stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
+Next action: publish the reviewed CI-gate quick-task candidate and obtain required hosted checks. Parent source-size stops, SEC-01 Phase 5 ownership and the Phase 2 gate remain.
 Resume file: None
