@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+planning_repo="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+exec elixir -r "$planning_repo/test/support/planning_state.ex" "$planning_repo/bin/planning_health.exs" "$@"

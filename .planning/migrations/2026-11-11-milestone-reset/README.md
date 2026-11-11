@@ -1,6 +1,6 @@
 # Milestone and phase numbering reset
 
-**Status:** Candidate under validation, not merged or approved for phase implementation.
+**Status:** Reset merged in PR #83, with required candidate and post-merge main CI passed. Guard Phase 1 remains unstarted. Earlier validation/approval statements below are historical snapshots.
 
 The owner requested fail-forward recovery and smaller milestones (INT-20261111-01). The old reset resolution waited for the whole product roadmap to finish. Nested inserted phases and stale fingerprints then kept the generic router pointing at old, deliberately stopped work. The primary checkout also remains on an old branch with uncommitted work. A status command cannot fix those conditions.
 
@@ -22,7 +22,7 @@ Do not switch/reset/stash/clean the dirty primary checkout as a shortcut. A new 
 
 ## Verification
 
-Read-only structural proof: `python3 .planning/migrations/2026-11-11-milestone-reset/verify.py`. It verifies archive bytes, all original requirement IDs/statuses/citations, future addresses and the sole active integer phase. Focused core/floor evidence consumers, format/compile/Credo/planning checks and required hosted CI are recorded below as they finish. Run these before presenting the candidate as ready. A source-sized implementation plan, product readiness, whole-audit completion and archived stale-report refresh are not claimed.
+Read-only structural proof: `python3 .planning/migrations/2026-11-11-milestone-reset/verify.py`. It verifies archive bytes and captured original requirement IDs/statuses/citations and initial future addresses, independently of later live progress. `--initial-layout` additionally checks the one-time v0.2 / Phase 1 activation; do not use that option as an ongoing gate. Live ownership/routing uses `bin/planning_health`. Focused core/floor evidence consumers, format/compile/Credo/planning checks and required hosted CI are recorded below as they finish. Run these before presenting the candidate as ready. A source-sized implementation plan, product readiness, whole-audit completion and archived stale-report refresh are not claimed.
 
 ## Next action
 
@@ -78,3 +78,9 @@ Next command after owner approval: `gh pr merge 83 --squash --match-head-commit 
 Owner approval is recorded in INT-20261111-02. [PR #83](https://github.com/szTheory/fablebook/pull/83) was squash-merged as `42eed41986476e40c2d291685df7f1b245b61ca0`, enforcing expected head `431747bca47ab59a5ab80427a990d0a56da8a88e`. All required candidate checks passed. Fresh main matches the reviewed source, active roadmap/requirements and instructions. Earlier pending-owner statements are historical snapshots.
 
 v0.2 and its ordinary Phase 1 are now the active planning structure. The phase is unstarted; exact source scope/estimates have not been selected. The owner then requested a full planning health/repair audit to prevent state loss and repeated audit loops. That repair is the current authorized work; no guard implementation starts. The separate [main CI](https://github.com/szTheory/fablebook/actions/runs/43042576747) is in progress, not yet a passing receipt.
+
+## Post-merge main receipt and lifecycle follow-up
+
+Read-only GitHub metadata confirms [main CI 43042576747](https://github.com/szTheory/fablebook/actions/runs/43042576747) succeeded at the PR #83 merge. Required jobs: core 539s, floor 648s, Dialyzer 23s, security 34s and ci-gate 2s. Core/floor overlapped; setup remained short and test time dominates. Compared with the candidate and preceding run, no repeatable gate-preserving shortcut is established. No extra workflow, dependency, cache or concurrency change is justified.
+
+The owner-requested planning health repair is the current task, ahead of Phase 1 discussion. See ../../audits/2026-11-11-planning-health/ and ../../references/PLANNING-LIFECYCLE.md. INITIAL-RECEIPT.json freezes migration observations; default verification no longer freezes mutable future product progress. Historical archive bytes and incomplete status remain unchanged.

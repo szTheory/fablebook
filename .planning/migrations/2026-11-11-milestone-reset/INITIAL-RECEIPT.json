@@ -1,0 +1,1163 @@
+{
+  "schema": "fablebook.migration-initial-receipt/1",
+  "source_head": "431747bca47ab59a5ab80427a990d0a56da8a88e",
+  "merge_head": "42eed41986476e40c2d291685df7f1b245b61ca0",
+  "ci_run": 43040038122,
+  "requirements": {
+    "CORE-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0001",
+        "INT-20261028-01"
+      ]
+    },
+    "CORE-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0002",
+        "INT-20261028-01"
+      ]
+    },
+    "CORE-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0002",
+        "INT-20261028-04"
+      ]
+    },
+    "CORE-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0008"
+      ]
+    },
+    "CORE-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0008",
+        "INT-20261028-01"
+      ]
+    },
+    "CORE-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0023",
+        "INT-20261028-04",
+        "INT-20261028-07"
+      ]
+    },
+    "CORE-07": {
+      "checked": false,
+      "citations": [
+        "ADR 0002",
+        "INT-20261028-06"
+      ]
+    },
+    "CORE-12": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-07",
+        "INT-20261028-08"
+      ]
+    },
+    "CORE-13": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-09",
+        "INT-20261028-11"
+      ]
+    },
+    "CORE-14": {
+      "checked": false,
+      "citations": [
+        "ADR 0022",
+        "INT-20261028-10",
+        "INT-20261028-11"
+      ]
+    },
+    "CORE-08": {
+      "checked": false,
+      "citations": [
+        "INT-20261028-04"
+      ]
+    },
+    "CORE-09": {
+      "checked": false,
+      "citations": [
+        "ADR 0022"
+      ]
+    },
+    "CORE-10": {
+      "checked": false,
+      "citations": [
+        "ADR 0002"
+      ]
+    },
+    "CORE-11": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-04"
+      ]
+    },
+    "CTRL-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0004"
+      ]
+    },
+    "CTRL-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0013"
+      ]
+    },
+    "CTRL-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-04"
+      ]
+    },
+    "CTRL-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0002",
+        "INT-20261028-13"
+      ]
+    },
+    "CTRL-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0004",
+        "ADR 0013",
+        "INT-20261028-16"
+      ]
+    },
+    "CANVAS-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0003",
+        "INT-20261028-01"
+      ]
+    },
+    "CANVAS-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0003"
+      ]
+    },
+    "CANVAS-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0003",
+        "INT-20261028-01"
+      ]
+    },
+    "CANVAS-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0004"
+      ]
+    },
+    "CANVAS-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0003"
+      ]
+    },
+    "CANVAS-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0008",
+        "INT-20261028-01"
+      ]
+    },
+    "CANVAS-07": {
+      "checked": false,
+      "citations": [
+        "ADR 0003",
+        "ADR 0004",
+        "INT-20261028-16"
+      ]
+    },
+    "WB-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-01"
+      ]
+    },
+    "WB-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0013"
+      ]
+    },
+    "WB-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0013"
+      ]
+    },
+    "WB-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0013"
+      ]
+    },
+    "WB-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0013"
+      ]
+    },
+    "WB-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-04"
+      ]
+    },
+    "WB-07": {
+      "checked": false,
+      "citations": [
+        "ADR 0013"
+      ]
+    },
+    "WB-08": {
+      "checked": false,
+      "citations": [
+        "ADR 0013"
+      ]
+    },
+    "WB-09": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-01"
+      ]
+    },
+    "WB-10": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-01"
+      ]
+    },
+    "WB-11": {
+      "checked": false,
+      "citations": [
+        "ADR 0004"
+      ]
+    },
+    "WB-13": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-09",
+        "INT-20261028-10"
+      ]
+    },
+    "WB-14": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-09"
+      ]
+    },
+    "WB-15": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-12",
+        "INT-20261028-14"
+      ]
+    },
+    "WB-16": {
+      "checked": false,
+      "citations": [
+        "ADR 0011",
+        "INT-20261028-14"
+      ]
+    },
+    "WB-12": {
+      "checked": false,
+      "citations": [
+        "ADR 0016"
+      ]
+    },
+    "WB-17": {
+      "checked": false,
+      "citations": [
+        "ADR 0010",
+        "ADR 0011",
+        "INT-20261028-04",
+        "INT-20261028-16"
+      ]
+    },
+    "WB-18": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-16"
+      ]
+    },
+    "CANON-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0012",
+        "INT-20261028-05"
+      ]
+    },
+    "CANON-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0012",
+        "INT-20261028-04"
+      ]
+    },
+    "CANON-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0012"
+      ]
+    },
+    "CANON-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0012",
+        "INT-20261028-04"
+      ]
+    },
+    "CANON-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0012"
+      ]
+    },
+    "CANON-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0012"
+      ]
+    },
+    "CANON-07": {
+      "checked": false,
+      "citations": [
+        "ADR 0012",
+        "INT-20261028-04"
+      ]
+    },
+    "CANON-09": {
+      "checked": false,
+      "citations": [
+        "ADR 0012",
+        "INT-20261028-10"
+      ]
+    },
+    "CANON-10": {
+      "checked": false,
+      "citations": [
+        "ADR 0012",
+        "INT-20261028-10"
+      ]
+    },
+    "CANON-11": {
+      "checked": false,
+      "citations": [
+        "ADR 0012",
+        "INT-20261028-09",
+        "INT-20261028-11"
+      ]
+    },
+    "CANON-12": {
+      "checked": false,
+      "citations": [
+        "ADR 0012",
+        "INT-20261028-11"
+      ]
+    },
+    "CANON-08": {
+      "checked": false,
+      "citations": [
+        "ADR 0002",
+        "INT-20261028-04"
+      ]
+    },
+    "CHECK-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0011",
+        "INT-20261028-04"
+      ]
+    },
+    "CHECK-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0011"
+      ]
+    },
+    "CHECK-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0013"
+      ]
+    },
+    "CHECK-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0017",
+        "INT-20261028-04"
+      ]
+    },
+    "CHECK-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0014"
+      ]
+    },
+    "CHECK-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0010",
+        "INT-20261028-04"
+      ]
+    },
+    "VIS-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0011",
+        "INT-20261028-04"
+      ]
+    },
+    "VIS-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0011"
+      ]
+    },
+    "VIS-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0017"
+      ]
+    },
+    "LLM-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0010",
+        "INT-20261028-04"
+      ]
+    },
+    "LLM-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0010"
+      ]
+    },
+    "LLM-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0010"
+      ]
+    },
+    "LLM-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0010",
+        "ADR 0018"
+      ]
+    },
+    "LLM-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0010"
+      ]
+    },
+    "LLM-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0009"
+      ]
+    },
+    "LLM-07": {
+      "checked": false,
+      "citations": [
+        "ADR 0010"
+      ]
+    },
+    "LLM-08": {
+      "checked": false,
+      "citations": [
+        "ADR 0010",
+        "INT-20261028-12"
+      ]
+    },
+    "JOURNEY-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0012",
+        "INT-20261028-12",
+        "INT-20261028-14"
+      ]
+    },
+    "JOURNEY-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-14"
+      ]
+    },
+    "JOURNEY-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0010",
+        "INT-20261028-12"
+      ]
+    },
+    "MOTION-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0025",
+        "INT-20261028-12",
+        "INT-20261028-13"
+      ]
+    },
+    "MOTION-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0025",
+        "INT-20261028-13"
+      ]
+    },
+    "MOTION-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0025",
+        "INT-20261028-13"
+      ]
+    },
+    "MOTION-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0025",
+        "INT-20261028-13"
+      ]
+    },
+    "MOTION-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0025",
+        "INT-20261028-13"
+      ]
+    },
+    "MOTION-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0011",
+        "ADR 0025",
+        "INT-20261028-13"
+      ]
+    },
+    "MOTION-07": {
+      "checked": false,
+      "citations": [
+        "ADR 0010",
+        "ADR 0025",
+        "INT-20261028-13"
+      ]
+    },
+    "UX-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-13"
+      ]
+    },
+    "UX-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-13"
+      ]
+    },
+    "UX-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-13"
+      ]
+    },
+    "UX-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-13"
+      ]
+    },
+    "UX-07": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-12",
+        "INT-20261028-14"
+      ]
+    },
+    "UX-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-13"
+      ]
+    },
+    "UX-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-13"
+      ]
+    },
+    "UX-08": {
+      "checked": false,
+      "citations": [
+        "ADR 0024",
+        "INT-20261028-13",
+        "INT-20261028-14"
+      ]
+    },
+    "SKILL-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0010",
+        "INT-20261028-12",
+        "INT-20261028-13"
+      ]
+    },
+    "SKILL-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0010",
+        "INT-20261028-13"
+      ]
+    },
+    "SEC-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0004",
+        "INT-20261028-01"
+      ]
+    },
+    "SEC-02": {
+      "checked": true,
+      "citations": [
+        "ADR 0006"
+      ]
+    },
+    "SEC-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0005"
+      ]
+    },
+    "SEC-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0010"
+      ]
+    },
+    "SEC-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0004"
+      ]
+    },
+    "PERF-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0015",
+        "INT-20261028-01"
+      ]
+    },
+    "PERF-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0015"
+      ]
+    },
+    "PERF-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0015"
+      ]
+    },
+    "PERF-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0015"
+      ]
+    },
+    "PERF-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0015"
+      ]
+    },
+    "PERF-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0015",
+        "INT-20261028-01"
+      ]
+    },
+    "TEL-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0016",
+        "INT-20261028-01"
+      ]
+    },
+    "TEL-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0016"
+      ]
+    },
+    "TEL-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0016"
+      ]
+    },
+    "INST-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0019",
+        "INT-20261028-01"
+      ]
+    },
+    "INST-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0019"
+      ]
+    },
+    "INST-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0019"
+      ]
+    },
+    "INST-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0019",
+        "ADR 0023"
+      ]
+    },
+    "INST-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0019",
+        "INT-20261028-01"
+      ]
+    },
+    "INST-06": {
+      "checked": false,
+      "citations": [
+        "ADR 0019",
+        "INT-20261028-01"
+      ]
+    },
+    "INST-07": {
+      "checked": false,
+      "citations": [
+        "ADR 0019",
+        "INT-20261028-12"
+      ]
+    },
+    "DOCS-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0019",
+        "INT-20261028-01"
+      ]
+    },
+    "DOCS-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0019"
+      ]
+    },
+    "DOCS-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0007",
+        "ADR 0019"
+      ]
+    },
+    "DOCS-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0013",
+        "INT-20261028-15"
+      ]
+    },
+    "QA-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0014",
+        "INT-20261028-01"
+      ]
+    },
+    "QA-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0014",
+        "INT-20261028-01"
+      ]
+    },
+    "QA-03": {
+      "checked": false,
+      "citations": [
+        "ADR 0014",
+        "ADR 0019"
+      ]
+    },
+    "QA-04": {
+      "checked": false,
+      "citations": [
+        "ADR 0020",
+        "INT-20261028-01"
+      ]
+    },
+    "QA-06": {
+      "checked": false,
+      "citations": [
+        "INT-20261028-08"
+      ]
+    },
+    "QA-05": {
+      "checked": false,
+      "citations": [
+        "ADR 0014",
+        "INT-20261028-04"
+      ]
+    },
+    "CI-01": {
+      "checked": true,
+      "citations": [
+        "ADR 0017",
+        "INT-20261028-02",
+        "INT-20261106-01"
+      ]
+    },
+    "CI-02": {
+      "checked": false,
+      "citations": [
+        "ADR 0017",
+        "INT-20261028-04"
+      ]
+    },
+    "REL-01": {
+      "checked": true,
+      "citations": [
+        "ADR 0017",
+        "INT-20261028-01"
+      ]
+    },
+    "COMPAT-01": {
+      "checked": false,
+      "citations": [
+        "ADR 0007",
+        "ADR 0008",
+        "INT-20261028-18"
+      ]
+    },
+    "INTENT-01": {
+      "checked": true,
+      "citations": [
+        "ADR 0021",
+        "INT-20261028-04"
+      ]
+    }
+  },
+  "phase_map": [
+    {
+      "legacy_phase": "2",
+      "milestone_key": "walking-skeleton",
+      "milestone_name": "Walking skeleton",
+      "phase": 1,
+      "name": "Walking skeleton and runner spike",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "3",
+      "milestone_key": "story-model",
+      "milestone_name": "Story model and render seam",
+      "phase": 1,
+      "name": "Story model and catalog",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "4",
+      "milestone_key": "story-model",
+      "milestone_name": "Story model and render seam",
+      "phase": 2,
+      "name": "Render seam, rules engine and generated tests",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "5",
+      "milestone_key": "controls-bundle",
+      "milestone_name": "Controls and first bundle",
+      "phase": 1,
+      "name": "Controls and URL state",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "6",
+      "milestone_key": "controls-bundle",
+      "milestone_name": "Controls and first bundle",
+      "phase": 2,
+      "name": "Thin bundle slice",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "7",
+      "milestone_key": "canvas-fidelity",
+      "milestone_name": "Canvas fidelity and installer core",
+      "phase": 1,
+      "name": "Canvas isolation and containment",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "8",
+      "milestone_key": "canvas-fidelity",
+      "milestone_name": "Canvas fidelity and installer core",
+      "phase": 2,
+      "name": "Canvas diagnostics, hot reload and Globals",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "9",
+      "milestone_key": "canvas-fidelity",
+      "milestone_name": "Canvas fidelity and installer core",
+      "phase": 3,
+      "name": "Operator host, fidelity receipt and real components",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "10",
+      "milestone_key": "canvas-fidelity",
+      "milestone_name": "Canvas fidelity and installer core",
+      "phase": 4,
+      "name": "Installer core",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "11",
+      "milestone_key": "workbench",
+      "milestone_name": "Workbench UX",
+      "phase": 1,
+      "name": "Chrome shell, sidebar, story page and grid",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "12",
+      "milestone_key": "workbench",
+      "milestone_name": "Workbench UX",
+      "phase": 2,
+      "name": "Inspector, toolbar, palette and keyboard",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "13",
+      "milestone_key": "workbench",
+      "milestone_name": "Workbench UX",
+      "phase": 3,
+      "name": "Mobile layout, QR, microcopy, Compare by Globals and Diagnostics",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "14",
+      "milestone_key": "design-canon",
+      "milestone_name": "Design canon and adopter Books",
+      "phase": 1,
+      "name": "Canon core",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "15",
+      "milestone_key": "design-canon",
+      "milestone_name": "Design canon and adopter Books",
+      "phase": 2,
+      "name": "Foundations, Themes, Directions, citations, coverage and To review",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "16",
+      "milestone_key": "design-canon",
+      "milestone_name": "Design canon and adopter Books",
+      "phase": 3,
+      "name": "Canon lints, tokens task and DESIGN.md",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "17",
+      "milestone_key": "design-canon",
+      "milestone_name": "Design canon and adopter Books",
+      "phase": 4,
+      "name": "Content track I - Fablebook brand book and the Logistify family",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "18",
+      "milestone_key": "design-canon",
+      "milestone_name": "Design canon and adopter Books",
+      "phase": 5,
+      "name": "Content track II - Chatly and Clinicly",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "19",
+      "milestone_key": "design-canon",
+      "milestone_name": "Design canon and adopter Books",
+      "phase": 6,
+      "name": "Bundle core with canon",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "20",
+      "milestone_key": "checks-capture",
+      "milestone_name": "Checks and visual regression",
+      "phase": 1,
+      "name": "Probe, Evidence and the Checks tab",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "21",
+      "milestone_key": "checks-capture",
+      "milestone_name": "Checks and visual regression",
+      "phase": 2,
+      "name": "Capture and visual baselines",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "22",
+      "milestone_key": "checks-capture",
+      "milestone_name": "Checks and visual regression",
+      "phase": 3,
+      "name": "Sweep, Ratchet and verdicts",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "23",
+      "milestone_key": "checks-capture",
+      "milestone_name": "Checks and visual regression",
+      "phase": 4,
+      "name": "UX checks I - interaction states, forms, layout shift, RTL",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "24",
+      "milestone_key": "checks-capture",
+      "milestone_name": "Checks and visual regression",
+      "phase": 5,
+      "name": "UX checks II, journeys and design.json",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "25",
+      "milestone_key": "motion",
+      "milestone_name": "Motion",
+      "phase": 1,
+      "name": "Motion spike, time shim and Motion panel",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "26",
+      "milestone_key": "motion",
+      "milestone_name": "Motion",
+      "phase": 2,
+      "name": "Motion tokens, checks and CI lane",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "27",
+      "milestone_key": "llm-bundles",
+      "milestone_name": "LLM context bundles",
+      "phase": 1,
+      "name": "Bundle browser tier and allocator",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "28",
+      "milestone_key": "llm-bundles",
+      "milestone_name": "LLM context bundles",
+      "phase": 2,
+      "name": "Focus framework, review focuses and gen.screens",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "29",
+      "milestone_key": "llm-bundles",
+      "milestone_name": "LLM context bundles",
+      "phase": 3,
+      "name": "Compare, journey and motion focuses",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "30",
+      "milestone_key": "installer-dx",
+      "milestone_name": "Installer and DX",
+      "phase": 1,
+      "name": "Generators, doctor shell and migrator",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "31",
+      "milestone_key": "installer-dx",
+      "milestone_name": "Installer and DX",
+      "phase": 2,
+      "name": "Image export, Docker demo and string check",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "32",
+      "milestone_key": "installer-dx",
+      "milestone_name": "Installer and DX",
+      "phase": 3,
+      "name": "Guides, docs brand and compatibility",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "33",
+      "milestone_key": "hardening",
+      "milestone_name": "Hardening and remaining twins",
+      "phase": 1,
+      "name": "Hardening",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "34",
+      "milestone_key": "hardening",
+      "milestone_name": "Hardening and remaining twins",
+      "phase": 2,
+      "name": "Finanza and Shopadelic twins",
+      "status": "future-pending"
+    },
+    {
+      "legacy_phase": "35",
+      "milestone_key": "dogfood",
+      "milestone_name": "Dogfood setup",
+      "phase": 1,
+      "name": "Dogfood setup",
+      "status": "future-pending"
+    }
+  ],
+  "initial_milestone": "v0.2",
+  "initial_phase": "1"
+}

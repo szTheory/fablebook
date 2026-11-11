@@ -1,0 +1,105 @@
+{
+  "schema": "fablebook.planning-audit-validation/1",
+  "source": "automated",
+  "base": "42eed41986476e40c2d291685df7f1b245b61ca0",
+  "revision": "working candidate identified by source hashes; final commit and full hosted receipt belong to PR",
+  "source_sha256": {
+    "test/support/planning_state.ex": "6cd9f1d532763263c479bd650c85d4e2fe864ba239b580c9ed870f34ebc225a5",
+    "test/planning/planning_state_test.exs": "b5c8ea3e8fc808ae870f532a0ddd2ef7e7ffd15484c36ec23638737f1a3addff",
+    "bin/planning_health": "77f29d47e392268b2ad16325190e51c2b49f51a6028235d84b72fd8d597b2973",
+    "bin/planning_health.exs": "28a053c6d667055df109619273dbaf4059b6c513531295229e7a7c3e0e771ccf",
+    "bin/refresh_planning_state": "9010e7835cc25ff55fd05b98e19c3732ccb2ab59784103b336820f06b72af32d",
+    ".planning/migrations/2026-11-11-milestone-reset/verify.py": "144def197775c6e637875479ba89e6666740c0cb7bab25a71aca982ee6bce07e"
+  },
+  "checks": [
+    {
+      "command": "MIX_ENV=test bin/lane core test --warnings-as-errors test/planning",
+      "status": "passed",
+      "result": "50 passed"
+    },
+    {
+      "command": "MIX_ENV=test bin/lane floor test --warnings-as-errors test/planning",
+      "status": "passed",
+      "result": "50 tests, 0 failures"
+    },
+    {
+      "command": "MIX_ENV=test bin/lane core mix format --check-formatted",
+      "status": "passed"
+    },
+    {
+      "command": "MIX_ENV=test bin/lane core mix compile --warnings-as-errors",
+      "status": "passed"
+    },
+    {
+      "command": "MIX_ENV=test bin/lane core mix credo --strict",
+      "status": "passed",
+      "result": "no issues"
+    },
+    {
+      "command": "bash -n bin/planning_health bin/refresh_planning_state",
+      "status": "passed"
+    },
+    {
+      "command": "bin/planning_health --stage status",
+      "status": "passed",
+      "result": "zero errors; v0.2 / Phase 1"
+    },
+    {
+      "command": "bin/planning_health --stage discuss --phase 1",
+      "status": "passed"
+    },
+    {
+      "command": "bin/planning_health --stage plan --phase 1",
+      "status": "expected-failure",
+      "exit": 1,
+      "result": "context_missing; no guard scope was selected"
+    },
+    {
+      "command": "bin/planning_health --stage milestone-close",
+      "status": "expected-failure",
+      "exit": 1,
+      "result": "unstarted phase cannot close"
+    },
+    {
+      "command": "bin/planning_health --unknown",
+      "status": "expected-failure",
+      "exit": 2
+    },
+    {
+      "command": "python3 .planning/migrations/2026-11-11-milestone-reset/verify.py",
+      "status": "passed",
+      "result": "318 archive hashes / 129 initial requirement states-citations / 34 initial future addresses"
+    },
+    {
+      "command": "python3 .planning/migrations/2026-11-11-milestone-reset/verify.py --initial-layout",
+      "status": "passed",
+      "result": "current activation only; not an ongoing lifecycle gate"
+    },
+    {
+      "command": "fixture: later milestone / Phase 2 / checked requirements / later shipped history",
+      "status": "passed",
+      "result": "default migration verifier exit 0; initial-only mode correctly rejects"
+    },
+    {
+      "command": "full planning structured inventory",
+      "status": "passed",
+      "result": "zero JSON, compressed JSONL or gzip integrity errors"
+    },
+    {
+      "command": "installed SDK read-only workflow init / health / state / isolation queries",
+      "status": "passed",
+      "result": "one active integer phase, no plans/context; compatible declared isolation; no repairable health issues"
+    },
+    {
+      "command": "act pull_request -W .github/workflows/ci.yml --dryrun",
+      "status": "unavailable",
+      "exit": 1,
+      "result": "installed parser rejects existing concurrency.queue before jobs; no retry/workflow mutation"
+    }
+  ],
+  "hosted_candidate": "pending",
+  "limits": [
+    "Metadata preflight supplements core freshness/review/CI checks; not an engine hook.",
+    "No guard/product phase implementation or full aggregate completion."
+  ]
+}

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+planning_repo="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+cd "$planning_repo"
+planning_candidates=(
+  "${GSD_TOOLS:-}"
+  "$planning_repo/gsd-core/bin/gsd-tools.cjs"
+  "$planning_repo/.codex/gsd-core/bin/gsd-tools.cjs"
+  "$planning_repo/.claude/gsd-core/bin/gsd-tools.cjs"
+  "${CODEX_HOME:-$HOME/.codex}/gsd-core/bin/gsd-tools.cjs"
+  "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/gsd-core/bin/gsd-tools.cjs"
+  "$HOME/.agents/gsd-core/bin/gsd-tools.cjs"
+)
+planning_publisher=''
+for planning_candidate in "${planning_candidates[@]}"; do
+  [[ -n "$planning_candidate" && -f "$planning_candidate" ]] || continue
+  if planning_identity="$(node "$planning_candidate" runtime-identity --raw 2>/dev/null)"; then
+    case "$planning_identity" in
+      '{"packageName":"@opengsd/gsd-core"'*'}')
+        planning_publisher="$(dirname -- "$planning_candidate")/lib/state-contract.cjs"
+        break
+        ;;
+    esac
+  fi
+done
+[[ -n "$planning_publisher" && -f "$planning_publisher" ]] || {
+  echo 'Cannot resolve the installed OpenGSD state-contract publisher. Set GSD_TOOLS to the active gsd-tools.cjs; do not hand-edit state.json.' >&2
+  exit 1
+}
+node - "$planning_publisher" <<'JS'
+const publisher = require(process.argv[2]);
+if (typeof publisher.publishStateContract !== "function") {
+  throw new Error("The installed OpenGSD package does not expose its state-contract publisher.");
+}
+const result = publisher.publishStateContract(process.cwd());
+if (!result.published) {
+  throw new Error("State projection was not published: " + result.reason);
+}
+process.stdout.write("Generated .planning/state.json from OpenGSD canonical owners.\n");
+JS

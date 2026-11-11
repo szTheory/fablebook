@@ -1,7 +1,7 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.2",
+  "milestone": "v0.2 — Guard coverage recovery",
   "phases": [
     {
       "number": "1",
@@ -10,9 +10,9 @@
     }
   ],
   "next": {
-    "command": "/gsd-health --repair",
-    "label": "Continue the owner-authorized full planning audit and repairs",
-    "reason": "Migration PR #83 is merged. Phase 1 remains unstarted while lifecycle state/routing and future milestone handoffs are checked."
+    "command": "$gsd-progress --next",
+    "label": "Advance to the next step (plan phase 1)",
+    "reason": "Phase 1 of 1 — needs a plan"
   },
-  "updated_at": "2026-11-11T15:03:54.147160+00:00"
+  "updated_at": "2026-11-11T16:01:47.684Z"
 }

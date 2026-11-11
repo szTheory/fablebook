@@ -1,0 +1,18 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": "v0.2",
+  "phases": [
+    {
+      "number": "1",
+      "name": "Bounded guard continuation",
+      "status": "pending"
+    }
+  ],
+  "next": {
+    "command": "/gsd-health --repair",
+    "label": "Continue the owner-authorized full planning audit and repairs",
+    "reason": "Migration PR #83 is merged. Phase 1 remains unstarted while lifecycle state/routing and future milestone handoffs are checked."
+  },
+  "updated_at": "2026-11-11T15:03:54.147160+00:00"
+}

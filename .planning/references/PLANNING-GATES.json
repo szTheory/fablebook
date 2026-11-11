@@ -1,0 +1,22 @@
+{
+  "schema": "fablebook.planning-gates/1",
+  "gates": [
+    {
+      "id": "guard-aggregate",
+      "status": "open",
+      "blocks_milestones": [
+        "walking-skeleton"
+      ],
+      "owner": "guard-recovery increments",
+      "closure": null,
+      "evidence": ".planning/migrations/2026-11-11-milestone-reset/CARRY-FORWARD.md"
+    }
+  ],
+  "known_increment_milestones": [
+    "guard-recovery"
+  ],
+  "requirement_owners": {
+    "SEC-01": "controls-bundle:1"
+  },
+  "automatic_followup": false
+}

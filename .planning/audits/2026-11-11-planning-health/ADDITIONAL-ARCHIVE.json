@@ -1,0 +1,12 @@
+{
+  "schema": "fablebook.planning-archive/1",
+  "status": "superseded-history",
+  "files": [
+    {
+      "original_path": ".planning/TRANSITION-01.1.1.md",
+      "archive_path": ".planning/milestones/v0.1-TRANSITION-01.1.1.md",
+      "sha256": "8feab39875a6bab4f83a80fdeaf1e602f1a2dc66b882331789cb03444e5b5633",
+      "bytes": 1626
+    }
+  ]
+}
