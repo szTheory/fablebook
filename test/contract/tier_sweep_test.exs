@@ -8417,6 +8417,19 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert_inets_trace_core_evidence!(record, ctx.graph, evidence, archive_only)
 
+    permuted_graph = %{
+      ctx.graph
+      | full_exported: Enum.reverse(ctx.graph.full_exported),
+        full_edges: Enum.reverse(ctx.graph.full_edges)
+    }
+
+    permuted_manifest = %{
+      evidence
+      | manifest: Map.update!(evidence.manifest, "files", &Enum.reverse/1)
+    }
+
+    assert_inets_trace_core_evidence!(record, permuted_graph, permuted_manifest, archive_only)
+
     for review <- record.reviews do
       {bytes, sha} = Map.fetch!(exact_sources, review.source_path)
       assert {review.bytes, review.sha256} == {bytes, sha}
@@ -8513,7 +8526,8 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     for mutated <- [
           %{record | exact_sources: tl(record.exact_sources)},
-          %{record | exact_sources: [hd(record.exact_sources) | record.exact_sources]}
+          %{record | exact_sources: [hd(record.exact_sources) | record.exact_sources]},
+          %{record | exact_sources: Enum.reverse(record.exact_sources)}
         ] do
       assert_raise ExUnit.AssertionError, ~r/exact source identity set changed/, fn ->
         assert_inets_trace_core_evidence!(mutated, ctx.graph, evidence, archive_only)
@@ -8523,6 +8537,15 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_raise ExUnit.AssertionError, ~r/review citation evidence changed/, fn ->
       assert_inets_trace_core_evidence!(
         %{record | reviews: tl(record.reviews)},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/review citation evidence changed/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{record | reviews: Enum.reverse(record.reviews)},
         ctx.graph,
         evidence,
         archive_only
