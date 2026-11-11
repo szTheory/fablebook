@@ -1401,6 +1401,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     kernel stdlib compiler erts crypto public_key asn1 ssl inets syntax_tools tools parsetools
     runtime_tools sasl dialyzer xmerl os_mon
   )a
+  @inets_trace_core_mfas [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}]
+  @inets_trace_core_url "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/inets/src/inets_app/inets_trace.erl"
   @elixir_apps [:elixir, :eex, :mix, :iex, :logger, :ex_unit]
   @floor_roots ~w(phoenix phoenix_live_view phoenix_html telemetry nimble_options)
   @reasons %{
@@ -5531,7 +5533,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
 
     assert SweepEvidence.archive_sha256() ==
-             "9a49947455b5d4697f8fd122f0e6d92c7b94dba4641aba6c7e1ca4b0c400315d"
+             "36803a5ccbd928cbee99ca719cdb58baaf5fa88724e3d7040cb242ada6337b0c"
 
     lane = evidence.lane.name
 
@@ -8413,6 +8415,8 @@ defmodule Fablebook.Contract.TierSweepTest do
           |> Map.put("runtime_tools", Path.join(evidence.archive_root, "missing-runtime-tools"))
     }
 
+    assert_inets_trace_core_evidence!(record, ctx.graph, evidence, archive_only)
+
     for review <- record.reviews do
       {bytes, sha} = Map.fetch!(exact_sources, review.source_path)
       assert {review.bytes, review.sha256} == {bytes, sha}
@@ -8426,11 +8430,12 @@ defmodule Fablebook.Contract.TierSweepTest do
       assert source_row["status"] == "present"
       assert {source_row["bytes"], source_row["sha256"]} == {bytes, sha}
 
-      for {citation, _source_line} <- review.citations do
+      for {citation, expected_line} <- review.citations do
         resolved = SweepEvidence.resolve!(archive_only, citation)
         assert resolved.origin == :archive
         assert resolved.sha256 == sha
         assert resolved.line in review.reviewed_lines
+        assert resolved.text =~ expected_line
       end
     end
 
@@ -8443,9 +8448,232 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :inets_trace_core_controls
-  test "EX-010 identifies the core record as a provisional candidate-only contract" do
+  @tag :tmp_dir
+  test "EX-010 integrity rejects changed graph, source, citation and semantic evidence",
+       %{tmp_dir: dir} = ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     record = Fablebook.Test.InetsTraceCoreEvidence.record()
-    assert Map.get(record, :checker_status) == :candidate_only
+
+    archive_only = %{
+      evidence
+      | installed:
+          evidence.installed
+          |> Map.put("inets", Path.join(evidence.archive_root, "missing-inets"))
+          |> Map.put("runtime_tools", Path.join(evidence.archive_root, "missing-runtime-tools"))
+    }
+
+    assert_inets_trace_core_evidence!(record, ctx.graph, evidence, archive_only)
+
+    assert_raise ExUnit.AssertionError, ~r/lane mismatch/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{record | lane: "floor"},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/candidate-only status changed/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{record | checker_status: :active},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/unsupported semantic status/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{record | semantic_status: :verified},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    for mutated <- [
+          %{record | matched_mfas: tl(record.matched_mfas)},
+          %{record | matched_mfas: [hd(record.matched_mfas) | record.matched_mfas]},
+          %{record | matched_mfas: Enum.reverse(record.matched_mfas)},
+          %{record | selected_function_evidence: tl(record.selected_function_evidence)},
+          %{
+            record
+            | selected_function_evidence: [
+                hd(record.selected_function_evidence) | record.selected_function_evidence
+              ]
+          }
+        ] do
+      assert_raise ExUnit.AssertionError,
+                   ~r/selected MFA identity|live matcher coverage|selected finding evidence changed/,
+                   fn ->
+                     assert_inets_trace_core_evidence!(mutated, ctx.graph, evidence, archive_only)
+                   end
+    end
+
+    for mutated <- [
+          %{record | exact_sources: tl(record.exact_sources)},
+          %{record | exact_sources: [hd(record.exact_sources) | record.exact_sources]}
+        ] do
+      assert_raise ExUnit.AssertionError, ~r/exact source identity set changed/, fn ->
+        assert_inets_trace_core_evidence!(mutated, ctx.graph, evidence, archive_only)
+      end
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/review citation evidence changed/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{record | reviews: tl(record.reviews)},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    for delegate_mutation <- [
+          tl(record.delegate_edges),
+          [hd(record.delegate_edges) | record.delegate_edges],
+          Enum.reverse(record.delegate_edges)
+        ] do
+      assert_raise ExUnit.AssertionError, ~r/delegate evidence/, fn ->
+        assert_inets_trace_core_evidence!(
+          %{record | delegate_edges: delegate_mutation},
+          ctx.graph,
+          evidence,
+          archive_only
+        )
+      end
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/incoming edge evidence/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{record | incoming_edges: [hd(record.delegate_edges)]},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    [review | rest] = record.reviews
+    [{citation, _body} | citation_rest] = review.citations
+    bad_body_review = %{review | citations: [{citation, "altered source body"} | citation_rest]}
+
+    assert_raise ExUnit.AssertionError, ~r/review citation evidence changed/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{record | reviews: [bad_body_review | rest]},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    bad_citation_review = %{review | citations: tl(review.citations)}
+
+    assert_raise ExUnit.AssertionError, ~r/review citation evidence changed/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{record | reviews: [bad_citation_review | rest]},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    bad_span_review = %{review | reviewed_lines: 1..1}
+
+    assert_raise ExUnit.AssertionError, ~r/review citation evidence changed/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{record | reviews: [bad_span_review | rest]},
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    selected = hd(record.selected_function_evidence)
+
+    assert_raise ExUnit.AssertionError, ~r/selected finding evidence changed/, fn ->
+      assert_inets_trace_core_evidence!(
+        %{
+          record
+          | selected_function_evidence: [
+              %{selected | finding: "unsupported claim"} | tl(record.selected_function_evidence)
+            ]
+        },
+        ctx.graph,
+        evidence,
+        archive_only
+      )
+    end
+
+    trace_review =
+      Enum.find(record.reviews, &(&1.source_path == "inets/src/inets_app/inets_trace.erl"))
+
+    trace_citation = hd(trace_review.citations) |> elem(0)
+
+    missing_manifest =
+      Map.update!(archive_only.manifest, "files", fn rows ->
+        Enum.reject(rows, &(&1["source_path"] == "inets/src/inets_app/inets_trace.erl"))
+      end)
+
+    missing_error =
+      assert_raise SweepEvidence.Error, ~r/missing_source/, fn ->
+        SweepEvidence.resolve!(%{archive_only | manifest: missing_manifest}, trace_citation)
+      end
+
+    assert missing_error.reason == :missing_source
+
+    wrong_ref_manifest =
+      Map.update!(archive_only.manifest, "files", fn rows ->
+        Enum.map(rows, fn row ->
+          if row["source_path"] == "inets/src/inets_app/inets_trace.erl",
+            do: Map.put(row, "url", "https://example.invalid/altered-source.erl"),
+            else: row
+        end)
+      end)
+
+    assert_raise ExUnit.AssertionError, ~r/source identity manifest mismatch/, fn ->
+      assert_inets_trace_core_evidence!(
+        record,
+        ctx.graph,
+        %{evidence | manifest: wrong_ref_manifest},
+        archive_only
+      )
+    end
+
+    for wrong_identity <- [
+          fn row -> %{row | "lane" => "floor", "path" => "floor/" <> row["source_path"]} end,
+          fn row -> Map.update!(row, "bytes", &(&1 + 1)) end
+        ] do
+      wrong_manifest =
+        Map.update!(evidence.manifest, "files", fn rows ->
+          Enum.map(rows, fn row ->
+            if row["source_path"] == "inets/src/inets_app/inets_trace.erl",
+              do: wrong_identity.(row),
+              else: row
+          end)
+        end)
+
+      assert_raise ExUnit.AssertionError, ~r/source identity manifest mismatch/, fn ->
+        assert_inets_trace_core_evidence!(
+          record,
+          ctx.graph,
+          %{evidence | manifest: wrong_manifest},
+          archive_only
+        )
+      end
+    end
+
+    resolved = SweepEvidence.resolve!(archive_only, trace_citation)
+    File.write!(resolved.path, File.read!(resolved.path) <> "% altered source bytes\n")
+
+    assert_raise SweepEvidence.Error, ~r/source_digest/, fn ->
+      assert_inets_trace_core_evidence!(record, ctx.graph, evidence, archive_only)
+    end
+
+    outside_row = Enum.find(original_identity_ledger!().exclusions, &(&1.id == "EX-011"))
+    assert outside_row.owner == "01.1.1.4"
+    assert outside_row.semantic_status == :pending
+
+    assert_inets_trace_archive_rejects_wrong_ref!(dir)
   end
 
   test "EX-159 maps its original caller-file functions to exact-lane atom evidence", ctx do
@@ -16176,6 +16404,304 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp calibration_match?("CN-005", matcher, mfa), do: call_name_exclusion_match?(matcher, mfa)
   defp calibration_match?("BD-002", matcher, mfa), do: boundary_match?(matcher, mfa)
+
+  defp exclusion_record_matches_mfa?({{:mfa, pattern}, _reason, _citations}, mfa)
+       when is_tuple(pattern) and tuple_size(pattern) == 3 do
+    pattern
+    |> Tuple.to_list()
+    |> Enum.zip(Tuple.to_list(mfa))
+    |> Enum.all?(fn {expected, actual} -> expected == :_ or expected == actual end)
+  end
+
+  defp exclusion_record_matches_mfa?({matcher, _reason}, {module, function, _arity}),
+    do: exclusion_match?(matcher, module, function)
+
+  defp exclusion_record_matches_mfa?({matcher, _reason, _citations}, {module, function, _arity}),
+    do: exclusion_match?(matcher, module, function)
+
+  defp exclusion_record_matches_mfa?(_record, _mfa), do: false
+
+  defp assert_inets_trace_core_evidence!(record, graph, evidence, archive_only) do
+    canonical = Fablebook.Test.InetsTraceCoreEvidence.record()
+    ledger = original_identity_ledger!()
+    original = Enum.find(ledger.exclusions, &(&1.id == "EX-010"))
+
+    assert evidence.lane.name == "core"
+    assert record.lane == evidence.lane.name, "lane mismatch"
+    assert record.original_id == original.id
+    assert record.owner == original.owner
+    assert record.semantic_status == :pending, "unsupported semantic status"
+    assert record.checker_status == :candidate_only, "candidate-only status changed"
+    assert original.owner == "01.1.1.4"
+    assert original.original_entry_raw == "{{:inets, [:enable_trace]}, :own_native}"
+    assert original.original_matcher_raw == "{:inets, [:enable_trace]}"
+    assert original.semantic_status == :pending
+
+    ex011 = Enum.find(ledger.exclusions, &(&1.id == "EX-011"))
+    assert ex011.owner == "01.1.1.4"
+    assert ex011.semantic_status == :pending
+    assert ex011.original_matcher_raw == ":inets_trace"
+
+    assert ex011.lane_matches == %{
+             "core" => [
+               "inets_trace:disable/0",
+               "inets_trace:enable/2",
+               "inets_trace:enable/3",
+               "inets_trace:report_event/4",
+               "inets_trace:set_level/1",
+               "inets_trace:set_level/2"
+             ],
+             "floor" => [
+               "inets_trace:disable/0",
+               "inets_trace:enable/2",
+               "inets_trace:enable/3",
+               "inets_trace:report_event/4",
+               "inets_trace:set_level/1",
+               "inets_trace:set_level/2"
+             ]
+           }
+
+    assert record.selected_function_evidence == canonical.selected_function_evidence,
+           "selected finding evidence changed"
+
+    assert record.exact_sources == canonical.exact_sources,
+           "exact source identity set changed"
+
+    assert record.reviews == canonical.reviews,
+           "review citation evidence changed"
+
+    selected_mfas = Enum.map(record.selected_function_evidence, & &1.mfa)
+
+    actual_matches =
+      graph.full_exported
+      |> Enum.filter(&call_name_exclusion_match?({:inets, [:enable_trace]}, &1))
+      |> Enum.sort()
+
+    assert selected_mfas == @inets_trace_core_mfas
+
+    assert record.matched_mfas == selected_mfas ++ record.remainder_mfas,
+           "selected MFA identity/order changed"
+
+    assert length(record.matched_mfas) == MapSet.size(MapSet.new(record.matched_mfas)),
+           "duplicate selected MFA evidence"
+
+    assert record.matched_mfas == actual_matches,
+           "live matcher coverage changed; missing=#{inspect(actual_matches -- record.matched_mfas)}; unexpected=#{inspect(record.matched_mfas -- actual_matches)}"
+
+    selected_set = MapSet.new(selected_mfas)
+    remainder_set = MapSet.new(record.remainder_mfas)
+
+    assert MapSet.disjoint?(selected_set, remainder_set),
+           "selected and remainder MFA sets overlap"
+
+    assert record.remainder_mfas == actual_matches -- selected_mfas
+
+    actual_incoming =
+      graph.full_edges
+      |> Enum.filter(fn {_caller, {module, function}} ->
+        module == :inets and function == :enable_trace
+      end)
+      |> Enum.sort()
+
+    expected_incoming =
+      Enum.map(record.incoming_edges, fn edge ->
+        {edge.caller, {elem(edge.callee, 0), elem(edge.callee, 1)}}
+      end)
+
+    assert actual_incoming == Enum.sort(expected_incoming), "incoming edge evidence changed"
+
+    assert record.delegate_edges == canonical.delegate_edges, "delegate evidence changed"
+
+    expected_delegates =
+      Enum.map(record.delegate_edges, fn edge ->
+        {edge.caller, {elem(edge.callee, 0), elem(edge.callee, 1)}}
+      end)
+
+    actual_delegates =
+      graph.full_edges
+      |> Enum.filter(fn {caller, _callee} -> caller in selected_mfas end)
+      |> MapSet.new()
+
+    expected_delegate_set = MapSet.new(expected_delegates)
+
+    assert length(expected_delegates) == MapSet.size(MapSet.new(expected_delegates)),
+           "duplicate delegate evidence"
+
+    assert actual_delegates == expected_delegate_set,
+           "delegate evidence changed; missing=#{inspect(MapSet.difference(expected_delegate_set, actual_delegates))}; unexpected=#{inspect(MapSet.difference(actual_delegates, expected_delegate_set))}"
+
+    original_exclusion = {{:inets, [:enable_trace]}, :own_native}
+    assert original_exclusion in @exclusions
+
+    covering_exclusions =
+      Enum.filter(@exclusions, fn exclusion ->
+        Enum.any?(selected_mfas, &exclusion_record_matches_mfa?(exclusion, &1))
+      end)
+
+    assert covering_exclusions == [original_exclusion],
+           "EX-010 overlap set changed; every overlap must participate in the removal witness"
+
+    call_name_overlaps =
+      Enum.filter(@call_name_exclusions, fn {matcher, _reason, _citations} ->
+        Enum.any?(selected_mfas, &call_name_exclusion_match?(matcher, &1))
+      end)
+
+    assert call_name_overlaps == [],
+           "EX-010 overlaps a call-name exclusion; include it in each removal witness"
+
+    boundary_overlaps =
+      Enum.filter(@boundary_exclusions, fn {matcher, _reason, _citations} ->
+        Enum.any?(selected_mfas, &boundary_match?(matcher, &1))
+      end)
+
+    assert boundary_overlaps == [],
+           "EX-010 overlaps a boundary exclusion; include it in each removal witness"
+
+    without_original = Enum.reject(@exclusions, &(&1 == original_exclusion))
+
+    for mfa <- selected_mfas do
+      assert call_name_exclusion_match?({:inets, [:enable_trace]}, mfa)
+
+      refute Enum.any?(without_original, &exclusion_record_matches_mfa?(&1, mfa)),
+             "removing only EX-010 must expose #{inspect(mfa)}; an overlap cannot fake the witness"
+    end
+
+    expected_sources =
+      Map.new(record.exact_sources, fn {path, bytes, sha} -> {path, {bytes, sha}} end)
+
+    assert map_size(expected_sources) == length(record.exact_sources)
+
+    assert Map.keys(expected_sources) |> Enum.sort() ==
+             Enum.map(canonical.exact_sources, &elem(&1, 0)) |> Enum.sort()
+
+    reviews_by_source = Map.new(record.reviews, &{&1.source_path, &1})
+    assert Map.keys(reviews_by_source) |> Enum.sort() == Map.keys(expected_sources) |> Enum.sort()
+
+    for {source_path, {bytes, sha}} <- expected_sources do
+      source_rows =
+        Enum.filter(evidence.manifest["files"], fn row ->
+          row["lane"] == "core" and row["source_path"] == source_path
+        end)
+
+      assert length(source_rows) == 1 and hd(source_rows)["lane"] == "core",
+             "source identity manifest mismatch"
+
+      [source_row] = source_rows
+
+      expected_url =
+        if source_path == "inets/src/inets_app/inets_trace.erl" do
+          @inets_trace_core_url
+        else
+          "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/" <>
+            source_path
+        end
+
+      manifest_identity =
+        Map.take(source_row, ["lane", "status", "path", "url", "bytes", "sha256"])
+
+      expected_manifest_identity = %{
+        "lane" => "core",
+        "status" => "present",
+        "path" => "core/" <> source_path,
+        "url" => expected_url,
+        "bytes" => bytes,
+        "sha256" => sha
+      }
+
+      assert manifest_identity == expected_manifest_identity,
+             "source identity manifest mismatch"
+
+      resolved_source = SweepEvidence.resolve!(archive_only, source_path <> ":1")
+      assert resolved_source.origin == :archive
+      assert resolved_source.sha256 == sha
+      source_bytes = File.read!(resolved_source.path)
+      assert byte_size(source_bytes) == bytes
+      assert :crypto.hash(:sha256, source_bytes) |> Base.encode16(case: :lower) == sha
+
+      source_lines = String.split(source_bytes, "\n")
+
+      line_count =
+        if String.ends_with?(source_bytes, "\n"),
+          do: length(source_lines) - 1,
+          else: length(source_lines)
+
+      review = Map.fetch!(reviews_by_source, source_path)
+      assert review.reviewed_lines == 1..line_count
+
+      assert review.citations != []
+
+      for {citation, expected_line} <- review.citations do
+        resolved = SweepEvidence.resolve!(archive_only, citation)
+        assert resolved.origin == :archive
+        assert resolved.sha256 == sha
+        assert resolved.line in review.reviewed_lines
+        assert resolved.text =~ expected_line, "review citation body changed: #{citation}"
+      end
+    end
+
+    for selected <- record.selected_function_evidence,
+        {citation, expected_line} <- selected.citations do
+      resolved = SweepEvidence.resolve!(archive_only, citation)
+      assert resolved.origin == :archive
+      assert resolved.text =~ expected_line, "selected citation body changed: #{citation}"
+    end
+
+    :ok
+  end
+
+  defp assert_inets_trace_archive_rejects_wrong_ref!(dir) do
+    archive = Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
+    {:ok, files} = :erl_tar.extract(String.to_charlist(archive), [:compressed, :memory])
+    trace_path = ~c"core/inets/src/inets_app/inets_trace.erl"
+    {^trace_path, trace_bytes} = Enum.find(files, fn {name, _bytes} -> name == trace_path end)
+
+    for {name, transform_row, relocate_source} <- [
+          {"wrong-ref",
+           fn row -> Map.put(row, "url", "https://example.invalid/altered-source.erl") end,
+           fn entries, _bytes -> entries end},
+          {"wrong-lane",
+           fn row -> %{row | "lane" => "floor", "path" => "floor/" <> row["source_path"]} end,
+           fn entries, bytes ->
+             Enum.reject(entries, fn {path, _} -> path == trace_path end) ++
+               [{~c"floor/inets/src/inets_app/inets_trace.erl", bytes}]
+           end}
+        ] do
+      transformed_entries =
+        Enum.map(files, fn
+          {~c"manifest.json", data} ->
+            manifest = JSON.decode!(data)
+
+            rows =
+              Enum.map(manifest["files"], fn row ->
+                if row["source_path"] == "inets/src/inets_app/inets_trace.erl",
+                  do: transform_row.(row),
+                  else: row
+              end)
+
+            {~c"manifest.json", JSON.encode!(Map.put(manifest, "files", rows))}
+
+          entry ->
+            entry
+        end)
+        |> then(&relocate_source.(&1, trace_bytes))
+
+      path = Path.join(dir, "inets-trace-#{name}.tar.gz")
+      :ok = :erl_tar.create(String.to_charlist(path), transformed_entries, [:compressed])
+      digest = :crypto.hash(:sha256, File.read!(path)) |> Base.encode16(case: :lower)
+
+      error =
+        assert_raise SweepEvidence.Error, fn -> SweepEvidence.load_archive!(path, digest) end
+
+      assert error.reason == :source_identity
+    end
+
+    missing_entry = Enum.reject(files, fn {path, _bytes} -> path == trace_path end)
+    path = Path.join(dir, "inets-trace-missing-archive-member.tar.gz")
+    :ok = :erl_tar.create(String.to_charlist(path), missing_entry, [:compressed])
+    digest = :crypto.hash(:sha256, File.read!(path)) |> Base.encode16(case: :lower)
+    error = assert_raise SweepEvidence.Error, fn -> SweepEvidence.load_archive!(path, digest) end
+    assert error.reason == :manifest_inventory
+  end
 
   defp mfa_string!({module, function, arity}) do
     Atom.to_string(module) <> ":" <> Atom.to_string(function) <> "/" <> Integer.to_string(arity)

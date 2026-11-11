@@ -23,6 +23,16 @@ defmodule Fablebook.Test.SweepEvidence do
       "elixir" => ["1.18.5", "dfe6612e546cec6557900e67651f7d21805472ef"]
     }
   }
+  @inets_trace_source_identity %{
+    "lane" => "core",
+    "source_path" => "inets/src/inets_app/inets_trace.erl",
+    "path" => "core/inets/src/inets_app/inets_trace.erl",
+    "url" =>
+      "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/inets/src/inets_app/inets_trace.erl",
+    "bytes" => 11_112,
+    "sha256" => "1f67a0bda05227eddd8ffb4909ec8a31465ef2d8582e0ff9ff5d2b72638c7599",
+    "status" => "present"
+  }
   @cn001_source_identities %{
     "mix/lib/mix/compilers/elixir.ex" => {
       "core",
@@ -370,6 +380,7 @@ defmodule Fablebook.Test.SweepEvidence do
       do: fail!(:manifest_inventory, Map.keys(files))
 
     Enum.each(records, &validate_record!(&1, files))
+    validate_inets_trace_source_inventory!(records)
     validate_asn1_inventory!(records)
     validate_asn1_external_transform_inventory!(records)
     validate_generator_dispatch_support_inventory!(records)
@@ -405,6 +416,7 @@ defmodule Fablebook.Test.SweepEvidence do
     validate_asn1_source_identity!(row)
     validate_asn1_external_transform_identity!(row)
     validate_generator_dispatch_support_identity!(row)
+    validate_inets_trace_source_identity!(row)
     data = Map.fetch!(files, path)
 
     if byte_size(data) != row["bytes"] or digest(data) != row["sha256"],
@@ -538,6 +550,20 @@ defmodule Fablebook.Test.SweepEvidence do
       unless Enum.any?(records, &(&1["lane"] == lane and &1["source_path"] == source_path)),
         do: fail!(:source_identity, {lane, source_path, :missing})
     end)
+  end
+
+  defp validate_inets_trace_source_identity!(row) do
+    if row["source_path"] == @inets_trace_source_identity["source_path"] and
+         row != @inets_trace_source_identity,
+       do: fail!(:source_identity, {row, @inets_trace_source_identity})
+  end
+
+  defp validate_inets_trace_source_inventory!(records) do
+    rows =
+      Enum.filter(records, &(&1["source_path"] == @inets_trace_source_identity["source_path"]))
+
+    if rows != [@inets_trace_source_identity],
+      do: fail!(:source_identity, {rows, [@inets_trace_source_identity]})
   end
 
   defp extract_files!(files) do
@@ -1584,6 +1610,7 @@ defmodule Fablebook.Test.InetsTraceCoreEvidence do
       original_id: "EX-010",
       owner: "01.1.1.4",
       semantic_status: :pending,
+      checker_status: :candidate_only,
       exact_sources: @exact_sources,
       selected_function_evidence: [
         function_evidence(
@@ -1671,7 +1698,7 @@ defmodule Fablebook.Test.InetsTraceCoreEvidence do
           105_185,
           1..3197,
           [
-            {"runtime_tools/src/dbg.erl:1069", "start_tracer_process(Handler, HandlerData)"},
+            {"runtime_tools/src/dbg.erl:1069", "tracer(process, {Handler,HandlerData})"},
             {"runtime_tools/src/dbg.erl:1324", "trace_ip_drv"},
             {"runtime_tools/src/dbg.erl:1341", "open_port({spawn, L}, [eof])"},
             {"runtime_tools/src/dbg.erl:2030", "invoke_handler(Traces, Handler, Hdata)"},
