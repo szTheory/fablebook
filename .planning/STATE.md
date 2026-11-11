@@ -4,17 +4,17 @@ milestone: v0.2
 milestone_name: Guard coverage recovery
 current_phase: 1
 current_phase_name: Bounded guard continuation
-status: planning
-stopped_at: "Phase 1 planning complete: three serial plans and six implementation tasks reviewed; current core/floor graph and isolated source/context/effort fit recorded. Implementation has not started. Actual phase closure still requires verified approved merged delivery."
-last_updated: "2026-11-11T19:46:14.334Z"
+status: executing
+stopped_at: Completed 01-01-PLAN.md; next run Plan 01-02
+last_updated: "2026-11-11T21:47:12.851Z"
 last_activity: 2026-11-11
-last_activity_desc: Phase 1 planning and independent review passed; source discovery and fit recorded; implementation unstarted.
-state_head: f832279a1330fbed734a75d6e16ab2388b7784ca
+last_activity_desc: Plan 01 core source evidence completed; Plan 02 floor review is next.
+state_head: 420dd57a21769c6c332a9a67389092b02556c0cf
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 3
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -25,15 +25,15 @@ progress:
 See PROJECT.md, ROADMAP.md and migrations/2026-11-11-milestone-reset/README.md.
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** One bounded guard increment in v0.2. The complete future product is in references/PRODUCT-ROADMAP.md and references/PRODUCT-REQUIREMENTS.md. The former planning cycle is archived as superseded and incomplete.
+**Current focus:** Phase 1 — Bounded guard continuation
 
 ## Current Position
 
-Milestone: v0.2 Guard coverage recovery — PLANNING — NOT STARTED
-Phase: 1 (Bounded guard continuation) — READY TO EXECUTE
-Plan: 0 of 3 complete; three independently reviewed serial plans ready for execution
-Status: planning
-Last activity: 2026-11-11 — Phase 1 planning and independent review passed; source discovery and fit recorded; implementation unstarted.
+Milestone: v0.2 Guard coverage recovery — EXECUTING — NOT DELIVERED
+Phase: 1 (Bounded guard continuation) — EXECUTING
+Plan: 2 of 3
+Status: Plan 01 complete; Plan 02 is next
+Last activity: 2026-11-11 — Plan 01 core source evidence completed; Plan 02 floor review is next.
 
 ## Decisions and gates
 
@@ -58,15 +58,15 @@ PR #82 is squash-merged; required candidate and post-merge main CI passed. The r
 
 ## Session Continuity
 
-Working checkout: `.claude/worktrees/agent-planning-main-261111` on `worktree-agent-planning-main-261111`, based directly on the approved PR #84 main merge. Verified local receipt/approval commits are carried forward. The dirty primary checkout and old PR worktree remain preserved; their recovery pointers identify this clean baseline.
+Working checkout: `.claude/worktrees/agent-planning-main-261111` on `gsd/phase-1-bounded-guard-continuation`, based directly on the approved PR #84 main merge. Plan 01 is complete; continue serially with Plan 02 in this pinned checkout. The dirty primary checkout and old PR worktree remain preserved.
 
-Last session: 2026-11-11T19:46:14.314Z
+Last session: 2026-11-11T21:47:12.827Z
 
-Stopped at: Phase 1 planning complete: three serial plans and six implementation tasks reviewed; current core/floor graph and isolated source/context/effort fit recorded. Implementation has not started. Actual phase closure still requires verified approved merged delivery.
+Stopped at: Completed 01-01-PLAN.md; next run Plan 01-02
 
-Next action: Owner may run $gsd-execute-phase 1 to implement the three reviewed serial plans. All summaries precede phase verify/ship; actual approved merge and delivery receipt precede phase completion. No automatic later phase.
+Next action: Execute Plan 01-02 after its own preflight and source-fit checks. Plan 01-03 follows only after Plan 02. All summaries precede phase verify/ship; approved merge and delivery receipt remain required before phase completion. No automatic later phase.
 
-Resume file: .planning/phases/01-bounded-guard-continuation/01-01-PLAN.md
+Resume file: .planning/phases/01-bounded-guard-continuation/01-02-PLAN.md
 
 ## Migration delivery receipt
 
@@ -81,3 +81,14 @@ PR #84 candidate CI 43054428068 passed at the reviewed source; audits/2026-11-11
 INT-20261111-04 approves the PR #84 squash merge. Fresh main matches the complete reviewed tree; required main CI 43061493617 passed at the verified merge. No phase implementation delivery is recorded by this maintenance merge.
 
 Planning repair delivery is complete. Full candidate and main core/floor/Dialyzer/security/ci-gate passed; scope and receipts are in audits/2026-11-11-planning-health/DELIVERY.json. The maintenance merge does not close the guard aggregate or deliver Phase 1. No further merge approval or status command is needed.
+
+## Performance Metrics
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 01 P01 | 89m | 2 tasks | 4 files |
+
+## Decisions
+
+- [Phase 01]: Keep EX-010 pending and checker status candidate-only until independent floor and integration work.
+- [Phase 01]: Preserve the dynamic-caller and caller-supplied callback limits; graph membership is not runtime proof.
