@@ -8646,6 +8646,7 @@ defmodule Fablebook.Contract.TierSweepTest do
            end)
   end
 
+  @tag :floor
   @tag :inets_trace_floor_source
   test "EX-010 records exact floor source evidence without closing callback ownership", ctx do
     evidence = SweepEvidence.source_roots!()
@@ -8760,6 +8761,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert ex011.semantic_status == :pending
   end
 
+  @tag :floor
   @tag :inets_trace_floor_controls
   @tag :tmp_dir
   test "EX-010 floor findings have individual exclusion-removal witnesses",
