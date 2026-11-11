@@ -1388,6 +1388,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   alias Fablebook.Test.DebuggerSettings
   alias Fablebook.Test.ExternalTransformEvidence
   alias Fablebook.Test.GeneratorDispatchIntegrationEvidence
+  alias Fablebook.Test.InetsTraceIntegrationEvidence
   alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.ParserTokenizerEvidence
   alias Fablebook.Test.SweepEvidence
@@ -7690,10 +7691,11 @@ defmodule Fablebook.Contract.TierSweepTest do
                "CN-006",
                "BD-002",
                "EX-159",
-               "EX-165"
+               "EX-165",
+               "EX-010"
              ])
 
-    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 212
+    assert Enum.count(ledger.exclusions, &(&1.semantic_status == :pending)) == 211
 
     assert Enum.all?(
              ledger.metadata,
@@ -7753,6 +7755,9 @@ defmodule Fablebook.Contract.TierSweepTest do
 
                  "EX-165" ->
                    "01.1.1.14"
+
+                 "EX-010" ->
+                   "v0.2/1"
 
                  _id ->
                    "01.1.1.4"
@@ -8387,6 +8392,162 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert Enum.map(apply(integration, :lane_records, []), & &1.lane) == ["core", "floor"]
   end
 
+  @tag :inets_trace_integration
+  test "EX-010 complete integration rejects missing, wrong-lane and unsupported evidence", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    tier = BannedCalls.banned_mfas()
+    records = InetsTraceIntegrationEvidence.lane_records()
+    assert_inets_trace_audit!(ctx.graph, evidence, ledger, tier)
+
+    permuted_records =
+      records
+      |> Enum.map(fn record ->
+        record
+        |> Map.update!(:selected_function_evidence, &Enum.reverse/1)
+        |> Map.update!(:reviews, &Enum.reverse/1)
+        |> Map.update!(:exact_sources, &Enum.reverse/1)
+        |> Map.update!(:matched_mfas, &Enum.reverse/1)
+        |> Map.update!(:delegate_edges, &Enum.reverse/1)
+      end)
+      |> Enum.reverse()
+
+    permuted_graph = %{ctx.graph | full_edges: Enum.reverse(ctx.graph.full_edges)}
+
+    assert_inets_trace_audit!(
+      permuted_graph,
+      Map.put(evidence, :inets_trace_records, permuted_records),
+      %{
+        ledger
+        | exclusions: Enum.reverse(ledger.exclusions),
+          metadata: Enum.reverse(ledger.metadata)
+      },
+      Enum.reverse(tier)
+    )
+
+    for invalid <- [[], tl(records), [hd(records), hd(records)]] do
+      assert_raise ExUnit.AssertionError, ~r/lane record membership/, fn ->
+        assert_inets_trace_audit!(
+          ctx.graph,
+          Map.put(evidence, :inets_trace_records, invalid),
+          ledger,
+          tier
+        )
+      end
+    end
+
+    for lane <- ["core", "floor"],
+        mutation <- [
+          &%{&1 | lane: "wrong-lane"},
+          &%{&1 | exact_sources: tl(&1.exact_sources)},
+          &%{&1 | reviews: tl(&1.reviews)},
+          &%{&1 | selected_function_evidence: tl(&1.selected_function_evidence)},
+          &%{&1 | delegate_edges: []},
+          &%{
+            &1
+            | selected_function_evidence:
+                Enum.map(&1.selected_function_evidence, fn finding ->
+                  %{finding | disposition: :runtime_safe, callback_boundary: ""}
+                end)
+          }
+        ] do
+      invalid =
+        Enum.map(records, fn record ->
+          if record.lane == lane, do: mutation.(record), else: record
+        end)
+
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_inets_trace_audit!(
+          ctx.graph,
+          Map.put(evidence, :inets_trace_records, invalid),
+          ledger,
+          tier
+        )
+      end
+    end
+
+    record = Enum.find(records, &(&1.lane == evidence.lane.name))
+    selected = InetsTraceIntegrationEvidence.selected_mfas()
+    assert_inets_trace_partition!(ctx.graph, record, Enum.reverse(selected))
+
+    for invalid <- [[], tl(selected), selected ++ [hd(selected)]] do
+      assert_raise ExUnit.AssertionError, fn ->
+        assert_inets_trace_partition!(ctx.graph, record, invalid)
+      end
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/live matcher set/, fn ->
+      assert_inets_trace_partition!(
+        %{
+          ctx.graph
+          | full_exported: MapSet.put(ctx.graph.full_exported, {:inets, :enable_trace, 4})
+        },
+        record,
+        selected
+      )
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/selected and remainder/, fn ->
+      assert_inets_trace_partition!(
+        ctx.graph,
+        %{record | remainder_mfas: [hd(selected)]},
+        selected
+      )
+    end
+
+    for collection <- [:exclusions, :metadata],
+        mutation <- [
+          &tl/1,
+          fn rows -> [hd(rows) | rows] end,
+          fn [row | rest] -> [%{row | owner: nil} | rest] end,
+          fn [row | rest] -> [%{row | semantic_status: nil} | rest] end
+        ] do
+      assert_raise ExUnit.AssertionError, ~r/original identity mapping/, fn ->
+        assert_inets_trace_preservation!(Map.update!(ledger, collection, mutation), ledger)
+      end
+    end
+
+    ex011_changed =
+      Map.update!(ledger, :exclusions, fn rows ->
+        Enum.map(rows, fn row ->
+          if row.id == "EX-011", do: %{row | semantic_status: :inets_trace_retained}, else: row
+        end)
+      end)
+
+    assert_raise ExUnit.AssertionError, ~r/original identity mapping/, fn ->
+      assert_inets_trace_preservation!(ex011_changed, ledger)
+    end
+  end
+
+  @tag :inets_trace_guards
+  test "EX-010 retains an individually necessary matcher on each live lane", ctx do
+    tier = BannedCalls.banned_mfas()
+    assert_inets_trace_guards!(ctx.graph, tier, @exclusions)
+    assert_inets_trace_guards!(ctx.graph, Enum.reverse(tier), Enum.reverse(@exclusions))
+
+    assert_raise ExUnit.AssertionError, ~r/original matcher/, fn ->
+      assert_inets_trace_guards!(
+        ctx.graph,
+        tier,
+        List.delete(@exclusions, {{:inets, [:enable_trace]}, :own_native})
+      )
+    end
+
+    for overlap <- [
+          {{:mfa, {:inets, :enable_trace, 2}}, :own_native, "inets/src/inets_app/inets.erl:1"},
+          {{:inets, [:enable_trace]}, :callback}
+        ] do
+      assert_raise ExUnit.AssertionError, ~r/overlapping matcher/, fn ->
+        assert_inets_trace_guards!(ctx.graph, tier, @exclusions ++ [overlap])
+      end
+    end
+
+    assert_raise ExUnit.AssertionError, ~r/retained static disposition/, fn ->
+      assert_inets_trace_guards!(ctx.graph, [{:inets, :enable_trace, :_} | tier], @exclusions)
+    end
+  end
+
   @tag :inets_trace_core_only
   @tag :inets_trace_core_source
   test "EX-010 records exact core source evidence without closing callback ownership", ctx do
@@ -8398,8 +8559,8 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert record.lane == "core"
     assert record.original_id == original.id
-    assert record.owner == original.owner
-    assert record.semantic_status == original.semantic_status
+    assert original.owner == "v0.2/1"
+    assert original.semantic_status == :inets_trace_retained
     assert record.owner == "01.1.1.4"
     assert record.semantic_status == :pending
     assert original.original_matcher_raw =~ "enable_trace"
@@ -8490,8 +8651,8 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     assert record.lane == "floor"
     assert record.original_id == original.id
-    assert record.owner == original.owner
-    assert record.semantic_status == original.semantic_status
+    assert original.owner == "v0.2/1"
+    assert original.semantic_status == :inets_trace_retained
     assert record.owner == "01.1.1.4"
     assert record.semantic_status == :pending
     assert original.original_matcher_raw =~ "enable_trace"
@@ -14295,6 +14456,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     do:
       raise(ExUnit.AssertionError, message: "invalid original audit-budget MFA #{inspect(other)}")
 
+  defp original_semantic_status("EX-010"), do: :inets_trace_retained
   defp original_semantic_status("CN-001"), do: :cn001_project_build_replaced
   defp original_semantic_status("CN-002"), do: :cn002_retained
   defp original_semantic_status("CN-003"), do: :cn003_retained
@@ -14306,6 +14468,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   defp original_semantic_status("EX-165"), do: :leex_replaced_by_tier
   defp original_semantic_status(_id), do: :pending
 
+  defp original_semantic_owner(:inets_trace_retained), do: "v0.2/1"
   defp original_semantic_owner(:cn002_retained), do: "01.1.1.6"
   defp original_semantic_owner(:cn001_project_build_replaced), do: "01.1.1.13"
   defp original_semantic_owner(:cn003_retained), do: "01.1.1.6"
@@ -16717,6 +16880,136 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp exclusion_record_matches_mfa?(_record, _mfa), do: false
 
+  defp assert_inets_trace_audit!(graph, evidence, ledger, tier) do
+    records =
+      Map.get(evidence, :inets_trace_records, InetsTraceIntegrationEvidence.lane_records())
+
+    assert Enum.sort(Enum.map(records, & &1.lane)) == ["core", "floor"],
+           "lane record membership changed"
+
+    canonical_records = InetsTraceIntegrationEvidence.lane_records()
+
+    assert normalize_inets_trace(records) == normalize_inets_trace(canonical_records),
+           "independently reviewed lane findings changed"
+
+    assert_inets_trace_preservation!(ledger, original_identity_ledger!())
+    [record] = Enum.filter(canonical_records, &(&1.lane == evidence.lane.name))
+    selected = InetsTraceIntegrationEvidence.selected_mfas()
+    assert_inets_trace_partition!(graph, record, selected)
+
+    row = Enum.find(ledger.exclusions, &(&1.id == "EX-010"))
+    assert row.owner == "v0.2/1"
+    assert row.semantic_status == :inets_trace_retained
+    assert Enum.sort(row.lane_matches[evidence.lane.name]) == Enum.map(selected, &mfa_string!/1)
+    assert row.original_entry_raw == "{{:inets, [:enable_trace]}, :own_native}"
+
+    archive_only = %{
+      evidence
+      | installed:
+          evidence.installed
+          |> Map.put("inets", Path.join(evidence.archive_root, "missing-inets"))
+          |> Map.put("runtime_tools", Path.join(evidence.archive_root, "missing-runtime-tools"))
+    }
+
+    case evidence.lane.name do
+      "core" -> assert_inets_trace_core_evidence!(record, graph, evidence, archive_only)
+      "floor" -> assert_inets_trace_floor_sources!(record, graph, evidence, archive_only)
+    end
+
+    assert InetsTraceIntegrationEvidence.dispositions() ==
+             Map.new(selected, &{&1, :retained_callback_front})
+
+    assert InetsTraceIntegrationEvidence.retention_basis() =~ "caller code"
+
+    assert InetsTraceIntegrationEvidence.limits() == [
+             :dynamic_callers_unproven,
+             :caller_callback_body_unreviewed,
+             :native_driver_internals_unreviewed,
+             :static_evidence_only,
+             :aggregate_open,
+             :sec01_pending
+           ]
+
+    assert_inets_trace_guards!(graph, tier, @exclusions)
+    :ok
+  end
+
+  defp assert_inets_trace_partition!(graph, record, selected) do
+    live =
+      graph.full_exported
+      |> Enum.filter(&call_name_exclusion_match?({:inets, [:enable_trace]}, &1))
+      |> Enum.uniq()
+      |> Enum.sort()
+
+    assert Enum.sort(record.matched_mfas) == live, "complete live matcher set changed"
+    assert length(record.matched_mfas) == MapSet.size(MapSet.new(record.matched_mfas))
+
+    assert Enum.sort(selected) == [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}],
+           "selected identity set changed"
+
+    assert MapSet.disjoint?(MapSet.new(selected), MapSet.new(record.remainder_mfas)),
+           "selected and remainder overlap"
+
+    assert Enum.sort(selected ++ record.remainder_mfas) == live,
+           "selected/remainder partition changed"
+
+    assert record.remainder_mfas == [], "new within-row remainder needs source review"
+    :ok
+  end
+
+  defp assert_inets_trace_preservation!(ledger, expected) do
+    assert normalize_inets_trace(ledger) == normalize_inets_trace(expected),
+           "complete original identity mapping changed"
+
+    assert length(ledger.exclusions) == 221
+    assert length(ledger.metadata) == 5
+    ex011 = Enum.find(ledger.exclusions, &(&1.id == "EX-011"))
+    assert ex011.owner == "01.1.1.4" and ex011.semantic_status == :pending
+    :ok
+  end
+
+  defp assert_inets_trace_guards!(graph, tier, exclusions) do
+    original = {{:inets, [:enable_trace]}, :own_native}
+
+    assert Enum.count(exclusions, &(&1 == original)) == 1,
+           "original matcher missing or duplicated"
+
+    assert InetsTraceIntegrationEvidence.guard_patterns() == []
+    selected = InetsTraceIntegrationEvidence.selected_mfas()
+
+    for mfa <- selected do
+      assert mfa in graph.full_exported, "missing expected lane export"
+
+      assert disposition(mfa, tier, BannedCalls.banned_names(), exclusions) == :own_native,
+             "retained static disposition changed"
+
+      overlaps = Enum.filter(exclusions, &exclusion_record_matches_mfa?(&1, mfa))
+      assert overlaps == [original], "overlapping matcher masks individual contribution"
+
+      assert Enum.all?(@call_name_exclusions, fn {matcher, _, _} ->
+               not call_name_exclusion_match?(matcher, mfa)
+             end)
+
+      assert Enum.all?(@boundary_exclusions, fn {matcher, _, _} ->
+               not boundary_match?(matcher, mfa)
+             end)
+
+      assert disposition(mfa, tier, BannedCalls.banned_names(), List.delete(exclusions, original)) ==
+               nil,
+             "removing only EX-010 must expose each selected MFA"
+    end
+
+    :ok
+  end
+
+  defp normalize_inets_trace(value) when is_map(value),
+    do: Map.new(Map.to_list(value), fn {key, item} -> {key, normalize_inets_trace(item)} end)
+
+  defp normalize_inets_trace(value) when is_list(value),
+    do: value |> Enum.map(&normalize_inets_trace/1) |> Enum.sort()
+
+  defp normalize_inets_trace(value), do: value
+
   defp assert_inets_trace_floor_witnesses!(record, graph, exclusions \\ @exclusions) do
     original = {{:inets, [:enable_trace]}, :own_native}
     assert record.lane == "floor", "floor matcher witness lane changed"
@@ -16832,8 +17125,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert evidence.lane.name == "floor"
     assert record.lane == evidence.lane.name, "lane mismatch"
     assert record.original_id == original.id
-    assert record.owner == original.owner
     assert record.owner == "01.1.1.4"
+    assert original.owner == "v0.2/1"
+    assert original.semantic_status == :inets_trace_retained
     assert record.semantic_status == :pending
     assert record.checker_status == :candidate_only
     assert original.original_matcher_raw == "{:inets, [:enable_trace]}"
@@ -16971,13 +17265,13 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert evidence.lane.name == "core"
     assert record.lane == evidence.lane.name, "lane mismatch"
     assert record.original_id == original.id
-    assert record.owner == original.owner
+    assert record.owner == "01.1.1.4"
+    assert original.owner == "v0.2/1"
     assert record.semantic_status == :pending, "unsupported semantic status"
     assert record.checker_status == :candidate_only, "candidate-only status changed"
-    assert original.owner == "01.1.1.4"
     assert original.original_entry_raw == "{{:inets, [:enable_trace]}, :own_native}"
     assert original.original_matcher_raw == "{:inets, [:enable_trace]}"
-    assert original.semantic_status == :pending
+    assert original.semantic_status == :inets_trace_retained
 
     ex011 = Enum.find(ledger.exclusions, &(&1.id == "EX-011"))
     assert ex011.owner == "01.1.1.4"

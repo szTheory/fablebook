@@ -1918,6 +1918,42 @@ defmodule Fablebook.Test.InetsTraceFloorEvidence do
   end
 end
 
+defmodule Fablebook.Test.InetsTraceIntegrationEvidence do
+  @moduledoc false
+
+  @selected_mfas [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}]
+  @dispositions Map.new(@selected_mfas, &{&1, :retained_callback_front})
+
+  def selected_mfas, do: @selected_mfas
+  def dispositions, do: @dispositions
+  def guard_patterns, do: []
+
+  def lane_records do
+    [
+      Fablebook.Test.InetsTraceCoreEvidence.record(),
+      Fablebook.Test.InetsTraceFloorEvidence.record()
+    ]
+  end
+
+  def retention_basis do
+    "Both exact lanes forward level, destination and validated service to fixed tracing operations. " <>
+      "The function destination is caller code invoked by dbg, not caller text evaluated by this path; " <>
+      "the native trace driver name is fixed. Retain the original matcher for both callback fronts " <>
+      "without adding an evaluator or atom-creation guard."
+  end
+
+  def limits do
+    [
+      :dynamic_callers_unproven,
+      :caller_callback_body_unreviewed,
+      :native_driver_internals_unreviewed,
+      :static_evidence_only,
+      :aggregate_open,
+      :sec01_pending
+    ]
+  end
+end
+
 defmodule Fablebook.Test.GeneratorDispatchCallerBEvidence do
   @moduledoc false
 

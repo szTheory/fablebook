@@ -689,7 +689,8 @@ defmodule Fablebook.Contract.BannedCallsTest do
 
   @tag :tmp_dir
   @tag :inets_trace_core_controls
-  test "inets trace APIs remain provisional while uncalled direct, capture and apply forms reconcile",
+  @tag :inets_trace_guards
+  test "retained inets trace APIs reconcile uncalled direct, capture and apply forms",
        %{tmp_dir: dir} do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
@@ -745,11 +746,22 @@ defmodule Fablebook.Contract.BannedCallsTest do
       assert module == :inets and function == :enable_trace
     end
 
+    assert credo_issues(
+             "quote do: :inets.enable_trace(level, destination)",
+             "inets_trace_quoted.ex"
+           ) == []
+
+    assert credo_issues(
+             "defmodule TraceSource do\n:inets.enable_trace(level, destination)\nend",
+             "inets_trace_body.ex"
+           ) == []
+
     assert credo_issues("Regex.compile(pattern)", "inets_trace_benign.ex") == []
   end
 
   @tag :tmp_dir
   @tag :inets_trace_floor_controls
+  @tag :inets_trace_guards
   test "floor inets trace forms compile without invoking the reviewed API", %{tmp_dir: dir} do
     unless Process.whereis(Credo.Supervisor),
       do: {:ok, _} = Application.ensure_all_started(:credo)
