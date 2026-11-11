@@ -2,7 +2,7 @@
 phase: quick-261110-v8d
 plan: "01"
 status: complete
-delivery_status: ready-for-owner-merge
+delivery_status: merged
 source_commit: 5fa9f080372fffc39485a77d00ce8d40c02fcdd9
 requirements_completed: []
 ---
@@ -71,3 +71,13 @@ The connector's optional full core-log download exceeded its transport frame lim
 Final receipt-only SUMMARY/STATE/audit updates are committed locally for the next substantive push, avoiding an identical hosted run. Live green CI is linked from the PR. The UAT audit still counts four groups until owner merge; the other three owners remain unchanged. The completed Phase 01.1.1.18 verification fingerprint still returns passed. Parent source-size stops, SEC-01 Phase 5 ownership, Phase 2 gate and the unapplied brand source remain preserved. No owner UAT is needed.
 
 Next command, after owner approval: `gh pr merge 82 --squash --match-head-commit 95ba228ef33c3b88fda61ffebed30958d1be5927` — merge the reviewed green candidate. The quick workflow says "User handles merge/rebase afterward"; this is the remaining owner boundary. No next phase starts automatically.
+
+## Approved merge closure
+
+[INT-20261110-11](../../intent/sources/2026-11-10-11-approve-floor-reporting-merge.md) records the owner's approval. [PR #82](https://github.com/szTheory/fablebook/pull/82) was squash-merged at `2026-11-11T04:01:22Z`, commit `0b028db2a933f407d9a75b2fd938200dd7a4e961`. The merge API enforced reviewed head `95ba228ef33c3b88fda61ffebed30958d1be5927`; all required candidate checks had passed. Earlier pending-owner statements are historical snapshots.
+
+A fresh fetch verifies main's four source files against the reviewed candidate and the digests above. The pre-merge-base-to-main workflow/library/dependency/lockfile diff is empty. The floor-reporting UAT group is resolved in its canonical deferred record; three unrelated groups retain their owners. Parent source-size stops, SEC-01 Phase 5 ownership and Phase 2 gate remain; brand assets and original/recovery checkouts are untouched.
+
+The separate [main CI run](https://github.com/szTheory/fablebook/actions/runs/42956492952) is in progress, not a passing receipt yet. Final closure/receipt bookkeeping stays local for the next substantive push; no receipt-only run is triggered.
+
+Next command: `gh run watch 42956492952 --exit-status` — observe post-merge main CI. No owner action is needed while it runs; no new phase or release is started.

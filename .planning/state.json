@@ -180,9 +180,9 @@
     }
   ],
   "next": {
-    "command": "gh pr merge 82 --squash --match-head-commit 95ba228ef33c3b88fda61ffebed30958d1be5927",
-    "label": "Owner approval: merge the green floor-reporting candidate",
-    "reason": "PR #82 passed required full hosted checks. Quick task complete; owner merge remains. Four UAT groups stay open pending landing; parent stop, SEC-01 Phase 5 ownership and Phase 2 gate remain."
+    "command": "gh run watch 42956492952 --exit-status",
+    "label": "Observe post-merge main CI",
+    "reason": "PR #82 is squash-merged with all required candidate checks passed. Three unrelated UAT groups remain; parent stop, SEC-01 Phase 5 ownership and Phase 2 gate are preserved. No owner action is needed while automation runs."
   },
-  "updated_at": "2026-11-11T03:58:57.190166+00:00"
+  "updated_at": "2026-11-11T04:02:38.666084+00:00"
 }

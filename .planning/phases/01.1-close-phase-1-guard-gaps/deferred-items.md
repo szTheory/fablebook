@@ -6,6 +6,10 @@
 
 ## IN-01: The floor-version test passes when it does not run
 
+status: resolved
+
+Closure 2026-11-10: [PR #82](https://github.com/szTheory/fablebook/pull/82) merged the floor-tag/helper reporting fix after all required [candidate CI](https://github.com/szTheory/fablebook/actions/runs/42954945700) passed. Core records the real version check as excluded; floor executes the unchanged version assertions. Real-helper probes preserve flag presence and diff-error behavior, CI-shape rejects a selected-floor exclusion, and a wrong expected version fails on the actual floor. Fresh main matches the tested source; workflows, lib, dependencies and lockfiles are unchanged. Historical findings below remain provenance. Only this reporting group is closed.
+
 - **Where:** `test/contract/dependency_budget_test.exs:55-69`, the floor-version check.
 - **Seen:** Phase 1 review (01-REVIEW IN-01). Without `FABLEBOOK_FLOOR` the test prints `not-run`, but ExUnit records a pass. ADR 0010 says a check that did not run is `not-run`, never `pass`.
 - **Fix direction:**
