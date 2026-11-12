@@ -1,0 +1,193 @@
+{
+  "schema": "fablebook.guard-research-observation/1",
+  "phase": "1",
+  "milestone": "v0.2",
+  "selected_original_id": "EX-010",
+  "authority_limit": "Current full graph discovery observation; no semantic verdict, complete row-ledger partition or fit certificate.",
+  "lanes": {
+    "core": {
+      "test_result": "passed",
+      "test_filter": "test/contract/tier_sweep_test.exs:5234",
+      "log_sha256": "d5e639793b6ce955a361ff7866f0a5a04f4909e33fcf4fa8e752bc13862ecfc7",
+      "receipt_footer": {
+        "active_records": 257398,
+        "apps": 35,
+        "beams": 1321,
+        "boundary_records": 681,
+        "export_records": 50568,
+        "kind": "footer",
+        "pending_records": 1791,
+        "reached_records": 5020,
+        "sha256": "159d0286303b78f12152f1c54d944703cb02d4e6dbbe0e30ff2dcefa17c9b97c",
+        "source_files": 1567
+      },
+      "metrics": {
+        "active_app_count": 35,
+        "active_edge_count": 236176,
+        "active_export_count": 19821,
+        "active_module_count": 1366,
+        "app_count": 35,
+        "beam_bytes": 51669924,
+        "beam_count": 1321,
+        "boundary_matches": 681,
+        "discovery_ms": 673,
+        "exported_matches": 50568,
+        "function_bytes": 110768910,
+        "function_count": 90276,
+        "graph_ms": 33340,
+        "inspection_ms": 5814,
+        "kind": "metrics",
+        "mapped_beams": 1292,
+        "missing_source_beams": 29,
+        "pending_app_count": 18,
+        "pending_mfa_count": 1078,
+        "pending_module_count": 695,
+        "pending_owner": "01.1.1.3",
+        "reached_matches": 5020,
+        "source_bytes": 50512398,
+        "source_file_count": 1567,
+        "source_scan_ms": 699,
+        "unavailable_source_beams": 0,
+        "xref_ms": 12718
+      },
+      "matched_exports": [
+        {
+          "app": "inets",
+          "arity": 2,
+          "function": "enable_trace",
+          "kind": "export",
+          "module": "inets"
+        },
+        {
+          "app": "inets",
+          "arity": 3,
+          "function": "enable_trace",
+          "kind": "export",
+          "module": "inets"
+        }
+      ],
+      "selected_mfas": [
+        "inets:enable_trace/2",
+        "inets:enable_trace/3"
+      ],
+      "outside_selected_within_EX010": [],
+      "within_row_partition_equal": true,
+      "active_projection_edges": [
+        {
+          "app": "inets",
+          "arity": 2,
+          "callee_app": "inets",
+          "callee_function": "enable",
+          "callee_module": "inets_trace",
+          "function": "enable_trace",
+          "kind": "active_edge",
+          "module": "inets"
+        },
+        {
+          "app": "inets",
+          "arity": 3,
+          "callee_app": "inets",
+          "callee_function": "enable",
+          "callee_module": "inets_trace",
+          "function": "enable_trace",
+          "kind": "active_edge",
+          "module": "inets"
+        }
+      ],
+      "active_projection_incoming_edges": [],
+      "limit": "Receipt stores active projection edges; paired OTP-only Xref found zero direct incoming edges across all OTP apps. Neither establishes absence of dynamic callers."
+    },
+    "floor": {
+      "test_result": "passed",
+      "test_filter": "test/contract/tier_sweep_test.exs:5234",
+      "log_sha256": "e201174ee369657e682a2a975434507e1bed11c496875c446464212095d6f694",
+      "receipt_footer": {
+        "active_records": 234241,
+        "apps": 34,
+        "beams": 1273,
+        "boundary_records": 594,
+        "export_records": 48449,
+        "kind": "footer",
+        "pending_records": 1756,
+        "reached_records": 4751,
+        "sha256": "4747c3e876b54271ef2d365912a834bb0b223a64007e2b6684f6ef10c06ce1b0",
+        "source_files": 1517
+      },
+      "metrics": {
+        "active_app_count": 35,
+        "active_edge_count": 215078,
+        "active_export_count": 17803,
+        "active_module_count": 1325,
+        "app_count": 34,
+        "beam_bytes": 53323560,
+        "beam_count": 1273,
+        "boundary_matches": 594,
+        "discovery_ms": 686,
+        "exported_matches": 48449,
+        "function_bytes": 102949508,
+        "function_count": 85475,
+        "graph_ms": 21281,
+        "inspection_ms": 6125,
+        "kind": "metrics",
+        "mapped_beams": 1244,
+        "missing_source_beams": 29,
+        "pending_app_count": 17,
+        "pending_mfa_count": 1051,
+        "pending_module_count": 688,
+        "pending_owner": "01.1.1.3",
+        "reached_matches": 4751,
+        "source_bytes": 46313125,
+        "source_file_count": 1517,
+        "source_scan_ms": 712,
+        "unavailable_source_beams": 0,
+        "xref_ms": 4751
+      },
+      "matched_exports": [
+        {
+          "app": "inets",
+          "arity": 2,
+          "function": "enable_trace",
+          "kind": "export",
+          "module": "inets"
+        },
+        {
+          "app": "inets",
+          "arity": 3,
+          "function": "enable_trace",
+          "kind": "export",
+          "module": "inets"
+        }
+      ],
+      "selected_mfas": [
+        "inets:enable_trace/2",
+        "inets:enable_trace/3"
+      ],
+      "outside_selected_within_EX010": [],
+      "within_row_partition_equal": true,
+      "active_projection_edges": [
+        {
+          "app": "inets",
+          "arity": 2,
+          "callee_app": "inets",
+          "callee_function": "enable",
+          "callee_module": "inets_trace",
+          "function": "enable_trace",
+          "kind": "active_edge",
+          "module": "inets"
+        },
+        {
+          "app": "inets",
+          "arity": 3,
+          "callee_app": "inets",
+          "callee_function": "enable",
+          "callee_module": "inets_trace",
+          "function": "enable_trace",
+          "kind": "active_edge",
+          "module": "inets"
+        }
+      ],
+      "active_projection_incoming_edges": [],
+      "limit": "Receipt stores active projection edges; paired OTP-only Xref found zero direct incoming edges across all OTP apps. Neither establishes absence of dynamic callers."
+    }
+  }
+}

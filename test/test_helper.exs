@@ -1,6 +1,9 @@
 exclude = [:prod_guard, :release]
 exclude = if System.get_env("FABLEBOOK_FLOOR"), do: exclude, else: [:floor | exclude]
 
+exclude =
+  if System.get_env("FABLEBOOK_FLOOR"), do: [:core | exclude], else: exclude
+
 case Fablebook.Test.GitDiff.base() do
   {:ok, sha} ->
     Application.put_env(:fablebook, :diff_base, sha)

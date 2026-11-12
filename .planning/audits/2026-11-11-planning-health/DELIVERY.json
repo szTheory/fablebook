@@ -1,0 +1,123 @@
+{
+  "schema": "fablebook.planning-repair-delivery/1",
+  "scope": "planning-lifecycle-repair",
+  "status": "merged",
+  "pr": "https://github.com/szTheory/fablebook/pull/84",
+  "reviewed_head": "885c6374fe99e88de7ae35913ed58d5e0612823c",
+  "base": "42eed41986476e40c2d291685df7f1b245b61ca0",
+  "ci": {
+    "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068",
+    "event": "pull_request",
+    "head": "885c6374fe99e88de7ae35913ed58d5e0612823c",
+    "status": "success",
+    "jobs": [
+      {
+        "name": "dialyzer",
+        "conclusion": "success",
+        "seconds": 19,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639963746"
+      },
+      {
+        "name": "floor",
+        "conclusion": "success",
+        "seconds": 689,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639964114"
+      },
+      {
+        "name": "security",
+        "conclusion": "success",
+        "seconds": 31,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639964162"
+      },
+      {
+        "name": "core",
+        "conclusion": "success",
+        "seconds": 593,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639964302"
+      },
+      {
+        "name": "ci-health",
+        "conclusion": "skipped",
+        "seconds": 0,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639966256"
+      },
+      {
+        "name": "nightly",
+        "conclusion": "skipped",
+        "seconds": 0,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130639966844"
+      },
+      {
+        "name": "ci-gate",
+        "conclusion": "success",
+        "seconds": 3,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43054428068/job/130646809579"
+      }
+    ]
+  },
+  "mergeable": true,
+  "mergeable_state": "clean",
+  "observed_at": "2026-11-11T16:57:54+00:00",
+  "phase_implementation_started": false,
+  "aggregate_gate": "open",
+  "next_owner_action": "When ready, run $gsd-discuss-phase 1 to select the next bounded guard scope. No further merge approval or status pass is needed.",
+  "after_merge": "$gsd-discuss-phase 1 selects the exact bounded guard scope; no automatic implementation.",
+  "bookkeeping": "Final receipt and approval are retained in the main-based checkout for the next substantive push; no duplicate receipt-only CI.",
+  "merge_command_after_approval": "gh pr merge 84 --squash --match-head-commit 885c6374fe99e88de7ae35913ed58d5e0612823c",
+  "approval": "INT-20261111-04",
+  "merge_commit": "1fb61faf700db5398d3174d94a967a9199b89a85",
+  "main_tree_matches_reviewed_candidate": true,
+  "main_ci": {
+    "url": "https://github.com/szTheory/fablebook/actions/runs/43061493617",
+    "head": "1fb61faf700db5398d3174d94a967a9199b89a85",
+    "event": "push",
+    "status": "success",
+    "jobs": [
+      {
+        "name": "floor",
+        "conclusion": "success",
+        "seconds": 663,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43061493617/job/130664975220"
+      },
+      {
+        "name": "core",
+        "conclusion": "success",
+        "seconds": 598,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43061493617/job/130664975423"
+      },
+      {
+        "name": "security",
+        "conclusion": "success",
+        "seconds": 25,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43061493617/job/130664975493"
+      },
+      {
+        "name": "dialyzer",
+        "conclusion": "success",
+        "seconds": 24,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43061493617/job/130664975548"
+      },
+      {
+        "name": "ci-health",
+        "conclusion": "skipped",
+        "seconds": 0,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43061493617/job/130664977454"
+      },
+      {
+        "name": "nightly",
+        "conclusion": "skipped",
+        "seconds": 0,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43061493617/job/130664977735"
+      },
+      {
+        "name": "ci-gate",
+        "conclusion": "success",
+        "seconds": 3,
+        "url": "https://github.com/szTheory/fablebook/actions/runs/43061493617/job/130671381648"
+      }
+    ]
+  },
+  "next_agent_action": "Planning repair delivery is complete. Preserve all gates; do not auto-start Phase 1.",
+  "working_checkout": ".claude/worktrees/agent-planning-main-261111",
+  "working_branch": "worktree-agent-planning-main-261111"
+}

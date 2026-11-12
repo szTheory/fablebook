@@ -12,7 +12,7 @@ defmodule Fablebook.Test.SweepEvidence do
   end
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
-  @archive_sha "9a49947455b5d4697f8fd122f0e6d92c7b94dba4641aba6c7e1ca4b0c400315d"
+  @archive_sha "7d4bd66fe72224cf49f849148b5e737443588ca66c12873938bfa30fa3d0ea58"
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -21,6 +21,28 @@ defmodule Fablebook.Test.SweepEvidence do
     "floor" => %{
       "otp" => ["27.3.4.9", "4aa809ae4eb4a20ad89c23837376acf179877f39"],
       "elixir" => ["1.18.5", "dfe6612e546cec6557900e67651f7d21805472ef"]
+    }
+  }
+  @inets_trace_source_identities %{
+    {"core", "inets/src/inets_app/inets_trace.erl"} => %{
+      "lane" => "core",
+      "source_path" => "inets/src/inets_app/inets_trace.erl",
+      "path" => "core/inets/src/inets_app/inets_trace.erl",
+      "url" =>
+        "https://raw.githubusercontent.com/erlang/otp/d199a49a01a2079afb6f2c5c9ae047cd4555e68d/lib/inets/src/inets_app/inets_trace.erl",
+      "bytes" => 11_112,
+      "sha256" => "1f67a0bda05227eddd8ffb4909ec8a31465ef2d8582e0ff9ff5d2b72638c7599",
+      "status" => "present"
+    },
+    {"floor", "inets/src/inets_app/inets_trace.erl"} => %{
+      "lane" => "floor",
+      "source_path" => "inets/src/inets_app/inets_trace.erl",
+      "path" => "floor/inets/src/inets_app/inets_trace.erl",
+      "url" =>
+        "https://raw.githubusercontent.com/erlang/otp/4aa809ae4eb4a20ad89c23837376acf179877f39/lib/inets/src/inets_app/inets_trace.erl",
+      "bytes" => 11_073,
+      "sha256" => "3e03ac1b03d2a01e7ddb1b1e29543e632aa3a63e16aa1f5a8c19ba935ae4dffd",
+      "status" => "present"
     }
   }
   @cn001_source_identities %{
@@ -370,6 +392,7 @@ defmodule Fablebook.Test.SweepEvidence do
       do: fail!(:manifest_inventory, Map.keys(files))
 
     Enum.each(records, &validate_record!(&1, files))
+    validate_inets_trace_source_inventory!(records)
     validate_asn1_inventory!(records)
     validate_asn1_external_transform_inventory!(records)
     validate_generator_dispatch_support_inventory!(records)
@@ -405,6 +428,7 @@ defmodule Fablebook.Test.SweepEvidence do
     validate_asn1_source_identity!(row)
     validate_asn1_external_transform_identity!(row)
     validate_generator_dispatch_support_identity!(row)
+    validate_inets_trace_source_identity!(row)
     data = Map.fetch!(files, path)
 
     if byte_size(data) != row["bytes"] or digest(data) != row["sha256"],
@@ -538,6 +562,23 @@ defmodule Fablebook.Test.SweepEvidence do
       unless Enum.any?(records, &(&1["lane"] == lane and &1["source_path"] == source_path)),
         do: fail!(:source_identity, {lane, source_path, :missing})
     end)
+  end
+
+  defp validate_inets_trace_source_identity!(row) do
+    identity = Map.get(@inets_trace_source_identities, {row["lane"], row["source_path"]})
+
+    if row["source_path"] == "inets/src/inets_app/inets_trace.erl" and row != identity,
+      do: fail!(:source_identity, {row, identity})
+  end
+
+  defp validate_inets_trace_source_inventory!(records) do
+    rows =
+      Enum.filter(records, &(&1["source_path"] == "inets/src/inets_app/inets_trace.erl"))
+      |> Enum.sort_by(& &1["lane"])
+
+    expected = @inets_trace_source_identities |> Map.values() |> Enum.sort_by(& &1["lane"])
+
+    if rows != expected, do: fail!(:source_identity, {rows, expected})
   end
 
   defp extract_files!(files) do
@@ -1563,6 +1604,353 @@ defmodule Fablebook.Test.GeneratorDispatchIntegrationEvidence do
   def all_edges(%{caller_a: caller_a, caller_b: caller_b}) do
     (Map.get(caller_a, :incoming_edges, []) ++ Map.get(caller_b, :incoming_edges, []))
     |> Enum.uniq_by(&{&1.caller, &1.callee})
+  end
+end
+
+defmodule Fablebook.Test.InetsTraceCoreEvidence do
+  @moduledoc false
+
+  @exact_sources [
+    {"inets/src/inets_app/inets.erl", 18_519,
+     "18d0c8091e7c9ce34fad897734c1b4105fd8c19d0912da28a32856664c760f00"},
+    {"inets/src/inets_app/inets_trace.erl", 11_112,
+     "1f67a0bda05227eddd8ffb4909ec8a31465ef2d8582e0ff9ff5d2b72638c7599"},
+    {"runtime_tools/src/dbg.erl", 105_185,
+     "d996e990b75251edb65d4930a1edf5c1914f6c18f77ac526313157612f95f5f2"}
+  ]
+
+  def record do
+    %{
+      lane: "core",
+      original_id: "EX-010",
+      owner: "01.1.1.4",
+      semantic_status: :pending,
+      checker_status: :candidate_only,
+      exact_sources: @exact_sources,
+      selected_function_evidence: [
+        function_evidence(
+          {:inets, :enable_trace, 2},
+          [
+            {"inets/src/inets_app/inets.erl:503", "inets_trace:enable(Level, Dest)"},
+            {"inets/src/inets_app/inets_trace.erl:65", "enable(Level, Dest)"},
+            {"inets/src/inets_app/inets_trace.erl:66", "enable(Level, Dest, all)"},
+            {"inets/src/inets_app/inets_trace.erl:90", "{Fun, _Data} = HandleSpec"},
+            {"runtime_tools/src/dbg.erl:1069", "tracer(process, {Handler,HandlerData})"},
+            {"runtime_tools/src/dbg.erl:2041", "Handler(Tr, Hdata)"}
+          ],
+          "Level and Dest pass unchanged through inets_trace:enable/2 and select a destination branch. The two-argument API fixes Service to all.",
+          "A list destination opens the caller-selected output file; an integer selects the fixed IP trace port; io selects standard output; {Fun, Data} passes the caller function and data to the process tracer.",
+          "The two-argument form fixes Service to all. The three-argument delegate accepts only all, httpc, or httpd before dispatch.",
+          "For {Fun, Data}, the caller-supplied function is retained as Handler and dbg invokes Handler(Trace, Data) in its tracer process for received events. Its implementation is caller code and is not recursively reviewed here.",
+          "The integer-port branch calls dbg:trace_port(ip, Port). That closure loads the fixed trace_ip_drv name from runtime_tools' private library directory and opens the resulting port; the native driver remains a fixed boundary.",
+          "The inspected path forwards values to fixed file, port, IO, service-validation, and callback operations. It does not derive a module name or evaluator input from Level, Dest, or Service. Callback semantics and dynamic callers remain outside this lane-local source conclusion."
+        ),
+        function_evidence(
+          {:inets, :enable_trace, 3},
+          [
+            {"inets/src/inets_app/inets.erl:505", "inets_trace:enable(Level, Dest, Service)"},
+            {"inets/src/inets_app/inets_trace.erl:68", "enable(Level, Dest, Service)"},
+            {"inets/src/inets_app/inets_trace.erl:69", "valid_trace_service(Service)"},
+            {"inets/src/inets_app/inets_trace.erl:85", "is_integer(Port)"},
+            {"inets/src/inets_app/inets_trace.erl:90", "is_function(Fun)"},
+            {"inets/src/inets_app/inets_trace.erl:94", "dbg:tracer(Type, HandleSpec)"},
+            {"inets/src/inets_app/inets_trace.erl:153", "Cond = [{ '=<', '$1', DetailLevel}]"},
+            {"runtime_tools/src/dbg.erl:1324", "Driver = \"trace_ip_drv\""},
+            {"runtime_tools/src/dbg.erl:2041", "Handler(Tr, Hdata)"}
+          ],
+          "Level, Dest, and Service pass unchanged from the exported wrapper. The delegate validates Service, then dispatches by destination and builds a fixed trace match specification from Level.",
+          "The same fixed list, integer-port, io, and {Fun, Data} branches apply. File paths select file output; integer ports select the fixed IP trace port; function destinations select the caller callback.",
+          "valid_trace_service/1 accepts all, httpc, and httpd; other services return an invalid_service error before destination dispatch.",
+          "A function destination reaches dbg:tracer(process, {Handler, HandlerData}); dbg later invokes the exact supplied Handler with each trace event and prior data. The callback body is outside OTP source authority.",
+          "The IP driver name is the fixed trace_ip_drv literal, loaded from runtime_tools' private library path before open_port. No caller-controlled driver or module name is constructed.",
+          "The selected path reaches fixed trace-pattern, service, output, and callback operations. The integer level is inserted as a comparison value in a generated match specification; it is not evaluated as source. No direct evaluator or atom-creation call is present in this path. Dynamic callers and callback implementation semantics remain unresolved."
+        )
+      ],
+      matched_mfas: [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}],
+      remainder_mfas: [],
+      incoming_edges: [],
+      delegate_edges: [
+        edge(
+          {:inets, :enable_trace, 2},
+          {:inets_trace, :enable, 2},
+          [{"inets/src/inets_app/inets.erl:503", "inets_trace:enable(Level, Dest)"}]
+        ),
+        edge(
+          {:inets, :enable_trace, 3},
+          {:inets_trace, :enable, 3},
+          [{"inets/src/inets_app/inets.erl:505", "inets_trace:enable(Level, Dest, Service)"}]
+        )
+      ],
+      reviews: [
+        review(
+          "inets/src/inets_app/inets.erl",
+          18_519,
+          1..566,
+          [
+            {"inets/src/inets_app/inets.erl:503", "inets_trace:enable(Level, Dest)"},
+            {"inets/src/inets_app/inets.erl:505", "inets_trace:enable(Level, Dest, Service)"}
+          ],
+          "Read the complete exact core module; the selected exports forward arguments directly to inets_trace."
+        ),
+        review(
+          "inets/src/inets_app/inets_trace.erl",
+          11_112,
+          1..355,
+          [
+            {"inets/src/inets_app/inets_trace.erl:69", "valid_trace_service(Service)"},
+            {"inets/src/inets_app/inets_trace.erl:78", "file:open(File, [write])"},
+            {"inets/src/inets_app/inets_trace.erl:86", "dbg:trace_port(ip, Port)"},
+            {"inets/src/inets_app/inets_trace.erl:90", "is_function(Fun)"},
+            {"inets/src/inets_app/inets_trace.erl:153", "DetailLevel"},
+            {"inets/src/inets_app/inets_trace.erl:174", "dbg:tp(MFA, Pattern)"}
+          ],
+          "Read the complete exact core module; validated services and explicit destination clauses reach fixed trace setup or a caller-supplied handler."
+        ),
+        review(
+          "runtime_tools/src/dbg.erl",
+          105_185,
+          1..3197,
+          [
+            {"runtime_tools/src/dbg.erl:1069", "tracer(process, {Handler,HandlerData})"},
+            {"runtime_tools/src/dbg.erl:1324", "trace_ip_drv"},
+            {"runtime_tools/src/dbg.erl:1341", "open_port({spawn, L}, [eof])"},
+            {"runtime_tools/src/dbg.erl:2030", "invoke_handler(Traces, Handler, Hdata)"},
+            {"runtime_tools/src/dbg.erl:2041", "Handler(Tr, Hdata)"}
+          ],
+          "Read the complete exact core module; the selected path reaches the process callback or a fixed native trace-port generator. Other debugger entry points are outside this call path."
+        )
+      ]
+    }
+  end
+
+  defp function_evidence(
+         mfa,
+         citations,
+         input_trace,
+         destination_dispatch,
+         service_validation,
+         callback_boundary,
+         fixed_native_boundary,
+         finding
+       ) do
+    %{
+      mfa: mfa,
+      citations: citations,
+      input_trace: input_trace,
+      destination_dispatch: destination_dispatch,
+      service_validation: service_validation,
+      callback_boundary: callback_boundary,
+      fixed_native_boundary: fixed_native_boundary,
+      disposition: :retained_callback_front_pending_integration,
+      finding: finding
+    }
+  end
+
+  defp review(source_path, bytes, reviewed_lines, citations, finding) do
+    {^source_path, ^bytes, sha256} = Enum.find(@exact_sources, &(elem(&1, 0) == source_path))
+
+    %{
+      source_path: source_path,
+      bytes: bytes,
+      sha256: sha256,
+      reviewed_lines: reviewed_lines,
+      citations: citations,
+      finding: finding
+    }
+  end
+
+  defp edge(caller, callee, citations),
+    do: %{caller: caller, callee: callee, citations: citations}
+end
+
+defmodule Fablebook.Test.InetsTraceFloorEvidence do
+  @moduledoc false
+
+  @exact_sources [
+    {"inets/src/inets_app/inets.erl", 18_409,
+     "d8786fea1edde0d055e7198cdb279e9a1999daa070d4dc229f3ec66b75e8bd5e"},
+    {"inets/src/inets_app/inets_trace.erl", 11_073,
+     "3e03ac1b03d2a01e7ddb1b1e29543e632aa3a63e16aa1f5a8c19ba935ae4dffd"},
+    {"runtime_tools/src/dbg.erl", 112_878,
+     "808aa7980e020fc529e153fc907b606fd0e2ff5fb4ad0b74e548b5eafaea0dae"}
+  ]
+
+  def record do
+    %{
+      lane: "floor",
+      original_id: "EX-010",
+      owner: "01.1.1.4",
+      semantic_status: :pending,
+      checker_status: :candidate_only,
+      exact_sources: @exact_sources,
+      selected_function_evidence: [
+        %{
+          mfa: {:inets, :enable_trace, 2},
+          disposition: :retained_callback_front_pending_integration,
+          citations: [
+            {"inets/src/inets_app/inets.erl:499", "inets_trace:enable(Level, Dest)"},
+            {"inets/src/inets_app/inets_trace.erl:63", "enable(Level, Dest)"},
+            {"inets/src/inets_app/inets_trace.erl:64", "enable(Level, Dest, all)"},
+            {"inets/src/inets_app/inets_trace.erl:88", "{Fun, _Data} = HandleSpec"},
+            {"runtime_tools/src/dbg.erl:1287", "tracer(process, {Handler,HandlerData})"},
+            {"runtime_tools/src/dbg.erl:2255", "Handler(Tr, Hdata)"}
+          ],
+          input_trace: "Level and Dest are forwarded unchanged; arity 2 supplies service all.",
+          destination_dispatch:
+            "List destinations open a file; integer destinations select the fixed IP trace port; io selects standard output; {Fun, Data} passes the caller function and data to the process tracer.",
+          service_validation:
+            "Arity 2 fixes service to all. The arity 3 path accepts only all, httpc, and httpd before dispatch.",
+          callback_boundary:
+            "The supplied function is invoked for each event by dbg with its prior data. The callback implementation is caller code and is outside this review.",
+          fixed_native_boundary:
+            "The integer-port case uses the fixed trace_ip_drv name in runtime_tools' private library path. Native driver internals are outside the source boundary.",
+          finding:
+            "The reviewed floor path forwards inputs to fixed file, port, IO, service, and callback operations. It does not derive module names, evaluator input, or atoms from these arguments. Dynamic callers and callback semantics remain unresolved."
+        },
+        %{
+          mfa: {:inets, :enable_trace, 3},
+          disposition: :retained_callback_front_pending_integration,
+          citations: [
+            {"inets/src/inets_app/inets.erl:501", "inets_trace:enable(Level, Dest, Service)"},
+            {"inets/src/inets_app/inets_trace.erl:66", "enable(Level, Dest, Service)"},
+            {"inets/src/inets_app/inets_trace.erl:67", "valid_trace_service(Service)"},
+            {"inets/src/inets_app/inets_trace.erl:83", "is_integer(Port)"},
+            {"inets/src/inets_app/inets_trace.erl:88", "is_function(Fun)"},
+            {"inets/src/inets_app/inets_trace.erl:92", "dbg:tracer(Type, HandleSpec)"},
+            {"inets/src/inets_app/inets_trace.erl:151", "Cond = [{ '=<', '$1', DetailLevel}]"},
+            {"runtime_tools/src/dbg.erl:1542", "Driver = \"trace_ip_drv\""},
+            {"runtime_tools/src/dbg.erl:2255", "Handler(Tr, Hdata)"}
+          ],
+          input_trace:
+            "Level, Dest, and Service reach the delegate unchanged; service validation precedes destination dispatch.",
+          destination_dispatch:
+            "The same fixed list, integer-port, io, and {Fun, Data} branches apply. File paths select file output; integer ports select the fixed IP trace port; function destinations select the caller callback.",
+          service_validation:
+            "valid_trace_service/1 accepts all, httpc, and httpd; all other services return invalid_service before destination handling.",
+          callback_boundary:
+            "A function destination reaches dbg:tracer(process, {Handler, HandlerData}); dbg invokes that exact handler with each trace event and prior data. Its body is caller code.",
+          fixed_native_boundary:
+            "The port branch loads the fixed trace_ip_drv literal from runtime_tools' private library path before opening the port; no caller-controlled driver name is constructed.",
+          finding:
+            "The floor source inserts an integer level only into a fixed comparison match specification and routes destinations to fixed operations. No direct evaluator or atom-creation call is reached in this path. Dynamic callers and callback implementation semantics remain unresolved."
+        }
+      ],
+      matched_mfas: [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}],
+      individual_exclusion_witnesses: [
+        %{
+          mfa: {:inets, :enable_trace, 2},
+          original_matcher: {{:inets, [:enable_trace]}, :own_native},
+          removed_matcher_exposes_mfa: true,
+          overlapping_matchers: []
+        },
+        %{
+          mfa: {:inets, :enable_trace, 3},
+          original_matcher: {{:inets, [:enable_trace]}, :own_native},
+          removed_matcher_exposes_mfa: true,
+          overlapping_matchers: []
+        }
+      ],
+      remainder_mfas: [],
+      incoming_edges: [],
+      delegate_edges: [
+        %{
+          caller: {:inets, :enable_trace, 2},
+          callee: {:inets_trace, :enable, 2},
+          citations: [{"inets/src/inets_app/inets.erl:499", "inets_trace:enable(Level, Dest)"}]
+        },
+        %{
+          caller: {:inets, :enable_trace, 3},
+          callee: {:inets_trace, :enable, 3},
+          citations: [
+            {"inets/src/inets_app/inets.erl:501", "inets_trace:enable(Level, Dest, Service)"}
+          ]
+        }
+      ],
+      reviews: [
+        %{
+          source_path: "inets/src/inets_app/inets.erl",
+          bytes: 18_409,
+          sha256: "d8786fea1edde0d055e7198cdb279e9a1999daa070d4dc229f3ec66b75e8bd5e",
+          reviewed_lines: 1..562,
+          citations: [
+            {"inets/src/inets_app/inets.erl:499", "inets_trace:enable(Level, Dest)"},
+            {"inets/src/inets_app/inets.erl:501", "inets_trace:enable(Level, Dest, Service)"}
+          ],
+          finding:
+            "Read the complete exact floor module; both selected exports forward arguments directly to inets_trace."
+        },
+        %{
+          source_path: "inets/src/inets_app/inets_trace.erl",
+          bytes: 11_073,
+          sha256: "3e03ac1b03d2a01e7ddb1b1e29543e632aa3a63e16aa1f5a8c19ba935ae4dffd",
+          reviewed_lines: 1..353,
+          citations: [
+            {"inets/src/inets_app/inets_trace.erl:67", "case valid_trace_service(Service)"},
+            {"inets/src/inets_app/inets_trace.erl:76", "file:open(File, [write])"},
+            {"inets/src/inets_app/inets_trace.erl:84", "dbg:trace_port(ip, Port)"},
+            {"inets/src/inets_app/inets_trace.erl:88", "is_function(Fun)"},
+            {"inets/src/inets_app/inets_trace.erl:151", "DetailLevel"},
+            {"inets/src/inets_app/inets_trace.erl:172", "dbg:tp(MFA, Pattern)"}
+          ],
+          finding:
+            "Read the complete exact floor module; service validation precedes explicit destination routing to fixed tracing operations or a caller-supplied handler."
+        },
+        %{
+          source_path: "runtime_tools/src/dbg.erl",
+          bytes: 112_878,
+          sha256: "808aa7980e020fc529e153fc907b606fd0e2ff5fb4ad0b74e548b5eafaea0dae",
+          reviewed_lines: 1..3392,
+          citations: [
+            {"runtime_tools/src/dbg.erl:1287", "tracer(process, {Handler,HandlerData})"},
+            {"runtime_tools/src/dbg.erl:1542", "trace_ip_drv"},
+            {"runtime_tools/src/dbg.erl:1556", "open_port({spawn, L}, [eof])"},
+            {"runtime_tools/src/dbg.erl:2244", "invoke_handler(Traces, Handler, Hdata)"},
+            {"runtime_tools/src/dbg.erl:2255", "Handler(Tr, Hdata)"}
+          ],
+          finding:
+            "Read the complete exact floor module; the selected path reaches the caller-supplied process handler or fixed native trace-port generator."
+        }
+      ]
+    }
+  end
+end
+
+defmodule Fablebook.Test.InetsTraceIntegrationEvidence do
+  @moduledoc false
+
+  alias Fablebook.Test.InetsTraceCoreEvidence
+  alias Fablebook.Test.InetsTraceFloorEvidence
+
+  @selected_mfas [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}]
+  @dispositions Map.new(@selected_mfas, &{&1, :retained_callback_front})
+
+  def selected_mfas, do: @selected_mfas
+  def dispositions, do: @dispositions
+  def guard_patterns, do: []
+
+  def lane_records do
+    [
+      InetsTraceCoreEvidence.record(),
+      InetsTraceFloorEvidence.record()
+    ]
+  end
+
+  def retention_basis do
+    "Both exact lanes forward level, destination and validated service to fixed tracing operations. " <>
+      "The function destination is caller code invoked by dbg, not caller text evaluated by this path; " <>
+      "the native trace driver name is fixed. Retain the original matcher for both callback fronts " <>
+      "without adding an evaluator or atom-creation guard."
+  end
+
+  def limits do
+    [
+      :dynamic_callers_unproven,
+      :caller_callback_body_unreviewed,
+      :native_driver_internals_unreviewed,
+      :static_evidence_only,
+      :aggregate_open,
+      :sec01_pending
+    ]
   end
 end
 

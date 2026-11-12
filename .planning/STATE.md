@@ -4,15 +4,17 @@ milestone: v0.2
 milestone_name: Guard coverage recovery
 current_phase: 1
 current_phase_name: Bounded guard continuation
-status: planning
-stopped_at: "PR #83 merged with green candidate and main CI. Owner-requested planning lifecycle repairs are under validation; Phase 1 remains unstarted."
-last_updated: "2026-11-11T16:01:47+00:00"
+status: executing
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-11-11T22:39:04.603Z"
 last_activity: 2026-11-11
+last_activity_desc: Plan 02 floor source evidence and controls completed; Plan 03 integration is next.
+state_head: c18e16700f4121bfc962599e5acc3e934bcac685
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 3
+  completed_plans: 2
   percent: 0
 ---
 
@@ -23,15 +25,15 @@ progress:
 See PROJECT.md, ROADMAP.md and migrations/2026-11-11-milestone-reset/README.md.
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** One bounded guard increment in v0.2. The complete future product is in references/PRODUCT-ROADMAP.md and references/PRODUCT-REQUIREMENTS.md. The former planning cycle is archived as superseded and incomplete.
+**Current focus:** Phase 1 — Bounded guard continuation
 
 ## Current Position
 
-Milestone: v0.2 Guard coverage recovery — PLANNING — NOT STARTED
-Phase: 1 of 1 — Bounded guard continuation
-Plan: Not planned
-Status: Planning health/repair audit in progress; Phase 1 unstarted
-Last activity: 2026-11-11 — Audited planning lifecycle and added recurrence checks; validating the repair candidate before owner review.
+Milestone: v0.2 Guard coverage recovery — EXECUTING — NOT DELIVERED
+Phase: 1 (Bounded guard continuation) — EXECUTING
+Plan: 3 of 3
+Status: Plans 01 and 02 complete; Plan 03 is next
+Last activity: 2026-11-11 — Plan 02 floor source evidence and controls completed; Plan 03 integration is next.
 
 ## Decisions and gates
 
@@ -56,12 +58,15 @@ PR #82 is squash-merged; required candidate and post-merge main CI passed. The r
 
 ## Session Continuity
 
-Working checkout: `.claude/worktrees/agent-planning-health-261111` on `worktree-agent-planning-health-261111`, based on merged PR #83. The dirty primary checkout is preserved; its local recovery pointer identifies this candidate.
+Working checkout: `.claude/worktrees/agent-planning-main-261111` on `gsd/phase-1-bounded-guard-continuation`, based directly on the approved PR #84 main merge. Plans 01 and 02 are complete; continue serially with Plan 03 in this pinned checkout. The dirty primary checkout and old PR worktree remain preserved.
 
-Last session: 2026-11-11T14:23:45.740145+00:00
-Stopped at: PR #83 merged with green candidate and main CI. Owner-requested planning lifecycle repairs are under validation; Phase 1 remains unstarted.
-Next action: Continue the authorized planning health/repair audit. No owner action is needed while checks and repairs proceed; do not start Phase 1 implementation.
-Resume file: None
+Last session: 2026-11-11T22:39:04.589Z
+
+Stopped at: Completed 01-02-PLAN.md
+
+Next action: Execute Plan 01-03 only after its own preflight and source-fit checks. Phase verification, ship preflight, approved merge, and delivery receipt remain required before phase completion. No automatic later phase.
+
+Resume file: .planning/phases/01-bounded-guard-continuation/01-03-PLAN.md
 
 ## Migration delivery receipt
 
@@ -70,3 +75,24 @@ PR #83 is squash-merged; required candidate CI 43040038122 and post-merge main C
 ## Planning health repair
 
 See audits/2026-11-11-planning-health/ and references/PLANNING-LIFECYCLE.md. Repairs cover stale routes/seeds, the generated cache, future prerequisites, bounded milestone exits and delivery-aware reentry prevention. The complete guard aggregate remains open; Walking skeleton is blocked and SEC-01 remains Pending with its future owner. This repair does not deliver v0.2 Phase 1. No product/guard implementation starts without its scope boundary.
+
+PR #84 candidate CI 43054428068 passed at the reviewed source; audits/2026-11-11-planning-health/DELIVERY.json records the reviewed head, owner approval, actual merge and main CI status. Final receipt-only bookkeeping is local for the next substantive push; the remote candidate remains the green head.
+
+INT-20261111-04 approves the PR #84 squash merge. Fresh main matches the complete reviewed tree; required main CI 43061493617 passed at the verified merge. No phase implementation delivery is recorded by this maintenance merge.
+
+Planning repair delivery is complete. Full candidate and main core/floor/Dialyzer/security/ci-gate passed; scope and receipts are in audits/2026-11-11-planning-health/DELIVERY.json. The maintenance merge does not close the guard aggregate or deliver Phase 1. No further merge approval or status command is needed.
+
+## Performance Metrics
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 01 P01 | 89m | 2 tasks | 4 files |
+| Phase 01 P02 | 40min | 2 tasks | 5 files |
+
+## Decisions
+
+- [Phase 01]: Keep EX-010 pending and checker status candidate-only until independent floor and integration work.
+- [Phase 01]: Preserve the dynamic-caller and caller-supplied callback limits; graph membership is not runtime proof.
+- [Phase 01]: Keep EX-010 pending and checker status candidate-only; the floor source review does not decide integration or runtime safety.
+- [Phase 01]: Resolve the identical source path separately by lane so core citations cannot be supplied by floor bytes or vice versa.
+- [Phase 01]: Run the two core-only EX-010 tests on the core lane and exclude only those tagged tests from the floor lane.

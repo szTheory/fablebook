@@ -5,6 +5,7 @@ defmodule Fablebook.Contract.BannedCallsTest do
   alias Credo.Test.CheckRunner
   alias Fablebook.Credo.BannedCalls
   alias Fablebook.Test.BeamWalker
+  alias Fablebook.Test.InetsTraceFloorEvidence
   alias Fablebook.Test.InstalledOtp
 
   Code.ensure_loaded?(BannedCalls) ||
@@ -685,6 +686,142 @@ defmodule Fablebook.Contract.BannedCallsTest do
     end
 
     assert credo_issues("Regex.compile(pattern)", "leex_benign.ex") == []
+  end
+
+  @tag :tmp_dir
+  @tag :inets_trace_core_controls
+  @tag :inets_trace_guards
+  test "retained inets trace APIs reconcile uncalled direct, capture and apply forms",
+       %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    selected = [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}]
+    active_tier = BannedCalls.banned_mfas()
+    refute Enum.any?(selected, &(&1 in active_tier))
+
+    for mfa <- selected, form <- [:direct, :capture, :apply] do
+      {module, function, arity} = mfa
+
+      body =
+        case {form, arity} do
+          {:direct, 2} ->
+            "def probe(level, destination), do: :inets.enable_trace(level, destination)"
+
+          {:direct, 3} ->
+            "def probe(level, destination, service), do: :inets.enable_trace(level, destination, service)"
+
+          {:capture, _} ->
+            "def probe, do: &:inets.enable_trace/#{arity}"
+
+          {:apply, 2} ->
+            "def probe(level, destination), do: apply(:inets, :enable_trace, [level, destination])"
+
+          {:apply, 3} ->
+            "def probe(level, destination, service), do: apply(:inets, :enable_trace, [level, destination, service])"
+        end
+
+      source = """
+      defmodule Fablebook.GuardFixture.InetsTrace#{arity}#{Macro.camelize(to_string(form))} do
+        #{body}
+      end
+      """
+
+      filename = "inets_trace_#{arity}_#{form}.ex"
+      path = Path.join(dir, filename)
+      File.write!(path, source)
+
+      assert credo_issues(source, filename) == [],
+             "candidate-only #{inspect(mfa)} activated Credo"
+
+      [beam] = compile!([path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      assert Enum.any?(scan.xref_edges, fn {_caller, callee} -> callee == mfa end),
+             "static xref lowering missed #{form} candidate form for #{inspect(mfa)}"
+
+      refute Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "active checker unexpectedly reported candidate-only #{inspect(mfa)}"
+
+      assert hits(scan, []) == []
+      assert module == :inets and function == :enable_trace
+    end
+
+    assert credo_issues(
+             "quote do: :inets.enable_trace(level, destination)",
+             "inets_trace_quoted.ex"
+           ) == []
+
+    assert credo_issues(
+             "defmodule TraceSource do\n:inets.enable_trace(level, destination)\nend",
+             "inets_trace_body.ex"
+           ) == []
+
+    assert credo_issues("Regex.compile(pattern)", "inets_trace_benign.ex") == []
+  end
+
+  @tag :tmp_dir
+  @tag :inets_trace_floor_controls
+  @tag :inets_trace_guards
+  test "floor inets trace forms compile without invoking the reviewed API", %{tmp_dir: dir} do
+    unless Process.whereis(Credo.Supervisor),
+      do: {:ok, _} = Application.ensure_all_started(:credo)
+
+    record = InetsTraceFloorEvidence.record()
+    assert record.lane == "floor"
+    selected = Enum.map(record.selected_function_evidence, & &1.mfa)
+    assert selected == [{:inets, :enable_trace, 2}, {:inets, :enable_trace, 3}]
+    active_tier = BannedCalls.banned_mfas()
+    refute Enum.any?(selected, &(&1 in active_tier))
+
+    for {module, function, arity} = mfa <- selected,
+        form <- [:direct, :capture, :apply] do
+      body =
+        case {form, arity} do
+          {:direct, 2} ->
+            "def probe(level, destination), do: :inets.enable_trace(level, destination)"
+
+          {:direct, 3} ->
+            "def probe(level, destination, service), do: :inets.enable_trace(level, destination, service)"
+
+          {:capture, _} ->
+            "def probe, do: &:inets.enable_trace/#{arity}"
+
+          {:apply, 2} ->
+            "def probe(level, destination), do: apply(:inets, :enable_trace, [level, destination])"
+
+          {:apply, 3} ->
+            "def probe(level, destination, service), do: apply(:inets, :enable_trace, [level, destination, service])"
+        end
+
+      source = """
+      defmodule Fablebook.GuardFixture.InetsTraceFloor#{arity}#{Macro.camelize(to_string(form))} do
+        #{body}
+      end
+      """
+
+      filename = "inets_trace_floor_#{arity}_#{form}.ex"
+      path = Path.join(dir, filename)
+      File.write!(path, source)
+
+      assert credo_issues(source, filename) == [],
+             "candidate-only floor #{inspect(mfa)} activated Credo"
+
+      [beam] = compile!([path], dir, true)
+      assert {:ok, scan} = BeamWalker.scan(beam)
+
+      assert Enum.any?(scan.xref_edges, fn {_caller, callee} -> callee == mfa end),
+             "static xref lowering missed floor #{form} form for #{inspect(mfa)}"
+
+      refute Enum.any?(hits(scan), &mfa_hit?(&1, mfa)),
+             "active checker unexpectedly reported floor candidate-only #{inspect(mfa)}"
+
+      assert hits(scan, []) == []
+      assert module == :inets and function == :enable_trace
+    end
+
+    benign = ":inets.start(:httpc, [])"
+    assert credo_issues(benign, "inets_trace_floor_benign.ex") == []
   end
 
   @tag :tmp_dir

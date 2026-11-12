@@ -50,3 +50,23 @@ PR #83's required candidate and post-merge main CI passed. Main run 43042576747 
 This repair candidate must pass the full required hosted checks before owner merge. The guard aggregate and walking-skeleton stop remain open; SEC-01 and three carried UAT/observation groups retain their owners. Original brand assets remain uncommitted/unapplied in the preserved primary checkout. No release, production deployment, live safety test, scope acceptance or automatic implementation is authorized by this audit.
 
 Next action: finish candidate CI and present its concrete merge decision. After landing, `$gsd-discuss-phase 1` selects a bounded source scope; the owner need not rerun a status command. This is recurrence protection for observed failure modes, not a guarantee against every possible future planning error.
+
+## Final candidate receipt
+
+[PR #84](https://github.com/szTheory/fablebook/pull/84) passed all required [hosted CI](https://github.com/szTheory/fablebook/actions/runs/43054428068) at the exact reviewed source head. GitHub reports clean and mergeable. Full core/floor, Dialyzer, security and ci-gate succeeded; scheduled-only jobs were correctly skipped. Source hashes still match local validation. Earlier pending-hosted statements are historical validation snapshots, superseded by this receipt. DELIVERY.json binds the PR, source/base, run event, jobs and exact guarded merge command. Owner merge is still pending; no approval is inferred from green CI.
+
+Core/floor overlapped, taking 593s/689s; their main CI/test steps took 574s/666s and setup 10s/11s. Compare PR #83 candidate 571s/599s and main 539s/648s: test time remains the critical path, with short cached setup and run-to-run variation. No evidence supports a repeatable safe step removal, added cache/concurrency or dependency. Preserve timing objectives and all gates. No receipt-only CI rerun is warranted.
+
+A separate read-only inventory of the preserved primary checkout covers 403 planning files / 250,254,257 bytes, 52 planning working changes, 65 JSON documents and 25 compressed JSONL streams; zero structured/gzip errors. Those local candidates remain preserved for provenance reconciliation before any future use. Only the prior agent-added recovery pointer was updated, preserving its pre-existing prefix. No primary branch/source/artifact or brand asset was reset, stashed, cleaned, moved or adopted.
+
+The final verification/receipt is retained locally and carried on the next substantive push; the PR source stays at its green reviewed head. Agent work on this repair is ready for the owner's squash-merge decision. The active guard milestone/Phase 1 stays unstarted; global product blockers and all old safety stops remain. No user status command is needed. After landing, `$gsd-discuss-phase 1` scopes the next bounded increment.
+
+## Approved merge and final main verification
+
+INT-20261111-04 records the owner's approval. PR #84 was squash-merged as recorded in DELIVERY.json with the exact reviewed-head guard. Fresh origin/main's complete tree matches the green reviewed candidate. Required [main CI 43061493617](https://github.com/szTheory/fablebook/actions/runs/43061493617) passed at that merge: core, floor, security, Dialyzer and ci-gate all succeeded. Earlier pending-approval/main statements above are historical snapshots, superseded here.
+
+Main core/floor overlapped at 598s/663s; their CI/test steps took 578s/638s with 11s setup each. Compared with this PR's candidate at 593s/689s and the prior reset receipts, test time still dominates and varies. No repeatable gate-preserving shortcut is established; keep quality gates and visible non-blocking timing objectives. No extra workflow/cache/concurrency/dependency change or receipt-only run is justified.
+
+A supported fresh checkout based directly on the approved main merge is now the active recovery baseline: `.claude/worktrees/agent-planning-main-261111`, branch `worktree-agent-planning-main-261111`. Only verified receipt/approval bookkeeping was carried forward; reviewed source hashes remain identical. The primary checkout's previous agent-added recovery block points there, preserving all earlier bytes. Primary and old PR/recovery worktrees remain intact. No agent-isolation or new phase dispatch is claimed.
+
+The merge/repair delivery is complete. Final proof and owner approval are saved locally for the next substantive push, and the closed PR links both green CI runs for remote reconciliation. There is no remaining merge approval or status-only task. The owner may run `$gsd-discuss-phase 1` to select the next bounded guard scope; Phase 1 remains unstarted, the full guard aggregate stays open and the product gate stays blocked.
