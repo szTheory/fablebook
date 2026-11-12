@@ -1,7 +1,7 @@
 defmodule Fablebook.Planning.IntentTest do
   use ExUnit.Case, async: true
 
-  alias Fablebook.Test.GitDiff
+  alias Fablebook.Test.{GitDiff, PlanningState}
 
   @moduletag :planning
 
@@ -146,10 +146,75 @@ defmodule Fablebook.Planning.IntentTest do
   end
 
   test "every real REQ line is cited, unique and traced once" do
-    text = File.read!(@requirements)
+    text = requirements_text(File.cwd!(), PlanningState.check(File.cwd!()))
 
     assert text =~ "## Traceability"
     assert req_violations(text, real_ints(), real_adrs()) == []
+  end
+
+  @tag :tmp_dir
+  test "active requirements remain authoritative when an archive exists", %{tmp_dir: root} do
+    archived = archived_requirements(root, "v0.2", "archived")
+    active = Path.join(root, @requirements)
+    File.write!(active, "active")
+
+    assert File.regular?(archived)
+    assert requirements_text(root, %{errors: [], phase: nil, milestone: "v0.2"}) == "active"
+  end
+
+  @tag :tmp_dir
+  test "a coherent between-milestone state validates its own archived requirements", %{
+    tmp_dir: root
+  } do
+    text = requirements(["A-01"], ["A-01"])
+    path = archived_requirements(root, "v0.2", text)
+    state = %{errors: [], phase: nil, milestone: "v0.2"}
+
+    assert requirements_text(root, state) == text
+    assert req_violations(requirements_text(root, state)) == []
+
+    File.write!(path, String.replace(text, "INT-20260101-01", "INT-20260101-09"))
+
+    assert req_violations(requirements_text(root, state)) == [{:uncited_req, 1, "A-01"}]
+  end
+
+  @tag :tmp_dir
+  test "missing active requirements cannot borrow an archive for an active or invalid state", %{
+    tmp_dir: root
+  } do
+    archived_requirements(root, "v0.2", "archived")
+
+    for state <- [
+          %{errors: [], phase: "1", milestone: "v0.2"},
+          %{errors: [%{code: "snapshot_milestone"}], phase: nil, milestone: "v0.2"},
+          %{errors: [], phase: nil, milestone: "v0.3"}
+        ] do
+      assert_raise File.Error, fn -> requirements_text(root, state) end
+    end
+  end
+
+  defp archived_requirements(root, version, text) do
+    path = Path.join(root, ".planning/milestones/#{version}-REQUIREMENTS.md")
+    File.mkdir_p!(Path.dirname(path))
+    File.write!(path, text)
+    path
+  end
+
+  defp requirements_text(root, planning_state) do
+    active = Path.join(root, @requirements)
+
+    path =
+      case planning_state do
+        %{errors: [], phase: nil, milestone: version} ->
+          if File.exists?(active),
+            do: active,
+            else: Path.join(root, ".planning/milestones/#{version}-REQUIREMENTS.md")
+
+        _ ->
+          active
+      end
+
+    File.read!(path)
   end
 
   defp add_only_violations(changes) do
