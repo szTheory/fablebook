@@ -64,6 +64,7 @@ Keep these explicit rather than silently treating them as accepted product polic
 
 ## Related planning records
 
+- Next brand and Chatly handoff: [Clinicly next; Chatly and Logistify handoff lessons](../notes/2026-11-11-clinicly-next-brand-handoff.md) (INT-20261111-12). Read before preparing or integrating the next fictional adopter brand; recommendations are not approved implementation or schema decisions.
 - Owner intent: `.planning/intent/sources/2026-11-10-08-logistify-brand-intake.md` (`INT-20261110-08`).
 - Phase context: `.planning/references/PRODUCT-ROADMAP.md`, Design canon and adopter Books / Phase 4 (legacy Phase 17); canon contract: `docs/adr/0012-canon-format.md`.
 - Seed: `.planning/seeds/SEED-261110-iry-logistify-phase17-brand-intake.md`.

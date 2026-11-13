@@ -41,3 +41,11 @@ Ahead/behind and tree differences are measured against `origin/main` at `3817912
 The v0.3 archive was completed on the isolated local branch `gsd/v0.3-milestone-closeout` at `2f794ad`. Its archive files have been transferred to primary `main`, where an annotated local `v0.3` tag now exists. The staging clone remains preserved at `/private/tmp/fablebook-v03-closeout` for provenance. No remote ref was changed.
 
 Every retained checkout and divergent branch is owned by Jon, with review by 2026-12-13. The only canonical planning checkout is now `~/projects/fablebook` on `main`. This inventory does not authorize deleting preserved work or starting a product scope. The next milestone workflow will wait for the owner to state what should be built next.
+
+## Post-close triage — 2026-11-13
+
+At the start of this follow-up triage, the canonical checkout was clean on main at 5988c3c with seven local commits ahead of origin/main. The v0.3 annotated tag and closeout remain local; no remote ref was pushed.
+
+The historical .claude/worktrees/agent-planning-main-261111 checkout remains unchanged on branch gsd/phase-1-bounded-guard-continuation at df17c24, with its nine dirty or untracked paths preserved. Its 02-04 plan, 02-05 plan and plan review are byte-identical to their v0.3 archived copies. Its tier-sweep and intent tests match the canonical main files. The old untracked 02-UAT is partial and predates final delivery; use the archived 5/5 UAT instead. The old floor guard test has an extra :floor module tag that was not merged or separately validated. The old Logistify intake pointer is now present in the canonical intake. Its seed is the earlier dormant copy; the canonical seed records the completed reconciliation. These differences remain on the historical branch for later owner review.
+
+No worktree was reset, stashed, cleaned or removed during this triage. The canonical main checkout is the clean active home; the historical worktree stays dirty by design until its retained material has an explicit disposition.
