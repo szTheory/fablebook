@@ -329,17 +329,30 @@ defmodule Fablebook.Test.PlanningState do
         "delivery_sequence",
         phase_numbers
       ) ++
-      Enum.flat_map(records, fn record ->
-        valid =
-          integer_id?(record["phase"]) and version?(record["milestone"]) and
-            is_binary(record["milestone_key"]) and
-            record["status"] == "merged" and is_integer(record["pr"]) and record["pr"] > 0 and
-            Enum.all?(~w(reviewed_head merge_commit), &sha?(record[&1])) and
-            is_binary(record["ci_run"]) and
-            String.starts_with?(record["ci_run"], "https://github.com/")
+      Enum.flat_map(records, &delivery_record_errors/1)
+  end
 
-        require_true(valid, "invalid_delivery", record["phase"])
-      end)
+  defp delivery_record_errors(record) do
+    require_true(valid_delivery_record?(record), "invalid_delivery", record["phase"])
+  end
+
+  defp valid_delivery_record?(record) do
+    valid_delivery_identity?(record) and valid_delivery_outcome?(record) and
+      valid_delivery_receipt?(record)
+  end
+
+  defp valid_delivery_identity?(record) do
+    integer_id?(record["phase"]) and version?(record["milestone"]) and
+      is_binary(record["milestone_key"])
+  end
+
+  defp valid_delivery_outcome?(record) do
+    record["status"] == "merged" and is_integer(record["pr"]) and record["pr"] > 0
+  end
+
+  defp valid_delivery_receipt?(record) do
+    Enum.all?(~w(reviewed_head merge_commit), &sha?(record[&1])) and
+      is_binary(record["ci_run"]) and String.starts_with?(record["ci_run"], "https://github.com/")
   end
 
   defp phase_sequence_errors(phases, deliveries, current_milestone) do
