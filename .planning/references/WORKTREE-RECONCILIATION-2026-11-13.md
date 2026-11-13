@@ -38,6 +38,6 @@ Ahead/behind and tree differences are measured against `origin/main` at `3817912
 
 ## Staging clone and next owner action
 
-The v0.3 archive was completed on the isolated local branch `gsd/v0.3-milestone-closeout` at `2f794ad`, with an annotated local `v0.3` tag. Its archive files are being transferred to the canonical primary checkout; the staging clone remains preserved at `/private/tmp/fablebook-v03-closeout` for provenance. No remote ref was changed.
+The v0.3 archive was completed on the isolated local branch `gsd/v0.3-milestone-closeout` at `2f794ad`. Its archive files have been transferred to primary `main`, where an annotated local `v0.3` tag now exists. The staging clone remains preserved at `/private/tmp/fablebook-v03-closeout` for provenance. No remote ref was changed.
 
 Every retained checkout and divergent branch is owned by Jon, with review by 2026-12-13. The only canonical planning checkout is now `~/projects/fablebook` on `main`. This inventory does not authorize deleting preserved work or starting a product scope. The next milestone workflow will wait for the owner to state what should be built next.

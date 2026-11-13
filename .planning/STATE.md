@@ -4,7 +4,7 @@ milestone: v0.3
 milestone_name: Bounded ASN.1 RTT Guard Evidence
 status: complete
 stopped_at: v0.3 archived locally; worktree inventory completed; next milestone scope awaits owner input
-last_updated: "2026-11-13T17:52:28Z"
+last_updated: "2026-11-13T17:57:18Z"
 last_activity: 2026-11-13
 last_activity_desc: Milestone v0.3 completed and archived
 state_head: 35cb6d841fa60708cb5b2546eb7b1c570f596ae9
@@ -137,14 +137,14 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning checkout: `~/projects/fablebook` on `main`; the completed v0.3 archive is being reconciled here. The four pre-existing dirty audit/state files were incorporated and the full [worktree inventory](references/WORKTREE-RECONCILIATION-2026-11-13.md) identifies this as the sole active planning checkout. The stale Phase 1 worktree and all other divergent branches remain preserved. Quick-task directories are unchanged. The staging clone at `/private/tmp/fablebook-v03-closeout` remains for provenance; no remote ref was pushed. PR #88 is merged at `3817912c861286608183c057d2e38ff7a260bd6e`; final UAT, security, delivery registry, CI timing, requirements and goal-verification artifacts are archived. The former dirty checkout remains on `archive/primary-dirty-checkout-20261113`; old local main history remains on `archive/main-before-sync-20261113`.
+Active planning checkout: `~/projects/fablebook` on `main`; the v0.3 archive and annotated local tag are now present here. The four pre-existing dirty audit/state files were incorporated and the full [worktree inventory](references/WORKTREE-RECONCILIATION-2026-11-13.md) identifies this as the sole active planning checkout. The stale Phase 1 worktree and all other divergent branches remain preserved. Quick-task directories are unchanged. The staging clone at `/private/tmp/fablebook-v03-closeout` remains for provenance; no remote ref was pushed. PR #88 is merged at `3817912c861286608183c057d2e38ff7a260bd6e`; final UAT, security, delivery registry, CI timing, requirements and goal-verification artifacts are archived. The former dirty checkout remains on `archive/primary-dirty-checkout-20261113`; old local main history remains on `archive/main-before-sync-20261113`.
 
 Separate brand intake: `origin/agent-brand-intake-261111` at `1ad8bde`;
 [the intake handoff](references/fablebook-brand-intake.md) owns future use.
 INT-20261111-06, INT-20261111-07 and INT-20261111-08 and the handoff pointer are retained unchanged. Assets are
 unapplied; source/instructions/seed/brief remain on their separate branch.
 
-Last session: 2026-11-13T17:52:28Z
+Last session: 2026-11-13T17:57:18Z
 
 Stopped at: v0.3 archive/tag is local and the worktree inventory is complete. The complete EX-107 row and remainder, static-only evidence limit, manual collision owner stop, Walking Skeleton block and SEC-01 Pending status remain unchanged.
 
