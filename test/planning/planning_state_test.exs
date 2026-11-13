@@ -108,9 +108,7 @@ defmodule Fablebook.Planning.PlanningStateTest do
     assert read_json(root, @gates)["gates"] |> hd() |> Map.fetch!("status") == "open"
   end
 
-  test "a stale router cannot reopen a delivered phase; versions distinguish repeated Phase 1", %{
-    root: root
-  } do
+  test "delivered IDs stay unique across milestones", %{root: root} do
     activate(root, "v0.2", "guard-recovery", ["1", "2"], "2")
     deliver(root)
     result = PlanningState.check(root)
@@ -121,10 +119,13 @@ defmodule Fablebook.Planning.PlanningStateTest do
       assert "delivered_phase_reentry" in codes(PlanningState.check(root, stage, "1"))
     end
 
-    activate(root, "v0.3", "guard-recovery", ["1"], "1")
+    activate(root, "v0.3", "guard-recovery", ["2"], "2")
     assert_ok(root, "discuss")
-    assert PlanningState.check(root).route_phase == "1"
+    assert PlanningState.check(root).route_phase == "2"
     assert_error(root, "discuss", "requested_phase", "01.1.1.18")
+
+    deliver(root, "v0.3", "guard-recovery", "1")
+    assert_error(root, "status", "duplicate_delivery")
   end
 
   test "a decorated generated milestone is accepted but stale phase and milestone caches fail", %{
@@ -196,21 +197,32 @@ defmodule Fablebook.Planning.PlanningStateTest do
   end
 
   test "typed prerequisites require merged receipts before later implementation", %{root: root} do
-    activate(root, "v0.3", "story-model", ["1", "2"], "2")
-    plan(root, "2", "2")
-    assert_error(root, "execute", "prerequisite_not_delivered")
-    deliver(root, "v0.2", "story-model", "1")
-    assert_error(root, "execute", "prerequisite_not_delivered")
-    deliver(root, "v0.3", "story-model", "1")
-    assert_ok(root, "execute")
-    activate(root, "v0.4", "controls-bundle", ["1"], "1")
-    plan(root)
+    deliver(root)
+
+    update_json(root, @mapping, fn mapping ->
+      mapping
+      |> put_in(["future_phases", Access.at(0), "phase"], 2)
+      |> put_in(["future_phases", Access.at(1), "phase"], 3)
+      |> put_in(["future_phases", Access.at(1), "depends_on"], ["story-model:2"])
+      |> put_in(["future_phases", Access.at(2), "phase"], 4)
+      |> put_in(["future_phases", Access.at(2), "depends_on"], ["story-model:3"])
+    end)
+
+    update_json(root, @gates, &put_in(&1, ["requirement_owners", "SEC-01"], "controls-bundle:4"))
+
+    activate(root, "v0.3", "story-model", ["2", "3"], "3")
+    plan(root, "3", "3")
     assert_error(root, "execute", "prerequisite_not_delivered")
     deliver(root, "v0.3", "story-model", "2")
     assert_ok(root, "execute")
+    activate(root, "v0.4", "controls-bundle", ["4"], "4")
+    plan(root, "4", "4")
+    assert_error(root, "execute", "prerequisite_not_delivered")
+    deliver(root, "v0.3", "story-model", "3")
+    assert_ok(root, "execute")
   end
 
-  test "future Phase 1 can start but cannot bypass its aggregate gate", %{root: root} do
+  test "initial global Phase 1 can start but cannot bypass its aggregate gate", %{root: root} do
     activate(root, "v0.9", "walking-skeleton", ["1"], "1")
     assert_error(root, "discuss", "milestone_prerequisite_open")
 

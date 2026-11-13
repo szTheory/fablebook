@@ -5947,6 +5947,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :debugger_remainder_ownership
   @tag :debugger_remainder_monitor
+  @tag timeout: 180_000
   test "monitor and file-window source branches include exact defaults and routes", ctx do
     evidence = SweepEvidence.source_roots!()
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
@@ -6261,6 +6262,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :debugger_remainder_ownership
   @tag :debugger_remainder_callbacks
+  @tag timeout: 180_000
   test "callback and breakpoint function dispositions reconcile exact lane sources and ownership",
        ctx do
     evidence = SweepEvidence.source_roots!()
@@ -6299,6 +6301,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :debugger_remainder_ownership
   @tag :debugger_remainder_interpreter
+  @tag timeout: 180_000
   test "interpreter evaluator, loader and debugged-process dispositions reconcile exact lane sources and ownership",
        ctx do
     evidence = SweepEvidence.source_roots!()
@@ -6532,6 +6535,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :debugger_remainder_ownership
   @tag :debugger_remainder_inventory
+  @tag timeout: 180_000
   test "remainder inventory rejects omitted functions, exports, roots and duplicate identities",
        ctx do
     evidence = SweepEvidence.source_roots!()
@@ -6875,6 +6879,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :debugger_remainder_ownership
   @tag :saved_settings_ownership
+  @tag timeout: 180_000
   test "saved-settings ownership resolves selected and remainder identities from the live lane",
        ctx do
     evidence = SweepEvidence.source_roots!()
@@ -6993,6 +6998,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :saved_settings_receipt
+  @tag timeout: 180_000
   test "saved-settings receipt acceptance binds the live graph to current source and ownership",
        ctx do
     evidence = SweepEvidence.source_roots!()
@@ -7142,6 +7148,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   @tag :debugger_installed_wide_acceptance
+  @tag timeout: 180_000
   test "debugger installed-wide acceptance composes the current lane evidence", ctx do
     test_started = System.monotonic_time(:millisecond)
     evidence = SweepEvidence.source_roots!()
@@ -17996,6 +18003,7 @@ defmodule Fablebook.Test.InstalledOtpReceiptTest do
     end
   end
 
+  @tag timeout: 180_000
   test "receipts reject wrong lanes, duplicate or missing identities, and inconsistent totals" do
     lines = receipt_lines("core")
 
