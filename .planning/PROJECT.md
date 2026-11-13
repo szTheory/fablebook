@@ -12,17 +12,55 @@ Fablebook is a Storybook-style workbench for Phoenix LiveView. It renders every 
 
 If everything else fails, a scenario must still render with production fidelity and export an accurate context bundle. The owner keeps using phoenix_storybook until Fablebook clears `.planning/intent/CLEARANCE.md`. (INT-20261028-04)
 
-**Design canon milestone / Phase 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
+**Design canon milestone / local slot 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
 
-## Current Milestone: v0.2 Guard coverage recovery
+## Current Milestone: v0.3 Bounded ASN.1 RTT Guard Evidence
 
-Planning reset under INT-20261111-01. Deliver one bounded guard increment with ordinary Phase 1, preserving the full unfinished aggregate and all gates. The full product requirement register is references/PRODUCT-REQUIREMENTS.md; future bounded milestones and old-to-new addresses are in references/PRODUCT-ROADMAP.md. The old unversioned cycle is archived as v0.1, explicitly superseded and incomplete. No product implementation or release is started by this reset.
+**Goal:** Establish source-backed dispositions for three pending EX-107 RTT functions on both pinned lanes while preserving the original row and every wider safety gate.
+
+**Target features:**
+- Revalidate current EX-107 membership, the selected three functions, and the remaining complement on core and floor before executable phase planning.
+- Record lane-specific source and caller evidence for `assert_defined/1`, `code/0`, and `dependencies/1`, with individual controls and the existing byte-only check for the large literal table.
+- Preserve the source, context and effort limits; do not invoke audited functions or claim runtime safety, full-row closure, aggregate closure, or automatic follow-up.
+
+## Current State
+
+v0.2 Guard coverage recovery is complete and archived (2026-11-11 local).
+Its selected EX-010 tracing-front static source coverage passed the scoped
+milestone audit and was delivered through approved PR #85 with green actual
+main CI. Five older artifacts remain explicitly acknowledged and unresolved;
+see [the closeout receipt](milestones/v0.2-CLOSEOUT.md). This was a bounded
+development milestone, not a package release or runtime-safety proof.
+
+v0.3 scope, requirements, and its one-phase roadmap are approved. Its first phase is global Phase 2; discussion has not started (INT-20261112-03, INT-20261112-04). The complete guard aggregate and installed-wide
+remainder stay open; Walking Skeleton remains blocked; SEC-01 remains Pending
+with Controls and first bundle / its first local slot, which receives a global
+phase number when that milestone activates. The v0.1 cycle stays superseded and
+incomplete. See [the full product register](references/PRODUCT-REQUIREMENTS.md),
+[future product roadmap](references/PRODUCT-ROADMAP.md), [v0.2 delivery](milestones/v0.2-phases/01-bounded-guard-continuation/01-MERGE.md),
+and [archived v0.2 requirements](milestones/v0.2-REQUIREMENTS.md).
+
+## Next Milestone Goals
+
+No automatic follow-up is selected. After v0.3, the owner chooses another
+bounded guard increment or a different scope at the next milestone boundary.
+Product milestones retain their typed prerequisites and the open guard gate.
+The rolling product direction is recorded in
+[PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md) (INT-20261111-13).
 
 ## Requirements
 
-The lists below summarize the wider v1 product vision; they are not the active milestone scope or a live progress ledger. Use REQUIREMENTS.md for current acceptance and references/PRODUCT-REQUIREMENTS.md for carried product status/citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
+The lists below summarize the wider v1 product vision; they are not the active milestone scope or a live progress ledger. Use the current milestone REQUIREMENTS.md when present for active acceptance; use milestones/v0.2-REQUIREMENTS.md for the archived v0.2 acceptance and references/PRODUCT-REQUIREMENTS.md for carried product status/citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
+
+### Current v0.3 milestone
+
+- **GRC-04–06**: Revalidate and disposition only the approved three-function RTT slice, preserve the complete EX-107 row and remaining complement, and deliver under existing review, safety and CI gates. Full acceptance and citations are in `.planning/REQUIREMENTS.md` (INT-20261111-13, INT-20261111-01, INT-20261110-01, ADR 0004, ADR 0021).
 
 ### Validated
+
+- ✓ **GRC-01** Exact-lane source identities, selected/remainder membership, caller/delegate paths and inherited limits bound the selected increment — v0.2 (INT-20261111-01, INT-20261110-01, ADR 0021).
+- ✓ **GRC-02** Selected static dispositions and non-vacuous positive/negative controls passed on both lanes and delivered through reviewed green PR #85 — v0.2 (INT-20261111-01, INT-20261029-02, ADR 0004, ADR 0021).
+- ✓ **GRC-03** Original exclusion identities, pending complement, prior evidence, owners and wider safety gates remain preserved — v0.2 (INT-20261111-01, INT-20261029-02, ADR 0021).
 
 - ✓ **SEC-02** In prod the router macro raises a `CompileError`, with no override in 1.0. Stories and canon never compile in prod. The CI prod build asserts there are no Fablebook routes and no story beams. — Phase 01.1 (ADR 0006)
 - ✓ **REL-01** release-please publishes to Hex via the bootstrap skill. Phase 1 publishes 0.1.0 to reserve the name. Includes a post-publish smoke test, a recovery workflow and an SBOM. — Phase 01.1 (ADR 0017, INT-20261028-01)
@@ -256,6 +294,9 @@ Every item below is a v1.0 commitment.
 
 ## Context
 
+- **Delivered v0.2:** Contract/static evidence only; no production code, workflow or dependency changes. Independent exact-lane findings and symmetric selection feed the existing Elixir/Phoenix core/floor test lanes. Full delivery and diff measurements are in milestones/v0.2-CLOSEOUT.md.
+- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; five acknowledged older artifacts and every aggregate/product gate keep their existing owners. No new scope is inferred.
+
 - **Ecosystem (verified 2026-10-28):**
   - Phoenix 1.8.16 and LiveView 1.2.13 are current; there is no Phoenix 1.9.
   - Tailwind v4 plus daisyUI are the generator defaults.
@@ -309,7 +350,7 @@ Every item below is a v1.0 commitment.
   - ≤5 plans per phase, about ≤3 days each. Every phase ends in a merged, green PR to main. Push on day 1.
   - No proof-only phases. Review loops are capped at 2.
   - A contract test is never edited in the same PR as the implementation it guards.
-  - Use sequential integer phases, restarting at 1 for each bounded milestone. The approved fail-forward reset is already active; do not wait for the full old product cycle. Preserve historical IDs in the archive and unfinished acceptance in the carry-forward register. (INT-20261101-02, INT-20261111-01)
+  - Use one sequential integer phase counter across bounded milestones. v0.2 Phase 1 is delivered and v0.3 is Phase 2; assign later IDs on milestone activation from the highest delivered integer. Do not wait for the full old product cycle. Preserve historical IDs in the archive and unfinished acceptance in the carry-forward register. (INT-20261101-02, INT-20261111-01, INT-20261112-04)
   - Clearance is a soak checked at the milestone audit, not a phase.
   (ADR 0021, INT-20261028-02, INT-20261028-03)
 - **Honesty**: Report only what a tool or a human actually verified. A check that didn't run is `not-run`, never `pass`. (ADR 0010, INT-20261028-01)
@@ -321,12 +362,14 @@ Every item below is a v1.0 commitment.
 
 | Decision | Rationale | Outcome |
 |---|---|---|
+| Retain the selected tracing-front matcher (v0.2 / Phase 1, INT-20261111-11) | Independent exact-lane source review distinguishes caller callbacks and the fixed native boundary from evaluator or atom-creation behavior | PR #85 delivers static dispositions and individual both-lane witnesses with green candidate/main CI. Only EX-010 advances; runtime safety and aggregate/product gates remain open. |
+| Validate lane-selection policy before expensive suites (v0.2 / Phase 1) | Broad tests exposed two wrong-lane tests and an unsupported custom exclusion | Symmetric core/floor tags, wrong-lane and unrelated-tag negatives, cheap CI-shape/lint first and a final focused review preserve coverage while avoiding repeated broad failures. |
 | Source-bind the bounded ASN.1 generator-dispatch slice (Phase 01.1.1.18) | Distinguish caller-prefix atom creation from existing-atom lookup and fixed literal data using independent exact-lane reviews | Two mirrored static patterns cover three exports; individual exclusions, source/caller controls and candidate CI passed in merged PR #79. Upstream internal-IR Prefix provenance stays an explicit evidence limit; SEC-01 remains with Phase 5. |
 | Verify Hex docs recovery locally when the published release already has docs (Phase 01.1, INT-20261108-01) | Do not alter a public package just to manufacture a missing-docs test case | Fake API contract cases cover docs absent and present; the real docs generator passed `--dry-run` without uploading |
 | End GSD flows with the next command; distinguish merge readiness from pending phase observations (INT-20261029-09) | Keep useful work moving and make the next action explicit | Merge green scoped PRs under existing checks; retain scheduled evidence; auto-advance stays off |
 | Automate verification by default; hand off only irreducible checks (INT-20261029-08) | Reduce owner toil and repeated UAT; add CI coverage when it has recurring value | `.planning/VERIFICATION.md` maps criteria to evidence, reuses approvals, and requires CI speed reviews to preserve gates; Phase 1 evidence is in `01-UAT.md`; GSD auto-advance stays off |
 | Allow validation-only publication for the named delivery-evidence items (ADR 0026, INT-20261101-01) | PR CI and merge identity cannot be verified before a PR exists or is merged | For Phase 01.1.1.3.1.3 only, publish a draft to collect exact-head CI; merge only after all required checks and markers pass; complete the phase only after independent merge identity verification. Other high findings still block. |
-| Reset and split the oversized roadmap (INT-20261101-02, INT-20261111-01) | Deeply nested IDs and a whole-product milestone obscured bounded progress | PR #83 activates v0.2 / Phase 1; the old cycle is superseded/incomplete, future product owners are mapped separately, and every later bounded milestone restarts at Phase 1. |
+| Reset and split the oversized roadmap (INT-20261101-02, INT-20261111-01) | Deeply nested IDs and a whole-product milestone obscured bounded progress | PR #83 activates v0.2 / Phase 1; the old cycle is superseded/incomplete and future product owners are mapped separately. INT-20261112-04 corrects the numbering policy: v0.3 is Phase 2 and later milestones continue globally. |
 | Stories are compiled `.ex` modules in `storybook/` (ADR 0001) | No eval surface; manifest available in test; colocated hooks work | — Pending |
 | Scenarios are functions; slots are never strings (ADR 0002) | The string round-trip caused the incumbent's root bugs and its CVE | — Pending |
 | Iframe canvas through the host's pipeline and root layout (ADR 0003) | Fidelity is the product; it removes CSS and hook isolation problems | — Pending |
@@ -433,4 +476,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-11 for owner-requested milestone/phase numbering recovery; all unfinished acceptance remains carried forward.*
+*Last updated: 2026-11-12 after v0.3 roadmap approval; wider guard and product acceptance remains open.*

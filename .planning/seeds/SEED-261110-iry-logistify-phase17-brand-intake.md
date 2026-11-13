@@ -8,6 +8,10 @@ scope: Logistify brand canon, operator console Book, shipper portal Book, and dr
 target_milestone: design-canon
 target_phase: 4
 legacy_phase: 17
+audit_acknowledged:
+  milestone: v0.2
+  at: 2026-11-11
+  status: dormant
 ---
 
 # SEED-261110-iry: Carry the Logistify v1.0 brand book into the Design canon milestone

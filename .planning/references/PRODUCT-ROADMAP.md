@@ -1,10 +1,27 @@
 # Future product milestones
 
-This is the preserved product roadmap, outside the active milestone. Every future milestone starts at Phase 1. Milestone names/keys are stable planning references; versions are assigned on activation. These are carried commitments, not approved executable plans or shipped features. INT-20261111-01 replaces the single oversized cycle. Original wording and IDs remain in milestones/v0.1-ROADMAP.md.
+This is the rolling product roadmap outside the active milestone. Executable phase IDs use one project-wide integer sequence: v0.2 Phase 1 was delivered and v0.3 is Phase 2. The roadmap's phase values and dependency references are milestone-local slots until activation; allocate global IDs after the highest delivered phase and update the selected map, gates, seeds and dependencies when a milestone activates. Milestone names/keys are stable planning references; versions are assigned on activation. These are carried commitments, not approved executable plans or shipped features. INT-20261111-01 split the oversized cycle; INT-20261112-04 sets the continuing numbering policy. Original wording and IDs remain in milestones/v0.1-ROADMAP.md.
 
-The active v0.2 milestone delivers one independently bounded guard increment. Its completion does not itself close the remaining guard aggregate or unlock the walking skeleton. Further guard increments must be scoped as small milestones while that gate remains. Do not insert nested decimal phases or silently weaken acceptance to advance.
+v0.2 delivered its selected EX-010 increment. Active v0.3 is a bounded EX-107 RTT source-evidence increment; neither milestone closes the complete guard aggregate or unlocks the Walking Skeleton. Further guard increments must be sized and approved one at a time while that gate remains open. Do not insert nested decimal phases or silently weaken acceptance to advance.
 
-| Future milestone | Local phase | Deliverable | Legacy phase |
+## Rolling outlook
+
+This is sequencing guidance, not a set of activated milestones. Preserve the dependency map and gate owners below. Versions are assigned when each milestone starts. Owner direction and source-custody decisions are recorded in INT-20261111-13; the source intakes remain authoritative for exact versions, hashes, and review limits.
+
+| Horizon | Recommended direction |
+|---|---|
+| Immediate | Complete the bounded v0.3 guard slice. Keep the aggregate open, Walking Skeleton blocked, SEC-01 pending, and all five acknowledged v0.2 deferrals unresolved. |
+| Near | After the aggregate-scoped proof passes, start the Walking Skeleton, then deliver the Story model/catalog, Controls, Canvas fidelity, and Workbench foundations in the existing dependency order. |
+| Mid | Complete the Design canon foundations. Dogfood Fablebook's own identity on its appropriate surfaces while keeping workbench chrome ink-on-neutral. Then use Logistify as the first adopter demo: one shared brand canon and three distinct Books, starting with the operator console, then the shipper portal and driver app. Make jobs/personas, product terms, cases and state coverage, Journeys, Screens, and components inspectable in the catalog. |
+| Later | Add Chatly and Clinicly after the Logistify family and canon foundations, then continue the mapped bundle, checks, motion, installer, hardening, remaining-twin, dogfood, and clearance work. |
+
+### Brand source custody and mapping
+
+Before Design canon and adopter Books consumes these sources, make the exact versions reproducible in the reviewed repository from pinned, hash-checked JSON, tokens, HTML, and records where present. Use the existing brand intakes as the source of provenance; do not depend on mutable latest downloads or a local-only clone. Do not copy all artwork or fonts by default: destination and reuse terms remain review items. The current v0.3 guard milestone does not move brand source files.
+
+Treat each brandbook's product recommendations as source input, not evidence of an implemented product. Source `flows` and `cases` need an explicit mapping to Fablebook's model before canon work; Fablebook's GLOSSARY owns UI terminology. A Logistify Route is a shipment-domain object, not a Fablebook Journey. The books should remain three Books with different jobs and screen constraints under the shared Logistify brand canon.
+
+| Future milestone | Local slot (pre-activation) | Deliverable | Legacy phase |
 |---|---|---|---|
 | Walking skeleton | 1 | Walking skeleton and runner spike | 2 |
 | Story model and render seam | 1 | Story model and catalog | 3 |
@@ -43,13 +60,13 @@ The active v0.2 milestone delivers one independently bounded guard increment. It
 
 ## Dependencies and preserved gates
 
-The order below retains the old phase dependencies. Walking skeleton / Phase 1 remains blocked on the complete guard aggregate, including installed-scope acceptance. SEC-01 stays Pending with Controls and first bundle / Phase 1 (legacy Phase 5). Smoke-consumer route-positive coverage belongs to Walking skeleton / Phase 1; adopter story/canon exclusion belongs to Walking skeleton and Canvas fidelity and installer core / Phase 4. Historical registry observation remains with scheduled security automation. No product milestone is activated by this migration.
+The order below retains the old dependencies, expressed as milestone-local slots until activation. Walking skeleton's first local slot remains blocked on the complete guard aggregate, including installed-scope acceptance. SEC-01 stays Pending with Controls and first bundle's first local slot (legacy Phase 5). Smoke-consumer route-positive coverage belongs to Walking skeleton's first local slot; adopter story/canon exclusion belongs to Walking skeleton and Canvas fidelity and installer core's fourth local slot. Historical registry observation remains with scheduled security automation. No product milestone is activated by this migration.
 
-Before Design canon and adopter Books / Phase 4 (legacy Phase 17), read references/logistify-brand-intake.md. The brand source is unapplied; schema mapping and the existing review limits remain. The workbench stays visually neutral. No asset move or publication is included.
+Before Design canon and adopter Books / local slot 4 (legacy Phase 17), read references/logistify-brand-intake.md. The brand source is unapplied; schema mapping and the existing review limits remain. The workbench stays visually neutral. No asset move or publication is included.
 
 ## Carried phase details
 
-### Walking skeleton / Phase 1: Walking skeleton and runner spike
+### Walking skeleton / local slot 1: Walking skeleton and runner spike
 
 Legacy Phase 2. Future, not activated.
 
@@ -57,7 +74,7 @@ Legacy Phase 2. Future, not activated.
 **Mode:** mvp
 **Depends on**: The open guard-aggregate gate carried from legacy Phase 01.1.1.1, plus the delivered legacy Phase 01.1.1.13 receipt. These are archived evidence/gate references, not active phase IDs.
 **Requirements**: None completed here (a vertical slice and a spike; see Partial delivery).
-**Partial delivery**: QA-04 (skeleton `hosts/operator`, completes in Canvas fidelity and installer core / Phase 3), VIS-01 and VIS-02 (guards, complete in Checks and visual regression / Phase 2), CANVAS-01 and SEC-03 (nonce CSP exercised, complete in Canvas fidelity and installer core / Phase 1).
+**Partial delivery**: QA-04 (skeleton `hosts/operator`, completes in Canvas fidelity and installer core / local slot 3), VIS-01 and VIS-02 (guards, complete in Checks and visual regression / local slot 2), CANVAS-01 and SEC-03 (nonce CSP exercised, complete in Canvas fidelity and installer core / local slot 1).
 **Provisional on:** Q9
 **Spike first**: the browser-runner spike on the unified criteria (media emulation, per-rendition viewport, use from a Mix task, availability in dev, remote server option, determinism on the maintainer's platform, probe injection under nonce CSP).
 **Success Criteria** (what must be TRUE):
@@ -67,15 +84,15 @@ Legacy Phase 2. Future, not activated.
   4. A written spike result states pass or fail for each runner criterion and the fallback decision, ready for the owner to record the Q1 resolution.
 **Plans**: 4 (estimate)
 
-### Story model and render seam / Phase 1: Story model and catalog
+### Story model and render seam / local slot 1: Story model and catalog
 
 Legacy Phase 3. Future, not activated.
 
 **Goal**: Authors declare stories as compiled modules, and the catalog finds, identifies and describes every scenario and every component, with or without a story, deterministically, with typed errors and telemetry in place.
 **Mode:** mvp
-**Depends on**: Walking skeleton / Phase 1
+**Depends on**: Walking skeleton / local slot 1
 **Requirements**: CORE-01, CORE-02, CORE-04, CORE-05, CORE-06, CORE-07, TEL-01, TEL-02, TEL-03, PERF-01, COMPAT-01
-**Partial delivery**: CORE-03 (citation shape only; existence and enforcement complete in Design canon and adopter Books / Phase 2).
+**Partial delivery**: CORE-03 (citation shape only; existence and enforcement complete in Design canon and adopter Books / local slot 2).
 **Provisional on:** Q12, Q13, Q24
 **Success Criteria** (what must be TRUE):
   1. A story with `use Fablebook.Story, subject:, tier:` appears in the catalog with ids from module namespace plus function name and a stable URL for every scenario, including scenarios inside groups; the catalog is identical in dev and test.
@@ -85,15 +102,15 @@ Legacy Phase 3. Future, not activated.
   5. A 5000-scenario catalog builds in at most 1.5 s with t(5000)/t(500) under 15 and no `Code` calls; every event in `Fablebook.Telemetry.events/0` is emitted and none unlisted, with whitelisted metadata and a closed `%Fablebook.Error{}` set.
 **Plans**: 5 (estimate)
 
-### Story model and render seam / Phase 2: Render seam, rules engine and generated tests
+### Story model and render seam / local slot 2: Render seam, rules engine and generated tests
 
 Legacy Phase 4. Future, not activated.
 
 **Goal**: Any scenario can be rendered outside a LiveView and judged by one rules registry, so the canvas, tests and bundles agree; every strict-rule failure is an error unless a visible Waiver or Draft says otherwise.
 **Mode:** mvp
-**Depends on**: Story model and render seam / Phase 1
+**Depends on**: Story model and render seam / local slot 1
 **Requirements**: CORE-09, CORE-12, CHECK-05
-**Partial delivery**: CORE-14 (render-mode metadata; completes in Canvas fidelity and installer core / Phase 1), LLM-06 (manifest and drift check; completes in Design canon and adopter Books / Phase 6).
+**Partial delivery**: CORE-14 (render-mode metadata; completes in Canvas fidelity and installer core / local slot 1), LLM-06 (manifest and drift check; completes in Design canon and adopter Books / local slot 6).
 **Pending (not v1, unmapped)**: CORE-15 (`unsupported_subject` for LiveComponent subjects), waiting on Q14.
 **Provisional on:** Q14, Q16, Q20
 **Success Criteria** (what must be TRUE):
@@ -103,15 +120,15 @@ Legacy Phase 4. Future, not activated.
   4. `mix fablebook.manifest` writes byte-identical output on repeated runs and a drift check fails when the committed manifest is stale.
 **Plans**: 5 (estimate)
 
-### Controls and first bundle / Phase 1: Controls and URL state
+### Controls and first bundle / local slot 1: Controls and URL state
 
 Legacy Phase 5. Future, not activated.
 
 **Goal**: A person can change a scenario's attrs through typed controls, and the whole view state round-trips through the URL, with the never-eval and never-atom guarantees proven against hostile input.
 **Mode:** mvp
-**Depends on**: Story model and render seam / Phase 2
+**Depends on**: Story model and render seam / local slot 2
 **Requirements**: CTRL-01, CTRL-03, CTRL-06, SEC-01
-**Partial delivery**: CTRL-04 (Globals type and codec; completes in Canvas fidelity and installer core / Phase 2), CTRL-02 and SEC-05 (complete in Workbench UX / Phase 2), QA-01 (cast and URL state properties; completes in Design canon and adopter Books / Phase 3).
+**Partial delivery**: CTRL-04 (Globals type and codec; completes in Canvas fidelity and installer core / local slot 2), CTRL-02 and SEC-05 (complete in Workbench UX / local slot 2), QA-01 (cast and URL state properties; completes in Design canon and adopter Books / local slot 3).
 **Success Criteria** (what must be TRUE):
   1. In the minimal workbench, attrs show typed controls (boolean, integer, float, string, and a select for `values:`), complex attrs offer compiled presets, and invalid input is rejected with a typed error rather than a crash.
   2. Reloading any workbench URL reproduces the view exactly, overrides over 2 KB are refused, and Back returns to the previous workbench URL.
@@ -119,16 +136,16 @@ Legacy Phase 5. Future, not activated.
   4. Properties show zero new atoms after warm-up through the real `handle_params` for arbitrary URL and control input, an XSS corpus stays escaped, and mutation-proven tests fail when a Credo ban or a guard is removed; Muex floors for `Cast` and `URLState` are committed.
 **Plans**: 4 (estimate)
 
-### Controls and first bundle / Phase 2: Thin bundle slice
+### Controls and first bundle / local slot 2: Thin bundle slice
 
 Legacy Phase 6. Future, not activated.
 
 *Pulled forward from Family 9, ahead of its home band so the Core Value (an accurate export) is exercised before the workbench exists.*
 **Goal**: A person can run one command and get a redacted, labelled context bundle for one scenario.
 **Mode:** mvp
-**Depends on**: Story model and render seam / Phase 2, Controls and first bundle / Phase 1
+**Depends on**: Story model and render seam / local slot 2, Controls and first bundle / local slot 1
 **Requirements**: SEC-04
-**Partial delivery**: LLM-01 (scenario selector and Mix task; completes in Design canon and adopter Books / Phase 6), LLM-02 (skeleton; completes in LLM context bundles / Phase 1), LLM-04 (no-browser level; completes in LLM context bundles / Phase 1).
+**Partial delivery**: LLM-01 (scenario selector and Mix task; completes in Design canon and adopter Books / local slot 6), LLM-02 (skeleton; completes in LLM context bundles / local slot 1), LLM-04 (no-browser level; completes in LLM context bundles / local slot 1).
 **Provisional on:** Q20
 **Success Criteria** (what must be TRUE):
   1. `mix fablebook.bundle <scenario>` writes `BUNDLE.md` and `bundle.json` (schema `fablebook.bundle/1` skeleton) with markup, Contract, situation and citations as data, labelled "no-browser", with browser-only parts reported as not-run.
@@ -136,13 +153,13 @@ Legacy Phase 6. Future, not activated.
   3. Running the command twice on unchanged input yields byte-identical output, and one golden bundle is committed.
 **Plans**: 3 (estimate)
 
-### Canvas fidelity and installer core / Phase 1: Canvas isolation and containment
+### Canvas fidelity and installer core / local slot 1: Canvas isolation and containment
 
 Legacy Phase 7. Future, not activated.
 
 **Goal**: Scenarios render in an iframe through the host's own pipeline, the grid lays out several scenarios, and whatever one scenario does wrong stays inside its own tile.
 **Mode:** mvp
-**Depends on**: Controls and first bundle / Phase 1
+**Depends on**: Controls and first bundle / local slot 1
 **Requirements**: CANVAS-01, CANVAS-02, CANVAS-03, CANVAS-04, CANVAS-07, CORE-10, CORE-14, SEC-03
 **Provisional on:** Q8, Q23
 **Spike first**: grid isolation with adversarial fixtures (duplicate ids, a hook, a portal, a modal, `min-h-screen`, a LiveComponent crashing in `handle_event`); the result decides per-tile iframes versus a stacked document.
@@ -154,13 +171,13 @@ Legacy Phase 7. Future, not activated.
   5. Scenarios render inside Containers with `:centered`, `:padded` or `:fullscreen` Placement; a `render: :static` story is served by a controller with no LiveSocket, and a check flags `phx-*` bindings in it.
 **Plans**: 5 (estimate)
 
-### Canvas fidelity and installer core / Phase 2: Canvas diagnostics, hot reload and Globals
+### Canvas fidelity and installer core / local slot 2: Canvas diagnostics, hot reload and Globals
 
 Legacy Phase 8. Future, not activated.
 
 **Goal**: When the canvas cannot work the person is told why, edits show up without a restart, and the Globals change what renders.
 **Mode:** mvp
-**Depends on**: Canvas fidelity and installer core / Phase 1
+**Depends on**: Canvas fidelity and installer core / local slot 1
 **Requirements**: CANVAS-05, CANVAS-06, CTRL-04
 **Pending (not v1, unmapped)**: CTRL-05 (how the host applies color scheme and Theme), waiting on Q10.
 **Provisional on:** Q10, Q11, Q13
@@ -172,30 +189,30 @@ Legacy Phase 8. Future, not activated.
   4. The canvas reports ready through a tested ready-attribute state machine (LiveSocket joined, nested views settled, fonts and images loaded), and reports not-run with the unmet condition otherwise.
 **Plans**: 4 (estimate)
 
-### Canvas fidelity and installer core / Phase 3: Operator host, fidelity receipt and real components
+### Canvas fidelity and installer core / local slot 3: Operator host, fidelity receipt and real components
 
 Legacy Phase 9. Future, not activated.
 
 **Goal**: The adversarial host app proves production fidelity, and real components from an owner repo render in a released 0.x.
 **Mode:** mvp
-**Depends on**: Canvas fidelity and installer core / Phase 2
+**Depends on**: Canvas fidelity and installer core / local slot 2
 **Requirements**: QA-04
 **Pending (not v1, unmapped)**: CORE-16 (fixture helper for streams, async and forms), waiting on Q14.
 **Provisional on:** Q22
 **Success Criteria** (what must be TRUE):
   1. `hosts/operator` is complete (custom tokens without daisyUI, self-hosted fonts, strict nonce CSP, custom root layout, `current_scope` `on_mount`, colocated hooks, JS commands, `<.portal>`, streams and async assigns, `to_form`, Gettext with an RTL locale), and its E2E fidelity spec passes on CSS bytes, fonts (`document.fonts` and network), hooks and CSP (C3).
   2. A 0.x release is installed read-only in one dogfood repo, and ten real mailglass components render there without changes to that repo's CSS or JS.
-  3. A throwaway installer-shape spike against `hosts/vanilla` leaves a written result that Canvas fidelity and installer core / Phase 4 consumes.
+  3. A throwaway installer-shape spike against `hosts/vanilla` leaves a written result that Canvas fidelity and installer core / local slot 4 consumes.
 **Plans**: 4 (estimate)
 
-### Canvas fidelity and installer core / Phase 4: Installer core
+### Canvas fidelity and installer core / local slot 4: Installer core
 
 Legacy Phase 10. Future, not activated.
 
 *Pulled forward from Family 10, so the installer's mount-shape surprises surface here rather than in Phase 30.*
 **Goal**: `mix igniter.install fablebook` on a fresh Phoenix app leaves exactly the tree that was hand-wired in the host apps.
 **Mode:** mvp
-**Depends on**: Canvas fidelity and installer core / Phase 3
+**Depends on**: Canvas fidelity and installer core / local slot 3
 **Requirements**: INST-01
 **Provisional on:** Q17
 **Success Criteria** (what must be TRUE):
@@ -204,15 +221,15 @@ Legacy Phase 10. Future, not activated.
   3. `MIX_ENV=prod mix compile` of the installed app succeeds with no Fablebook routes, and a plain-Mix fallback works when Igniter is absent.
 **Plans**: 4 (estimate)
 
-### Workbench UX / Phase 1: Chrome shell, sidebar, story page and grid
+### Workbench UX / local slot 1: Chrome shell, sidebar, story page and grid
 
 Legacy Phase 11. Future, not activated.
 
 **Goal**: A person can browse the catalog in the workbench: a tier-first sidebar, a story page that is the docs, and the All-scenarios grid, inside the performance gates.
 **Mode:** mvp
-**Depends on**: Canvas fidelity and installer core / Phase 1, Canvas fidelity and installer core / Phase 4
+**Depends on**: Canvas fidelity and installer core / local slot 1, Canvas fidelity and installer core / local slot 4
 **Requirements**: WB-01, WB-02, WB-08, WB-09, PERF-02, PERF-03, PERF-04, INST-05
-**Partial delivery**: A11Y-01 (basics; completes in Workbench UX / Phase 3), WB-17 (dots read "Not run"; completes in Checks and visual regression / Phase 1), LLM-01 ("Copy for LLM" button; completes in Design canon and adopter Books / Phase 6), CORE-06 (tier-first sidebar), SEC-05 (Markdown escaped by default; completes in Workbench UX / Phase 2).
+**Partial delivery**: A11Y-01 (basics; completes in Workbench UX / local slot 3), WB-17 (dots read "Not run"; completes in Checks and visual regression / local slot 1), LLM-01 ("Copy for LLM" button; completes in Design canon and adopter Books / local slot 6), CORE-06 (tier-first sidebar), SEC-05 (Markdown escaped by default; completes in Workbench UX / local slot 2).
 **Provisional on:** Q16
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
@@ -223,15 +240,15 @@ Legacy Phase 11. Future, not activated.
   5. A clean-room timed run on a fresh `phx.new` with Node absent from `PATH` goes from install to an auto-discovered component rendering in the host's real CSS in under 5 minutes, passing strict mode with zero Waivers.
 **Plans**: 5 (estimate)
 
-### Workbench UX / Phase 2: Inspector, toolbar, palette and keyboard
+### Workbench UX / local slot 2: Inspector, toolbar, palette and keyboard
 
 Legacy Phase 12. Future, not activated.
 
 **Goal**: A person can inspect and edit a scenario, set up the canvas environment from the toolbar, and drive the workbench from the keyboard.
 **Mode:** mvp
-**Depends on**: Workbench UX / Phase 1
+**Depends on**: Workbench UX / local slot 1
 **Requirements**: CTRL-02, WB-03, WB-04, WB-06, WB-11, WB-15, WB-18, SEC-05
-**Partial delivery**: WB-05 (Attrs, HEEx and Events tabs; the Checks tab completes it in Checks and visual regression / Phase 1), CTRL-04 (device frame tool).
+**Partial delivery**: WB-05 (Attrs, HEEx and Events tabs; the Checks tab completes it in Checks and visual regression / local slot 1), CTRL-04 (device frame tool).
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
   1. The inspector shows Attrs, HEEx (copy the exact call) and Events; an edited control shows an "Edited" chip with Restore scenario, and attrs that cannot be edited say "Set in the story file" with Open in editor, which works only on localhost and only for paths inside the project root.
@@ -240,15 +257,15 @@ Legacy Phase 12. Future, not activated.
   4. Workbench settings (Appearance, density, single-key switch, pane sizes) persist and are listed, and input over a control type's size cap is refused with `:state_too_large`.
 **Plans**: 4 (estimate)
 
-### Workbench UX / Phase 3: Mobile layout, QR, microcopy, Compare by Globals and Diagnostics
+### Workbench UX / local slot 3: Mobile layout, QR, microcopy, Compare by Globals and Diagnostics
 
 Legacy Phase 13. Future, not activated.
 
 **Goal**: The workbench works on a phone, every empty and error state speaks in canonical words, and the chrome meets WCAG 2.2 AA.
 **Mode:** mvp
-**Depends on**: Workbench UX / Phase 2
+**Depends on**: Workbench UX / local slot 2
 **Requirements**: WB-07, WB-10, A11Y-01
-**Partial delivery**: WB-13 (Compare along Globals axes with a canvas cap; completes in LLM context bundles / Phase 3), WB-12 (catalog build time, scenario count and recent crashes; completes in Checks and visual regression / Phase 3).
+**Partial delivery**: WB-13 (Compare along Globals axes with a canvas cap; completes in LLM context bundles / local slot 3), WB-12 (catalog build time, scenario count and recent crashes; completes in Checks and visual regression / local slot 3).
 **Provisional on:** Q21, Q25
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
@@ -258,15 +275,15 @@ Legacy Phase 13. Future, not activated.
   4. The chrome has landmarks, skip links, a disclosure-list sidebar, live regions, keyboard-resizable separators, a combobox palette, 24 px targets and reflow at 320 px, and its computed contrast matrix across light, dark and high contrast has no failing pair.
 **Plans**: 4 (estimate)
 
-### Design canon and adopter Books / Phase 1: Canon core
+### Design canon and adopter Books / local slot 1: Canon core
 
 Legacy Phase 14. Future, not activated.
 
 **Goal**: Design knowledge lives in `design/` as Markdown and DTCG tokens that Fablebook parses itself, layered from brand to product, and pages can embed live scenarios.
 **Mode:** mvp
-**Depends on**: Story model and render seam / Phase 2
+**Depends on**: Story model and render seam / local slot 2
 **Requirements**: CANON-01, CANON-02, CANON-03, CANON-09, CANON-12, CORE-11
-**Partial delivery**: QA-01 (frontmatter property; completes in Design canon and adopter Books / Phase 3).
+**Partial delivery**: QA-01 (frontmatter property; completes in Design canon and adopter Books / local slot 3).
 **Provisional on:** Q30
 **Success Criteria** (what must be TRUE):
   1. A canon entry of each kind (term, voice, tone, microcopy rule, persona, job, twin, imagery) loads from a Markdown file with strict-subset frontmatter, and a malformed file fails with its file, line and a fix; the parser is property-tested and uses no YAML dependency.
@@ -275,15 +292,15 @@ Legacy Phase 14. Future, not activated.
   4. A Markdown or HEEx Page embeds a live scenario, and the embed follows the scenario when it changes.
 **Plans**: 4 (estimate)
 
-### Design canon and adopter Books / Phase 2: Foundations, Themes, Directions, citations, coverage and To review
+### Design canon and adopter Books / local slot 2: Foundations, Themes, Directions, citations, coverage and To review
 
 Legacy Phase 15. Future, not activated.
 
 **Goal**: The canon is visible in the workbench and enforced against scenarios: Foundations pages, citation checks, a coverage matrix, Themes, Directions and a first To review page.
 **Mode:** mvp
-**Depends on**: Workbench UX / Phase 1, Design canon and adopter Books / Phase 1
+**Depends on**: Workbench UX / local slot 1, Design canon and adopter Books / local slot 1
 **Requirements**: CANON-04, CANON-08, CANON-10, CANON-11, CORE-03, CORE-08, JOURNEY-01
-**Partial delivery**: WB-14 (To review lists proposals, stale or assumed canon, gaps and due Waivers; findings without a verdict complete it in Checks and visual regression / Phase 3), WB-13 (Theme and Direction axes; completes in LLM context bundles / Phase 3), WB-03 (canon entries appear in the palette).
+**Partial delivery**: WB-14 (To review lists proposals, stale or assumed canon, gaps and due Waivers; findings without a verdict complete it in Checks and visual regression / local slot 3), WB-13 (Theme and Direction axes; completes in LLM context bundles / local slot 3), WB-03 (canon entries appear in the palette).
 **Provisional on:** Q16, Q25, Q26
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
@@ -294,15 +311,15 @@ Legacy Phase 15. Future, not activated.
   5. A To review page with a sidebar count badge and no pop-ups lists proposals, stale or assumed canon, Gaps and Waivers due, and a Journey declared in a job file fails the catalog build when a referenced scenario is missing.
 **Plans**: 5 (estimate)
 
-### Design canon and adopter Books / Phase 3: Canon lints, tokens task and DESIGN.md
+### Design canon and adopter Books / local slot 3: Canon lints, tokens task and DESIGN.md
 
 Legacy Phase 16. Future, not activated.
 
 **Goal**: The canon is checked in the PR lane by pure-Elixir lints, imported from external brand-book source, and turned into CSS and a DESIGN.md.
 **Mode:** mvp
-**Depends on**: Design canon and adopter Books / Phase 1, Design canon and adopter Books / Phase 2
+**Depends on**: Design canon and adopter Books / local slot 1, Design canon and adopter Books / local slot 2
 **Requirements**: CANON-05, CANON-07, UX-06, QA-01
-**Partial delivery**: CANON-06 (`DESIGN.md` and `mix fablebook.tokens`; `.impeccable/design.json` completes it in Checks and visual regression / Phase 5).
+**Partial delivery**: CANON-06 (`DESIGN.md` and `mix fablebook.tokens`; `.impeccable/design.json` completes it in Checks and visual regression / local slot 5).
 **Provisional on:** Q27
 **Success Criteria** (what must be TRUE):
   1. external brand-book source's BRAND.md and direction notes appear as Voice, Imagery and Applications pages, logos are filtered by `rights/assets.json`, and a bundle pins the brand by its `inventory.json` hash.
@@ -312,15 +329,15 @@ Legacy Phase 16. Future, not activated.
   5. The StreamData invariants for cast, URL state, id stability, manifest determinism, no new atoms, bounded render, frontmatter, contrast maths and telemetry metadata all run in CI.
 **Plans**: 4 (estimate)
 
-### Design canon and adopter Books / Phase 4: Content track I - Fablebook brand book and the Logistify family
+### Design canon and adopter Books / local slot 4: Content track I - Fablebook brand book and the Logistify family
 
 Legacy Phase 17. Future, not activated.
 
 **Goal**: Fablebook has its own brand book, and the Logistify product family exists as three full Books under one brand canon.
 **Mode:** mvp
-**Depends on**: Design canon and adopter Books / Phase 3
+**Depends on**: Design canon and adopter Books / local slot 3
 **Requirements**: DOCS-04
-**Partial delivery**: QA-06 (Logistify's three Books; completes in Hardening and remaining twins / Phase 2).
+**Partial delivery**: QA-06 (Logistify's three Books; completes in Hardening and remaining twins / local slot 2).
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
   1. Fablebook's brand book is built through the two-session external brand-book source process and covers the mark, docs site, README, Hex page and social card, while the workbench chrome stays ink-on-neutral.
@@ -328,15 +345,15 @@ Legacy Phase 17. Future, not activated.
   3. The Logistify Books pass the canon lints, citation checks and coverage report, and Foundations shows their cards; a hand-authored minimal-token fallback keeps the phase mergeable if a brand book slips.
 **Plans**: 4 (estimate)
 
-### Design canon and adopter Books / Phase 5: Content track II - Chatly and Clinicly
+### Design canon and adopter Books / local slot 5: Content track II - Chatly and Clinicly
 
 Legacy Phase 18. Future, not activated.
 
 **Goal**: Two more fictional adopter products, one mobile-first CJK consumer app and one RTL accessibility-critical portal, extend the showcase.
 **Mode:** mvp
-**Depends on**: Design canon and adopter Books / Phase 4
+**Depends on**: Design canon and adopter Books / local slot 4
 **Requirements**: None completed here (see Partial delivery).
-**Partial delivery**: QA-06 (Chatly and Clinicly; completes in Hardening and remaining twins / Phase 2).
+**Partial delivery**: QA-06 (Chatly and Clinicly; completes in Hardening and remaining twins / local slot 2).
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
   1. Chatly (ja, mobile-first, playful) and Clinicly (ar with en, RTL, high-contrast, minimal motion) each have an external brand-book source-built brand book, a full canon, a Shell, Areas and Screens and a visually distinct style in `hosts/operator`.
@@ -344,16 +361,16 @@ Legacy Phase 18. Future, not activated.
   3. The twins stay out of the Hex tarball, shown by the allowlist test.
 **Plans**: 3 (estimate)
 
-### Design canon and adopter Books / Phase 6: Bundle core with canon
+### Design canon and adopter Books / local slot 6: Bundle core with canon
 
 Legacy Phase 19. Future, not activated.
 
 *Pulled forward from Family 9 so the no-browser tier carries canon context as soon as canon and twins exist.*
 **Goal**: A bundle for any selector carries the cited canon, validates against a committed schema, and is guarded by golden bundles from the twins.
 **Mode:** mvp
-**Depends on**: Controls and first bundle / Phase 2, Design canon and adopter Books / Phase 1, Design canon and adopter Books / Phase 4, Design canon and adopter Books / Phase 5
+**Depends on**: Controls and first bundle / local slot 2, Design canon and adopter Books / local slot 1, Design canon and adopter Books / local slot 4, Design canon and adopter Books / local slot 5
 **Requirements**: LLM-01, LLM-06, LLM-07
-**Partial delivery**: LLM-02 (`context/` and no-browser scenario files; completes in LLM context bundles / Phase 1), SEC-04 (already complete).
+**Partial delivery**: LLM-02 (`context/` and no-browser scenario files; completes in LLM context bundles / local slot 1), SEC-04 (already complete).
 **Success Criteria** (what must be TRUE):
   1. `mix fablebook.bundle` accepts a scenario, story, section, tier, tag or `all`, and the workbench offers Copy for LLM and Download context.
   2. A bundle's `context/` holds DESIGN.md, the tokens used, glossary hits, voice, personas and jobs and a PRODUCT.md excerpt, and `Fablebook.Bundle.validate/1` round-trips every bundle against the committed JSON Schema.
@@ -361,13 +378,13 @@ Legacy Phase 19. Future, not activated.
   4. The manifest (`index.json`, `components.json`) is served at the mount, `llms.txt` and `llms-full.txt` are included, and the drift check still passes.
 **Plans**: 4 (estimate)
 
-### Checks and visual regression / Phase 1: Probe, Evidence and the Checks tab
+### Checks and visual regression / local slot 1: Probe, Evidence and the Checks tab
 
 Legacy Phase 20. Future, not activated.
 
 **Goal**: A person can run the probe on a rendition in their own browser and read honest Evidence, with no Node and no false green.
 **Mode:** mvp
-**Depends on**: Canvas fidelity and installer core / Phase 2, Workbench UX / Phase 1, Workbench UX / Phase 2
+**Depends on**: Canvas fidelity and installer core / local slot 2, Workbench UX / local slot 1, Workbench UX / local slot 2
 **Requirements**: CHECK-01, CHECK-02, CHECK-03, WB-05, WB-17, LLM-05
 **Provisional on:** Q11
 **UI hint**: yes
@@ -379,13 +396,13 @@ Legacy Phase 20. Future, not activated.
   5. The inspector offers Attrs, HEEx, Events and Checks.
 **Plans**: 5 (estimate)
 
-### Checks and visual regression / Phase 2: Capture and visual baselines
+### Checks and visual regression / local slot 2: Capture and visual baselines
 
 Legacy Phase 21. Future, not activated.
 
 **Goal**: Pixel diffs run deterministically in a pinned container and a baseline can only ever be accepted by a person.
 **Mode:** mvp
-**Depends on**: Walking skeleton / Phase 1, Checks and visual regression / Phase 1
+**Depends on**: Walking skeleton / local slot 1, Checks and visual regression / local slot 1
 **Requirements**: VIS-01, VIS-02, VIS-03, CI-02
 **Provisional on:** Q9, Q29
 **Success Criteria** (what must be TRUE):
@@ -394,15 +411,15 @@ Legacy Phase 21. Future, not activated.
   3. Nightly and release runs cover the full set (at most 400) plus Firefox, WebKit and the LiveView `main` canary; the determinism self-test (identical hashes across three captures) blocks a release, and an open `quality-regression` issue blocks release PRs.
 **Plans**: 4 (estimate)
 
-### Checks and visual regression / Phase 3: Sweep, Ratchet and verdicts
+### Checks and visual regression / local slot 3: Sweep, Ratchet and verdicts
 
 Legacy Phase 22. Future, not activated.
 
 **Goal**: Every rendition in the manifest is checked at every standard size and scheme, findings can only shrink, and a person's verdicts are remembered.
 **Mode:** mvp
-**Depends on**: Design canon and adopter Books / Phase 2, Checks and visual regression / Phase 1, Checks and visual regression / Phase 2
+**Depends on**: Design canon and adopter Books / local slot 2, Checks and visual regression / local slot 1, Checks and visual regression / local slot 2
 **Requirements**: CHECK-04, CHECK-06, A11Y-02, WB-12, WB-14
-**Partial delivery**: WB-13 (the revision axis, current rendition against its committed Baseline; completes in LLM context bundles / Phase 3).
+**Partial delivery**: WB-13 (the revision axis, current rendition against its committed Baseline; completes in LLM context bundles / local slot 3).
 **Provisional on:** Q25
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
@@ -412,13 +429,13 @@ Legacy Phase 22. Future, not activated.
   4. The workbench chrome passes Fablebook's own sweep, and the nightly self-test history on `main` begins.
 **Plans**: 4 (estimate)
 
-### Checks and visual regression / Phase 4: UX checks I - interaction states, forms, layout shift, RTL
+### Checks and visual regression / local slot 4: UX checks I - interaction states, forms, layout shift, RTL
 
 Legacy Phase 23. Future, not activated.
 
 **Goal**: A person can see and check interaction states, forms, loading shifts and right-to-left handling for any scenario.
 **Mode:** mvp
-**Depends on**: Checks and visual regression / Phase 1, Checks and visual regression / Phase 2
+**Depends on**: Checks and visual regression / local slot 1, Checks and visual regression / local slot 2
 **Requirements**: UX-01, UX-02, UX-03, UX-04
 **Spike first**: forcing `:hover` and `:focus-visible` without a mouse (CDP versus stylesheet rewriting on Tailwind v4 output) and measuring layout shift.
 **Success Criteria** (what must be TRUE):
@@ -428,15 +445,15 @@ Legacy Phase 23. Future, not activated.
   4. A lint flags physical properties where logical ones belong (`ml-` instead of `ms-`), English-formatted numbers and dates under non-English locales, and `<time>` without `datetime`.
 **Plans**: 4 (estimate)
 
-### Checks and visual regression / Phase 5: UX checks II, journeys and design.json
+### Checks and visual regression / local slot 5: UX checks II, journeys and design.json
 
 Legacy Phase 24. Future, not activated.
 
 **Goal**: Destructive and feedback patterns are checked, Journeys are checked and shown as a filmstrip, and impeccable gets a design file made from rendered primitives.
 **Mode:** mvp
-**Depends on**: Design canon and adopter Books / Phase 2, Checks and visual regression / Phase 2, Checks and visual regression / Phase 4
+**Depends on**: Design canon and adopter Books / local slot 2, Checks and visual regression / local slot 2, Checks and visual regression / local slot 4
 **Requirements**: UX-05, UX-08, JOURNEY-02, CANON-06
-**Partial delivery**: JOURNEY-03 (the workbench filmstrip of a Journey's steps; the `journey` focus completes it in LLM context bundles / Phase 3).
+**Partial delivery**: JOURNEY-03 (the workbench filmstrip of a Journey's steps; the `journey` focus completes it in LLM context bundles / local slot 3).
 **Provisional on:** Q27
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
@@ -447,13 +464,13 @@ Legacy Phase 24. Future, not activated.
   5. `.impeccable/design.json` is generated from tokens plus rendered primitives with an ownership header and a pinned schema, and Fablebook refuses to overwrite a file it does not own.
 **Plans**: 5 (estimate)
 
-### Motion / Phase 1: Motion spike, time shim and Motion panel
+### Motion / local slot 1: Motion spike, time shim and Motion panel
 
 Legacy Phase 25. Future, not activated.
 
 **Goal**: A person can pause, scrub and slow every canvas animation and see a filmstrip, without the canvas disconnecting.
 **Mode:** mvp
-**Depends on**: Canvas fidelity and installer core / Phase 2, Workbench UX / Phase 2
+**Depends on**: Canvas fidelity and installer core / local slot 2, Workbench UX / local slot 2
 **Requirements**: MOTION-01
 **Provisional on:** Q18
 **Spike first**: the virtual clock against real LiveView `JS` transitions.
@@ -464,13 +481,13 @@ Legacy Phase 25. Future, not activated.
   3. A filmstrip shows the rendition at 0, 50, 100, 150, 200 and 300 ms plus the settled state.
 **Plans**: 4 (estimate)
 
-### Motion / Phase 2: Motion tokens, checks and CI lane
+### Motion / local slot 2: Motion tokens, checks and CI lane
 
 Legacy Phase 26. Future, not activated.
 
 **Goal**: Motion is governed by canon tokens and strict checks, and seeked filmstrips are baselined in CI.
 **Mode:** mvp
-**Depends on**: Design canon and adopter Books / Phase 1, Checks and visual regression / Phase 2, Motion / Phase 1
+**Depends on**: Design canon and adopter Books / local slot 1, Checks and visual regression / local slot 2, Motion / local slot 1
 **Requirements**: MOTION-02, MOTION-03, MOTION-04, MOTION-05, MOTION-06
 **Provisional on:** Q9, Q17
 **Success Criteria** (what must be TRUE):
@@ -480,13 +497,13 @@ Legacy Phase 26. Future, not activated.
   4. A CI motion lane baselines and diffs seeked filmstrips while ordinary visual diffs keep animations off, and the reduced-motion custom variant is installable and checked by the doctor core.
 **Plans**: 4 (estimate)
 
-### LLM context bundles / Phase 1: Bundle browser tier and allocator
+### LLM context bundles / local slot 1: Bundle browser tier and allocator
 
 Legacy Phase 27. Future, not activated.
 
 **Goal**: A person can opt in to browser capture and get a bundle that fits an LLM's budget, with every gap labelled.
 **Mode:** mvp
-**Depends on**: Design canon and adopter Books / Phase 6, Checks and visual regression / Phase 1, Checks and visual regression / Phase 2
+**Depends on**: Design canon and adopter Books / local slot 6, Checks and visual regression / local slot 1, Checks and visual regression / local slot 2
 **Requirements**: LLM-02, LLM-03, LLM-04
 **Success Criteria** (what must be TRUE):
   1. `--browser` adds PNG shots, `aria.yaml`, styles, measurements and a11y to each scenario's folder through the shared Capture pipeline; without Playwright it prints one canonical "needs Playwright (opt-in)" message and records not-run, and the no-browser level stays pure Elixir.
@@ -494,30 +511,30 @@ Legacy Phase 27. Future, not activated.
   3. Stale or missing Evidence is labelled in the bundle and never shown as current, and the committed schema and size budgets still pass with the goldens re-recorded in a reviewed diff.
 **Plans**: 4 (estimate)
 
-### LLM context bundles / Phase 2: Focus framework, review focuses and gen.screens
+### LLM context bundles / local slot 2: Focus framework, review focuses and gen.screens
 
 Legacy Phase 28. Future, not activated.
 
 **Goal**: A person can ask an LLM for one kind of feedback, and a greenfield project can scaffold its screens.
 **Mode:** mvp
-**Depends on**: Design canon and adopter Books / Phase 2, LLM context bundles / Phase 1
+**Depends on**: Design canon and adopter Books / local slot 2, LLM context bundles / local slot 1
 **Requirements**: CORE-13
-**Partial delivery**: LLM-08 (framework and the explore, critique, copy, a11y, layout, consistency and brand focuses; completes in LLM context bundles / Phase 3), SKILL-02 (digests for these focuses; completes in LLM context bundles / Phase 3).
+**Partial delivery**: LLM-08 (framework and the explore, critique, copy, a11y, layout, consistency and brand focuses; completes in LLM context bundles / local slot 3), SKILL-02 (digests for these focuses; completes in LLM context bundles / local slot 3).
 **Success Criteria** (what must be TRUE):
   1. `--focus` accepts exactly one value from the closed list and rejects anything else, and a bundle's `BUNDLE.md` carries the rubric digest and reading order for explore, critique, copy, a11y, layout, consistency and brand.
   2. Draft stories and scenarios turn strict-rule errors into warnings and stay in To review, and `--focus explore` produces a bundle for them.
   3. `mix fablebook.gen.screens` scaffolds a Shell and one Draft Screen story per canon job in a greenfield project.
 **Plans**: 4 (estimate)
 
-### LLM context bundles / Phase 3: Compare, journey and motion focuses
+### LLM context bundles / local slot 3: Compare, journey and motion focuses
 
 Legacy Phase 29. Future, not activated.
 
 **Goal**: The remaining three focuses work, every focus carries a credited digest, and the four agent skills exist.
 **Mode:** mvp
-**Depends on**: Checks and visual regression / Phase 3, Checks and visual regression / Phase 5, Motion / Phase 2, LLM context bundles / Phase 2
+**Depends on**: Checks and visual regression / local slot 3, Checks and visual regression / local slot 5, Motion / local slot 2, LLM context bundles / local slot 2
 **Requirements**: LLM-08, WB-13, JOURNEY-03, MOTION-07, SKILL-02
-**Partial delivery**: SKILL-01 (the four skills are authored here; installing them completes it in Installer and DX / Phase 1).
+**Partial delivery**: SKILL-01 (the four skills are authored here; installing them completes it in Installer and DX / local slot 1).
 **Provisional on:** Q25
 **Success Criteria** (what must be TRUE):
   1. Compare shows renditions that differ in exactly one respect (a Global, a Theme or Direction, or the current rendition against its committed Baseline) at any tier, and `--focus compare` sends them to an LLM.
@@ -526,13 +543,13 @@ Legacy Phase 29. Future, not activated.
   4. Every focus in the closed list carries a short credited digest, rules live in checks with stable ids, and upstream skills (impeccable, ux-writing, review-animations, emil-design-eng) are named when installed and suggested as optional otherwise, never installed silently; the `fablebook`, `fablebook-review`, `fablebook-motion` and `fablebook-canon` skills are authored.
 **Plans**: 4 (estimate)
 
-### Installer and DX / Phase 1: Generators, doctor shell and migrator
+### Installer and DX / local slot 1: Generators, doctor shell and migrator
 
 Legacy Phase 30. Future, not activated.
 
 **Goal**: A person can generate a story, diagnose their setup, move off phoenix_storybook, and install the agent skills.
 **Mode:** mvp
-**Depends on**: Canvas fidelity and installer core / Phase 4, LLM context bundles / Phase 3
+**Depends on**: Canvas fidelity and installer core / local slot 4, LLM context bundles / local slot 3
 **Requirements**: INST-02, INST-03, INST-04, SKILL-01
 **Provisional on:** Q28
 **Success Criteria** (what must be TRUE):
@@ -542,13 +559,13 @@ Legacy Phase 30. Future, not activated.
   4. The four skills install through `usage_rules` sync or `mix fablebook.skills.install`, version-stamped, and never overwrite a user's edits.
 **Plans**: 4 (estimate)
 
-### Installer and DX / Phase 2: Image export, Docker demo and string check
+### Installer and DX / local slot 2: Image export, Docker demo and string check
 
 Legacy Phase 31. Future, not activated.
 
 **Goal**: A person can export a framed image of any scenario, try the demo in one command, and catch untranslated strings.
 **Mode:** mvp
-**Depends on**: Design canon and adopter Books / Phase 5, Checks and visual regression / Phase 2
+**Depends on**: Design canon and adopter Books / local slot 5, Checks and visual regression / local slot 2
 **Requirements**: WB-16, INST-06, UX-07
 **Success Criteria** (what must be TRUE):
   1. Export image and `mix fablebook.shot <scenario> --frame phone --scheme dark` produce a framed, high-resolution PNG, optionally on a background, and without Playwright print the canonical opt-in message.
@@ -556,30 +573,30 @@ Legacy Phase 31. Future, not activated.
   3. For a Book that declares Gettext, the optional Credo check flags user-visible literal text in `~H` not wrapped in `gettext`, waivable with a reason such as a brand name.
 **Plans**: 4 (estimate)
 
-### Installer and DX / Phase 3: Guides, docs brand and compatibility
+### Installer and DX / local slot 3: Guides, docs brand and compatibility
 
 Legacy Phase 32. Future, not activated.
 
 **Goal**: An adopter can learn, upgrade and troubleshoot from the docs alone, and the docs carry Fablebook's brand.
 **Mode:** mvp
-**Depends on**: Installer and DX / Phase 1, Installer and DX / Phase 2
+**Depends on**: Installer and DX / local slot 1, Installer and DX / local slot 2
 **Requirements**: DOCS-01, DOCS-02, DOCS-03
-**Partial delivery**: INST-07 (the convention and helper are documented here; dogfooding in sigra completes it in Dogfood setup / Phase 1), DOCS-04 (applied to the docs site, README, Hex page and social card).
+**Partial delivery**: INST-07 (the convention and helper are documented here; dogfooding in sigra completes it in Dogfood setup / local slot 1), DOCS-04 (applied to the docs site, README, Hex page and social card).
 **Success Criteria** (what must be TRUE):
   1. The 12 ADR 0019 guides, the cheatsheets and `llms.txt` exist, and a test confirms each troubleshooting heading is a canonical error string.
   2. Comparison and migration content for phoenix_storybook and Storybook, security-model and limits sections, and an interaction-testing recipe are published.
   3. `UPGRADING.md` exists for the minor release, with a compatibility matrix and a deprecation policy.
-  4. The docs site, README, Hex page and social card carry Fablebook's brand book from Design canon and adopter Books / Phase 4, while the workbench chrome stays ink-on-neutral.
+  4. The docs site, README, Hex page and social card carry Fablebook's brand book from Design canon and adopter Books / local slot 4, while the workbench chrome stays ink-on-neutral.
   5. A documented convention and a small helper let a library that generates UI into a host also generate host-owned Fablebook stories for it.
 **Plans**: 5 (estimate)
 
-### Hardening and remaining twins / Phase 1: Hardening
+### Hardening and remaining twins / local slot 1: Hardening
 
 Legacy Phase 33. Future, not activated.
 
 **Goal**: The remaining deterministic gates, mutation floors and regression tests are in place, so quality cannot erode silently.
 **Mode:** mvp
-**Depends on**: Installer and DX / Phase 3
+**Depends on**: Installer and DX / local slot 3
 **Requirements**: PERF-05, PERF-06, QA-02, QA-03, QA-05
 **Provisional on:** Q15, Q19
 **Success Criteria** (what must be TRUE):
@@ -590,13 +607,13 @@ Legacy Phase 33. Future, not activated.
   5. One regression test per phoenix_storybook footgun in CLEARANCE C2 exists under `test/regressions/`, and the security job runs `mix hex.audit`, OSV-Scanner and sobelow on the host apps.
 **Plans**: 4 (estimate)
 
-### Hardening and remaining twins / Phase 2: Finanza and Shopadelic twins
+### Hardening and remaining twins / local slot 2: Finanza and Shopadelic twins
 
 Legacy Phase 34. Future, not activated.
 
 **Goal**: The last two showcase products complete the set, and the white-label Theme and Guardrail path is exercised.
 **Mode:** mvp
-**Depends on**: Checks and visual regression / Phase 3
+**Depends on**: Checks and visual regression / local slot 3
 **Requirements**: QA-06
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
@@ -605,13 +622,13 @@ Legacy Phase 34. Future, not activated.
   3. All seven Books (three Logistify, Chatly, Finanza, Shopadelic, Clinicly) pass the canon lints and the sweep, and none of them is in the Hex tarball.
 **Plans**: 4 (estimate)
 
-### Dogfood setup / Phase 1: Dogfood setup
+### Dogfood setup / local slot 1: Dogfood setup
 
 Legacy Phase 35. Future, not activated.
 
 **Goal**: The owner's repos run Fablebook in CI so the 14-day clearance soak can start.
 **Mode:** mvp
-**Depends on**: Installer and DX / Phase 1, Hardening and remaining twins / Phase 2
+**Depends on**: Installer and DX / local slot 1, Hardening and remaining twins / local slot 2
 **Requirements**: INST-07
 **Provisional on:** Q2, Q22
 **Success Criteria** (what must be TRUE):

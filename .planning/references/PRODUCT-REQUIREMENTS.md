@@ -1,6 +1,6 @@
 # Full product requirement register
 
-All original requirement IDs, citations and statuses are retained below. Future owners use milestone-local phase numbers; historical validation remains scoped to its recorded receipts. The active milestone uses REQUIREMENTS.md. No pending requirement is completed by this migration. See migrations/2026-11-11-milestone-reset/CARRY-FORWARD.md.
+All original requirement IDs, citations and statuses are retained below. Future roadmap references are milestone-local slots until activation, when selected slots receive global integer IDs and the active map is updated. Historical validation remains scoped to its recorded receipts. The active milestone uses REQUIREMENTS.md. No pending requirement is completed by this migration. See migrations/2026-11-11-milestone-reset/CARRY-FORWARD.md.
 
 # Requirements: Fablebook
 
@@ -366,7 +366,7 @@ Which phases cover which requirements. Filled by roadmap creation.
 | UX-08 | Checks and visual regression / Phase 5 | Pending |
 | SKILL-01 | Installer and DX / Phase 1 | Pending |
 | SKILL-02 | LLM context bundles / Phase 3 | Pending |
-| SEC-01 | Controls and first bundle / Phase 1 | Pending |
+| SEC-01 | Controls and first bundle / first local slot | Pending |
 | SEC-02 | Phase 1 | Complete |
 | SEC-03 | Canvas fidelity and installer core / Phase 1 | Pending |
 | SEC-04 | Controls and first bundle / Phase 2 | Pending |
