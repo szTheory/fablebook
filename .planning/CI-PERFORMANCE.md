@@ -62,3 +62,12 @@ A scoped test-only change builds a map from caller/callee function pairs to the 
 The pending-MFA identities and all non-path inventory rows matched across baseline and indexed runs. Caller-chain paths differed between independent runs with both the old and new implementation (70 pending rows in the old pair; 31 in the indexed pair). That observed variation means a receipt hash is not a byte-for-byte cross-run equivalence check for caller paths. The untagged core tier-sweep module passed 53 tests, and the focused index fixture passed on both core and floor (one selected, 52 excluded in each lane; graph setup measured 20.932 s and 20.032 s). It pins duplicate handling, lowest-arity tie-breaking against the previous scan semantics, start-arity preservation, single-node fallback, and missing-edge failure. PR CI must still pass on both exact lanes before retaining the change; compare its core/floor job durations with the current-main baseline then.
 
 No dependency, cache, workflow, runtime lane, security check, or test exclusion changed. The optimization is in an isolated branch pending its exact-head CI run.
+
+## Phase 2 delivery timing review — 2026-11-13
+
+The prerequisite PR #87's post-merge main run [43445896621](https://github.com/szTheory/fablebook/actions/runs/43445896621) completed with core in 10m27s and floor in 10m14s; both required lanes overlapped. PR #88's final-head run [43449606316](https://github.com/szTheory/fablebook/actions/runs/43449606316) completed with core in 7m54s and floor in 12m12s, also in parallel.
+
+After PR #88 merged, main run [43451903473](https://github.com/szTheory/fablebook/actions/runs/43451903473) completed in about 11m36s. Core ran for 10m10s (the mix ci step took 9m49s); floor ran for 11m28s (the prod_guard test step took 11m06s). They overlapped from 15:22:08Z; floor was the critical path, with ci-gate finishing five seconds later. Dialyzer took 19s, security 29s, and the gate 3s. ci-health and nightly were skipped. The paired release-please workflow completed successfully; no package publish or deployment was part of this run.
+
+Core and floor already run concurrently, setup was brief, and these few samples do not establish a repeatable trend that justifies removing work or changing coverage. The latest floor test exceeded the 600s timing objective, but timing-only overages remain non-blocking under the existing policy. No safe low-risk CI change is justified by these measurements; keep both lanes and their current gates.
+
