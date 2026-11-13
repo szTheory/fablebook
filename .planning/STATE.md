@@ -1,11 +1,15 @@
 ---
 gsd_state_version: "1.0"
 milestone: v0.4
-milestone_name: Guard Aggregate Reconciliation
-status: planning
+milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 3
-last_updated: "2026-11-13T19:40:25Z"
+current_phase_name: Guard aggregate scope rejoin and candidate sizing
+status: Phase 3 context captured; ready for planning
+stopped_at: "Phase 3 context gathered on ~/projects/fablebook/main; v0.2 Phase 1 and v0.3 Phase 2 are delivered. Phase 3 full row/source/caller rejoin and candidate sizing remain unfinished. Static-only boundary, actual-library collision stop, SEC-01 Pending, aggregate gate open, and Walking Skeleton blocked remain unchanged. Next: $gsd-plan-phase 3; Codex proceeds within approved scope and returns at plan review or earlier if a material scope, risk, or fit change arises."
+last_updated: "2026-11-13T21:29:14.612Z"
 last_activity: 2026-11-13
+last_activity_desc: Phase 3 context gathered
+state_head: 3808bfc43b4924b07c3b6be255442f3d9e79ee7e
 progress:
   total_phases: 1
   completed_phases: 0
@@ -30,8 +34,8 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 Phase: 3 — Guard aggregate scope rejoin and candidate sizing
 Plan: —
-Status: Phase 3 selected; phase context not yet discussed
-Last activity: 2026-11-13 — v0.4 Guard Aggregate Reconciliation roadmap established
+Status: Phase 3 context captured; ready for planning
+Last activity: 2026-11-13 — Phase 3 context gathered
 
 ## Active Handoff
 
@@ -145,15 +149,15 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: ~/projects/fablebook on main. This agent session remains attached to the old worktree, so new work uses explicit main paths. v0.4 planning changes are local and unpushed. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains on its historical Phase 1 branch with eight modified tracked paths and one untracked UAT file; preserve it without reset, stash, cleanup, or removal. The separate brand-intake branch and provenance archive remain unchanged. PR #85 and PR #88 merge/main CI receipts are recorded in PHASE-DELIVERIES.json. No remote ref was pushed.
+Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Planning updates are committed locally and remain unpushed. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 has context only, with the full current row/source/caller rejoin and candidate sizing unfinished. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
 
-Last session: 2026-11-13T19:37:37Z
+Last session: 2026-11-13T21:27:28.592Z
 
-Stopped at: v0.4 is active on global Phase 3, with its one-phase roadmap and six requirements recorded. No full aggregate rejoin or candidate sizing has been executed. The live read-only probe rechecked the already delivered EX-010 and EX-107 row memberships; that did not close any additional scope. Static-only evidence, the manual actual-library collision stop, the Walking Skeleton block, and SEC-01 Pending status remain unchanged.
+Stopped at: Phase 3 context gathered on ~/projects/fablebook/main; v0.2 Phase 1 and v0.3 Phase 2 are delivered. Phase 3 full row/source/caller rejoin and candidate sizing remain unfinished. Static-only boundary, actual-library collision stop, SEC-01 Pending, aggregate gate open, and Walking Skeleton blocked remain unchanged. Next: $gsd-plan-phase 3; Codex proceeds within approved scope and returns at plan review or earlier if a material scope, risk, or fit change arises.
 
-Next action: Run $gsd-discuss-phase 3 to define the evidence-producing scope against the approved requirements. Continue on ~/projects/fablebook on main. The owner acts next only if phase discussion surfaces a material scope or risk change; otherwise proceed within v0.4. No guard implementation slice or product UI work is selected before the rejoin output and its size are reviewed.
+Next action: Run $gsd-plan-phase 3 to plan the full read-only two-lane row/MFA/source/caller rejoin and candidate sizing. Codex acts next within the approved scope; the owner acts if the plan surfaces a material scope, risk, or fit decision.
 
-Resume file: None
+Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CONTEXT.md
 
 ## Decisions
 
