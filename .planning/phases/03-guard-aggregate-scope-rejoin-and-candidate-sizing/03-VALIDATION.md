@@ -19,8 +19,8 @@ created: "2026-11-13"
 |----------|-------|
 | **Framework** | ExUnit contract tests on pinned core and floor Elixir/OTP lanes |
 | **Config file** | `mix.exs`, `test/test_helper.exs` |
-| **Quick run command** | `bin/lane core test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors && bin/lane floor test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors` |
-| **Full suite command** | `bin/lane core test --warnings-as-errors --include prod_guard && bin/lane floor test --warnings-as-errors --include prod_guard` |
+| **Quick run command** | `bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors && bin/lane floor test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors` |
+| **Full suite command** | `bin/lane core mix ci && bin/lane floor test --warnings-as-errors --include prod_guard --include release` |
 | **Estimated runtime** | Use current core and floor CI receipt timings; no tests were run during planning research. |
 
 ---
@@ -36,16 +36,21 @@ created: "2026-11-13"
 
 ## Per-Task Verification Map
 
-Plan, wave, and task IDs are assigned when the planner decomposes the six requirements. Every row remains pending until that mapping and its verification command are confirmed.
+Plans assign eleven tasks across five sequential waves because the existing authoritative identity ledger, narrow collector and tagged contract share file ownership. All outcomes remain pending: no source/runtime or test execution occurred during planning. `Q` below means the exact quick run command above. Records-only and bundle selectors are additional tags created by the leading tracer, not separate workflow tasks.
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | TBD | GSR-01 | TBD | Fresh core and floor inventory records bind exact lane/runtime/archive identity and provenance; inventory does not invoke audited targets. | contract/static evidence | `bin/lane core test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors && bin/lane floor test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors` | ❌ Wave 0 | ⬜ pending |
-| TBD | TBD | TBD | GSR-02 | TBD | Every original row retains exact owner and per-lane selected, added, missing, delivered, and pending MFA sets. | contract/exact membership | `bin/lane core test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors && bin/lane floor test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors` | ❌ Wave 0 | ⬜ pending |
-| TBD | TBD | TBD | GSR-03 | TBD | Surviving targets link to exact lane-specific sources and caller/delegate edges, or retain an explicit evidence gap. | contract/static source | `bin/lane core test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors && bin/lane floor test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors` | ❌ Wave 0 | ⬜ pending |
-| TBD | TBD | TBD | GSR-04 | TBD | EX-010 and EX-107 receipts and all historical partitions stay distinct and unchanged. | contract/integration | `bin/lane core test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors && bin/lane floor test test/contract/guard_aggregate_reconciliation_test.exs --warnings-as-errors` | ❌ Wave 0; EX-107 partition pattern exists | ⬜ pending |
-| TBD | TBD | TBD | GSR-05 | TBD | Candidate source, context, plan, and effort sizing fits every inherited limit or records the concrete no-candidate gap. | contract/sizing + review | Focused aggregate contract test on both lanes plus plan sizing review | ❌ Wave 0 | ⬜ pending |
-| TBD | TBD | TBD | GSR-06 | TBD | Evidence keeps the static-only boundary, collision stop, SEC-01 owner, open aggregate gate, Walking Skeleton block, and separate owner decision inspectable. | contract/document | Focused aggregate contract test on both lanes plus phase verification | ❌ Wave 0 | ⬜ pending |
+| 03-01-01 | 03-01 | 1 | GSR-01, GSR-04, GSR-06 | T-03-01, T-03-03, T-03-04 | Real both-lane tracer, pinned provenance, static acquisition and atomic opt-in records. | contract/static tracer | `FABLEBOOK_GUARD_AGGREGATE_WRITE=1 bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors && FABLEBOOK_GUARD_AGGREGATE_WRITE=1 bin/lane floor test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors && bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors` | Existing file; new tag in leading tracer | ⬜ pending |
+| 03-01-02 | 03-01 | 1 | GSR-01, GSR-02, GSR-04 | T-03-01, T-03-02 | Complete original identities/owners, exact sets and separate delivered/historical partitions. | contract/exact membership | Same explicit write/recheck command as 03-01-01 | Existing file; new tag in leading tracer | ⬜ pending |
+| 03-02-01 | 03-02 | 2 | GSR-03 | T-03-05, T-03-07 | Exact lane sources or individually typed source/provenance gaps. | contract/static source | Same explicit write/recheck command as 03-01-01 | Earlier plan creates collector/tag | ⬜ pending |
+| 03-02-02 | 03-02 | 2 | GSR-03, GSR-06 | T-03-06, T-03-07, T-03-08 | Full observed caller/delegate references, cycles and scoped empty/unknown outcomes; all required gaps block recommendation. | contract/static graph | Same explicit write/recheck command as 03-01-01 | Earlier plan creates collector/tag | ⬜ pending |
+| 03-03-01 | 03-03 | 3 | GSR-05 | T-03-09, T-03-10 | Fresh exact-source/token/context/reread manifest or explicit missing measurement. | contract/sizing | Q | Earlier plan creates collector/tag | ⬜ pending |
+| 03-03-02 | 03-03 | 3 | GSR-05, GSR-06 | T-03-09, T-03-10, T-03-11, T-03-12 | Below/at/above limits, unknowns, global gaps, atomic generation and separate owner authority. | contract/fit decision | Q | Earlier plan creates collector/tag | ⬜ pending |
+| 03-04-01 | 03-04 | 4 | GSR-01 through GSR-06 | T-03-13 | Independent completeness/provenance/authority and static call-graph review. | contract + independent judgment | Q | Earlier plan creates collector/tag | ⬜ pending |
+| 03-04-02 | 03-04 | 4 | GSR-01 through GSR-06 | T-03-14 | Accepted findings falsified, corrected records invalidate stale sizing. | focused records | `FABLEBOOK_GUARD_AGGREGATE_WRITE=1 bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation_records --warnings-as-errors && FABLEBOOK_GUARD_AGGREGATE_WRITE=1 bin/lane floor test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation_records --warnings-as-errors` | Earlier plan creates records sub-tag | ⬜ pending |
+| 03-04-03 | 03-04 | 4 | GSR-01 through GSR-06 | T-03-14, T-03-15 | Corrected report reproduces machine evidence and bounded review dispositions. | full bundle | `FABLEBOOK_GUARD_AGGREGATE_REPORT_WRITE=1 bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation_bundle --warnings-as-errors`, then Q | Earlier plan creates bundle sub-tag | ⬜ pending |
+| 03-05-01 | 03-05 | 5 | GSR-01 through GSR-06 | T-03-16, T-03-17 | Observed local reviewed/tested tree, full lanes and truthful act feasibility; hosted/merge receipts separate. | full lane | `bin/lane core mix ci && bin/lane floor test --warnings-as-errors --include prod_guard --include release` | Existing commands | ⬜ pending |
+| 03-05-02 | 03-05 | 5 | GSR-06 | T-03-18 | Accurate canonical handoff and validation state; original safety/owner stops preserved. | planning/static | `git diff --check origin/main...HEAD && git diff --check HEAD && bin/planning_health --stage execute --phase 3` | Existing commands | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -53,8 +58,9 @@ Plan, wave, and task IDs are assigned when the planner decomposes the six requir
 
 ## Wave 0 Requirements
 
-- [ ] Add `test/contract/guard_aggregate_reconciliation_test.exs` for inventory provenance, exact row/MFA membership, source links, delivered partitions, candidate sizing, and retained safety boundaries.
-- [ ] Add or extend only a narrowly scoped `test/support/` collector if the existing helpers cannot produce a required record.
+- [ ] Leading tracer adds `:guard_aggregate_reconciliation`, `:guard_aggregate_reconciliation_records` and `:guard_aggregate_reconciliation_bundle` tagged checks inside existing `test/contract/tier_sweep_test.exs`, reusing its private authoritative ledger and current graph.
+- [ ] Leading tracer adds only `test/support/guard_aggregate_reconciliation_evidence.ex` for the missing aggregate receipt/renderer; reuse InstalledOtp and SweepEvidence for inventory/source authority.
+- [ ] Confirm each focused selector runs nonzero relevant tests; ordinary checks are read-only, record/report writes require their explicit separate flags.
 - [ ] Confirm both pinned lane toolchains are available before lane-specific implementation verification; do not substitute one lane for the other.
 - [ ] Keep any contract-test addition separate from changes to `lib/**` or `.github/**` in a PR, per ADR 0021.
 
@@ -79,3 +85,7 @@ Plan, wave, and task IDs are assigned when the planner decomposes the six requir
 - [ ] `nyquist_compliant: true` set after validation confirms the plan's verification coverage.
 
 **Approval:** pending
+
+## Spec-less assumptions and prohibition review
+
+Plan 03-05 retains all 13 supplied unresolved edge prompts, including both unclassified items, with planned task checks. It also records the two-stage recall/precision pass for all six requirements and six unresolved bespoke safety/transparency prohibitions. These remain unresolved until execution evidence and independent judgment establish an honest resolution; merely writing a check does not resolve the probe. Generic archive/path/privacy canon remains with the existing resolver/project rules and security review. No new user-facing values or thresholds are assumed.

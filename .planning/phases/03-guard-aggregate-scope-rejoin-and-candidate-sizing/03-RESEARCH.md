@@ -140,7 +140,7 @@ test/support/
 ├── sweep_evidence.ex                # existing archive and source resolver
 └── <narrow aggregate evidence helper> # only if existing helper cannot emit a required record
 test/contract/
-└── <aggregate reconciliation contract> # exact set and provenance assertions
+└── tier_sweep_test.exs               # extend existing authoritative ledger/graph test with aggregate tags
 .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/
 ├── <lane-specific machine-readable inventory and provenance records>
 ├── <row-level linked crosswalk>
@@ -148,6 +148,8 @@ test/contract/
 ```
 
 Precise filenames and schema are discretionary; the plan should nominate one source of truth and derive or link the crosswalk rather than hand-maintaining duplicate membership facts. `[VERIFIED: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CONTEXT.md:20-22, 28-30]`
+
+Plans 03-01 through 03-04 choose the existing `test/contract/tier_sweep_test.exs` as the aggregate contract entry point because its module owns the authoritative private `original_identity_ledger!`, compiled matcher tables and current full graph. Extend it in place with `:guard_aggregate_reconciliation`, records and bundle tags, passing its existing authority to the narrow collector rather than duplicating or moving the ledger. `test/contract/asn1_rtt_integration_test.exs` remains a secondary analog for exact-set, historical-partition and source-identity assertions; it is not the aggregate entry point. This records the chosen planning boundary, not executed aggregate coverage.
 
 ### Pattern 1: Fail-closed, lane-specific inventory
 
@@ -256,19 +258,21 @@ Nyquist validation is enabled in `.planning/config.json`. This research did not 
 |----------|-------|
 | Framework | ExUnit, in-repo contract tests |
 | Config file | `mix.exs` includes `test/support` in the test compile paths and the `ci` alias runs the test task. `[VERIFIED: mix.exs:30-37, 52-62]` |
-| Quick run command | `mix test test/contract/guard_aggregate_reconciliation_test.exs` (after implementation; not run during this research) |
-| Full suite command | `mix test` on both pinned lanes (after implementation; not run during this research) |
+| Quick run command | `bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors` (after implementation; not run during this research) |
+| Full suite command | `bin/lane core mix ci && bin/lane floor test --warnings-as-errors --include prod_guard --include release` (after implementation; not run during this research) |
 
 ### Phase Requirements → Test Map
 
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
-| GSR-01 | Current inventory on both pinned lanes has explicit lane/runtime/lock and provenance records; collector never calls audited targets | contract | `mix test test/contract/guard_aggregate_reconciliation_test.exs` | No — phase artifact/test to add |
-| GSR-02 | Every original identity retains owner and exact per-lane selected, added, missing, delivered, and pending sets | contract | `mix test test/contract/guard_aggregate_reconciliation_test.exs` | No — phase artifact/test to add |
-| GSR-03 | Each surviving target links to exact lane source identity and cited caller/delegate edges or an explicit evidence gap | contract | `mix test test/contract/guard_aggregate_reconciliation_test.exs` | No — phase artifact/test to add |
-| GSR-04 | Existing merged receipts and EX-010/EX-107 partitions remain distinct and unchanged | contract | `mix test test/contract/guard_aggregate_reconciliation_test.exs` | Partial — EX-107 partition pattern exists in `test/contract/asn1_rtt_integration_test.exs`; aggregate coverage is new |
-| GSR-05 | Candidate source/context/effort record obeys all inherited limits or reports a concrete no-candidate gap | contract + review | `mix test test/contract/guard_aggregate_reconciliation_test.exs` plus plan sizing review | No — aggregate sizing record is new |
-| GSR-06 | Report retains static-only boundary, collision stop, SEC-01 owner, open aggregate gate, Walking Skeleton block, and explicit owner choice | contract + document review | `mix test test/contract/guard_aggregate_reconciliation_test.exs` plus phase verification | No — aggregate acceptance is new |
+| GSR-01 | Current inventory on both pinned lanes has explicit lane/runtime/lock and provenance records; collector never calls audited targets | contract | `bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors` | Yes — existing file; aggregate-tagged cases to add |
+| GSR-02 | Every original identity retains owner and exact per-lane selected, added, missing, delivered, and pending sets | contract | `bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors` | Yes — existing file; aggregate-tagged cases to add |
+| GSR-03 | Each surviving target links to exact lane source identity and cited caller/delegate edges or an explicit evidence gap | contract | `bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors` | Yes — existing file; aggregate-tagged cases to add |
+| GSR-04 | Existing merged receipts and EX-010/EX-107 partitions remain distinct and unchanged | contract | `bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors` | Yes — existing file; aggregate cases to add using the secondary EX-107 partition analog |
+| GSR-05 | Candidate source/context/effort record obeys all inherited limits or reports a concrete no-candidate gap | contract + review | `bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors` plus plan sizing review | Yes — existing file; aggregate sizing cases to add |
+| GSR-06 | Report retains static-only boundary, collision stop, SEC-01 owner, open aggregate gate, Walking Skeleton block, and explicit owner choice | contract + document review | `bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors` plus phase verification | Yes — existing file; aggregate acceptance cases to add |
+
+Each focused command above must also run on floor as `bin/lane floor test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors`. The file's existence is not evidence that the planned tagged cases exist or pass; capture nonzero selected-test counts on both lanes during execution. Records-only correction and bundle-publication selectors follow the separate tags in Plans 03-01/03-04.
 
 ### Sampling Rate
 
@@ -278,7 +282,7 @@ Nyquist validation is enabled in `.planning/config.json`. This research did not 
 
 ### Wave 0 Gaps
 
-- Add `test/contract/guard_aggregate_reconciliation_test.exs` for aggregate row/MFA, inventory-provenance, source-link, and sizing contract coverage in the approved `test/contract/` surface.
+- Extend `test/contract/tier_sweep_test.exs` with aggregate-tagged row/MFA, inventory-provenance, source-link and sizing cases. Reuse its authoritative private ledger, compiled matchers and full graph in place; do not create a separate aggregate test file or duplicate the identity authority. Use `test/contract/asn1_rtt_integration_test.exs` only as the secondary set/partition/source-assertion analog.
 - Add/extend only a narrow `test/support/` collector if current helper output cannot provide required records.
 - Do not change production guards or add a new CI lane.
 
@@ -340,20 +344,19 @@ Static command presence was checked; runtime version commands and tests were not
 
 ## Open Questions
 
-1. **What are the exact current core and floor row-to-MFA sets after both delivered slices?**
-   - What we know: archived original identities and prior scoped records exist; existing helpers can enumerate installed exports.
-   - What's unclear: current installed membership, additions/missing members, and exact complete remaining complement have not been freshly recorded.
-   - Recommendation: produce lane-bound inventory receipts first; fail closed on any mismatch and retain every member in machine-readable records.
+No unresolved planning-method or scope questions remain. The resolutions below settle how Phase 3 will produce and assess its evidence; they do not resolve the factual results. Current membership, source/caller completeness and candidate fit remain unobserved execution outputs under GSR-01 through GSR-06 and D-01 through D-04. No current inventory or fit is certified here, and no candidate is preselected.
 
-2. **Which surviving rows have complete exact source and relevant caller/delegate provenance?**
-   - What we know: Phase 1 and Phase 2 contain source/caller patterns for their own slices.
-   - What's unclear: complete row-by-row and both-lane source/caller closure across the remaining aggregate; static edges also do not establish dynamic-caller absence.
-   - Recommendation: link all known paths and state each missing source/provenance/caller gap explicitly; do not select a candidate if it affects that candidate's fit or evidence.
+1. **RESOLVED — How will exact current core and floor row-to-MFA membership be established?**
+   - Planning resolution: Plan 03-01 first proves one real both-lane path, then rejoins every original identity to independently acquired pinned-lane export inventories using the existing helpers and a narrow collector. Lane-specific machine-readable records retain owners, exact member sets, additions, absences, delivered scope, historical partitions and full pending complements; the crosswalk is derived from them per D-01/D-02.
+   - Execution evidence still required (unobserved): the actual current core/floor memberships, inventory provenance, differences and complete remaining complements. Historical records remain historical inputs. Acquisition or identity failures fail closed; they cannot be filled with prior counts or opposite-lane evidence.
 
-3. **Does a later bounded candidate fit the inherited limits?**
-   - What we know: rolling allocation permits a bounded recommendation, and prior source/context/effort examples exist.
-   - What's unclear: current exact file identities, measured context tokens, task grouping, output/context reserve, and itemized effort for any candidate.
-   - Recommendation: choose a candidate only after the full join, and size each isolated plan with exact source files, rereads, and effort reserve. Otherwise select none and state the bounded remedy.
+2. **RESOLVED — How will complete source and relevant caller/delegate provenance be assessed?**
+   - Planning resolution: Plan 03-02 joins every surviving lane/row/MFA to exact lane source identities and observed static caller/delegate paths using the existing resolver and full graph. It retains an exhaustive phase-wide required-evidence-gap index. Any required source, caller or provenance gap prevents recommending a candidate, even if a possible candidate's own row appears complete, per GSR-03/D-03.
+   - Execution evidence still required (unobserved): which associations are complete and the exact missing evidence across both lanes. Static edges never establish dynamic-caller absence or runtime safety. Missing evidence is an explicit result with a bounded remedy, not an assumed closure.
+
+3. **RESOLVED — How will later candidate fit and the owner decision be determined?**
+   - Planning resolution: Plan 03-03 measures at most one diagnostic pending scope after the complete join, using current exact source identities, tokenizer counts, reads/rereads, isolated context/reserve totals, task/plan grouping and itemized effort. A recommendation requires complete phase-wide evidence and every inherited limit to pass. Missing measurements, any evidence/fit failure or an unresolved actual-library collision select no candidate and name the concrete gap/remedy per D-03. Plans 03-04/03-05 independently review the result and preserve the separate later owner decision per D-04.
+   - Execution evidence still required (unobserved): the actual source/context/effort measurements and whether any candidate qualifies. No-candidate remains a valid completed reconciliation outcome. Recommendation never grants implementation authority; the collision stop, static-only boundary, SEC-01 ownership, open aggregate gate and Walking Skeleton block remain intact.
 
 ## Sources
 

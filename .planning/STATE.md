@@ -4,16 +4,16 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 3
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: Phase 3 context captured; ready for planning
-stopped_at: "Phase 3 context gathered on ~/projects/fablebook/main; v0.2 Phase 1 and v0.3 Phase 2 are delivered. Phase 3 full row/source/caller rejoin and candidate sizing remain unfinished. Static-only boundary, actual-library collision stop, SEC-01 Pending, aggregate gate open, and Walking Skeleton blocked remain unchanged. Next: $gsd-plan-phase 3; Codex proceeds within approved scope and returns at plan review or earlier if a material scope, risk, or fit change arises."
-last_updated: "2026-11-13T21:29:14.612Z"
+status: Phase 3 planned; awaiting separate owner decision before implementation
+stopped_at: "Phase 3 plan is complete and independently reviewed on ~/projects/fablebook/main. The five plans define the read-only aggregate rejoin, source/caller evidence, candidate sizing, review, and handoff; implementation has not started. v0.2 Phase 1 and v0.3 Phase 2 remain delivered. Static-only boundary, actual-library collision stop, SEC-01 Pending, aggregate gate open, and Walking Skeleton blocked remain unchanged. Next: owner reviews the plan and decides whether to authorize $gsd-execute-phase 3. Any later guard increment still requires its own owner decision."
+last_updated: "2026-11-13T23:16:55.706Z"
 last_activity: 2026-11-13
-last_activity_desc: Phase 3 context gathered
-state_head: 3808bfc43b4924b07c3b6be255442f3d9e79ee7e
+last_activity_desc: Phase 3 plan completed and independently reviewed
+state_head: 1a90aeb6c92149a29c7b4aca66373cea20689204
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
+  total_plans: 5
   completed_plans: 0
   percent: 0
 ---
@@ -32,18 +32,18 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 3 — Guard aggregate scope rejoin and candidate sizing
-Plan: —
-Status: Phase 3 context captured; ready for planning
-Last activity: 2026-11-13 — Phase 3 context gathered
+Phase: 3 (Guard aggregate scope rejoin and candidate sizing) — PLAN COMPLETE
+Plan: 5 plans; 11 tasks across 5 waves
+Status: Awaiting separate owner decision before implementation
+Last activity: 2026-11-13 — Phase 3 plan completed and independently reviewed
 
 ## Active Handoff
 
-- Canonical planning checkout: ~/projects/fablebook, branch main. This agent session was launched from the old worktree at ~/.claude/worktrees/agent-planning-main-261111, so all new commands explicitly target main. The old worktree remains dirty and preserved; it was not reset, stashed, cleaned, or removed.
+- Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: v0.4 Phase 3 must rejoin every surviving original exclusion row to both current lane inventories, exact source identities, caller/delegate paths, and the pending complement; then measure a bounded candidate or record why none fits.
+- Unfinished: Phase 3 has five reviewed plans (11 tasks across five waves), but no implementation or aggregate evidence exists yet. Execution must rejoin every surviving original exclusion row to both current lane inventories, exact source identities, caller/delegate paths, and the pending complement; then measure one bounded candidate or record why none fits.
 - Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: $gsd-discuss-phase 3 to define the exact evidence-producing phase context. The owner acts next only if that discussion surfaces a material scope or risk change; otherwise continue within this approved milestone.
+- Next action: owner reviews the Phase 3 plan and decides whether to authorize $gsd-execute-phase 3. If authorized, execute its read-only evidence work and return for a separate owner decision on any later guard increment. Owner acts next.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
