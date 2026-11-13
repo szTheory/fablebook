@@ -57,6 +57,10 @@ defmodule Fablebook.Test.PlanningState do
 
       %{stage: stage, milestone: field(state, "milestone"), phase: nil, errors: errors}
     else
+      roadmap_milestone =
+        capture(roadmap, ~r/^# Roadmap:\s+(v[\d.]+)\b/m) ||
+          capture(roadmap, ~r/^## (v[\d.]+)\b/m)
+
       errors =
         require_true(
           phases != [] and Enum.all?(phases, &integer_id?/1),
@@ -70,7 +74,7 @@ defmodule Fablebook.Test.PlanningState do
           ) ++
           state_phase_errors(state, current, phases) ++
           require_true(
-            capture(roadmap, ~r/^# Roadmap:\s+(v[\d.]+)\b/m) == field(state, "milestone"),
+            roadmap_milestone == field(state, "milestone"),
             "roadmap_milestone",
             field(state, "milestone")
           ) ++
@@ -90,12 +94,7 @@ defmodule Fablebook.Test.PlanningState do
             "milestone_key",
             key
           ) ++
-          require_true(
-            normalize(phases) ==
-              Enum.map(1..max(length(phases), 1), &Integer.to_string/1) |> Enum.sort(),
-            "phase_sequence",
-            phases
-          ) ++
+          phase_sequence_errors(phases, deliveries, field(state, "milestone")) ++
           active_owner_errors(key, phases, mapping, gates) ++
           active_delivery_errors(deliveries, key, field(state, "milestone")) ++
           directory_errors(root, phases) ++
@@ -315,20 +314,60 @@ defmodule Fablebook.Test.PlanningState do
 
   defp delivery_errors(deliveries) do
     records = deliveries["phases"]
-    identities = Enum.map(records, &{&1["milestone"], normalized(&1["phase"])})
+    phase_numbers = records |> Enum.map(&phase_number(&1["phase"])) |> Enum.reject(&is_nil/1)
 
-    require_true(length(identities) == length(Enum.uniq(identities)), "duplicate_delivery", nil) ++
-      Enum.flat_map(records, fn record ->
-        valid =
-          integer_id?(record["phase"]) and version?(record["milestone"]) and
-            is_binary(record["milestone_key"]) and
-            record["status"] == "merged" and is_integer(record["pr"]) and record["pr"] > 0 and
-            Enum.all?(~w(reviewed_head merge_commit), &sha?(record[&1])) and
-            is_binary(record["ci_run"]) and
-            String.starts_with?(record["ci_run"], "https://github.com/")
+    expected_numbers =
+      if phase_numbers == [], do: [], else: Enum.to_list(1..length(phase_numbers))
 
-        require_true(valid, "invalid_delivery", record["phase"])
-      end)
+    require_true(
+      length(phase_numbers) == length(Enum.uniq(phase_numbers)),
+      "duplicate_delivery",
+      nil
+    ) ++
+      require_true(
+        Enum.sort(phase_numbers) == expected_numbers,
+        "delivery_sequence",
+        phase_numbers
+      ) ++
+      Enum.flat_map(records, &delivery_record_errors/1)
+  end
+
+  defp delivery_record_errors(record) do
+    require_true(valid_delivery_record?(record), "invalid_delivery", record["phase"])
+  end
+
+  defp valid_delivery_record?(record) do
+    valid_delivery_identity?(record) and valid_delivery_outcome?(record) and
+      valid_delivery_receipt?(record)
+  end
+
+  defp valid_delivery_identity?(record) do
+    integer_id?(record["phase"]) and version?(record["milestone"]) and
+      is_binary(record["milestone_key"])
+  end
+
+  defp valid_delivery_outcome?(record) do
+    record["status"] == "merged" and is_integer(record["pr"]) and record["pr"] > 0
+  end
+
+  defp valid_delivery_receipt?(record) do
+    Enum.all?(~w(reviewed_head merge_commit), &sha?(record[&1])) and
+      is_binary(record["ci_run"]) and String.starts_with?(record["ci_run"], "https://github.com/")
+  end
+
+  defp phase_sequence_errors(phases, deliveries, current_milestone) do
+    prior_numbers =
+      deliveries["phases"]
+      |> Enum.reject(&(&1["milestone"] == current_milestone))
+      |> Enum.map(&phase_number(&1["phase"]))
+      |> Enum.reject(&is_nil/1)
+
+    next_number = if prior_numbers == [], do: 1, else: Enum.max(prior_numbers) + 1
+
+    expected =
+      if phases == [], do: [], else: Enum.map(0..(length(phases) - 1), &(next_number + &1))
+
+    require_true(Enum.map(phases, &phase_number/1) == expected, "phase_sequence", phases)
   end
 
   defp delivered?(deliveries, version, phase) do
@@ -611,6 +650,8 @@ defmodule Fablebook.Test.PlanningState do
 
   defp integer_id?(value),
     do: is_binary(value) and Regex.match?(~r/^\d+$/, value) and String.to_integer(value) > 0
+
+  defp phase_number(value), do: if(integer_id?(value), do: String.to_integer(value))
 
   defp normalize(values), do: values |> Enum.map(&normalized/1) |> Enum.sort()
 

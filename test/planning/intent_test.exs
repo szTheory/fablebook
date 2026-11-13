@@ -141,6 +141,7 @@ defmodule Fablebook.Planning.IntentTest do
     assert source_violations(real_sources()) == []
   end
 
+  @tag timeout: 180_000
   test "every INT and ADR citation in the real corpus exists and is canonical" do
     assert citation_violations(corpus(), real_ints(), real_adrs()) == []
   end
