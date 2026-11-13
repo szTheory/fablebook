@@ -149,15 +149,15 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Planning updates are committed locally and remain unpushed. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 has context only, with the full current row/source/caller rejoin and candidate sizing unfinished. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
+Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Phase 3 plan and supporting records are committed locally and remain unpushed. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 has five independently reviewed plans, while its full current row/source/caller rejoin and candidate sizing remain unfinished. No implementation has started. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
 
-Last session: 2026-11-13T21:27:28.592Z
+Last session: 2026-11-13T23:18:54Z
 
-Stopped at: Phase 3 context gathered on ~/projects/fablebook/main; v0.2 Phase 1 and v0.3 Phase 2 are delivered. Phase 3 full row/source/caller rejoin and candidate sizing remain unfinished. Static-only boundary, actual-library collision stop, SEC-01 Pending, aggregate gate open, and Walking Skeleton blocked remain unchanged. Next: $gsd-plan-phase 3; Codex proceeds within approved scope and returns at plan review or earlier if a material scope, risk, or fit change arises.
+Stopped at: Phase 3 planning is complete and independently reviewed on ~/projects/fablebook/main. Five plans define the read-only rejoin, source/caller evidence, candidate sizing, review, and owner handoff; no implementation has started. v0.2 Phase 1 and v0.3 Phase 2 are delivered. Static-only boundary, actual-library collision stop, SEC-01 Pending, aggregate gate open, and Walking Skeleton blocked remain unchanged. Next: owner reviews the plan and decides whether to authorize $gsd-execute-phase 3; any later guard increment still requires its own owner decision.
 
-Next action: Run $gsd-plan-phase 3 to plan the full read-only two-lane row/MFA/source/caller rejoin and candidate sizing. Codex acts next within the approved scope; the owner acts if the plan surfaces a material scope, risk, or fit decision.
+Next action: owner reviews the five-plan Phase 3 package and decides whether to authorize $gsd-execute-phase 3. Owner acts next.
 
-Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CONTEXT.md
+Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
 ## Decisions
 
@@ -174,8 +174,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 context and execution have not started. The complete EX-107 row and guard aggregate, actual-library collision owner stop, static-only evidence limit, Walking Skeleton block, and SEC-01 Pending status remain active. A later implementation increment still requires its own bounded owner decision.
+- Phase 3 context and planning are complete; implementation has not started. The full current row/source/caller rejoin and candidate sizing remain unfinished. The actual-library collision owner stop, static-only evidence limit, Walking Skeleton block, and SEC-01 Pending status remain active. A later implementation increment still requires its own bounded owner decision.
 
 ## Operator Next Steps
 
-- Run `$gsd-discuss-phase 3` to scope the approved v0.4 reconciliation phase.
+- Review the five Phase 3 plans and decide whether to authorize `$gsd-execute-phase 3`; implementation is a separate owner decision from this plan.
