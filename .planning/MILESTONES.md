@@ -1,5 +1,37 @@
 # Milestone history
 
+## v0.3 Bounded ASN.1 RTT Guard Evidence (Shipped: 2026-11-13)
+
+**Delivered:** Source-backed static evidence for the approved three-function ASN.1 RTT slice on both pinned lanes, with review and green delivery receipts; wider safety boundaries remain open.
+
+**Phases completed:** Phase 2 (1 phase, 5 plans, 10 tasks)
+
+**Closeout:** `override_closeout`; scoped audit status remains `tech_debt` with 3/3 requirements and no critical gaps.
+
+Known verification overrides: 2 newly acknowledged, 5 carried forward from the v0.2 closeout (see STATE.md Deferred Items and the closeout receipt). The six audit debt items remain recorded.
+
+**Key accomplishments:**
+- Core ASN.1 RTT evidence binds all three approved functions and direct callers to the pinned OTP archive, with independent controls and a byte-only table check.
+- Floor archive citations and individual static controls now cover all three selected RTT functions, with `code/0` validated as bytes only.
+- The integration contract verifies exact EX-107 lane membership, independent 3/174 and 13/164/161 partitions, and six lane-specific static controls.
+- The five lane and integration outputs pass independent static-security review, with lane-correct focused checks and all wider safety stops preserved.
+- The original core/floor failures remain recorded; the separately delivered prerequisite, lane ownership and bounded timeout fixes were followed by passing full suites on a PR-shaped tested tree. Candidate and merged-main delivery remain separate gates.
+
+**Stats:**
+- 86 files in the Phase 2 delivery diff, including planning and archive records; focused test/support changes were 5 files and 816 added lines.
+- 1 phase, 5 plans, 10 tasks.
+- One day from approved v0.3 scope (2026-11-12) to merged delivery and verification (2026-11-13).
+
+**Git range:** PR #87 prerequisite delivery → PR #88 phase delivery and final verification closeout.
+
+[Roadmap](milestones/v0.3-ROADMAP.md), [requirements](milestones/v0.3-REQUIREMENTS.md), [audit](milestones/v0.3-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.3-phases/), [closeout](milestones/v0.3-CLOSEOUT.md).
+
+**Post-close worktree reconciliation:** [checkout inventory and active planning path](references/WORKTREE-RECONCILIATION-2026-11-13.md).
+
+**What's next:** `$gsd-new-milestone` — the owner chooses and defines the next bounded scope. No next milestone is selected automatically.
+
+---
+
 ## v0.2 Guard coverage recovery (Shipped: 2026-11-11)
 
 **Phases completed:** 1 phase, 3 plans, 6 tasks

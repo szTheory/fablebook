@@ -2,44 +2,45 @@
 gsd_state_version: "1.0"
 milestone: v0.3
 milestone_name: Bounded ASN.1 RTT Guard Evidence
-current_phase: 2
-status: completed
-stopped_at: Phase 2 complete and verified; v0.3 milestone audit and owner closeout decision remain
-last_updated: "2026-11-13T16:10:26Z"
+status: complete
+stopped_at: v0.3 archived locally; worktree inventory completed; next milestone scope awaits owner input
+last_updated: "2026-11-13T17:52:28Z"
 last_activity: 2026-11-13
-last_activity_desc: Phase 2 verified and delivered; awaiting milestone boundary decision
-state_head: 7c775ba4e4890aef8bf793fe3ab5e908ca5e8763
+last_activity_desc: Milestone v0.3 completed and archived
+state_head: 35cb6d841fa60708cb5b2546eb7b1c570f596ae9
 progress:
   total_phases: 1
   completed_phases: 1
   total_plans: 5
   completed_plans: 5
   percent: 100
+current_phase: null
 ---
 
 # Project State
 
 ## Project Reference
 
-See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md) and the
+See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
+[v0.3 closeout](milestones/v0.3-CLOSEOUT.md), the
+[worktree reconciliation](references/WORKTREE-RECONCILIATION-2026-11-13.md), and the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 2 is complete; v0.3 milestone closeout remains owner-gated
+**Current focus:** v0.3 is archived locally; the next milestone scope remains an owner decision
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
-Status: Phase 2 verified and delivered; milestone audit/closeout is the next owner boundary
-Last activity: 2026-11-13 — Phase 2 complete
-
-Progress: [██████████] 100%
+Phase: Milestone v0.3 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-11-13 — Milestone v0.3 completed and archived
 
 ## Performance Metrics
 
 - v0.3 plans drafted: 5; independent plan review passed; all five plans executed.
-- Ten tasks were grouped across five plans and four waves. Phase 2 verification passed 5/5 must-haves with no unresolved human checks. PR #88 reviewed head `ded4af612df3346b8516f4a027772ed3d2bbd53f` merged as `3817912c861286608183c057d2e38ff7a260bd6e`; final-head CI [43449606316](https://github.com/szTheory/fablebook/actions/runs/43449606316) and main CI [43451903473](https://github.com/szTheory/fablebook/actions/runs/43451903473) passed. PR #87’s prerequisite delivery and main CI also passed; see `02-UAT.md`, `02-SECURITY.md`, and `PHASE-DELIVERIES.json`.
+- Ten tasks were grouped across five plans and four waves. Phase 2 verification passed 5/5 must-haves with no unresolved human checks. PR #88 reviewed head `ded4af612df3346b8516f4a027772ed3d2bbd53f` merged as `3817912c861286608183c057d2e38ff7a260bd6e`; final-head CI [43449606316](https://github.com/szTheory/fablebook/actions/runs/43449606316) and main CI [43451903473](https://github.com/szTheory/fablebook/actions/runs/43451903473) passed. PR #87’s prerequisite delivery and main CI also passed; see [02-UAT.md](milestones/v0.3-phases/02-bounded-asn-1-rtt-guard-evidence/02-UAT.md), [02-SECURITY.md](milestones/v0.3-phases/02-bounded-asn-1-rtt-guard-evidence/02-SECURITY.md), and [delivery registry](references/PHASE-DELIVERIES.json).
+- The v0.3 milestone audit reports all three requirements and the evidence integration flow pass; six tracked items remain nonblocking debt. See [v0.3-MILESTONE-AUDIT.md](milestones/v0.3-MILESTONE-AUDIT.md).
 
 **Per-Plan Metrics:**
 
@@ -131,21 +132,23 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: IN-02 smoke route positive control | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: SEC-02 fixture-only story-beam exclusion | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: scheduled security registry failure | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
+| seeds | SEED-261112-sln | dormant; acknowledged at close | 2026-11-13 | v0.3 |
+| deferred_items | Phase 02 / deferred-items.md: local act concurrency.queue limitation | deferred; acknowledged at close | 2026-11-13 | v0.3 |
 
 ## Session Continuity
 
-Working checkout: `~/projects/fablebook` on `main`. Phase 2 implementation is merged at `3817912c861286608183c057d2e38ff7a260bd6e`; the local verification closeout commit records the final UAT, security, delivery registry, CI timing, requirements and goal-verification artifacts. No receipt-only CI loop was triggered. The former dirty primary checkout is preserved on local branch `archive/primary-dirty-checkout-20261113`; the old local main history is preserved on `archive/main-before-sync-20261113`. The isolated verification checkout remains at `/private/tmp/fablebook-phase2-rebase-20261113` for provenance; the primary path is clean on `main`.
+Active planning checkout: `~/projects/fablebook` on `main`; the completed v0.3 archive is being reconciled here. The four pre-existing dirty audit/state files were incorporated and the full [worktree inventory](references/WORKTREE-RECONCILIATION-2026-11-13.md) identifies this as the sole active planning checkout. The stale Phase 1 worktree and all other divergent branches remain preserved. Quick-task directories are unchanged. The staging clone at `/private/tmp/fablebook-v03-closeout` remains for provenance; no remote ref was pushed. PR #88 is merged at `3817912c861286608183c057d2e38ff7a260bd6e`; final UAT, security, delivery registry, CI timing, requirements and goal-verification artifacts are archived. The former dirty checkout remains on `archive/primary-dirty-checkout-20261113`; old local main history remains on `archive/main-before-sync-20261113`.
 
 Separate brand intake: `origin/agent-brand-intake-261111` at `1ad8bde`;
 [the intake handoff](references/fablebook-brand-intake.md) owns future use.
 INT-20261111-06, INT-20261111-07 and INT-20261111-08 and the handoff pointer are retained unchanged. Assets are
 unapplied; source/instructions/seed/brief remain on their separate branch.
 
-Last session: 2026-11-13T16:04:00Z
+Last session: 2026-11-13T17:52:28Z
 
-Stopped at: Phase 2 verification passed and merged delivery receipts are reconciled. The v0.3 phase is complete; milestone audit/closure is the next owner boundary.
+Stopped at: v0.3 archive/tag is local and the worktree inventory is complete. The complete EX-107 row and remainder, static-only evidence limit, manual collision owner stop, Walking Skeleton block and SEC-01 Pending status remain unchanged.
 
-Next action: Owner decides whether to run `$gsd-audit-milestone v0.3` before the separate milestone-close approval. Do not select another guard increment, bypass the Walking Skeleton block or close SEC-01. The generated state cache was refreshed through the SDK publisher; it remains advisory and cannot authorize new scope.
+Next action: The owner answers the new-milestone question with the next bounded goal. No v0.4 requirements or roadmap have been written yet. Start from `~/projects/fablebook` on `main`; do not resume the dirty historical worktree or bypass the Walking Skeleton block or close SEC-01. The v0.3 tag remains local and unpushed.
 
 Resume file: None
 
@@ -165,3 +168,7 @@ Resume file: None
 ### Blockers
 
 - No Phase 2 verification blocker remains. The complete EX-107 row and guard aggregate, actual-library collision owner stop, static-only evidence limit, Walking Skeleton block, SEC-01 Pending status, and owner decision before another increment remain active.
+
+## Operator Next Steps
+
+- Run `$gsd-new-milestone` to choose the next milestone scope and define fresh requirements.

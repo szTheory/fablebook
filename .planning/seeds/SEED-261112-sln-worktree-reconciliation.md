@@ -1,10 +1,15 @@
 ---
 id: SEED-261112-sln
-status: dormant
+status: complete
+completed: 2026-11-13
 planted: 2026-11-12
 planted_during: v0.3 Phase 2 planning
 trigger_when: After v0.3 Phase 2 is verified, merged, and its actual main CI receipt is confirmed; complete during v0.3 milestone closeout and before activating or planning the next milestone.
 scope: One-time repository/worktree reconciliation and canonical-checkout handoff.
+audit_acknowledged:
+  milestone: v0.3
+  at: 2026-11-13
+  status: dormant
 ---
 
 # SEED-261112-sln: Reconcile worktrees at milestone closeout
@@ -39,3 +44,12 @@ Several worktrees now hold different generations of planning, phase, and brand-i
 ## Notes
 
 The Phase 2 owner decision to use separate lane-owned test files is already recorded and the five plans passed review. This seed does not delay or change Phase 2 execution. The Shopadelic handoff in the primary checkout is separate brand-intake work and is not part of the Phase 2 implementation scope.
+
+
+## Resolution (2026-11-13)
+
+The registered checkout inventory and canonical-checkout handoff are complete.
+See [WORKTREE-RECONCILIATION-2026-11-13.md](../references/WORKTREE-RECONCILIATION-2026-11-13.md).
+The active planning checkout is `~/projects/fablebook` on `main`. No checkout,
+branch or filesystem remnant was removed. Dirty and divergent history is
+preserved with Jon as owner and a review date of 2026-12-13.

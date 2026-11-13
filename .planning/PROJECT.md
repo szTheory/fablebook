@@ -14,14 +14,9 @@ If everything else fails, a scenario must still render with production fidelity 
 
 **Design canon milestone / local slot 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
 
-## Current Milestone: v0.3 Bounded ASN.1 RTT Guard Evidence
+## Last Shipped Milestone: v0.3 Bounded ASN.1 RTT Guard Evidence
 
-**Goal:** Establish source-backed dispositions for three pending EX-107 RTT functions on both pinned lanes while preserving the original row and every wider safety gate.
-
-**Target features:**
-- Revalidate current EX-107 membership, the selected three functions, and the remaining complement on core and floor before executable phase planning.
-- Record lane-specific source and caller evidence for `assert_defined/1`, `code/0`, and `dependencies/1`, with individual controls and the existing byte-only check for the large literal table.
-- Preserve the source, context and effort limits; do not invoke audited functions or claim runtime safety, full-row closure, aggregate closure, or automatic follow-up.
+v0.3 shipped on 2026-11-13 as bounded static evidence for three selected ASN.1 RTT functions on both pinned lanes. It records exact source and caller evidence, lane-specific controls, and reviewed delivery receipts. It does not establish runtime behavior or close the full EX-107 row, the guard aggregate, Walking Skeleton, or SEC-01. See the [v0.3 archive](milestones/v0.3-ROADMAP.md) and [closeout receipt](milestones/v0.3-CLOSEOUT.md).
 
 ## Current State
 
@@ -32,16 +27,17 @@ main CI. Five older artifacts remain explicitly acknowledged and unresolved;
 see [the closeout receipt](milestones/v0.2-CLOSEOUT.md). This was a bounded
 development milestone, not a package release or runtime-safety proof.
 
-v0.3 scope, requirements, and its one-phase roadmap are approved. Global Phase 2
-is complete and verified against reviewed source evidence, security findings, and
-merged green delivery receipts (INT-20261112-03, INT-20261112-04). The complete
-guard aggregate and installed-wide remainder stay open; Walking Skeleton remains
-blocked; SEC-01 remains Pending with Controls and first bundle / its first local
-slot, which receives a global phase number when that milestone activates. The
-v0.1 cycle stays superseded and
-incomplete. See [the full product register](references/PRODUCT-REQUIREMENTS.md),
-[future product roadmap](references/PRODUCT-ROADMAP.md), [v0.2 delivery](milestones/v0.2-phases/01-bounded-guard-continuation/01-MERGE.md),
-and [archived v0.2 requirements](milestones/v0.2-REQUIREMENTS.md).
+v0.3 is archived locally as a bounded development milestone. Its audit confirms
+3/3 requirements and no critical gaps; six nonblocking debt items remain recorded.
+The closeout is `override_closeout` for two newly acknowledged artifacts and five
+items carried from v0.2. The frozen v0.1 source and all wider owners remain intact.
+The complete guard aggregate and installed-wide remainder stay open; Walking
+Skeleton remains blocked; SEC-01 remains Pending with Controls and first bundle /
+its first local slot. No next milestone scope is selected. See the [v0.3
+requirements](milestones/v0.3-REQUIREMENTS.md), [audit](milestones/v0.3-MILESTONE-AUDIT.md),
+[phase evidence](milestones/v0.3-phases/), [closeout receipt](milestones/v0.3-CLOSEOUT.md),
+[full product register](references/PRODUCT-REQUIREMENTS.md), and [future product
+roadmap](references/PRODUCT-ROADMAP.md).
 
 ## Next Milestone Goals
 
@@ -53,17 +49,16 @@ The rolling product direction is recorded in
 
 ## Requirements
 
-The lists below summarize the wider v1 product vision; they are not the active milestone scope or a live progress ledger. Use the current milestone REQUIREMENTS.md when present for active acceptance; use milestones/v0.2-REQUIREMENTS.md for the archived v0.2 acceptance and references/PRODUCT-REQUIREMENTS.md for carried product status/citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
-
-### Current v0.3 milestone
-
-- **GRC-04–06**: Revalidate and disposition only the approved three-function RTT slice, preserve the complete EX-107 row and remaining complement, and deliver under existing review, safety and CI gates. Full acceptance and citations are in `.planning/REQUIREMENTS.md` (INT-20261111-13, INT-20261111-01, INT-20261110-01, ADR 0004, ADR 0021).
+The lists below summarize the wider v1 product vision; they are not a live progress ledger. Use the archived [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md) and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
 
 ### Validated
 
 - ✓ **GRC-01** Exact-lane source identities, selected/remainder membership, caller/delegate paths and inherited limits bound the selected increment — v0.2 (INT-20261111-01, INT-20261110-01, ADR 0021).
 - ✓ **GRC-02** Selected static dispositions and non-vacuous positive/negative controls passed on both lanes and delivered through reviewed green PR #85 — v0.2 (INT-20261111-01, INT-20261029-02, ADR 0004, ADR 0021).
 - ✓ **GRC-03** Original exclusion identities, pending complement, prior evidence, owners and wider safety gates remain preserved — v0.2 (INT-20261111-01, INT-20261029-02, ADR 0021).
+- ✓ **GRC-04** Revalidated the complete EX-107 lane sets, selected three functions, exact complement, and lane source identities — v0.3 (INT-20261111-13, INT-20261111-01, ADR 0021).
+- ✓ **GRC-05** Recorded source spans, direct callers, individual controls, and the byte-only table check while keeping runtime behavior unproven — v0.3 (INT-20261111-13, INT-20261110-01, ADR 0004, ADR 0021).
+- ✓ **GRC-06** Delivered the selected slice through review, exact-head CI, merged PR, and main CI while preserving all wider stops — v0.3 (INT-20261111-13, INT-20261112-03, ADR 0021).
 
 - ✓ **SEC-02** In prod the router macro raises a `CompileError`, with no override in 1.0. Stories and canon never compile in prod. The CI prod build asserts there are no Fablebook routes and no story beams. — Phase 01.1 (ADR 0006)
 - ✓ **REL-01** release-please publishes to Hex via the bootstrap skill. Phase 1 publishes 0.1.0 to reserve the name. Includes a post-publish smoke test, a recovery workflow and an SBOM. — Phase 01.1 (ADR 0017, INT-20261028-01)
@@ -298,7 +293,8 @@ Every item below is a v1.0 commitment.
 ## Context
 
 - **Delivered v0.2:** Contract/static evidence only; no production code, workflow or dependency changes. Independent exact-lane findings and symmetric selection feed the existing Elixir/Phoenix core/floor test lanes. Full delivery and diff measurements are in milestones/v0.2-CLOSEOUT.md.
-- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; five acknowledged older artifacts and every aggregate/product gate keep their existing owners. No new scope is inferred.
+- **Delivered v0.3:** Five test/support files add 816 lines of source-backed static evidence and controls; no runtime library code changed. The existing Elixir/Phoenix core/floor lanes and their hosted delivery gates remain in use.
+- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; five previously acknowledged artifacts and two v0.3 acknowledgements remain unresolved under their existing owners. No new scope is inferred.
 
 - **Ecosystem (verified 2026-10-28):**
   - Phoenix 1.8.16 and LiveView 1.2.13 are current; there is no Phoenix 1.9.
@@ -366,7 +362,7 @@ Every item below is a v1.0 commitment.
 | Decision | Rationale | Outcome |
 |---|---|---|
 | Retain the selected tracing-front matcher (v0.2 / Phase 1, INT-20261111-11) | Independent exact-lane source review distinguishes caller callbacks and the fixed native boundary from evaluator or atom-creation behavior | PR #85 delivers static dispositions and individual both-lane witnesses with green candidate/main CI. Only EX-010 advances; runtime safety and aggregate/product gates remain open. |
-| Close only the verified ASN.1 RTT slice (v0.3 / Phase 2, INT-20261111-13) | Exact lane membership, source/caller evidence and individual controls can be independently checked against final delivery receipts | GRC-04–06 are complete after reviewed PR #88 and green final-head/main CI; the full EX-107 remainder, runtime limits, collision owner stop and wider gates stay open. |
+| Close only the verified ASN.1 RTT slice (v0.3 / Phase 2, INT-20261111-13) | Exact lane membership, source/caller evidence and individual controls can be independently checked against final delivery receipts | v0.3 is archived under `override_closeout`; GRC-04–06 passed after reviewed PR #88 and green final-head/main CI. The full EX-107 remainder, runtime limits, collision owner stop and wider gates stay open; no next scope is selected. |
 | Validate lane-selection policy before expensive suites (v0.2 / Phase 1) | Broad tests exposed two wrong-lane tests and an unsupported custom exclusion | Symmetric core/floor tags, wrong-lane and unrelated-tag negatives, cheap CI-shape/lint first and a final focused review preserve coverage while avoiding repeated broad failures. |
 | Source-bind the bounded ASN.1 generator-dispatch slice (Phase 01.1.1.18) | Distinguish caller-prefix atom creation from existing-atom lookup and fixed literal data using independent exact-lane reviews | Two mirrored static patterns cover three exports; individual exclusions, source/caller controls and candidate CI passed in merged PR #79. Upstream internal-IR Prefix provenance stays an explicit evidence limit; SEC-01 remains with Phase 5. |
 | Verify Hex docs recovery locally when the published release already has docs (Phase 01.1, INT-20261108-01) | Do not alter a public package just to manufacture a missing-docs test case | Fake API contract cases cover docs absent and present; the real docs generator passed `--dry-run` without uploading |
@@ -480,4 +476,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-13 after Phase 2 verification and delivery; wider guard and product acceptance remains open.*
+*Last updated: 2026-11-13 after v0.3 milestone closeout; wider guard and product acceptance remains open.*

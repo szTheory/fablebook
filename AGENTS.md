@@ -29,3 +29,8 @@ After a phase's green PR is merged, append its actual milestone version/key, int
 Before discussing another guard increment, show its concrete contribution to the remaining product blocker, full selected scope and pending complement, inherited limits, a bounded exit and the owner decision after that exit. Do not generate an automatic sequence of audit phases or milestones. One bounded milestone closes against its own requirements and merged deliveries; the wider gate remains open until its complete scoped proof passes. New product milestones must satisfy typed prerequisites in PHASE-MAP.json and PLANNING-GATES.json. Do not convert an open observation into a generic blocking audit task or weaken a product gate to move forward.
 
 On every pause, record the actual checkout/branch, current milestone and phase, delivered versus unfinished work, unchanged safety stops, concrete next action and who acts next in STATE.md and the relevant receipt. Replace obsolete live handoffs; keep archived evidence immutable. Reconcile the dirty primary checkout through its recovery pointer before making changes there; do not reset, stash or clean it as a recovery shortcut. See `.planning/references/PLANNING-LIFECYCLE.md` for ownership and transition details.
+
+
+## Canonical planning checkout
+
+For OpenGSD milestone planning, use `~/projects/fablebook` on `main` after reconciling merged main and delivery receipts. The old `.claude/worktrees/agent-planning-main-261111` checkout remains a preserved dirty historical branch; do not resume, reset, stash, clean or remove it. Consult `.planning/references/WORKTREE-RECONCILIATION-2026-11-13.md` before resuming or retiring any preserved checkout.
