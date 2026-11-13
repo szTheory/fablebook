@@ -14,7 +14,7 @@ Before declaring a requested phase missing, inspect the checkout branch and fetc
 
 ## Milestone and phase numbering
 
-Use sequential integer phase numbers and reset to Phase 1 for each new milestone. Do not add nested decimal phases. Keep active milestones bounded; preserve the wider product roadmap separately. Historical IDs and unfinished acceptance remain traceable through the archive and carry-forward register. See INT-20261111-01.
+Use one project-wide sequence of ordinary integer phase numbers across active-era milestones. v0.2 Phase 1 is the delivered anchor and v0.3 is Phase 2; assign later numbers after the highest delivered phase when each milestone activates. Do not add nested decimal phases or reset numbering without new owner intent. Keep active milestones bounded; preserve the wider product roadmap separately. Historical IDs and unfinished acceptance remain traceable through the archive and carry-forward register. INT-20261112-04 supersedes only the numbering clause of INT-20261111-01.
 
 A progress check is a diagnostic, not the default next task. Recommend the concrete next action when known, preserve required milestone/phase approval boundaries, and continue routine authorized work without asking the owner to rerun status commands. Before reporting status, reconcile the checkout with merged main and the latest saved receipts; preserve dirty historical checkouts.
 

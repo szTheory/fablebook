@@ -1,18 +1,18 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.2 — Guard coverage recovery",
+  "milestone": "v0.3 — Bounded ASN.1 RTT Guard Evidence",
   "phases": [
     {
-      "number": "1",
-      "name": "Bounded guard continuation",
+      "number": "2",
+      "name": "Bounded ASN.1 RTT guard evidence",
       "status": "in_progress"
     }
   ],
   "next": {
-    "command": "/gsd-progress --next",
+    "command": "$gsd-progress --next",
     "label": "Advance to the next step",
     "reason": "Phase 1 of 1 · 0% · executing"
   },
-  "updated_at": "2026-11-11T22:39:03.887Z"
+  "updated_at": "2026-11-13T06:00:41.172Z"
 }

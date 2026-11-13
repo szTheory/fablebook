@@ -1,4 +1,15 @@
 {
   "schema": "fablebook.phase-deliveries/1",
-  "phases": []
+  "phases": [
+    {
+      "milestone": "v0.2",
+      "milestone_key": "guard-recovery",
+      "phase": "1",
+      "status": "merged",
+      "pr": 85,
+      "reviewed_head": "a90ef1dfe7bad10ac3d303b82f8ba7b32c949745",
+      "merge_commit": "fb2e31be861acca65ef85399d0845901a3cc2b30",
+      "ci_run": "https://github.com/szTheory/fablebook/actions/runs/43138409677"
+    }
+  ]
 }

@@ -3,6 +3,10 @@ status: diagnosed
 trigger: "Diagnose UAT test 15: timing-only CI p50/p95 breaches create quality-regression issues that block release PRs despite INT-20261106-01."
 created: 2026-11-06
 updated: 2026-11-06T13:43:14Z
+audit_acknowledged:
+  milestone: v0.2
+  at: 2026-11-11
+  status: diagnosed
 ---
 
 ## Current Focus
