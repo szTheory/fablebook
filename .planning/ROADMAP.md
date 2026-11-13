@@ -2,7 +2,7 @@
 
 ## Milestones
 
-- **v0.3 Bounded ASN.1 RTT Guard Evidence** — active scope; all five reviewed Phase 2 plans have summaries. Plan 02-05's full core/floor checks failed, so local readiness is blocked and phase requirements remain pending.
+- **v0.3 Bounded ASN.1 RTT Guard Evidence** — Phase 2 is complete with GRC-04–06 verified and delivered. The scoped milestone is ready for its audit and owner closeout decision; wider guard obligations remain open.
 - v0.2 Guard coverage recovery — Phase 1 complete, archived 2026-11-11; [roadmap and phase details](milestones/v0.2-ROADMAP.md).
 - v0.1 Legacy planning cycle — superseded and incomplete; [historical roadmap](milestones/v0.1-ROADMAP.md).
 
@@ -25,7 +25,7 @@ was delivered; this first and only v0.3 phase is Phase 2. Later milestones
 continue after the highest delivered integer. Future roadmap slots receive
 global IDs when their milestone activates. (INT-20261112-04)
 
-- [ ] **Phase 2: Bounded ASN.1 RTT guard evidence** - Disposition only the approved three-function EX-107 slice on both lanes through existing source, review and delivery gates.
+- [x] **Phase 2: Bounded ASN.1 RTT guard evidence** - Disposition only the approved three-function EX-107 slice on both lanes through existing source, review and delivery gates. (completed 2026-11-13)
 
 ## Phase Details
 
@@ -52,7 +52,7 @@ global IDs when their milestone activates. (INT-20261112-04)
   4. [02-04 — Independent review and bounded corrections](phases/02-bounded-asn-1-rtt-guard-evidence/02-04-PLAN.md)
   5. [02-05 — Full local checks and readiness handoff](phases/02-bounded-asn-1-rtt-guard-evidence/02-05-PLAN.md)
 
-**Planning complete:** The owner selected separate core, floor, and integration evidence/test outputs. The five-plan set passed independent review. Core plan 02-01 and floor plan 02-02 are complete; cross-lane integration, independent review/corrections, and full local checks remain in the approved sequence.
+**Planning and execution complete:** The owner selected separate core, floor, and integration evidence/test outputs. All five plans passed their required review and execution steps; Phase 2 verification passed after the final merged-delivery receipts were reconciled.
 
 ### Inherited limits and stop conditions
 
@@ -64,9 +64,9 @@ global IDs when their milestone activates. (INT-20261112-04)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 2. Bounded ASN.1 RTT guard evidence | 5/5 | In Progress; core plan 02-01 complete | - |
+| 2. Bounded ASN.1 RTT guard evidence | 5/5 | Complete    | 2026-11-13 |
 
-**Coverage:** 3/3 approved v0.3 requirements mapped exactly once; no unmapped requirements. All remain Pending until their phase evidence passes.
+**Coverage:** 3/3 approved v0.3 requirements mapped exactly once and verified complete for Phase 2; no unmapped requirements. Wider product and safety obligations remain open under their existing owners.
 
 ## Preserved boundaries and next action
 
@@ -81,7 +81,6 @@ and [planning gates](references/PLANNING-GATES.json).
 Logistify/Fablebook brandbooks, UI catalog and demo work stay in the separate
 [rolling product roadmap](references/PRODUCT-ROADMAP.md); no product implementation,
 release, deployment, brand application or automatic follow-up is authorized here.
-After selected delivery and the required closeout, the owner chooses whether to
-authorize another bounded increment or revisit the aggregate strategy.
+Phase 2 delivery and verification are complete. The owner chooses whether to audit and close this bounded milestone before selecting any later scope. No next increment is selected automatically.
 
-Current position: Phase 2 is executing under the approved scope. Core plan 02-01 is complete; plans 02-02 through 02-05 remain. The actual-library collision stop, static-only evidence limit, complete EX-107 remainder, Walking Skeleton block, and SEC-01 Pending status remain unchanged. Next: continue with `$gsd-execute-phase 2` at plan 02-02.
+Current position: Phase 2 is complete and delivered through merged PR #88 with green final-head and main CI. The static-only evidence limit, actual-library collision owner stop, complete EX-107 remainder, Walking Skeleton block, SEC-01 Pending status, and requirement for a fresh owner decision before later scope remain unchanged. Next: the owner decides whether to run `$gsd-audit-milestone v0.3`.

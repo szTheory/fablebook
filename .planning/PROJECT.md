@@ -32,10 +32,13 @@ main CI. Five older artifacts remain explicitly acknowledged and unresolved;
 see [the closeout receipt](milestones/v0.2-CLOSEOUT.md). This was a bounded
 development milestone, not a package release or runtime-safety proof.
 
-v0.3 scope, requirements, and its one-phase roadmap are approved. Its first phase is global Phase 2; discussion has not started (INT-20261112-03, INT-20261112-04). The complete guard aggregate and installed-wide
-remainder stay open; Walking Skeleton remains blocked; SEC-01 remains Pending
-with Controls and first bundle / its first local slot, which receives a global
-phase number when that milestone activates. The v0.1 cycle stays superseded and
+v0.3 scope, requirements, and its one-phase roadmap are approved. Global Phase 2
+is complete and verified against reviewed source evidence, security findings, and
+merged green delivery receipts (INT-20261112-03, INT-20261112-04). The complete
+guard aggregate and installed-wide remainder stay open; Walking Skeleton remains
+blocked; SEC-01 remains Pending with Controls and first bundle / its first local
+slot, which receives a global phase number when that milestone activates. The
+v0.1 cycle stays superseded and
 incomplete. See [the full product register](references/PRODUCT-REQUIREMENTS.md),
 [future product roadmap](references/PRODUCT-ROADMAP.md), [v0.2 delivery](milestones/v0.2-phases/01-bounded-guard-continuation/01-MERGE.md),
 and [archived v0.2 requirements](milestones/v0.2-REQUIREMENTS.md).
@@ -363,6 +366,7 @@ Every item below is a v1.0 commitment.
 | Decision | Rationale | Outcome |
 |---|---|---|
 | Retain the selected tracing-front matcher (v0.2 / Phase 1, INT-20261111-11) | Independent exact-lane source review distinguishes caller callbacks and the fixed native boundary from evaluator or atom-creation behavior | PR #85 delivers static dispositions and individual both-lane witnesses with green candidate/main CI. Only EX-010 advances; runtime safety and aggregate/product gates remain open. |
+| Close only the verified ASN.1 RTT slice (v0.3 / Phase 2, INT-20261111-13) | Exact lane membership, source/caller evidence and individual controls can be independently checked against final delivery receipts | GRC-04–06 are complete after reviewed PR #88 and green final-head/main CI; the full EX-107 remainder, runtime limits, collision owner stop and wider gates stay open. |
 | Validate lane-selection policy before expensive suites (v0.2 / Phase 1) | Broad tests exposed two wrong-lane tests and an unsupported custom exclusion | Symmetric core/floor tags, wrong-lane and unrelated-tag negatives, cheap CI-shape/lint first and a final focused review preserve coverage while avoiding repeated broad failures. |
 | Source-bind the bounded ASN.1 generator-dispatch slice (Phase 01.1.1.18) | Distinguish caller-prefix atom creation from existing-atom lookup and fixed literal data using independent exact-lane reviews | Two mirrored static patterns cover three exports; individual exclusions, source/caller controls and candidate CI passed in merged PR #79. Upstream internal-IR Prefix provenance stays an explicit evidence limit; SEC-01 remains with Phase 5. |
 | Verify Hex docs recovery locally when the published release already has docs (Phase 01.1, INT-20261108-01) | Do not alter a public package just to manufacture a missing-docs test case | Fake API contract cases cover docs absent and present; the real docs generator passed `--dry-run` without uploading |
@@ -476,4 +480,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-12 after v0.3 roadmap approval; wider guard and product acceptance remains open.*
+*Last updated: 2026-11-13 after Phase 2 verification and delivery; wider guard and product acceptance remains open.*
