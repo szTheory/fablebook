@@ -2,14 +2,14 @@
 gsd_state_version: "1.0"
 milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
-current_phase: 3
+current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: Phase 3 planned; awaiting separate owner decision before implementation
-stopped_at: "Phase 3 plan is complete and independently reviewed on ~/projects/fablebook/main. The five plans define the read-only aggregate rejoin, source/caller evidence, candidate sizing, review, and handoff; implementation has not started. v0.2 Phase 1 and v0.3 Phase 2 remain delivered. Static-only boundary, actual-library collision stop, SEC-01 Pending, aggregate gate open, and Walking Skeleton blocked remain unchanged. Next: owner reviews the plan and decides whether to authorize $gsd-execute-phase 3. Any later guard increment still requires its own owner decision."
-last_updated: "2026-11-13T23:16:55.706Z"
+status: Phase 3 paused at a blocking-human execution checkpoint
+stopped_at: Phase 03-01 Task 03-01-01 paused before writes at the exact-source budget checkpoint; awaiting owner decision recorded in 03-01-CHECKPOINT.md.
+last_updated: "2026-11-13T23:40:12.437Z"
 last_activity: 2026-11-13
-last_activity_desc: Phase 3 plan completed and independently reviewed
-state_head: 1a90aeb6c92149a29c7b4aca66373cea20689204
+last_activity_desc: Plan 03-01 paused before writes at the exact-source budget checkpoint
+state_head: a4a25589bd5d2e86bc7aa10d817b18b424922a31
 progress:
   total_phases: 1
   completed_phases: 0
@@ -28,22 +28,22 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** v0.4 Guard Aggregate Reconciliation. The complete current row, source, and caller/delegate join across both pinned lanes remains to be produced; no next implementation slice is selected. The product UI gate remains open. The systematic UI quality and dogfood vision remains in INT-20261113-01 and PRODUCT-ROADMAP.md.
+**Current focus:** Phase 03 — Guard aggregate scope rejoin and candidate sizing
 
 ## Current Position
 
-Phase: 3 (Guard aggregate scope rejoin and candidate sizing) — PLAN COMPLETE
-Plan: 5 plans; 11 tasks across 5 waves
-Status: Awaiting separate owner decision before implementation
-Last activity: 2026-11-13 — Phase 3 plan completed and independently reviewed
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — EXECUTION PAUSED
+Plan: 03-01, Task 03-01-01; 0/2 tasks complete
+Status: Blocking-human checkpoint; awaiting owner decision
+Last activity: 2026-11-13 — Plan 03-01 paused before writes at the exact-source budget checkpoint
 
 ## Active Handoff
 
 - Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five reviewed plans (11 tasks across five waves), but no implementation or aggregate evidence exists yet. Execution must rejoin every surviving original exclusion row to both current lane inventories, exact source identities, caller/delegate paths, and the pending complement; then measure one bounded candidate or record why none fits.
+- Unfinished: Phase 3 has five reviewed plans (11 tasks across five waves), but no implementation or aggregate evidence exists yet. Plan 03-01 Task 03-01-01 is paused before writes because its executor exhausted the exact-source read allowance. The full rejoin and candidate sizing remain unfinished.
 - Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: owner reviews the Phase 3 plan and decides whether to authorize $gsd-execute-phase 3. If authorized, execute its read-only evidence work and return for a separate owner decision on any later guard increment. Owner acts next.
+- Next action: owner decides whether to re-plan Wave 1 within the existing source/context limits, then independently review and resume execution, or stop Phase 3 here. See [03-01-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md). Owner acts next.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -149,15 +149,15 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Phase 3 plan and supporting records are committed locally and remain unpushed. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 has five independently reviewed plans, while its full current row/source/caller rejoin and candidate sizing remain unfinished. No implementation has started. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
+Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Phase 3 plans and the execution checkpoint are committed locally or awaiting the checkpoint commit; nothing was pushed. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered. The v0.4 Phase 3 rejoin and candidate sizing remain unfinished; Plan 03-01 Task 03-01-01 stopped before writes when the executor exhausted its exact-source allowance. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
 
-Last session: 2026-11-13T23:18:54Z
+Last session: 2026-11-13T23:40:12.420Z
 
-Stopped at: Phase 3 planning is complete and independently reviewed on ~/projects/fablebook/main. Five plans define the read-only rejoin, source/caller evidence, candidate sizing, review, and owner handoff; no implementation has started. v0.2 Phase 1 and v0.3 Phase 2 are delivered. Static-only boundary, actual-library collision stop, SEC-01 Pending, aggregate gate open, and Walking Skeleton blocked remain unchanged. Next: owner reviews the plan and decides whether to authorize $gsd-execute-phase 3; any later guard increment still requires its own owner decision.
+Stopped at: Phase 03-01 Task 03-01-01 paused before writes at the exact-source budget checkpoint. No task files or commits were produced. The initial static scan found no EX-010 collision, but the broader collision gate remains open. Safety stops are unchanged; details are in 03-01-CHECKPOINT.md.
 
-Next action: owner reviews the five-plan Phase 3 package and decides whether to authorize $gsd-execute-phase 3. Owner acts next.
+Next action: owner chooses whether to re-plan Wave 1 within the existing source/context limits, independently review it, and resume execution, or stop Phase 3 here. Owner acts next.
 
-Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
+Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md
 
 ## Decisions
 
@@ -174,8 +174,9 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 context and planning are complete; implementation has not started. The full current row/source/caller rejoin and candidate sizing remain unfinished. The actual-library collision owner stop, static-only evidence limit, Walking Skeleton block, and SEC-01 Pending status remain active. A later implementation increment still requires its own bounded owner decision.
+- Phase 3 context and planning are complete; execution began but Plan 03-01 Task 03-01-01 stopped before writes at the exact-source budget checkpoint. The full current row/source/caller rejoin and candidate sizing remain unfinished. The actual-library collision owner stop, static-only evidence limit, Walking Skeleton block, and SEC-01 Pending status remain active. A later implementation increment still requires its own bounded owner decision.
+- Phase 03-01 Task 03-01-01 is paused at a blocking-human checkpoint: the executor reports its exact-source read allowance was exhausted after rereading test/contract/tier_sweep_test.exs; no task files or commits were produced. See .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md.
 
 ## Operator Next Steps
 
-- Review the five Phase 3 plans and decide whether to authorize `$gsd-execute-phase 3`; implementation is a separate owner decision from this plan.
+- Choose whether to re-plan Wave 1 within the existing evidence limits and resume after an independent review, or stop Phase 3 execution here. The decision and evidence are recorded in [03-01-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md).

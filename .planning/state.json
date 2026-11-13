@@ -6,13 +6,13 @@
     {
       "number": "3",
       "name": "Guard aggregate scope rejoin and candidate sizing",
-      "status": "in_progress"
+      "status": "pending"
     }
   ],
   "next": {
-    "command": "$gsd-progress --next",
-    "label": "Advance to the next step (plan phase 3)",
-    "reason": "Phase 1 of 1 — needs a plan"
+    "command": "$gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-11-13T23:19:35.110Z"
+  "updated_at": "2026-11-13T23:40:56.498Z"
 }
