@@ -29,7 +29,11 @@ defmodule Fablebook.Test.Asn1RttFloorEvidence do
   end
 
   def selected_mfas,
-    do: [{:asn1ct_rtt, :assert_defined, 1}, {:asn1ct_rtt, :code, 0}, {:asn1ct_rtt, :dependencies, 1}]
+    do: [
+      {:asn1ct_rtt, :assert_defined, 1},
+      {:asn1ct_rtt, :code, 0},
+      {:asn1ct_rtt, :dependencies, 1}
+    ]
 
   def evidence_for(record, mfa) do
     Enum.find(record.selected_function_evidence, &(&1.mfa == mfa))
@@ -59,7 +63,8 @@ defmodule Fablebook.Test.Asn1RttFloorEvidence do
       target_span: 533..1038,
       caller_path: [
         {"asn1/src/asn1ct_func.erl:59", "generate(Fd) ->"},
-        {"asn1/src/asn1ct_func.erl:64", "    Code = sofs:relation(asn1ct_rtt:code(), [{mfa,code}]),"}
+        {"asn1/src/asn1ct_func.erl:64",
+         "    Code = sofs:relation(asn1ct_rtt:code(), [{mfa,code}]),"}
       ],
       finding:
         "The floor source returns a fixed generated-code table consumed by generate/1. The complete table is checked only as bytes against a bounded grammar; its contents are not parsed or evaluated. Runtime behavior, dynamic callers, native internals, and SEC-01 remain unproven."
@@ -73,7 +78,8 @@ defmodule Fablebook.Test.Asn1RttFloorEvidence do
       target_span: 122..531,
       caller_path: [
         {"asn1/src/asn1ct_func.erl:90", "handle_cast({need,MFA}, #st{used=Used0}=St) ->"},
-        {"asn1/src/asn1ct_func.erl:93", "\t    Used = pull_in_deps(gb_sets:singleton(MFA), Used0),"},
+        {"asn1/src/asn1ct_func.erl:93",
+         "\t    Used = pull_in_deps(gb_sets:singleton(MFA), Used0),"},
         {"asn1/src/asn1ct_func.erl:125", "pull_in_deps(Ws0, Used0) ->"},
         {"asn1/src/asn1ct_func.erl:132", "\t    Needs = asn1ct_rtt:dependencies(MFA),"},
         {"asn1/src/asn1ct_func.erl:133", "\t    Ws = update_worklist(Needs, Used, Ws1),"}

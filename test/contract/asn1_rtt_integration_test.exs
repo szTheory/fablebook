@@ -1,9 +1,9 @@
 defmodule Fablebook.Test.Asn1RttIntegrationTest do
   use ExUnit.Case, async: false
 
-  alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.Asn1RttCoreEvidence
   alias Fablebook.Test.Asn1RttFloorEvidence
+  alias Fablebook.Test.InstalledOtp
   alias Fablebook.Test.SweepEvidence
 
   @budget_path Path.expand(
@@ -54,15 +54,19 @@ defmodule Fablebook.Test.Asn1RttIntegrationTest do
     lane = evidence.lane.name
     expected = Map.fetch!(lane_sets, lane)
     live = live_asn1_matches!(evidence, lane)
+
     assert live == expected,
            "EX-107/#{lane} differs from the preserved exact lane membership"
 
     selected = MapSet.new(Enum.map(@selected_mfas, &mfa_string/1))
-    assert selected == MapSet.new([
-             "asn1ct_rtt:assert_defined/1",
-             "asn1ct_rtt:code/0",
-             "asn1ct_rtt:dependencies/1"
-           ])
+
+    assert selected ==
+             MapSet.new([
+               "asn1ct_rtt:assert_defined/1",
+               "asn1ct_rtt:code/0",
+               "asn1ct_rtt:dependencies/1"
+             ])
+
     assert MapSet.subset?(selected, expected)
     full_complement = MapSet.difference(expected, selected)
     assert MapSet.size(full_complement) == 174
@@ -100,11 +104,15 @@ defmodule Fablebook.Test.Asn1RttIntegrationTest do
       assert String.length(entry.disposition) > 0
       positive_span = Enum.at(entry.caller.spans, entry.control.positive_span)
       positive_source = SweepEvidence.resolve!(core, positive_span.citation)
-      positive_text = span!(positive_source.path, positive_span.first_line, positive_span.last_line)
+
+      positive_text =
+        span!(positive_source.path, positive_span.first_line, positive_span.last_line)
+
       assert Asn1RttCoreEvidence.guard_matches?(entry, positive_text)
 
       negative = SweepEvidence.resolve!(core, entry.control.negative_citation)
       refute Asn1RttCoreEvidence.guard_matches?(entry, negative.text)
+
       refute Asn1RttCoreEvidence.guard_matches?(
                entry,
                String.replace(positive_text, entry.control.guard, "", global: false)
@@ -130,6 +138,7 @@ defmodule Fablebook.Test.Asn1RttIntegrationTest do
              ]
 
       target = mfa_call(entry.mfa)
+
       matching_citations =
         Enum.filter(entry.caller_path, fn {_citation, line} -> String.contains?(line, target) end)
 
@@ -155,7 +164,11 @@ defmodule Fablebook.Test.Asn1RttIntegrationTest do
     assert floor_code.target_span == 533..1038
 
     assert @collision_report_fields == [:mfa, :call_site, :input_trace, :triggering_guard]
-    assert Enum.all?(floor_entries, &String.contains?(String.downcase(&1.finding), "runtime behavior"))
+
+    assert Enum.all?(
+             floor_entries,
+             &String.contains?(String.downcase(&1.finding), "runtime behavior")
+           )
   end
 
   defp archived_lane_sets! do

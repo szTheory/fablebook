@@ -22,7 +22,9 @@ defmodule Fablebook.Test.Asn1RttCoreGuardTest do
   test "assert_defined/1 source and need/1 caller resolve to their complete pinned spans", %{
     evidence: evidence
   } do
-    entry = Enum.find(Asn1RttCoreEvidence.entries(), &(&1.mfa == {:asn1ct_rtt, :assert_defined, 1}))
+    entry =
+      Enum.find(Asn1RttCoreEvidence.entries(), &(&1.mfa == {:asn1ct_rtt, :assert_defined, 1}))
+
     assert entry.mfa == {:asn1ct_rtt, :assert_defined, 1}
 
     source = SweepEvidence.resolve!(evidence, entry.source.citation)
@@ -46,15 +48,17 @@ defmodule Fablebook.Test.Asn1RttCoreGuardTest do
 
     negative = SweepEvidence.resolve!(evidence, entry.control.negative_citation)
     refute Asn1RttCoreEvidence.guard_matches?(entry, negative.text)
+
     refute Asn1RttCoreEvidence.guard_matches?(
              entry,
              String.replace(caller_text, entry.control.guard, "", global: false)
            )
   end
 
-  test "the three selected functions have complete pinned spans and individual caller controls", %{
-    evidence: evidence
-  } do
+  test "the three selected functions have complete pinned spans and individual caller controls",
+       %{
+         evidence: evidence
+       } do
     entries = Asn1RttCoreEvidence.entries()
 
     assert Enum.map(entries, & &1.mfa) == [
@@ -77,6 +81,7 @@ defmodule Fablebook.Test.Asn1RttCoreGuardTest do
       assert source.origin == :archive
       assert source.sha256 == entry.source.identity.sha256
       assert File.stat!(source.path).size == entry.source.identity.bytes
+
       assert sha256(span!(source.path, entry.source.first_line, entry.source.last_line)) ==
                entry.source.span_sha256
 
@@ -86,6 +91,7 @@ defmodule Fablebook.Test.Asn1RttCoreGuardTest do
         assert caller.origin == :archive
         assert caller.sha256 == entry.caller.identity.sha256
         assert File.stat!(caller.path).size == entry.caller.identity.bytes
+
         assert sha256(span!(caller.path, caller_span.first_line, caller_span.last_line)) ==
                  caller_span.span_sha256
       end
@@ -97,6 +103,7 @@ defmodule Fablebook.Test.Asn1RttCoreGuardTest do
 
       negative = SweepEvidence.resolve!(evidence, entry.control.negative_citation)
       refute Asn1RttCoreEvidence.guard_matches?(entry, negative.text)
+
       refute Asn1RttCoreEvidence.guard_matches?(
                entry,
                String.replace(positive_text, entry.control.guard, "", global: false)
@@ -114,9 +121,14 @@ defmodule Fablebook.Test.Asn1RttCoreGuardTest do
     grammar = rtt_grammar()
 
     assert Regex.match?(grammar, body)
-    assert length(Regex.scan(Regex.compile!(row_pattern()), body)) == entry.literal_table.row_count
 
-    refute Regex.match?(grammar, String.replace(body, <<60, 60, 34>>, "<<integer_to_binary(1)>>", global: false))
+    assert length(Regex.scan(Regex.compile!(row_pattern()), body)) ==
+             entry.literal_table.row_count
+
+    refute Regex.match?(
+             grammar,
+             String.replace(body, <<60, 60, 34>>, "<<integer_to_binary(1)>>", global: false)
+           )
 
     refute Regex.match?(
              grammar,

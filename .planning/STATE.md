@@ -5,7 +5,7 @@ milestone_name: Bounded ASN.1 RTT Guard Evidence
 current_phase: 2
 current_phase_name: Bounded ASN.1 RTT guard evidence
 status: executing
-stopped_at: "All five Phase 2 plans are complete and local core/floor full suites pass on the PR-shaped candidate tree. Checkout is the phase candidate branch gsd/phase2-bounded-asn1-rtt-evidence; PR #87 is the green test-only prerequisite. The Phase 2 candidate PR, exact-head hosted checks, and merge/main receipts remain pending. GRC-04, GRC-05, and GRC-06 remain pending until phase verification and delivery acceptance. Static-only boundaries, the full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. Next: commit the readiness/state update, publish the candidate PR stacked on #87, and verify hosted checks on its final head."
+stopped_at: "All five Phase 2 plans are complete; local core/floor full suites pass on the recorded PR-shaped tree. Checkout is the phase candidate branch gsd/phase2-bounded-asn1-rtt-evidence; PR #88 is stacked on green test-only prerequisite PR #87. Its first hosted run failed core at formatting; formatter and strict-Credo alias-order defects in new Elixir files are fixed locally, while the original floor job is still running. GRC-04, GRC-05, and GRC-06 remain pending until updated-head verification and delivery acceptance. Static-only boundaries, the full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. Next: commit and push the corrections, then inspect hosted checks on the updated PR head."
 last_updated: "2026-11-13T03:44:30Z"
 last_activity: 2026-11-13
 last_activity_desc: Plan 02-05 full core/floor checks completed with failures; local readiness blocked
@@ -32,8 +32,8 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md) and the
 
 Phase: 2 (Bounded ASN.1 RTT guard evidence) — EXECUTING
 Plan: 5 of 5
-Status: All plans executed; local readiness passed. Exact-head verification and hosted delivery receipts remain pending
-Last activity: 2026-11-13 — Follow-up core and floor full suites passed; exact-head candidate delivery pending
+Status: All plans executed; local readiness passed. Corrective static checks are green; exact-head hosted verification remains pending
+Last activity: 2026-11-13 — Corrective formatter/Credo checks passed; updated-head hosted CI pending
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -146,11 +146,11 @@ Separate brand intake: `origin/agent-brand-intake-261111` at `1ad8bde`;
 INT-20261111-06, INT-20261111-07 and INT-20261111-08 and the handoff pointer are retained unchanged. Assets are
 unapplied; source/instructions/seed/brief remain on their separate branch.
 
-Last session: 2026-11-13T03:45:00Z
+Last session: 2026-11-13T03:56:09Z
 
-Stopped at: All five v0.3 Phase 2 plans have summaries; follow-up core and floor full-suite checks pass on the PR-shaped candidate tree recorded in `02-CANDIDATE.md`. GRC-04, GRC-05, and GRC-06 remain pending until exact-head verification and delivery receipts. Static-only boundaries, the full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. The test-only prerequisite PR #87 is open and green; the Phase 2 candidate PR has not yet been opened.
+Stopped at: All five v0.3 Phase 2 plans have summaries; follow-up core and floor full-suite checks pass on the PR-shaped candidate tree recorded in `02-CANDIDATE.md`. GRC-04, GRC-05, and GRC-06 remain pending until exact-head verification and delivery receipts. Static-only boundaries, the full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. Test-only prerequisite PR #87 is open and green. Phase 2 PR #88 is open on #87; its first core job failed on formatting and the floor job is still running. The formatting and strict-Credo findings are fixed locally, and local static checks are green.
 
-Next action: Commit the readiness/state update, publish the Phase 2 candidate PR stacked on #87, then inspect hosted core/floor results for its final head. No owner action is required before that review boundary.
+Next action: Commit and push the corrections, then inspect the new hosted core/floor results on PR #88. The owner review/merge boundary follows only after the updated head is green.
 Do not execute the delivered v0.2 Phase 1 again, automatically select another
 guard increment, bypass the Walking Skeleton block or close SEC-01. Generated
 state.json was refreshed through the SDK publisher after the canonical state
@@ -170,8 +170,8 @@ Resume file: None
 - [Phase 02]: Keep the Phase 2 3/174 partition separate from the historical 13/164/161 partition.
 - [Phase 02]: Use lane-specific selectors for floor and integration checks so each run resolves its pinned source set.
 - [Phase 02]: Static source evidence does not establish runtime behavior, dynamic callers, native internals, or SEC-01 safety.
-- [Phase 02]: Full pinned-lane suite failures block local readiness; keep GRC-04 through GRC-06 pending and resolve recorded blockers before phase verification/ship.
+- [Phase 02]: The initial full-suite failures were resolved by the test-only prerequisite, lane ownership and timeout corrections, and an uncontended rerun. Local readiness passes on the recorded tree; keep GRC-04 through GRC-06 pending until exact-head hosted verification and delivery acceptance.
 
 ### Blockers
 
-- The earlier Plan 02-05 core/floor failures are resolved by the separately recorded ADR-compliant test prerequisite, lane ownership tag, bounded timeout adjustments, and a sequential uncontended rerun. Current blocker: exact Phase 2 PR head, hosted core/floor checks, review approval, and actual merge/main receipts remain pending. Do not change the static-only boundary or mark GRC-04/05/06 complete before their own acceptance evidence.
+- The earlier Plan 02-05 core/floor failures are resolved by the separately recorded ADR-compliant test prerequisite, lane ownership tag, bounded timeout adjustments, and a sequential uncontended rerun. The first PR #88 core attempt also exposed formatter and strict-Credo issues in new test/evidence files; these have local fixes and await a new hosted run. Current blocker: updated-head hosted core/floor checks, review approval, and actual merge/main receipts remain pending. Do not change the static-only boundary or mark GRC-04/05/06 complete before their own acceptance evidence.
