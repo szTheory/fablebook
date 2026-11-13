@@ -1,12 +1,18 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.3",
-  "phases": [],
+  "milestone": "v0.4 — Guard Aggregate Reconciliation — Fablebook",
+  "phases": [
+    {
+      "number": "3",
+      "name": "Guard aggregate scope rejoin and candidate sizing",
+      "status": "in_progress"
+    }
+  ],
   "next": {
-    "command": "$gsd-progress",
-    "label": "Show progress",
-    "reason": "Unsure of state — showing progress"
+    "command": "$gsd-progress --next",
+    "label": "Advance to the next step (plan phase 3)",
+    "reason": "Phase 1 of 1 — needs a plan"
   },
-  "updated_at": "2026-11-13T18:42:11.795Z"
+  "updated_at": "2026-11-13T19:40:49.885Z"
 }

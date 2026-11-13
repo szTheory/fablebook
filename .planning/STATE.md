@@ -1,20 +1,17 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.3
-milestone_name: Bounded ASN.1 RTT Guard Evidence
-status: complete
-stopped_at: v0.3 archived locally; product direction recorded; next bounded milestone scope awaits owner selection
-last_updated: "2026-11-13T18:41:46Z"
+milestone: v0.4
+milestone_name: Guard Aggregate Reconciliation
+status: planning
+current_phase: 3
+last_updated: "2026-11-13T19:40:25Z"
 last_activity: 2026-11-13
-last_activity_desc: Milestone v0.3 completed and archived
-state_head: 35cb6d841fa60708cb5b2546eb7b1c570f596ae9
 progress:
   total_phases: 1
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
-current_phase: null
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -27,14 +24,24 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** v0.3 is archived locally. Recommendation: first decide whether to fund a fresh, read-only exact-lane scope reconciliation for possible guard recovery; current receipts do not select a next slice. Product UI remains gated by the open aggregate. The systematic UI quality and dogfood vision is recorded in INT-20261113-01 and the rolling roadmap.
+**Current focus:** v0.4 Guard Aggregate Reconciliation. The complete current row, source, and caller/delegate join across both pinned lanes remains to be produced; no next implementation slice is selected. The product UI gate remains open. The systematic UI quality and dogfood vision remains in INT-20261113-01 and PRODUCT-ROADMAP.md.
 
 ## Current Position
 
-Phase: Milestone v0.3 complete
+Phase: 3 — Guard aggregate scope rejoin and candidate sizing
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-11-13 — Milestone v0.3 completed and archived
+Status: Phase 3 selected; phase context not yet discussed
+Last activity: 2026-11-13 — v0.4 Guard Aggregate Reconciliation roadmap established
+
+## Active Handoff
+
+- Canonical planning checkout: ~/projects/fablebook, branch main. This agent session was launched from the old worktree at ~/.claude/worktrees/agent-planning-main-261111, so all new commands explicitly target main. The old worktree remains dirty and preserved; it was not reset, stashed, cleaned, or removed.
+- Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
+- Unfinished: v0.4 Phase 3 must rejoin every surviving original exclusion row to both current lane inventories, exact source identities, caller/delegate paths, and the pending complement; then measure a bounded candidate or record why none fits.
+- Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
+- Next action: $gsd-discuss-phase 3 to define the exact evidence-producing phase context. The owner acts next only if that discussion surfaces a material scope or risk change; otherwise continue within this approved milestone.
+- Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
+
 
 ## Performance Metrics
 
@@ -56,7 +63,7 @@ Last activity: 2026-11-13 — Milestone v0.3 completed and archived
 
 ### Decisions and gates
 
-- Owner’s systematic UI quality and AI-assisted dogfood direction, including recommendation-first continuity, is recorded in INT-20261113-01 and PRODUCT-ROADMAP.md. The real mailglass dogfood and authored Logistify showcase are separate proofs; the next milestone is not activated.
+- Owner’s systematic UI quality and AI-assisted dogfood direction, including recommendation-first continuity, is recorded in INT-20261113-01 and PRODUCT-ROADMAP.md. The real mailglass dogfood and authored Logistify showcase are separate proofs; v0.4 now owns the guard aggregate reconciliation prerequisite.
 - Use one global sequence of ordinary integer phases across active-era milestones: v0.2 Phase 1, v0.3 Phase 2, then continue from the highest delivered integer when a later milestone activates. Historical dotted IDs are evidence identities, never executable routes (INT-20261112-04).
 - v0.3 owns only `asn1ct_rtt:assert_defined/1`, `code/0` and `dependencies/1` on both pinned lanes under GRC-04–06. Independently revalidate the complete EX-107 sets, exact selection/complement and lane source identities in reviewed context before planning; a mismatch stops for rescoping (INT-20261111-13).
 - Preserve the 100,000-token planning bound, at most five total exact source files read per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. Count re-read source; do not truncate source/caller evidence to fit. The large `code/0` literal table uses its bounded byte-only check outside the prompt (INT-20261110-01, INT-20261111-13).
@@ -138,18 +145,13 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning checkout: ~/projects/fablebook on main. Main has a clean working tree at this handoff; the v0.3 archive/tag and this planning-only roadmap/intent update are local, with eight commits ahead of origin/main. No remote ref was pushed. See the [worktree inventory and follow-up triage](references/WORKTREE-RECONCILIATION-2026-11-13.md). The old Phase 1 worktree remains preserved with nine dirty or untracked paths; its partial UAT is superseded by the archived 5/5 UAT, and no historical worktree was reset, stashed, cleaned or removed. The staging clone at /private/tmp/fablebook-v03-closeout remains for provenance. PR #88 is merged at 3817912c861286608183c057d2e38ff7a260bd6e; final UAT, security, delivery registry, CI timing, requirements and goal-verification artifacts are archived. The former dirty checkout remains on archive/primary-dirty-checkout-20261113; old local main history remains on archive/main-before-sync-20261113.
+Active planning target: ~/projects/fablebook on main. This agent session remains attached to the old worktree, so new work uses explicit main paths. v0.4 planning changes are local and unpushed. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains on its historical Phase 1 branch with eight modified tracked paths and one untracked UAT file; preserve it without reset, stash, cleanup, or removal. The separate brand-intake branch and provenance archive remain unchanged. PR #85 and PR #88 merge/main CI receipts are recorded in PHASE-DELIVERIES.json. No remote ref was pushed.
 
-Separate brand intake: `origin/agent-brand-intake-261111` at `1ad8bde`;
-[the intake handoff](references/fablebook-brand-intake.md) owns future use.
-INT-20261111-06, INT-20261111-07 and INT-20261111-08 and the handoff pointer are retained unchanged. Assets are
-unapplied; source/instructions/seed/brief remain on their separate branch.
+Last session: 2026-11-13T19:37:37Z
 
-Last session: 2026-11-13T18:41:46Z
+Stopped at: v0.4 is active on global Phase 3, with its one-phase roadmap and six requirements recorded. No full aggregate rejoin or candidate sizing has been executed. The live read-only probe rechecked the already delivered EX-010 and EX-107 row memberships; that did not close any additional scope. Static-only evidence, the manual actual-library collision stop, the Walking Skeleton block, and SEC-01 Pending status remain unchanged.
 
-Stopped at: v0.3 is complete; no new milestone or phase is active. The complete EX-107 row and remainder, static-only evidence limit, manual collision owner stop, Walking Skeleton block and SEC-01 Pending status remain unchanged. The owner’s UI quality and dogfood direction is recorded in INT-20261113-01 and the rolling roadmap.
-
-Next action: Jon decides whether to fund one fresh, read-only scope reconciliation for possible guard recovery. The current receipts do not name a next selected slice. If funded, rejoin the complete surviving row/function sets and source identities on both pinned lanes, then present exact membership and complement, caller/delegate evidence, inherited limits, fresh sizing and the bounded exit before activating a milestone. If Jon selects that milestone after reviewing the scope, run $gsd-new-milestone v0.4 to define its requirements and phases. Product UI work remains behind the existing gate. Continue from ~/projects/fablebook on main; keep the dirty historical worktree preserved and do not bypass the Walking Skeleton block or close SEC-01 by assumption. No remote ref was pushed.
+Next action: Run $gsd-discuss-phase 3 to define the evidence-producing scope against the approved requirements. Continue on ~/projects/fablebook on main. The owner acts next only if phase discussion surfaces a material scope or risk change; otherwise proceed within v0.4. No guard implementation slice or product UI work is selected before the rejoin output and its size are reviewed.
 
 Resume file: None
 
@@ -168,8 +170,8 @@ Resume file: None
 
 ### Blockers
 
-- No Phase 2 verification blocker remains. The complete EX-107 row and guard aggregate, actual-library collision owner stop, static-only evidence limit, Walking Skeleton block, SEC-01 Pending status, and owner decision before another increment remain active.
+- Phase 3 context and execution have not started. The complete EX-107 row and guard aggregate, actual-library collision owner stop, static-only evidence limit, Walking Skeleton block, and SEC-01 Pending status remain active. A later implementation increment still requires its own bounded owner decision.
 
 ## Operator Next Steps
 
-- Run `$gsd-new-milestone` to choose the next milestone scope and define fresh requirements.
+- Run `$gsd-discuss-phase 3` to scope the approved v0.4 reconciliation phase.

@@ -33,23 +33,26 @@ The closeout is `override_closeout` for two newly acknowledged artifacts and fiv
 items carried from v0.2. The frozen v0.1 source and all wider owners remain intact.
 The complete guard aggregate and installed-wide remainder stay open; Walking
 Skeleton remains blocked; SEC-01 remains Pending with Controls and first bundle /
-its first local slot. No next milestone scope is selected. See the [v0.3
+its first local slot. v0.4 Guard Aggregate Reconciliation is now selected; it begins with a full current lane rejoin and candidate sizing, without repeating the delivered EX-010 or EX-107 implementation slices. See the [v0.3
 requirements](milestones/v0.3-REQUIREMENTS.md), [audit](milestones/v0.3-MILESTONE-AUDIT.md),
 [phase evidence](milestones/v0.3-phases/), [closeout receipt](milestones/v0.3-CLOSEOUT.md),
 [full product register](references/PRODUCT-REQUIREMENTS.md), and [future product
 roadmap](references/PRODUCT-ROADMAP.md).
 
-## Next Milestone Goals
+## Current Milestone: v0.4 Guard Aggregate Reconciliation
 
-No automatic follow-up is selected. After v0.3, the owner chooses another
-bounded guard increment or a different scope at the next milestone boundary.
-Product milestones retain their typed prerequisites and the open guard gate.
-The rolling product direction is recorded in
-[PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md) (INT-20261111-13).
+**Goal:** Rejoin the complete surviving guard exclusion scope against both pinned lanes, with exact source and caller evidence and a bounded next-scope estimate.
+
+**Target features:**
+- A repeatable read-only inventory that joins current lane membership to original row identities, preserving delivered rows and exact pending complements.
+- Per-lane source identities and caller/delegate paths, with missing or mismatched evidence made explicit.
+- Current source, context, and effort sizing for a candidate guard increment within inherited limits; no candidate is selected when evidence or fit is insufficient.
+
+This milestone does not repeat EX-010 or EX-107 implementation, change guard dispositions, close the aggregate gate, resolve SEC-01, or start product UI work. The active requirements are in [REQUIREMENTS.md](REQUIREMENTS.md); the wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md).
 
 ## Requirements
 
-The lists below summarize the wider v1 product vision; they are not a live progress ledger. Use the archived [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md) and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
+The lists below summarize the wider v1 product vision; they are not a live progress ledger. The current v0.4 milestone acceptance is in [REQUIREMENTS.md](REQUIREMENTS.md). Use the archived [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md) and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
 
 ### Validated
 
@@ -476,4 +479,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-13 after v0.3 milestone closeout; wider guard and product acceptance remains open.*
+*Last updated: 2026-11-13 after v0.4 Guard Aggregate Reconciliation was selected; the guard gate remains open pending complete aggregate proof.*
