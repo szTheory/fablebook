@@ -32,9 +32,9 @@ No additional future requirement is promoted into v0.3. The full EX-107 row, ins
 
 | Requirement | Phase | Status |
 |---|---|---|
-| GRC-04 | Phase 2 | Pending (independent membership evidence exists; full core/floor validation failed in Plan 02-05) |
-| GRC-05 | Phase 2 | Pending (focused review is complete; full core/floor validation failed in Plan 02-05) |
-| GRC-06 | Phase 2 | Pending (local readiness is blocked by full-suite failures; final-head hosted delivery remains pending) |
+| GRC-04 | Phase 2 | Pending (local full core/floor suites pass; exact reviewed-head verification remains) |
+| GRC-05 | Phase 2 | Pending (local full core/floor suites pass; exact reviewed-head verification remains) |
+| GRC-06 | Phase 2 | Pending (local readiness passes; the Phase 2 PR and exact-head hosted delivery receipts remain pending) |
 
 **Coverage:**
 - v0.3 requirements: 3 total

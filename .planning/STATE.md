@@ -5,8 +5,8 @@ milestone_name: Bounded ASN.1 RTT Guard Evidence
 current_phase: 2
 current_phase_name: Bounded ASN.1 RTT guard evidence
 status: executing
-stopped_at: "Plan 02-05 evidence recorded; local readiness blocked by full-suite failures. Checkout on gsd/phase-1-bounded-guard-continuation; v0.3 Phase 2 plans 02-01 through 02-05 have summaries. GRC-04, GRC-05, and GRC-06 remain pending. Static-only boundaries, full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. Next: resolve deferred full-suite blockers and rerun core/floor checks; phase verification/ship remains pending. No owner action required for this bookkeeping."
-last_updated: "2026-11-13T01:29:25.741Z"
+stopped_at: "All five Phase 2 plans are complete and local core/floor full suites pass on the PR-shaped candidate tree. Checkout is the phase candidate branch gsd/phase2-bounded-asn1-rtt-evidence; PR #87 is the green test-only prerequisite. The Phase 2 candidate PR, exact-head hosted checks, and merge/main receipts remain pending. GRC-04, GRC-05, and GRC-06 remain pending until phase verification and delivery acceptance. Static-only boundaries, the full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. Next: commit the readiness/state update, publish the candidate PR stacked on #87, and verify hosted checks on its final head."
+last_updated: "2026-11-13T03:44:30Z"
 last_activity: 2026-11-13
 last_activity_desc: Plan 02-05 full core/floor checks completed with failures; local readiness blocked
 state_head: 005f8f112f422323517a58817c1602e9a7fcb45e
@@ -32,15 +32,15 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md) and the
 
 Phase: 2 (Bounded ASN.1 RTT guard evidence) — EXECUTING
 Plan: 5 of 5
-Status: Local readiness blocked; required full core/floor checks failed
-Last activity: 2026-11-13 — Plan 02-05 full-check outcomes recorded
+Status: All plans executed; local readiness passed. Exact-head verification and hosted delivery receipts remain pending
+Last activity: 2026-11-13 — Follow-up core and floor full suites passed; exact-head candidate delivery pending
 
 Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
-- v0.3 plans drafted: 5; independent plan review passed; plans executed: 4.
-- Ten tasks are grouped across five plans and four waves. Wave 1 lane outputs are disjoint, all task ceilings and exact source reads meet their bounds, and the end-to-end critical path including ship is estimated at 1.75–2.75 working days. Core, floor, integration, and independent review plans are complete; full-check/readiness plan 02-05 remains.
+- v0.3 plans drafted: 5; independent plan review passed; all five plans executed.
+- Ten tasks are grouped across five plans and four waves. Wave 1 lane outputs are disjoint, all task ceilings and exact source reads meet their bounds, and the end-to-end critical path including ship is estimated at 1.75–2.75 working days. Core, floor, integration, independent review, and full-check/readiness plans are complete. Local full core/floor suites now pass; Phase 2 exact-head hosted checks and merge receipts remain pending.
 
 **Per-Plan Metrics:**
 
@@ -72,7 +72,7 @@ No additional work is promoted into v0.3. Wider product work remains in the sepa
 
 ### Blockers and concerns
 
-The pre-plan membership/source-identity, connected-source, context-sizing, and effort gates passed for the exact pinned-lane scope. The owner selected disjoint outputs: core owns `test/support/asn1_rtt_core_evidence.ex` and `test/contract/asn1_rtt_core_guard_test.exs`; floor owns `test/support/asn1_rtt_floor_evidence.ex` and `test/contract/asn1_rtt_floor_guard_test.exs`; integration owns the dedicated `test/contract/asn1_rtt_integration_test.exs` with evidence assertions inline. `test/support/sweep_evidence.ex` remains the read-only archive resolver. Plans 02-01 through 02-04 are complete. Plan 02-05 full checks/readiness remain; the actual-library collision stop, static-only boundary, full EX-107 remainder, Walking Skeleton block, and SEC-01 Pending status are unchanged.
+The pre-plan membership/source-identity, connected-source, context-sizing, and effort gates passed for the exact pinned-lane scope. The owner selected disjoint outputs: core owns `test/support/asn1_rtt_core_evidence.ex` and `test/contract/asn1_rtt_core_guard_test.exs`; floor owns `test/support/asn1_rtt_floor_evidence.ex` and `test/contract/asn1_rtt_floor_guard_test.exs`; integration owns the dedicated `test/contract/asn1_rtt_integration_test.exs` with evidence assertions inline. `test/support/sweep_evidence.ex` remains the read-only archive resolver. Plans 02-01 through 02-05 are complete. Both full pinned-lane suites pass on the PR-shaped local candidate tree; the exact Phase 2 PR head still needs hosted CI and delivery verification. The actual-library collision stop, static-only boundary, full EX-107 remainder, Walking Skeleton block, and SEC-01 Pending status are unchanged.
 
 ## Delivered work and archive
 
@@ -135,8 +135,8 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Working checkout: `.claude/worktrees/agent-planning-main-261111` on
-`gsd/phase-1-bounded-guard-continuation`, originally based on approved PR #84 main.
+Working checkout: `/private/tmp/fablebook-phase2-candidate` on
+`gsd/phase2-bounded-asn1-rtt-evidence`, stacked on the green test-only prerequisite PR #87. The preserved primary checkout remains on `gsd/phase-1-bounded-guard-continuation` with unrelated dirty user material untouched.
 Actual main contains approved PR #85 implementation and PR #86 compatibility
 maintenance. Local history incorporates that main commit without restoring old
 active phase paths. Phase 2 planning artifacts are present locally and have not been pushed. Later local receipt/audit/archive commits have not been pushed. Carry them with the next substantive push; do not trigger a receipt-only CI loop. Preserve this checkout.
@@ -146,11 +146,11 @@ Separate brand intake: `origin/agent-brand-intake-261111` at `1ad8bde`;
 INT-20261111-06, INT-20261111-07 and INT-20261111-08 and the handoff pointer are retained unchanged. Assets are
 unapplied; source/instructions/seed/brief remain on their separate branch.
 
-Last session: 2026-11-13T01:29:25.677Z
+Last session: 2026-11-13T03:45:00Z
 
-Stopped at: Plan 02-05 evidence recorded; local readiness blocked by full-suite failures. Checkout on gsd/phase-1-bounded-guard-continuation; v0.3 Phase 2 plans 02-01 through 02-05 have summaries. GRC-04, GRC-05, and GRC-06 remain pending. Static-only boundaries, full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. Next: resolve deferred full-suite blockers and rerun core/floor checks; phase verification/ship remains pending. No owner action required for this bookkeeping.
+Stopped at: All five v0.3 Phase 2 plans have summaries; follow-up core and floor full-suite checks pass on the PR-shaped candidate tree recorded in `02-CANDIDATE.md`. GRC-04, GRC-05, and GRC-06 remain pending until exact-head verification and delivery receipts. Static-only boundaries, the full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. The test-only prerequisite PR #87 is open and green; the Phase 2 candidate PR has not yet been opened.
 
-Next action: Resolve the full-suite blockers in `.planning/phases/02-bounded-asn-1-rtt-guard-evidence/deferred-items.md` and rerun the required core and floor commands before phase verification/ship.
+Next action: Commit the readiness/state update, publish the Phase 2 candidate PR stacked on #87, then inspect hosted core/floor results for its final head. No owner action is required before that review boundary.
 Do not execute the delivered v0.2 Phase 1 again, automatically select another
 guard increment, bypass the Walking Skeleton block or close SEC-01. Generated
 state.json was refreshed through the SDK publisher after the canonical state
@@ -174,4 +174,4 @@ Resume file: None
 
 ### Blockers
 
-- Plan 02-05 full core and floor suites failed; local readiness is blocked. Resolve the planning diff-overlap, lane-correct suite selection, and exhaustive verification timeouts recorded in .planning/phases/02-bounded-asn-1-rtt-guard-evidence/deferred-items.md; then rerun both full lanes before phase verification/ship.
+- The earlier Plan 02-05 core/floor failures are resolved by the separately recorded ADR-compliant test prerequisite, lane ownership tag, bounded timeout adjustments, and a sequential uncontended rerun. Current blocker: exact Phase 2 PR head, hosted core/floor checks, review approval, and actual merge/main receipts remain pending. Do not change the static-only boundary or mark GRC-04/05/06 complete before their own acceptance evidence.
