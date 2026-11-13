@@ -138,9 +138,15 @@ Plan 02-04 can review the five lane and integration outputs with exact partition
 *Phase: 02-bounded-asn-1-rtt-guard-evidence*
 *Completed: 2026-11-12*
 
-## Self-Check: PASSED
+## Plan completion checks
 
 - The integration contract and summary exist.
 - Both task commits are ancestors of the current head.
 - The measured plan commit count is 2, and the recorded plan head hashes match Git.
 - GRC-04 and GRC-05 remain pending because sibling plans still declare them; the SDK ready-ID gate blocked premature completion.
+
+## Self-Check: PASSED
+
+- The integration contract and summary exist.
+- Both task commits and the measured plan commit count are recorded.
+- The scoped integration checks passed, while broader requirements remain explicitly open.

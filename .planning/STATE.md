@@ -5,10 +5,10 @@ milestone_name: Bounded ASN.1 RTT Guard Evidence
 current_phase: 2
 current_phase_name: Bounded ASN.1 RTT guard evidence
 status: executing
-stopped_at: "All five Phase 2 plans are complete; local core/floor full suites pass on the recorded PR-shaped tree. Checkout is the phase candidate branch gsd/phase2-bounded-asn1-rtt-evidence; PR #88 is stacked on green test-only prerequisite PR #87. Its first hosted run failed core at formatting; formatter and strict-Credo alias-order defects in new Elixir files are fixed locally, while the original floor job is still running. GRC-04, GRC-05, and GRC-06 remain pending until updated-head verification and delivery acceptance. Static-only boundaries, the full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. Next: commit and push the corrections, then inspect hosted checks on the updated PR head."
-last_updated: "2026-11-13T03:44:30Z"
+stopped_at: "The owner chose separate deliveries. Automated UAT is complete in `02-UAT.md`; both local full lanes passed on PR-shaped tree `3c87cdb`, and remote PR #88 source head `2e35c62135c436a2ef953381024f82c237db188f` passed hosted checks in [run 43362320210](https://github.com/szTheory/fablebook/actions/runs/43362320210). Security audit closed 11/16 threats; only high T-02-08 remains open because PR #87 and #88 are unmerged and actual merge/main receipts are absent. Four collision threats are not presently triggered because the phase adds no production guard; D-06/manual stop remains binding for future guard work. The local candidate branch has two validation-document commits after the hosted head; they do not alter tests or runtime code. Formal phase verification is stopped at the security gate. Next: owner reviews/merges #87, then #88 targets/rebases onto main, runs required checks on the final head, and records merge/main receipts. Keep GRC-04/05/06, static-only limits, full EX-107 remainder, Walking Skeleton block and SEC-01 Pending unchanged."
+last_updated: "2026-11-13T06:00:33.611Z"
 last_activity: 2026-11-13
-last_activity_desc: Plan 02-05 full core/floor checks completed with failures; local readiness blocked
+last_activity_desc: Phase 2 UAT and security audit recorded; T-02-08 remains open for merge/main receipts
 state_head: 005f8f112f422323517a58817c1602e9a7fcb45e
 progress:
   total_phases: 1
@@ -32,15 +32,15 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md) and the
 
 Phase: 2 (Bounded ASN.1 RTT guard evidence) — EXECUTING
 Plan: 5 of 5
-Status: All plans executed; local readiness passed. Corrective static checks are green; exact-head hosted verification remains pending
-Last activity: 2026-11-13 — Corrective formatter/Credo checks passed; updated-head hosted CI pending
+Status: Automated UAT complete; security gate blocks formal verification pending merge/main receipts
+Last activity: 2026-11-13 — Recorded Phase 2 UAT and security findings
 
 Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 - v0.3 plans drafted: 5; independent plan review passed; all five plans executed.
-- Ten tasks are grouped across five plans and four waves. Wave 1 lane outputs are disjoint, all task ceilings and exact source reads meet their bounds, and the end-to-end critical path including ship is estimated at 1.75–2.75 working days. Core, floor, integration, independent review, and full-check/readiness plans are complete. Local full core/floor suites now pass; Phase 2 exact-head hosted checks and merge receipts remain pending.
+- Ten tasks are grouped across five plans and four waves. The local full core/floor suites pass on PR-shaped tree `3c87cdb`; remote PR #88 source head `2e35c62` passed hosted core/floor/security/dialyzer/gate checks. Automated UAT is complete. Formal verification is stopped by high threat T-02-08 pending merge/main receipts.
 
 **Per-Plan Metrics:**
 
@@ -139,18 +139,22 @@ Working checkout: `/private/tmp/fablebook-phase2-candidate` on
 `gsd/phase2-bounded-asn1-rtt-evidence`, stacked on the green test-only prerequisite PR #87. The preserved primary checkout remains on `gsd/phase-1-bounded-guard-continuation` with unrelated dirty user material untouched.
 Actual main contains approved PR #85 implementation and PR #86 compatibility
 maintenance. Local history incorporates that main commit without restoring old
-active phase paths. Phase 2 planning artifacts are present locally and have not been pushed. Later local receipt/audit/archive commits have not been pushed. Carry them with the next substantive push; do not trigger a receipt-only CI loop. Preserve this checkout.
+active phase paths. Phase 2 implementation artifacts are in open PR #88 at remote
+head `2e35c62`; the local candidate is at `5776488` with two validation-document
+commits plus local verification reports. Keep the open delivery stop until #87
+merges and #88 is retargeted/rebased to main, then carry receipts with the next
+substantive push. Do not trigger a receipt-only CI loop. Preserve this checkout.
 
 Separate brand intake: `origin/agent-brand-intake-261111` at `1ad8bde`;
 [the intake handoff](references/fablebook-brand-intake.md) owns future use.
 INT-20261111-06, INT-20261111-07 and INT-20261111-08 and the handoff pointer are retained unchanged. Assets are
 unapplied; source/instructions/seed/brief remain on their separate branch.
 
-Last session: 2026-11-13T03:56:09Z
+Last session: 2026-11-13T06:00:33Z
 
-Stopped at: All five v0.3 Phase 2 plans have summaries; follow-up core and floor full-suite checks pass on the PR-shaped candidate tree recorded in `02-CANDIDATE.md`. GRC-04, GRC-05, and GRC-06 remain pending until exact-head verification and delivery receipts. Static-only boundaries, the full EX-107 remainder, actual-library collision stop, Walking Skeleton block, and SEC-01 Pending remain unchanged. Test-only prerequisite PR #87 is open and green. Phase 2 PR #88 is open on #87; its first core job failed on formatting and the floor job is still running. The formatting and strict-Credo findings are fixed locally, and local static checks are green.
+Stopped at: Phase 2 automated UAT is complete. Local full core/floor suites pass on the recorded PR-shaped tree and remote PR #88 source head has green hosted checks. `02-SECURITY.md` records one open high threat, T-02-08, because PR #87/#88 remain unmerged and no hosted main receipt exists. The old partial UAT in the primary checkout is preserved as historical; this separate-delivery candidate has superseding complete automated evidence. GRC-04/05/06 remain pending; static-only boundaries, future collision stop, full EX-107 remainder, Walking Skeleton block and SEC-01 Pending remain unchanged.
 
-Next action: Commit and push the corrections, then inspect the new hosted core/floor results on PR #88. The owner review/merge boundary follows only after the updated head is green.
+Next action: Owner reviews/merges green prerequisite PR #87. Then retarget/rebase PR #88 onto main, confirm required hosted checks on that final candidate head, complete formal phase verification, and record actual merge/main receipts. Do not mark Phase 2 verified or delivered before that evidence exists.
 Do not execute the delivered v0.2 Phase 1 again, automatically select another
 guard increment, bypass the Walking Skeleton block or close SEC-01. Generated
 state.json was refreshed through the SDK publisher after the canonical state
@@ -170,8 +174,9 @@ Resume file: None
 - [Phase 02]: Keep the Phase 2 3/174 partition separate from the historical 13/164/161 partition.
 - [Phase 02]: Use lane-specific selectors for floor and integration checks so each run resolves its pinned source set.
 - [Phase 02]: Static source evidence does not establish runtime behavior, dynamic callers, native internals, or SEC-01 safety.
-- [Phase 02]: The initial full-suite failures were resolved by the test-only prerequisite, lane ownership and timeout corrections, and an uncontended rerun. Local readiness passes on the recorded tree; keep GRC-04 through GRC-06 pending until exact-head hosted verification and delivery acceptance.
+- [Phase 02]: The owner selected separate deliveries. Planning tests are isolated in PR #87 from guarded Phase 2 outputs in PR #88; both local full lanes and remote hosted core/floor checks pass for their recorded heads.
+- [Phase 02]: T-02-11 and T-02-SC close for their recorded events. Collision findings are not presently triggered because no production guard was added; preserve the manual D-06 owner stop for future guard work. T-02-08 remains open until actual merge/main evidence is reconciled.
 
 ### Blockers
 
-- The earlier Plan 02-05 core/floor failures are resolved by the separately recorded ADR-compliant test prerequisite, lane ownership tag, bounded timeout adjustments, and a sequential uncontended rerun. The first PR #88 core attempt also exposed formatter and strict-Credo issues in new test/evidence files; these have local fixes and await a new hosted run. Current blocker: updated-head hosted core/floor checks, review approval, and actual merge/main receipts remain pending. Do not change the static-only boundary or mark GRC-04/05/06 complete before their own acceptance evidence.
+- Formal phase verification is held at the security gate by T-02-08. PR #87 is green but unmerged; PR #88 is stacked on it. After the owner merges #87, rebase/retarget #88 to `main`, confirm its exact-head hosted checks and actual main CI, then complete phase verification. Do not change the static-only boundary or mark GRC-04/05/06 complete before their own acceptance evidence.

@@ -7,8 +7,8 @@ requires:
   - phase: 02-04
     provides: Independent review and lane-correct focused validation
 provides:
-  - Local full-suite results for core and floor tied to the tested tree
-  - A truthful local readiness report with an explicit blocked status and final-head handoff
+  - Historical local full-suite outcomes and follow-up passing core/floor results tied to their tested trees
+  - A readiness report separating local results from exact candidate and merged-main receipts
 affects: [phase 02 verification and ship]
 actuals:
   tokens: 4245
@@ -32,7 +32,7 @@ key-files:
     - .planning/STATE.md
     - .planning/WINDOWS.md
 key-decisions:
-  - "Record the full-suite failures and block local readiness; do not change unrelated planning or intent files to obtain a green result."
+  - "Preserve the original full-suite outcomes, isolate planning tests and lane ownership, then rerun both lanes without changing the approved guard scope."
   - "Keep GRC-04, GRC-05, and GRC-06 pending because required full checks did not pass."
 requirements-completed: []
 verification:
@@ -44,6 +44,10 @@ verification:
     result: "BLOCKED: installed act rejects the hosted Actions concurrency.queue field; Docker daemon is available and no jobs ran."
   - command: "python3 candidate report field and handoff assertion from 02-05-PLAN.md"
     result: "PASS: all required fields and the pending final-head/hosted-receipt handoff are present."
+  - command: "GITHUB_EVENT_NAME=pull_request bin/lane core test --warnings-as-errors --include prod_guard"
+    result: "PASS: 442 passed, 14 excluded on PR-shaped tested tree 3c87cdb after the planning-test prerequisite was isolated."
+  - command: "GITHUB_EVENT_NAME=pull_request bin/lane floor test --warnings-as-errors --include prod_guard"
+    result: "PASS: 456 passed, 6 excluded on the same PR-shaped tested tree 3c87cdb."
 duration: 90min
 completed: 2026-11-13
 status: complete
@@ -54,7 +58,7 @@ commits: 2
 
 # Phase 2 Plan 05: Local Readiness Evidence Summary
 
-**Core and floor full-suite outcomes are recorded against one tested tree; both failed, so local readiness remains blocked and no candidate or hosted delivery claim is made.**
+**The original core/floor failures remain recorded; the separately delivered prerequisite, lane ownership and bounded timeout fixes were followed by passing full suites on a PR-shaped tested tree. Candidate and merged-main delivery remain separate gates.**
 
 ## Performance
 
@@ -99,13 +103,13 @@ The full core and floor commands completed but failed, contrary to the plan's pa
 
 ## Next Phase Readiness
 
-Plan evidence is complete, but local readiness is **blocked**. Resolve the items in `deferred-items.md`, then rerun the full core and floor checks before phase verification/ship. After all plan and summary commits, phase verification/ship must bind any hosted core/floor receipts to the exact final PR head and record actual merged-main evidence. GRC-04, GRC-05, and GRC-06 remain pending; full EX-107 and aggregate closure remain open, Walking Skeleton remains blocked, and SEC-01 remains Pending. No next increment is selected.
+The original local-readiness failures are resolved as recorded in `deferred-items.md`; both required full suites pass on tested tree `3c87cdb`. Hosted CI passes for remote PR #88 source head `2e35c62` at run 43362320210. Formal phase verification is held at the security gate because T-02-08 requires actual PR merge identity and hosted main CI evidence. GRC-04, GRC-05, and GRC-06 remain pending; full EX-107 and aggregate closure remain open, Walking Skeleton remains blocked, and SEC-01 remains Pending. No next increment is selected.
 
-## Self-Check: PASSED
+## Original plan self-check (historical)
 
 - The candidate readiness report contains every required machine-readable field and explicitly defers final-head and hosted-receipt verification.
 - The two task commits are ancestors of the current plan head, and both newly created evidence files exist.
-- The two required full commands reached terminal results. Their failed outcomes are explicitly recorded; this self-check confirms the evidence is complete and truthful, not that the full-suite gate is green.
+- The two required full commands reached terminal results. Their original outcomes are explicitly recorded; this check confirms the evidence is complete and truthful, not that the full-suite gate was green at that time.
 
 ## Follow-up resolution (2026-11-13)
 
@@ -115,4 +119,10 @@ The failed full-suite results above are the original Plan 02-05 run and remain p
 - The floor-owned RTT contract is tagged for the floor lane, and the slow source/receipt/citation checks have bounded 180-second timeouts. CN-004 passed at its existing timeout.
 - Both full suites were rerun sequentially on PR-shaped merge checkout `3c87cdb0e1ba20eaefa50d4b918b8970b006bcfd` with prerequisite PR #87 as first parent and Phase 2 source branch head `a391b0dcb0fa5c82502b2d7e1399da0b1355ad33` as second parent.
 
-The follow-up core result is **442 passed, 14 excluded** on Elixir 1.20.4 / OTP 29.1.2; floor is **456 tests, 0 failures, 6 excluded** on Elixir 1.18.5 / OTP 27.3.4.9. Current local readiness is **PASS**; `.planning/phases/02-bounded-asn-1-rtt-guard-evidence/02-CANDIDATE.md` is the current machine-readable report. The Phase 2 PR's exact-head hosted checks and actual merge/main receipts remain pending. After the local full-suite run, formatter and strict-Credo alias-order defects in new Elixir files were found by the first PR CI attempt and corrected without changing assertions or runtime code; the updated PR head must pass hosted CI. GRC-04 through GRC-06, the full EX-107 remainder, the actual-library collision stop, Walking Skeleton block, and SEC-01 Pending status remain unchanged.
+The follow-up core result is **442 passed, 14 excluded** on Elixir 1.20.4 / OTP 29.1.2; floor is **456 passed, 6 excluded** on Elixir 1.18.5 / OTP 27.3.4.9. The current machine-readable readiness report is `02-CANDIDATE.md`. Remote PR #88 source head `2e35c62135c436a2ef953381024f82c237db188f` passed hosted CI run 43362320210. Local validation-document commits `33b596d` and `5776488` followed that head and do not change tests or runtime source. Actual merge identity and hosted main receipts remain pending; GRC-04 through GRC-06, the full EX-107 remainder, the future collision stop, Walking Skeleton block, and SEC-01 Pending status remain unchanged.
+
+## Self-Check: PASSED
+
+- The original full-suite outcomes and the later passing results are both retained with their tested trees.
+- The local readiness report, hosted PR receipt, and remaining merge/main gate are stated separately.
+- The plan's approved scope and all wider safety stops remain unchanged.
