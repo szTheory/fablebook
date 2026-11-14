@@ -4,11 +4,11 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: "Task 03-01-05 paused after an unplanned sixth source read; owner decision required"
-stopped_at: "The Task 03-01-05 executor used a narrow lookup on the same ASN.1 test span already completed as event 3. The independent reviewer classified it as a sixth exact-source read, beyond the five-event cap. No implementation or tests changed, and no further reads may occur under the current schedule. The last fresh direct count before the lookup was 62,182 and the prior accounted source output was 10,839/12,000; the narrow lookup was not separately token-counted, so that is not a current fit certificate. Owner decision: approve a one-time exception for this already-taken read while keeping the 12,000/100,000 ceilings and safety stops, or keep the five-event cap and leave Task 03-01-05 incomplete."
-last_updated: "2026-11-14T09:33:15Z"
+status: "Task 03-01-05 execution resumed under reviewed one-time lookup exception"
+stopped_at: null
+last_updated: "2026-11-14T16:03:11Z"
 last_activity: 2026-11-14
-last_activity_desc: Independent review blocked an unplanned sixth source read; implementation is paused
+last_activity_desc: Independent reviewer passed the bounded exception and fit; executor may resume Task05
 state_head: 93476fe
 progress:
   total_phases: 1
@@ -32,18 +32,18 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — reviewed recovery schedule active
-Plan: 03-01; Task 03-01-03 source notes and Task 03-01-04 tracer are complete. Task 03-01-05 implementation is paused after a narrow lookup was classified as an unplanned sixth exact-source read.
-Status: Task 03-01-04 is committed at 884684b. Task 03-01-05 has complete planned source evidence plus one narrow unplanned reread from event 3. The independent reviewer ruled it a sixth exact-source read. No code or tests changed; do not continue until the owner resolves the limit exception.
-Last activity: 2026-11-14 — reviewer blocked the unplanned sixth source read; implementation paused
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — reviewed Task05 schedule active
+Plan: 03-01; Task 03-01-03 source notes and Task 03-01-04 tracer are complete. Task 03-01-05 is cleared to resume after independent review of the owner-approved one-time lookup exception.
+Status: Task 03-01-04 is committed at 884684b. The Task05 one-time lookup exception is documented in INT-20261114-02 and independently reviewed PASS. The fit receipt bounds selected planning/receipt inputs plus source/output/reserve at 90,727/100,000 with 9,273 slack. No source reread is permitted; implementation and tests have not resumed yet.
+Last activity: 2026-11-14 — independent review passed the one-time lookup exception and context bound
 
 ## Active Handoff
 
 - Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five sequential plans. Task 03-01-03 recovery/source notes and Task 03-01-04 tracer are committed. Task 03-01-05 implementation and required tests remain. A narrow lookup of the already-read Task05 event3 ASN.1 test span was classified as an unplanned sixth exact-source read against the five-event task cap. No implementation or tests ran. The last fresh count before that lookup was 62,182; prior accounted source output was 10,839/12,000. The lookup was not separately count-only measured, so those are historical figures, not a current fit certificate. Do not take another source read. Nothing was pushed.
+- Unfinished: Phase 3 has five sequential plans. Task 03-01-03 recovery/source notes and Task 03-01-04 tracer are committed; Task 03-01-05 implementation and required tests remain. The one-time Task05 lookup exception is approved and conservatively charged against the remaining source allowance; no further source reads are permitted.
 - Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: owner decides whether to record a one-time exception for the already-taken lookup while preserving the 12,000-token source and 100,000-token total ceilings, or keep the five-event cap and stop Task 03-01-05 incomplete. Recommendation: approve the one-time exception; the lookup re-displayed a small set from a source span already acquired in event 3, and no code or tests changed. No key rotation is needed. Nothing was pushed.
+- Next action: executor runs execute preflight, then implements Task05 using saved notes only; perform cheap shape/identity/count consistency checks before the longer selectors. No owner action is needed; nothing was pushed.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -149,13 +149,13 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout at ~/projects/fablebook on main; source baseline 884684b and the recovery/source schedule are committed locally. Current v0.4 Phase 3, Plan 03-01. Task 03-01-03 source notes and Task 03-01-04 tracer are complete. Task 03-01-05 has the five planned source events complete, but its executor made a narrow reread from the already-acquired event3 source. The independent reviewer classified it as a sixth exact-source read, exceeding the task limit. No implementation or tests have run. The last direct count was 62,182 before that lookup; the additional output was not separately counted. Next actor: owner decides whether to authorize a one-time exception or keep Task 03-01-05 stopped. Candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and all static-only, actual-library-collision, and Macro checkpoints remain binding. Nothing was pushed.
+Active planning target: Canonical checkout at ~/projects/fablebook on branch main; source baseline 884684b, planning HEAD e45af84 before amendment, current v0.4 Phase 3 Plan 03-01. Task03 recovery/source notes and Task04 tracer are committed; Task05 implementation/tests remain. The owner approved the already-taken lookup under INT-20261114-02; it is charged the full remaining 1,161 tokens, preserving the 12,000-token source cap, with no further read allowed. The old 62,182 count is historical. The 41,727-token selected-document count and 90,727/100,000 conservative upper bound (including 1,000-token post-count cushion) are recorded in [03-01-05-FIT-RECEIPT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-05-FIT-RECEIPT.md); independent review passed; executor is next after execute preflight. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, collision, and Macro stops remain binding. Nothing was pushed.
 
 Last session: 2026-11-14 (America/New_York)
 
-Paused at the Task 03-01-05 source-event gate after an unplanned sixth read was identified.
+Active again after the owner approved a one-time exception for the already-taken Task05 lookup; implementation waits only for independent review of the amended plan.
 
-Next action: owner chooses between a one-time exception for the already-taken narrow reread, with the 12,000-token source and 100,000-token total limits unchanged, or keeping the five-event cap and stopping this task incomplete. No further source read, implementation, or test is authorized until that decision.
+Next action: executor runs execute preflight, resumes Task05 from the saved notes, and runs cheap consistency checks before longer selectors; no owner action is needed.
 
 Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
@@ -174,8 +174,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 planning passed independent review before execution. Task 03-01-04 EX-010 tracer is committed. Task 03-01-05 source events 1–5 are complete; an additional narrow reread from event3 was classified by independent review as a sixth exact-source read, exceeding the five-event cap. No implementation or tests changed. Current fit is not certified after that lookup; source/event limits and all safety stops remain binding pending owner decision. Nothing was pushed.
+- Phase 3 planning passed independent review before execution. The owner approved a one-time exception for the already-taken Task05 lookup and the amendment/fit projection passed independent review. The full source cap and all safety stops remain binding; no additional source read is allowed. The executor may resume after execute preflight.
 
 ## Operator Next Steps
 
-- Owner next: decide whether to record a one-time exception for the already-taken reread while preserving the source-token and total-context ceilings, or maintain the hard five-event cap and stop Task 03-01-05 incomplete.
+- Executor next: run execute preflight, resume Task05 from the saved notes, and put cheap consistency checks before longer selectors.

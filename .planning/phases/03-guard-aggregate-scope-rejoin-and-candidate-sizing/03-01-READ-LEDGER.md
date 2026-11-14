@@ -30,3 +30,12 @@ These are compact reported notes, not source-anchored evidence or a substitute f
 ## Replanning Constraint
 
 The owner chose re-planning within the existing cap. Preserve the historical 13-event overrun transparently. Do not use it to raise any task ceiling or claim the failed attempt completed work. Re-plan remaining work into genuinely distinct tasks, each with an explicit read-event ledger and at most five exact-source reads. A new task may read source bodies only as specifically budgeted in the independently reviewed revision; each reread counts. Keep the 100,000-token plan ceiling and fixed 31,000-token reserve. No source reads or implementation work should resume before the revised plan passes independent review.
+
+
+## Task 03-01-05 owner-approved read exception — 2026-11-14
+
+| Task | Source path and span | Outcome | Accounting |
+|---|---|---|---|
+| 03-01-05 event 6 | `test/contract/asn1_rtt_integration_test.exs`: three selected-MFA lines from the already completed event-3 span | Narrow lookup had already been emitted before the schedule reviewer identified the sixth read. Owner later approved a one-time exception; the finding is recorded from that prior output and the source must not be reopened. | Actual output size not separately measured; conservatively charge the full remaining 1,161 tokens. The unchanged task source cap remains 12,000 total, with no further source reads authorized. |
+
+This addendum does not alter the historical 03-01-01 overrun above, renew any task limit, or change the static-only safety stops. Approval: [INT-20261114-02](../../intent/sources/2026-11-14-02-approve-task05-read-exception.md).

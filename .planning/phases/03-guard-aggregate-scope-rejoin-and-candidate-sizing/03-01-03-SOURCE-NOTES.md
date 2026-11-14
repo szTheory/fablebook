@@ -254,3 +254,8 @@ was present. No source file changed during acquisition.
   supported creator refs. Implementation must resolve by both id and lane,
   preserve per-row identity, and reject missing/duplicate refs or any unknown
   matcher form. These are source-level assertions; they have not been run yet.
+
+
+## Task 03-01-05 owner-approved lookup exception
+
+The already-emitted narrow lookup from Task05 event 6 listed the selected MFA identities `asn1ct_rtt:assert_defined/1`, `asn1ct_rtt:code/0`, and `asn1ct_rtt:dependencies/1`. The retained reference forms are `source:<table>:<1-based-index>` (CN-001 and CN-004 redirect to exact EX carrier refs) and `creator:<id>:<lane>`. This mapping is recorded from the prior tool result under [INT-20261114-02](../../intent/sources/2026-11-14-02-approve-task05-read-exception.md); do not reopen or re-query the ASN.1 source span. The actual lookup output was not separately token-count measured, so the plan charges the entire unused 1,161-token source allowance to it. No further source-read allowance remains.

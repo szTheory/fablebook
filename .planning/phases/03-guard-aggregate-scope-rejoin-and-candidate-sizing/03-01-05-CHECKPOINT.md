@@ -141,3 +141,15 @@ Unchanged safety stops: static-only evidence; no audited OTP APIs, callbacks, at
 During the Task 03-01-05 implementation handoff, the executor used a narrow rg lookup against test/contract/asn1_rtt_integration_test.exs to re-display only the three selected-MFA lines from the same file span already completed as Task05 event 3. The independent schedule reviewer classified reopening the file as a sixth exact-source read, beyond Task05's five-event limit. No implementation or tests changed. Do not use the result or make another source read under the current schedule.
 
 The last direct count before the lookup was 62,182, with 10,839/12,000 source tokens accounted for; the lookup output was not separately count-only measured, so the old figure is not a current fit certificate. Next actor: the owner decides whether to record a one-time exception for this already-taken lookup while retaining the 12,000-token source cap, 5,000-token output allowance, 31,000-token reserve, 100,000-token ceiling, and all safety stops, or keep the five-event cap and stop Task05 incomplete. No code or tests have run, no key was created, and nothing was pushed.
+
+
+## Owner resolution — one-time exception approved
+
+The owner approved the already-taken event6 lookup as a one-time exception; the approval is recorded in [INT-20261114-02](../../intent/sources/2026-11-14-02-approve-task05-read-exception.md). The independent review's earlier block remains part of the history. The plan now charges the whole 1,161-token unused source balance to the unmeasured lookup, preserving the 12,000-token source ceiling, 5,000-token output allowance, 31,000-token reserve, and 100,000-token total. The reference mapping is in `03-01-03-SOURCE-NOTES.md`; no further source reads are allowed.
+
+Current state: implementation has not resumed yet. Next actor is the independent plan reviewer, then the executor after PASS and execute preflight. Preserve static-only scope, actual-library collision stop, Macro checkpoints, `candidate=null`, `implementation_authorized=false`, `aggregate_gate=open`, Walking Skeleton blocked, and SEC-01 Pending. Nothing was pushed.
+
+
+## Independent amendment review — PASS
+
+The one-time exception and conservative fit receipt passed independent review. The reviewer verified the owner-authorized scope, full 12,000-token source accounting, 90,727/100,000 upper bound, 9,273 slack, and unchanged safety stops without source-body reads. The executor may resume after execute preflight; no further source read is permitted.
