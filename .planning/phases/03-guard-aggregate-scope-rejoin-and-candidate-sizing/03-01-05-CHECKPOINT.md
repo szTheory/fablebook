@@ -135,3 +135,9 @@ Canonical checkout is `~/projects/fablebook`, branch `main`, with source baselin
 Next actor: the Phase 3 executor implements Task 03-01-05 from the completed source notes and committed tracer, runs cheap shape, identity, nonempty-record, and nonzero-count checks before the broader selectors, then commits only after required checks pass. Do not begin Plan 03-02 until Plan 03-01 is complete and committed. No owner action is needed; nothing was pushed.
 
 Unchanged safety stops: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime evaluation, or generated-code invocation; stop on an actual-library collision; preserve the Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
+
+## Unplanned lookup and independent schedule block — 2026-11-14
+
+During the Task 03-01-05 implementation handoff, the executor used a narrow rg lookup against test/contract/asn1_rtt_integration_test.exs to re-display only the three selected-MFA lines from the same file span already completed as Task05 event 3. The independent schedule reviewer classified reopening the file as a sixth exact-source read, beyond Task05's five-event limit. No implementation or tests changed. Do not use the result or make another source read under the current schedule.
+
+The last direct count before the lookup was 62,182, with 10,839/12,000 source tokens accounted for; the lookup output was not separately count-only measured, so the old figure is not a current fit certificate. Next actor: the owner decides whether to record a one-time exception for this already-taken lookup while retaining the 12,000-token source cap, 5,000-token output allowance, 31,000-token reserve, 100,000-token ceiling, and all safety stops, or keep the five-event cap and stop Task05 incomplete. No code or tests have run, no key was created, and nothing was pushed.
