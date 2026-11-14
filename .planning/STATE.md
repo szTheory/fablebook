@@ -4,11 +4,11 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: executing
-stopped_at: The bounded Wave 1 re-plan passed independent review. Phase 3 execution has resumed at zero-read recovery task 03-01-03; the original 13-read overrun and unchanged safety stops remain recorded in 03-01-CHECKPOINT.md and 03-01-READ-LEDGER.md.
+status: Phase 03 execution paused before source work for context-fit measurement
+stopped_at: Task 03-01-03 recorded the missing exact GPT-6 Luna context measurement and stopped before any new source-body event. The 100,000-token plan cap, 31,000 reserve, five-read per-task ceiling, and all safety stops remain unchanged.
 last_updated: "2026-11-14T00:10:13.170Z"
 last_activity: 2026-11-13
-last_activity_desc: Phase 03 execution started
+last_activity_desc: Wave 1 stopped before source work; exact context-fit measurement unavailable
 state_head: 5767b79e457cb77ee162b268f955a34493be5170
 progress:
   total_phases: 1
@@ -32,18 +32,18 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — EXECUTING
-Plan: 1 of 5
-Status: Executing Phase 03
-Last activity: 2026-11-13 — Phase 03 execution started
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — EXECUTION PAUSED
+Plan: 03-01, recovery task 03-01-03; no task completed
+Status: Paused before source work; fit proof for the shared plan context is unavailable
+Last activity: 2026-11-13 — Wave 1 stopped before source work
 
 ## Active Handoff
 
 - Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five plans (12 active tasks across five waves), but no implementation or aggregate evidence exists yet. The first attempt used 13 source-body reads against the five-read task ceiling and produced no task files or commits. The overrun is retained in the read ledger. Revised Wave 1 tasks 03-01-03/04/05 have separate 0/5/5 read-event ceilings; Plan 03-01 passed independent re-review and execution resumed at 03-01-03.
+- Unfinished: Phase 3 has five plans (12 active tasks across five waves), and no aggregate evidence or implementation output exists. The first attempt used 13 source-body reads against the five-read task ceiling; that overrun remains in the read ledger. The revised Wave 1 passed independent review. Task 03-01-03 created a diagnostic receipt but could not prove the shared plan-context fit because GPT-6 Luna's exact tokenizer/context meter is unavailable; no new source-body event occurred and Plan 03-01 is not complete.
 - Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: finish 03-01-03 without source-body reads, then execute the bounded tracer and expansion tasks within their separate five-read ledgers. No owner action is needed unless a new material decision arises. See [03-01-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md) and [03-01-PLAN.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md).
+- Next action: Codex will investigate an exact context-fit measurement method that does not add dependencies or change the 100,000-token cap, 31,000 reserve, or per-task read ceilings. Do not start tracer source reads until the 69,000-token remainder is rigorously established. See [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md).
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -149,13 +149,13 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Phase 3 plans, the source-read ledger, and execution checkpoint are committed locally; nothing was pushed. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered. The v0.4 Phase 3 rejoin and candidate sizing remain unfinished. The owner chose bounded Wave 1 replanning after the first attempt exceeded its read ceiling; the 13-read overrun is preserved, independent plan review passed, and execution resumed at zero-read task 03-01-03. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
+Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Phase 3 plans and historical read checkpoint are committed locally; nothing was pushed. The new [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md) records that Wave 1 stopped before its first new source read because the exact context-fit measurement is unavailable. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 remains unfinished. The 13-read overrun is preserved and the re-plan passed independent review. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
 
 Last session: 2026-11-14T00:03:52.522Z
 
-Stopped at: Execution is active on main at Plan 03-01, Task 03-01-03, Wave 1. The independent plan review passed; the first attempt's 13-read overrun and unchanged safety stops remain recorded in 03-01-CHECKPOINT.md and 03-01-READ-LEDGER.md.
+Stopped at: Wave 1, Plan 03-01, before source task 03-01-04. The recovery receipt records the unavailable exact context-fit measure; no new source-body event occurred. The independent plan review passed, and the first attempt's 13-read overrun and unchanged safety stops remain recorded.
 
-Next action: complete zero-read recovery task 03-01-03, then proceed through the two separately bounded Wave 1 evidence tasks. Codex acts next; the owner acts only if a new material decision arises.
+Next action: Codex investigates a trustworthy exact context-fit measurement path without changing the cap or installing dependencies; resume source work only if the 69,000-token allowance is proven. If no such method is available, ask the owner to choose a measurement approach that preserves the existing limits. Codex acts next.
 
 Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
@@ -174,8 +174,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 context and planning are complete; execution has resumed but no aggregate evidence exists yet. The first attempt used 13 exact-source body-read events against the five-event limit; its reported history is preserved in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). The owner chose a bounded re-plan, independent review passed, and Wave 1 is restarting at the zero-read recovery task. The full join and sizing remain unfinished, with all safety stops active.
+- Phase 3 context and planning are complete, but execution is paused before source work. The first attempt used 13 exact-source body-read events against the five-event limit; its history is preserved in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). The owner chose a bounded re-plan and independent review passed. The recovery receipt shows that no exact context-fit meter is available, so the 03-01-04 tracer has not started. The full join and sizing remain unfinished, with all safety stops active.
 
 ## Operator Next Steps
 
-- Codex completes bounded Wave 1, starting with 03-01-03. No owner action is needed unless a new material decision arises.
+- Codex checks for a trustworthy exact context-fit measurement method without changing any existing limit. If none is available, the owner chooses whether to supply a measurement method; no source work should start before that blocker is resolved.
