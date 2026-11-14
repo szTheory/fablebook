@@ -68,6 +68,44 @@ evidence. The prior partial event bodies were neither loaded nor reproduced.
   exclusions and five distinct lane-metadata identities, and rejects dropped,
   duplicated, substituted, misowned, or payload-mutated rows. It keeps
   exclusion identities distinct from lane metadata.
+- Retained event-2 output confirms `setup_all` calls `build_graph/0`, binds the
+  result as `graph`, and returns `{:ok, graph: graph}`. The tracer test can be
+  inserted after that setup block and before the first caller-chain index test.
+  Its exact line number was not retained; no additional source read is needed
+  to apply the unique test-name anchor.
+- The EX-010 test inputs in `8390–8560` are `evidence =
+  SweepEvidence.source_roots!()`, `ledger = original_identity_ledger!()`,
+  `tier = BannedCalls.banned_mfas()`, and
+  `records = InetsTraceIntegrationEvidence.lane_records()`. The existing
+  integration call is `assert_inets_trace_audit!(ctx.graph, evidence, ledger,
+  tier)`; the tracer guard uses `ctx.graph.full_edges` and
+  `ctx.graph.exported`. The recorded integration result carries lane,
+  selected-function evidence, reviews, exact sources, matched MFAs, delegate
+  edges and remainder MFAs. No distinct delivery-registry API was retained;
+  use the actual phase delivery registry separately and do not infer a helper.
+- The retained identity test shows `ledger.exclusions` and `ledger.metadata`
+  as lists of map-like rows. Exclusions have string `id` and `table`,
+  `identity_class: :exclusion`, raw matcher/reason strings, atom semantic
+  statuses, string owners, string-list replacement refs, and lane-keyed match
+  lists. Metadata rows have string `id`, `table`, original raw values, owner,
+  `identity_class: :lane_metadata`, `semantic_status: :pending`, and
+  string-list replacement refs. It checks 221 exclusions and five metadata
+  identities. The source and compiled tables are `call_name_exclusions` /
+  `@call_name_exclusions`, `exclusions` / `@exclusions`,
+  `boundary_exclusions` / `@boundary_exclusions`,
+  `call_name_lane_specific` / `@call_name_lane_specific`, and
+  `boundary_lane_specific` / `@boundary_lane_specific`; expected lane maps
+  include `@cn004_expected_matches_by_lane`,
+  `@cn006_expected_matches_by_lane`, and `@inets_trace_core_mfas`.
+- `InetsTraceIntegrationEvidence.lane_records/0` is consumed as a list of
+  map-like rows with string `lane` and list-valued
+  `selected_function_evidence`, `reviews`, `exact_sources`, `matched_mfas`,
+  `delegate_edges`, and `remainder_mfas`. Nested item types beyond the
+  retained source assertions were not recorded. The existing assertion helpers
+  are `assert_inets_trace_audit!/4`, `assert_inets_trace_partition!/3`, and
+  `assert_inets_trace_guards!/3`; `InetsTraceIntegrationEvidence.selected_mfas/0`
+  supplies the selected set. Use these only with the recorded lane and source
+  identities; do not infer unrecorded nested fields.
 - EX-010 assertions at `8390–8560` require both lane records, retained callback
   front dispositions for `inets:enable_trace/2,3`, empty guard patterns, and
   reject missing, duplicated, wrong-lane, reordered, or unsupported evidence.
