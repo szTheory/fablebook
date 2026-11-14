@@ -28,6 +28,7 @@ When the owner gives direction, add a verbatim entry to `.planning/intent/source
 
 ## Execution preferences
 - Prefer a clear, opinionated default; optimize the adopter's DX and UX, use idiomatic Elixir, and keep useful investigation evidence.
+- Before long tests or suites, run cheap consistency checks that can catch malformed inputs or artifacts early. When repeated retries or gates stall progress, identify the narrow bottleneck and replan within the approved limits before repeating costly work.
 - Explain risks and decisions in plain, concrete language. Prefer local contract tests and dry-runs when they establish the same behavior; do not change public release state just to create a test case. (INT-20261108-01)
 - Before hosted CI, run the relevant GitHub Actions locally with `act` whenever feasible to catch failures and reduce CI work. Local `act` results supplement, but do not replace, required hosted receipts.
 - The owner has granted standing authorization across Fablebook OpenGSD phases, plans, and milestones to publish reviewed/tested phase candidates by pushing the phase branch and opening or updating a PR to trigger hosted CI, without asking for permission again each time (INT-20261109-01). Follow existing branch protection and phase delivery gates; this does not authorize unrelated releases or production deployments.

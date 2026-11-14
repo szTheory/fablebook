@@ -156,3 +156,101 @@ SEC-01 remains Pending. Keep the actual-library-collision stop and Macro
 caller-AST and explanation checkpoints. The next implementation task must first
 meet its own reviewed preconditions and retain the early record consistency
 checks in the plan.
+
+## Late Task 03-01-03 continuation event 5: Task 03-01-04 collector interface
+
+This post-tracer supplement reads only the complete `build_lane!/1` and
+`validate_lane!/1` definitions at
+`test/support/guard_aggregate_reconciliation_evidence.ex:16–89`. It was a
+single 805-token source event, 74 lines and 2,899 bytes, SHA-256
+`72f4b50c7f2b376a8f9a143305e43a45799350cbd5c624fb752668b92e7c269a`.
+
+`build_lane!/1` requires an input map with `:lane`, `:identity`,
+`:selected_mfas`, `:live_mfas`, `:lane_evidence`, `:delivery`, `:runtime`, and
+`:lock_sha256`. The lane must be core or floor. For this tracer, identity must
+be EX-010 with `identity_class == "exclusion"`. The builder normalizes both
+MFA lists through `mfa!/1`, removes duplicates and sorts them, then requires
+`live_mfas` to be a subset of `selected_mfas`. The lane evidence must carry the
+same lane and list-valued `selected_function_evidence`, `reviews`,
+`exact_sources`, `matched_mfas`, `delegate_edges`, and `remainder_mfas`.
+Delivery must be merged and include a binary CI-run identity. Runtime and lock
+digest are passed separately. The serialized record retains identity, owner,
+delivery, selected/live MFAs, lane evidence, and the fixed safety stops.
+
+`validate_lane!/1` checks schema/collector/lane, matching generation and input
+hash, a 64-character lock digest, EX-010 exclusion identity, evidence-lane
+match, owner/identity agreement, sorted unique MFA lists, `live_mfas` subset
+of `selected_mfas`, merged delivery, and exact stop flags. It validates this
+tracer record shape; it does not compute original-row matches or current
+replacement sets. Those inputs are precomputed by the caller. Task 03-01-05
+must derive its row-specific `selected_mfas` and `live_mfas` from the existing
+ledger, compiled tables and full lane export, preserving separate identities
+and the explicitly recorded replacement references. Do not treat this
+interface note as evidence that such a mapping was already implemented.
+
+## Task 03-01-05 event 1: exact current matcher interfaces
+
+Task05 event 1 acquired only TierSweepTest ranges 13836–13872,
+14004–14149, 14644–14713, and 12492–12540. The plain labeled payload was
+302 source lines, 310 rendered lines, 11,670 bytes, 3,149 `gpt-6-luna`
+input tokens, SHA-256
+`4c17fdfda670b7138f560bfddf9d615a202c67a9deae45e9a8ade144f9ab7833`.
+All four function groups reached their known next-function boundary and the
+explicit end marker was present; no truncation occurred. The source file was
+not modified during acquisition.
+
+The source rows use 1-based indices. `source_row_indices/1` maps an equal raw
+row to every index and restores ascending source order, preserving duplicates.
+The historical accessor reads `lane_baselines[lane][id]["matches"]`, converts
+those MFAs to their recorded strings, and asserts uniqueness. Current
+call-name lookup matches the exact compiled matcher and returns
+`source:CN:<1-based-index>`.
+
+The observed predicates are table-specific. Call-name matching requires the
+same module and membership in the functions list. Boundary matching accepts an
+atom module or a `{module, functions}` pair. Generic exclusion matching handles
+module/function lists, module prefixes, function-name prefixes, and exact
+module/function pairs. The logger-family helper accepts its explicit module,
+function/list, or module-prefix forms. Lane-specific boundary/call-name
+helpers select the floor path when `FABLEBOOK_FLOOR` is set and avoid attaching
+a lane-only row when a generic match already exists.
+
+The retained `assert_creator_audit!/5` body directly validates the EX-159
+`:file` creator record: it derives matches from that lane's `graph.exported`
+using the record's original matcher, removes metadata exports, and asserts exact
+equality with `record.matched_mfas`; it also pins replacement/tier membership.
+This observation does not establish every creator-audit family. The aggregate
+builder must keep creator refs separate, validate each referenced record against
+the matching lane's full export set using a supported source-anchored matcher,
+and fail closed on an unsupported matcher or missing/duplicate record. Do not
+claim the whole creator mapping is closed until that guard passes for every
+referenced row.
+
+## Task 03-01-05 event 2: creator-family live-set contracts
+
+Task05 event2 acquired the six exact ranges at TierSweepTest: 12541–12553,
+12611–12623, 13630–13642, 13660–13667, 13688–13804, and 13805–13815.
+The rendered payload was 175 source lines, 187 rendered lines, 8,074 bytes,
+2,024 `gpt-6-luna` input tokens, SHA-256
+`58aabdf37871de43db1e0ed562d7f69fd7b47d204ef6e414c6a35ea99333d12d`.
+All selected ranges and function boundaries were complete, and the end marker
+was present. No source file changed during acquisition.
+
+- EX-165/LEEX uses original matcher `{:leex, [:file]}`. The source assertion
+  filters `graph.full_exported` through `creator_original_match?/2`, removes
+  metadata exports, and checks exact equality with the pinned LEEX MFA set. It
+  separately converts the record's `matched_mfas` and checks exact equality
+  with the original lane baseline.
+- EX-089/YECC uses `{:yecc, :epp_guard}`. Its matcher accepts only `:yecc`
+  exports other than `module_info` and `__info__`; the source assertion checks
+  the exact-lane filtered set equals the record's `matched_mfas`.
+- Logger creator records have one exact MFA each, with matcher `{:mfa, mfa}`.
+  The source assertion proves each expected lane MFA is exported and that the
+  complete live family set (reachable tier members plus explicit tier and
+  exclusion roots) exactly equals both the pinned lane universe and the union
+  of recorded creator MFAs.
+- Together with event1's EX-159 assertion and the previously observed
+  `creator:<id>:<lane>` reference construction, these contracts cover the
+  supported creator refs. Implementation must resolve by both id and lane,
+  preserve per-row identity, and reject missing/duplicate refs or any unknown
+  matcher form. These are source-level assertions; they have not been run yet.

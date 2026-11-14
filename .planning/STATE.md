@@ -4,11 +4,11 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: "Task 03-01-03 source notes complete; Task 03-01-04 remains gated"
-stopped_at: "Task 03-01-03 source-note continuation events 2–4 completed after exact payload and combined-context gates passed. The event-2 payload measured 12,356 tokens; combined count was 48,851 with 3,149 tokens of working slack after unchanged allowances and reserve. Both continuation event 1 and the earlier Task 03-01-04 event 1 remain consumed/incomplete and unusable as evidence. No implementation or tests ran. Continue to Task 03-01-04 only after its precondition and fresh fit gate."
-last_updated: "2026-11-14T04:54:11Z"
-last_activity: 2026-11-13
-last_activity_desc: Source-note continuation events 2–4 completed within reviewed limits
+status: "Task 03-01-05 implementation ready; all planned source evidence events complete"
+stopped_at: "Task 03-01-04 tracer is committed at 884684b. Task 03-01-05 matcher and creator-family source events 1–2 are complete; no implementation or tests have run. The last fresh direct count was 62,182, projecting to 98,182/100,000 with the unchanged 5,000 output allowance and 31,000 reserve. Source accounting is 10,839/12,000. Continue with the all-row join, run cheap integrity checks before broad selectors, preserve all safety stops, and do not start the next plan until Task 03-01-05 is committed and passes."
+last_updated: "2026-11-14T09:04:08Z"
+last_activity: 2026-11-14
+last_activity_desc: Task 03-01-05 source gates completed; implementation handoff prepared
 state_head: 93476fe
 progress:
   total_phases: 1
@@ -33,17 +33,17 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 ## Current Position
 
 Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — reviewed recovery schedule active
-Plan: 03-01; Task 03-01-03 source-notes continuation is complete; next evaluate Task 03-01-04's reviewed precondition and fresh fit gate
-Status: Task 03-01-03 event 1 and Task 03-01-04 event 1 remain consumed/incomplete and unusable as evidence; corrective Task 03-01-03 events 2–4 are complete; no implementation started
-Last activity: 2026-11-13 — all scheduled Task 03-01-03 source groups completed within the reviewed limits
+Plan: 03-01; Task 03-01-03 source-note continuation, Task 03-01-04 tracer, and Task 03-01-05 source mapping are complete; next implement the all-row join and delivered partitions
+Status: Task 03-01-04 is committed at 884684b. Task 03-01-05 has complete source evidence and has made no implementation or test changes yet. Task 03-01-03 continuation event 1 and Task 03-01-04 events 1 and 4 remain consumed/incomplete and unusable as evidence.
+Last activity: 2026-11-14 — creator-family source mapping completed under the reviewed cap
 
 ## Active Handoff
 
 - Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five plans and twelve active tasks across five sequential waves. No aggregate evidence or implementation output exists. Task 03-01-03 recovery is committed as `a6d99e4`; its source-notes continuation events 2–4 are now complete. Corrective event 2 covered all eight scheduled TierSweepTest ranges within the 16,000-token inner and 18,000-token outer ceilings, followed by the exact InstalledOtp and SweepEvidence groups. The fresh combined count was 48,851 tokens, with the unchanged allowances and reserve projecting to 96,851/100,000 and 3,149 slack. Both incomplete source events remain consumed and unusable: Task 03-01-04 event 1 and Task 03-01-03 continuation event 1. Neither partial body is evidence. The count-only requests used the existing key only at the free input-token endpoint; its value was not emitted or committed. The full-manifest parse and wrong-line-window lookup remain documented in [03-01-REPLAN.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-REPLAN.md). No implementation source changed and no tests ran. The source handoff and bounded graph-builder gap are in [03-01-03-SOURCE-NOTES.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-03-SOURCE-NOTES.md); the current checkpoint is [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md).
-- Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: Assistant resumes `$gsd-execute-phase 3` to evaluate Task 03-01-04's reviewed precondition and fresh fit gate before tracer work. No owner action or new key is needed. Nothing was pushed.
+- Unfinished: Phase 3 has five plans and twelve active tasks across five sequential waves. Task 03-01-03 recovery is committed as `a6d99e4`; Task 03-01-04 tracer is committed as `884684b`. Task 03-01-05 has source-anchored per-table and creator-family mappings; its implementation and required tests remain. The last fresh direct count was 62,182, projecting to 98,182/100,000 with the unchanged 5,000-token output allowance and 31,000-token reserve; cumulative source accounting is 10,839/12,000. Continuation event 1 and Task 03-01-04 events 1 and 4 remain consumed/incomplete and are not evidence. The count-only requests used the existing ignored local key only at the free input-token endpoint; no key value was emitted or committed. Recovery and source mappings are in [03-01-03-SOURCE-NOTES.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-03-SOURCE-NOTES.md); execution receipts are in [03-01-05-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-05-CHECKPOINT.md). Nothing was pushed.
+- Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
+- Next action: the Phase 3 executor continues Task 03-01-05, implements the complete all-row and partition join, runs cheap shape/identity/nonempty/count checks before broader lane selectors, and commits only after required checks pass. No owner action or new key is needed. Nothing was pushed.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -149,13 +149,13 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout `~/projects/fablebook` on `main` at reviewed recovery schedule HEAD before this documentation commit; current v0.4 Phase 3, Plan 03-01. Task 03-01-03 source notes are complete. Corrective events 2–4 passed within exact output and cumulative-context limits; the two incomplete event-1 acquisitions remain permanently unusable as evidence. The exact payload and count transfers are recorded in [03-01-REPLAN.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-REPLAN.md) and [03-01-03-SOURCE-NOTES.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-03-SOURCE-NOTES.md). The bounded graph-builder excerpt gap remains explicit. No implementation or tests ran. Continue to Task 03-01-04 by checking its reviewed precondition and refreshing fit; candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, with the actual-library-collision stop and Macro checkpoints unchanged.
+Active planning target: Canonical checkout `~/projects/fablebook` on `main`; source baseline `884684b`, with the recovery/source schedule and current handoff committed locally. Current v0.4 Phase 3, Plan 03-01. Task 03-01-03 source notes and Task 03-01-04 tracer are complete. Task 03-01-05 source events 1–2 establish exact per-table and creator-family membership; all five event slots are accounted for, including consumed/incomplete events. The last direct count was 62,182; with the fixed output allowance and reserve it projected to 98,182/100,000. No Task 03-01-05 implementation or tests have run. Next actor: the Phase 3 executor implements the all-row join, runs cheap integrity checks before broad selectors, and commits on success; the owner has no action. Candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and the static-only, actual-library-collision and Macro checkpoints remain binding. Nothing was pushed.
 
-Last session: 2026-11-13 (America/New_York)
+Last session: 2026-11-14 (America/New_York)
 
-Stopped at: Task 03-01-03 source notes completed after exact payload and cumulative fit checks passed. Event 2 was 47,039 bytes, 1,221 lines, SHA-256 `1a30248724a2a5697bc79aba53d791475fa876ade17e7039e1402007203c4537`, and 12,356 count-only tokens. Events 2–4 are complete; continuation event 1 and the separate Task 03-01-04 event 1 remain consumed/incomplete. Fresh combined context measured 48,851 tokens, projecting 96,851/100,000 with 3,149 slack after the unchanged caps and reserve. The bounded graph-builder excerpt gap is documented in the source notes. No implementation, tests, audited API, callback, atom sink or generated-code invocation occurred. The full-manifest parse and wrong-line-window lookup remain in the replan receipt.
+Stopped for execution handoff after Task 03-01-05 source event 2. The exact creator-family slices passed their reviewed 2,024-token cap and complete range/hash checks. The direct count at that gate was 62,182; with 5,000 output and 31,000 reserve it projected to 98,182/100,000. Source accounting is 10,839/12,000. Task 03-01-05 has not changed implementation or run tests yet. The three consumed/incomplete events remain unusable evidence. No audited API, callback, atom sink or generated-code path was invoked; no new key was created; nothing was pushed.
 
-Next action: Assistant resumes `$gsd-execute-phase 3`; evaluate Task 03-01-04's precondition and fresh fit before tracer work. The two incomplete events remain gaps and no implementation has started. Nothing was pushed.
+Next action: the Phase 3 executor continues `$gsd-execute-phase 3` by implementing Task 03-01-05 from the completed source notes, running cheap consistency checks before longer selectors, and committing the verified task. The owner does not need to act. Nothing was pushed.
 
 Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
@@ -174,8 +174,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 planning passed independent review before execution. The initial 13-read overrun remains in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). Both incomplete source events remain permanently recorded and unusable as evidence. Task 03-01-03's reviewed corrective schedule completed its three source groups within the same event, output, and context limits; exact counts and the event ledger are in [03-01-REPLAN.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-REPLAN.md) and [03-01-03-SOURCE-NOTES.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-03-SOURCE-NOTES.md). The graph-builder excerpt ends inside its function; the remainder is an explicit bounded gap. No implementation or tests ran. The aggregate join and sizing remain unfinished, and all safety stops remain active.
+- Phase 3 planning passed independent review before execution. The initial 13-read overrun and its bounded recovery remain in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md) and [03-01-REPLAN.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-REPLAN.md). Task 03-01-04’s EX-010 tracer is committed. Task 03-01-05 source mapping is complete; its all-row membership and partition implementation is the active next step. All three consumed/incomplete source events remain unusable as evidence. Candidate and implementation authority remain unset; aggregate closure, Walking Skeleton and SEC-01 remain blocked/open as recorded. Nothing was pushed.
 
 ## Operator Next Steps
 
-- Assistant next: run `$gsd-execute-phase 3` to evaluate Task 03-01-04's reviewed precondition and fresh fit gate before tracer work. No user action or new key is needed.
+- Assistant next: continue `$gsd-execute-phase 3` with Task 03-01-05 implementation and run low-cost consistency checks before longer selectors. No user action or new key is needed.
