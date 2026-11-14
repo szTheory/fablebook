@@ -5,7 +5,7 @@ milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
 status: Phase 03 execution paused before source work for context-fit measurement
-stopped_at: Task 03-01-03 recorded the missing exact GPT-6 Luna context measurement and stopped before any new source-body event. An official API counter exists, but using it requires credentials and owner authorization to send planned project context; the 100,000-token cap, 31,000 reserve, five-read per-task ceiling, and all safety stops remain unchanged.
+stopped_at: Task 03-01-03 recorded the missing exact GPT-6 Luna context measurement and stopped before any new source-body event. The owner chose the recommended free OpenAI count endpoint; the local environment needs an API key before Codex can verify GPT-6 Luna support and count the planned context. The 100,000-token cap, 31,000 reserve, five-read per-task ceiling, and all safety stops remain unchanged.
 last_updated: "2026-11-14T00:10:13.170Z"
 last_activity: 2026-11-13
 last_activity_desc: Wave 1 stopped before source work; exact context-fit measurement unavailable
@@ -43,7 +43,7 @@ Last activity: 2026-11-13 — Wave 1 stopped before source work
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
 - Unfinished: Phase 3 has five plans (12 active tasks across five waves), and no aggregate evidence or implementation output exists. The first attempt used 13 source-body reads against the five-read task ceiling; that overrun remains in the read ledger. The revised Wave 1 passed independent review. Task 03-01-03 created a diagnostic receipt but could not prove the shared plan-context fit because GPT-6 Luna's exact tokenizer/context meter is unavailable; no new source-body event occurred and Plan 03-01 is not complete.
 - Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: owner selects the exact measurement route. Recommended: provide a trusted local meter, or authorize the official OpenAI count endpoint after credentials are available; this would send selected project context to the API and may incur API usage charges. Do not start tracer reads until the 69,000-token remainder is rigorously established. See [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md).
+- Next action: owner makes an API key available securely and tells Codex when it is ready. The selected endpoint counts are free according to OpenAI's Help Center; each on-demand count request sends the selected context to the API but does not start an inference run or create a subscription. Codex will verify GPT-6 Luna support with a harmless prompt before counting project context. Do not start tracer reads until the 69,000-token remainder is rigorously established. See [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md).
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -153,9 +153,9 @@ Active planning target: Canonical checkout: ~/projects/fablebook on main; this s
 
 Last session: 2026-11-14T00:03:52.522Z
 
-Stopped at: Wave 1, Plan 03-01, before source task 03-01-04. The recovery receipt records that no local exact context-fit measure is available; the official API counter requires credentials and owner authorization for the added data transfer. No new source-body event occurred. The independent plan review passed, and the first attempt's 13-read overrun and unchanged safety stops remain recorded.
+Stopped at: Wave 1, Plan 03-01, before source task 03-01-04. The recovery receipt records that no local exact context-fit measure is available. The owner selected the free official API counter; the local environment has no API key, so the endpoint has not been called and no new source-body event occurred. The independent plan review passed, and the first attempt's 13-read overrun and unchanged safety stops remain recorded.
 
-Next action: owner chooses a trusted local context meter or authorizes the official API counter after credentials are available. Keep source work paused until the 69,000-token allowance is proven; the owner acts next.
+Next action: owner makes an API key available securely and tells Codex when ready. Codex then verifies GPT-6 Luna support with a harmless prompt and measures the planned context; source work stays paused until the 69,000-token allowance is proven.
 
 Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
@@ -178,4 +178,4 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ## Operator Next Steps
 
-- Owner supplies a trusted local exact counter or authorizes the official API counter after credentials are available. No source work should start before the context-fit blocker is resolved.
+- Owner makes an API key available securely and tells Codex when ready. No source work should start before the context-fit blocker is resolved.
