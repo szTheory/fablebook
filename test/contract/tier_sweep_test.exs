@@ -5093,6 +5093,54 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :guard_aggregate_reconciliation
   @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation_preflight
+  test "aggregate input identities and references are complete before writes", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    lane = to_string(evidence.lane.name)
+    ledger = original_identity_ledger!()
+
+    delivery_receipts =
+      Path.expand("../../.planning/references/PHASE-DELIVERIES.json", __DIR__)
+      |> File.read!()
+      |> Jason.decode!()
+      |> Map.fetch!("phases")
+      |> Enum.filter(&(&1["status"] == "merged" and &1["phase"] in ["1", "2"]))
+      |> Enum.sort_by(&{&1["milestone"], &1["phase"]})
+
+    rows = aggregate_identity_rows!(lane, ledger, ctx.graph.full_exported, delivery_receipts)
+    ids = Enum.map(rows, & &1.identity.id)
+    true_exported = ctx.graph.full_exported != MapSet.new()
+    true = lane in ["core", "floor"]
+    true = length(ids) == 226 and length(ids) == length(Enum.uniq(ids))
+    true = Enum.take(ids, 3) == ["CN-001", "CN-002", "CN-003"]
+    true = Enum.any?(rows, &(&1.replacement_live_mfas != []))
+
+    true =
+      Enum.all?(
+        rows,
+        &(&1.mapping_status == "complete" and &1.identity.current_replacement_refs != [])
+      )
+
+    true = true_exported
+    ex010 = Enum.find(rows, &(&1.identity.id == "EX-010"))
+    ex107 = Enum.find(rows, &(&1.identity.id == "EX-107"))
+
+    true =
+      ex010.delivered_scope_mfas ==
+        InetsTraceIntegrationEvidence.selected_mfas() |> Enum.to_list() |> Enum.sort()
+
+    true =
+      ex107.delivered_scope_mfas ==
+        Enum.sort([
+          {:asn1ct_rtt, :assert_defined, 1},
+          {:asn1ct_rtt, :code, 0},
+          {:asn1ct_rtt, :dependencies, 1}
+        ])
+  end
+
+  @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation
   @tag :guard_aggregate_reconciliation_records
   test "one-row tracer preserves EX-010 identity and lane evidence", ctx do
     evidence = SweepEvidence.source_roots!()
@@ -5153,11 +5201,123 @@ defmodule Fablebook.Contract.TierSweepTest do
         |> Base.encode16(case: :lower)
     }
 
-    record = Fablebook.Test.GuardAggregateReconciliationEvidence.build_lane!(input)
+    delivery_receipts =
+      Path.expand("../../.planning/references/PHASE-DELIVERIES.json", __DIR__)
+      |> File.read!()
+      |> Jason.decode!()
+      |> Map.fetch!("phases")
+      |> Enum.filter(&(&1["status"] == "merged" and &1["phase"] in ["1", "2"]))
+      |> Enum.sort_by(&{&1["milestone"], &1["phase"]})
+
+    assert Enum.map(delivery_receipts, &{&1["milestone"], &1["phase"]}) ==
+             [{"v0.2", "1"}, {"v0.3", "2"}]
+
+    aggregate_rows =
+      aggregate_identity_rows!(lane, ledger, ctx.graph.full_exported, delivery_receipts)
+
+    expected_ids = Enum.map(ledger.exclusions ++ ledger.metadata, & &1.id)
+    assert Enum.map(aggregate_rows, & &1.identity.id) == expected_ids
+    full_exports = ctx.graph.full_exported |> Enum.sort()
+    assert length(aggregate_rows) == 226
+
+    record =
+      Fablebook.Test.GuardAggregateReconciliationEvidence.build_lane!(
+        Map.merge(input, %{
+          aggregate_rows: aggregate_rows,
+          delivery_receipts: delivery_receipts,
+          live_nonoriginal_entries: ledger.live_nonoriginal_entries,
+          inventory_universe: %{
+            "kind" => "full_installed_otp_elixir_dependency_exports",
+            "lane" => lane,
+            "count" => length(full_exports),
+            "exported_mfas" => full_exports
+          }
+        })
+      )
+
     assert :ok = Fablebook.Test.GuardAggregateReconciliationEvidence.validate_lane!(record)
+
+    assert :ok =
+             Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(record)
+
+    assert record["membership_join_complete"]
+    assert record["source_join_complete"] == false
+    assert length(record["identity_rows"]) == 226
+
+    expected_identities =
+      aggregate_rows |> Enum.map(& &1.identity) |> Jason.encode!() |> Jason.decode!()
+
+    assert Enum.map(record["identity_rows"], & &1["identity"]) == expected_identities
     assert record["live_mfas"] != []
     assert record["candidate"] == nil
     assert record["stops"]["implementation_authorized"] == false
+
+    ex107 = Enum.find(record["identity_rows"], &(&1["identity"]["id"] == "EX-107"))
+    assert length(ex107["delivered_mfas"]) == 3
+    assert length(ex107["live_mfas"]) == 177
+    assert length(ex107["pending_after_delivered_and_historical_mfas"]) == 161
+
+    first_row = hd(record["identity_rows"])
+
+    assert_raise MatchError, fn ->
+      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(
+        Map.update!(record, "identity_rows", &[hd(&1) | &1])
+      )
+    end
+
+    assert_raise MatchError, fn ->
+      mutated =
+        Map.update!(record, "identity_rows", fn rows ->
+          List.update_at(
+            rows,
+            0,
+            &Map.update!(&1, "identity", fn identity -> Map.put(identity, "owner", "changed") end)
+          )
+        end)
+
+      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(mutated)
+    end
+
+    ex010_original = Enum.find(record["identity_rows"], &(&1["identity"]["id"] == "EX-010"))
+    assert length(ex010_original["live_mfas"]) >= 2
+
+    equal_count_mutation =
+      Map.update!(record, "identity_rows", fn rows ->
+        Enum.map(rows, fn row ->
+          if row["identity"]["id"] == "EX-010" do
+            Map.put(
+              row,
+              "live_mfas",
+              Fablebook.Test.GuardAggregateReconciliationEvidence.equal_count_mfa_mutation!(
+                row["live_mfas"],
+                ["synthetic", "different", 0]
+              )
+            )
+          else
+            row
+          end
+        end)
+      end)
+
+    ex010_mutated =
+      Enum.find(equal_count_mutation["identity_rows"], &(&1["identity"]["id"] == "EX-010"))
+
+    assert length(ex010_mutated["live_mfas"]) == length(ex010_original["live_mfas"])
+    assert ex010_mutated["live_mfas"] != ex010_original["live_mfas"]
+
+    assert_raise MatchError, fn ->
+      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(
+        equal_count_mutation
+      )
+    end
+
+    assert_raise MatchError, fn ->
+      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(
+        Map.put(record, "lane", if(lane == "core", do: "floor", else: "core"))
+      )
+    end
+
+    assert first_row["identity"]["id"] == "CN-001"
 
     if System.get_env("FABLEBOOK_GUARD_AGGREGATE_WRITE") == "1" do
       name =
@@ -5175,6 +5335,208 @@ defmodule Fablebook.Contract.TierSweepTest do
       File.write!(temporary, Jason.encode_to_iodata!(record, pretty: true) ++ [10])
       File.rename!(temporary, path)
     end
+  end
+
+  defp aggregate_identity_rows!(lane, ledger, exported, delivery_receipts) do
+    identities = ledger.exclusions ++ ledger.metadata
+
+    Enum.map(identities, fn identity ->
+      refs = identity.current_replacement_refs
+
+      baseline =
+        if identity.identity_class == :exclusion,
+          do: parse_mfa_strings!(identity.lane_matches[lane]),
+          else: []
+
+      replacement_live =
+        if identity.identity_class == :exclusion do
+          refs
+          |> Enum.flat_map(
+            &aggregate_reference_mfas!(&1, lane, ledger.current_values, exported, baseline)
+          )
+          |> Enum.uniq()
+          |> Enum.sort()
+        else
+          assert_aggregate_metadata_refs!(refs, ledger.current_values)
+          []
+        end
+
+      if identity.id == "EX-165" do
+        :ok =
+          Fablebook.Test.GuardAggregateReconciliationEvidence.validate_creator_match_set!(
+            "EX-165",
+            replacement_live,
+            baseline,
+            baseline
+          )
+      end
+
+      original_live =
+        if identity.identity_class == :exclusion and identity.id not in ["CN-001", "CN-004"] do
+          refs
+          |> Enum.reject(
+            &(String.starts_with?(&1, "source:") and identity.id in ["CN-001", "CN-004"])
+          )
+          |> Enum.flat_map(
+            &aggregate_reference_mfas!(&1, lane, ledger.current_values, exported, baseline)
+          )
+          |> Enum.uniq()
+          |> Enum.sort()
+        else
+          []
+        end
+
+      {delivered_scope, delivered_owner, row_receipts, historical_partition} =
+        case identity.id do
+          "EX-010" ->
+            {InetsTraceIntegrationEvidence.selected_mfas() |> Enum.to_list(), "v0.2/1",
+             [Enum.find(delivery_receipts, &(&1["milestone"] == "v0.2" and &1["phase"] == "1"))],
+             []}
+
+          "EX-107" ->
+            {[
+               {:asn1ct_rtt, :assert_defined, 1},
+               {:asn1ct_rtt, :code, 0},
+               {:asn1ct_rtt, :dependencies, 1}
+             ], "v0.3/2",
+             [Enum.find(delivery_receipts, &(&1["milestone"] == "v0.3" and &1["phase"] == "2"))],
+             @asn1_expected_selected_mfas}
+
+          _ ->
+            {[], nil, [], []}
+        end
+
+      delivered_scope = Enum.uniq(delivered_scope) |> Enum.sort()
+
+      row = %{
+        identity: identity,
+        baseline_mfas: baseline,
+        original_live_mfas: original_live,
+        replacement_live_mfas: replacement_live,
+        delivered_scope_mfas: delivered_scope,
+        delivered_slice_owner: delivered_owner,
+        delivery_refs: Enum.map(row_receipts, &aggregate_delivery_ref!/1),
+        mapping_status: "complete"
+      }
+
+      if historical_partition == [] do
+        row
+      else
+        row
+        |> Map.put(:historical_partition_mfas, historical_partition)
+        |> Map.put(:historical_partition_name, "historical_13")
+      end
+    end)
+  end
+
+  defp aggregate_reference_mfas!("creator:" <> ref, lane, _current_values, exported, baseline) do
+    case Fablebook.Test.GuardAggregateReconciliationEvidence.creator_reference_scope!(
+           "creator:" <> ref,
+           lane
+         ) do
+      :current_lane ->
+        [id, _ref_lane] = String.split(ref, ":")
+        [record] = Enum.filter(@creator_audit, &(&1.original_id == id and &1.lane == lane))
+        matches = Enum.uniq(record.matched_mfas) |> Enum.sort()
+        true = matches != []
+        true = MapSet.subset?(MapSet.new(matches), exported)
+        matcher = Map.get(record, :original_matcher) || Map.get(record, :matcher)
+        true = not is_nil(matcher)
+
+        expected =
+          case id do
+            "EX-159" ->
+              Enum.filter(exported, &creator_original_match?(matcher, &1))
+              |> Enum.reject(&(elem(&1, 1) in [:module_info, :__info__]))
+
+            "EX-165" ->
+              Enum.filter(exported, &creator_original_match?({:leex, [:file]}, &1))
+              |> Enum.reject(&(elem(&1, 1) in [:module_info, :__info__]))
+
+            "EX-089" ->
+              Enum.filter(exported, fn
+                {:yecc, function, _arity} -> function not in [:module_info, :__info__]
+                _ -> false
+              end)
+
+            "NEW-" <> _ ->
+              case matcher do
+                {:mfa, mfa} -> Enum.filter(exported, &(&1 == mfa))
+                _ -> raise ArgumentError, "unsupported logger creator matcher #{inspect(matcher)}"
+              end
+          end
+
+        :ok =
+          Fablebook.Test.GuardAggregateReconciliationEvidence.validate_creator_match_set!(
+            id,
+            matches,
+            expected,
+            baseline
+          )
+
+        matches
+
+      :other_lane ->
+        []
+    end
+  end
+
+  defp aggregate_reference_mfas!("source:" <> ref, _lane, current_values, exported, _baseline) do
+    [table, index_string] = String.split(ref, ":")
+    index = String.to_integer(index_string)
+    entries = Map.fetch!(current_values, table)
+    entry = Enum.at(entries, index - 1) || raise ArgumentError, "missing current ref #{ref}"
+
+    Enum.filter(exported, fn {module, function, _arity} = mfa ->
+      case table do
+        "CN" -> call_name_exclusion_match?(aggregate_entry_matcher!(entry), mfa)
+        "EX" -> exclusion_record_matches_mfa?(entry, mfa)
+        "BD" -> boundary_match?(aggregate_entry_matcher!(entry), mfa)
+        "CN-LANE" -> lane_specific_call_name?(entry, {module, function})
+        "BD-LANE" -> lane_specific_boundary?(entry, {module, function})
+        _ -> raise ArgumentError, "unsupported current source table #{table}"
+      end
+    end)
+  end
+
+  defp aggregate_reference_mfas!(ref, _lane, _current_values, _exported, _baseline),
+    do: raise(ArgumentError, "unsupported current replacement reference #{inspect(ref)}")
+
+  defp assert_aggregate_metadata_refs!(refs, current_values) do
+    Enum.each(refs, fn ref ->
+      case String.split(ref, ":") do
+        ["source", table, index_string] when table in ["CN-LANE", "BD-LANE"] ->
+          index = String.to_integer(index_string)
+          true = not is_nil(Enum.at(Map.fetch!(current_values, table), index - 1))
+
+        _ ->
+          raise ArgumentError, "unsupported lane-metadata reference #{inspect(ref)}"
+      end
+    end)
+  end
+
+  defp aggregate_entry_matcher!({matcher, _reason}), do: matcher
+  defp aggregate_entry_matcher!({matcher, _reason, _citation}), do: matcher
+
+  defp aggregate_entry_matcher!(value),
+    do: raise(ArgumentError, "unsupported compiled matcher row #{inspect(value)}")
+
+  defp aggregate_delivery_ref!(receipt) do
+    %{
+      "milestone" => receipt["milestone"],
+      "phase" => receipt["phase"],
+      "pr" => receipt["pr"],
+      "sha256" =>
+        :crypto.hash(:sha256, :erlang.term_to_binary(receipt, [:deterministic]))
+        |> Base.encode16(case: :lower)
+    }
+  end
+
+  defp parse_mfa_strings!(values) do
+    values
+    |> Enum.map(&Fablebook.Test.GuardAggregateReconciliationEvidence.parse_mfa_identity!/1)
+    |> Enum.uniq()
+    |> Enum.sort()
   end
 
   @tag :guard_aggregate_reconciliation
@@ -5237,7 +5599,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @tag :guard_aggregate_reconciliation
   @tag :guard_aggregate_reconciliation_bundle
-  test "two lane records reproduce the one-row tracer crosswalk" do
+  test "two lane records reproduce the complete original-identity crosswalk" do
     directory =
       Path.expand(
         "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
@@ -5254,12 +5616,16 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> Jason.decode!()
 
     report = Fablebook.Test.GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor)
+    assert report["scope"] == "complete-original-ledger"
+    assert report["membership_join_complete"]
+    assert report["source_join_complete"] == false
+    assert length(report["rows"]) == 226
     path = Path.join(directory, "03-RECONCILIATION.md")
 
     if System.get_env("FABLEBOOK_GUARD_AGGREGATE_REPORT_WRITE") == "1" do
       content = [
-        "# Phase 03 tracer crosswalk\n\n",
-        "One EX-010 row is joined across the pinned core and floor inventories. This is a tracer only; source join and aggregate closure remain open.\n\n",
+        "# Phase 03 aggregate reconciliation\n\n",
+        "All original exclusion and lane-metadata identities are joined across the pinned core and floor inventories. Source join remains open; candidate selection is null.\n\n",
         "```json\n",
         Jason.encode_to_iodata!(report, pretty: true),
         "\n```\n"
@@ -14441,6 +14807,8 @@ defmodule Fablebook.Contract.TierSweepTest do
       exclusions: exclusions,
       metadata: metadata,
       live_nonoriginal_entries: added_live_rows,
+      current_values: current_values,
+      current_tables: current_tables,
       provenance: %{
         snapshot_path:
           ".planning/phases/01.1.1.5-complete-atom-creator-fronts-and-audit-calibration/01.1.1.5-ORIGINAL-IDENTITY-SOURCE.txt",

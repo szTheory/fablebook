@@ -153,3 +153,26 @@ Current state: implementation has not resumed yet. Next actor is the independent
 ## Independent amendment review — PASS
 
 The one-time exception and conservative fit receipt passed independent review. The reviewer verified the owner-authorized scope, full 12,000-token source accounting, 90,727/100,000 upper bound, 9,273 slack, and unchanged safety stops without source-body reads. The executor may resume after execute preflight; no further source read is permitted.
+
+
+## Task 03-01-05 execution complete — 2026-11-14
+
+Implementation, generated records, report, and planned selectors are complete. Current checkout is ~/projects/fablebook on main at bad20cec, with the five Task05 implementation/evidence files modified and awaiting the parent-owned commit. The parent ran execute preflight successfully after the final selector. No commit or push was made by this executor; the protected-main commit guard remains in force.
+
+The corrected bundle selector completed with actual command exit 0: 1 selected test passed, 104 excluded, 51.9 seconds. Earlier successful checks were core preflight 1/1 in 93.6 seconds; core record generation 2/2 in 64.6 seconds; floor record generation 2/2 in 70.6 seconds; initial bundle run 1/1 in 65.5 seconds; core broad aggregate selector 4/4 in 74.6 seconds; floor broad aggregate selector 4/4 in 63.7 seconds. The first bundle wrapper reported shell exit 1 after ExUnit had passed because zsh treats status as a read-only variable; the corrected rerun above verifies the actual ExUnit exit. Both lane aggregate selectors and the bundle selector passed again under the required final sequence.
+
+Resolved focused-check issues: the original MFA parser now extracts only a numeric final /arity suffix, including inputs with multiple slashes; references for the other lane remain metadata without contributing to current-lane membership; creator matcher output is compared exactly to its own matched_mfas record, with historical-baseline equality retained only where source evidence supports it; metadata refs validate table/index identity without exclusion matching; tuple/string MFA forms pass through the canonicalizer; the negative control mutates the known two-member EX-010 set; and export-subset guards apply to current original/replacement live sets, while historical and delivered members absent from live sets remain explicit missing partitions. The compact records omit the 50,568-MFA global list and retain its count, digest, lane, and provenance while preserving per-row sets.
+
+Both records contain 226 unique identities each: 221 exclusions and 5 lane-metadata rows. Cross-lane identity equality and every row's added, missing, delivered, delivered-now-missing, pending, disjointness, and union equations passed. EX-010 delivered scope remains two MFAs. EX-107 retains delivered three, historical thirteen, complement 164, and pending 161. The combined report contains 226 crosswalk rows with both lane memberships, two receipt links, and links to both records. Format and diff checks passed.
+
+| Artifact | Bytes | SHA-256 |
+|---|---:|---|
+| test/support/guard_aggregate_reconciliation_evidence.ex | 18,215 | effcd366fcbb94de9b9e8cf71a7a4ac00622c4f66c3cd59c94bc7b4c49401361 |
+| test/contract/tier_sweep_test.exs | 743,771 | 8c9c6f7fb0c0ed642baf916f61480c6f2adf22817ec54de0bd40359c8d0a0c29 |
+| 03-CORE-AGGREGATE-EVIDENCE.json | 1,418,156 | 70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd |
+| 03-FLOOR-AGGREGATE-EVIDENCE.json | 1,390,810 | 955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d |
+| 03-RECONCILIATION.md | 2,624,216 | 3230fde0ffcb2de96ca213671836d38d3ce20a01dd1a545863fe3bf97d544394 |
+
+The fit receipt remains unchanged: measured selected planning context 41,727 tokens + 1,000-token post-count cushion + the full 12,000-token source allocation (including the one-time approved event6 charge) + 5,000 output allowance + 31,000 fixed reserve = 90,727/100,000, leaving 9,273 slack. No source body was reread after event6; the incomplete event4 body remains excluded and represented only by receipt metadata.
+
+All stops remain unchanged: static-only evidence; no audited OTP/API callbacks, atom sinks, runtime evaluation, or generated-code path; stop on actual-library collision; preserve Macro caller-AST and explanation checkpoints; candidate null; implementation authorization false; aggregate gate open; source join open; Walking Skeleton blocked; SEC-01 Pending. Plans 03-02 through 03-05 remain unfinished. Next actor is the parent, who will commit these five files via the authorized path. Nothing was pushed.
