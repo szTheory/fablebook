@@ -1,5 +1,5 @@
 ---
-status: paused-truncated-output
+status: reviewed-recovery-awaiting-fit
 phase: 03
 plan: 03-01
 task: 03-01
@@ -14,7 +14,7 @@ updated: 2026-11-13
 - Checkout: `~/projects/fablebook`, branch `main`, HEAD `93476fe` before this checkpoint update; local branch is 25 commits ahead of fetched `origin/main`.
 - Milestone and phase: v0.4 Phase 3, Guard aggregate scope rejoin and candidate sizing.
 - Completed: Task 03-01-03 recovery receipt, committed as `a6d99e4`.
-- Current: The bounded three-task replan passed independent review. Execute preflight passed immediately before this checkpoint update. The owner directed continuing without credential rotation; the key was used only for the free input-token count endpoint, and its value remains out of tool output and Git.
+- Current: The corrective three-task schedule passed independent review, and execute preflight passed after review. Exact rendered-payload and cumulative-context counts remain pending. The owner directed continuing without credential rotation; use the key only for the free input-token count endpoint and keep its value out of tool output and Git.
 
 ## Truncated Source Event
 
@@ -53,3 +53,7 @@ Fresh pre-event fit: 44,205 direct combined input tokens. This request used only
 ## Credential Exposure and Handling
 
 A resumed count-setup command searched `.env.local` and emitted its `OPENAI_API_KEY` assignment in local tool output. No network request was made by that command. The key value is intentionally omitted here. The owner chose to continue without rotation to avoid setup delay and authorized use only of the free input-token count endpoint; the key's broader request permission remains a residual exposure risk. Keep the value out of tool output and Git, never use an inference endpoint, and proceed only if the fresh count fits. No source bodies, implementation, or tests were read or run before this count.
+
+## Owner-Authorized Recovery Schedule
+
+The owner later directed the assistant to resolve the truncation bottleneck within the inherited limits. The revised plan retains continuation event 1 as consumed/incomplete and schedules one whole-range corrective event 2 with a rendered-output consistency gate; it does not split the ranges or increase the 16,000/18,000 output ceilings. Independent review returned PASS and execute preflight passed. The 44,205-token count is historical. Before event 2, measure the exact raw payload's bytes, lines, digest and count-only tokens, then refresh the exact combined context in the isolated execution context. Both checks must fit the unchanged limits. No source-note artifact is complete, and no implementation or test has run.

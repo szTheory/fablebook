@@ -4,11 +4,11 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: "Phase 03 paused after truncated source acquisition"
-stopped_at: "Task 03-01-03 source-notes continuation event 1 returned truncated output and is consumed/incomplete under the reviewed no-retry rule. Task 03-01-04 event 1 is separately consumed/incomplete. The fresh 44,205-token count and 92,205/100,000 projection were measured before the latest event. Execute preflight passed before this checkpoint update. No source-note artifact is complete; no implementation or tests ran. The owner directed count-only reuse without key rotation; keep the value out of tool output and Git."
+status: "Phase 03 recovery schedule reviewed; exact fit pending"
+stopped_at: "Task 03-01-03 source-notes continuation event 1 and the earlier Task 03-01-04 event 1 remain consumed/incomplete. The owner authorized a new reviewed whole-range corrective event without relaxing limits. Independent plan review and execute preflight passed. Fresh exact rendered-output and cumulative-context counts are required before that event. No source-note artifact is complete; no implementation or tests ran. Keep the existing key out of tool output and Git; use it only at the free count-only endpoint, with no inference request."
 last_updated: "2026-11-14T03:59:11Z"
 last_activity: 2026-11-13
-last_activity_desc: Bounded TierSweepTest acquisition returned a truncation marker; no-retry stop recorded
+last_activity_desc: Corrective whole-range schedule passed independent review; exact payload/context fit pending
 state_head: 93476fe
 progress:
   total_phases: 1
@@ -32,8 +32,8 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — PAUSED AFTER TRUNCATED SOURCE ACQUISITION
-Plan: 03-01; corrected three-task revision passed independent review; execute preflight passed before the latest source event
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — REVIEWED RECOVERY SCHEDULE, AWAITING EXACT FIT
+Plan: 03-01; revised three-task schedule passed independent review and execute preflight; rendered-payload and cumulative-context counts remain pending
 Status: Task 03-01-03 source-notes continuation event 1 is consumed and incomplete; Task 03-01-04 event 1 is also consumed and incomplete; no implementation started
 Last activity: 2026-11-13 — bounded TierSweepTest acquisition returned a truncation marker; reviewed no-retry stop applies
 
@@ -43,7 +43,7 @@ Last activity: 2026-11-13 — bounded TierSweepTest acquisition returned a trunc
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
 - Unfinished: Phase 3 has five plans and twelve active tasks across five sequential waves. No aggregate evidence or implementation output exists. Task 03-01-03 recovery is committed as `a6d99e4`. Two distinct source events are consumed and incomplete: Task 03-01-04 event 1, and Task 03-01-03 source-notes continuation event 1, whose eight scheduled `TierSweepTest` ranges returned an explicit truncation marker despite the 16,000-token inner and 18,000-token outer ceilings. The reviewed plan says to stop without retrying an incomplete acquisition; no later `InstalledOtp` or `SweepEvidence` events were started. The fresh combined count of 44,205 and projection of 92,205/100,000 with 7,795 slack are pre-event historical evidence only. Execute preflight passed immediately before the checkpoint update. During resumed count setup, a command emitted the ignored `.env.local` API-key assignment in local tool output. The owner directed continuing without rotation and authorized use only of the free input-token count endpoint; keep the value out of tool output and Git, and do not call an inference endpoint. The full-manifest parse, wrong-line-window lookup, and both incomplete source events are recorded in [03-01-REPLAN.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-REPLAN.md). No source-note artifact is complete; no implementation source was read or changed and no tests ran. See [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md).
 - Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: The owner chooses whether to request a newly reviewed schedule that accounts for the consumed incomplete event and missing source handoff. No source retry, implementation, or tests proceed under the current plan.
+- Next action: The assistant builds and count-checks the exact raw-range payload and refreshed combined context; if both fit existing limits, it starts corrective event 2 in a fresh bounded executor context. No owner action or new key is needed.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -153,9 +153,9 @@ Active planning target: Canonical checkout `~/projects/fablebook` on `main` at `
 
 Last session: 2026-11-13 (America/New_York)
 
-Stopped at: Task 03-01-03 source-notes continuation event 1 returned an explicit truncation marker at the configured 16,000/18,000-token output ceilings. Under the reviewed plan's no-retry instruction, the event is consumed; do not retry or split it, and do not start later source events, implementation, or tests. Task 03-01-04 event 1 remains separately consumed and incomplete. Execute preflight passed before this pause was recorded. The 44,205 direct combined count and 92,205/100,000 projection with 7,795 slack were measured before the latest event and are historical. No new key was needed; the owner directed count-only reuse without rotation. Keep its value out of tool output and Git and use no inference endpoint. The full-manifest parse and wrong-line-window lookup are recorded in the replan receipt.
+Stopped at: Task 03-01-03 source-notes continuation event 1 returned an explicit truncation marker at the configured 16,000/18,000-token output ceilings. It remains consumed/incomplete; Task 03-01-04 event 1 is separately consumed/incomplete. The owner authorized a newly reviewed whole-range corrective schedule within the same limits. Its independent review and execute preflight passed; the 44,205 direct combined count and 92,205/100,000 projection are historical pre-event figures. Before corrective event 2, the assistant must check exact rendered payload size/count and a fresh combined context. No new key is needed; use the existing key only for the free count endpoint, keeping its value out of output and Git and making no inference request. The full-manifest parse and wrong-line-window lookup are recorded in the replan receipt.
 
-Next action: The owner decides whether to request a newly reviewed schedule that accounts for the consumed incomplete event and missing source handoff. Nothing was pushed; no action is needed to preserve the current safety stop.
+Next action: The assistant completes the exact output and context fit gates, then resumes Task 03-01-03 if they pass. The two failed events remain gaps; no source note, implementation or test exists yet. Nothing was pushed.
 
 Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
