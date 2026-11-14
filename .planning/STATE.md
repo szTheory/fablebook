@@ -4,12 +4,12 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: Phase 03 plan reviewed; execution not started
-stopped_at: Task 03-01-03 measured the selected planning inputs and known source spans at 49,422 tokens. Capped future reads (12,000) and task outputs (5,000) project 66,422 of the 69,000 working allocation, leaving 2,578 slack plus the fixed 31,000 reserve. No new semantic source-body event has occurred; all safety stops remain unchanged.
-last_updated: "2026-11-14T02:00:10Z"
+status: "Phase 03 execution paused after tracer source output truncation"
+stopped_at: "Task 03-01-03 recovery committed as a6d99e4. Task 03-01-04 source event 1 acquired the scheduled TierSweepTest ranges, but the tool truncated the returned body. Count the event as consumed; do not reread or proceed under the current schedule. No implementation or test ran. The pre-read combined count was 50,044 tokens; safety stops remain unchanged."
+last_updated: "2026-11-14T02:28:34Z"
 last_activity: 2026-11-13
-last_activity_desc: Independent bounded plan review passed; awaiting execution command
-state_head: 5767b79e457cb77ee162b268f955a34493be5170
+last_activity_desc: Recovery task committed; tracer paused after source output truncation
+state_head: a6d99e4
 progress:
   total_phases: 1
   completed_phases: 0
@@ -33,17 +33,17 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 ## Current Position
 
 Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — EXECUTION PAUSED
-Plan: 03-01, recovery task 03-01-03; no task completed
-Status: Plan 03-01 independently reviewed; execution not started
-Last activity: 2026-11-13 — bounded context fit and plan review passed
+Plan: 03-01, Task 03-01-04, source event 1 of 5 attempted; output incomplete
+Status: Recovery task 03-01-03 complete; tracer paused before implementation
+Last activity: 2026-11-13 — recovery receipt committed; source event output was truncated
 
 ## Active Handoff
 
 - Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five plans (12 active tasks across five waves), and no aggregate evidence or implementation output exists. The first attempt used 13 source-body reads against the five-read task ceiling; that overrun remains recorded in the read ledger. The owner chose a bounded re-plan. Exact count-only measurement now covers the selected planning inputs, one archive-manifest row, and scheduled source spans: 49,422 tokens. Future source reads are capped at 12,000 tokens and intermediate/task output at 5,000; the projected 66,422-token total leaves 2,578 within the 69,000 allocation. The input-token endpoint returned exact counts for GPT-6 Luna; no inference endpoint was used. No new semantic source-body event has occurred, and Plan 03-01 is independently reviewed.
+- Unfinished: Phase 3 has five plans (12 active tasks across five waves), and no aggregate evidence or implementation output exists. Task 03-01-03 completed and was committed as `a6d99e4`. Task 03-01-04's first scheduled source event used one body read of `test/contract/tier_sweep_test.exs` across the eight reviewed ranges; its count-only estimate was 12,419 tokens. The returned output was truncated by the outer tool, leaving the complete event unavailable for review. Count it as one consumed event; do not reread or proceed using the current schedule. The pre-read direct combined count was 50,044 tokens. The 12,000-token future-source cap, 5,000-token output allowance, and 31,000-token reserve remain unchanged; the measured plan projection before this event was 98,044 of 100,000 with 1,956 slack. No implementation or tests ran. See [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md).
 - Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: The owner starts `$gsd-execute-phase 3` when ready. Its first task finalizes the recovery receipt and permits zero semantic source events; the tracer remains gated until the task completes and the exact inputs are recounted. `.env.local` is ignored and mode 600; the key was used only with the free input-token count endpoint. Its Request permission could incur charges if used on other model endpoints. The exact count and future caps are recorded in [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md).
+- Next action: Owner decides whether to authorize a bounded replan for the truncated source event under the existing source/context limits, or stop Phase 3 execution. Any revised schedule must account for the consumed event, pass independent review and execute preflight, and receive a fresh exact count before another source read. The partial event is recorded in [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md).
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -149,13 +149,13 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout `~/projects/fablebook` on `main`; current Phase 3, Plan 03-01, task 03-01-03. The plan remains local and unpushed. The exact selected-context and known-span count is recorded in [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md); no new semantic source read has occurred. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 remains unfinished. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
+Active planning target: Canonical checkout `~/projects/fablebook` on `main` at `a6d99e4`; current Phase 3, Plan 03-01, Task 03-01-04, source event 1 attempted. Task 03-01-03 is complete; the tracer is paused because the source output was truncated. The event is consumed and must not be reread under the current plan. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 remains unfinished. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
 
-Last session: 2026-11-14T02:00:10Z
+Last session: 2026-11-14T02:28:34Z
 
-Stopped at: The revised Plan 03-01 passed independent review. The exact known inputs plus capped future reads and output allowance fit the 69,000-token allocation, with the 31,000 reserve and safety stops unchanged. The owner's key remains in ignored `.env.local` with mode 600. The free count endpoint was used; no inference endpoint or semantic source-body event was used.
+Stopped at: Task 03-01-03 is complete and committed. Task 03-01-04 event 1 produced a truncated tool response, so its required complete source regions are not available for review. No implementation or tests ran; the event is consumed and must not be retried under the current schedule. The direct pre-read count was 50,044 tokens, with fixed reserve and safety stops unchanged.
 
-Next action: Owner starts `$gsd-execute-phase 3` when ready. Its first task is documentation-only with a zero source-event limit; the tracer remains gated pending its exact before-read count.
+Next action: Owner chooses whether to authorize a bounded, independently reviewed replanning pass within the existing limits or stop this execution. If resuming, start from `~/projects/fablebook` on `main` at `a6d99e4`; account for the consumed event and perform a fresh exact count before any further source read.
 
 Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
@@ -174,8 +174,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 planning passed independent review; execution has not started. The first attempt's 13-read overrun remains in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). The exact measured baseline is 49,422 tokens; future reads and output are capped at 17,000 combined, projecting 66,422 of 69,000 with 2,578 slack. The 03-01-04 tracer has not started. The aggregate join and sizing remain unfinished, and all safety stops remain active.
+- Phase 3 planning passed independent review. The initial 13-read overrun remains in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). The recovery receipt is committed. The tracer is paused after one consumed source event returned truncated output; no implementation began. A bounded schedule revision needs an owner decision and independent review. The aggregate join and sizing remain unfinished, and all safety stops remain active.
 
 ## Operator Next Steps
 
-- Owner starts `$gsd-execute-phase 3` when ready. The first task is the zero-source-event recovery receipt; the tracer remains gated by its exact before-read recount.
+- Owner decides whether to authorize a bounded replanning pass for the truncated tracer source event under existing limits or stop Phase 3 execution. The current blocker and consumed-event record are in [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md).
