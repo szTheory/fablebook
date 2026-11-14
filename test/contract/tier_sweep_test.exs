@@ -5091,6 +5091,195 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   @exclusions @exclusions ++ [@escript_debug_exclusion]
 
+  @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation_records
+  test "one-row tracer preserves EX-010 identity and lane evidence", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    tier = BannedCalls.banned_mfas()
+    records = InetsTraceIntegrationEvidence.lane_records()
+
+    ExUnit.CaptureIO.capture_io(fn ->
+      assert_inets_trace_audit!(ctx.graph, evidence, ledger, tier)
+    end)
+
+    lane = to_string(evidence.lane.name)
+    identity = Enum.find(ledger.exclusions, &(Map.get(&1, "id", Map.get(&1, :id)) == "EX-010"))
+    lane_record = Enum.find(records, &(Map.get(&1, "lane", Map.get(&1, :lane)) == lane))
+
+    lane_evidence =
+      Map.new([
+        {"lane", Map.get(lane_record, "lane", Map.get(lane_record, :lane))},
+        {"selected_function_evidence",
+         Map.get(
+           lane_record,
+           "selected_function_evidence",
+           Map.get(lane_record, :selected_function_evidence)
+         )},
+        {"reviews", Map.get(lane_record, "reviews", Map.get(lane_record, :reviews))},
+        {"exact_sources",
+         Map.get(lane_record, "exact_sources", Map.get(lane_record, :exact_sources))},
+        {"matched_mfas",
+         Map.get(lane_record, "matched_mfas", Map.get(lane_record, :matched_mfas))},
+        {"delegate_edges",
+         Map.get(lane_record, "delegate_edges", Map.get(lane_record, :delegate_edges))},
+        {"remainder_mfas",
+         Map.get(lane_record, "remainder_mfas", Map.get(lane_record, :remainder_mfas))}
+      ])
+
+    selected_mfas = InetsTraceIntegrationEvidence.selected_mfas() |> Enum.to_list()
+    live_mfas = Enum.filter(selected_mfas, &MapSet.member?(ctx.graph.exported, &1))
+    lock = if lane == "core", do: "mix.lock", else: "mix.floor.lock"
+
+    delivery =
+      Path.expand("../../.planning/references/PHASE-DELIVERIES.json", __DIR__)
+      |> File.read!()
+      |> Jason.decode!()
+      |> Map.fetch!("phases")
+      |> Enum.find(&(&1["milestone"] == "v0.2" and &1["phase"] == "1"))
+
+    input = %{
+      lane: lane,
+      identity: identity,
+      selected_mfas: selected_mfas,
+      live_mfas: live_mfas,
+      lane_evidence: lane_evidence,
+      delivery: delivery,
+      runtime: %{"elixir" => System.version(), "otp" => System.otp_release()},
+      lock_sha256:
+        :crypto.hash(:sha256, File.read!(Path.expand("../../#{lock}", __DIR__)))
+        |> Base.encode16(case: :lower)
+    }
+
+    record = Fablebook.Test.GuardAggregateReconciliationEvidence.build_lane!(input)
+    assert :ok = Fablebook.Test.GuardAggregateReconciliationEvidence.validate_lane!(record)
+    assert record["live_mfas"] != []
+    assert record["candidate"] == nil
+    assert record["stops"]["implementation_authorized"] == false
+
+    if System.get_env("FABLEBOOK_GUARD_AGGREGATE_WRITE") == "1" do
+      name =
+        if lane == "core",
+          do: "03-CORE-AGGREGATE-EVIDENCE.json",
+          else: "03-FLOOR-AGGREGATE-EVIDENCE.json"
+
+      path =
+        Path.expand(
+          "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/#{name}",
+          __DIR__
+        )
+
+      temporary = path <> ".tmp"
+      File.write!(temporary, Jason.encode_to_iodata!(record, pretty: true) ++ [10])
+      File.rename!(temporary, path)
+    end
+  end
+
+  @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation_records
+  test "tracer input and lane identities fail closed", ctx do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    ledger = original_identity_ledger!()
+    identity = Enum.find(ledger.exclusions, &(Map.get(&1, "id", Map.get(&1, :id)) == "EX-010"))
+    lane = to_string(evidence.lane.name)
+
+    lane_evidence = %{
+      "lane" => lane,
+      "selected_function_evidence" => [],
+      "reviews" => [],
+      "exact_sources" => [],
+      "matched_mfas" => [],
+      "delegate_edges" => [],
+      "remainder_mfas" => []
+    }
+
+    input = %{
+      lane: lane,
+      identity: identity,
+      selected_mfas: [],
+      live_mfas: [],
+      lane_evidence: lane_evidence,
+      delivery: %{"status" => "merged", "ci_run" => "receipt"},
+      runtime: %{"elixir" => System.version(), "otp" => System.otp_release()},
+      lock_sha256: String.duplicate("a", 64)
+    }
+
+    record = Fablebook.Test.GuardAggregateReconciliationEvidence.build_lane!(input)
+
+    assert_raise KeyError, fn ->
+      Fablebook.Test.GuardAggregateReconciliationEvidence.build_lane!(
+        Map.delete(input, :delivery)
+      )
+    end
+
+    assert_raise MatchError, fn ->
+      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_lane!(
+        Map.put(record, "source_and_caller_evidence", Map.put(lane_evidence, "lane", "other"))
+      )
+    end
+
+    assert_raise MatchError, fn ->
+      Fablebook.Test.GuardAggregateReconciliationEvidence.check_bundle!(
+        [record, record, record],
+        %{}
+      )
+    end
+
+    assert MapSet.member?(
+             ctx.graph.exported,
+             hd(InetsTraceIntegrationEvidence.selected_mfas() |> Enum.to_list())
+           )
+  end
+
+  @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation_bundle
+  test "two lane records reproduce the one-row tracer crosswalk" do
+    directory =
+      Path.expand(
+        "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+        __DIR__
+      )
+
+    core =
+      directory |> Path.join("03-CORE-AGGREGATE-EVIDENCE.json") |> File.read!() |> Jason.decode!()
+
+    floor =
+      directory
+      |> Path.join("03-FLOOR-AGGREGATE-EVIDENCE.json")
+      |> File.read!()
+      |> Jason.decode!()
+
+    report = Fablebook.Test.GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor)
+    path = Path.join(directory, "03-RECONCILIATION.md")
+
+    if System.get_env("FABLEBOOK_GUARD_AGGREGATE_REPORT_WRITE") == "1" do
+      content = [
+        "# Phase 03 tracer crosswalk\n\n",
+        "One EX-010 row is joined across the pinned core and floor inventories. This is a tracer only; source join and aggregate closure remain open.\n\n",
+        "```json\n",
+        Jason.encode_to_iodata!(report, pretty: true),
+        "\n```\n"
+      ]
+
+      temporary = path <> ".tmp"
+      File.write!(temporary, content)
+      File.rename!(temporary, path)
+    end
+
+    stored = File.read!(path)
+    assert String.contains?(stored, Jason.encode!(report["generation"]))
+
+    assert :ok =
+             Fablebook.Test.GuardAggregateReconciliationEvidence.check_bundle!(
+               [core, floor],
+               report
+             )
+  end
+
   test "caller-chain index preserves duplicate edges and lowest caller arity" do
     start_mfa = {:fablebook_index_target, :run, 9}
     caller = {:fablebook_index_middle, :route}

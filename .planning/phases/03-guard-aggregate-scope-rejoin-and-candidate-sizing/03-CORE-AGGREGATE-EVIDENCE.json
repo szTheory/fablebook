@@ -1,0 +1,347 @@
+{
+  "aggregate_gate": "open",
+  "candidate": null,
+  "collector": "guard-aggregate-tracer/1",
+  "delivery": {
+    "ci_run": "https://github.com/szTheory/fablebook/actions/runs/43138409677",
+    "merge_commit": "fb2e31be861acca65ef85399d0845901a3cc2b30",
+    "milestone": "v0.2",
+    "milestone_key": "guard-recovery",
+    "phase": "1",
+    "pr": 85,
+    "reviewed_head": "a90ef1dfe7bad10ac3d303b82f8ba7b32c949745",
+    "status": "merged"
+  },
+  "generation": "f804533b8f8a2b01cce20a8169751143a006a6d615ff4b2c3aa5172c62153ad3",
+  "identity": {
+    "current_replacement_refs": [
+      "source:EX:10"
+    ],
+    "id": "EX-010",
+    "identity_class": "exclusion",
+    "lane_matches": {
+      "core": [
+        "inets:enable_trace/2",
+        "inets:enable_trace/3"
+      ],
+      "floor": [
+        "inets:enable_trace/2",
+        "inets:enable_trace/3"
+      ]
+    },
+    "original_citations_raw": null,
+    "original_entry_raw": "{{:inets, [:enable_trace]}, :own_native}",
+    "original_matcher_raw": "{:inets, [:enable_trace]}",
+    "original_reason_raw": ":own_native",
+    "owner": "v0.2/1",
+    "remaining_semantic_owner": "01.1.1.4",
+    "semantic_status": "inets_trace_retained",
+    "table": "EX"
+  },
+  "implementation_authorized": false,
+  "input_sha256": "f804533b8f8a2b01cce20a8169751143a006a6d615ff4b2c3aa5172c62153ad3",
+  "lane": "core",
+  "live_mfas": [
+    [
+      "inets",
+      "enable_trace",
+      2
+    ],
+    [
+      "inets",
+      "enable_trace",
+      3
+    ]
+  ],
+  "lock_sha256": "4638a2d1c25b5be2bfaf6b6a3309e9147612f343aa694d64b2af99cc46f33a85",
+  "owner": "v0.2/1",
+  "runtime": {
+    "elixir": "1.20.4",
+    "otp": "29"
+  },
+  "schema": "fablebook.guard-aggregate-lane/1",
+  "scope_complete": false,
+  "sec_01": "Pending",
+  "selected_mfas": [
+    [
+      "inets",
+      "enable_trace",
+      2
+    ],
+    [
+      "inets",
+      "enable_trace",
+      3
+    ]
+  ],
+  "source_and_caller_evidence": {
+    "delegate_edges": [
+      {
+        "callee": [
+          "inets_trace",
+          "enable",
+          2
+        ],
+        "caller": [
+          "inets",
+          "enable_trace",
+          2
+        ],
+        "citations": [
+          [
+            "inets/src/inets_app/inets.erl:503",
+            "inets_trace:enable(Level, Dest)"
+          ]
+        ]
+      },
+      {
+        "callee": [
+          "inets_trace",
+          "enable",
+          3
+        ],
+        "caller": [
+          "inets",
+          "enable_trace",
+          3
+        ],
+        "citations": [
+          [
+            "inets/src/inets_app/inets.erl:505",
+            "inets_trace:enable(Level, Dest, Service)"
+          ]
+        ]
+      }
+    ],
+    "exact_sources": [
+      [
+        "inets/src/inets_app/inets.erl",
+        18519,
+        "18d0c8091e7c9ce34fad897734c1b4105fd8c19d0912da28a32856664c760f00"
+      ],
+      [
+        "inets/src/inets_app/inets_trace.erl",
+        11112,
+        "1f67a0bda05227eddd8ffb4909ec8a31465ef2d8582e0ff9ff5d2b72638c7599"
+      ],
+      [
+        "runtime_tools/src/dbg.erl",
+        105185,
+        "d996e990b75251edb65d4930a1edf5c1914f6c18f77ac526313157612f95f5f2"
+      ]
+    ],
+    "lane": "core",
+    "matched_mfas": [
+      [
+        "inets",
+        "enable_trace",
+        2
+      ],
+      [
+        "inets",
+        "enable_trace",
+        3
+      ]
+    ],
+    "remainder_mfas": [],
+    "reviews": [
+      {
+        "bytes": 18519,
+        "citations": [
+          [
+            "inets/src/inets_app/inets.erl:503",
+            "inets_trace:enable(Level, Dest)"
+          ],
+          [
+            "inets/src/inets_app/inets.erl:505",
+            "inets_trace:enable(Level, Dest, Service)"
+          ]
+        ],
+        "finding": "Read the complete exact core module; the selected exports forward arguments directly to inets_trace.",
+        "reviewed_lines": {
+          "__struct__": "Elixir.Range",
+          "first": 1,
+          "last": 566,
+          "step": 1
+        },
+        "sha256": "18d0c8091e7c9ce34fad897734c1b4105fd8c19d0912da28a32856664c760f00",
+        "source_path": "inets/src/inets_app/inets.erl"
+      },
+      {
+        "bytes": 11112,
+        "citations": [
+          [
+            "inets/src/inets_app/inets_trace.erl:69",
+            "valid_trace_service(Service)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:78",
+            "file:open(File, [write])"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:86",
+            "dbg:trace_port(ip, Port)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:90",
+            "is_function(Fun)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:153",
+            "DetailLevel"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:174",
+            "dbg:tp(MFA, Pattern)"
+          ]
+        ],
+        "finding": "Read the complete exact core module; validated services and explicit destination clauses reach fixed trace setup or a caller-supplied handler.",
+        "reviewed_lines": {
+          "__struct__": "Elixir.Range",
+          "first": 1,
+          "last": 355,
+          "step": 1
+        },
+        "sha256": "1f67a0bda05227eddd8ffb4909ec8a31465ef2d8582e0ff9ff5d2b72638c7599",
+        "source_path": "inets/src/inets_app/inets_trace.erl"
+      },
+      {
+        "bytes": 105185,
+        "citations": [
+          [
+            "runtime_tools/src/dbg.erl:1069",
+            "tracer(process, {Handler,HandlerData})"
+          ],
+          [
+            "runtime_tools/src/dbg.erl:1324",
+            "trace_ip_drv"
+          ],
+          [
+            "runtime_tools/src/dbg.erl:1341",
+            "open_port({spawn, L}, [eof])"
+          ],
+          [
+            "runtime_tools/src/dbg.erl:2030",
+            "invoke_handler(Traces, Handler, Hdata)"
+          ],
+          [
+            "runtime_tools/src/dbg.erl:2041",
+            "Handler(Tr, Hdata)"
+          ]
+        ],
+        "finding": "Read the complete exact core module; the selected path reaches the process callback or a fixed native trace-port generator. Other debugger entry points are outside this call path.",
+        "reviewed_lines": {
+          "__struct__": "Elixir.Range",
+          "first": 1,
+          "last": 3197,
+          "step": 1
+        },
+        "sha256": "d996e990b75251edb65d4930a1edf5c1914f6c18f77ac526313157612f95f5f2",
+        "source_path": "runtime_tools/src/dbg.erl"
+      }
+    ],
+    "selected_function_evidence": [
+      {
+        "callback_boundary": "For {Fun, Data}, the caller-supplied function is retained as Handler and dbg invokes Handler(Trace, Data) in its tracer process for received events. Its implementation is caller code and is not recursively reviewed here.",
+        "citations": [
+          [
+            "inets/src/inets_app/inets.erl:503",
+            "inets_trace:enable(Level, Dest)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:65",
+            "enable(Level, Dest)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:66",
+            "enable(Level, Dest, all)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:90",
+            "{Fun, _Data} = HandleSpec"
+          ],
+          [
+            "runtime_tools/src/dbg.erl:1069",
+            "tracer(process, {Handler,HandlerData})"
+          ],
+          [
+            "runtime_tools/src/dbg.erl:2041",
+            "Handler(Tr, Hdata)"
+          ]
+        ],
+        "destination_dispatch": "A list destination opens the caller-selected output file; an integer selects the fixed IP trace port; io selects standard output; {Fun, Data} passes the caller function and data to the process tracer.",
+        "disposition": "retained_callback_front_pending_integration",
+        "finding": "The inspected path forwards values to fixed file, port, IO, service-validation, and callback operations. It does not derive a module name or evaluator input from Level, Dest, or Service. Callback semantics and dynamic callers remain outside this lane-local source conclusion.",
+        "fixed_native_boundary": "The integer-port branch calls dbg:trace_port(ip, Port). That closure loads the fixed trace_ip_drv name from runtime_tools' private library directory and opens the resulting port; the native driver remains a fixed boundary.",
+        "input_trace": "Level and Dest pass unchanged through inets_trace:enable/2 and select a destination branch. The two-argument API fixes Service to all.",
+        "mfa": [
+          "inets",
+          "enable_trace",
+          2
+        ],
+        "service_validation": "The two-argument form fixes Service to all. The three-argument delegate accepts only all, httpc, or httpd before dispatch."
+      },
+      {
+        "callback_boundary": "A function destination reaches dbg:tracer(process, {Handler, HandlerData}); dbg later invokes the exact supplied Handler with each trace event and prior data. The callback body is outside OTP source authority.",
+        "citations": [
+          [
+            "inets/src/inets_app/inets.erl:505",
+            "inets_trace:enable(Level, Dest, Service)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:68",
+            "enable(Level, Dest, Service)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:69",
+            "valid_trace_service(Service)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:85",
+            "is_integer(Port)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:90",
+            "is_function(Fun)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:94",
+            "dbg:tracer(Type, HandleSpec)"
+          ],
+          [
+            "inets/src/inets_app/inets_trace.erl:153",
+            "Cond = [{ '=<', '$1', DetailLevel}]"
+          ],
+          [
+            "runtime_tools/src/dbg.erl:1324",
+            "Driver = \"trace_ip_drv\""
+          ],
+          [
+            "runtime_tools/src/dbg.erl:2041",
+            "Handler(Tr, Hdata)"
+          ]
+        ],
+        "destination_dispatch": "The same fixed list, integer-port, io, and {Fun, Data} branches apply. File paths select file output; integer ports select the fixed IP trace port; function destinations select the caller callback.",
+        "disposition": "retained_callback_front_pending_integration",
+        "finding": "The selected path reaches fixed trace-pattern, service, output, and callback operations. The integer level is inserted as a comparison value in a generated match specification; it is not evaluated as source. No direct evaluator or atom-creation call is present in this path. Dynamic callers and callback implementation semantics remain unresolved.",
+        "fixed_native_boundary": "The IP driver name is the fixed trace_ip_drv literal, loaded from runtime_tools' private library path before open_port. No caller-controlled driver or module name is constructed.",
+        "input_trace": "Level, Dest, and Service pass unchanged from the exported wrapper. The delegate validates Service, then dispatches by destination and builds a fixed trace match specification from Level.",
+        "mfa": [
+          "inets",
+          "enable_trace",
+          3
+        ],
+        "service_validation": "valid_trace_service/1 accepts all, httpc, and httpd; other services return an invalid_service error before destination dispatch."
+      }
+    ]
+  },
+  "stops": {
+    "aggregate_gate": "open",
+    "candidate": null,
+    "implementation_authorized": false,
+    "scope_complete": false,
+    "sec_01": "Pending",
+    "walking_skeleton": "blocked"
+  },
+  "walking_skeleton": "blocked"
+}
