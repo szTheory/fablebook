@@ -4,11 +4,11 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: Phase 03 execution paused before source work for context-fit measurement
-stopped_at: Task 03-01-03 recorded the missing exact GPT-6 Luna context measurement and stopped before any new source-body event. The owner chose the recommended free OpenAI count endpoint; the local environment needs an API key before Codex can verify GPT-6 Luna support and count the planned context. The 100,000-token cap, 31,000 reserve, five-read per-task ceiling, and all safety stops remain unchanged.
-last_updated: "2026-11-14T00:10:13.170Z"
+status: Phase 03 plan reviewed; execution not started
+stopped_at: Task 03-01-03 measured the selected planning inputs and known source spans at 49,422 tokens. Capped future reads (12,000) and task outputs (5,000) project 66,422 of the 69,000 working allocation, leaving 2,578 slack plus the fixed 31,000 reserve. No new semantic source-body event has occurred; all safety stops remain unchanged.
+last_updated: "2026-11-14T02:00:10Z"
 last_activity: 2026-11-13
-last_activity_desc: Wave 1 stopped before source work; exact context-fit measurement unavailable
+last_activity_desc: Independent bounded plan review passed; awaiting execution command
 state_head: 5767b79e457cb77ee162b268f955a34493be5170
 progress:
   total_phases: 1
@@ -34,16 +34,16 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — EXECUTION PAUSED
 Plan: 03-01, recovery task 03-01-03; no task completed
-Status: Paused before source work; fit proof for the shared plan context is unavailable
-Last activity: 2026-11-13 — Wave 1 stopped before source work
+Status: Plan 03-01 independently reviewed; execution not started
+Last activity: 2026-11-13 — bounded context fit and plan review passed
 
 ## Active Handoff
 
 - Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five plans (12 active tasks across five waves), and no aggregate evidence or implementation output exists. The first attempt used 13 source-body reads against the five-read task ceiling; that overrun remains in the read ledger. The revised Wave 1 passed independent review. Task 03-01-03 created a diagnostic receipt but could not prove the shared plan-context fit because GPT-6 Luna's exact tokenizer/context meter is unavailable; no new source-body event occurred and Plan 03-01 is not complete.
+- Unfinished: Phase 3 has five plans (12 active tasks across five waves), and no aggregate evidence or implementation output exists. The first attempt used 13 source-body reads against the five-read task ceiling; that overrun remains recorded in the read ledger. The owner chose a bounded re-plan. Exact count-only measurement now covers the selected planning inputs, one archive-manifest row, and scheduled source spans: 49,422 tokens. Future source reads are capped at 12,000 tokens and intermediate/task output at 5,000; the projected 66,422-token total leaves 2,578 within the 69,000 allocation. The input-token endpoint returned exact counts for GPT-6 Luna; no inference endpoint was used. No new semantic source-body event has occurred, and Plan 03-01 is independently reviewed.
 - Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: owner makes an API key available securely and tells Codex when it is ready. The selected endpoint counts are free according to OpenAI's Help Center; each on-demand count request sends the selected context to the API but does not start an inference run or create a subscription. Codex will verify GPT-6 Luna support with a harmless prompt before counting project context. Do not start tracer reads until the 69,000-token remainder is rigorously established. See [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md).
+- Next action: The owner starts `$gsd-execute-phase 3` when ready. Its first task finalizes the recovery receipt and permits zero semantic source events; the tracer remains gated until the task completes and the exact inputs are recounted. `.env.local` is ignored and mode 600; the key was used only with the free input-token count endpoint. Its Request permission could incur charges if used on other model endpoints. The exact count and future caps are recorded in [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md).
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -149,13 +149,13 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Phase 3 plans and historical read checkpoint are committed locally; nothing was pushed. The new [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md) records that Wave 1 stopped before its first new source read because the exact context-fit measurement is unavailable. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 remains unfinished. The 13-read overrun is preserved and the re-plan passed independent review. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
+Active planning target: Canonical checkout `~/projects/fablebook` on `main`; current Phase 3, Plan 03-01, task 03-01-03. The plan remains local and unpushed. The exact selected-context and known-span count is recorded in [03-01-RECOVERY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-RECOVERY.md); no new semantic source read has occurred. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 remains unfinished. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
 
-Last session: 2026-11-14T00:03:52.522Z
+Last session: 2026-11-14T02:00:10Z
 
-Stopped at: Wave 1, Plan 03-01, before source task 03-01-04. The recovery receipt records that no local exact context-fit measure is available. The owner selected the free official API counter; the local environment has no API key, so the endpoint has not been called and no new source-body event occurred. The independent plan review passed, and the first attempt's 13-read overrun and unchanged safety stops remain recorded.
+Stopped at: The revised Plan 03-01 passed independent review. The exact known inputs plus capped future reads and output allowance fit the 69,000-token allocation, with the 31,000 reserve and safety stops unchanged. The owner's key remains in ignored `.env.local` with mode 600. The free count endpoint was used; no inference endpoint or semantic source-body event was used.
 
-Next action: owner makes an API key available securely and tells Codex when ready. Codex then verifies GPT-6 Luna support with a harmless prompt and measures the planned context; source work stays paused until the 69,000-token allowance is proven.
+Next action: Owner starts `$gsd-execute-phase 3` when ready. Its first task is documentation-only with a zero source-event limit; the tracer remains gated pending its exact before-read count.
 
 Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
@@ -174,8 +174,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 context and planning are complete, but execution is paused before source work. The first attempt used 13 exact-source body-read events against the five-event limit; its history is preserved in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). The owner chose a bounded re-plan and independent review passed. The recovery receipt shows that no exact context-fit meter is available, so the 03-01-04 tracer has not started. The full join and sizing remain unfinished, with all safety stops active.
+- Phase 3 planning passed independent review; execution has not started. The first attempt's 13-read overrun remains in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). The exact measured baseline is 49,422 tokens; future reads and output are capped at 17,000 combined, projecting 66,422 of 69,000 with 2,578 slack. The 03-01-04 tracer has not started. The aggregate join and sizing remain unfinished, and all safety stops remain active.
 
 ## Operator Next Steps
 
-- Owner makes an API key available securely and tells Codex when ready. No source work should start before the context-fit blocker is resolved.
+- Owner starts `$gsd-execute-phase 3` when ready. The first task is the zero-source-event recovery receipt; the tracer remains gated by its exact before-read recount.
