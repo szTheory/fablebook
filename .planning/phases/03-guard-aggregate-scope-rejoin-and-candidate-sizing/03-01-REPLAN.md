@@ -1,5 +1,5 @@
 ---
-status: source-gate-pending
+status: paused-truncated-output
 phase: 03
 plan: 03-01
 updated: 2026-11-13
@@ -31,13 +31,25 @@ The pre-review candidate snapshot was 45,678 tokens and is historical. After the
 
 During the replan lookup, a Python command parsed the full archive manifest instead of selecting only the allowed matching row. The shell output was clipped by the tool before its full parent record reached the conversation. This was local metadata; no source body, API key, count request, or network request was involved. This violated the existing single-row handling rule. For all further work, locate the exact row by path and extract only that bounded row; never parse or print the full manifest again. No implementation/source read or test has resumed.
 
+During resumed count setup, a later `sed` lookup used the wrong manifest line window and emitted several unrelated metadata rows. No source body, secret, API request, or network request was involved. This second bounded-scope mistake is recorded for transparency. The exact matching row was already acquired; do not query or print the manifest again.
+
 ## Gate and next action
 
-Independent review of the corrected three-task revision passed. Execute preflight and a fresh exact cumulative count remain required before Task 03-01-03's source-notes continuation. If the count does not fit, stop and record the exact gap; do not spend the reserve or reduce evidence/safety gates. Keep `candidate=null`, `implementation_authorized=false`, `aggregate_gate=open`, Walking Skeleton blocked, and SEC-01 Pending.
+Independent review of the corrected three-task revision passed. Before the source-notes continuation, execute preflight passed and a fresh exact combined count fit. The first scheduled acquisition then returned truncated output; the current no-retry stop is recorded below. Keep `candidate=null`, `implementation_authorized=false`, `aggregate_gate=open`, Walking Skeleton blocked, and SEC-01 Pending.
+
+## Execution pause after the revised source event
+
+The fresh 44,205-token combined count and 92,205/100,000 projection were measured before the event below. They remain historical pre-event evidence; the count is not a post-acquisition fit result.
+
+Task 03-01-03 source-notes continuation event 1 attempted the eight scheduled `TierSweepTest` ranges once, with an inner `exec_command` output ceiling of 16,000 and an outer `functions.exec` ceiling of 18,000 tokens. The tool result displayed `[…1829 tokens truncated…]`, so completeness could not be verified. This is a second, distinct consumed and incomplete source event; the earlier Task 03-01-04 event 1 remains separately consumed and incomplete.
+
+The reviewed plan's `<read_first>` says to stop without retrying when this acquisition is incomplete. Accordingly, do not retry or split these ranges, do not start the later `InstalledOtp` or `SweepEvidence` events, and do not proceed to implementation or tests under this plan. No source-note artifact is complete. Execute preflight passed immediately before this pause was recorded. No implementation source was read or changed and no audited API, callback, atom sink, or generated-code path was invoked.
+
+The aggregate gate and all existing safety stops remain unchanged. Continuing this task requires an independently reviewed schedule that accounts for the consumed event and resolves the missing source handoff. The owner acts next to choose that scope; nothing was pushed.
 
 ## Credential exposure and pause
 
-During resumed count setup, a search command included ignored `.env.local` and emitted its `OPENAI_API_KEY` assignment in local tool output. That command made no network request. The key value is omitted from this receipt and must be treated as exposed; it will not be used again. The owner must revoke it, issue a replacement, and update `.env.local`. After that credential change, rerun execute preflight and the exact combined count before any semantic source acquisition. No source body, implementation change, or test occurred in this resumed turn.
+During resumed count setup, a search command included ignored `.env.local` and emitted its `OPENAI_API_KEY` assignment in local tool output. That command made no network request. The key value is omitted from this receipt. The owner chose to continue without rotation to avoid setup delay and authorized use only of the free input-token count endpoint; the key's broader request permission remains a residual exposure risk. Keep its value out of tool output and Git, and never use an inference endpoint. The exact combined count was refreshed before the event described above; no source body, implementation change, or test occurred before that count.
 
 ## Review iteration
 
