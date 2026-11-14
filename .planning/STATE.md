@@ -4,12 +4,12 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: "Phase 03 execution paused after tracer source output truncation"
-stopped_at: "Task 03-01-03 recovery committed as a6d99e4. Task 03-01-04 source event 1 acquired the scheduled TierSweepTest ranges, but the tool truncated the returned body. Count the event as consumed; do not reread or proceed under the current schedule. No implementation or test ran. The pre-read combined count was 50,044 tokens; safety stops remain unchanged."
-last_updated: "2026-11-14T02:28:34Z"
+status: "Phase 03 paused for API-key rotation"
+stopped_at: "Owner chose replan within limits. Task 03-01-04 event 1 remains consumed and incomplete. The corrected three-task revision passed independent review and execute preflight. During resumed count setup, a command emitted the ignored .env.local API-key assignment in local tool output; the value is not recorded in git and must be treated as exposed. No network request was made by that command. Stop all use of the key. The owner must revoke it and update .env.local before a fresh exact count and gated source acquisition. No source work, implementation, or tests occurred in this resumed turn."
+last_updated: "2026-11-14T03:32:40Z"
 last_activity: 2026-11-13
-last_activity_desc: Recovery task committed; tracer paused after source output truncation
-state_head: a6d99e4
+last_activity_desc: Resumed execution paused after local API-key exposure
+state_head: 527e27c
 progress:
   total_phases: 1
   completed_phases: 0
@@ -32,18 +32,18 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — EXECUTION PAUSED
-Plan: 03-01, Task 03-01-04, source event 1 of 5 attempted; output incomplete
-Status: Recovery task 03-01-03 complete; tracer paused before implementation
-Last activity: 2026-11-13 — recovery receipt committed; source event output was truncated
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — PAUSED FOR CREDENTIAL ROTATION
+Plan: 03-01; corrected three-task revision passed independent review and execute preflight; fresh exact count and source work wait for API-key replacement
+Status: Recovery task 03-01-03 complete; Task 03-01-04 source event 1 remains consumed and incomplete; execution paused for credential rotation; no implementation started
+Last activity: 2026-11-13 — resumed execution paused after local API-key exposure
 
 ## Active Handoff
 
 - Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five plans (12 active tasks across five waves), and no aggregate evidence or implementation output exists. Task 03-01-03 completed and was committed as `a6d99e4`. Task 03-01-04's first scheduled source event used one body read of `test/contract/tier_sweep_test.exs` across the eight reviewed ranges; its count-only estimate was 12,419 tokens. The returned output was truncated by the outer tool, leaving the complete event unavailable for review. Count it as one consumed event; do not reread or proceed using the current schedule. The pre-read direct combined count was 50,044 tokens. The 12,000-token future-source cap, 5,000-token output allowance, and 31,000-token reserve remain unchanged; the measured plan projection before this event was 98,044 of 100,000 with 1,956 slack. No implementation or tests ran. See [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md).
+- Unfinished: Phase 3 has five plans and twelve active tasks across five sequential waves. No aggregate evidence or implementation output exists. Task 03-01-03 recovery is committed as `a6d99e4`. The first Task 03-01-04 source event was a 12,419-token estimated acquisition of eight `TierSweepTest` ranges; its output omitted 1,819 tokens, so the required complete evidence is unavailable. The event stays consumed. The corrected three-task replan passed independent review and execute preflight, preserving the five-event task ceilings, 12,000-token future-source cap, 5,000-token output allowance, 31,000-token reserve, and 100,000-token total ceiling. During resumed count setup, a command emitted the ignored `.env.local` API-key assignment in local tool output. Its value is omitted from git and must be treated as exposed; no network request was made by that command. The owner must revoke and replace the key before a fresh count or source work. The full-manifest parse mistake is recorded in [03-01-REPLAN.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-REPLAN.md). No source, implementation, or tests occurred in this resumed turn. See [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md).
 - Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: Owner decides whether to authorize a bounded replan for the truncated source event under the existing source/context limits, or stop Phase 3 execution. Any revised schedule must account for the consumed event, pass independent review and execute preflight, and receive a fresh exact count before another source read. The partial event is recorded in [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md).
+- Next action: The owner revokes the exposed count-only API key, issues a replacement, and updates ignored `.env.local`. Then the assistant reruns execute preflight and the fresh exact count; only a passing count opens the scheduled source spans. No source work continues before the credential is replaced.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -149,13 +149,13 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout `~/projects/fablebook` on `main` at `a6d99e4`; current Phase 3, Plan 03-01, Task 03-01-04, source event 1 attempted. Task 03-01-03 is complete; the tracer is paused because the source output was truncated. The event is consumed and must not be reread under the current plan. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 remains unfinished. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
+Active planning target: Canonical checkout `~/projects/fablebook` on `main` at `527e27c`, 24 commits ahead of fetched `origin/main`; current v0.4 Phase 3, Plan 03-01. Task 03-01-03 recovery is complete; its source-notes continuation is gated on credential replacement and exact count. The first Task 03-01-04 source event is consumed and incomplete. The bounded three-task replan passed independent review and execute preflight. A local count-setup command exposed the ignored `.env.local` API-key assignment in tool output; the owner must revoke and replace it before execution resumes. No source, implementation, or tests occurred in this resumed turn. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered; v0.4 Phase 3 remains unfinished. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
 
-Last session: 2026-11-14T02:28:34Z
+Last session: 2026-11-14T03:32:40Z
 
-Stopped at: Task 03-01-03 is complete and committed. Task 03-01-04 event 1 produced a truncated tool response, so its required complete source regions are not available for review. No implementation or tests ran; the event is consumed and must not be retried under the current schedule. The direct pre-read count was 50,044 tokens, with fixed reserve and safety stops unchanged.
+Stopped at: The owner authorized a bounded revision after Task 03-01-04 event 1 returned a truncated response. The event remains consumed; no implementation or test ran. The first revision was blocked because it raised the plan to four tasks; the corrected structure keeps three by making the source-note handoff a continuation of Task 03-01-03 while preserving its committed zero-read recovery receipt. Independent review passed and execute preflight passed. The reviewed 45,678-token snapshot is documented, but a fresh exact count is required because the replan receipt now contains the review result. A full-manifest parse mistake during local metadata lookup is recorded in the replan receipt; no network request was made.
 
-Next action: Owner chooses whether to authorize a bounded, independently reviewed replanning pass within the existing limits or stop this execution. If resuming, start from `~/projects/fablebook` on `main` at `a6d99e4`; account for the consumed event and perform a fresh exact count before any further source read.
+Next action: The owner rotates the exposed API key and updates ignored `.env.local`; the assistant then reruns execute preflight and a fresh exact count. Continue only if the complete source acquisition and remaining allowances fit within the unchanged limits; otherwise stop with the exact gap.
 
 Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
@@ -174,8 +174,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 planning passed independent review. The initial 13-read overrun remains in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). The recovery receipt is committed. The tracer is paused after one consumed source event returned truncated output; no implementation began. A bounded schedule revision needs an owner decision and independent review. The aggregate join and sizing remain unfinished, and all safety stops remain active.
+- Phase 3 planning passed independent review before execution. The initial 13-read overrun remains in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). The recovery receipt is committed. The tracer is paused after one consumed source event returned truncated output; no implementation began. The owner selected a bounded schedule revision; the first revision was blocked at four tasks and corrected to retain the three-task limit. The corrected review and execute preflight passed; the exact pre-source count is being refreshed. The local full-manifest parse mistake is recorded in [03-01-REPLAN.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-REPLAN.md). The aggregate join and sizing remain unfinished, and all safety stops remain active.
 
 ## Operator Next Steps
 
-- Owner decides whether to authorize a bounded replanning pass for the truncated tracer source event under existing limits or stop Phase 3 execution. The current blocker and consumed-event record are in [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md).
+- The owner revokes the exposed count-only API key, issues a replacement, and updates ignored `.env.local`. Then the assistant reruns execute preflight and a fresh count; source work begins only if the combined fit remains within the unchanged limits. The consumed event and replan are in [03-01-04-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-04-CHECKPOINT.md) and [03-01-REPLAN.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-REPLAN.md).
