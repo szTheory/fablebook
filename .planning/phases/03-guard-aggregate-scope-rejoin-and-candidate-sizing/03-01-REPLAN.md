@@ -9,7 +9,7 @@ updated: 2026-11-13
 
 ## Decision and position
 
-The owner selected “Replan within limits.” That earlier checkpoint used `~/projects/fablebook`, branch `main`, at `527e27c` (then 24 commits ahead of fetched `origin/main`). The documentation-only recovery is committed as `a6d99e4`; the first truncation checkpoint is committed as `527e27c`. The current revision starts on canonical `main` at `1553234`, after plan-stage preflight passed. No implementation source changed and no tests ran during this revision.
+The owner selected “Replan within limits.” That earlier checkpoint used `~/projects/fablebook`, branch `main`, at `527e27c` (then 24 commits ahead of fetched `origin/main`). The documentation-only recovery is committed as `a6d99e4`; the first truncation checkpoint is committed as `527e27c`. The current revision started on canonical `main` at `1553234`; the corrective schedule and review receipt are committed as `49a8782` on `main` (27 commits ahead of the fetched `origin/main`). No implementation source changed and no tests ran during this revision.
 
 The first Task 03-01-04 source event remains consumed: one 12,419-token count-only-estimated acquisition of the eight scheduled `TierSweepTest` ranges returned 11,819 tool-output tokens with 1,819 omitted. Its complete content cannot be verified. It is retained as an incomplete incident event and is not evidence or completed work.
 
