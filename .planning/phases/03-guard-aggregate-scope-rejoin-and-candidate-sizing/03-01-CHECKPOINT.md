@@ -19,7 +19,7 @@ updated: 2026-11-13
 
 ## Blocking-Human Decision
 
-The executor reports that its exact-source read allowance for Task 03-01-01 was exhausted after it reread `test/contract/tier_sweep_test.exs` while locating the graph and ledger interfaces. The plan permits no more than five exact-source reads per task and explicitly counts rereads. The executor returned before changing files or committing. It did not leave a durable per-file read ledger, so the phase cannot treat any additional source as safely available to this task without revising the evidence plan.
+The executor reported 13 exact-source body-read events for Task 03-01-01: nine reads of `test/contract/tier_sweep_test.exs`, two reads of `test/support/installed_otp.ex`, and two reads of `test/support/sweep_evidence.ex`. The plan permits no more than five reads per task and explicitly counts rereads, so this exceeded the ceiling by eight events. The executor returned before changing files or committing. The recovered per-file history is recorded in [03-01-READ-LEDGER.md](03-01-READ-LEDGER.md); cross-file event order was not retained. The failed attempt is not complete work and does not increase any later task allowance.
 
 ## Checks and Safety State
 
@@ -32,6 +32,6 @@ The executor reports that its exact-source read allowance for Task 03-01-01 was 
 
 ## Owner Decision
 
-Recommended: re-plan the Wave 1 evidence task within the existing per-task source and context limits, preserve the phase scope and all safety stops, and independently review the revision before execution resumes. The revised read ledger should prevent repeated source reads and make any unavailable evidence an explicit gap. This does not raise the five-read ceiling or authorize a later guard increment.
+Owner decision: re-plan Wave 1 within the existing per-task source and context limits. Preserve this historical overrun transparently, split the remaining work into distinct bounded tasks with explicit read ledgers, and independently review the revision before execution resumes. This does not raise the five-read ceiling or authorize a later guard increment.
 
 Alternative: stop Phase 3 execution here and preserve the current plans without another attempt.

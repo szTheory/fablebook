@@ -4,12 +4,12 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: Phase 3 paused at a blocking-human execution checkpoint
-stopped_at: Phase 03-01 Task 03-01-01 paused before writes at the exact-source budget checkpoint; awaiting owner decision recorded in 03-01-CHECKPOINT.md.
-last_updated: "2026-11-13T23:40:12.437Z"
+status: Phase 3 execution paused for independent review of bounded Wave 1 re-plan
+stopped_at: Owner-approved Wave 1 re-plan and task-count/reference fixes are complete; the revised plan awaits independent review before execution resumes. The first 13-read overrun, no-write state, and unchanged safety stops are recorded in 03-01-CHECKPOINT.md and 03-01-READ-LEDGER.md.
+last_updated: "2026-11-14T00:03:52.544Z"
 last_activity: 2026-11-13
-last_activity_desc: Plan 03-01 paused before writes at the exact-source budget checkpoint
-state_head: a4a25589bd5d2e86bc7aa10d817b18b424922a31
+last_activity_desc: Plan 03-05 task references corrected; independent review is underway
+state_head: 386577e46765d435258299c80869563dd3bf168d
 progress:
   total_phases: 1
   completed_phases: 0
@@ -32,18 +32,18 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — EXECUTION PAUSED
-Plan: 03-01, Task 03-01-01; 0/2 tasks complete
-Status: Blocking-human checkpoint; awaiting owner decision
-Last activity: 2026-11-13 — Plan 03-01 paused before writes at the exact-source budget checkpoint
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — EXECUTION PAUSED FOR PLAN REVIEW
+Plan: 03-01 revised to tasks 03-01-03/04/05; 0/3 active tasks complete
+Status: Owner chose bounded replanning; consistency fixes are complete and independent review is underway
+Last activity: 2026-11-13 — Plan 03-05 task references corrected
 
 ## Active Handoff
 
 - Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five reviewed plans (11 tasks across five waves), but no implementation or aggregate evidence exists yet. Plan 03-01 Task 03-01-01 is paused before writes because its executor exhausted the exact-source read allowance. The full rejoin and candidate sizing remain unfinished.
+- Unfinished: Phase 3 has five plans (12 active tasks across five waves), but no implementation or aggregate evidence exists yet. The first attempt used 13 source-body reads against the five-read task ceiling and produced no task files or commits. The overrun is retained in the read ledger; revised Wave 1 tasks 03-01-03/04/05 have separate 0/5/5 read-event ceilings. Plan 03-01 awaits independent re-review after consistency fixes.
 - Safety stops unchanged: evidence remains static; never invoke audited APIs or atom sinks; stop for an actual lib collision; SEC-01 remains Pending; the full aggregate remains open and Walking Skeleton remains blocked.
-- Next action: owner decides whether to re-plan Wave 1 within the existing source/context limits, then independently review and resume execution, or stop Phase 3 here. See [03-01-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md). Owner acts next.
+- Next action: independent plan review completes; Codex resumes at the zero-read recovery task if it passes. No owner action is needed unless review raises a new material decision. See [03-01-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md).
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -149,15 +149,15 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Phase 3 plans and the execution checkpoint are committed locally or awaiting the checkpoint commit; nothing was pushed. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered. The v0.4 Phase 3 rejoin and candidate sizing remain unfinished; Plan 03-01 Task 03-01-01 stopped before writes when the executor exhausted its exact-source allowance. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
+Active planning target: Canonical checkout: ~/projects/fablebook on main; this session is attached here. Phase 3 plans, the source-read ledger, and the execution checkpoint are committed locally or awaiting the re-plan commit; nothing was pushed. v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 are delivered. The v0.4 Phase 3 rejoin and candidate sizing remain unfinished. The owner chose bounded Wave 1 replanning after the first attempt exceeded its read ceiling; the 13-read overrun is preserved and no implementation has resumed. Preserve the separate dirty historical worktree and brand-intake assets. Static-only evidence, the actual-library-collision stop, SEC-01 Pending, open aggregate gate, and Walking Skeleton block remain unchanged.
 
-Last session: 2026-11-13T23:40:12.420Z
+Last session: 2026-11-14T00:03:52.522Z
 
-Stopped at: Phase 03-01 Task 03-01-01 paused before writes at the exact-source budget checkpoint. No task files or commits were produced. The initial static scan found no EX-010 collision, but the broader collision gate remains open. Safety stops are unchanged; details are in 03-01-CHECKPOINT.md.
+Stopped at: Owner-approved Wave 1 re-plan and task-count/reference fixes are complete; the revised plan awaits independent review before execution resumes. The first 13-read overrun, no-write state, and unchanged safety stops are recorded in 03-01-CHECKPOINT.md and 03-01-READ-LEDGER.md.
 
-Next action: owner chooses whether to re-plan Wave 1 within the existing source/context limits, independently review it, and resume execution, or stop Phase 3 here. Owner acts next.
+Next action: independent review completes; Codex resumes Wave 1 if it passes. Owner acts only if a new material decision arises.
 
-Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md
+Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
 
 ## Decisions
 
@@ -174,9 +174,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 context and planning are complete; execution began but Plan 03-01 Task 03-01-01 stopped before writes at the exact-source budget checkpoint. The full current row/source/caller rejoin and candidate sizing remain unfinished. The actual-library collision owner stop, static-only evidence limit, Walking Skeleton block, and SEC-01 Pending status remain active. A later implementation increment still requires its own bounded owner decision.
-- Phase 03-01 Task 03-01-01 is paused at a blocking-human checkpoint: the executor reports its exact-source read allowance was exhausted after rereading test/contract/tier_sweep_test.exs; no task files or commits were produced. See .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md.
+- Phase 3 context and planning are complete; execution has not produced task files or commits. The first attempt used 13 exact-source body-read events against the five-event limit; its reported history is preserved in [03-01-READ-LEDGER.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-READ-LEDGER.md). The owner chose a bounded re-plan, and revised Wave 1 awaits independent review. The full join and sizing remain unfinished, with all safety stops active.
 
 ## Operator Next Steps
 
-- Choose whether to re-plan Wave 1 within the existing evidence limits and resume after an independent review, or stop Phase 3 execution here. The decision and evidence are recorded in [03-01-CHECKPOINT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-CHECKPOINT.md).
+- Independent review completes; Codex resumes Wave 1 if it passes. No owner action is needed unless a new material decision arises.
