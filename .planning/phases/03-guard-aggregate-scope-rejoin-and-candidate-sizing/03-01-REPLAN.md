@@ -1,5 +1,5 @@
 ---
-status: reviewed-awaiting-fresh-fit
+status: source-notes-complete
 phase: 03
 plan: 03-01
 updated: 2026-11-13
@@ -35,9 +35,12 @@ During resumed count setup, a later `sed` lookup used the wrong manifest line wi
 
 ## Gate and next action
 
-The earlier three-task revision passed independent review, execute preflight and a then-current exact combined count. Its first continuation acquisition then truncated as recorded below. The owner's latest direction authorizes a newly reviewed corrective schedule within the same resource limits and cheap checks before expensive work; it supersedes that revision's latest no-retry instruction only through the event-2 gate below. The current revision passed independent review and execute preflight; its refreshed exact count and rendered-payload measurement remain pending. The checkpoint/state record those live count results without altering this selected count input. Keep `candidate=null`, `implementation_authorized=false`, `aggregate_gate=open`, Walking Skeleton blocked, and SEC-01 Pending.
+The earlier three-task revision passed independent review, execute preflight and a then-current exact combined count. Its first continuation acquisition then truncated as recorded below. The owner's latest direction authorizes a newly reviewed corrective schedule within the same resource limits and cheap checks before expensive work; it supersedes that revision's latest no-retry instruction only through the event-2 gate below. The current revision passed independent review and execute preflight; its refreshed exact count and rendered-payload measurement are complete as recorded below. Keep `candidate=null`, `implementation_authorized=false`, `aggregate_gate=open`, Walking Skeleton blocked, and SEC-01 Pending.
 
-## Execution pause after the revised source event
+## Execution pause after the revised source event (historical)
+
+This records the pause before the newly reviewed corrective schedule completed;
+the later source-notes outcome below supersedes its pending status.
 
 The fresh 44,205-token combined count and 92,205/100,000 projection were measured before the event below. They remain historical pre-event evidence; the count is not a post-acquisition fit result.
 
@@ -67,4 +70,33 @@ The first independent review returned **BLOCK**: the draft added a fourth task b
 
 The second independent review returned **PASS** on the earlier corrected three-task plan. It confirmed the then-current 45,678-token snapshot and 93,678-token projection, the consumed Task 03-01-04 event, exact source limits, explicit 16,000/18,000 ceilings, and unchanged safety gates. That PASS did not review the later corrective-event schedule. Neither historical review nor either partial output supplies the missing handoff. The third review covers the current schedule, as recorded below; exact post-edit fit remains pending.
 
-The third independent plan review returned **PASS** on this corrective-event revision. It confirmed the three-task structure; both incomplete events retained as consumed and unusable as evidence; the whole-range corrective event and 1,213-line count; the unchanged 16,000/18,000 output ceilings and 14,000-token payload gate; the 12,000-token future-source cap, 5,000-token output allowance, 31,000-token reserve, and 100,000-token total; and cheap record-consistency checks before broader selectors. Execute preflight passed after the review. The reviewer did not inspect source, credentials, or tests. Fresh exact combined context and rendered-payload counts remain required before event 2.
+The third independent plan review returned **PASS** on this corrective-event revision. It confirmed the three-task structure; both incomplete events retained as consumed and unusable as evidence; the whole-range corrective event and 1,213-line count; the unchanged 16,000/18,000 output ceilings and 14,000-token payload gate; the 12,000-token future-source cap, 5,000-token output allowance, 31,000-token reserve, and 100,000-token total; and cheap record-consistency checks before broader selectors. Execute preflight passed after the review. The reviewer did not inspect source, credentials, or tests. The fresh exact combined context and rendered-payload counts below supersede the pending status recorded at review time.
+
+## Source-notes continuation outcome
+
+The payload preflight produced one plain, ordered payload for the exact eight
+TierSweepTest ranges: 1,213 source lines plus eight anchor-label lines, 47,039
+bytes, SHA-256
+`1a30248724a2a5697bc79aba53d791475fa876ade17e7039e1402007203c4537`, and
+12,356 count-only tokens. It fit the 14,000-token payload limit. Before event 2,
+the fresh combined input count was 48,851; including the 12,000 future-source
+cap, 5,000 output allowance, and 31,000 reserve projected to 96,851/100,000
+(65,851/69,000 working; 3,149 slack). The payload digest, bytes and line totals
+were checked again immediately before its single emission.
+
+Continuation event 2 completed under the unchanged 16,000 inner and 18,000
+outer output ceilings with all eight ranges present and no truncation marker.
+Events 3 and 4 then completed their exact scheduled `InstalledOtp` and
+`SweepEvidence` ranges. Fresh combined counts before each later event remained
+48,851, including completed and remaining source-note payloads and only receipt
+metadata for incomplete event 1. Count-only transfers are not semantic
+evidence. The earlier Task 03-01-04 event 1 and Task 03-01-03 continuation
+event 1 remain permanently consumed/incomplete and unusable as evidence.
+
+The source-anchored handoff is [03-01-03-SOURCE-NOTES.md](03-01-03-SOURCE-NOTES.md).
+The scheduled `TierSweepTest` excerpt at 10620–10695 ends inside its graph
+builder; the omitted remainder was not inspected and is recorded as a bounded
+gap in the handoff. No implementation or tests ran. No audited API, callback,
+atom sink, or generated-code path was invoked. All safety states remain
+unchanged. Next, evaluate the reviewed Task 03-01-04 precondition and its fresh
+fit gate before the tracer work.

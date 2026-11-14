@@ -1,5 +1,5 @@
 ---
-status: reviewed-recovery-awaiting-fit
+status: source-notes-complete
 phase: 03
 plan: 03-01
 task: 03-01
@@ -11,12 +11,12 @@ updated: 2026-11-13
 
 ## Position
 
-- Checkout: `~/projects/fablebook`, branch `main`, HEAD `93476fe` before this checkpoint update; local branch is 25 commits ahead of fetched `origin/main`.
+- Checkout: `~/projects/fablebook`, canonical branch `main`, HEAD `9b74391` before this source-notes completion commit; local branch was 28 commits ahead of fetched `origin/main` at that checkpoint.
 - Milestone and phase: v0.4 Phase 3, Guard aggregate scope rejoin and candidate sizing.
-- Completed: Task 03-01-03 recovery receipt, committed as `a6d99e4`.
-- Current: The corrective three-task schedule passed independent review, and execute preflight passed after review. Exact rendered-payload and cumulative-context counts remain pending. The owner directed continuing without credential rotation; use the key only for the free input-token count endpoint and keep its value out of tool output and Git.
+- Completed: Task 03-01-03 recovery receipt, committed as `a6d99e4`, and the source-notes continuation recorded below.
+- Current: Task 03-01-03 source notes are complete. Task 03-01-04 tracer remains gated on its reviewed precondition and a fresh fit check. The owner directed continuing without credential rotation; the key was used only for the free input-token count endpoint and its value stayed out of tool output and Git.
 
-## Truncated Source Event
+## Truncated Source Event (historical)
 
 The pre-read combined count was 50,044 tokens for the selected planning inputs, matching archive-manifest entry, and all scheduled known source spans. Event 1 was one count-only-estimated 12,419-token acquisition of `test/contract/tier_sweep_test.exs` covering lines 1360–1485, 2840–2905, 5030–5125, 7670–7905, 8390–8560, 10620–10695, 13440–13620, and 14070–14330.
 
@@ -54,6 +54,28 @@ Fresh pre-event fit: 44,205 direct combined input tokens. This request used only
 
 A resumed count-setup command searched `.env.local` and emitted its `OPENAI_API_KEY` assignment in local tool output. No network request was made by that command. The key value is intentionally omitted here. The owner chose to continue without rotation to avoid setup delay and authorized use only of the free input-token count endpoint; the key's broader request permission remains a residual exposure risk. Keep the value out of tool output and Git, never use an inference endpoint, and proceed only if the fresh count fits. No source bodies, implementation, or tests were read or run before this count.
 
-## Owner-Authorized Recovery Schedule
+## Owner-Authorized Recovery Schedule (historical before corrective events)
 
 The owner later directed the assistant to resolve the truncation bottleneck within the inherited limits. The revised plan retains continuation event 1 as consumed/incomplete and schedules one whole-range corrective event 2 with a rendered-output consistency gate; it does not split the ranges or increase the 16,000/18,000 output ceilings. Independent review returned PASS and execute preflight passed. The 44,205-token count is historical. Before event 2, measure the exact raw payload's bytes, lines, digest and count-only tokens, then refresh the exact combined context in the isolated execution context. Both checks must fit the unchanged limits. No source-note artifact is complete, and no implementation or test has run.
+
+## Corrective Source-Notes Completion
+
+The exact event-2 payload was 47,039 bytes and 1,221 total lines (1,213 source
+lines plus eight anchor labels), SHA-256
+`1a30248724a2a5697bc79aba53d791475fa876ade17e7039e1402007203c4537`, and
+12,356 count-only tokens. The count stayed below 14,000. The combined count
+before event 2 and each subsequent source event was 48,851; its projection with
+the unchanged 12,000 source cap, 5,000 output allowance and 31,000 reserve was
+96,851/100,000 (3,149 slack). Event 2 completed once under the 16,000/18,000
+ceilings with all eight ranges and no truncation marker. Events 3 and 4
+completed the scheduled InstalledOtp and SweepEvidence ranges. The incomplete
+event 1 body was not used in the count or notes; only its receipt was included.
+See [03-01-03-SOURCE-NOTES.md](03-01-03-SOURCE-NOTES.md) for the event ledger,
+count-only transfers and source anchors.
+
+The `TierSweepTest` range 10620–10695 ends inside its graph builder. The
+remainder was not read; this bounded evidence gap is explicit in the source
+notes. No implementation or tests ran, and no audited API, callback, atom sink,
+or generated-code path was invoked. Candidate, authorization, aggregate gate,
+Walking Skeleton, SEC-01, actual-library-collision, and Macro checkpoints are
+unchanged. Next, evaluate Task 03-01-04's precondition and fresh fit gate.
