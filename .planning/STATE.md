@@ -4,17 +4,17 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: "Task 03-01-05 execution resumed under reviewed one-time lookup exception"
+status: "executing Plan 03-02"
 stopped_at: null
-last_updated: "2026-11-14T16:03:11Z"
+last_updated: "2026-11-14T17:08:40Z"
 last_activity: 2026-11-14
-last_activity_desc: Independent reviewer passed the bounded exception and fit; executor may resume Task05
-state_head: 93476fe
+last_activity_desc: Plan 03-01 all-row aggregate join committed after required lane checks
+state_head: 12ecc23
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 5
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -32,18 +32,18 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — reviewed Task05 schedule active
-Plan: 03-01; Task 03-01-03 source notes and Task 03-01-04 tracer are complete. Task 03-01-05 is cleared to resume after independent review of the owner-approved one-time lookup exception.
-Status: Task 03-01-04 is committed at 884684b. The Task05 one-time lookup exception is documented in INT-20261114-02 and independently reviewed PASS. The fit receipt bounds selected planning/receipt inputs plus source/output/reserve at 90,727/100,000 with 9,273 slack. No source reread is permitted; implementation and tests have not resumed yet.
-Last activity: 2026-11-14 — independent review passed the one-time lookup exception and context bound
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — execution underway
+Plan: 03-01 complete; Plan 03-02 is the next runnable plan.
+Status: Plan 03-01's complete core/floor row join and reconciliation report are committed at 12ecc23 after the focused and broad lane selectors, bundle check, formatting check, and structural integrity checks passed. The Task05 one-time lookup exception remains documented in INT-20261114-02 and its 12,000-token source cap remains fully charged. Plan 03-02 must establish a fresh context fit before any new source-body acquisition.
+Last activity: 2026-11-14 — Plan 03-01 implementation and evidence committed
 
 ## Active Handoff
 
 - Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five sequential plans. Task 03-01-03 recovery/source notes and Task 03-01-04 tracer are committed; Task 03-01-05 implementation and required tests remain. The one-time Task05 lookup exception is approved and conservatively charged against the remaining source allowance; no further source reads are permitted.
+- Unfinished: Phase 3 has five sequential plans. Plan 03-01 is complete; Plans 03-02 through 03-05 remain. Plan 03-02 source reads are gated on its own fresh context count and bounded read schedule.
 - Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: executor runs execute preflight, then implements Task05 using saved notes only; perform cheap shape/identity/count consistency checks before the longer selectors. No owner action is needed; nothing was pushed.
+- Next action: execute Plan 03-02 after execute preflight and a fresh context-fit check; keep source reads within Plan 03-02's per-task file limits and use cheap shape/provenance checks before longer lane selectors. No owner action is needed; nothing was pushed.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -149,15 +149,15 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout at ~/projects/fablebook on branch main; source baseline 884684b, planning HEAD e45af84 before amendment, current v0.4 Phase 3 Plan 03-01. Task03 recovery/source notes and Task04 tracer are committed; Task05 implementation/tests remain. The owner approved the already-taken lookup under INT-20261114-02; it is charged the full remaining 1,161 tokens, preserving the 12,000-token source cap, with no further read allowed. The old 62,182 count is historical. The 41,727-token selected-document count and 90,727/100,000 conservative upper bound (including 1,000-token post-count cushion) are recorded in [03-01-05-FIT-RECEIPT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-05-FIT-RECEIPT.md); independent review passed; executor is next after execute preflight. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, collision, and Macro stops remain binding. Nothing was pushed.
+Active planning target: Canonical checkout at ~/projects/fablebook on branch main, v0.4 Phase 3. Plan 03-01 completed and committed at 12ecc23; Plan 03-02 is next. Plan 01's approved event6 lookup remains charged against its full 12,000-token source cap, with no further source reads authorized by that plan. The historical 41,727-token fit and 90,727/100,000 upper bound are preserved in [03-01-05-FIT-RECEIPT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-05-FIT-RECEIPT.md); Plan 03-02 requires its own fresh fit. Candidate stays null, implementation unauthorized, aggregate gate open, source join open, Walking Skeleton blocked, SEC-01 Pending, and static-only, collision, and Macro stops remain binding. Nothing was pushed.
 
 Last session: 2026-11-14 (America/New_York)
 
-Active again after the owner approved a one-time exception for the already-taken Task05 lookup; implementation waits only for independent review of the amended plan.
+Active again after Plan 03-01 completion; Plan 03-02 is ready to execute within its reviewed scope and limits.
 
-Next action: executor runs execute preflight, resumes Task05 from the saved notes, and runs cheap consistency checks before longer selectors; no owner action is needed.
+Next action: execute preflight, measure Plan 03-02 context fit, then perform its bounded source mapping with cheap consistency checks before longer selectors; no owner action is needed.
 
-Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-PLAN.md
+Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-02-PLAN.md
 
 ## Decisions
 
@@ -174,8 +174,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ### Blockers
 
-- Phase 3 planning passed independent review before execution. The owner approved a one-time exception for the already-taken Task05 lookup and the amendment/fit projection passed independent review. The full source cap and all safety stops remain binding; no additional source read is allowed. The executor may resume after execute preflight.
+- Phase 3 planning passed independent review before execution. Plan 03-01 is complete; its one-time approved lookup exception is fully charged to that plan's source cap. Plan 03-02 uses its own bounded source-read budget and fresh fit gate. All phase safety stops remain binding.
 
 ## Operator Next Steps
 
-- Executor next: run execute preflight, resume Task05 from the saved notes, and put cheap consistency checks before longer selectors.
+- Executor next: run Plan 03-02 after execute preflight and a fresh context-fit check; put cheap identity/provenance checks before longer selectors.
