@@ -5804,6 +5804,57 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :guard_aggregate_reconciliation_callers
+  test "caller graph records preserve exact observations and explicit gaps" do
+    module = Fablebook.Test.GuardAggregateReconciliationEvidence
+    assert function_exported?(module, :attach_static_callers!, 2)
+
+    if function_exported?(module, :attach_static_callers!, 2) do
+      evidence = SweepEvidence.source_roots!()
+      on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+      lane = to_string(evidence.lane.name)
+      directory =
+        Path.expand(
+          "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+          __DIR__
+        )
+      record_path = Path.join(directory, "03-#{String.upcase(lane)}-AGGREGATE-EVIDENCE.json")
+      original = record_path |> File.read!() |> Jason.decode!()
+      graph_path =
+        Path.expand(
+          "../../.planning/milestones/v0.2-phases/01-bounded-guard-continuation/01-GRAPH-OBSERVATIONS.json",
+          __DIR__
+        )
+      graph_bytes = File.read!(graph_path)
+      graph_document = Jason.decode!(graph_bytes)
+      graph_observation =
+        graph_document
+        |> Map.fetch!("lanes")
+        |> Map.fetch!(lane)
+        |> Map.put("observation_path", Path.relative_to(graph_path, File.cwd!()))
+        |> Map.put("observation_sha256", :crypto.hash(:sha256, graph_bytes) |> Base.encode16(case: :lower))
+
+      enriched = apply(module, :attach_static_callers!, [original, graph_observation])
+      caller_evidence = enriched["static_caller_evidence"]
+      records = caller_evidence["records"]
+      known = Enum.filter(records, &(&1["identity_id"] == "EX-010"))
+
+      assert enriched["membership_sha256"] == original["membership_sha256"]
+      assert enriched["identity_rows"] == original["identity_rows"]
+      assert length(records) == Enum.sum(Enum.map(original["identity_rows"], &length(&1["live_mfas"])))
+      assert Enum.any?(known, &(&1["mfa"] == ["inets", "enable_trace", 2]))
+      assert Enum.any?(known, &(&1["mfa"] == ["inets", "enable_trace", 3]))
+      assert Enum.all?(known, &(&1["status"] == "observed_scoped_graph"))
+      assert caller_evidence["required_evidence_gaps"] != []
+      assert caller_evidence["recommendation_gate"] == false
+      assert enriched["candidate"] == nil
+      assert enriched["aggregate_gate"] == "open"
+      assert enriched["implementation_authorized"] == false
+      assert enriched["sec_01"]["status"] == "Pending"
+      assert enriched["walking_skeleton"]["status"] == "blocked"
+    end
+  end
+
   test "caller-chain index preserves duplicate edges and lowest caller arity" do
     start_mfa = {:fablebook_index_target, :run, 9}
     caller = {:fablebook_index_middle, :route}
