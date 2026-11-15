@@ -1,4 +1,5 @@
 {
+  "actual_library_collision": null,
   "caller_closure_complete": false,
   "candidate": null,
   "candidate_fit": {
@@ -9,6 +10,37 @@
   },
   "candidates": [],
   "evidence_complete": false,
+  "forward_effort": {
+    "items": [
+      {
+        "blocked_by": "target-source gaps remain in both lanes",
+        "upper_working_days": null,
+        "work": "Complete lane-pinned target-source identity, size, digest, repository, lock, and archive mappings."
+      },
+      {
+        "blocked_by": "current graph and callback/delegate evidence gaps remain",
+        "upper_working_days": null,
+        "work": "Reconcile current graph observations and callback/delegate provenance for the complete caller set."
+      },
+      {
+        "blocked_by": "candidate scope and required source/caller context are not established",
+        "upper_working_days": null,
+        "work": "Run scoped controls, integrate evidence, review, apply accepted fixes, and retest."
+      },
+      {
+        "blocked_by": "no later increment is authorized",
+        "bounded_reviews": 2,
+        "upper_working_days": null,
+        "waits_estimated_as_active_work": false,
+        "work": "Run focused and full local checks, then obtain hosted CI and prepare reviewed delivery."
+      }
+    ],
+    "prior_observations": "Historical durations and token counts are non-certifying.",
+    "status": "unknown_fails_closed",
+    "upper_bound_limit_working_days": 3,
+    "upper_bound_working_days": null,
+    "working_day_convention": "Project working-day units; token counts are not converted to time."
+  },
   "generation": "09f46024e419d4fe81c273befabe0019ab953e5a6f8c4dd1c01c114df184709b",
   "global_gaps": [
     "target_source_and_caller_evidence_incomplete"
@@ -65,20 +97,20 @@
       },
       "membership": {
         "delivered_scope_mfas": {
+          "canonical_mfa_set_sha256": "ed87d6cc8721622f09cf6b4461e694945d6a5e7825fa1ce340bd72d6cbddd0af",
           "count": 5,
-          "selector": "$.identity_rows[*].delivered_scope_mfas",
-          "sha256": "65c7264f389f97f97053f2b5284036c22458361232ec079a8d6f1299099b7d61"
+          "selector": "$.identity_rows[*].delivered_scope_mfas"
         },
         "original_live_mfas": {
+          "canonical_mfa_set_sha256": "d2c6b170422f1c0fe2c64992a343814ecd55e6006513bbd6f4a4a66a9b36aef2",
           "count": 1754,
-          "selector": "$.identity_rows[*].original_live_mfas",
-          "sha256": "442d105fbb96b27e08a6ce46c402011df0da58ebd61c49650ac1bf6ce0ab8659"
+          "selector": "$.identity_rows[*].original_live_mfas"
         },
         "pending_complement": {
+          "canonical_mfa_set_sha256": "d95ac86383d315efb443dd80d95cc5715f5234b824bf5f4bceb132d9858e9d44",
           "count": 1749,
           "selector": "unique_sorted_union($.identity_rows[*].pending_mfas)",
           "set_difference": "unique_sorted_union($.identity_rows[*].original_live_mfas) minus unique_sorted_union($.identity_rows[*].delivered_scope_mfas)",
-          "sha256": "d7b53ac48e2c5440e3dee9ae2f7bd0259b32e34ecc08a62d00b0d0698553f4db",
           "source_record_sha256": "ef5fb7e08ced66c8669d6c0896140d98c74186763561ab1a5cbe5358937a250a"
         }
       },
@@ -208,20 +240,20 @@
       },
       "membership": {
         "delivered_scope_mfas": {
+          "canonical_mfa_set_sha256": "ed87d6cc8721622f09cf6b4461e694945d6a5e7825fa1ce340bd72d6cbddd0af",
           "count": 5,
-          "selector": "$.identity_rows[*].delivered_scope_mfas",
-          "sha256": "65c7264f389f97f97053f2b5284036c22458361232ec079a8d6f1299099b7d61"
+          "selector": "$.identity_rows[*].delivered_scope_mfas"
         },
         "original_live_mfas": {
+          "canonical_mfa_set_sha256": "d0f9fc159fa9c01e695df6b84891a8629db20e2af50c559fba2e9b7052d6dd45",
           "count": 1709,
-          "selector": "$.identity_rows[*].original_live_mfas",
-          "sha256": "6f652676b9a3ad9b8fc77cb3d794685933e08f197252825bb9631292cd5808e5"
+          "selector": "$.identity_rows[*].original_live_mfas"
         },
         "pending_complement": {
+          "canonical_mfa_set_sha256": "668eb9d03c554c7fc9f3c5c7a581066a8d192e7670ab72f046f7f6658d5da0e6",
           "count": 1704,
           "selector": "unique_sorted_union($.identity_rows[*].pending_mfas)",
           "set_difference": "unique_sorted_union($.identity_rows[*].original_live_mfas) minus unique_sorted_union($.identity_rows[*].delivered_scope_mfas)",
-          "sha256": "e099c3bc9982e5fd781c4329a5883f34d08e1a09b1d73ce89b98156c0b864338",
           "source_record_sha256": "47e6b9137353d12396ece7e52f94fc904fdf2ef6ba6557dafb3a822f0ed5a121"
         }
       },
@@ -315,6 +347,40 @@
       "core": "ef5fb7e08ced66c8669d6c0896140d98c74186763561ab1a5cbe5358937a250a",
       "floor": "47e6b9137353d12396ece7e52f94fc904fdf2ef6ba6557dafb3a822f0ed5a121"
     },
+    "membership_set_metadata": {
+      "core": {
+        "delivered_scope_mfas": {
+          "canonical_mfa_set_sha256": "ed87d6cc8721622f09cf6b4461e694945d6a5e7825fa1ce340bd72d6cbddd0af",
+          "selector": "unique_sorted_union(identity_rows[*].delivered_scope_mfas)",
+          "unique_mfas": 5
+        },
+        "original_live_mfas": {
+          "canonical_mfa_set_sha256": "d2c6b170422f1c0fe2c64992a343814ecd55e6006513bbd6f4a4a66a9b36aef2",
+          "selector": "unique_sorted_union(identity_rows[*].original_live_mfas)",
+          "unique_mfas": 1754
+        },
+        "pending_complement": {
+          "canonical_mfa_set_sha256": "d95ac86383d315efb443dd80d95cc5715f5234b824bf5f4bceb132d9858e9d44",
+          "unique_mfas": 1749
+        }
+      },
+      "floor": {
+        "delivered_scope_mfas": {
+          "canonical_mfa_set_sha256": "ed87d6cc8721622f09cf6b4461e694945d6a5e7825fa1ce340bd72d6cbddd0af",
+          "selector": "unique_sorted_union(identity_rows[*].delivered_scope_mfas)",
+          "unique_mfas": 5
+        },
+        "original_live_mfas": {
+          "canonical_mfa_set_sha256": "d0f9fc159fa9c01e695df6b84891a8629db20e2af50c559fba2e9b7052d6dd45",
+          "selector": "unique_sorted_union(identity_rows[*].original_live_mfas)",
+          "unique_mfas": 1709
+        },
+        "pending_complement": {
+          "canonical_mfa_set_sha256": "668eb9d03c554c7fc9f3c5c7a581066a8d192e7670ab72f046f7f6658d5da0e6",
+          "unique_mfas": 1704
+        }
+      }
+    },
     "method": "direct_count_only_api",
     "model": "gpt-6-luna",
     "output_tokens": 5000,
@@ -323,10 +389,32 @@
     "source_file_count": 2,
     "task1_source_tokens": 8023,
     "task1_span_payload_sha256": "393a1fc7dcab55d86644ab4f3e49341a7321b02589b75be9d525582aec07c875",
+    "task2_reuse_receipt": {
+      "combined_payload_sha256": "561305eb66edc64a23e497249a455878751c30f310f503abf35ca6f716701e03",
+      "context_payload_sha256": "23a3758e6aa1bffd98a88cec3c22768b3ddaaf85cc1b55cc32cd5e71b8312a84",
+      "context_plus_reuse_tokens": 41634,
+      "context_tokens": 41459,
+      "new_source_body_reads": 0,
+      "report_bytes_selected": 730,
+      "report_sha256": "662cdcb1f88c3fe5e266ad18f0fdf804b947891852178e8afac8a67196964dd4",
+      "reused_task1_span_tokens": 8023,
+      "schedule_sha256": "20a4489ca75b33c86e5b50e67787ecb78b39ca2cf84616df43ab2dc338a23313",
+      "sizing_input_sha256": "96763b2312124fa5109a204bd51063cd425bbda60c83930e32e27557e8f3711a",
+      "total_tokens": 87657,
+      "working_tokens": 56657
+    },
     "task2_source_tokens": 0,
     "task_count": 2,
     "total_tokens": 81310,
     "working_tokens": 50310
+  },
+  "owner_decision": {
+    "automatic_phase_or_disposition": false,
+    "no_later_work_authorized": true,
+    "options": [
+      "Review the complete rejoin and separately authorize a bounded evidence-closure increment.",
+      "Approve a scoped remedy or reconsider the strategy."
+    ]
   },
   "schema": "fablebook.guard-aggregate-candidate-sizing/1",
   "source_join_complete": false

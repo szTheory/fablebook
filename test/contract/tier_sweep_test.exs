@@ -5639,7 +5639,26 @@ defmodule Fablebook.Contract.TierSweepTest do
         {lane, :crypto.hash(:sha256, bytes) |> Base.encode16(case: :lower)}
       end)
 
+    keyed_evidence_path = Path.join(directory, "03-03-KEYED-EVIDENCE.json")
+    keyed_evidence = keyed_evidence_path |> File.read!() |> Jason.decode!()
+
+    membership_set_metadata =
+      Map.new(["core", "floor"], fn lane ->
+        complement = keyed_evidence["lanes"][lane]["pending_complement"]
+
+        {lane,
+         %{
+           "original_live_mfas" => complement["original_live_mfas"],
+           "delivered_scope_mfas" => complement["delivered_scope_mfas"],
+           "pending_complement" => %{
+             "unique_mfas" => complement["unique_mfas"],
+             "canonical_mfa_set_sha256" => complement["canonical_mfa_set_sha256"]
+           }
+         }}
+      end)
+
     measurements = %{
+      "membership_set_metadata" => membership_set_metadata,
       "method" => "direct_count_only_api",
       "model" => "gpt-6-luna",
       "endpoint" => "POST /v1/responses/input_tokens",
@@ -5663,7 +5682,21 @@ defmodule Fablebook.Contract.TierSweepTest do
       "task_count" => 2,
       "plan_count" => 5,
       "effort_upper_working_days" => 3,
-      "lane_record_sha256s" => lane_record_sha256s
+      "lane_record_sha256s" => lane_record_sha256s,
+      "task2_reuse_receipt" => %{
+        "schedule_sha256" => "20a4489ca75b33c86e5b50e67787ecb78b39ca2cf84616df43ab2dc338a23313",
+        "sizing_input_sha256" => "96763b2312124fa5109a204bd51063cd425bbda60c83930e32e27557e8f3711a",
+        "context_tokens" => 41_459,
+        "context_payload_sha256" => "23a3758e6aa1bffd98a88cec3c22768b3ddaaf85cc1b55cc32cd5e71b8312a84",
+        "context_plus_reuse_tokens" => 41_634,
+        "combined_payload_sha256" => "561305eb66edc64a23e497249a455878751c30f310f503abf35ca6f716701e03",
+        "reused_task1_span_tokens" => 8_023,
+        "new_source_body_reads" => 0,
+        "working_tokens" => 56_657,
+        "total_tokens" => 87_657,
+        "report_bytes_selected" => 730,
+        "report_sha256" => "662cdcb1f88c3fe5e266ad18f0fdf804b947891852178e8afac8a67196964dd4"
+      }
     }
 
     sizing =
@@ -5680,6 +5713,28 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert sizing["candidate_fit"]["context_tokens"] == nil
     assert sizing["candidate_fit"]["source_tokens"] == nil
     assert sizing["implementation_authorized"] == false
+    assert sizing["actual_library_collision"] == nil
+    assert sizing["forward_effort"]["upper_bound_working_days"] == nil
+    assert sizing["forward_effort"]["status"] == "unknown_fails_closed"
+    assert sizing["forward_effort"]["items"] != []
+    assert sizing["owner_decision"]["no_later_work_authorized"]
+
+    stale_sizing =
+      put_in(
+        sizing,
+        ["measurements", "lane_record_sha256s", "core"],
+        String.duplicate("0", 64)
+      )
+
+    assert {:error, :stale_lane_record} =
+             Fablebook.Test.GuardAggregateReconciliationEvidence.validate_sizing!(stale_sizing)
+
+    Enum.each(["core", "floor"], fn lane ->
+      expected = membership_set_metadata[lane]["pending_complement"]
+      actual = sizing["lane_records"][lane]["membership"]["pending_complement"]
+      assert actual["count"] == expected["unique_mfas"]
+      assert actual["canonical_mfa_set_sha256"] == expected["canonical_mfa_set_sha256"]
+    end)
 
     if System.get_env("FABLEBOOK_GUARD_AGGREGATE_SIZING_WRITE") == "1" do
       sizing_path = Path.join(directory, "03-SIZING.json")
@@ -5700,6 +5755,13 @@ defmodule Fablebook.Contract.TierSweepTest do
         "Candidate: null. Target-source and caller/delegate evidence gaps remain open, so candidate-specific source, context, and effort fit are unmeasured.\n\n",
         "The fresh execution-context count is #{measurements["context_tokens"]} context tokens, #{measurements["task1_source_tokens"]} Task 1 span tokens, and #{measurements["combined_tokens"]} combined tokens. With 5,000 output tokens and 2,000 cushion, projected working use is #{measurements["working_tokens"]}/69,000; adding the fixed 31,000 reserve gives #{measurements["total_tokens"]}/100,000.\n\n",
         "Implementation remains unauthorized; aggregate gate is open; Walking Skeleton is blocked; SEC-01 is Pending.\n\n",
+        "## Forward effort and owner decision\n\n",
+        "The three-working-day upper-bound gate is not established: candidate effort remains unknown while both lane source and caller closure are incomplete.\n\n",
+        Enum.map(sizing["forward_effort"]["items"], fn item ->
+          "- #{item["work"]} Upper bound: unknown. Blocker: #{item["blocked_by"]}.\n"
+        end),
+        "\nIndependent review is bounded to two passes; hosted CI and delivery waits are separate from active effort. Historical observations are non-certifying.\n\n",
+        "Owner choice: review the complete rejoin and no-candidate result, then separately authorize bounded evidence-closure work, or approve a scoped remedy/reconsider the strategy. This plan authorizes no later increment, phase, disposition, or implementation.\n\n",
         "```json\n",
         Jason.encode_to_iodata!(report, pretty: true),
         "\n```\n"
@@ -5714,6 +5776,8 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert String.contains?(stored, Jason.encode!(report["generation"]))
     assert String.contains?(stored, "## Candidate sizing")
     assert String.contains?(stored, "Candidate: null")
+    assert String.contains?(stored, "## Forward effort and owner decision")
+    assert String.contains?(stored, "This plan authorizes no later increment")
 
     assert :ok =
              Fablebook.Test.GuardAggregateReconciliationEvidence.check_bundle!(
@@ -6177,6 +6241,41 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert {:error, :reserve_mismatch} =
              module.validate_sizing!(put_in(base, ["measurements", "reserve_tokens"], 30_999))
 
+    assert {:error, :reserve_mismatch} =
+             module.validate_sizing!(put_in(base, ["measurements", "reserve_tokens"], 31_001))
+
+    assert {:error, :task2_source_reads_not_zero} =
+             module.validate_sizing!(put_in(base, ["measurements", "task2_source_tokens"], 1))
+
+    assert {:error, :measurement_unknown} =
+             module.validate_sizing!(put_in(base, ["measurements", "context_tokens"], -1))
+
+    assert {:error, :working_limit_exceeded} =
+             module.validate_sizing!(
+               put_in(base, ["measurements", "combined_tokens"], 1_000_000_000_000_000_000_000)
+             )
+
+    assert :ok =
+             module.validate_sizing!(
+               base
+               |> put_in(["measurements", "context_tokens"], 51_999)
+               |> put_in(["measurements", "task1_source_tokens"], 9_999)
+             )
+
+    assert {:error, :source_file_limit_exceeded} =
+             module.validate_sizing!(put_in(base, ["measurements", "source_file_count"], 6))
+
+    assert {:error, :task_count_out_of_range} =
+             module.validate_sizing!(put_in(base, ["measurements", "task_count"], 4))
+
+    assert {:error, :plan_count_out_of_range} =
+             module.validate_sizing!(put_in(base, ["measurements", "plan_count"], 6))
+
+    assert {:error, :effort_limit_exceeded} =
+             module.validate_sizing!(
+               put_in(base, ["measurements", "effort_upper_working_days"], 4)
+             )
+
     candidate = %{
       "core" => [{:core_target, :run, 1}],
       "floor" => [{:floor_target, :run, 1}]
@@ -6196,6 +6295,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       | "evidence_complete" => true,
         "source_join_complete" => true,
         "caller_closure_complete" => true,
+        "actual_library_collision" => false,
         "global_gaps" => [],
         "candidate" => candidate,
         "candidates" => [candidate],
@@ -6214,6 +6314,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     }
 
     assert :ok = module.validate_sizing!(complete)
+
+    collision = %{complete | "actual_library_collision" => true}
+    assert {:error, :actual_library_collision} = module.validate_sizing!(collision)
 
     overlap = put_in(complete, ["candidate", "core"], [{:core_target, :run, 2}])
     overlap = put_in(overlap, ["candidates", Access.at(0), "core"], [{:core_target, :run, 2}])

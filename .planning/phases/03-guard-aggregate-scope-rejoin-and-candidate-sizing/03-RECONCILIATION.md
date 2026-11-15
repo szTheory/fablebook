@@ -10,6 +10,19 @@ The fresh execution-context count is 35202 context tokens, 8023 Task 1 span toke
 
 Implementation remains unauthorized; aggregate gate is open; Walking Skeleton is blocked; SEC-01 is Pending.
 
+## Forward effort and owner decision
+
+The three-working-day upper-bound gate is not established: candidate effort remains unknown while both lane source and caller closure are incomplete.
+
+- Complete lane-pinned target-source identity, size, digest, repository, lock, and archive mappings. Upper bound: unknown. Blocker: target-source gaps remain in both lanes.
+- Reconcile current graph observations and callback/delegate provenance for the complete caller set. Upper bound: unknown. Blocker: current graph and callback/delegate evidence gaps remain.
+- Run scoped controls, integrate evidence, review, apply accepted fixes, and retest. Upper bound: unknown. Blocker: candidate scope and required source/caller context are not established.
+- Run focused and full local checks, then obtain hosted CI and prepare reviewed delivery. Upper bound: unknown. Blocker: no later increment is authorized.
+
+Independent review is bounded to two passes; hosted CI and delivery waits are separate from active effort. Historical observations are non-certifying.
+
+Owner choice: review the complete rejoin and no-candidate result, then separately authorize bounded evidence-closure work, or approve a scoped remedy/reconsider the strategy. This plan authorizes no later increment, phase, disposition, or implementation.
+
 ```json
 {
   "collector": "guard-aggregate-tracer/1",

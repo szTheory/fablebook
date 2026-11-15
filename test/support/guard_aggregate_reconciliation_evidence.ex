@@ -758,6 +758,18 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
       total = working + reserve
       candidates = record["candidates"]
       candidate = record["candidate"]
+      stale_lane_record =
+        case record["lane_records"] do
+          lanes when is_map(lanes) ->
+            not is_map(measurements["lane_record_sha256s"]) or
+              Enum.any?(["core", "floor"], fn lane ->
+                get_in(lanes, [lane, "record", "sha256"]) !=
+                  measurements["lane_record_sha256s"][lane]
+              end)
+
+          _ ->
+            false
+        end
 
       cond do
         context > 52_000 ->
@@ -799,6 +811,9 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
         measurements["effort_upper_working_days"] > 3 ->
           {:error, :effort_limit_exceeded}
 
+        stale_lane_record ->
+          {:error, :stale_lane_record}
+
         not is_list(candidates) or length(candidates) > 1 ->
           {:error, :candidate_cardinality_exceeded}
 
@@ -816,6 +831,12 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
           record["caller_closure_complete"] != true or
             record["global_gaps"] != [] ->
           {:error, :candidate_requires_complete_evidence}
+
+        record["actual_library_collision"] == true ->
+          {:error, :actual_library_collision}
+
+        record["actual_library_collision"] != false ->
+          {:error, :collision_status_unknown}
 
         not is_map(record["lanes"]) ->
           {:error, :lane_membership_missing}
@@ -908,6 +929,13 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
         pending = members.("pending_mfas")
         exact_pending = MapSet.difference(MapSet.new(original), MapSet.new(delivered))
         true = MapSet.new(pending) == exact_pending
+        set_metadata = measurements["membership_set_metadata"][lane]
+        original_metadata = set_metadata["original_live_mfas"]
+        delivered_metadata = set_metadata["delivered_scope_mfas"]
+        pending_metadata = set_metadata["pending_complement"]
+        true = original_metadata["unique_mfas"] == length(original)
+        true = delivered_metadata["unique_mfas"] == length(delivered)
+        true = pending_metadata["unique_mfas"] == length(pending)
 
         target_gaps = record["target_source_gaps"]
         required_gaps = record["required_evidence_gaps"]
@@ -941,19 +969,19 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
             "original_live_mfas" => %{
               "selector" => "$.identity_rows[*].original_live_mfas",
               "count" => length(original),
-              "sha256" => digest(original)
+              "canonical_mfa_set_sha256" => original_metadata["canonical_mfa_set_sha256"]
             },
             "delivered_scope_mfas" => %{
               "selector" => "$.identity_rows[*].delivered_scope_mfas",
               "count" => length(delivered),
-              "sha256" => digest(delivered)
+              "canonical_mfa_set_sha256" => delivered_metadata["canonical_mfa_set_sha256"]
             },
             "pending_complement" => %{
               "selector" => "unique_sorted_union($.identity_rows[*].pending_mfas)",
               "set_difference" =>
                 "unique_sorted_union($.identity_rows[*].original_live_mfas) minus unique_sorted_union($.identity_rows[*].delivered_scope_mfas)",
               "count" => length(pending),
-              "sha256" => digest(pending),
+              "canonical_mfa_set_sha256" => pending_metadata["canonical_mfa_set_sha256"],
               "source_record_sha256" => raw_hash
             }
           },
@@ -1026,6 +1054,47 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
         "context_tokens" => nil,
         "source_tokens" => nil,
         "effort_upper_working_days" => nil
+      },
+      "actual_library_collision" => nil,
+      "owner_decision" => %{
+        "options" => [
+          "Review the complete rejoin and separately authorize a bounded evidence-closure increment.",
+          "Approve a scoped remedy or reconsider the strategy."
+        ],
+        "no_later_work_authorized" => true,
+        "automatic_phase_or_disposition" => false
+      },
+      "forward_effort" => %{
+        "working_day_convention" =>
+          "Project working-day units; token counts are not converted to time.",
+        "upper_bound_limit_working_days" => 3,
+        "upper_bound_working_days" => nil,
+        "status" => "unknown_fails_closed",
+        "items" => [
+          %{
+            "work" => "Complete lane-pinned target-source identity, size, digest, repository, lock, and archive mappings.",
+            "upper_working_days" => nil,
+            "blocked_by" => "target-source gaps remain in both lanes"
+          },
+          %{
+            "work" => "Reconcile current graph observations and callback/delegate provenance for the complete caller set.",
+            "upper_working_days" => nil,
+            "blocked_by" => "current graph and callback/delegate evidence gaps remain"
+          },
+          %{
+            "work" => "Run scoped controls, integrate evidence, review, apply accepted fixes, and retest.",
+            "upper_working_days" => nil,
+            "blocked_by" => "candidate scope and required source/caller context are not established"
+          },
+          %{
+            "work" => "Run focused and full local checks, then obtain hosted CI and prepare reviewed delivery.",
+            "upper_working_days" => nil,
+            "bounded_reviews" => 2,
+            "waits_estimated_as_active_work" => false,
+            "blocked_by" => "no later increment is authorized"
+          }
+        ],
+        "prior_observations" => "Historical durations and token counts are non-certifying."
       },
       "implementation_authorized" => false,
       "measurements" => measurements

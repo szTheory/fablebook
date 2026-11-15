@@ -1,7 +1,7 @@
 ---
 phase: 03
 plan: 03-03
-status: task-1-complete; task-2-zero-read-rebind-count-pending
+status: task-2-complete; summary-bookkeeping-pending
 date: 2026-11-15
 ---
 
@@ -179,3 +179,66 @@ receipt, Task 2 output allowance, cushion, and reserve before any Task 2 work.
 Task 1 preserves `candidate=null`, `implementation_authorized=false`, aggregate
 gate open, Walking Skeleton blocked, SEC-01 Pending, static-only evidence,
 actual-library collision stop, and both Macro checkpoints.
+
+## Independent post-Task 1 Task 2 rebind review — PASS
+
+**Reviewed pre-receipt schedule SHA-256:** `da78d37225dd6f715f07232a3338ed62acee12fe3c7b439cbea2c20688080241`. **Task 1 commit:** `62c037361286888d40297a463c4e92b08fb40e21`. **Patch SHA-256:** `b68315334d41bb2ff4dc71c9a61ee63bfc294667de17797768e33d6a0795aba6`. **Post-Task 1 file SHA-256 values:** `test/support/guard_aggregate_reconciliation_evidence.ex` `b3d0a1b3f039d45b339ec736fc4649e38b984e5a5ecf14add79aae903f4380d6`; `test/contract/tier_sweep_test.exs` `293570b02b302d8aa98dbc12ee202ca95a0704f41523d468ad0a793f4d27a808`. The fit-interface notes bind the original scheduled span hashes, patch, post-edit hashes, and Task 1 outputs; Task 2 reuses those notes and outputs with zero semantic rereads and stops on any mismatch. Metadata review only: the fresh Task 2 direct combined count remains pending, and this receipt does not authorize Task 2.
+
+
+## Task 2 zero-read execution receipt
+
+After the post-Task 1 review receipt was appended, execute preflight passed with
+no errors and `route_phase: 03`. The stable schedule input was 25,463 bytes,
+SHA-256 `20a4489ca75b33c86e5b50e67787ecb78b39ca2cf84616df43ab2dc338a23313`.
+The direct Task 2 count used the compact 20-row context manifest, keyed lane
+evidence, current schedule and receipts, Task 1 fit-interface/patch references,
+the full 13,285-byte Task 1 sizing record, and only the 730-byte bounded report
+section/metadata. The 13 MB report JSON body was excluded. Task 1 spans were
+charged once as reused prior context (8,023 tokens, payload SHA-256
+`393a1fc7dcab55d86644ab4f3e49341a7321b02589b75be9d525582aec07c875`); Task 2
+performed zero new source-body reads.
+
+| Task 2 count component | Tokens | Payload SHA-256 |
+|---|---:|---|
+| Compact context, keyed evidence, current schedule, full sizing record, bounded report section/metadata | 41,459 | `23a3758e6aa1bffd98a88cec3c22768b3ddaaf85cc1b55cc32cd5e71b8312a84` |
+| Context plus Task 1 reuse receipt and Task 2 framing | 41,634 | `561305eb66edc64a23e497249a455878751c30f310f503abf35ca6f716701e03` |
+| Reused Task 1 exact spans, charged once | 8,023 | prior Task 1 span payload above |
+
+The combined Task 2 input plus reused spans is 49,657 tokens. With the 5,000
+token output allowance and 2,000 token cushion, working projection is
+56,657/69,000. The fixed 31,000 reserve gives 87,657/100,000 total. Compact
+context is 41,459/52,000; exact Task 1 spans are 8,023/10,000; Task 2 new reads
+are 0/0. Every gate passes. No source body was reopened.
+
+Task 2 added canonical set-digest agreement with the keyed projection, stale
+lane-record hash rejection, synthetic collision rejection, and controls for
+unknown, negative, oversized, boundary, reserve, task-count, plan-count, effort,
+delivered-overlap, empty-scope, global-gap, and two-candidate inputs. The focused
+core selector passed 5 tests (103 excluded); floor passed 108 tests with 0
+failures (103 excluded). Both report and sizing outputs are validated in memory
+before atomic publication.
+
+| Task 2 output | Measured metadata |
+|---|---|
+| `03-SIZING.json` | 17,357 bytes / `7b3caeec99b0d8d1182386b095b27f4fa85f6056270cbe0989f7fe53baad0f16` |
+| Bounded human-readable report section | 2,034 bytes / `7e9e57a2a4c7d171210f20aeea61380ebcc466d06d9669bfe6a4548c7f1048a8` |
+| Full `03-RECONCILIATION.md` file | 13,115,491 bytes; not read into Task 2 context |
+
+The human-readable section records candidate null, unknown candidate-specific
+effort, the three-working-day gate as unproven, itemized bounded remedies,
+two-pass review maximum, hosted CI/delivery waits separate from active effort,
+and the explicit owner choice. No later increment, phase, disposition, or
+implementation is authorized.
+
+| Task 2 modified file | Post-Task 2 bytes / SHA-256 |
+|---|---|
+| `test/support/guard_aggregate_reconciliation_evidence.ex` | 58,686 / `2d618ea779ca33fff9b90398f96476b495311fd780b92a207cc3e34edf5f83a9` |
+| `test/contract/tier_sweep_test.exs` | 768,677 / `f3d5b9901c0373b39331163a4b4cdbd2f3b29c6682337d0134e6691f45bfc4f5` |
+
+Task 2 binary patch SHA-256, relative to the Task 1 commit:
+`35306d4305e36d8f2ea3befec868edc3388ba328a8a3a1716f5ab8e0f1f589a8`.
+The current sizing artifact confirms canonical original/delivered/pending set
+digests against the keyed projection and both immutable lane-record hashes.
+Candidate remains null; source/caller closure and future effort remain
+incomplete/unknown. All static-only, collision, Macro, aggregate, Walking
+Skeleton, SEC-01, and implementation-authority stops remain unchanged.
