@@ -261,3 +261,100 @@ owner-approved budget/sequence that preserves all required checks. Do not
 continue to Task 2 or Task 3 under this plan without that replan. Any changed
 schedule or context requires a new independent schedule review, fresh execute
 preflight, and direct combined count before source emission.
+
+## Fresh direct count gate — FAILED; source-body gate remains closed
+
+On 2026-11-15, after the independent metadata PASS for schedule SHA-256
+`faabfdfce9a22b3f2d3af9641dc5f131ec6aa08fc7e74ff6cbff623a054d5479` and a fresh
+`bin/planning_health --stage execute --phase 3` PASS (`route_phase: 03`), the
+approved count-only endpoint was called for model `gpt-6-luna`. The existing
+ignored `.env.local` credential was read by a redacted harness and was not
+printed or persisted. No response was generated; no source or test body was
+emitted to the review prompt, and no test was run.
+
+| Count input | Direct tokens | Serialized request SHA-256 |
+|---|---:|---|
+| Exact compact context, including selected lane/sizing/receipt projections and schedule/review receipts | 41,326 | `cacec5e27a7d257b7c90ffea23a2b93494caa31dc56b43b4cad495aa4596d97a` |
+| Exact Task 1 complete scheduled spans, including `aggregate_identity_rows!/4` | 21,183 | `f929d9da7f596952deb826b9c263feb3c7f72808f4204e523ac27727a742e9d9` |
+| Exact combined context and spans with framing | 62,523 | `be45b712257b6b549c7d741eb205a3ede9753a4d6366a558601e2e08318b6b28` |
+
+The context exceeded its 38,000-token cap by 3,326; Task 1 spans exceeded
+their 21,000-token cap by 183. The combined direct count plus the 1,000-token
+Task 2 correction allowance, 5,000 output allowance and 2,000 cushion is
+70,523 working tokens, 3,523 above the 67,000 cap. Adding the fixed 31,000
+reserve gives 101,523 total, 3,523 above the 98,000 cap. The count requests
+covered 153,896 context bytes and 86,866 span-input bytes; no byte-based token
+estimate was used. Task 3's new-read allowance remains zero.
+
+This fit gate failed. Stop before source-body emission, implementation review,
+tests, or Task 2/3. Do not drop required identities, receipts, source/caller
+coverage, or context and do not change the approved envelope. Preserve the
+earlier 52,623 / 18,258 / 108,881 count above as a historical failure receipt.
+The phase orchestrator must replan a no-loss context/source schedule within
+the approved caps; if that cannot fit without changing scope or the envelope,
+the owner decides that specific change. Plan 03-05 remains unstarted.
+
+## Fresh direct count gate — FAILED; source-body gate remains closed
+
+On 2026-11-15, the receipt-bearing schedule at SHA-256
+`bafb0374e58f10c7b2f0951522bff8dd13444292ddd54aef50dfbd78540fb160` passed
+independent metadata review and fresh execute preflight. The redacted harness
+`/private/tmp/fablebook_plan03_04_count.py` (SHA-256
+`c22bca53d4f1cd3adbf9ead987d74c1014175dbece0494601e8a6dfdb5b152d8`) called
+only `POST /v1/responses/input_tokens` for `gpt-6-luna` with the existing
+ignored credential. The credential was not printed or persisted. No generation
+request, source review, implementation, or test ran. The exact returned counts
+and serialized request hashes are:
+
+| Count input | Direct tokens | Serialized request SHA-256 |
+|---|---:|---|
+| Hash-bound context and keyed projections | 40,422 | `590b41cee9e2384fb28f8339299d54a88dbfc959ad604be8f89d4220e11f71c7` |
+| Ten exact Task 1 spans with deterministic framing | 21,172 | `ef1d84f91dbe93dafb018a8567c161a9482eac7621a2bf4c1fd39d967f5a94ef` |
+| Combined context and all ten spans | 61,588 | `d02e167e3301b62ddbb8bb5a12f0af70a34ba9e90077b8ae4086972a5bf9400d` |
+
+Context exceeds 38,500 by 1,922 tokens. Task 1 spans pass the 22,000 cap by
+828 tokens. The combined count plus the 500-token Task 2 allowance, 5,000-token
+output allowance, 2,000-token cushion, and fixed 31,000-token reserve is
+100,088, which exceeds the 99,000 envelope by 1,088. Retain the reported
+combined count; component counts differ by six tokens of framing.
+
+The no-loss replan narrows only `GLOSSARY.md` from lines 1–370 to its complete
+Phase 3-relevant sections: Tiers (118–150), Checks and evidence (261–327),
+Catalog and context (328–351), and Scope (352–354). It preserves the full-file
+identity, phase-relevant definitions, all other selected context and evidence,
+all ten spans, every cap, and every safety stop. Obtain a fresh independent
+schedule review, execute preflight, and direct count before any source body is
+emitted. Plan 03-05 remains unstarted.
+
+## Plan 03-04 Task 1 independent source review — material finding
+
+On 2026-11-15, an independent reviewer completed the scheduled source and
+keyed-evidence challenge against execution schedule SHA-256
+`487e71fa2c6d769f0d3573c00827f13f8fbefeb1c2b7bd3c387e8f6cfcd3d789`. Both
+focused `guard_aggregate_reconciliation` checks passed on core and floor; each
+selected five tests with no failures (103 tests excluded per lane).
+
+The reviewer confirmed 226 unique identities per lane (221 exclusions and 5
+metadata records), matching identity/reference sets, complete mapping statuses,
+EX-010's 2/2 v0.2/Phase 1 receipts, and EX-107's 3/3 v0.3/Phase 2 receipts with
+historical 13/164/161 partitions retained. Core/floor source gaps are 1,761 /
+1,716 and caller gaps are 5,287 / 5,152. Candidate and fit remain null;
+recommendation and implementation authority remain false. Actual collision is
+null/unknown, not cleared. Aggregate remains open, Walking Skeleton blocked,
+SEC-01 Pending, and the static-only and caller checkpoints remain intact. The
+review found no execution of audited targets, callbacks, atom sinks, or
+generated code in the selected collector/tests.
+
+**Material medium finding — source-join flag cannot become complete.**
+`build_lane!/1` initializes `source_join_complete` to false;
+`attach_target_sources!/3` establishes source coverage but does not update this
+flag; and `build_sizing_record!/3` requires it to be true for complete
+evidence. No function in the reviewed spans sets it true. Consequently, a
+future exact, gap-free source join can never qualify for evidence completeness.
+Current lane records remain conservatively false/null because source and caller
+gaps already exist. Proposed remedy: set the flag only after validating the
+complete exact join and add a non-vacuous failing regression. Task 2 may apply
+this correction only if its full code-and-test schedule stays within 500 source
+tokens and passes independent schedule review plus a fresh direct count;
+otherwise preserve this owner-facing gap without claiming the join validator
+is corrected. No actual library collision was found; null remains unresolved.
