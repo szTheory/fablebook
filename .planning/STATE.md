@@ -4,18 +4,18 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-current_plan: 3
-status: ready for Plan 03-03
-stopped_at: Completed 03-02-PLAN.md on gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing
-last_updated: "2026-11-15T01:52:45.463Z"
-last_activity: 2026-11-14
-last_activity_desc: Plan 03-02 source/caller reconciliation committed locally with explicit gaps
-state_head: 3c3578fd484ee8dcd89f5da92b0380f0d17f59a1
+current_plan: 4
+status: awaiting owner decision before further scope planning
+stopped_at: Completed 03-03-PLAN.md; awaiting owner decision
+last_updated: "2026-11-15T18:15:40.636Z"
+last_activity: 2026-11-15
+last_activity_desc: Plan 03-03 sizing completed locally with no candidate selected
+state_head: 9463f56b0eee63bb630a2ae404390b542a1be733
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 5
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -33,21 +33,22 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — execution underway
-Current Plan: 3
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — Plans 03-01 through 03-03 complete
+Current Plan: 4
 Total Plans in Phase: 5
-Progress: 2/5 plans complete ([░░░░░░░░░░] 0%)
-Plan: 03-01 and 03-02 complete; Plan 03-03 is next.
-Status: Plan 03-02 committed locally at 3c3578f after source/caller gap checks and focused core/floor selectors. Both lane records preserve Plan 03-01 partitions. Current graph coverage beyond the saved EX-010 projection remains an explicit required gap; candidate stays null, implementation authorization false, and aggregate gate open.
-Last activity: 2026-11-14 — Plan 03-02 source/caller reconciliation committed
+Progress: 3/5 plans complete ([░░░░░░░░░░] 0%)
+Plan: 03-01, 03-02, and 03-03 complete; Plans 03-04 and 03-05 remain unstarted.
+Status: Plan 03-03 committed locally as `62c0373` and `9463f56`. Its sizing result selects no candidate because source/caller coverage remains incomplete and candidate-specific effort is unknown. Aggregate remains open and implementation remains unauthorized.
+Last activity: 2026-11-15 — Plan 03-03 candidate sizing completed with no candidate
 
 ## Active Handoff
 
-- Canonical planning checkout remains ~/projects/fablebook on main after reconciliation. Current Plan 03-02 execution was committed locally on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; no push was made. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
+- Current checkout: `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; Plan 03-03 task commits and planning records are local, with no push. The old worktree at `~/.claude/worktrees/agent-planning-main-261111` remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five sequential plans. Plans 03-01 and 03-02 are complete; Plans 03-03 through 03-05 remain. Plan 03-03 must use its own lifecycle preflight, bounded source schedule, and fresh context fit.
+- Delivered in this phase: Plans 03-01 through 03-03 are complete. Plan 03-03 records the exact no-candidate gap and bounded remedy; it does not authorize a follow-on implementation.
+- Unfinished: Plans 03-04 and 03-05 have not started. The aggregate gate remains open; the complete remaining source/caller proof and any separately selected implementation remain unresolved.
 - Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: the phase orchestrator may dispatch Plan 03-03 after its execute preflight and exact source-fit/review gates. Preserve the current graph and source gaps and all safety stops. No owner action is needed; nothing was pushed.
+- Next action: the owner reviews the no-candidate result and decides whether to authorize any separately measured next scope. The phase orchestrator acts only after that decision; do not dispatch Plan 03-04 from this result alone. Preserve the current evidence gaps and all safety stops.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -67,6 +68,7 @@ Last activity: 2026-11-14 — Plan 03-02 source/caller reconciliation committed
 | Phase 02 P04 | 9min | 2 tasks | 1 files |
 | Phase 02 P05 | 90min | 2 tasks | 5 files |
 | Phase 03 P02 | not reconstructed across resumed sessions | 2 tasks | 6 files |
+| Phase 03 P03 | not captured | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -156,14 +158,14 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 Active planning target: v0.4 Phase 3 in ~/projects/fablebook. Plan 03-02 was executed on `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`, with local commits 16c929c, 2ff63f4, and 3c3578f; no push. Plans 03-01 and 03-02 are complete; 03-03 through 03-05 remain. Only the selected EX-010 graph projection has caller edges; other targets and current graph freshness remain explicit gaps. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, actual-collision, and Macro stops remain binding.
 
-Last session: 2026-11-15T01:52:01.773Z
-Stopped at: Completed 03-02-PLAN.md on gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing
+Last session: 2026-11-15T18:15:40.617Z
+Stopped at: Completed 03-03-PLAN.md
 
 Plan 03-02 execution and local commits are complete. No user action is needed; the phase orchestrator acts next by starting Plan 03-03 under its own gates.
 
 Next action: run Plan 03-03 execute preflight and its exact independent source-fit/review gate, then continue with bounded checks. Do not reuse Plan 03-02's graph projection as evidence of current complete graph coverage.
 
-Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-03-PLAN.md
+Resume file: None
 
 ## Decisions
 
@@ -180,6 +182,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 - [Phase 03]: Preserve only lane/hash-scoped caller edges when source identity is proven; record all other graph and callback coverage as keyed gaps.
 - [Phase 03]: Treat the saved EX-010 graph projection as scoped historical evidence, not a complete current graph or a dynamic-caller absence claim.
 - [Phase 03]: Keep candidate null and recommendation disabled while any required source, graph, callback, or delegate gap remains.
+- [Phase 03]: Keep candidate null because both evidence lanes remain incomplete and candidate-specific effort is unknown against the three-working-day limit.
+- [Phase 03]: Bind all scope counts and pending-complement digests to the immutable lane records and compact keyed projection.
 
 ### Blockers
 
