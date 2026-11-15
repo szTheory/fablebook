@@ -403,10 +403,86 @@
       "total_tokens": 87657,
       "working_tokens": 56657
     },
-    "task2_source_tokens": 0,
+    "task2_source_tokens": 611,
     "task_count": 2,
     "total_tokens": 81310,
-    "working_tokens": 50310
+    "working_tokens": 50310,
+    "task2_correction_schedule": {
+      "candidate_patch_bytes": 2285,
+      "candidate_patch_sha256": "ad4206158f28e7193c85c58a291cb4a60d0dd375a52dfbb23456638e271326df",
+      "source_token_cap": 500,
+      "source_tokens": 611,
+      "support_span": {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "lines": "383-390",
+        "bytes": 297,
+        "sha256": "598d385a248ecd5951dbbd51e1ee9e673dca862aa51f2010a257260dc6853912"
+      },
+      "regression": {
+        "candidate_patch_sha256": "ad4206158f28e7193c85c58a291cb4a60d0dd375a52dfbb23456638e271326df",
+        "direct_count_pending": false,
+        "path": "test/contract/tier_sweep_test.exs",
+        "placement_before_line": 5936,
+        "anchor_lines": "5936-5937",
+        "anchor_sha256": "194b0665bb52289e99a0dbf328a40727dbd8c74673b0e15eeb61ab7725fd0998",
+        "reused_task1_span": {
+          "lines": "5936-6137",
+          "bytes": 7797,
+          "sha256": "39d0c8cb47e88d1a42b4849e2afe0736439eb65aff2dbac41f0490ea5a94798c"
+        }
+      },
+      "direct_count_pending": false,
+      "count_receipts": {
+        "context_tokens": 34069,
+        "context_payload_sha256": "79474c3463b6fb8d449647b95b0596e0c03dbad37fa7c6b35e8533578e97f18e",
+        "source_tokens": 611,
+        "source_payload_sha256": "7186a70d6d43b1cc5b6b8039adf95f2cd99ee7bfa268281f90db3e861ed3eeb5",
+        "candidate_output_tokens": 638,
+        "candidate_output_payload_sha256": "65f19e763707a4ca1aa405b3af6657d7d6920990c3293ed497811578e51f53fa",
+        "combined_tokens": 35306,
+        "combined_payload_sha256": "d39033d17fcb9ee66c2c02e6cacfd745117a1b809c05aee3db857bb73b9d0f7c",
+        "projected_total_tokens": 72668,
+        "schedule_sha256": "a7b4dd86dbaa784eafd06def2f952587ee5f094bf9be0038293e443791b26381"
+      },
+      "previous_attempts": [
+        {
+          "version": 1,
+          "candidate_patch_bytes": 2402,
+          "candidate_patch_sha256": "147d8ef69e1bee8115b3365f40e70c4467a5eb42aea6fe55f8c4bcd32d5d62bf",
+          "source_tokens": 759,
+          "task2_cap_pass": null,
+          "source_cap_pass": null,
+          "combined_input_tokens": 759,
+          "output_upper_bound_tokens": 759,
+          "output_cap_pass": true
+        },
+        {
+          "version": 2,
+          "candidate_patch_bytes": 2292,
+          "candidate_patch_sha256": "2c3c51eb1a7ff53e268d38b81e660539ec93d1d6ef775e8389d40db267b86660",
+          "source_tokens": 743,
+          "task2_cap_pass": null,
+          "source_cap_pass": null,
+          "combined_input_tokens": 743,
+          "output_upper_bound_tokens": 743,
+          "output_cap_pass": true
+        }
+      ],
+      "output_token_cap": 5000,
+      "candidate_output_tokens": 638,
+      "diagnostic_read": {
+        "lines": "5905-5960",
+        "bytes": 2125,
+        "sha256": "c6c5fa526f2ebaf6f19e76abe650a79b3a65a76f1472cc715fd24a3c1103a6b3",
+        "counted_conservatively_in_v4": true
+      },
+      "reuse_interpretation_review": {
+        "status": "blocked",
+        "schedule_sha256": "09caf25576d2aabb550dfc0ddfb1b09766b1dfa2391510ccda26cf194147f076",
+        "reason": "Task2 diagnostic reread must remain counted under including every reread; v4 611-token source count exceeds 500-token cap",
+        "v5_direct_count_run": false
+      }
+    }
   },
   "owner_decision": {
     "automatic_phase_or_disposition": false,

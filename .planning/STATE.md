@@ -6,11 +6,11 @@ current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
 current_plan: 4
 status: Plan 03-04 blocked by fixed review count caps; bounded replan required
-stopped_at: Plan 03-04 Task 1 blocked before source emission
-last_updated: "2026-11-15T18:15:40.636Z"
+stopped_at: Plan 03-04 Task 2 cap gap recorded; Task 3 report publication verified
+last_updated: "2026-11-15T23:33:58.404Z"
 last_activity: 2026-11-15
 last_activity_desc: Plan 03-03 sizing completed locally with no candidate selected
-state_head: 9463f56b0eee63bb630a2ae404390b542a1be733
+state_head: 936d599f3a40d4bb401e58b7ad1492bfb1fdf1f3
 progress:
   total_phases: 1
   completed_phases: 0
@@ -37,18 +37,18 @@ Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — Plans 03-01 th
 Current Plan: 4
 Total Plans in Phase: 5
 Progress: 3/5 plans complete ([░░░░░░░░░░] 0%)
-Plan: 03-01, 03-02, and 03-03 complete; Plan 03-04 is blocked before Task 1 source review; Plan 03-05 has not started.
-Status: Plan 03-04 is blocked before Task 1 source-body review. Its metadata-only schedule passed independent review, but the fresh direct count measured 52,623 context tokens, 18,258 source-span tokens, and 108,881 total tokens with required reserves, exceeding the fixed context, span, and total caps. No source body was emitted to the model prompt and no Plan 03-04 task is complete. Plan 03-03's no-candidate result remains unchanged.
-Last activity: 2026-11-15 — Plan 03-03 candidate sizing completed with no candidate
+Plan: 03-01, 03-02, and 03-03 complete; Plan 03-04 Task 1 review and Task 3 report publication complete; Task 2 source-join correction remains an owner-facing gap under the 500-token cap; Plan 03-05 has not started.
+Status: Task 1's independent source review and both lane-focused aggregate checks passed. It found that `source_join_complete` can never become true even for a gap-free join. V4 counted 611 Task 2 source-span tokens, 111 above the cap; context (34,069), output (638), and projected total (72,668) passed. Independent review confirmed every Task 2 reread must be counted, so no correction was emitted. Task 3 published/verified the existing report from current records without new source-body reads; its count and bundle/core/floor checks passed, and the report plus machine evidence hashes were unchanged. Keep the finding open with its consequence/remedy. No Plan 03-05 or follow-on implementation is authorized.
+Last activity: 2026-11-15 — Task 3 report publication and both-lane checks passed; source-join finding remains open
 
 ## Active Handoff
 
 - Current checkout: `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; Plan 03-03 task commits and planning records are local, with no push. The old worktree at `~/.claude/worktrees/agent-planning-main-261111` remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
 - Delivered in this phase: Plans 03-01 through 03-03 are complete. Plan 03-03 records the exact no-candidate gap and bounded remedy; it does not authorize a follow-on implementation.
-- Unfinished: Plan 03-04 stopped before Task 1 source review because the exact selected context and required complete spans exceed their hard limits. The independent schedule review and direct count receipt are in [03-REVIEW.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-REVIEW.md). Plan 03-05 has not started. The aggregate gate remains open; the complete remaining source/caller proof and any separately selected implementation remain unresolved.
+- Unfinished: Plan 03-04 Task 1 review and Task 3 report publication are complete. Task 2's accepted source-join finding remains unfixed because its exact source/reread count exceeded the cap; independent review confirmed the overlapping diagnostic read must remain counted. The consequence is that `source_join_complete` cannot become true even for a future gap-free join. The remedy is a separately approved bounded resource/scope change or a future plan that fits the complete reread and falsifiable regression within limits. The report and machine evidence agree, candidate remains null, and all safety stops remain in force. Plan 03-05 has not started.
 - Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: the phase orchestrator replans Plan 03-04's independent review into bounded increments that preserve all identity, source-acquisition, caller, receipt, and fit checks within the existing per-task and context limits. If that cannot fit without changing limits or scope, ask the owner for that specific decision. Do not resume source review, run its focused tests, or start Plan 03-05 under the failed schedule. Any changed schedule requires a new independent metadata review, fresh execute preflight, and direct count before source emission.
+- Next action: the owner decides whether to leave the source-join finding as an owner-facing gap or authorize a separately bounded resource/scope plan to fit its full reread and regression. Do not start Plan 03-05 or implementation until that decision and the required gates are recorded.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -156,14 +156,14 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: v0.4 Phase 3 in `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`. Plans 03-01 through 03-03 are complete and committed locally, with no push; Plans 03-04 and 03-05 have not started. Plan 03-03 records no candidate because source/caller coverage remains incomplete and candidate-specific effort is unknown. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, actual-collision, and Macro stops remain binding.
+Active planning target: v0.4 Phase 3 in `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`. Plans 03-01 through 03-03 are complete and committed locally, with no push. Plan 03-04 Task 1 and its zero-source-read Task 3 report publication are complete. Task 2 remains an owner-facing medium finding because the exact correction/reread count was 611 against the 500-token cap; independent review confirmed the accidental reread must be included. No code patch was applied. Plan 03-05 has not started. The report and core/floor records match their current bound hashes. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, actual-collision, and Macro stops remain binding.
 
-Last session: 2026-11-15T19:01:11Z
-Stopped at: Plan 03-04 Task 1 blocked before source emission by context/span/total count caps
+Last session: 2026-11-15T23:33:58.384Z
+Stopped at: Plan 03-04 Task 2 cap gap recorded; Task 3 report publication verified
 
-Plan 03-03 execution and local commits are complete. Plan 03-04 has not completed a task: the metadata-only source schedule passed independent review, but a fresh direct count failed the 45,000-token context, 12,000-token span, and 100,000-token total caps. No implementation source body was emitted to the model prompt, and no focused test was run.
+Plan 03-04 Task 1 review and Task 3 publication completed. Task 2's v4 count measured 34,069 context, 611 source-span tokens, 638 generated-output tokens and 35,306 combined; the 500-token source cap failed by 111. Context, output and total passed. The zero-source-read Task 3 measured 37,387 context, 19 marker tokens, and 37,400 combined; with the prior Task 1 and Task 2 reads, 5,000 output, cushion and reserve, total was 97,183/99,000. Bundle publication, core aggregate and floor aggregate checks passed, and the report/machine evidence hashes were unchanged. No Task 2 code patch was applied.
 
-Next action: the phase orchestrator replans Plan 03-04's review into bounded increments that preserve identity, source-acquisition, caller, receipt, and fit checks within the existing caps. If that cannot fit without changing limits or scope, ask the owner for that specific decision. Do not resume source review or tests under the failed schedule, and do not start Plan 03-05. Any revised schedule needs independent metadata review, fresh execute preflight, and direct count before source emission.
+Next action: the owner decides whether to leave the accepted source-join finding as an owner-facing gap or authorize a separately bounded resource/scope plan to fit its complete reread and falsifiable regression within the 500-token limit. Do not start Plan 03-05 or implementation until that decision and required gates are recorded. The owner acts next only if they want to change the current bounded plan; otherwise no action is required to preserve the open finding and stops.
 
 Resume file: None
 
