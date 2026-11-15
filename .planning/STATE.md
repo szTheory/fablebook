@@ -5,8 +5,8 @@ milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
 current_plan: 4
-status: awaiting owner decision before further scope planning
-stopped_at: Completed 03-03-PLAN.md; awaiting owner decision
+status: Plan 03-04 blocked by fixed review count caps; bounded replan required
+stopped_at: Plan 03-04 Task 1 blocked before source emission
 last_updated: "2026-11-15T18:15:40.636Z"
 last_activity: 2026-11-15
 last_activity_desc: Plan 03-03 sizing completed locally with no candidate selected
@@ -37,8 +37,8 @@ Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — Plans 03-01 th
 Current Plan: 4
 Total Plans in Phase: 5
 Progress: 3/5 plans complete ([░░░░░░░░░░] 0%)
-Plan: 03-01, 03-02, and 03-03 complete; Plans 03-04 and 03-05 remain unstarted.
-Status: Plan 03-03 committed locally as `62c0373` and `9463f56`. Its sizing result selects no candidate because source/caller coverage remains incomplete and candidate-specific effort is unknown. Aggregate remains open and implementation remains unauthorized.
+Plan: 03-01, 03-02, and 03-03 complete; Plan 03-04 is blocked before Task 1 source review; Plan 03-05 has not started.
+Status: Plan 03-04 is blocked before Task 1 source-body review. Its metadata-only schedule passed independent review, but the fresh direct count measured 52,623 context tokens, 18,258 source-span tokens, and 108,881 total tokens with required reserves, exceeding the fixed context, span, and total caps. No source body was emitted to the model prompt and no Plan 03-04 task is complete. Plan 03-03's no-candidate result remains unchanged.
 Last activity: 2026-11-15 — Plan 03-03 candidate sizing completed with no candidate
 
 ## Active Handoff
@@ -46,9 +46,9 @@ Last activity: 2026-11-15 — Plan 03-03 candidate sizing completed with no cand
 - Current checkout: `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; Plan 03-03 task commits and planning records are local, with no push. The old worktree at `~/.claude/worktrees/agent-planning-main-261111` remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
 - Delivered in this phase: Plans 03-01 through 03-03 are complete. Plan 03-03 records the exact no-candidate gap and bounded remedy; it does not authorize a follow-on implementation.
-- Unfinished: Plans 03-04 and 03-05 have not started. The aggregate gate remains open; the complete remaining source/caller proof and any separately selected implementation remain unresolved.
+- Unfinished: Plan 03-04 stopped before Task 1 source review because the exact selected context and required complete spans exceed their hard limits. The independent schedule review and direct count receipt are in [03-REVIEW.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-REVIEW.md). Plan 03-05 has not started. The aggregate gate remains open; the complete remaining source/caller proof and any separately selected implementation remain unresolved.
 - Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: the owner reviews the no-candidate result and decides whether to authorize any separately measured next scope. The phase orchestrator acts only after that decision; do not dispatch Plan 03-04 from this result alone. Preserve the current evidence gaps and all safety stops.
+- Next action: the phase orchestrator replans Plan 03-04's independent review into bounded increments that preserve all identity, source-acquisition, caller, receipt, and fit checks within the existing per-task and context limits. If that cannot fit without changing limits or scope, ask the owner for that specific decision. Do not resume source review, run its focused tests, or start Plan 03-05 under the failed schedule. Any changed schedule requires a new independent metadata review, fresh execute preflight, and direct count before source emission.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -158,12 +158,12 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 Active planning target: v0.4 Phase 3 in `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`. Plans 03-01 through 03-03 are complete and committed locally, with no push; Plans 03-04 and 03-05 have not started. Plan 03-03 records no candidate because source/caller coverage remains incomplete and candidate-specific effort is unknown. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, actual-collision, and Macro stops remain binding.
 
-Last session: 2026-11-15T18:15:40.617Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-11-15T19:01:11Z
+Stopped at: Plan 03-04 Task 1 blocked before source emission by context/span/total count caps
 
-Plan 03-03 execution and local commits are complete. The owner must review its no-candidate result and decide whether to authorize any separately measured next scope; no later plan is authorized by this result alone.
+Plan 03-03 execution and local commits are complete. Plan 03-04 has not completed a task: the metadata-only source schedule passed independent review, but a fresh direct count failed the 45,000-token context, 12,000-token span, and 100,000-token total caps. No implementation source body was emitted to the model prompt, and no focused test was run.
 
-Next action: owner reviews the bounded no-candidate result and decides whether a new scope may be planned. The phase orchestrator acts after that decision; preserve all safety stops and do not start Plan 03-04 from this result alone.
+Next action: the phase orchestrator replans Plan 03-04's review into bounded increments that preserve identity, source-acquisition, caller, receipt, and fit checks within the existing caps. If that cannot fit without changing limits or scope, ask the owner for that specific decision. Do not resume source review or tests under the failed schedule, and do not start Plan 03-05. Any revised schedule needs independent metadata review, fresh execute preflight, and direct count before source emission.
 
 Resume file: None
 
