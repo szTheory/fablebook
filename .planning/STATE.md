@@ -156,14 +156,14 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: v0.4 Phase 3 in ~/projects/fablebook. Plan 03-02 was executed on `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`, with local commits 16c929c, 2ff63f4, and 3c3578f; no push. Plans 03-01 and 03-02 are complete; 03-03 through 03-05 remain. Only the selected EX-010 graph projection has caller edges; other targets and current graph freshness remain explicit gaps. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, actual-collision, and Macro stops remain binding.
+Active planning target: v0.4 Phase 3 in `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`. Plans 03-01 through 03-03 are complete and committed locally, with no push; Plans 03-04 and 03-05 have not started. Plan 03-03 records no candidate because source/caller coverage remains incomplete and candidate-specific effort is unknown. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, actual-collision, and Macro stops remain binding.
 
 Last session: 2026-11-15T18:15:40.617Z
 Stopped at: Completed 03-03-PLAN.md
 
-Plan 03-02 execution and local commits are complete. No user action is needed; the phase orchestrator acts next by starting Plan 03-03 under its own gates.
+Plan 03-03 execution and local commits are complete. The owner must review its no-candidate result and decide whether to authorize any separately measured next scope; no later plan is authorized by this result alone.
 
-Next action: run Plan 03-03 execute preflight and its exact independent source-fit/review gate, then continue with bounded checks. Do not reuse Plan 03-02's graph projection as evidence of current complete graph coverage.
+Next action: owner reviews the bounded no-candidate result and decides whether a new scope may be planned. The phase orchestrator acts after that decision; preserve all safety stops and do not start Plan 03-04 from this result alone.
 
 Resume file: None
 
