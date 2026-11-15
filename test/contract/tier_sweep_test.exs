@@ -5616,6 +5616,17 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> Jason.decode!()
 
     report = Fablebook.Test.GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor)
+
+    report =
+      if Enum.all?([core, floor], &(&1["target_source_coverage_complete"] == true)) do
+        Fablebook.Test.GuardAggregateReconciliationEvidence.with_source_crosswalk!(
+          report,
+          [core, floor]
+        )
+      else
+        report
+      end
+
     assert report["scope"] == "complete-original-ledger"
     assert report["membership_join_complete"]
     assert report["source_join_complete"] == false
@@ -5644,6 +5655,153 @@ defmodule Fablebook.Contract.TierSweepTest do
                [core, floor],
                report
              )
+  end
+
+  @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation_sources
+  test "target source links preserve exact identities and enumerate every gap" do
+    evidence = SweepEvidence.source_roots!()
+    on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
+    lane = to_string(evidence.lane.name)
+
+    directory =
+      Path.expand(
+        "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+        __DIR__
+      )
+
+    path = Path.join(directory, "03-#{String.upcase(lane)}-AGGREGATE-EVIDENCE.json")
+    original = path |> File.read!() |> Jason.decode!()
+
+    enriched =
+      Fablebook.Test.GuardAggregateReconciliationEvidence.attach_target_sources!(
+        original,
+        evidence.manifest["files"],
+        SweepEvidence.archive_sha256()
+      )
+
+    assert enriched["membership_sha256"] == original["membership_sha256"]
+    assert enriched["identity_rows"] == original["identity_rows"]
+
+    assert Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(enriched) ==
+             :ok
+
+    expected_targets =
+      Enum.reduce(enriched["identity_rows"], 0, fn row, count ->
+        count + length(row["live_mfas"])
+      end)
+
+    assert Enum.count(enriched["target_source_associations"], &(&1["mfa"] != nil)) ==
+             expected_targets
+
+    ex010_refs =
+      Enum.filter(enriched["target_source_associations"], fn association ->
+        association["identity_id"] == "EX-010" and
+          association["status"] == "cited_static_evidence"
+      end)
+
+    assert length(ex010_refs) == 2
+    assert enriched["target_source_gaps"] != []
+
+    Enum.each(enriched["target_source_records"], fn source ->
+      assert source["status"] == "source_identity_verified_by_locked_archive"
+      assert source["citations"] != []
+
+      Enum.each(source["citations"], fn citation ->
+        resolved = SweepEvidence.resolve!(evidence, hd(citation))
+        assert resolved.sha256 == source["sha256"]
+      end)
+    end)
+
+    [first_source | other_sources] = enriched["target_source_records"]
+
+    assert_raise MatchError, fn ->
+      other_lane = if lane == "core", do: "floor", else: "core"
+
+      changed = %{
+        enriched
+        | "target_source_records" => [Map.put(first_source, "lane", other_lane) | other_sources]
+      }
+
+      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
+    end
+
+    assert_raise MatchError, fn ->
+      changed = %{
+        enriched
+        | "target_source_records" => [
+            Map.put(first_source, "sha256", String.duplicate("0", 64)) | other_sources
+          ]
+      }
+
+      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
+    end
+
+    assert_raise MatchError, fn ->
+      changed = %{
+        enriched
+        | "target_source_records" => [first_source, first_source | other_sources]
+      }
+
+      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
+    end
+
+    assert_raise MatchError, fn ->
+      changed = %{
+        enriched
+        | "target_source_associations" => tl(enriched["target_source_associations"])
+      }
+
+      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
+    end
+
+    assert_raise SweepEvidence.Error, fn ->
+      SweepEvidence.resolve!(evidence, "../unsafe/file.erl:1")
+    end
+
+    if System.get_env("FABLEBOOK_GUARD_AGGREGATE_WRITE") == "1" do
+      temporary = path <> ".tmp"
+      File.write!(temporary, Jason.encode_to_iodata!(enriched, pretty: true))
+      File.rename!(temporary, path)
+
+      core =
+        directory
+        |> Path.join("03-CORE-AGGREGATE-EVIDENCE.json")
+        |> File.read!()
+        |> Jason.decode!()
+
+      floor =
+        directory
+        |> Path.join("03-FLOOR-AGGREGATE-EVIDENCE.json")
+        |> File.read!()
+        |> Jason.decode!()
+
+      if Enum.all?([core, floor], &(&1["target_source_coverage_complete"] == true)) and
+           System.get_env("FABLEBOOK_GUARD_AGGREGATE_REPORT_WRITE") == "1" do
+        report =
+          Fablebook.Test.GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor)
+
+        report =
+          Fablebook.Test.GuardAggregateReconciliationEvidence.with_source_crosswalk!(
+            report,
+            [core, floor]
+          )
+
+        report_path = Path.join(directory, "03-RECONCILIATION.md")
+
+        content = [
+          "# Phase 03 aggregate reconciliation\n\n",
+          "All original exclusion and lane-metadata identities are joined across the pinned core and floor inventories. Source links and gaps are keyed per lane/row/MFA; candidate selection remains null.\n\n",
+          "```json\n",
+          Jason.encode_to_iodata!(report, pretty: true),
+          "\n```\n"
+        ]
+
+        temporary_report = report_path <> ".tmp"
+        File.write!(temporary_report, content)
+        File.rename!(temporary_report, report_path)
+      end
+    end
   end
 
   test "caller-chain index preserves duplicate edges and lowest caller arity" do

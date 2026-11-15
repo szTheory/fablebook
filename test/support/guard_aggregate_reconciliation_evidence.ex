@@ -294,8 +294,214 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
   def check_bundle!(records, report) when is_list(records) and is_map(report) do
     [core, floor] = Enum.sort_by(records, & &1["lane"])
     expected = render_crosswalk!(core, floor)
-    true = report == expected
+
+    if Enum.all?([core, floor], &(&1["target_source_coverage_complete"] == true)) do
+      expected = Map.put(expected, "source_crosswalk", source_crosswalk!([core, floor]))
+      true = report == expected
+    else
+      true = report == expected
+    end
+
     :ok
+  end
+
+  def with_source_crosswalk!(report, records) when is_map(report) and is_list(records),
+    do: Map.put(report, "source_crosswalk", source_crosswalk!(records))
+
+  def attach_target_sources!(record, archive_files, archive_sha256)
+      when is_map(record) and is_list(archive_files) and is_binary(archive_sha256) do
+    :ok = validate_aggregate_lane!(record)
+    original_rows = record["identity_rows"]
+
+    {associations, gaps} =
+      Enum.reduce(original_rows, {[], []}, fn row, {associations, gaps} ->
+        identity_id = row["identity"]["id"]
+
+        if row["live_mfas"] == [] do
+          {[
+             %{"identity_id" => identity_id, "status" => "not_applicable", "targets" => []}
+             | associations
+           ], gaps}
+        else
+          Enum.reduce(row["live_mfas"], {associations, gaps}, fn mfa, {associations, gaps} ->
+            case target_source!(record, identity_id, mfa, archive_files, archive_sha256) do
+              {:ok, source} ->
+                association = %{
+                  "identity_id" => identity_id,
+                  "mfa" => mfa,
+                  "status" => "cited_static_evidence",
+                  "source_key" => source["key"]
+                }
+
+                {[association | associations], gaps}
+
+              {:gap, gap} ->
+                association = %{
+                  "identity_id" => identity_id,
+                  "mfa" => mfa,
+                  "status" => "source_gap",
+                  "gap_key" => gap["key"]
+                }
+
+                {[association | associations], [gap | gaps]}
+            end
+          end)
+        end
+      end)
+
+    source_keys =
+      associations
+      |> Enum.filter(&(&1["status"] == "cited_static_evidence"))
+      |> Enum.map(& &1["source_key"])
+      |> Enum.uniq()
+      |> Enum.sort()
+
+    sources =
+      source_keys
+      |> Enum.map(fn key ->
+        {identity_id, mfa} = source_key_index!(associations, key)
+        {:ok, source} = target_source!(record, identity_id, mfa, archive_files, archive_sha256)
+        source
+      end)
+
+    gaps = Enum.sort_by(gaps, & &1["key"])
+    associations = Enum.sort_by(associations, &{&1["identity_id"], &1["mfa"] || [], &1["status"]})
+
+    record
+    |> Map.put("target_source_records", sources)
+    |> Map.put("target_source_associations", associations)
+    |> Map.put("target_source_gaps", gaps)
+    |> Map.put("target_source_coverage_complete", true)
+    |> tap(fn enriched -> :ok = validate_target_sources!(enriched) end)
+  end
+
+  def validate_target_sources!(record) when is_map(record) do
+    :ok = validate_aggregate_lane!(record)
+    true = record["target_source_coverage_complete"] == true
+    true = is_list(record["target_source_records"])
+    true = is_list(record["target_source_associations"])
+    true = is_list(record["target_source_gaps"])
+
+    expected =
+      for row <- record["identity_rows"],
+          mfa <- row["live_mfas"],
+          do: {row["identity"]["id"], mfa}
+
+    actual =
+      record["target_source_associations"]
+      |> Enum.map(&{&1["identity_id"], &1["mfa"]})
+      |> Enum.reject(fn {_id, mfa} -> is_nil(mfa) end)
+
+    true = length(actual) == length(Enum.uniq(actual))
+    true = Enum.sort(actual) == Enum.sort(expected)
+
+    Enum.each(record["identity_rows"], fn row ->
+      if row["live_mfas"] == [] do
+        not_applicable =
+          Enum.filter(record["target_source_associations"], fn association ->
+            association["identity_id"] == row["identity"]["id"] and
+              association["status"] == "not_applicable"
+          end)
+
+        true = length(not_applicable) == 1
+      else
+        true =
+          Enum.all?(record["target_source_associations"], fn association ->
+            association["identity_id"] != row["identity"]["id"] or
+              association["status"] != "not_applicable"
+          end)
+      end
+    end)
+
+    gap_keys = Enum.map(record["target_source_gaps"], & &1["key"])
+    true = length(gap_keys) == length(Enum.uniq(gap_keys))
+
+    source_keys = Enum.map(record["target_source_records"], & &1["key"])
+    true = length(source_keys) == length(Enum.uniq(source_keys))
+
+    Enum.each(record["target_source_associations"], fn association ->
+      case association["status"] do
+        "cited_static_evidence" ->
+          source =
+            Enum.find(record["target_source_records"], &(&1["key"] == association["source_key"]))
+
+          true = is_map(source)
+          true = source["lane"] == record["lane"]
+          true = source["lock_sha256"] == record["lock_sha256"]
+          true = is_binary(source["repository_ref"]) and source["repository_ref"] != ""
+          true = is_binary(source["relative_path"]) and source["relative_path"] != ""
+          true = is_integer(source["bytes"]) and source["bytes"] > 0
+          true = is_binary(source["sha256"]) and byte_size(source["sha256"]) == 64
+
+          identity =
+            Map.take(source, [
+              "lane",
+              "repository_ref",
+              "lock_sha256",
+              "archive_sha256",
+              "relative_path",
+              "bytes",
+              "sha256"
+            ])
+
+          true = source["key"] == "source:" <> digest(identity)
+
+        "source_gap" ->
+          true = association["gap_key"] in gap_keys
+
+        "not_applicable" ->
+          true = association["mfa"] == nil
+
+        _ ->
+          raise ArgumentError, "invalid target source association status"
+      end
+    end)
+
+    :ok
+  end
+
+  def source_crosswalk!(records) when is_list(records) do
+    records = Enum.sort_by(records, & &1["lane"])
+    true = length(records) == 2
+    true = Enum.map(records, & &1["lane"]) == ["core", "floor"]
+
+    rows =
+      Enum.flat_map(records, fn record ->
+        :ok = validate_target_sources!(record)
+
+        for row <- record["identity_rows"] do
+          identity_id = row["identity"]["id"]
+
+          source_keys =
+            record["target_source_associations"]
+            |> Enum.filter(
+              &(&1["identity_id"] == identity_id and &1["status"] == "cited_static_evidence")
+            )
+            |> Enum.map(& &1["source_key"])
+            |> Enum.uniq()
+            |> Enum.sort()
+
+          gap_keys =
+            record["target_source_gaps"]
+            |> Enum.filter(&(&1["identity_id"] == identity_id))
+            |> Enum.map(& &1["key"])
+            |> Enum.sort()
+
+          %{
+            "lane" => record["lane"],
+            "identity_id" => identity_id,
+            "target_source_keys" => source_keys,
+            "required_source_gap_keys" => gap_keys
+          }
+        end
+      end)
+
+    gaps =
+      records
+      |> Enum.flat_map(& &1["target_source_gaps"])
+      |> Enum.sort_by(& &1["key"])
+
+    %{"rows" => rows, "required_source_gaps" => gaps}
   end
 
   def parse_mfa_identity!(value) when is_binary(value) do
@@ -466,4 +672,114 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
   defp set_intersection(left, right),
     do:
       MapSet.intersection(MapSet.new(left), MapSet.new(right)) |> MapSet.to_list() |> Enum.sort()
+
+  defp target_source!(record, identity_id, mfa, archive_files, archive_sha256) do
+    lane = record["lane"]
+    evidence = record["source_and_caller_evidence"]
+
+    selected =
+      Enum.find(evidence["selected_function_evidence"], fn item ->
+        item["mfa"] == mfa
+      end)
+
+    path_module = Enum.at(mfa, 0)
+
+    candidates =
+      evidence["exact_sources"]
+      |> Enum.filter(fn
+        [path, _bytes, _sha256] ->
+          Path.basename(path) in ["#{path_module}.erl", "#{path_module}.ex"]
+
+        _ ->
+          false
+      end)
+
+    candidate =
+      case {selected, candidates} do
+        {%{} = selected, [source]} ->
+          [path, bytes, sha256] = source
+          source_review = Enum.find(evidence["reviews"], &(&1["source_path"] == path))
+          cited? = Enum.any?(selected["citations"], &(citation_path(&1) == path))
+
+          archive_rows =
+            Enum.filter(archive_files, fn row ->
+              row["lane"] == lane and row["source_path"] == path and
+                row["sha256"] == sha256 and archive_bytes(row) == bytes
+            end)
+
+          if source_review && cited? && source_review["bytes"] == bytes &&
+               source_review["sha256"] == sha256 && length(archive_rows) == 1 do
+            [archive_row] = archive_rows
+            {:ok, path, bytes, sha256, archive_row, selected}
+          else
+            {:gap, "archive_or_citation_mismatch"}
+          end
+
+        {nil, _} ->
+          {:gap, "source_mapping_not_present_in_scoped_findings"}
+
+        {_selected, _} ->
+          {:gap, "source_mapping_ambiguous_or_missing"}
+      end
+
+    case candidate do
+      {:ok, path, bytes, sha256, archive_row, selected} ->
+        repository_ref =
+          archive_row["repository_ref"] || archive_row["repo_ref"] || archive_row["ref"] ||
+            "locked-archive:#{archive_sha256}"
+
+        identity = %{
+          "lane" => lane,
+          "repository_ref" => repository_ref,
+          "lock_sha256" => record["lock_sha256"],
+          "archive_sha256" => archive_sha256,
+          "relative_path" => path,
+          "bytes" => bytes,
+          "sha256" => sha256
+        }
+
+        {:ok,
+         Map.merge(identity, %{
+           "key" => "source:" <> digest(identity),
+           "status" => "source_identity_verified_by_locked_archive",
+           "evidence_status" => "cited_static_evidence",
+           "citations" => Enum.filter(selected["citations"], &(citation_path(&1) == path))
+         })}
+
+      {:gap, reason} ->
+        {:gap,
+         %{
+           "key" => source_gap_key(lane, identity_id, mfa),
+           "identity_id" => identity_id,
+           "lane" => lane,
+           "mfa" => mfa,
+           "module" => path_module,
+           "relative_path" => nil,
+           "lock_sha256" => record["lock_sha256"],
+           "archive_sha256" => archive_sha256,
+           "status" => reason,
+           "remedy" =>
+             "Add the exact #{lane} InstalledOtp module-to-source path for #{inspect(path_module)}, then bind that relative path, byte count, digest, repository ref, lane lock, and archive row to this MFA."
+         }}
+    end
+  end
+
+  defp source_key_index!(associations, key) do
+    case Enum.find(associations, &(&1["source_key"] == key)) do
+      %{"identity_id" => identity_id, "mfa" => mfa} -> {identity_id, mfa}
+      _ -> raise ArgumentError, "source key has no target association"
+    end
+  end
+
+  defp source_gap_key(lane, identity_id, mfa),
+    do: "source-gap:" <> digest(%{"lane" => lane, "identity_id" => identity_id, "mfa" => mfa})
+
+  defp citation_path([citation, _text]) when is_binary(citation),
+    do: citation |> String.split(":", parts: 2) |> hd()
+
+  defp citation_path(_), do: nil
+
+  defp archive_bytes(%{"bytes" => bytes}) when is_integer(bytes), do: bytes
+  defp archive_bytes(%{"size" => bytes}) when is_integer(bytes), do: bytes
+  defp archive_bytes(_row), do: nil
 end
