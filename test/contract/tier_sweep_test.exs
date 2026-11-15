@@ -5617,26 +5617,89 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     report = Fablebook.Test.GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor)
 
-    report =
-      if Enum.all?([core, floor], &(&1["target_source_coverage_complete"] == true)) do
-        Fablebook.Test.GuardAggregateReconciliationEvidence.with_source_crosswalk!(
-          report,
-          [core, floor]
-        )
-      else
-        report
-      end
-
     assert report["scope"] == "complete-original-ledger"
     assert report["membership_join_complete"]
     assert report["source_join_complete"] == false
     assert length(report["rows"]) == 226
+    assert is_map(report["source_crosswalk"])
+    assert length(report["source_crosswalk"]["rows"]) == 452
+    assert is_map(report["static_caller_crosswalk"])
+    assert length(report["static_caller_crosswalk"]["rows"]) == 3_481
+
+    assert :ok =
+             Fablebook.Test.GuardAggregateReconciliationEvidence.check_bundle!(
+               [core, floor],
+               report
+             )
+
+    lane_record_sha256s =
+      Map.new([{"core", core}, {"floor", floor}], fn {lane, _record} ->
+        path = Path.join(directory, "03-#{String.upcase(lane)}-AGGREGATE-EVIDENCE.json")
+        bytes = File.read!(path)
+        {lane, :crypto.hash(:sha256, bytes) |> Base.encode16(case: :lower)}
+      end)
+
+    measurements = %{
+      "method" => "direct_count_only_api",
+      "model" => "gpt-6-luna",
+      "endpoint" => "POST /v1/responses/input_tokens",
+      "context_payload_sha256" =>
+        "d794963538c8459e203f416d60882e1eee3c7429c381825d061aab89dad3d2eb",
+      "task1_span_payload_sha256" =>
+        "393a1fc7dcab55d86644ab4f3e49341a7321b02589b75be9d525582aec07c875",
+      "combined_payload_sha256" =>
+        "6fa45eff7d6fac8c0fababf36ce9858e810632cc294d34ec66d7f8005dd9d36b",
+      "context_tokens" => 35_202,
+      "task1_source_tokens" => 8_023,
+      "task2_source_tokens" => 0,
+      "combined_tokens" => 43_310,
+      "framing_tokens" => 85,
+      "output_tokens" => 5_000,
+      "cushion_tokens" => 2_000,
+      "reserve_tokens" => 31_000,
+      "working_tokens" => 50_310,
+      "total_tokens" => 81_310,
+      "source_file_count" => 2,
+      "task_count" => 2,
+      "plan_count" => 5,
+      "effort_upper_working_days" => 3,
+      "lane_record_sha256s" => lane_record_sha256s
+    }
+
+    sizing =
+      Fablebook.Test.GuardAggregateReconciliationEvidence.build_sizing_record!(
+        core,
+        floor,
+        measurements
+      )
+
+    assert :ok = Fablebook.Test.GuardAggregateReconciliationEvidence.validate_sizing!(sizing)
+    assert sizing["candidate"] == nil
+    assert sizing["candidates"] == []
+    assert sizing["evidence_complete"] == false
+    assert sizing["candidate_fit"]["context_tokens"] == nil
+    assert sizing["candidate_fit"]["source_tokens"] == nil
+    assert sizing["implementation_authorized"] == false
+
+    if System.get_env("FABLEBOOK_GUARD_AGGREGATE_SIZING_WRITE") == "1" do
+      sizing_path = Path.join(directory, "03-SIZING.json")
+      temporary_sizing = sizing_path <> ".tmp"
+      File.write!(temporary_sizing, Jason.encode_to_iodata!(sizing, pretty: true))
+      File.rename!(temporary_sizing, sizing_path)
+    end
+
     path = Path.join(directory, "03-RECONCILIATION.md")
 
     if System.get_env("FABLEBOOK_GUARD_AGGREGATE_REPORT_WRITE") == "1" do
+      measurements = sizing["measurements"]
+
       content = [
         "# Phase 03 aggregate reconciliation\n\n",
         "All original exclusion and lane-metadata identities are joined across the pinned core and floor inventories. Source join remains open; candidate selection is null.\n\n",
+        "## Candidate sizing\n\n",
+        "Candidate: null. Target-source and caller/delegate evidence gaps remain open, so candidate-specific source, context, and effort fit are unmeasured.\n\n",
+        "The fresh execution-context count is #{measurements["context_tokens"]} context tokens, #{measurements["task1_source_tokens"]} Task 1 span tokens, and #{measurements["combined_tokens"]} combined tokens. With 5,000 output tokens and 2,000 cushion, projected working use is #{measurements["working_tokens"]}/69,000; adding the fixed 31,000 reserve gives #{measurements["total_tokens"]}/100,000.\n\n",
+        "Implementation remains unauthorized; aggregate gate is open; Walking Skeleton is blocked; SEC-01 is Pending.\n\n",
         "```json\n",
         Jason.encode_to_iodata!(report, pretty: true),
         "\n```\n"
@@ -5649,6 +5712,8 @@ defmodule Fablebook.Contract.TierSweepTest do
 
     stored = File.read!(path)
     assert String.contains?(stored, Jason.encode!(report["generation"]))
+    assert String.contains?(stored, "## Candidate sizing")
+    assert String.contains?(stored, "Candidate: null")
 
     assert :ok =
              Fablebook.Test.GuardAggregateReconciliationEvidence.check_bundle!(
@@ -6060,6 +6125,106 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert_raise RuntimeError, ~r/installed OTP inventory caller-chain edge missing/, fn ->
       caller_chain(parent, start_mfa, caller_chain_index([]))
     end
+  end
+
+  test "sizing validation fails closed on unknown limits and incomplete candidate evidence" do
+    module = Fablebook.Test.GuardAggregateReconciliationEvidence
+
+    measurement = %{
+      "context_tokens" => 52_000,
+      "task1_source_tokens" => 10_000,
+      "task2_source_tokens" => 0,
+      "combined_tokens" => 62_000,
+      "output_tokens" => 5_000,
+      "cushion_tokens" => 2_000,
+      "reserve_tokens" => 31_000,
+      "source_file_count" => 5,
+      "task_count" => 3,
+      "plan_count" => 5,
+      "effort_upper_working_days" => 3
+    }
+
+    base = %{
+      "measurements" => measurement,
+      "candidate" => nil,
+      "candidates" => [],
+      "evidence_complete" => false,
+      "source_join_complete" => false,
+      "caller_closure_complete" => false,
+      "global_gaps" => ["source_or_caller_evidence_incomplete"],
+      "lanes" => %{}
+    }
+
+    assert :ok = module.validate_sizing!(base)
+
+    assert {:error, :measurement_unknown} =
+             module.validate_sizing!(put_in(base, ["measurements", "context_tokens"], nil))
+
+    assert {:error, :context_limit_exceeded} =
+             module.validate_sizing!(put_in(base, ["measurements", "context_tokens"], 52_001))
+
+    assert {:error, :source_limit_exceeded} =
+             module.validate_sizing!(
+               put_in(base, ["measurements", "task1_source_tokens"], 10_001)
+             )
+
+    assert {:error, :working_limit_exceeded} =
+             module.validate_sizing!(put_in(base, ["measurements", "combined_tokens"], 62_001))
+
+    assert {:error, :combined_count_underreported} =
+             module.validate_sizing!(put_in(base, ["measurements", "combined_tokens"], 61_999))
+
+    assert {:error, :reserve_mismatch} =
+             module.validate_sizing!(put_in(base, ["measurements", "reserve_tokens"], 30_999))
+
+    candidate = %{
+      "core" => [{:core_target, :run, 1}],
+      "floor" => [{:floor_target, :run, 1}]
+    }
+
+    incomplete_candidate = %{
+      base
+      | "candidate" => candidate,
+        "candidates" => [candidate]
+    }
+
+    assert {:error, :candidate_requires_complete_evidence} =
+             module.validate_sizing!(incomplete_candidate)
+
+    complete = %{
+      base
+      | "evidence_complete" => true,
+        "source_join_complete" => true,
+        "caller_closure_complete" => true,
+        "global_gaps" => [],
+        "candidate" => candidate,
+        "candidates" => [candidate],
+        "lanes" => %{
+          "core" => %{
+            "original_live_mfas" => [{:core_target, :run, 1}, {:core_target, :run, 2}],
+            "delivered_scope_mfas" => [{:core_target, :run, 2}],
+            "pending_mfas" => [{:core_target, :run, 1}]
+          },
+          "floor" => %{
+            "original_live_mfas" => [{:floor_target, :run, 1}],
+            "delivered_scope_mfas" => [],
+            "pending_mfas" => [{:floor_target, :run, 1}]
+          }
+        }
+    }
+
+    assert :ok = module.validate_sizing!(complete)
+
+    overlap = put_in(complete, ["candidate", "core"], [{:core_target, :run, 2}])
+    overlap = put_in(overlap, ["candidates", Access.at(0), "core"], [{:core_target, :run, 2}])
+    assert {:error, :delivered_overlap} = module.validate_sizing!(overlap)
+
+    empty_scope = put_in(complete, ["candidate", "core"], [])
+    empty_scope = put_in(empty_scope, ["candidates", Access.at(0), "core"], [])
+    assert {:error, :empty_candidate_scope} = module.validate_sizing!(empty_scope)
+
+    two_candidates = %{complete | "candidates" => [candidate, candidate]}
+    assert {:error, :candidate_cardinality_exceeded} = module.validate_sizing!(two_candidates)
   end
 
   @tag :audit_readiness

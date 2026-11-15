@@ -1,0 +1,333 @@
+{
+  "caller_closure_complete": false,
+  "candidate": null,
+  "candidate_fit": {
+    "context_tokens": null,
+    "effort_upper_working_days": null,
+    "source_tokens": null,
+    "status": "not_measured_without_complete_source_and_caller_closure"
+  },
+  "candidates": [],
+  "evidence_complete": false,
+  "generation": "09f46024e419d4fe81c273befabe0019ab953e5a6f8c4dd1c01c114df184709b",
+  "global_gaps": [
+    "target_source_and_caller_evidence_incomplete"
+  ],
+  "implementation_authorized": false,
+  "lane_records": {
+    "core": {
+      "existing_selected_mfas": {
+        "live_count": 2,
+        "live_sha256": "0a82d5fa8dc4406d3b6a8c5208f422b90a697007d1e16a5f075f50cf9d2532ea",
+        "selected_count": 2,
+        "selected_sha256": "0a82d5fa8dc4406d3b6a8c5208f422b90a697007d1e16a5f075f50cf9d2532ea",
+        "source_selectors": [
+          "$.selected_mfas",
+          "$.live_mfas"
+        ]
+      },
+      "generation": "09f46024e419d4fe81c273befabe0019ab953e5a6f8c4dd1c01c114df184709b",
+      "identity": {
+        "current_replacement_refs": [
+          "source:EX:10"
+        ],
+        "id": "EX-010",
+        "identity_class": "exclusion",
+        "lane_matches": {
+          "core": [
+            "inets:enable_trace/2",
+            "inets:enable_trace/3"
+          ],
+          "floor": [
+            "inets:enable_trace/2",
+            "inets:enable_trace/3"
+          ]
+        },
+        "original_citations_raw": null,
+        "original_entry_raw": "{{:inets, [:enable_trace]}, :own_native}",
+        "original_matcher_raw": "{:inets, [:enable_trace]}",
+        "original_reason_raw": ":own_native",
+        "owner": "v0.2/1",
+        "remaining_semantic_owner": "01.1.1.4",
+        "semantic_status": "inets_trace_retained",
+        "table": "EX"
+      },
+      "identity_rows": {
+        "count": 226,
+        "selector": "$.identity_rows[*]",
+        "sha256": "b062e4988ff993a904951f3f85e0a945dc231d3f9cdae472d71a62c5eb813db3"
+      },
+      "inventory_universe": {
+        "count": 50568,
+        "exported_mfas_sha256": "028e54a3f2bbb892d17d3d831c0789b5c12a91870c26a1519a642450cbb95a81",
+        "kind": "full_installed_otp_elixir_dependency_exports",
+        "lane": "core"
+      },
+      "membership": {
+        "delivered_scope_mfas": {
+          "count": 5,
+          "selector": "$.identity_rows[*].delivered_scope_mfas",
+          "sha256": "65c7264f389f97f97053f2b5284036c22458361232ec079a8d6f1299099b7d61"
+        },
+        "original_live_mfas": {
+          "count": 1754,
+          "selector": "$.identity_rows[*].original_live_mfas",
+          "sha256": "442d105fbb96b27e08a6ce46c402011df0da58ebd61c49650ac1bf6ce0ab8659"
+        },
+        "pending_complement": {
+          "count": 1749,
+          "selector": "unique_sorted_union($.identity_rows[*].pending_mfas)",
+          "set_difference": "unique_sorted_union($.identity_rows[*].original_live_mfas) minus unique_sorted_union($.identity_rows[*].delivered_scope_mfas)",
+          "sha256": "d7b53ac48e2c5440e3dee9ae2f7bd0259b32e34ecc08a62d00b0d0698553f4db",
+          "source_record_sha256": "ef5fb7e08ced66c8669d6c0896140d98c74186763561ab1a5cbe5358937a250a"
+        }
+      },
+      "membership_join_complete": true,
+      "record": {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
+        "sha256": "ef5fb7e08ced66c8669d6c0896140d98c74186763561ab1a5cbe5358937a250a"
+      },
+      "required_evidence_gaps": {
+        "bounded_remedy": "Complete current lane-pinned graph reconciliation and review callback/delegate provenance.",
+        "count": 5287,
+        "reason_counts": {
+          "callback_and_delegate_provenance_unreviewed": 1763,
+          "current_graph_reconciliation_missing": 1763,
+          "selected_graph_observation_missing": 1761
+        },
+        "records_sha256": "8bced82c8f3409740770de6ef9b42eca4b28e591852238a6a14d763bf73fec73"
+      },
+      "scope_complete": false,
+      "source_and_caller_evidence": {
+        "delegate_edge_count": 2,
+        "exact_source_count": 3,
+        "matched_mfa_count": 2,
+        "review_count": 3,
+        "sha256": "37e9e4994d34daa36955a93fd2e357953970c6d3a3c935b0b9cf0f5d3fe2c504"
+      },
+      "source_join_complete": false,
+      "static_caller_evidence": {
+        "complete": false,
+        "edge_count": 2,
+        "edges_sha256": "a4c1b8a3c915512661f1f1bb0e32316a653cb1aacea20be19fb142ad8ff74000",
+        "graph_observation_bundle": {
+          "log_sha256": "d5e639793b6ce955a361ff7866f0a5a04f4909e33fcf4fa8e752bc13862ecfc7",
+          "path": ".planning/milestones/v0.2-phases/01-bounded-guard-continuation/01-GRAPH-OBSERVATIONS.json",
+          "scope": "saved selected projection only; current graph completeness is unproven",
+          "selected_mfas": [
+            [
+              "inets",
+              "enable_trace",
+              2
+            ],
+            [
+              "inets",
+              "enable_trace",
+              3
+            ]
+          ],
+          "selected_original_id": "EX-010",
+          "sha256": "b4b820ad94d460921c9d2f1aa869df7a281cd67d8ac7f8f3de82c9845b47198f"
+        },
+        "graph_observation_bundle_sha256": "2d6d37978d14355fd6690d0895155154f855f7a0123983332061a6ab36a9c08f",
+        "recommendation_gate": false,
+        "record_count": 1763,
+        "records_sha256": "228063881a46f8a66035f8febdfbf7f0eb0a73ca05209da0ddc6da281d593ee4",
+        "required_gap_count": 5287,
+        "required_gaps_sha256": "8bced82c8f3409740770de6ef9b42eca4b28e591852238a6a14d763bf73fec73"
+      },
+      "stops": {
+        "aggregate_gate": "open",
+        "candidate": null,
+        "implementation_authorized": false,
+        "scope_complete": false,
+        "sec_01": "Pending",
+        "walking_skeleton": "blocked"
+      },
+      "target_source_associations": {
+        "count": 1844,
+        "sha256": "85e6248f12e31303a7445a62dee783abac9b113666ce3cfcbb9cf1f0e0bc41da"
+      },
+      "target_source_coverage_complete": true,
+      "target_source_gaps": {
+        "bounded_remedy": "Bind each lane-pinned source path, size, digest, repository ref, lock, and archive row.",
+        "count": 1761,
+        "reason_counts": {
+          "nil": 1761
+        },
+        "records_sha256": "a75a0cb286886caee632b0c0921c033b1c9c26d1a5751f123800bc336dd11e19"
+      }
+    },
+    "floor": {
+      "existing_selected_mfas": {
+        "live_count": 2,
+        "live_sha256": "0a82d5fa8dc4406d3b6a8c5208f422b90a697007d1e16a5f075f50cf9d2532ea",
+        "selected_count": 2,
+        "selected_sha256": "0a82d5fa8dc4406d3b6a8c5208f422b90a697007d1e16a5f075f50cf9d2532ea",
+        "source_selectors": [
+          "$.selected_mfas",
+          "$.live_mfas"
+        ]
+      },
+      "generation": "09f46024e419d4fe81c273befabe0019ab953e5a6f8c4dd1c01c114df184709b",
+      "identity": {
+        "current_replacement_refs": [
+          "source:EX:10"
+        ],
+        "id": "EX-010",
+        "identity_class": "exclusion",
+        "lane_matches": {
+          "core": [
+            "inets:enable_trace/2",
+            "inets:enable_trace/3"
+          ],
+          "floor": [
+            "inets:enable_trace/2",
+            "inets:enable_trace/3"
+          ]
+        },
+        "original_citations_raw": null,
+        "original_entry_raw": "{{:inets, [:enable_trace]}, :own_native}",
+        "original_matcher_raw": "{:inets, [:enable_trace]}",
+        "original_reason_raw": ":own_native",
+        "owner": "v0.2/1",
+        "remaining_semantic_owner": "01.1.1.4",
+        "semantic_status": "inets_trace_retained",
+        "table": "EX"
+      },
+      "identity_rows": {
+        "count": 226,
+        "selector": "$.identity_rows[*]",
+        "sha256": "b86543a58ab6837c204f640178832a11dee1416dabd7401ff04f2302511fa80b"
+      },
+      "inventory_universe": {
+        "count": 48449,
+        "exported_mfas_sha256": "875de4d1961dec08cac9600fb063e2b647234900198f1c5461a4d2fc32b04b19",
+        "kind": "full_installed_otp_elixir_dependency_exports",
+        "lane": "floor"
+      },
+      "membership": {
+        "delivered_scope_mfas": {
+          "count": 5,
+          "selector": "$.identity_rows[*].delivered_scope_mfas",
+          "sha256": "65c7264f389f97f97053f2b5284036c22458361232ec079a8d6f1299099b7d61"
+        },
+        "original_live_mfas": {
+          "count": 1709,
+          "selector": "$.identity_rows[*].original_live_mfas",
+          "sha256": "6f652676b9a3ad9b8fc77cb3d794685933e08f197252825bb9631292cd5808e5"
+        },
+        "pending_complement": {
+          "count": 1704,
+          "selector": "unique_sorted_union($.identity_rows[*].pending_mfas)",
+          "set_difference": "unique_sorted_union($.identity_rows[*].original_live_mfas) minus unique_sorted_union($.identity_rows[*].delivered_scope_mfas)",
+          "sha256": "e099c3bc9982e5fd781c4329a5883f34d08e1a09b1d73ce89b98156c0b864338",
+          "source_record_sha256": "47e6b9137353d12396ece7e52f94fc904fdf2ef6ba6557dafb3a822f0ed5a121"
+        }
+      },
+      "membership_join_complete": true,
+      "record": {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json",
+        "sha256": "47e6b9137353d12396ece7e52f94fc904fdf2ef6ba6557dafb3a822f0ed5a121"
+      },
+      "required_evidence_gaps": {
+        "bounded_remedy": "Complete current lane-pinned graph reconciliation and review callback/delegate provenance.",
+        "count": 5152,
+        "reason_counts": {
+          "callback_and_delegate_provenance_unreviewed": 1718,
+          "current_graph_reconciliation_missing": 1718,
+          "selected_graph_observation_missing": 1716
+        },
+        "records_sha256": "44d0247676b2183b00706ce5f6837e21ae7e559f9971892cbb85be47347dc4a4"
+      },
+      "scope_complete": false,
+      "source_and_caller_evidence": {
+        "delegate_edge_count": 2,
+        "exact_source_count": 3,
+        "matched_mfa_count": 2,
+        "review_count": 3,
+        "sha256": "df8c3d54b437333dadee3c548b8d71e79cf96b839c1be74608ea074610122c35"
+      },
+      "source_join_complete": false,
+      "static_caller_evidence": {
+        "complete": false,
+        "edge_count": 2,
+        "edges_sha256": "fdcdeb259d72629b8703a277e2895f94c5217237966325394866fc8c1b73af4d",
+        "graph_observation_bundle": {
+          "log_sha256": "e201174ee369657e682a2a975434507e1bed11c496875c446464212095d6f694",
+          "path": ".planning/milestones/v0.2-phases/01-bounded-guard-continuation/01-GRAPH-OBSERVATIONS.json",
+          "scope": "saved selected projection only; current graph completeness is unproven",
+          "selected_mfas": [
+            [
+              "inets",
+              "enable_trace",
+              2
+            ],
+            [
+              "inets",
+              "enable_trace",
+              3
+            ]
+          ],
+          "selected_original_id": "EX-010",
+          "sha256": "b4b820ad94d460921c9d2f1aa869df7a281cd67d8ac7f8f3de82c9845b47198f"
+        },
+        "graph_observation_bundle_sha256": "a4fd7c0e540e878eda462efc99e783e0cb3aca53c15b8b63f75212e42b71579a",
+        "recommendation_gate": false,
+        "record_count": 1718,
+        "records_sha256": "658b806e2ca6b556d9a5bc70206895a19ef28ab996bb09c53c30ef6a15a0d0a6",
+        "required_gap_count": 5152,
+        "required_gaps_sha256": "44d0247676b2183b00706ce5f6837e21ae7e559f9971892cbb85be47347dc4a4"
+      },
+      "stops": {
+        "aggregate_gate": "open",
+        "candidate": null,
+        "implementation_authorized": false,
+        "scope_complete": false,
+        "sec_01": "Pending",
+        "walking_skeleton": "blocked"
+      },
+      "target_source_associations": {
+        "count": 1802,
+        "sha256": "6346356bc7e0440d4581efb076042df101fc0f78c2b7c8c62c0ba3bdd3d654d1"
+      },
+      "target_source_coverage_complete": true,
+      "target_source_gaps": {
+        "bounded_remedy": "Bind each lane-pinned source path, size, digest, repository ref, lock, and archive row.",
+        "count": 1716,
+        "reason_counts": {
+          "nil": 1716
+        },
+        "records_sha256": "4d86b6ae80905887a4228e37112e2054d9321e3e5b09ca6bb92f6811c35f6495"
+      }
+    }
+  },
+  "measurements": {
+    "combined_payload_sha256": "6fa45eff7d6fac8c0fababf36ce9858e810632cc294d34ec66d7f8005dd9d36b",
+    "combined_tokens": 43310,
+    "context_payload_sha256": "d794963538c8459e203f416d60882e1eee3c7429c381825d061aab89dad3d2eb",
+    "context_tokens": 35202,
+    "cushion_tokens": 2000,
+    "effort_upper_working_days": 3,
+    "endpoint": "POST /v1/responses/input_tokens",
+    "framing_tokens": 85,
+    "lane_record_sha256s": {
+      "core": "ef5fb7e08ced66c8669d6c0896140d98c74186763561ab1a5cbe5358937a250a",
+      "floor": "47e6b9137353d12396ece7e52f94fc904fdf2ef6ba6557dafb3a822f0ed5a121"
+    },
+    "method": "direct_count_only_api",
+    "model": "gpt-6-luna",
+    "output_tokens": 5000,
+    "plan_count": 5,
+    "reserve_tokens": 31000,
+    "source_file_count": 2,
+    "task1_source_tokens": 8023,
+    "task1_span_payload_sha256": "393a1fc7dcab55d86644ab4f3e49341a7321b02589b75be9d525582aec07c875",
+    "task2_source_tokens": 0,
+    "task_count": 2,
+    "total_tokens": 81310,
+    "working_tokens": 50310
+  },
+  "schema": "fablebook.guard-aggregate-candidate-sizing/1",
+  "source_join_complete": false
+}

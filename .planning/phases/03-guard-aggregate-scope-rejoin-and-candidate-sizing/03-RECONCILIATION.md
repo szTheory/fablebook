@@ -1,6 +1,14 @@
 # Phase 03 aggregate reconciliation
 
-Lane and row membership is preserved. Caller edges below are scoped to saved graph observations; missing graph/source/callback provenance remains explicit and blocks recommendation. Dynamic and native boundaries remain unproven.
+All original exclusion and lane-metadata identities are joined across the pinned core and floor inventories. Source join remains open; candidate selection is null.
+
+## Candidate sizing
+
+Candidate: null. Target-source and caller/delegate evidence gaps remain open, so candidate-specific source, context, and effort fit are unmeasured.
+
+The fresh execution-context count is 35202 context tokens, 8023 Task 1 span tokens, and 43310 combined tokens. With 5,000 output tokens and 2,000 cushion, projected working use is 50310/69,000; adding the fixed 31,000 reserve gives 81310/100,000.
+
+Implementation remains unauthorized; aggregate gate is open; Walking Skeleton is blocked; SEC-01 is Pending.
 
 ```json
 {

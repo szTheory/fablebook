@@ -252,43 +252,50 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
       ]
     }
 
-    if Map.has_key?(core, "identity_rows") and Map.has_key?(floor, "identity_rows") do
-      core_rows = Map.new(core["identity_rows"], &{&1["identity"]["id"], &1})
-      floor_rows = Map.new(floor["identity_rows"], &{&1["identity"]["id"], &1})
-      true = Map.keys(core_rows) |> Enum.sort() == Map.keys(floor_rows) |> Enum.sort()
+    report =
+      if Map.has_key?(core, "identity_rows") and Map.has_key?(floor, "identity_rows") do
+        core_rows = Map.new(core["identity_rows"], &{&1["identity"]["id"], &1})
+        floor_rows = Map.new(floor["identity_rows"], &{&1["identity"]["id"], &1})
+        true = Map.keys(core_rows) |> Enum.sort() == Map.keys(floor_rows) |> Enum.sort()
 
-      rows =
-        Enum.map(core["identity_rows"], fn core_row ->
-          id = core_row["identity"]["id"]
-          floor_row = Map.fetch!(floor_rows, id)
-          true = core_row["identity"] == floor_row["identity"]
-          true = core_row["delivery_refs"] == floor_row["delivery_refs"]
+        rows =
+          Enum.map(core["identity_rows"], fn core_row ->
+            id = core_row["identity"]["id"]
+            floor_row = Map.fetch!(floor_rows, id)
+            true = core_row["identity"] == floor_row["identity"]
+            true = core_row["delivery_refs"] == floor_row["delivery_refs"]
 
-          %{
-            "id" => id,
-            "identity" => core_row["identity"],
-            "owner" => core_row["identity"]["owner"],
-            "delivered_slice_owner" => core_row["delivered_slice_owner"],
-            "delivery_refs" => core_row["delivery_refs"],
-            "core" => Map.drop(core_row, ["identity", "delivered_slice_owner", "delivery_refs"]),
-            "floor" => Map.drop(floor_row, ["identity", "delivered_slice_owner", "delivery_refs"])
-          }
-        end)
+            %{
+              "id" => id,
+              "identity" => core_row["identity"],
+              "owner" => core_row["identity"]["owner"],
+              "delivered_slice_owner" => core_row["delivered_slice_owner"],
+              "delivery_refs" => core_row["delivery_refs"],
+              "core" =>
+                Map.drop(core_row, ["identity", "delivered_slice_owner", "delivery_refs"]),
+              "floor" =>
+                Map.drop(floor_row, ["identity", "delivered_slice_owner", "delivery_refs"])
+            }
+          end)
 
-      Map.merge(base, %{
-        "scope" => "complete-original-ledger",
-        "membership_join_complete" => true,
-        "source_join_complete" => false,
-        "delivery_receipts" => core["delivery_receipts"],
-        "live_nonoriginal_entries" => %{
-          "core" => core["live_nonoriginal_entries"],
-          "floor" => floor["live_nonoriginal_entries"]
-        },
-        "rows" => rows
-      })
-    else
-      base
-    end
+        Map.merge(base, %{
+          "scope" => "complete-original-ledger",
+          "membership_join_complete" => true,
+          "source_join_complete" => false,
+          "delivery_receipts" => core["delivery_receipts"],
+          "live_nonoriginal_entries" => %{
+            "core" => core["live_nonoriginal_entries"],
+            "floor" => floor["live_nonoriginal_entries"]
+          },
+          "rows" => rows
+        })
+      else
+        base
+      end
+
+    report
+    |> with_source_crosswalk!([core, floor])
+    |> with_static_caller_crosswalk!([core, floor])
   end
 
   def check_bundle!(records, report) when is_list(records) and is_map(report) do
@@ -715,6 +722,317 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
     end)
 
     :ok
+  end
+
+  def validate_sizing!(record) when is_map(record) do
+    measurements = record["measurements"]
+
+    measured_fields = [
+      "context_tokens",
+      "task1_source_tokens",
+      "task2_source_tokens",
+      "combined_tokens",
+      "output_tokens",
+      "cushion_tokens",
+      "reserve_tokens",
+      "source_file_count",
+      "task_count",
+      "plan_count",
+      "effort_upper_working_days"
+    ]
+
+    if not is_map(measurements) or
+         Enum.any?(measured_fields, fn field ->
+           not is_integer(measurements[field]) or measurements[field] < 0
+         end) do
+      {:error, :measurement_unknown}
+    else
+      context = measurements["context_tokens"]
+      task1 = measurements["task1_source_tokens"]
+      task2 = measurements["task2_source_tokens"]
+      combined = measurements["combined_tokens"]
+      output = measurements["output_tokens"]
+      cushion = measurements["cushion_tokens"]
+      reserve = measurements["reserve_tokens"]
+      working = combined + output + cushion
+      total = working + reserve
+      candidates = record["candidates"]
+      candidate = record["candidate"]
+
+      cond do
+        context > 52_000 ->
+          {:error, :context_limit_exceeded}
+
+        task1 > 10_000 ->
+          {:error, :source_limit_exceeded}
+
+        combined < context + task1 ->
+          {:error, :combined_count_underreported}
+
+        task2 != 0 ->
+          {:error, :task2_source_reads_not_zero}
+
+        output > 5_000 ->
+          {:error, :output_limit_exceeded}
+
+        cushion > 2_000 ->
+          {:error, :cushion_limit_exceeded}
+
+        reserve != 31_000 ->
+          {:error, :reserve_mismatch}
+
+        working > 69_000 ->
+          {:error, :working_limit_exceeded}
+
+        total > 100_000 ->
+          {:error, :total_limit_exceeded}
+
+        measurements["source_file_count"] > 5 ->
+          {:error, :source_file_limit_exceeded}
+
+        measurements["task_count"] not in [2, 3] ->
+          {:error, :task_count_out_of_range}
+
+        measurements["plan_count"] not in 4..5 ->
+          {:error, :plan_count_out_of_range}
+
+        measurements["effort_upper_working_days"] > 3 ->
+          {:error, :effort_limit_exceeded}
+
+        not is_list(candidates) or length(candidates) > 1 ->
+          {:error, :candidate_cardinality_exceeded}
+
+        candidates == [] and not is_nil(candidate) ->
+          {:error, :candidate_presence_mismatch}
+
+        candidates == [] ->
+          :ok
+
+        not is_map(hd(candidates)) or hd(candidates) != candidate ->
+          {:error, :candidate_presence_mismatch}
+
+        record["evidence_complete"] != true or
+          record["source_join_complete"] != true or
+          record["caller_closure_complete"] != true or
+            record["global_gaps"] != [] ->
+          {:error, :candidate_requires_complete_evidence}
+
+        not is_map(record["lanes"]) ->
+          {:error, :lane_membership_missing}
+
+        true ->
+          validate_candidate_scope!(candidate, record["lanes"])
+      end
+    end
+  end
+
+  defp validate_candidate_scope!(candidate, lanes) do
+    Enum.reduce_while(["core", "floor"], :ok, fn lane, :ok ->
+      lane_record = lanes[lane]
+      selected = candidate[lane]
+
+      if not is_map(lane_record) or not is_list(selected) or selected == [] do
+        {:halt, {:error, :empty_candidate_scope}}
+      else
+        original = lane_record["original_live_mfas"]
+        delivered = lane_record["delivered_scope_mfas"]
+        pending = lane_record["pending_mfas"]
+
+        if not (is_list(original) and is_list(delivered) and is_list(pending)) do
+          {:halt, {:error, :pending_complement_missing}}
+        else
+          original_set = MapSet.new(original)
+          delivered_set = MapSet.new(delivered)
+          pending_set = MapSet.new(pending)
+          selected_set = MapSet.new(selected)
+          exact_pending = MapSet.difference(original_set, delivered_set)
+
+          cond do
+            MapSet.size(original_set) != length(original) or
+              MapSet.size(delivered_set) != length(delivered) or
+              MapSet.size(pending_set) != length(pending) or
+                MapSet.size(selected_set) != length(selected) ->
+              {:halt, {:error, :duplicate_mfa_membership}}
+
+            pending_set != exact_pending ->
+              {:halt, {:error, :pending_complement_mismatch}}
+
+            not MapSet.disjoint?(selected_set, delivered_set) ->
+              {:halt, {:error, :delivered_overlap}}
+
+            not MapSet.subset?(selected_set, pending_set) ->
+              {:halt, {:error, :candidate_outside_pending_scope}}
+
+            true ->
+              {:cont, :ok}
+          end
+        end
+      end
+    end)
+  end
+
+  def build_sizing_record!(core, floor, measurements)
+      when is_map(core) and is_map(floor) and is_map(measurements) do
+    :ok = validate_aggregate_lane!(core)
+    :ok = validate_aggregate_lane!(floor)
+    :ok = validate_static_callers!(core)
+    :ok = validate_static_callers!(floor)
+    true = core["lane"] == "core" and floor["lane"] == "floor"
+    true = core["generation"] == floor["generation"]
+    true = core["identity"] == floor["identity"]
+    true = core["delivery"] == floor["delivery"]
+
+    lane_records = %{"core" => core, "floor" => floor}
+
+    lane_paths = %{
+      "core" =>
+        ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
+      "floor" =>
+        ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json"
+    }
+
+    lane_summaries =
+      Map.new(lane_records, fn {lane, record} ->
+        rows = record["identity_rows"]
+
+        members = fn field ->
+          rows
+          |> Enum.flat_map(&Map.fetch!(&1, field))
+          |> Enum.uniq()
+          |> Enum.sort()
+          |> canonical_mfas!()
+        end
+
+        original = members.("original_live_mfas")
+        delivered = members.("delivered_scope_mfas")
+        pending = members.("pending_mfas")
+        exact_pending = MapSet.difference(MapSet.new(original), MapSet.new(delivered))
+        true = MapSet.new(pending) == exact_pending
+
+        target_gaps = record["target_source_gaps"]
+        required_gaps = record["required_evidence_gaps"]
+        caller = record["static_caller_evidence"]
+        source_evidence = record["source_and_caller_evidence"]
+        raw_hash = measurements["lane_record_sha256s"][lane]
+        true = is_binary(raw_hash) and byte_size(raw_hash) == 64
+
+        summary = %{
+          "record" => %{"path" => lane_paths[lane], "sha256" => raw_hash},
+          "generation" => record["generation"],
+          "identity" => record["identity"],
+          "membership_join_complete" => record["membership_join_complete"],
+          "source_join_complete" => record["source_join_complete"],
+          "target_source_coverage_complete" => record["target_source_coverage_complete"],
+          "scope_complete" => record["scope_complete"],
+          "inventory_universe" => record["inventory_universe"],
+          "identity_rows" => %{
+            "selector" => "$.identity_rows[*]",
+            "count" => length(rows),
+            "sha256" => record["membership_sha256"]
+          },
+          "existing_selected_mfas" => %{
+            "source_selectors" => ["$.selected_mfas", "$.live_mfas"],
+            "selected_count" => length(record["selected_mfas"]),
+            "selected_sha256" => digest(record["selected_mfas"]),
+            "live_count" => length(record["live_mfas"]),
+            "live_sha256" => digest(record["live_mfas"])
+          },
+          "membership" => %{
+            "original_live_mfas" => %{
+              "selector" => "$.identity_rows[*].original_live_mfas",
+              "count" => length(original),
+              "sha256" => digest(original)
+            },
+            "delivered_scope_mfas" => %{
+              "selector" => "$.identity_rows[*].delivered_scope_mfas",
+              "count" => length(delivered),
+              "sha256" => digest(delivered)
+            },
+            "pending_complement" => %{
+              "selector" => "unique_sorted_union($.identity_rows[*].pending_mfas)",
+              "set_difference" =>
+                "unique_sorted_union($.identity_rows[*].original_live_mfas) minus unique_sorted_union($.identity_rows[*].delivered_scope_mfas)",
+              "count" => length(pending),
+              "sha256" => digest(pending),
+              "source_record_sha256" => raw_hash
+            }
+          },
+          "target_source_associations" => %{
+            "count" => length(record["target_source_associations"]),
+            "sha256" => digest(record["target_source_associations"])
+          },
+          "target_source_gaps" => %{
+            "count" => length(target_gaps),
+            "records_sha256" => digest(target_gaps),
+            "reason_counts" => Enum.frequencies_by(target_gaps, & &1["reason"]),
+            "bounded_remedy" =>
+              "Bind each lane-pinned source path, size, digest, repository ref, lock, and archive row."
+          },
+          "required_evidence_gaps" => %{
+            "count" => length(required_gaps),
+            "records_sha256" => digest(required_gaps),
+            "reason_counts" => Enum.frequencies_by(required_gaps, & &1["reason"]),
+            "bounded_remedy" =>
+              "Complete current lane-pinned graph reconciliation and review callback/delegate provenance."
+          },
+          "source_and_caller_evidence" => %{
+            "sha256" => digest(source_evidence),
+            "exact_source_count" => length(source_evidence["exact_sources"]),
+            "matched_mfa_count" => length(source_evidence["matched_mfas"]),
+            "delegate_edge_count" => length(source_evidence["delegate_edges"]),
+            "review_count" => length(source_evidence["reviews"])
+          },
+          "static_caller_evidence" => %{
+            "complete" => caller["complete"],
+            "recommendation_gate" => caller["recommendation_gate"],
+            "edge_count" => length(caller["edges"]),
+            "edges_sha256" => digest(caller["edges"]),
+            "record_count" => length(caller["records"]),
+            "records_sha256" => digest(caller["records"]),
+            "graph_observation_bundle" => caller["graph_observation"],
+            "graph_observation_bundle_sha256" => digest(caller["graph_observation"]),
+            "required_gap_count" => length(caller["required_evidence_gaps"]),
+            "required_gaps_sha256" => digest(caller["required_evidence_gaps"])
+          },
+          "stops" => @stops
+        }
+
+        {lane, summary}
+      end)
+
+    evidence_complete =
+      Enum.all?(lane_records, fn {_lane, record} ->
+        record["membership_join_complete"] == true and
+          record["source_join_complete"] == true and
+          record["target_source_coverage_complete"] == true and
+          record["target_source_gaps"] == [] and
+          record["static_caller_evidence"]["complete"] == true and
+          record["required_evidence_gaps"] == []
+      end)
+
+    record = %{
+      "schema" => "fablebook.guard-aggregate-candidate-sizing/1",
+      "generation" => core["generation"],
+      "lane_records" => lane_summaries,
+      "candidate" => nil,
+      "candidates" => [],
+      "evidence_complete" => evidence_complete,
+      "source_join_complete" => evidence_complete,
+      "caller_closure_complete" => evidence_complete,
+      "global_gaps" =>
+        if(evidence_complete, do: [], else: ["target_source_and_caller_evidence_incomplete"]),
+      "candidate_fit" => %{
+        "status" => "not_measured_without_complete_source_and_caller_closure",
+        "context_tokens" => nil,
+        "source_tokens" => nil,
+        "effort_upper_working_days" => nil
+      },
+      "implementation_authorized" => false,
+      "measurements" => measurements
+    }
+
+    :ok = validate_sizing!(record)
+    record
   end
 
   def with_static_caller_crosswalk!(report, records)
