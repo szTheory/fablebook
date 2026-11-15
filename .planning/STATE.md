@@ -4,17 +4,18 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-status: "executing Plan 03-02"
-stopped_at: null
-last_updated: "2026-11-14T17:08:40Z"
+current_plan: 3
+status: ready for Plan 03-03
+stopped_at: Completed 03-02-PLAN.md on gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing
+last_updated: "2026-11-15T01:52:45.463Z"
 last_activity: 2026-11-14
-last_activity_desc: Plan 03-01 all-row aggregate join committed after required lane checks
-state_head: 12ecc23
+last_activity_desc: Plan 03-02 source/caller reconciliation committed locally with explicit gaps
+state_head: 3c3578fd484ee8dcd89f5da92b0380f0d17f59a1
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 5
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -33,17 +34,20 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 ## Current Position
 
 Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — execution underway
-Plan: 03-01 complete; Plan 03-02 is the next runnable plan.
-Status: Plan 03-01's complete core/floor row join and reconciliation report are committed at 12ecc23 after the focused and broad lane selectors, bundle check, formatting check, and structural integrity checks passed. The Task05 one-time lookup exception remains documented in INT-20261114-02 and its 12,000-token source cap remains fully charged. Plan 03-02 must establish a fresh context fit before any new source-body acquisition.
-Last activity: 2026-11-14 — Plan 03-01 implementation and evidence committed
+Current Plan: 3
+Total Plans in Phase: 5
+Progress: 2/5 plans complete ([░░░░░░░░░░] 0%)
+Plan: 03-01 and 03-02 complete; Plan 03-03 is next.
+Status: Plan 03-02 committed locally at 3c3578f after source/caller gap checks and focused core/floor selectors. Both lane records preserve Plan 03-01 partitions. Current graph coverage beyond the saved EX-010 projection remains an explicit required gap; candidate stays null, implementation authorization false, and aggregate gate open.
+Last activity: 2026-11-14 — Plan 03-02 source/caller reconciliation committed
 
 ## Active Handoff
 
-- Canonical planning checkout: ~/projects/fablebook, branch main. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
+- Canonical planning checkout remains ~/projects/fablebook on main after reconciliation. Current Plan 03-02 execution was committed locally on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; no push was made. The old worktree at ~/.claude/worktrees/agent-planning-main-261111 remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Unfinished: Phase 3 has five sequential plans. Plan 03-01 is complete; Plans 03-02 through 03-05 remain. Plan 03-02 source reads are gated on its own fresh context count and bounded read schedule.
+- Unfinished: Phase 3 has five sequential plans. Plans 03-01 and 03-02 are complete; Plans 03-03 through 03-05 remain. Plan 03-03 must use its own lifecycle preflight, bounded source schedule, and fresh context fit.
 - Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: execute Plan 03-02 after execute preflight and a fresh context-fit check; keep source reads within Plan 03-02's per-task file limits and use cheap shape/provenance checks before longer lane selectors. No owner action is needed; nothing was pushed.
+- Next action: the phase orchestrator may dispatch Plan 03-03 after its execute preflight and exact source-fit/review gates. Preserve the current graph and source gaps and all safety stops. No owner action is needed; nothing was pushed.
 - Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
 
 
@@ -62,6 +66,7 @@ Last activity: 2026-11-14 — Plan 03-01 implementation and evidence committed
 | Phase 02 P03 | 16min | 2 tasks | 1 file |
 | Phase 02 P04 | 9min | 2 tasks | 1 files |
 | Phase 02 P05 | 90min | 2 tasks | 5 files |
+| Phase 03 P02 | not reconstructed across resumed sessions | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -149,15 +154,16 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: Canonical checkout at ~/projects/fablebook on branch main, v0.4 Phase 3. Plan 03-01 completed and committed at 12ecc23; Plan 03-02 is next. Plan 01's approved event6 lookup remains charged against its full 12,000-token source cap, with no further source reads authorized by that plan. The historical 41,727-token fit and 90,727/100,000 upper bound are preserved in [03-01-05-FIT-RECEIPT.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-01-05-FIT-RECEIPT.md); Plan 03-02 requires its own fresh fit. Candidate stays null, implementation unauthorized, aggregate gate open, source join open, Walking Skeleton blocked, SEC-01 Pending, and static-only, collision, and Macro stops remain binding. Nothing was pushed.
+Active planning target: v0.4 Phase 3 in ~/projects/fablebook. Plan 03-02 was executed on `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`, with local commits 16c929c, 2ff63f4, and 3c3578f; no push. Plans 03-01 and 03-02 are complete; 03-03 through 03-05 remain. Only the selected EX-010 graph projection has caller edges; other targets and current graph freshness remain explicit gaps. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, actual-collision, and Macro stops remain binding.
 
-Last session: 2026-11-14 (America/New_York)
+Last session: 2026-11-15T01:52:01.773Z
+Stopped at: Completed 03-02-PLAN.md on gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing
 
-Active again after Plan 03-01 completion; Plan 03-02 is ready to execute within its reviewed scope and limits.
+Plan 03-02 execution and local commits are complete. No user action is needed; the phase orchestrator acts next by starting Plan 03-03 under its own gates.
 
-Next action: execute preflight, measure Plan 03-02 context fit, then perform its bounded source mapping with cheap consistency checks before longer selectors; no owner action is needed.
+Next action: run Plan 03-03 execute preflight and its exact independent source-fit/review gate, then continue with bounded checks. Do not reuse Plan 03-02's graph projection as evidence of current complete graph coverage.
 
-Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-02-PLAN.md
+Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-03-PLAN.md
 
 ## Decisions
 
@@ -171,6 +177,9 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 - [Phase 02]: Static source evidence does not establish runtime behavior, dynamic callers, native internals, or SEC-01 safety.
 - [Phase 02]: The owner selected separate deliveries. PR #87 and PR #88 both merged with matching final-head/main CI receipts; final Phase 2 verification binds to the reviewed source slice and preserves wider gates.
 - [Phase 02]: T-02-08 is closed against actual merge/main receipts. T-02-11 and T-02-SC close for their recorded events; four medium collision-verification limitations remain open below the high blocking threshold, with the manual D-06 owner stop binding.
+- [Phase 03]: Preserve only lane/hash-scoped caller edges when source identity is proven; record all other graph and callback coverage as keyed gaps.
+- [Phase 03]: Treat the saved EX-010 graph projection as scoped historical evidence, not a complete current graph or a dynamic-caller absence claim.
+- [Phase 03]: Keep candidate null and recommendation disabled while any required source, graph, callback, or delegate gap remains.
 
 ### Blockers
 
