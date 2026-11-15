@@ -74,7 +74,7 @@ byte count, line count, and SHA-256; all eight matched. The schedule does not
 authorize a body read by itself: execute preflight and a fresh direct combined
 count remain required immediately before emission.
 
-## Plan 03-02 Task 2 source schedule — review pending
+## Plan 03-02 Task 2 source schedule — reviewed-pass
 
 Task 1's focused lane records and source-gap crosswalk passed the keyed integrity
 checks. Execute preflight passed again before this count. No Task 2 source body
@@ -113,3 +113,48 @@ review and a fresh execute preflight/count after review are required before
 emission. Static-only collection, explicit unknowns, `candidate=null`,
 `implementation_authorized=false`, `aggregate_gate=open`, Walking Skeleton
 blocked, and SEC-01 Pending remain binding.
+
+## Task 2 independent schedule review
+
+**PASS — 2026-11-14.** The six scheduled ranges cover the three Task 2 source
+files named in the plan, within its five-file limit. An opaque-byte check matched
+each recorded byte count, line count, and SHA-256 without emitting or semantically
+inspecting source text. The 4,892-token schedule is within Task 2's 6,000-token
+cap, leaving 1,108 tokens. Before this review receipt was appended, the
+59,391-token direct combined count included Task 1 source context and the exact
+Task 2 spans. Adding the remaining Task 2 allowance, 5,000-token output
+allowance, and 2,000-token post-count receipt/framing cushion gives
+67,499/69,000 working tokens and 98,499/100,000 total with the fixed 31,000-token
+reserve. The ranges match Task 2's planned collector, graph-contract, and
+InstalledOtp evidence scope. Evidence scope and safety stops are unchanged.
+
+This review does not authorize source-body acquisition. Run execute preflight
+and a fresh direct combined count including this receipt before any Task 2 body
+is emitted.
+
+## Refreshed Task 2 acquisition gate and actual scope
+
+After the independent PASS and a fresh `bin/planning_health --stage execute
+--phase 3`, the free count-only endpoint returned **60,026 tokens** for the 20
+selected documents, the eight previously emitted Task 1 spans, the six exact
+Task 2 spans, and selected keyed core/floor lane evidence. This was the required
+pre-emission count for the approved spans. After those spans were emitted, it
+became clear that the two keyed graph-observation records also needed to be
+included in the measured context. A second direct count with those selected
+records returned **60,661 tokens**. This sequencing deviation used 635 tokens of
+the reserved cushion; the fresh total projection remained below the cap. No graph
+aggregate or additional source body was emitted. The Task 2 exact spans remain
+4,892 tokens; 1,108 remain in its 6,000-token source allowance.
+
+`60,661 + 1,108 + 5,000 output + 2,000 cushion = 68,769 / 69,000 working
+tokens`; adding the unchanged 31,000 reserve gives `99,769 / 100,000`, with 231
+tokens of slack. The count includes the current review receipt and selected
+graph metadata. The scheduled spans were emitted once only. Task 1 consumed
+6,253 source tokens and Task 2 consumed 4,892, for 11,145 / 17,000 total.
+
+The saved graph observations contain only the selected EX-010 projection, not
+a fresh complete graph. Both lane records retain exact links for those observed
+edges and mark current graph reconciliation, callback/delegate review, and all
+other target coverage as explicit required gaps. Recommendation remains false;
+candidate, implementation authority, aggregate, Walking Skeleton, and SEC-01
+stops are unchanged.

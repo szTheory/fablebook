@@ -5807,32 +5807,42 @@ defmodule Fablebook.Contract.TierSweepTest do
   @tag :guard_aggregate_reconciliation_callers
   test "caller graph records preserve exact observations and explicit gaps" do
     module = Fablebook.Test.GuardAggregateReconciliationEvidence
+    Code.ensure_loaded!(module)
     assert function_exported?(module, :attach_static_callers!, 2)
 
     if function_exported?(module, :attach_static_callers!, 2) do
       evidence = SweepEvidence.source_roots!()
       on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
       lane = to_string(evidence.lane.name)
+
       directory =
         Path.expand(
           "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
           __DIR__
         )
+
       record_path = Path.join(directory, "03-#{String.upcase(lane)}-AGGREGATE-EVIDENCE.json")
       original = record_path |> File.read!() |> Jason.decode!()
+
       graph_path =
         Path.expand(
           "../../.planning/milestones/v0.2-phases/01-bounded-guard-continuation/01-GRAPH-OBSERVATIONS.json",
           __DIR__
         )
+
       graph_bytes = File.read!(graph_path)
       graph_document = Jason.decode!(graph_bytes)
+
       graph_observation =
         graph_document
         |> Map.fetch!("lanes")
         |> Map.fetch!(lane)
+        |> Map.put("lane", lane)
         |> Map.put("observation_path", Path.relative_to(graph_path, File.cwd!()))
-        |> Map.put("observation_sha256", :crypto.hash(:sha256, graph_bytes) |> Base.encode16(case: :lower))
+        |> Map.put(
+          "observation_sha256",
+          :crypto.hash(:sha256, graph_bytes) |> Base.encode16(case: :lower)
+        )
 
       enriched = apply(module, :attach_static_callers!, [original, graph_observation])
       caller_evidence = enriched["static_caller_evidence"]
@@ -5841,17 +5851,158 @@ defmodule Fablebook.Contract.TierSweepTest do
 
       assert enriched["membership_sha256"] == original["membership_sha256"]
       assert enriched["identity_rows"] == original["identity_rows"]
-      assert length(records) == Enum.sum(Enum.map(original["identity_rows"], &length(&1["live_mfas"])))
+
+      assert length(records) ==
+               Enum.sum(Enum.map(original["identity_rows"], &length(&1["live_mfas"])))
+
       assert Enum.any?(known, &(&1["mfa"] == ["inets", "enable_trace", 2]))
       assert Enum.any?(known, &(&1["mfa"] == ["inets", "enable_trace", 3]))
       assert Enum.all?(known, &(&1["status"] == "observed_scoped_graph"))
+      assert Enum.all?(known, &(&1["observed_outgoing_edges"] != []))
+      assert Enum.all?(known, &(&1["delegate_paths"] != []))
+
+      assert Enum.all?(caller_evidence["edges"], fn edge ->
+               is_binary(edge["caller_source_key"]) and is_binary(edge["callee_source_key"]) and
+                 is_binary(edge["delegate_path_key"]) and
+                 edge["callee_arity"] == "linked_from_scoped_delegate" and edge["citations"] != []
+             end)
+
       assert caller_evidence["required_evidence_gaps"] != []
       assert caller_evidence["recommendation_gate"] == false
       assert enriched["candidate"] == nil
       assert enriched["aggregate_gate"] == "open"
       assert enriched["implementation_authorized"] == false
-      assert enriched["sec_01"]["status"] == "Pending"
-      assert enriched["walking_skeleton"]["status"] == "blocked"
+      assert enriched["sec_01"] == "Pending"
+      assert enriched["walking_skeleton"] == "blocked"
+
+      other_lane = if lane == "core", do: "floor", else: "core"
+
+      assert_raise MatchError, fn ->
+        apply(module, :attach_static_callers!, [
+          original,
+          Map.put(graph_observation, "lane", other_lane)
+        ])
+      end
+
+      missing_edges = Map.put(graph_observation, "active_projection_edges", [])
+      missing_edge_record = apply(module, :attach_static_callers!, [original, missing_edges])
+
+      assert Enum.any?(
+               missing_edge_record["static_caller_evidence"]["records"],
+               fn caller_record ->
+                 caller_record["identity_id"] == "EX-010" and
+                   "selected_graph_edges_missing" in Enum.map(
+                     caller_record["gaps"],
+                     & &1["reason"]
+                   )
+               end
+             )
+
+      duplicated_permuted =
+        Map.update!(graph_observation, "active_projection_edges", fn edges ->
+          [hd(edges) | Enum.reverse(edges)]
+        end)
+
+      permuted_record = apply(module, :attach_static_callers!, [original, duplicated_permuted])
+      assert permuted_record["static_caller_evidence"]["edges"] == caller_evidence["edges"]
+
+      cycle_edge = %{
+        "module" => "inets_trace",
+        "function" => "enable",
+        "arity" => 2,
+        "callee_module" => "inets",
+        "callee_function" => "enable_trace",
+        "callee_arity" => 2,
+        "kind" => "active_edge"
+      }
+
+      cycle_graph =
+        Map.update!(graph_observation, "active_projection_edges", fn edges ->
+          [cycle_edge | edges]
+        end)
+
+      cycle_record = apply(module, :attach_static_callers!, [original, cycle_graph])
+
+      assert Enum.count(
+               cycle_record["static_caller_evidence"]["edges"],
+               &(&1["cycle_marker"] == "two_edge_cycle")
+             ) == 2
+
+      no_delegate_record =
+        put_in(original, ["source_and_caller_evidence", "delegate_edges"], [])
+        |> then(&apply(module, :attach_static_callers!, [&1, graph_observation]))
+
+      assert Enum.any?(
+               no_delegate_record["static_caller_evidence"]["required_evidence_gaps"],
+               fn gap ->
+                 gap["reason"] == "delegate_path_provenance_missing"
+               end
+             )
+
+      invalid_gaps =
+        put_in(enriched, ["static_caller_evidence", "required_evidence_gaps"], [])
+
+      assert_raise MatchError, fn ->
+        apply(module, :validate_static_callers!, [invalid_gaps])
+      end
+
+      if System.get_env("FABLEBOOK_GUARD_AGGREGATE_CALLER_WRITE") == "1" do
+        for output_lane <- ["core", "floor"] do
+          output_path =
+            Path.join(directory, "03-#{String.upcase(output_lane)}-AGGREGATE-EVIDENCE.json")
+
+          output_record = output_path |> File.read!() |> Jason.decode!()
+
+          output_observation =
+            graph_document
+            |> Map.fetch!("lanes")
+            |> Map.fetch!(output_lane)
+            |> Map.put("lane", output_lane)
+            |> Map.put("observation_path", Path.relative_to(graph_path, File.cwd!()))
+            |> Map.put(
+              "observation_sha256",
+              :crypto.hash(:sha256, graph_bytes) |> Base.encode16(case: :lower)
+            )
+
+          enriched_record =
+            apply(module, :attach_static_callers!, [output_record, output_observation])
+
+          temporary = output_path <> ".tmp"
+          File.write!(temporary, Jason.encode_to_iodata!(enriched_record, pretty: true))
+          File.rename!(temporary, output_path)
+        end
+
+        core =
+          directory
+          |> Path.join("03-CORE-AGGREGATE-EVIDENCE.json")
+          |> File.read!()
+          |> Jason.decode!()
+
+        floor =
+          directory
+          |> Path.join("03-FLOOR-AGGREGATE-EVIDENCE.json")
+          |> File.read!()
+          |> Jason.decode!()
+
+        report = module.render_crosswalk!(core, floor)
+        report = module.with_source_crosswalk!(report, [core, floor])
+        report = module.with_static_caller_crosswalk!(report, [core, floor])
+        :ok = module.check_bundle!([core, floor], report)
+
+        report_path = Path.join(directory, "03-RECONCILIATION.md")
+
+        content = [
+          "# Phase 03 aggregate reconciliation\n\n",
+          "Lane and row membership is preserved. Caller edges below are scoped to saved graph observations; missing graph/source/callback provenance remains explicit and blocks recommendation. Dynamic and native boundaries remain unproven.\n\n",
+          "```json\n",
+          Jason.encode_to_iodata!(report, pretty: true),
+          "\n```\n"
+        ]
+
+        temporary_report = report_path <> ".tmp"
+        File.write!(temporary_report, content)
+        File.rename!(temporary_report, report_path)
+      end
     end
   end
 

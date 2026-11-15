@@ -297,7 +297,13 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
 
     if Enum.all?([core, floor], &(&1["target_source_coverage_complete"] == true)) do
       expected = Map.put(expected, "source_crosswalk", source_crosswalk!([core, floor]))
-      true = report == expected
+
+      if Enum.all?([core, floor], &is_map(&1["static_caller_evidence"])) do
+        expected = with_static_caller_crosswalk!(expected, [core, floor])
+        true = report == expected
+      else
+        true = report == expected
+      end
     else
       true = report == expected
     end
@@ -502,6 +508,431 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
       |> Enum.sort_by(& &1["key"])
 
     %{"rows" => rows, "required_source_gaps" => gaps}
+  end
+
+  def attach_static_callers!(record, observation)
+      when is_map(record) and is_map(observation) do
+    :ok = validate_aggregate_lane!(record)
+    :ok = validate_target_sources!(record)
+    lane = record["lane"]
+    true = observation["lane"] == lane
+    true = is_binary(observation["observation_path"])
+    true = is_binary(observation["observation_sha256"])
+    true = byte_size(observation["observation_sha256"]) == 64
+    true = is_binary(observation["log_sha256"])
+    true = byte_size(observation["log_sha256"]) == 64
+
+    observed_mfas =
+      observation["selected_mfas"]
+      |> Enum.map(&caller_observation_mfa!/1)
+      |> Enum.uniq()
+      |> Enum.sort()
+
+    source_records = caller_source_records(record)
+
+    edges =
+      (observation["active_projection_edges"] || [])
+      |> Enum.map(&caller_observation_edge!(&1, lane, record, source_records))
+      |> Enum.uniq_by(& &1["key"])
+      |> Enum.sort_by(& &1["key"])
+
+    incoming =
+      (observation["active_projection_incoming_edges"] || [])
+      |> Enum.map(&caller_observation_edge!(&1, lane, record, source_records))
+      |> Enum.uniq_by(& &1["key"])
+      |> Enum.sort_by(& &1["key"])
+
+    edges = caller_mark_two_edge_cycles(edges ++ incoming)
+
+    targets =
+      for row <- record["identity_rows"], mfa <- row["live_mfas"] do
+        {row["identity"]["id"], mfa}
+      end
+
+    caller_records =
+      Enum.map(targets, fn {identity_id, mfa} ->
+        selected = Enum.any?(observed_mfas, &(&1 == mfa))
+        outgoing = Enum.filter(edges, &(&1["from"] == mfa))
+
+        incoming_edges =
+          Enum.filter(incoming, fn edge ->
+            edge["to"] == mfa or
+              (is_nil(List.last(edge["to"])) and Enum.take(edge["to"], 2) == Enum.take(mfa, 2))
+          end)
+
+        delegate_paths = caller_delegate_paths(record, mfa)
+
+        finding_refs =
+          if identity_id == "EX-010" do
+            record["source_and_caller_evidence"]["selected_function_evidence"]
+            |> Enum.filter(&caller_finding_matches?(&1, mfa))
+            |> Enum.map(fn finding ->
+              citations = finding["citations"] || []
+              source = caller_source_for_mfa(record, mfa)
+
+              %{
+                "key" =>
+                  "finding:" <>
+                    digest(%{"lane" => lane, "mfa" => mfa, "citations" => citations}),
+                "source_key" => source,
+                "citations" => citations,
+                "callback_boundary" => finding["callback_boundary"],
+                "fixed_native_boundary" => finding["fixed_native_boundary"]
+              }
+            end)
+          else
+            []
+          end
+
+        graph_gap =
+          if selected do
+            []
+          else
+            [caller_gap!(lane, identity_id, mfa, "selected_graph_observation_missing")]
+          end
+
+        freshness_gap =
+          [caller_gap!(lane, identity_id, mfa, "current_graph_reconciliation_missing")]
+
+        callback_gap =
+          if finding_refs == [] or Enum.any?(finding_refs, &is_binary(&1["callback_boundary"])) do
+            [caller_gap!(lane, identity_id, mfa, "callback_and_delegate_provenance_unreviewed")]
+          else
+            []
+          end
+
+        edge_gap =
+          if selected and outgoing == [] and incoming_edges == [] do
+            [caller_gap!(lane, identity_id, mfa, "selected_graph_edges_missing")]
+          else
+            []
+          end
+
+        delegate_gap =
+          if outgoing != [] and delegate_paths == [] do
+            [caller_gap!(lane, identity_id, mfa, "delegate_path_provenance_missing")]
+          else
+            []
+          end
+
+        edge_source_gap =
+          if Enum.any?(outgoing ++ incoming_edges, fn edge ->
+               not is_binary(edge["caller_source_key"]) or
+                 not is_binary(edge["callee_source_key"])
+             end) do
+            [caller_gap!(lane, identity_id, mfa, "edge_source_identity_missing")]
+          else
+            []
+          end
+
+        gaps =
+          graph_gap ++
+            freshness_gap ++ callback_gap ++ edge_gap ++ delegate_gap ++ edge_source_gap
+
+        %{
+          "identity_id" => identity_id,
+          "mfa" => mfa,
+          "status" => if(selected, do: "observed_scoped_graph", else: "graph_evidence_missing"),
+          "observed_incoming_edges" => Enum.map(incoming_edges, & &1["key"]),
+          "observed_outgoing_edges" => Enum.map(outgoing, & &1["key"]),
+          "delegate_paths" => delegate_paths,
+          "finding_refs" => finding_refs,
+          "dynamic_boundary" => "unproven",
+          "gap_keys" => Enum.map(gaps, & &1["key"]),
+          "gaps" => gaps
+        }
+      end)
+      |> Enum.sort_by(&{&1["identity_id"], &1["mfa"]})
+
+    gaps =
+      caller_records
+      |> Enum.flat_map(& &1["gaps"])
+      |> Enum.uniq_by(& &1["key"])
+      |> Enum.sort_by(& &1["key"])
+
+    evidence = %{
+      "schema" => "guard-aggregate-static-caller-evidence/1",
+      "lane" => lane,
+      "graph_observation" => %{
+        "path" => observation["observation_path"],
+        "sha256" => observation["observation_sha256"],
+        "log_sha256" => observation["log_sha256"],
+        "selected_mfas" => observed_mfas,
+        "selected_original_id" => "EX-010",
+        "scope" => "saved selected projection only; current graph completeness is unproven"
+      },
+      "edges" => Enum.sort_by(edges ++ incoming, & &1["key"]),
+      "source_records" => source_records,
+      "records" => caller_records,
+      "required_evidence_gaps" => gaps,
+      "complete" => false,
+      "recommendation_gate" => false
+    }
+
+    record
+    |> Map.put("static_caller_evidence", evidence)
+    |> Map.put("required_evidence_gaps", gaps)
+    |> tap(fn enriched -> :ok = validate_static_callers!(enriched) end)
+  end
+
+  def validate_static_callers!(record) when is_map(record) do
+    evidence = record["static_caller_evidence"]
+    true = is_map(evidence)
+    true = evidence["lane"] == record["lane"]
+    true = evidence["complete"] == false
+    true = evidence["recommendation_gate"] == false
+    true = record["candidate"] == nil
+    true = record["implementation_authorized"] == false
+
+    expected =
+      for row <- record["identity_rows"],
+          mfa <- row["live_mfas"],
+          do: {row["identity"]["id"], mfa}
+
+    actual = Enum.map(evidence["records"], &{&1["identity_id"], &1["mfa"]})
+    true = length(actual) == length(Enum.uniq(actual))
+    true = Enum.sort(actual) == Enum.sort(expected)
+    gap_keys = Enum.map(evidence["required_evidence_gaps"], & &1["key"])
+    true = length(gap_keys) == length(Enum.uniq(gap_keys))
+    true = gap_keys != []
+    true = record["required_evidence_gaps"] == evidence["required_evidence_gaps"]
+
+    Enum.each(evidence["records"], fn caller_record ->
+      true = caller_record["dynamic_boundary"] == "unproven"
+      true = Enum.all?(caller_record["gap_keys"], &(&1 in gap_keys))
+
+      true =
+        Enum.all?(
+          caller_record["observed_incoming_edges"],
+          &(&1 in Enum.map(evidence["edges"], fn e -> e["key"] end))
+        )
+
+      true =
+        Enum.all?(
+          caller_record["observed_outgoing_edges"],
+          &(&1 in Enum.map(evidence["edges"], fn e -> e["key"] end))
+        )
+    end)
+
+    :ok
+  end
+
+  def with_static_caller_crosswalk!(report, records)
+      when is_map(report) and is_list(records) do
+    rows =
+      records
+      |> Enum.sort_by(& &1["lane"])
+      |> Enum.flat_map(fn record ->
+        :ok = validate_static_callers!(record)
+
+        Enum.map(record["static_caller_evidence"]["records"], fn caller_record ->
+          Map.take(caller_record, [
+            "identity_id",
+            "mfa",
+            "status",
+            "observed_incoming_edges",
+            "observed_outgoing_edges",
+            "delegate_paths",
+            "finding_refs",
+            "dynamic_boundary",
+            "gap_keys"
+          ])
+          |> Map.put("lane", record["lane"])
+        end)
+      end)
+
+    gaps =
+      records
+      |> Enum.flat_map(& &1["static_caller_evidence"]["required_evidence_gaps"])
+      |> Enum.uniq_by(& &1["key"])
+      |> Enum.sort_by(& &1["key"])
+
+    Map.put(report, "static_caller_crosswalk", %{
+      "rows" => rows,
+      "required_evidence_gaps" => gaps,
+      "recommendation_gate" => false
+    })
+  end
+
+  defp caller_observation_mfa!(text) when is_binary(text) do
+    case Regex.run(~r/^([^:]+):([^\/]+)\/(\d+)$/, text) do
+      [_, module, function, arity] -> [module, function, String.to_integer(arity)]
+      _ -> raise ArgumentError, "invalid selected MFA in graph observation"
+    end
+  end
+
+  defp caller_observation_edge!(edge, lane, record, source_records) when is_map(edge) do
+    from = [edge["module"], edge["function"], edge["arity"]]
+    observed_to = [edge["callee_module"], edge["callee_function"], edge["callee_arity"]]
+    true = Enum.all?(from, &(!is_nil(&1)))
+    true = Enum.all?(Enum.take(observed_to, 2), &(!is_nil(&1)))
+
+    delegate =
+      Enum.find(record["source_and_caller_evidence"]["delegate_edges"], fn candidate ->
+        candidate["caller"] == from and
+          Enum.take(candidate["callee"], 2) == Enum.take(observed_to, 2)
+      end)
+
+    to = if delegate, do: delegate["callee"], else: observed_to
+    caller_path = Path.basename(hd(from)) <> ".erl"
+
+    caller_source_key =
+      caller_source_for_mfa(record, from) ||
+        caller_source_for_basename(source_records, caller_path)
+
+    callee_path = Path.basename(hd(Enum.take(to, 2))) <> ".erl"
+    callee_source_key = caller_source_for_basename(source_records, callee_path)
+    delegate_key = if delegate, do: caller_delegate_key(lane, delegate), else: nil
+
+    identity = %{
+      "lane" => lane,
+      "from" => from,
+      "to" => to,
+      "kind" => edge["kind"],
+      "caller_source_key" => caller_source_key,
+      "callee_source_key" => callee_source_key,
+      "delegate_path_key" => delegate_key
+    }
+
+    %{
+      "key" => "edge:" <> digest(identity),
+      "lane" => lane,
+      "from" => from,
+      "to" => to,
+      "kind" => edge["kind"],
+      "caller_source_key" => caller_source_key,
+      "callee_source_key" => callee_source_key,
+      "delegate_path_key" => delegate_key,
+      "citations" => if(delegate, do: delegate["citations"], else: []),
+      "callee_arity" =>
+        if(is_integer(List.last(to)),
+          do: "linked_from_scoped_delegate",
+          else: "unresolved_in_graph_observation"
+        )
+    }
+  end
+
+  defp caller_mark_two_edge_cycles(edges) do
+    pairs = MapSet.new(edges, &{&1["from"], &1["to"]})
+
+    Enum.map(edges, fn edge ->
+      reverse = {edge["to"], edge["from"]}
+
+      Map.put(
+        edge,
+        "cycle_marker",
+        if(MapSet.member?(pairs, reverse), do: "two_edge_cycle", else: nil)
+      )
+    end)
+  end
+
+  defp caller_finding_matches?(finding, ["inets", "enable_trace", arity]) do
+    expected_call =
+      if arity == 2,
+        do: "inets_trace:enable(Level, Dest)",
+        else: "inets_trace:enable(Level, Dest, Service)"
+
+    Enum.any?(finding["citations"] || [], fn
+      [path, reference] ->
+        String.ends_with?(path, "/inets.erl") and String.contains?(reference, expected_call)
+
+      _ ->
+        false
+    end)
+  end
+
+  defp caller_finding_matches?(_finding, _mfa), do: false
+
+  defp caller_source_for_mfa(record, mfa) do
+    Enum.find_value(record["target_source_associations"], fn association ->
+      if association["mfa"] == mfa and association["status"] == "cited_static_evidence",
+        do: association["source_key"]
+    end)
+  end
+
+  defp caller_delegate_paths(record, mfa) do
+    record["source_and_caller_evidence"]["delegate_edges"]
+    |> Enum.filter(&(&1["caller"] == mfa))
+    |> Enum.map(fn edge ->
+      %{
+        "key" => caller_delegate_key(record["lane"], edge),
+        "source_key" => caller_source_for_mfa(record, mfa),
+        "caller" => edge["caller"],
+        "callee" => edge["callee"],
+        "citations" => edge["citations"]
+      }
+    end)
+    |> Enum.sort_by(& &1["key"])
+  end
+
+  defp caller_delegate_key(lane, edge) do
+    "delegate:" <>
+      digest(%{
+        "lane" => lane,
+        "caller" => edge["caller"],
+        "callee" => edge["callee"],
+        "citations" => edge["citations"]
+      })
+  end
+
+  defp caller_source_records(record) do
+    base = List.first(record["target_source_records"])
+    true = is_map(base)
+
+    record["source_and_caller_evidence"]["exact_sources"]
+    |> Enum.map(fn [path, bytes, sha256] ->
+      identity = %{
+        "lane" => record["lane"],
+        "repository_ref" => base["repository_ref"],
+        "lock_sha256" => record["lock_sha256"],
+        "archive_sha256" => base["archive_sha256"],
+        "relative_path" => path,
+        "bytes" => bytes,
+        "sha256" => sha256
+      }
+
+      existing = Enum.find(record["target_source_records"], &(&1["relative_path"] == path))
+
+      %{
+        "key" => if(existing, do: existing["key"], else: "source:" <> digest(identity)),
+        "lane" => record["lane"],
+        "repository_ref" => base["repository_ref"],
+        "lock_sha256" => record["lock_sha256"],
+        "archive_sha256" => base["archive_sha256"],
+        "relative_path" => path,
+        "bytes" => bytes,
+        "sha256" => sha256,
+        "evidence_status" => "existing_lane_scoped_exact_source_hash"
+      }
+    end)
+    |> Enum.uniq_by(& &1["key"])
+    |> Enum.sort_by(& &1["key"])
+  end
+
+  defp caller_source_for_basename(source_records, basename) do
+    case Enum.find(source_records, &String.ends_with?(&1["relative_path"], "/" <> basename)) do
+      %{"key" => key} -> key
+      nil -> nil
+    end
+  end
+
+  defp caller_gap!(lane, identity_id, mfa, reason) do
+    identity = %{
+      "lane" => lane,
+      "identity_id" => identity_id,
+      "mfa" => mfa,
+      "reason" => reason
+    }
+
+    %{
+      "key" => "caller-gap:" <> digest(identity),
+      "lane" => lane,
+      "identity_id" => identity_id,
+      "mfa" => mfa,
+      "reason" => reason,
+      "remedy" =>
+        "Provide a complete lane- and lock-pinned static graph snapshot with exact incoming/outgoing edges and source provenance for this MFA."
+    }
   end
 
   def parse_mfa_identity!(value) when is_binary(value) do
