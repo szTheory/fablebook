@@ -2,14 +2,14 @@
   "schema_version": "04.resource-ledger.1",
   "envelope": "ENV-20261117-06",
   "effective_at_utc": "2026-11-17T21:22:12.376Z",
-  "measured_at_utc": "2026-11-17T21:45:32.266Z",
+  "measured_at_utc": "2026-11-17T21:48:33.530Z",
   "generated_output_ceiling": 650000,
   "working_ceiling": 610000,
   "protected_reserve": 40000,
   "starting_generated_output_usage": 0,
   "post_reset_usage": {
-    "output_tokens": 592316,
-    "session_attribution": "Exact parent output delta from ENV-05 baseline plus completed provenance-audit and plan-review threads at 2026-11-17T21:45:32.266Z.",
+    "output_tokens": 601913,
+    "session_attribution": "Exact parent output delta from ENV-05 baseline plus completed audit and plan-review threads at 2026-11-17T21:48:33.530Z",
     "sessions": [
       {
         "thread_id": "01a1e766-afb2-77a1-8977-350fde6d15dd",
@@ -17,9 +17,9 @@
         "counter": "payload.thread_token_usage.output_tokens",
         "baseline_at_utc": "2026-11-17T18:46:55.030Z",
         "baseline_output_tokens": 1057978,
-        "current_at_utc": "2026-11-17T21:45:32.266Z",
-        "current_output_tokens": 1591445,
-        "delta_output_tokens": 533467,
+        "current_at_utc": "2026-11-17T21:48:33.530Z",
+        "current_output_tokens": 1601042,
+        "delta_output_tokens": 543064,
         "status": "active"
       },
       {
@@ -45,8 +45,8 @@
     ],
     "accounting_note": "The cumulative ENV-06 usage is the reconciled total recorded in the renewal receipt. The review allowance overrun is already included; no additional review will be dispatched."
   },
-  "remaining_working_balance": 17684,
-  "remaining_total_balance": 57684,
+  "remaining_working_balance": 8087,
+  "remaining_total_balance": 48087,
   "protected_reserve_preserved": true,
   "usage_attributed": true,
   "status": "measured_with_request_blocked",
@@ -64,10 +64,10 @@
     "04-03_tasks_1_and_2_max_output": 4000,
     "03-05_tasks_2_and_3_max_output": 38000,
     "all_caps_total": 58000,
-    "current_working_balance": 17684,
+    "current_working_balance": 8087,
     "minimum_future_contingency": 10000,
-    "current_shortfall_including_contingency": 50316,
-    "note": "No task starts under this envelope. Exact counters must be reconciled before any continuation."
+    "current_shortfall_including_contingency": 59913,
+    "note": "No task starts under this envelope; reconcile all later output before continuation."
   },
   "task_caps": {
     "04-02-01": {
@@ -112,5 +112,5 @@
   "reset_receipt_sha256": "5bf7584b664b6516bdd635ed77afede810ec9c28351dde78dbda9047ff0b4b6d",
   "stop_rule": "No source request or Phase 3 Task 2/3 work starts under the current measured balance. Preserve source access closed and the protected 40,000 reserve. Any continuation requires an explicit bounded owner-approved replan; no automatic renewal or unchanged retry.",
   "active_replan": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261117-06.md",
-  "active_replan_sha256": "4eeb67bfb55812473a2808bc34712884ed527553a24916e39fa35cf1f9077864"
+  "active_replan_sha256": "3a8ff1ddd077fcfee0cc1e3fc33b1ffd23f72843d09da6b1285eb88d4c7dacb2"
 }

@@ -35,7 +35,7 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — OPEN. Plan 03-05 Task 1 is complete; Tasks 2–3 are not-run and remain behind Phase 4 evidence gates.
 Current Plan: 5 of 5
-Status: At 2026-11-17T21:45:32.266Z, ENV-06 use is 592,316; 17,684 working tokens remain, with 40,000 protected. The remaining Phase 3 task cap is 38,000 before contingency, so execution cannot start within the approved ceiling.
+Status: At 2026-11-17T21:48:33.530Z, ENV-06 use is 601,913; 8,087 working tokens remain, with 40,000 protected. The remaining Phase 3 task cap is 38,000 before contingency, so execution cannot start within the approved ceiling.
 Last activity: 2026-11-17 — corrected the ENV-06 validator ceiling, passed cheap consistency checks, and recorded the exact budget stop.
 
 ## Active Handoff
@@ -44,8 +44,8 @@ Last activity: 2026-11-17 — corrected the ENV-06 validator ceiling, passed che
 - Completed: Phase 3 Plan 03-05 Task 1; Phase 4 preservation bridge and metadata rebind reviews; blocked and supported partitions; input reconciliation; validator self-test (31 checks); Phase 3 and Phase 4 execute preflights.
 - Unfinished: Phase 4 R1 schedule/review/direct count and final review/handoff/summary; Phase 3 Plan 03-05 Tasks 2–3. No source body was read or emitted, no direct count or long suite ran.
 - Safety stops: source access closed; no audited OTP/runtime paths, candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 pending. Preserve the 40,000 reserve.
-- Budget: one-time ceiling 650,000 total / 610,000 working / 40,000 reserve. Current measured use 592,316; remaining working balance 17,684. The 38,000 Phase 3 cap is short by 20,316 even before the required 10,000 contingency. The exact next-step arithmetic and receipts are in [the budget stop replan](phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261117-06.md) and [resource ledger](phases/04-evidence-only-source-and-gap-provenance-closure/04-RESOURCE-LEDGER.json).
-- Next actor: the owner must authorize a new bounded ceiling/replan to continue. The calculated minimum total ceiling is 700,316; recommend rounding once to 705,000 while keeping the reserve at 40,000. If not, keep Phase 3 open and do not start the gated tasks.
+- Budget: one-time ceiling 650,000 total / 610,000 working / 40,000 reserve. Current measured use 601,913; remaining working balance 8,087. The 38,000 Phase 3 cap is short by 29,913 even before the required 10,000 contingency. The exact next-step arithmetic and receipts are in [the budget stop replan](phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261117-06.md) and [resource ledger](phases/04-evidence-only-source-and-gap-provenance-closure/04-RESOURCE-LEDGER.json).
+- Next actor: the owner must authorize a new bounded ceiling/replan to continue. The calculated minimum total ceiling is 709,913; recommend rounding once to 715,000 while keeping the reserve at 40,000. If not, keep Phase 3 open and do not start the gated tasks.
 - Provenance: INT-20261117-10 is the one-time 650,000 authorization. No further renewal is automatic.
 
 
