@@ -5,12 +5,12 @@ milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
 current_plan: 5
-status: "Phase 3 recovery stopped at the budget reconciliation gate; source access remains closed"
-stopped_at: "Plan 04-02 not started: measured child output exceeds the Plan 04-01 allocation and aggregate usage is unavailable"
-last_updated: "2026-11-17T14:53:09Z"
+status: "Phase 3 recovery paused at the owner-selected budget hold; source access remains closed"
+stopped_at: "Owner selected hold at the current cap until aggregate usage is measurable and the remaining scope fits"
+last_updated: "2026-11-17T15:16:51Z"
 last_activity: 2026-11-17
-last_activity_desc: The child log shows 81,800 output tokens across Plan 04-01 and Plan 04-02 setup, exceeding their combined 32,000-token allocations; parent output and total balance are unavailable, so no later plan started
-state_head: 6d1e79a221cd9479ec703ee7bf75125ffec7dbb6
+last_activity_desc: Owner selected the current-cap hold; no further plans will start until full usage can be measured and remaining work replanned within the reserve
+state_head: 60c5a9eca2f2216cd2071829456991f858b1f4d1
 progress:
   total_phases: 2
   completed_phases: 0
@@ -38,8 +38,8 @@ Current Plan: 5
 Total Plans in Phase: 5
 Progress: 4/5 plans complete ([░░░░░░░░░░] 0%)
 Plan: 5 of 5; Plan 03-05 Task 1 local repairs pass; Tasks 2–3 remain incomplete pending Phase 4 provenance
-Status: The child log records 81,800 output tokens across Plan 04-01 and Plan 04-02 setup, exceeding their combined 32,000-token allocations. Parent/orchestrator output is not attributable; total balance and reserve preservation cannot be verified. The remaining 49,000 task allocations exceed the 37,200 child-only working balance. No new plan started; source gates remain closed.
-Last activity: 2026-11-17 — Plan 04-01 blocked artifacts verified; stopped before Plan 04-02 because of the cap overrun and unmeasured aggregate usage
+Status: The child log records 81,800 output tokens across Plan 04-01 and Plan 04-02 setup, exceeding their combined 32,000-token allocations. Parent/orchestrator output is not attributable; total balance and reserve preservation cannot be verified. The remaining 49,000 task allocations exceed the 37,200 child-only working balance. The owner selected a hold at the current cap; no new plan started and source gates remain closed.
+Last activity: 2026-11-17 — Owner selected a hold at the current cap; execution remains stopped before Plan 04-02
 
 ## Active Handoff
 
@@ -48,7 +48,7 @@ Last activity: 2026-11-17 — Plan 04-01 blocked artifacts verified; stopped bef
 - Delivered in this phase: Plans 03-01 through 03-03 are complete. Plan03-04's metadata route produced and validated [the gap report](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-REPORT.md), [the index](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAPS.jsonl), [the receipt](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-RECEIPT.json), and [the validation record](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-VALIDATION.json). This route only exposes retained metadata membership and unresolved mappings.
 - Unfinished: The original [03-READINESS.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md) remains immutable. On the isolated candidate, the two formatting errors and intent-corpus numbering/citation failures are repaired; the focused intent test passes 22/22. Plan 03-05 Task 2 has not started: the nullable collision fixture, keyed source/caller consumers and full crosswalk remain unverified. Phase 4 Plan 04-01 produced [the blocked summary](phases/04-evidence-only-source-and-gap-provenance-closure/04-01-SUMMARY.md), [metadata manifest](phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json), and [closed request schedule](phases/04-evidence-only-source-and-gap-provenance-closure/04-SOURCE-SCHEDULE.json). Three preservation hashes differ. The child log records 81,800 output tokens across Plan 04-01 and Plan 04-02 setup, exceeding their combined 32,000-token allocations; its task-level split is unavailable and parent output is unmeasured. Plan 04-02 produced no artifacts. Phase 3 is not ready for verification or complete.
 - Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: Owner decision is required before further execution: either keep the current 150,000-token cap and hold until full usage can be reconciled and the remaining scope replanned, or authorize a new bounded budget after review. The 31,000 reserve must remain protected. Source access, direct counts, Plan 04-02/04-03 and Phase 3 source-dependent suites remain stopped; no owner action is needed merely to preserve this stop.
+- Next action: Codex resumes only when aggregate post-reset usage is measurable and a reviewed remaining scope fits the current cap with the 31,000 reserve protected. The owner selected a hold; no owner action is needed unless they later request a new budget. Source access, direct counts, Plans 04-02/04-03 and Phase 3 source-dependent suites remain stopped.
 - Scope decision provenance: INT-20261113-02, bounded trace approval INT-20261115-01, one-time Phase 3 budget authorization INT-20261115-02, metadata-only recovery direction INT-20261116-03, bounded continuation authorization INT-20261116-04, bounded recovery authorization INT-20261116-05, budget rebase INT-20261117-01, and reset-point selection INT-20261117-02. Requirements and bounded exit: ROADMAP.md, REQUIREMENTS.md, 03-04-REPLAN.md, the Phase 4 context, and the budget-reset receipt.
 
 
