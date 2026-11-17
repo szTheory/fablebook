@@ -4,18 +4,18 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-current_plan: 4
-status: Plan 03-04 blocked by fixed review count caps; bounded replan required
-stopped_at: Plan 03-04 Task 2 cap gap recorded; Task 3 report publication verified
-last_updated: "2026-11-15T23:33:58.404Z"
-last_activity: 2026-11-15
-last_activity_desc: Plan 03-03 sizing completed locally with no candidate selected
-state_head: 936d599f3a40d4bb401e58b7ad1492bfb1fdf1f3
+current_plan: 5
+status: "Phase 3 recovery in progress; Phase 4 metadata closeout is blocked and source access remains closed"
+stopped_at: "Phase 4 Plan 04-01 metadata route complete; proceed only with its planned blocked-result closeout"
+last_updated: "2026-11-17T14:31:44Z"
+last_activity: 2026-11-17
+last_activity_desc: Phase 4 Plan 04-01 produced the blocked metadata partition and schedule; executor usage is unattributable, so source access and cumulative fit remain closed/unverifiable
+state_head: 46e0b350b3ccd38a72660c5844616ec4c1d063c2
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -33,23 +33,23 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — Plans 03-01 through 03-03 complete
-Current Plan: 4
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — OPEN; bounded recovery is active under INT-20261117-01 and INT-20261117-02
+Current Plan: 5
 Total Plans in Phase: 5
-Progress: 3/5 plans complete ([░░░░░░░░░░] 0%)
-Plan: 03-01, 03-02, and 03-03 complete; Plan 03-04 Task 1 review and Task 3 report publication complete; Task 2 source-join correction remains an owner-facing gap under the 500-token cap; Plan 03-05 has not started.
-Status: Task 1's independent source review and both lane-focused aggregate checks passed. It found that `source_join_complete` can never become true even for a gap-free join. V4 counted 611 Task 2 source-span tokens, 111 above the cap; context (34,069), output (638), and projected total (72,668) passed. Independent review confirmed every Task 2 reread must be counted, so no correction was emitted. Task 3 published/verified the existing report from current records without new source-body reads; its count and bundle/core/floor checks passed, and the report plus machine evidence hashes were unchanged. Keep the finding open with its consequence/remedy. No Plan 03-05 or follow-on implementation is authorized.
-Last activity: 2026-11-15 — Task 3 report publication and both-lane checks passed; source-join finding remains open
+Progress: 4/5 plans complete ([░░░░░░░░░░] 0%)
+Plan: 5 of 5; Plan 03-05 Task 1 local repairs pass; Tasks 2–3 remain incomplete pending Phase 4 provenance
+Status: Post-reset usage cannot be reconciled exactly because the executor child did not expose session telemetry. The 31,000 reserve remains protected by the stop rule; actual balance is unknown and Phase 4 source-request gates remain closed.
+Last activity: 2026-11-17 — Phase 4 Plan 04-01 completed on its blocked metadata route; no source access or direct count
 
 ## Active Handoff
 
-- Current checkout: `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; Plan 03-03 task commits and planning records are local, with no push. The old worktree at `~/.claude/worktrees/agent-planning-main-261111` remains preserved and was not resumed, reset, stashed, cleaned, or removed.
+- Current checkout: isolated recovery worktree at `/private/tmp/fablebook-phase3-remediation`, branch `gsd/phase-03-recovery-and-provenance-closure`, current head `72c5cdd` after the three local Plan 04-01 commits. The exact 44-path transfer is recorded in `forensics/phase3-recovery-transfer-20261117.json`; generated `.planning/state.json` was regenerated from canonical planning files. The original dirty checkout at `~/projects/fablebook` on `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing` remains untouched; the old worktree at `~/.claude/worktrees/agent-planning-main-261111` remains preserved. No push, PR, hosted CI, or delivery is claimed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Delivered in this phase: Plans 03-01 through 03-03 are complete. Plan 03-03 records the exact no-candidate gap and bounded remedy; it does not authorize a follow-on implementation.
-- Unfinished: Plan 03-04 Task 1 review and Task 3 report publication are complete. Task 2's accepted source-join finding remains unfixed because its exact source/reread count exceeded the cap; independent review confirmed the overlapping diagnostic read must remain counted. The consequence is that `source_join_complete` cannot become true even for a future gap-free join. The remedy is a separately approved bounded resource/scope change or a future plan that fits the complete reread and falsifiable regression within limits. The report and machine evidence agree, candidate remains null, and all safety stops remain in force. Plan 03-05 has not started.
+- Delivered in this phase: Plans 03-01 through 03-03 are complete. Plan03-04's metadata route produced and validated [the gap report](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-REPORT.md), [the index](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAPS.jsonl), [the receipt](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-RECEIPT.json), and [the validation record](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-VALIDATION.json). This route only exposes retained metadata membership and unresolved mappings.
+- Unfinished: The original [03-READINESS.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md) remains immutable. On the isolated candidate, the two formatting errors and intent-corpus numbering/citation failures are repaired; the focused intent test passes 22/22. Plan 03-05 Task 2 has not started: the explicit nullable collision fixture, keyed source/caller consumers and full crosswalk remain unverified. Phase 4 Plan 04-01 produced [a blocked summary](phases/04-evidence-only-source-and-gap-provenance-closure/04-01-SUMMARY.md), [a metadata manifest](phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json), and [a closed request schedule](phases/04-evidence-only-source-and-gap-provenance-closure/04-SOURCE-SCHEDULE.json). Three expected/current preservation hashes differ, and exact executor usage is unavailable; cumulative fit is unverifiable. See [03-RECOVERY-READINESS.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md). Phase 3 is not ready for verification or complete.
 - Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: the owner decides whether to leave the source-join finding as an owner-facing gap or authorize a separately bounded resource/scope plan to fit its full reread and regression. Do not start Plan 03-05 or implementation until that decision and the required gates are recorded.
-- Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
+- Next action: Codex continues Phase 4 Plans 04-02 and 04-03 only on their already-planned blocked-result route, producing the six consumer artifacts and final handoff. Do not open a source request, read source bodies, run direct counts, or run Phase 3 source-dependent suites while usage attribution and preservation hashes remain unresolved. After the blocked closeout, reassess Phase 3 Tasks 2–3; no owner action is needed for this bounded metadata work.
+- Scope decision provenance: INT-20261113-02, bounded trace approval INT-20261115-01, one-time Phase 3 budget authorization INT-20261115-02, metadata-only recovery direction INT-20261116-03, bounded continuation authorization INT-20261116-04, bounded recovery authorization INT-20261116-05, budget rebase INT-20261117-01, and reset-point selection INT-20261117-02. Requirements and bounded exit: ROADMAP.md, REQUIREMENTS.md, 03-04-REPLAN.md, the Phase 4 context, and the budget-reset receipt.
 
 
 ## Performance Metrics
@@ -77,7 +77,7 @@ Last activity: 2026-11-15 — Task 3 report publication and both-lane checks pas
 - Owner’s systematic UI quality and AI-assisted dogfood direction, including recommendation-first continuity, is recorded in INT-20261113-01 and PRODUCT-ROADMAP.md. The real mailglass dogfood and authored Logistify showcase are separate proofs; v0.4 now owns the guard aggregate reconciliation prerequisite.
 - Use one global sequence of ordinary integer phases across active-era milestones: v0.2 Phase 1, v0.3 Phase 2, then continue from the highest delivered integer when a later milestone activates. Historical dotted IDs are evidence identities, never executable routes (INT-20261112-04).
 - v0.3 owns only `asn1ct_rtt:assert_defined/1`, `code/0` and `dependencies/1` on both pinned lanes under GRC-04–06. Independently revalidate the complete EX-107 sets, exact selection/complement and lane source identities in reviewed context before planning; a mismatch stops for rescoping (INT-20261111-13).
-- Preserve the 100,000-token planning bound, at most five total exact source files read per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. Count re-read source; do not truncate source/caller evidence to fit. The large `code/0` literal table uses its bounded byte-only check outside the prompt (INT-20261110-01, INT-20261111-13).
+- Preserve the standard 100,000-token bound for other work, at most five exact source files per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. INT-20261117-01 is a one-time 150,000 generated-output-token incremental envelope for this Phase 4/Phase 3 recovery only; its 31,000-token reserve remains protected. Count re-read source; do not truncate source/caller evidence to fit. The large `code/0` literal table uses its bounded byte-only check outside the prompt (INT-20261110-01, INT-20261111-13).
 - GRC-04–06 are complete for the bounded Phase 2 slice; the complete EX-107 row, guard aggregate, installed-wide remainder and unfinished source/caller coverage remain open. Walking Skeleton remains blocked.
 - SEC-01 remains Pending with Controls and first bundle / its first local slot; allocate the global integer when that milestone activates. Callback implementations, dynamic callers and native internals remain outside static proof.
 - Preserve original source/context/effort limits, actual-library-collision stops, Macro caller-AST and explanation checkpoints. Do not resume the halted old five-slot decomposition.
@@ -92,6 +92,10 @@ No additional work is promoted into v0.3. Wider product work remains in the sepa
 ### Blockers and concerns
 
 The pre-plan membership/source-identity, connected-source, context-sizing, and effort gates passed for the exact pinned-lane scope. Core, floor, and integration outputs are complete; independent review, focused/full lane receipts, exact PR-head CI, merged PR/main CI, and 5/5 goal verification support GRC-04–06. High-severity delivery threat T-02-08 is closed. Four medium collision-verification findings remain explicitly open below the configured high blocking threshold; no actual collision is claimed, no production guard was added, and the manual owner stop remains binding. The static-only boundary, full EX-107 remainder, Walking Skeleton block, and SEC-01 Pending status are unchanged.
+
+### Roadmap Evolution
+
+- Phase 4: Evidence-only source and gap provenance closure remains separate from Phase 3 delivery. INT-20261117-01 rebases only their bounded recovery budget; Phase 4 still adds evidence only and does not close Phase 3.
 
 ## Delivered work and archive
 
@@ -156,16 +160,16 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: v0.4 Phase 3 in `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`. Plans 03-01 through 03-03 are complete and committed locally, with no push. Plan 03-04 Task 1 and its zero-source-read Task 3 report publication are complete. Task 2 remains an owner-facing medium finding because the exact correction/reread count was 611 against the 500-token cap; independent review confirmed the accidental reread must be included. No code patch was applied. Plan 03-05 has not started. The report and core/floor records match their current bound hashes. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, actual-collision, and Macro stops remain binding.
+Active planning target: v0.4 Phase 3 recovery in isolated worktree `/private/tmp/fablebook-phase3-remediation`, branch `gsd/phase-03-recovery-and-provenance-closure`, based on HEAD `46e0b350b3ccd38a72660c5844616ec4c1d063c2`; exact transfer provenance is recorded in `forensics/phase3-recovery-transfer-20261117.json`. Plans 03-01 through 03-04 are complete under their recorded scopes. Plan 03-05 Task 1's formatting, intent recovery, citation corrections, and intent-corpus check pass; Tasks 2–3 remain behind Phase 4's exact evidence and per-request gates. INT-20261117-01 supplies a 150,000 generated-output-token incremental envelope with the 31,000-token reserve protected; prior measured Phase 4 usage remains sunk and traceable. No Phase 4 source read, source-dependent suite, commit, push, PR, hosted CI, phase verification, or delivery is claimed. The original dirty checkout and old recovery worktree remain preserved. Candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending and all static-only/collision/Macro stops remain binding.
 
-Last session: 2026-11-15T23:33:58.384Z
-Stopped at: Plan 03-04 Task 2 cap gap recorded; Task 3 report publication verified
+Last activity: 2026-11-17T13:19:47Z
+Current work: Plan 03-05 Task 1 local repairs pass. The 150,000-token incremental recovery envelope became active at 2026-11-17T13:49:13Z after the owner selected the post-review/preflight start. Its 31,000 reserve is protected. No Phase 4 source body or source-dependent Phase 3 test has been run. Evidence is in [the recovery readiness receipt](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md), [the historical budget stop](forensics/phase4-budget-stop-20261117.md), and [the active envelope receipt](forensics/phase4-budget-reset-20261117.md).
 
-Plan 03-04 Task 1 review and Task 3 publication completed. Task 2's v4 count measured 34,069 context, 611 source-span tokens, 638 generated-output tokens and 35,306 combined; the 500-token source cap failed by 111. Context, output and total passed. The zero-source-read Task 3 measured 37,387 context, 19 marker tokens, and 37,400 combined; with the prior Task 1 and Task 2 reads, 5,000 output, cushion and reserve, total was 97,183/99,000. Bundle publication, core aggregate and floor aggregate checks passed, and the report/machine evidence hashes were unchanged. No Task 2 code patch was applied.
+The original Phase 4 ceiling was exceeded by a conservative 191,582 output-token lower bound across nine dedicated sessions; its accounting remains in `forensics/phase4-budget-stop-20261117.md`. The owner later accepted a separate 150,000 generated-output-token incremental envelope under INT-20261117-01, with 31,000 still protected; the new receipt and exact scope are in `forensics/phase4-budget-reset-20261117.md`. This does not open any source request. The previous `bin/refresh_planning_state`, `git diff --check`, and Phase 3 execute preflight passed before the budget reset; rerun canonical refresh and lifecycle checks after these edits.
 
-Next action: the owner decides whether to leave the accepted source-join finding as an owner-facing gap or authorize a separately bounded resource/scope plan to fit its complete reread and falsifiable regression within the 500-token limit. Do not start Plan 03-05 or implementation until that decision and required gates are recorded. The owner acts next only if they want to change the current bounded plan; otherwise no action is required to preserve the open finding and stops.
+Next action: Codex begins Phase 4 Plan 04-01's metadata-only work under the recorded 0/150,000 starting balance. Reconcile exact usage at the end of the wave before continuing; source bodies remain behind their separate ordered gates.
 
-Resume file: None
+Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md
 
 ## Decisions
 
@@ -187,8 +191,8 @@ Resume file: None
 
 ### Blockers
 
-- Phase 3 planning passed independent review before execution. Plan 03-01 is complete; its one-time approved lookup exception is fully charged to that plan's source cap. Plan 03-02 uses its own bounded source-read budget and fresh fit gate. All phase safety stops remain binding.
+- The metadata index records membership, not source proof. Keyed target-source/gap provenance, coverage-flag caller derivation and the nested SIZING digest recipe remain unresolved. Candidate remains null; implementation unauthorized; aggregate gate open; SEC-01 Pending; Walking Skeleton blocked.
 
 ## Operator Next Steps
 
-- Executor next: run Plan 03-02 after execute preflight and a fresh context-fit check; put cheap identity/provenance checks before longer selectors.
+- Codex next: run Phase 4 Plan 04-01's bounded metadata tasks, then reconcile exact input/output usage and remaining balance before the next plan wave. Keep the source schedule/review/preflight/direct-count gates and all safety stops active. The local repair and budget history are in [03-RECOVERY-READINESS.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md), [the historical budget stop](forensics/phase4-budget-stop-20261117.md), and [the active envelope](forensics/phase4-budget-reset-20261117.md).

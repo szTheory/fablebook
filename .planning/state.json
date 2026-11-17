@@ -7,12 +7,17 @@
       "number": "3",
       "name": "Guard aggregate scope rejoin and candidate sizing",
       "status": "pending"
+    },
+    {
+      "number": "4",
+      "name": "Evidence-only source and gap provenance closure",
+      "status": "pending"
     }
   ],
   "next": {
     "command": "$gsd-progress --next",
-    "label": "Advance to the next step (verify)",
-    "reason": "Phase 1 of 1 · 0% · ready to verify"
+    "label": "Advance to the next step",
+    "reason": "Phase 1 of 2 · 0% · executing"
   },
-  "updated_at": "2026-11-15T23:33:58.569Z"
+  "updated_at": "2026-11-17T14:34:06.797Z"
 }
