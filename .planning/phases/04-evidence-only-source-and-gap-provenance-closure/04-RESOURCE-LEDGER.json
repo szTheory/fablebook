@@ -1,66 +1,116 @@
 {
   "schema_version": "04.resource-ledger.1",
-  "reset_receipt": ".planning/forensics/phase4-budget-reset-20261117.md",
-  "reset_receipt_sha256": "c812b255e634b1b26c25aa3395e10b1148f6898bed6886ebbefd32cd96e2694d",
-  "effective_at_utc": "2026-11-17T13:49:13Z",
-  "status": "cumulative_usage_unverifiable",
-  "generated_output_ceiling": 150000,
+  "envelope": "ENV-20261117-06",
+  "effective_at_utc": "2026-11-17T21:22:12.376Z",
+  "measured_at_utc": "2026-11-17T21:45:32.266Z",
+  "generated_output_ceiling": 650000,
+  "working_ceiling": 610000,
+  "protected_reserve": 40000,
   "starting_generated_output_usage": 0,
-  "protected_reserve": 31000,
-  "working_ceiling": 119000,
   "post_reset_usage": {
-    "output_tokens": null,
-    "input_tokens": null,
-    "cached_input_tokens": null,
-    "session_attribution": "Partial: executor child measured; parent/orchestrator and aggregate totals are unavailable",
-    "session_log_path": null,
-    "session_log_sha256": null,
-    "task_attribution": "Phase 4 Plan 04-01 execution plus Plan 04-02 setup; task split is not measurable",
-    "reason": "Child-session output is measured, but the root/orchestrator output is unavailable and the child work spans 04-01 plus 04-02 setup. Full cumulative use and remaining balance cannot be established; preserve the 31,000 reserve and stop before further plans.",
-    "measured_child_session": {
-      "thread_id": "01a1e9c9-1241-7733-b115-68ff213e25db",
-      "session_log_path": "/Users/jon/.codex/sessions/2026/11/17/rollout-2026-11-17T08-53-51-01a1e9c9-1241-7733-b115-68ff213e25db.jsonl",
-      "session_log_sha256": "d9d7c2001307ed44399d11b2c61d86215ae645e8257a91650306245ae34d4a63",
-      "first_usage_at_utc": "2026-11-17T13:54:24.574Z",
-      "latest_usage_at_utc": "2026-11-17T14:47:52.189Z",
-      "input_tokens": 8660005,
-      "cached_input_tokens": 8490752,
-      "output_tokens": 81800
+    "output_tokens": 592316,
+    "session_attribution": "Exact parent output delta from ENV-05 baseline plus completed provenance-audit and plan-review threads at 2026-11-17T21:45:32.266Z.",
+    "sessions": [
+      {
+        "thread_id": "01a1e766-afb2-77a1-8977-350fde6d15dd",
+        "role": "parent",
+        "counter": "payload.thread_token_usage.output_tokens",
+        "baseline_at_utc": "2026-11-17T18:46:55.030Z",
+        "baseline_output_tokens": 1057978,
+        "current_at_utc": "2026-11-17T21:45:32.266Z",
+        "current_output_tokens": 1591445,
+        "delta_output_tokens": 533467,
+        "status": "active"
+      },
+      {
+        "thread_id": "01a1ead9-74fe-7122-85b0-2678600cea2c",
+        "role": "completed provenance audit",
+        "counter": "payload.thread_token_usage.output_tokens",
+        "baseline_output_tokens": 0,
+        "current_output_tokens": 8726,
+        "delta_output_tokens": 8726,
+        "status": "completed"
+      },
+      {
+        "thread_id": "01a1eaed-eb5b-7953-881e-a94e7060ebdb",
+        "role": "plan reviewer, including ENV-05 baseline and ENV-06 continuation",
+        "counter": "payload.thread_token_usage.output_tokens",
+        "env05_baseline_output_tokens": 17229,
+        "current_output_tokens": 50123,
+        "env06_increment_output_tokens": 32894,
+        "env06_allowance": 20000,
+        "env06_overrun": 12894,
+        "status": "completed"
+      }
+    ],
+    "accounting_note": "The cumulative ENV-06 usage is the reconciled total recorded in the renewal receipt. The review allowance overrun is already included; no additional review will be dispatched."
+  },
+  "remaining_working_balance": 17684,
+  "remaining_total_balance": 57684,
+  "protected_reserve_preserved": true,
+  "usage_attributed": true,
+  "status": "measured_with_request_blocked",
+  "source_access": "closed",
+  "cumulative_fit": "blocked: remaining Phase 3 task cap and contingency exceed working balance",
+  "source_request_count": 0,
+  "compact_request_count": 0,
+  "compact_request_tokens": null,
+  "count_status": "not_run",
+  "source_request_fit": "blocked: no end-to-end budget fit; no source request or Phase 3 task started",
+  "source_request_execute_preflight": "not_run",
+  "review_status": "bridge and metadata rebind passed; R1 schedule review not_run",
+  "planned_remaining_allocations": {
+    "R1_max_generated_output": 16000,
+    "04-03_tasks_1_and_2_max_output": 4000,
+    "03-05_tasks_2_and_3_max_output": 38000,
+    "all_caps_total": 58000,
+    "current_working_balance": 17684,
+    "minimum_future_contingency": 10000,
+    "current_shortfall_including_contingency": 50316,
+    "note": "No task starts under this envelope. Exact counters must be reconciled before any continuation."
+  },
+  "task_caps": {
+    "04-02-01": {
+      "lifetime_cap": 220000,
+      "prior_charge": 65606,
+      "continuation_charge_at_stop": 183628,
+      "measured_lifetime_charge_at_stop": 249234,
+      "overrun": 29234,
+      "status": "complete; do not repeat"
     },
-    "plan_cap_review": {
-      "04-01-01": 8000,
-      "04-01-02": 3000,
-      "measured_child_output_across_04-01_and_04-02_setup": 81800,
-      "per_task_split": null,
-      "overrun": true,
-      "note": "The child session output exceeds the combined 11,000 token allocation; the exact task-level split and parent output are unavailable."
+    "04-02-02_R1": {
+      "combined_cap": 50000,
+      "input_max": 34000,
+      "analysis_review_allowance": 14000,
+      "output_allowance": 2000,
+      "generated_output_max": 16000
+    },
+    "04-03-01": 3000,
+    "04-03-02": 1000,
+    "03-05-02_and_03": 38000,
+    "parent_orchestration": {
+      "historical_lifetime_cap": 50000,
+      "historical_charge_at_2026_11_17T20_30Z": 32685,
+      "current_bookkeeping": "charged to remaining phase task caps; no separate allowance"
     }
   },
-  "remaining_working_balance": null,
-  "remaining_total_balance": null,
-  "compact_request_tokens": null,
-  "compact_request_count": 0,
-  "source_request_count": 0,
-  "source_access": "closed",
-  "count_status": "not_run",
-  "review_status": "not_run",
-  "source_request_execute_preflight": "not_run",
-  "cumulative_fit": "unverifiable",
-  "protected_reserve_preserved": null,
-  "task_caps": {
-    "04-01-01": 8000,
-    "04-01-02": 3000,
-    "04-02-01": 3000,
-    "04-02-02": 18000,
-    "04-03-01": 5000,
-    "04-03-02": 3000,
-    "03-05-remaining": 20000
+  "task_execution_baseline": {
+    "task": "Plan 04-02 Task 1 continuation",
+    "baseline_at_utc": "2026-11-17T19:46:08Z",
+    "parent_output_baseline": 1230582,
+    "parent_output_current_at_snapshot": 1414210,
+    "output_since_baseline": 183628,
+    "previously_charged": 65606,
+    "measured_lifetime_charge_at_snapshot": 249234,
+    "lifetime_cap": 220000,
+    "remaining_at_snapshot": -29234,
+    "mode": "existing parent thread",
+    "overrun": 29234,
+    "stopped_at_utc": "2026-11-17T20:44:53.762Z"
   },
-  "stop_rule": "Measured child output exceeds the Plan 04-01 combined task allocation, while parent/orchestrator output and total balance are unavailable. Do not continue Plan 04-02 or Phase 3 under this envelope until a measured, affordable replan is approved. Source access, direct count and source-dependent suites remain closed.",
-  "planned_remaining_allocations": {
-    "04-02-and-04-03": 29000,
-    "03-05-tasks-2-and-3": 20000,
-    "total": 49000,
-    "note": "Existing plan caps; not measured usage. This exceeds the 37,200 child-only working balance before unknown parent output."
-  }
+  "reset_receipt": ".planning/forensics/phase4-budget-renewal-05-20261117.md",
+  "reset_receipt_sha256": "5bf7584b664b6516bdd635ed77afede810ec9c28351dde78dbda9047ff0b4b6d",
+  "stop_rule": "No source request or Phase 3 Task 2/3 work starts under the current measured balance. Preserve source access closed and the protected 40,000 reserve. Any continuation requires an explicit bounded owner-approved replan; no automatic renewal or unchanged retry.",
+  "active_replan": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261117-06.md",
+  "active_replan_sha256": "4eeb67bfb55812473a2808bc34712884ed527553a24916e39fa35cf1f9077864"
 }

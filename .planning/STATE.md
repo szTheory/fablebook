@@ -5,12 +5,12 @@ milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
 current_plan: 5
-status: "Phase 3 recovery active under a fresh capped Phase 4 provenance gate"
-stopped_at: "The 80,000-token envelope exceeded its 49,000 working ceiling; a fresh 90,000-token envelope is active with 31,000 reserve"
-last_updated: "2026-11-17T16:11:11Z"
+status: "Stopped: ENV-06 Plan 04-02 Task 1 exceeded its cap; source access remains closed"
+resumed_at: "2026-11-17T20:12:27Z under owner authorization INT-20261117-08 and bounded envelope ENV-20261117-06"
+last_updated: "2026-11-17T20:50:09.607Z"
 last_activity: 2026-11-17
-last_activity_desc: Owner authorized a fresh 90,000-token recovery envelope after the previous working ceiling was exceeded
-state_head: 60c5a9eca2f2216cd2071829456991f858b1f4d1
+last_activity_desc: Reconciled ENV-06 headroom, fixed validator routing and budget checks, and found one stale historical plan-input hash
+state_head: 962e6f7d5cd560119ae15d5f57f487b5088b9863
 progress:
   total_phases: 2
   completed_phases: 0
@@ -33,23 +33,20 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — OPEN; bounded recovery continues under INT-20261117-04 through the Phase 4 provenance gate
-Current Plan: 5
-Total Plans in Phase: 5
-Progress: 4/5 plans complete ([░░░░░░░░░░] 0%)
-Plan: 5 of 5; Plan 03-05 Task 1 local repairs pass; Tasks 2–3 remain behind the active Phase 4 provenance gate
-Status: The prior 150,000-token envelope exceeded its ceiling by 112,847. The next 80,000-token envelope used 60,773 parent output tokens and exceeded its 49,000 working ceiling by 11,773 before execution. The owner authorized a fresh 90,000-token envelope with 59,000 working tokens and 31,000 reserve. Phase 4 Plan 04-02 is next; source emission and Phase 3 source-dependent suites remain gated.
-Last activity: 2026-11-17 — Owner authorized the fresh capped envelope; Phase 4 Plan 04-02 is next
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — OPEN. Plan 03-05 Task 1 is complete; Tasks 2–3 are not-run and remain behind Phase 4 evidence gates.
+Current Plan: 5 of 5
+Status: At 2026-11-17T21:45:32.266Z, ENV-06 use is 592,316; 17,684 working tokens remain, with 40,000 protected. The remaining Phase 3 task cap is 38,000 before contingency, so execution cannot start within the approved ceiling.
+Last activity: 2026-11-17 — corrected the ENV-06 validator ceiling, passed cheap consistency checks, and recorded the exact budget stop.
 
 ## Active Handoff
 
-- Current checkout: isolated recovery worktree at `/private/tmp/fablebook-phase3-remediation`, branch `gsd/phase-03-recovery-and-provenance-closure`, with Plan 04-01 task commits `7b24c19` and `1fbd36c`, summary commit `72c5cdd`, and prior state handoff `6d1e79a`. The exact 44-path transfer is recorded in `forensics/phase3-recovery-transfer-20261117.json`; generated `.planning/state.json` is refreshed from canonical owners. The original dirty checkout at `~/projects/fablebook` on `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing` remains untouched; the old worktree at `~/.claude/worktrees/agent-planning-main-261111` remains preserved. No push, PR, hosted CI, or delivery is claimed.
-- Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Delivered in this phase: Plans 03-01 through 03-03 are complete. Plan03-04's metadata route produced and validated [the gap report](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-REPORT.md), [the index](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAPS.jsonl), [the receipt](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-RECEIPT.json), and [the validation record](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-VALIDATION.json). This route only exposes retained metadata membership and unresolved mappings.
-- Unfinished: The original [03-READINESS.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md) remains immutable. On the isolated candidate, the two formatting errors and intent-corpus numbering/citation failures are repaired; the focused intent test passes 22/22. Plan 03-05 Task 2 has not started: the nullable collision fixture, keyed source/caller consumers and full crosswalk remain unverified. Phase 4 Plan 04-01 produced [the blocked summary](phases/04-evidence-only-source-and-gap-provenance-closure/04-01-SUMMARY.md), [metadata manifest](phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json), and [closed request schedule](phases/04-evidence-only-source-and-gap-provenance-closure/04-SOURCE-SCHEDULE.json). Three preservation hashes differ. The child log records 81,800 output tokens across Plan 04-01 and Plan 04-02 setup, exceeding their combined 32,000-token allocations; its task-level split is unavailable and parent output is unmeasured. Plan 04-02 produced no artifacts. Phase 3 is not ready for verification or complete.
-- Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: Codex executes Phase 4 Plan 04-02 under ENV-20261117-03. Reconcile parent and child output before source emission and at each plan boundary. Continue only while total spend remains below 59,000; run Phase 3 source-dependent checks only after the six Phase 4 consumer files pass.
-- Scope decision provenance: INT-20261113-02, bounded trace approval INT-20261115-01, one-time Phase 3 budget authorization INT-20261115-02, metadata-only recovery direction INT-20261116-03, bounded continuation authorization INT-20261116-04, bounded recovery authorization INT-20261116-05, budget rebase INT-20261117-01, and reset-point selection INT-20261117-02. Requirements and bounded exit: ROADMAP.md, REQUIREMENTS.md, 03-04-REPLAN.md, the Phase 4 context, and the budget-reset receipt.
+- Checkout: `/private/tmp/fablebook-phase3-remediation`; branch `gsd/phase-03-recovery-and-provenance-closure`; HEAD `962e6f7`. The primary checkout remains untouched.
+- Completed: Phase 3 Plan 03-05 Task 1; Phase 4 preservation bridge and metadata rebind reviews; blocked and supported partitions; input reconciliation; validator self-test (31 checks); Phase 3 and Phase 4 execute preflights.
+- Unfinished: Phase 4 R1 schedule/review/direct count and final review/handoff/summary; Phase 3 Plan 03-05 Tasks 2–3. No source body was read or emitted, no direct count or long suite ran.
+- Safety stops: source access closed; no audited OTP/runtime paths, candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 pending. Preserve the 40,000 reserve.
+- Budget: one-time ceiling 650,000 total / 610,000 working / 40,000 reserve. Current measured use 592,316; remaining working balance 17,684. The 38,000 Phase 3 cap is short by 20,316 even before the required 10,000 contingency. The exact next-step arithmetic and receipts are in [the budget stop replan](phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261117-06.md) and [resource ledger](phases/04-evidence-only-source-and-gap-provenance-closure/04-RESOURCE-LEDGER.json).
+- Next actor: the owner must authorize a new bounded ceiling/replan to continue. The calculated minimum total ceiling is 700,316; recommend rounding once to 705,000 while keeping the reserve at 40,000. If not, keep Phase 3 open and do not start the gated tasks.
+- Provenance: INT-20261117-10 is the one-time 650,000 authorization. No further renewal is automatic.
 
 
 ## Performance Metrics
@@ -77,7 +74,7 @@ Last activity: 2026-11-17 — Owner authorized the fresh capped envelope; Phase 
 - Owner’s systematic UI quality and AI-assisted dogfood direction, including recommendation-first continuity, is recorded in INT-20261113-01 and PRODUCT-ROADMAP.md. The real mailglass dogfood and authored Logistify showcase are separate proofs; v0.4 now owns the guard aggregate reconciliation prerequisite.
 - Use one global sequence of ordinary integer phases across active-era milestones: v0.2 Phase 1, v0.3 Phase 2, then continue from the highest delivered integer when a later milestone activates. Historical dotted IDs are evidence identities, never executable routes (INT-20261112-04).
 - v0.3 owns only `asn1ct_rtt:assert_defined/1`, `code/0` and `dependencies/1` on both pinned lanes under GRC-04–06. Independently revalidate the complete EX-107 sets, exact selection/complement and lane source identities in reviewed context before planning; a mismatch stops for rescoping (INT-20261111-13).
-- Preserve the standard 100,000-token bound for other work, at most five exact source files per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. INT-20261117-01 is a one-time 150,000 generated-output-token incremental envelope for this Phase 4/Phase 3 recovery only; its 31,000-token reserve remains protected. Count re-read source; do not truncate source/caller evidence to fit. The large `code/0` literal table uses its bounded byte-only check outside the prompt (INT-20261110-01, INT-20261111-13).
+- Preserve the standard 100,000-token bound for other work, at most five exact source files per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. Recovery budgets ENV-03 and ENV-04 are one-time, scoped envelopes; ENV-04 is recorded in the active renewal receipt with a protected 31,000-token reserve. Count re-read source; do not truncate source/caller evidence to fit. The large `code/0` literal table uses its bounded byte-only check outside the prompt (INT-20261110-01, INT-20261111-13).
 - GRC-04–06 are complete for the bounded Phase 2 slice; the complete EX-107 row, guard aggregate, installed-wide remainder and unfinished source/caller coverage remain open. Walking Skeleton remains blocked.
 - SEC-01 remains Pending with Controls and first bundle / its first local slot; allocate the global integer when that milestone activates. Callback implementations, dynamic callers and native internals remain outside static proof.
 - Preserve original source/context/effort limits, actual-library-collision stops, Macro caller-AST and explanation checkpoints. Do not resume the halted old five-slot decomposition.
@@ -160,17 +157,13 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: v0.4 Phase 3 recovery in isolated worktree `/private/tmp/fablebook-phase3-remediation`, branch `gsd/phase-03-recovery-and-provenance-closure`, based on HEAD `46e0b350b3ccd38a72660c5844616ec4c1d063c2`; exact transfer provenance is recorded in `forensics/phase3-recovery-transfer-20261117.json`. Plans 03-01 through 03-04 are complete under their recorded scopes. Plan 03-05 Task 1's formatting, intent recovery, citation corrections, and intent-corpus check pass; Tasks 2–3 remain behind Phase 4's exact evidence and per-request gates. INT-20261117-01 supplies a 150,000 generated-output-token incremental envelope with the 31,000-token reserve protected; prior measured Phase 4 usage remains sunk and traceable. No Phase 4 source read, source-dependent suite, commit, push, PR, hosted CI, phase verification, or delivery is claimed. The original dirty checkout and old recovery worktree remain preserved. Candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending and all static-only/collision/Macro stops remain binding.
+Active target: v0.4 Phase 3 recovery in `/private/tmp/fablebook-phase3-remediation`, branch `gsd/phase-03-recovery-and-provenance-closure`, HEAD `962e6f7d5cd560119ae15d5f57f487b5088b9863`. Plans 03-01 through 03-04 are complete; Plan 03-05 Task 1 local repairs pass, and Tasks 2–3 remain not-run. Phase 4 Plan 04-01 is a metadata-only stop. Plan 04-02 Task 1 is active; validator self-test, bridge validation/review, and input-reconciliation review pass within their scopes. The supported generation and ENV-06 active ledger are not yet created. One stale historical `03-05-PLAN.md` input hash is separately preserved for rebind. No helper body, direct count, source-dependent suite, implementation, PR, hosted CI, merge, or delivery is claimed.
 
-Last activity: 2026-11-17T13:19:47Z
-Current work: Plan 03-05 Task 1 local repairs pass. The 150,000-token envelope and following 80,000-token envelope were exceeded. Owner authorization INT-20261117-05 starts a fresh 90,000-token envelope at 2026-11-17T16:11:11.228Z, with 59,000 working tokens and 31,000 reserve. Phase 4 Plan 04-02 is next; source access remains gated. See forensics/phase4-budget-renewal-02-20261117.md.
+ENV-20261117-06 has 368,420 measured output tokens at the latest exact snapshot (2026-11-17T20:30:04.820Z), leaving 131,580 under its 500,000 working ceiling; the 40,000 reserve is protected. Remaining ceilings total 130,742, while calibrated estimates project 115,142 and 16,438 contingency at that snapshot. Task 04-02-01 has a 220,000 lifetime cap with at most 17,427 remaining. Post-snapshot output has not yet been reconciled. The original dirty checkout and historical worktree remain untouched. Candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and all static-only/collision/Macro stops remain binding.
 
-The original Phase 4 ceiling was exceeded by a conservative 191,582 output-token lower bound across nine dedicated sessions; its accounting remains in `forensics/phase4-budget-stop-20261117.md`. The owner later accepted a separate 150,000 generated-output-token incremental envelope under INT-20261117-01, with 31,000 still protected; the new receipt and exact scope are in `forensics/phase4-budget-reset-20261117.md`. This does not open any source request. The previous `bin/refresh_planning_state`, `git diff --check`, and Phase 3 execute preflight passed before the budget reset; rerun canonical refresh and lifecycle checks after these edits.
+Next action: continue the supported metadata-generation construction and cheap partition/ledger checks; the detached bridge and rebind review already returned. Before any schedule review or source gate, reconcile the live output counters and require at least 10,000 contingency beyond measured next-work cost. R1 stays closed until the fresh schedule review, Phase 4 execute preflight, direct count, and exact cumulative fit pass. No owner action is needed for this bounded work; stop at any failed gate or active cap.
 
-Next action: Codex executes Phase 4 Plan 04-02 under the fresh 59,000 working ceiling, updating the resource ledger and request validator before any source emission. Reconcile all thread output at the plan boundary; Phase 3 suites remain gated.
-
-Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md
-
+Resume file: `.planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261117-04.md`
 ## Decisions
 
 - [Phase 02]: Core evidence reuses the locked lane-specific resolver and pins full file and span digests for the RTT targets and direct callers.
@@ -196,3 +189,8 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 ## Operator Next Steps
 
 - Codex next: run Phase 4 Plan 04-01's bounded metadata tasks, then reconcile exact input/output usage and remaining balance before the next plan wave. Keep the source schedule/review/preflight/direct-count gates and all safety stops active. The local repair and budget history are in [03-RECOVERY-READINESS.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md), [the historical budget stop](forensics/phase4-budget-stop-20261117.md), and [the active envelope](forensics/phase4-budget-reset-20261117.md).
+
+
+## Latest handoff — ENV-06 stop
+
+Checkout: `/private/tmp/fablebook-phase3-remediation`, branch `gsd/phase-03-recovery-and-provenance-closure`. Task 04-02-01 stopped for a 29,234-token cap overrun; exact stop and completed checks are in [the ENV-06 stop receipt](forensics/phase4-task-cap-stop-env06-20261117.md). The supported metadata partition passes, but the two missing Phase 4 consumer artifacts keep Plan 04-03 and Phase 3 Tasks 2–3 not-run. Source access remains closed. Next actor: owner, only if authorizing a bounded budget replan.
