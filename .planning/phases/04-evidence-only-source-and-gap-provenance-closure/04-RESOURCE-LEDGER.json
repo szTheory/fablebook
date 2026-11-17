@@ -12,11 +12,29 @@
     "output_tokens": null,
     "input_tokens": null,
     "cached_input_tokens": null,
-    "session_attribution": "not exposed by this child runtime",
+    "session_attribution": "Partial: executor child measured; parent/orchestrator and aggregate totals are unavailable",
     "session_log_path": null,
     "session_log_sha256": null,
-    "task_attribution": "Phase 4 Plan 04-01 Tasks 1-2",
-    "reason": "Exact child-session usage metadata and attributable local log are unavailable here; parent reconciliation is required."
+    "task_attribution": "Phase 4 Plan 04-01 execution plus Plan 04-02 setup; task split is not measurable",
+    "reason": "Child-session output is measured, but the root/orchestrator output is unavailable and the child work spans 04-01 plus 04-02 setup. Full cumulative use and remaining balance cannot be established; preserve the 31,000 reserve and stop before further plans.",
+    "measured_child_session": {
+      "thread_id": "01a1e9c9-1241-7733-b115-68ff213e25db",
+      "session_log_path": "/Users/jon/.codex/sessions/2026/11/17/rollout-2026-11-17T08-53-51-01a1e9c9-1241-7733-b115-68ff213e25db.jsonl",
+      "session_log_sha256": "d9d7c2001307ed44399d11b2c61d86215ae645e8257a91650306245ae34d4a63",
+      "first_usage_at_utc": "2026-11-17T13:54:24.574Z",
+      "latest_usage_at_utc": "2026-11-17T14:47:52.189Z",
+      "input_tokens": 8660005,
+      "cached_input_tokens": 8490752,
+      "output_tokens": 81800
+    },
+    "plan_cap_review": {
+      "04-01-01": 8000,
+      "04-01-02": 3000,
+      "measured_child_output_across_04-01_and_04-02_setup": 81800,
+      "per_task_split": null,
+      "overrun": true,
+      "note": "The child session output exceeds the combined 11,000 token allocation; the exact task-level split and parent output are unavailable."
+    }
   },
   "remaining_working_balance": null,
   "remaining_total_balance": null,
@@ -28,7 +46,7 @@
   "review_status": "not_run",
   "source_request_execute_preflight": "not_run",
   "cumulative_fit": "unverifiable",
-  "protected_reserve_preserved": true,
+  "protected_reserve_preserved": null,
   "task_caps": {
     "04-01-01": 8000,
     "04-01-02": 3000,
@@ -38,5 +56,11 @@
     "04-03-02": 3000,
     "03-05-remaining": 20000
   },
-  "stop_rule": "No source count or analysis until exact usage is attributed and schedule, review, preflight, count and fit gates pass."
+  "stop_rule": "Measured child output exceeds the Plan 04-01 combined task allocation, while parent/orchestrator output and total balance are unavailable. Do not continue Plan 04-02 or Phase 3 under this envelope until a measured, affordable replan is approved. Source access, direct count and source-dependent suites remain closed.",
+  "planned_remaining_allocations": {
+    "04-02-and-04-03": 29000,
+    "03-05-tasks-2-and-3": 20000,
+    "total": 49000,
+    "note": "Existing plan caps; not measured usage. This exceeds the 37,200 child-only working balance before unknown parent output."
+  }
 }

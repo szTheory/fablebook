@@ -37,7 +37,7 @@ key-files:
 
 key-decisions:
   - Preserve the three expected/current file-hash mismatches as provenance gaps; source access remains closed.
-  - Keep cumulative usage and remaining balance unknown because the executor child runtime did not expose attributable token records.
+  - Keep aggregate usage and remaining balance unknown because only child-session usage is measurable; parent/orchestrator output is unavailable.
 
 patterns-established:
   - Metadata blockers remain explicit typed rows with exact keys and null unavailable source fields.
@@ -54,7 +54,9 @@ outcome: blocked-metadata-closeout
 
 Plan 04-01 completed its metadata-only route. Both lanes contain 226 identities and corroborate against retained authority: 221 archived IDs plus five preserved lane IDs. The partition contains 9,716 unresolved rows, including 2,469 core keys, 2,380 floor keys, and 18 unknown target sets.
 
-Three preservation hashes differ from their immutable expected values: `03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md`, `test/support/guard_aggregate_reconciliation_evidence.ex`, and `test/contract/tier_sweep_test.exs`. These files were touched by the authorized citation/formatting repairs, but this metadata-only check does not establish that the byte changes are limited to those edits. The manifest records both hashes. The request schedule remains blocked with `source_access=closed`; review, source-request preflight, and direct count are `not_run`, and cumulative fit is `unverifiable`. The resource ledger retains null usage and balance values because this executor runtime did not expose exact child-session accounting.
+Three preservation hashes differ from their immutable expected values: `03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md`, `test/support/guard_aggregate_reconciliation_evidence.ex`, and `test/contract/tier_sweep_test.exs`. These files were touched by the authorized citation/formatting repairs, but this metadata-only check does not establish that the byte changes are limited to those edits. The manifest records both hashes. The request schedule remains blocked with `source_access=closed`; review, source-request preflight, and direct count are `not_run`, and cumulative fit is `unverifiable`.
+
+The executor child log records 81,800 output tokens, 8,660,005 input tokens, and 8,490,752 cached input tokens through 2026-11-17T14:47:52Z. This spans Plan 04-01 and Plan 04-02 setup, so the task split is unknown; the child work exceeds the combined 32,000-token allocations for those plans. Parent/orchestrator usage is unavailable, so the aggregate balance remains null in the resource ledger. The reset receipt remains byte-identical to its manifest-bound input; the newer child telemetry is recorded in the resource ledger and this summary instead.
 
 ## Performance
 
@@ -92,4 +94,4 @@ The first blocked partition attempt exposed a validator field-name mismatch. The
 
 ## Next Phase Readiness
 
-Phase 4 Plan 04-01 is complete as a blocked metadata result. Continue Plans 04-02 and 04-03 only on their preplanned blocked closeout branches; source analysis remains prohibited while usage attribution and the exact source gates are unresolved. Phase 3 Plan 03-05 Tasks 2–3 remain pending that closeout and any future approved source gate. The next actor is Codex; no owner action is needed now.
+Phase 4 Plan 04-01 is complete as a blocked metadata result. Do not start Plan 04-02: measured child work exceeds its assigned plan allocations, parent usage is unavailable, and the 49,000 tokens allocated for Plans 04-02/04-03 plus Phase 3 Tasks 2–3 exceed the 37,200 child-only working balance before parent output. Phase 3 Plan 03-05 Tasks 2–3 remain pending a measured, affordable replan; source access stays closed. The owner must choose whether to hold the current cap or authorize a newly bounded replan before more execution.
