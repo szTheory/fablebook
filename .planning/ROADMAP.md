@@ -10,6 +10,7 @@
 ## Phases
 
 - [ ] **Phase 3: Guard aggregate scope rejoin and candidate sizing** — Reconcile the complete current two-lane scope and size a bounded next decision.
+- [ ] **Phase 4: Evidence-only source and gap provenance closure** — Complete the lane-pinned source and typed-gap provenance needed to explain Phase 3's coverage and digest gaps.
 
 **Milestone key:** guard-recovery
 
@@ -43,3 +44,13 @@
 - [x] Phase 1: Bounded guard continuation — completed 2026-11-11.
 
 </details>
+
+### Phase 4: Evidence-only source and gap provenance closure
+
+**Goal:** For all 226 identities on core and floor, produce complete lane-pinned target-source association and typed-gap rows; trace the caller that derives source-coverage status; and establish the nested SIZING digest recipe. If inputs are missing or evidence cannot fit within inherited limits, report exact identity/provenance gaps and leave candidate null.
+**Requirements:** GSR-03, GSR-05
+**Depends on:** Phase 3's recorded bounded trace stop; Phase 4 supplies evidence only and does not close Phase 3 or authorize a guard implementation.
+**Boundaries:** Static evidence only. No audited OTP APIs, callbacks, atom sinks, runtime evaluation, generated-code paths, guard behavior changes, candidate promotion, aggregate closure, or automatic follow-on. Preserve the collision and Macro stops, SEC-01 Pending status, and Walking Skeleton block.
+**Plans:** 3 plans exist under `.planning/phases/04-evidence-only-source-and-gap-provenance-closure/`.
+
+The owner approved a one-time 150,000 generated-output-token recovery envelope under [INT-20261117-01](intent/sources/2026-11-17-01-authorize-rebased-recovery-envelope.md); its historical receipt is [here](forensics/phase4-budget-reset-20261117.md). Measured telemetry later showed 181,047 parent-thread output tokens plus 81,800 from its executor child under that envelope, exceeding it by 112,847. On 2026-11-17 the owner authorized one additional 80,000-token envelope under [INT-20261117-04](intent/sources/2026-11-17-04-authorize-recovery-envelope.md), with the 31,000 reserve protected and a 49,000 working ceiling. Its baseline, scope, and stop rule are in [the continuation receipt](forensics/phase4-budget-renewal-20261117.md). This applies only to the remaining Phase 4 provenance plans and Phase 3 Plan 03-05 Tasks 2/3. All source-read, evidence-only, and safety gates remain active.
