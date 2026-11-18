@@ -10,6 +10,7 @@
 ## Phases
 
 - [ ] **Phase 3: Guard aggregate scope rejoin and candidate sizing** — Reconcile the complete current two-lane scope and size a bounded next decision.
+- [ ] **Phase 4: Evidence-only source and gap provenance closure** — Complete the lane-pinned source and typed-gap provenance needed to explain Phase 3's coverage and digest gaps.
 
 **Milestone key:** guard-recovery
 
@@ -43,3 +44,14 @@
 - [x] Phase 1: Bounded guard continuation — completed 2026-11-11.
 
 </details>
+
+### Phase 4: Evidence-only source and gap provenance closure
+
+**Goal:** For all 226 identities on core and floor, produce complete lane-pinned target-source association and typed-gap rows; trace the caller that derives source-coverage status; and establish the nested SIZING digest recipe. If inputs are missing or evidence cannot fit within inherited limits, report exact identity/provenance gaps and leave candidate null.
+**Requirements:** GSR-03, GSR-05
+**Depends on:** Phase 3's recorded bounded trace stop; Phase 4 supplies evidence only and does not close Phase 3 or authorize a guard implementation.
+**Boundaries:** Static evidence only. No audited OTP APIs, callbacks, atom sinks, runtime evaluation, generated-code paths, guard behavior changes, candidate promotion, aggregate closure, or automatic follow-on. Preserve the collision and Macro stops, SEC-01 Pending status, and Walking Skeleton block.
+**Plans:** 0 plans
+
+Plans:
+- [ ] To be planned with the standard 100,000-token ceiling and fixed 31,000-token reserve.

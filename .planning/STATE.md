@@ -4,19 +4,19 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 03
 current_phase_name: Guard aggregate scope rejoin and candidate sizing
-current_plan: 4
-status: Plan 03-04 blocked by fixed review count caps; bounded replan required
-stopped_at: Plan 03-04 Task 2 cap gap recorded; Task 3 report publication verified
-last_updated: "2026-11-15T23:33:58.404Z"
-last_activity: 2026-11-15
-last_activity_desc: Plan 03-03 sizing completed locally with no candidate selected
-state_head: 936d599f3a40d4bb401e58b7ad1492bfb1fdf1f3
+current_plan: 5
+status: "Phase 3 local execution complete; phase verification pending"
+stopped_at: "Plan 03-05 checks and handoff reconciliation complete; verifier pending"
+last_updated: "2026-11-18T17:37:41Z"
+last_activity: 2026-11-18
+last_activity_desc: Plan 03-05 local checks passed; canonical handoff refreshed
+state_head: 46e0b350b3ccd38a72660c5844616ec4c1d063c2
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
-  percent: 0
+  completed_plans: 5
+  percent: 100
 ---
 
 # Project State
@@ -33,23 +33,24 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — Plans 03-01 through 03-03 complete
-Current Plan: 4
+Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — OPEN; local execution is complete and phase verification is pending
+Current Plan: 5
 Total Plans in Phase: 5
-Progress: 3/5 plans complete ([░░░░░░░░░░] 0%)
-Plan: 03-01, 03-02, and 03-03 complete; Plan 03-04 Task 1 review and Task 3 report publication complete; Task 2 source-join correction remains an owner-facing gap under the 500-token cap; Plan 03-05 has not started.
-Status: Task 1's independent source review and both lane-focused aggregate checks passed. It found that `source_join_complete` can never become true even for a gap-free join. V4 counted 611 Task 2 source-span tokens, 111 above the cap; context (34,069), output (638), and projected total (72,668) passed. Independent review confirmed every Task 2 reread must be counted, so no correction was emitted. Task 3 published/verified the existing report from current records without new source-body reads; its count and bundle/core/floor checks passed, and the report plus machine evidence hashes were unchanged. Keep the finding open with its consequence/remedy. No Plan 03-05 or follow-on implementation is authorized.
-Last activity: 2026-11-15 — Task 3 report publication and both-lane checks passed; source-join finding remains open
+Progress: 5/5 plans complete ([██████████] 100%)
+Plan: 5 of 5; local readiness and handoff checks are complete
+Status: Phase-level verification is in progress; hosted candidate/main CI and merge receipts remain pending
+Last activity: 2026-11-18 — Corrected core/floor checks passed; phase verification is pending
 
 ## Active Handoff
 
-- Current checkout: `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; Plan 03-03 task commits and planning records are local, with no push. The old worktree at `~/.claude/worktrees/agent-planning-main-261111` remains preserved and was not resumed, reset, stashed, cleaned, or removed.
+- Current checkout: `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`, HEAD `46e0b350b3ccd38a72660c5844616ec4c1d063c2`; fetched `origin/main` is `3817912c861286608183c057d2e38ff7a260bd6e` (v0.3 Phase 2 closeout). Phase 3 work remains local and unmerged; no commit, push or PR was made. The old worktree at `~/.claude/worktrees/agent-planning-main-261111` remains preserved and was not resumed, reset, stashed, cleaned, or removed.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Delivered in this phase: Plans 03-01 through 03-03 are complete. Plan 03-03 records the exact no-candidate gap and bounded remedy; it does not authorize a follow-on implementation.
-- Unfinished: Plan 03-04 Task 1 review and Task 3 report publication are complete. Task 2's accepted source-join finding remains unfixed because its exact source/reread count exceeded the cap; independent review confirmed the overlapping diagnostic read must remain counted. The consequence is that `source_join_complete` cannot become true even for a future gap-free join. The remedy is a separately approved bounded resource/scope change or a future plan that fits the complete reread and falsifiable regression within limits. The report and machine evidence agree, candidate remains null, and all safety stops remain in force. Plan 03-05 has not started.
+- Delivered in this phase: Plans 03-01 through 03-04 are complete. Plan03-04's metadata route produced and validated [the gap report](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-REPORT.md), [the index](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAPS.jsonl), [the receipt](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-RECEIPT.json), and [the validation record](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-VALIDATION.json). This route only exposes retained metadata membership and unresolved mappings.
+- Plan 03-05 local execution: Complete. Cheap format/metadata/intent/CI-shape/Credo checks and full pinned core/floor suites passed on the reviewed local tree; see [readiness](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md), [summary](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-SUMMARY.md), and [recovery code review](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-CODE-REVIEW.md). Phase verification is pending; hosted candidate/main CI and merge receipts remain pending.
+- Evidence still unresolved: 4,797 known target mappings and 18 unknown target sets remain unproven. GSR-03/GSR-05 remain incomplete; no source bodies were read to fill those gaps, and no guard fix was authorized.
 - Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: the owner decides whether to leave the source-join finding as an owner-facing gap or authorize a separately bounded resource/scope plan to fit its full reread and regression. Do not start Plan 03-05 or implementation until that decision and the required gates are recorded.
-- Scope decision provenance: INT-20261113-02. Requirements and bounded exit: ROADMAP.md and REQUIREMENTS.md.
+- Next action: finish the current phase verification, then run the approved Phase 3 delivery path (review, local action feasibility, PR candidate CI, and merge/main CI receipts). The owner has authorized routine Phase 3 verification and delivery; no user action is needed for these steps. Keep candidate and implementation gates closed, preserve all collision/source/caller/SEC-01 stops, and do not enter Phase 4 automatically.
+- Scope decision provenance: INT-20261113-02, bounded trace approval INT-20261115-01, one-time Phase 3 budget authorization INT-20261115-02, metadata-only recovery direction INT-20261116-03, and bounded continuation authorization INT-20261116-04. Requirements and bounded exit: ROADMAP.md, REQUIREMENTS.md and03-04-REPLAN.md.
 
 
 ## Performance Metrics
@@ -92,6 +93,10 @@ No additional work is promoted into v0.3. Wider product work remains in the sepa
 ### Blockers and concerns
 
 The pre-plan membership/source-identity, connected-source, context-sizing, and effort gates passed for the exact pinned-lane scope. Core, floor, and integration outputs are complete; independent review, focused/full lane receipts, exact PR-head CI, merged PR/main CI, and 5/5 goal verification support GRC-04–06. High-severity delivery threat T-02-08 is closed. Four medium collision-verification findings remain explicitly open below the configured high blocking threshold; no actual collision is claimed, no production guard was added, and the manual owner stop remains binding. The static-only boundary, full EX-107 remainder, Walking Skeleton block, and SEC-01 Pending status are unchanged.
+
+### Roadmap Evolution
+
+- Phase 4 added: Evidence-only source and gap provenance closure selected by owner under the standard 100,000-token ceiling; Phase 3 remains stopped and Phase 4 adds evidence only.
 
 ## Delivered work and archive
 
@@ -156,16 +161,16 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: v0.4 Phase 3 in `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`. Plans 03-01 through 03-03 are complete and committed locally, with no push. Plan 03-04 Task 1 and its zero-source-read Task 3 report publication are complete. Task 2 remains an owner-facing medium finding because the exact correction/reread count was 611 against the 500-token cap; independent review confirmed the accidental reread must be included. No code patch was applied. Plan 03-05 has not started. The report and core/floor records match their current bound hashes. Candidate stays null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and static-only, actual-collision, and Macro stops remain binding.
+Active planning target: v0.4 Phase 3 in `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`, HEAD `46e0b350b3ccd38a72660c5844616ec4c1d063c2`. Plans 03-01 through 03-05 have local summaries and recorded evidence; Phase 3 verification is active. Plan 03-05's full core/floor suites and quick checks pass. No commit, push, hosted CI, or delivery registry row exists yet. Candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and all source/caller/collision/Macro stops remain binding.
 
-Last session: 2026-11-15T23:33:58.384Z
-Stopped at: Plan 03-04 Task 2 cap gap recorded; Task 3 report publication verified
+Last session: 2026-11-18T17:41:48Z
+Stopped at: Local Plan 03-05 checks and canonical handoff reconciliation complete; phase verification is running, followed by routine Phase 3 delivery.
 
-Plan 03-04 Task 1 review and Task 3 publication completed. Task 2's v4 count measured 34,069 context, 611 source-span tokens, 638 generated-output tokens and 35,306 combined; the 500-token source cap failed by 111. Context, output and total passed. The zero-source-read Task 3 measured 37,387 context, 19 marker tokens, and 37,400 combined; with the prior Task 1 and Task 2 reads, 5,000 output, cushion and reserve, total was 97,183/99,000. Bundle publication, core aggregate and floor aggregate checks passed, and the report/machine evidence hashes were unchanged. No Task 2 code patch was applied.
+The inherited Phase 3 project reserve remains intact and is tracked separately from assistant context; no assistant-side cumulative ceiling is applied. Plan 03-05 validation logs and hashes are in `03-READINESS.md`; no failed check was repeated, and the known local `act` parser limitation was reused without another attempt. `git diff --check HEAD` and planning preflight passed; the base-to-main diff check reports inherited whitespace in planning/archive Markdown, which was left unchanged. The generated `state.json` was refreshed from canonical owners and now recommends verification; the canonical route and preflight also resolve to Phase 03.
 
-Next action: the owner decides whether to leave the accepted source-join finding as an owner-facing gap or authorize a separately bounded resource/scope plan to fit its complete reread and falsifiable regression within the 500-token limit. Do not start Plan 03-05 or implementation until that decision and required gates are recorded. The owner acts next only if they want to change the current bounded plan; otherwise no action is required to preserve the open finding and stops.
+Next action: phase verifier completes `.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-VERIFICATION.md`, then proceed through authorized Phase 3 review and hosted delivery. Do not enter Phase 4 or alter the retained product gates as part of this closeout.
 
-Resume file: None
+Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md
 
 ## Decisions
 
@@ -187,8 +192,8 @@ Resume file: None
 
 ### Blockers
 
-- Phase 3 planning passed independent review before execution. Plan 03-01 is complete; its one-time approved lookup exception is fully charged to that plan's source cap. Plan 03-02 uses its own bounded source-read budget and fresh fit gate. All phase safety stops remain binding.
+- The metadata index records membership, not source proof. Keyed target-source/gap provenance, coverage-flag caller derivation and the nested SIZING digest recipe remain unresolved. Candidate remains null; implementation unauthorized; aggregate gate open; SEC-01 Pending; Walking Skeleton blocked.
 
 ## Operator Next Steps
 
-- Executor next: run Plan 03-02 after execute preflight and a fresh context-fit check; put cheap identity/provenance checks before longer selectors.
+- Agent next: complete Phase 3 verification and then the authorized delivery checks for the reviewed candidate. No owner action is needed for routine closeout. Once this bounded phase is delivered, the next command is `$gsd-progress` to identify the next approved project action; Phase 4 still requires its own start gate and is not auto-started here.
