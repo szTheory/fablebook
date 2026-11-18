@@ -42,11 +42,11 @@ Last activity: 2026-11-18 — the canonical verifier passed with 21/21 must-have
 
 - Checkout: `/private/tmp/fablebook-phase3-remediation`, branch `gsd/phase-03-recovery-and-provenance-closure`. This is the existing recovery checkout; the dirty primary checkout remains untouched, and no additional worktree was created.
 - Completed locally: Plans 03-01 through 03-05; 27/27 required artifacts; goal verification 21/21; both UAT checks automated and passing; no human UAT remains. Focused/core/floor test receipts, code review, ASVS L1 review, and 12/12 Nyquist coverage are recorded.
-- Current evidence: Phase 4 validation is `pass_with_open_gaps`; 9,716 typed gaps, zero source associations, source resolution unresolved, caller closure incomplete, legacy digest unresolved, candidate null, implementation unauthorized. The Phase 3 crosswalk matches the current manifest. No source request or new source emission occurred.
-- Delivery pending: no Phase 3 candidate PR, hosted CI, merge, main CI, or delivery receipt yet. The phase is not delivered until the reviewed PR is merged with green hosted checks.
+- Current evidence: Phase 4 validation is `pass_with_open_gaps`; 9,716 typed gaps, zero source associations, source resolution unresolved, caller closure incomplete, legacy digest unresolved, candidate null, implementation unauthorized. The Phase 3 crosswalk matches the current manifest. No new source request or source emission occurred.
+- PR #90 is open. Hosted CI surfaced a Plug multipart advisory; the lockfile now pins patched Plug 1.20.4, and a new hosted run must pass before merge. No merge, main CI, or delivery receipt exists yet.
 - Safety stops unchanged: static-only boundary; actual library collision unknown; Macro caller-AST and explanation wording unresolved; candidate null; implementation unauthorized; aggregate gate open; Walking Skeleton blocked; SEC-01 pending. Do not invoke audited OTP/runtime paths.
 - Budget policy: INT-20261117-11 removes the cumulative assistant-output ceiling and reserve stop. Counters are informational; exact-source count, review, preflight, provenance and security gates remain active.
-- Next action: Codex commits and pushes this reviewed candidate, opens or updates the PR under standing authorization, captures hosted CI, and reviews its critical path. The owner merges only after required hosted checks are green; no new phase starts automatically.
+- Next action: Codex monitors PR #90's hosted checks and reviews the measured critical path. The owner merges only when all required checks are green; no new phase starts automatically.
 
 ## Performance Metrics
 
@@ -190,4 +190,4 @@ Next action: Codex continues to the reviewed candidate PR and hosted CI/delivery
 
 ## Latest handoff — Phase 3 candidate submission
 
-Checkout: `/private/tmp/fablebook-phase3-remediation`, branch `gsd/phase-03-recovery-and-provenance-closure`. Local Phase 3 verification is green (21/21), all 27 required artifacts and both automated UAT checks pass, and the Phase 4 evidence package validates with its semantic gaps explicit. Hosted PR CI and merge are still pending; the `act` preflight was blocked by its local runner architecture mismatch and is recorded in [CI-PERFORMANCE.md](CI-PERFORMANCE.md). Safety stops remain unchanged. Next actor: Codex submits the candidate and monitors hosted CI; the owner merges after required checks pass.
+Checkout: `/private/tmp/fablebook-phase3-remediation`, branch `gsd/phase-03-recovery-and-provenance-closure`. PR #90 is open with Phase 3 verification green locally (21/21), 27/27 artifacts, 2/2 automated UAT, and the Plug 1.20.4 security patch. The hosted check suite must be green before merge; no owner UAT or further source access is needed. The local `act` limitation is recorded in [CI-PERFORMANCE.md](CI-PERFORMANCE.md). Safety stops remain unchanged. Next actor: Codex monitors hosted checks; owner merges when they pass.
