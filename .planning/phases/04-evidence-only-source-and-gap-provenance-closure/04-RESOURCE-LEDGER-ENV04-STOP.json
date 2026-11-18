@@ -1,0 +1,111 @@
+{
+  "compact_request_count": 0,
+  "compact_request_tokens": null,
+  "count_status": "not_run",
+  "cumulative_fit": "unverifiable",
+  "effective_at_utc": "2026-11-17T18:40:58.174Z",
+  "envelope": "ENV-20261117-04",
+  "generated_output_ceiling": 210000,
+  "measured_at_utc": "2026-11-17T18:40:58.174Z",
+  "planned_remaining_allocations": {
+    "03-05-substantive_output": 14000,
+    "04-02-substantive_output": 12000,
+    "04-03-substantive_output": 5000,
+    "avoided_executor_startup_projection": 53100,
+    "generated_output_projection": 31000,
+    "note": "Projections only; per-task caps and live measured counters control. No source request is included as authorized work unless every gate passes."
+  },
+  "post_reset_usage": {
+    "cached_input_tokens": 15260800,
+    "input_tokens": 15632751,
+    "output_tokens": 159613,
+    "session_attribution": "Complete for the parent and completed ENV-04 plan-cap reviewer; same payload.thread_token_usage fields and per-thread baselines.",
+    "sessions": [
+      {
+        "baseline": {
+          "cached_input_tokens": 128100352,
+          "input_tokens": 130132961,
+          "output_tokens": 903356
+        },
+        "baseline_at_utc": "2026-11-17T17:50:42.160Z",
+        "counter": "payload.thread_token_usage",
+        "current": {
+          "cached_input_tokens": 141259520,
+          "input_tokens": 143543108,
+          "output_tokens": 1045868
+        },
+        "delta": {
+          "cached_input_tokens": 13159168,
+          "input_tokens": 13410147,
+          "output_tokens": 142512
+        },
+        "latest_record_at_utc": "2026-11-17T18:40:58.174Z",
+        "role": "parent",
+        "session_log_path": "~/.codex/sessions/2026/11/16/rollout-2026-11-16T21-47-09-01a1e766-afb2-77a1-8977-350fde6d15dd.jsonl",
+        "session_log_sha256": "f3d070ab50b2323d858bb72f1144137cec0ed59a3603ad6a23e3f1cf3ba5697b",
+        "status": "active",
+        "thread_id": "01a1e766-afb2-77a1-8977-350fde6d15dd"
+      },
+      {
+        "baseline": {
+          "cached_input_tokens": 0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "baseline_at_utc": "2026-11-17T17:54:32.747Z",
+        "counter": "payload.thread_token_usage",
+        "current": {
+          "cached_input_tokens": 2101632,
+          "input_tokens": 2222604,
+          "output_tokens": 17101
+        },
+        "delta": {
+          "cached_input_tokens": 2101632,
+          "input_tokens": 2222604,
+          "output_tokens": 17101
+        },
+        "latest_record_at_utc": "2026-11-17T18:16:52.035Z",
+        "role": "completed plan-cap reviewer",
+        "session_log_path": "~/.codex/sessions/2026/11/17/rollout-2026-11-17T12-54-23-01a1eaa5-4a7e-7242-9caa-7dd7a04c9820.jsonl",
+        "session_log_sha256": "2fc1b3f65516b8181bb531ef8756850fe59b9df051e4b24cc12c117d4748bf2a",
+        "status": "completed",
+        "thread_id": "01a1eaa5-4a7e-7242-9caa-7dd7a04c9820"
+      }
+    ]
+  },
+  "protected_reserve": 31000,
+  "protected_reserve_preserved": false,
+  "remaining_total_balance": 50387,
+  "remaining_working_balance": 19387,
+  "reset_receipt": ".planning/forensics/phase4-budget-renewal-03-20261117.md",
+  "reset_receipt_sha256": "a1a306fdd4f51274bcbc6ce32d1f045537e59b2672a5fda7c4e724784342773d",
+  "review_status": "not_run",
+  "schema_version": "04.resource-ledger.1",
+  "source_access": "closed",
+  "source_request_count": 0,
+  "source_request_execute_preflight": "not_run",
+  "source_request_fit": "unverifiable: blocked before exact schedule review, execute preflight and direct count",
+  "starting_generated_output_usage": 0,
+  "status": "task_cap_exceeded",
+  "stop_rule": "Stopped: Plan 04-02 Task 1 lifetime cap exceeded. No further task execution or source request is permitted under the current per-task allocation.",
+  "task_caps": {
+    "03-05-tasks-2-and-3": 31700,
+    "04-02-01": 22312,
+    "04-02-02": 18000,
+    "04-03-01": 22700,
+    "04-03-02": 3000
+  },
+  "task_execution_baseline": {
+    "baseline_at_utc": "2026-11-17T18:26:26.813Z",
+    "lifetime_cap": 40000,
+    "measured_lifetime_charge": 65606,
+    "mode": "existing parent thread",
+    "output_since_baseline": 47918,
+    "overrun": 25606,
+    "parent_output_baseline": 997950,
+    "previously_charged": 17688,
+    "task": "04-02-01 inline execution"
+  },
+  "usage_attributed": true,
+  "working_ceiling": 179000
+}

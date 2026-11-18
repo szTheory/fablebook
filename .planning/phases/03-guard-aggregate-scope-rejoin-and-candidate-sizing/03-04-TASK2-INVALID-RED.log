@@ -1,0 +1,34 @@
+Command:
+FABLEBOOK_TAP_REPORT=/private/tmp/fablebook_plan03_04_task2_v6_red.tap bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation_records --warnings-as-errors --formatter=Fablebook.Test.ExUnitTapFormatter
+
+Exit code: 1
+
+Unmodified command output:
+    warning: redefining module Fablebook.Test.ExUnitTapFormatter (current version loaded from _build/lanes/core/build/test/lib/fablebook/ebin/Elixir.Fablebook.Test.ExUnitTapFormatter.beam)
+    │
+  1 │ defmodule Fablebook.Test.ExUnitTapFormatter do
+    │ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ test/support/exunit_tap_formatter.ex:1: Fablebook.Test.ExUnitTapFormatter (module)
+
+
+== Compilation error in file test/contract/tier_sweep_test.exs ==
+** (SyntaxError) invalid syntax found on test/contract/tier_sweep_test.exs:5944:306:
+      error: unexpected expression after keyword list. Keyword lists must always come last in lists and maps. Therefore, this is not allowed:
+
+          [some: :value, :another]
+          %{some: :value, another => value}
+
+      Instead, reorder it to be the last entry:
+
+          [:another, some: :value]
+          %{another => value, some: :value}
+
+      Syntax error after: ','
+      │
+ 5944 │       r = e.build_lane!(%{lane: "core", identity: id, selected_mfas: ms, live_mfas: ms, lane_evidence: ev, delivery: %{status: :merged, ci_run: "x"}, runtime: %{}, lock_sha256: String.duplicate("a", 64), aggregate_rows: [row], delivery_receipts: [%{}, %{}], inventory_universe: %{count: max(length(ms), 1), "exported_mfas" => ms}, live_nonoriginal_entries: %{}})
+      │                                                                                                                                                                                                                                                                                                                  ^
+      │
+      └─ test/contract/tier_sweep_test.exs:5944:306
+    (elixir 1.20.4) lib/kernel/parallel_compiler.ex:667: Kernel.ParallelCompiler.require_file/2
+    (elixir 1.20.4) lib/kernel/parallel_compiler.ex:550: anonymous fn/5 in Kernel.ParallelCompiler.spawn_workers/8

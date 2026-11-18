@@ -34,6 +34,41 @@
 
 ---
 
+## Plan 03-05 recovery boundary (2026-11-16)
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Repair the local format and record failures, then close keyed Phase 4 provenance before rerunning source-dependent contracts | Fix the issues that can be resolved from existing evidence immediately. Keep slow suites behind a cheap, identity-level provenance check. | ✓ |
+| Rerun the same focused and full suites first | Produces no new evidence because the recorded target-source/caller gaps and local failures have not changed. | |
+| Stop with a handoff only | Preserves the stops but leaves already authorized local and evidence-only repairs undone. | |
+
+**User's choice:** The user selected the recommended bounded recovery, then explicitly authorized fixing the recorded issues and proceeding.
+**Notes:** Preserve the original dirty checkout. Use the exact transfer snapshot in the isolated candidate. Do not rewrite the failed readiness receipt; append new receipts for remediation results.
+
+## Repair and check order
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Increasing-cost gates: format/whitespace, keyed artifact consistency, focused contracts, core CI, full floor suite | Finds malformed files or incomplete evidence before the expensive tests and makes failures attributable. | ✓ |
+| Run every check in parallel | Shortens wall time only when prerequisites are independent; here source-dependent checks can fail for the same unresolved keyed evidence. | |
+| Skip failing checks and record them | Leaves the phase blocked without learning whether the evidence repair solved the reported failures. | |
+
+**User's choice:** Recommendation applied under the user's instruction to use cheap sanity checks first and remove the repeated-work bottleneck.
+**Notes:** Stop at the first failure, identify its cause, and rerun only the affected checks after a fix. Corpus, test-support, and planning repairs may proceed; production guard behavior, thresholds, dependencies, and safety stops remain fixed.
+
+## Phase 4 evidence boundary
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Complete the already selected evidence-only provenance closure | Key every lane association or typed gap, trace the coverage caller and digest selector, and stop with exact unknowns when evidence cannot establish a claim. | ✓ |
+| Treat aggregate counts and coverage flags as sufficient | Cheaper in the short term, but does not establish which identity maps to which source or gap. | |
+| Guess missing provenance or legacy digest encoding | Can make checks appear green while changing the meaning of prior evidence. | |
+
+**User's choice:** Phase 4 evidence-only closure was selected earlier; the latest authorization explicitly permits carrying it out within its original limits.
+**Notes:** No candidate promotion, runtime-safety claim, guard implementation, aggregate-gate closure, or automatic next phase. Source-body reads still require the exact reviewed schedule, planning preflight, and fresh direct count.
+
+---
+
 ## the agent's Discretion
 
 - Use one GSD assumptions-analysis agent for an independent, read-only scan of existing inventory, provenance, and sizing patterns. No tests, OTP guard calls, or file writes were performed by that scan.

@@ -1,7 +1,7 @@
 # Phase 3: Guard aggregate scope rejoin and candidate sizing - Context
 
-**Gathered:** 2026-11-13
-**Status:** Ready for planning
+**Gathered:** 2026-11-16 (recovery decisions added)
+**Status:** Recovery plan amended under INT-20261117-01; source gates remain closed
 **Milestone:** v0.4 / guard-recovery
 
 <domain>
@@ -25,6 +25,14 @@ This phase is static evidence only. It does not invoke audited OTP functions, ca
 - **D-03:** Present one evidence-backed recommendation for a later bounded increment when the complete join and measured source/context/effort fit support it. Include the exact remaining complement and sizing basis. If evidence is missing or the candidate exceeds any inherited limit, select no candidate and state the concrete gap and bounded remedy.
 - **D-04:** End at an explicit owner decision point. A Phase 3 recommendation is not approval to implement, add dispositions, open another phase automatically, or claim aggregate closure. The owner decides separately whether to authorize any later guard increment after reviewing the rejoin and sizing.
 
+### Recovery and validation boundary
+- **D-05:** Continue from the isolated `gsd/phase-03-recovery-and-provenance-closure` candidate created from the exact preserved Phase 3 snapshot. Keep the original dirty checkout untouched. Treat the transfer manifest as byte provenance only; the regenerated `.planning/state.json` is a projection, not canonical input.
+- **D-06:** Repair the recorded Plan 03-05 local failures within evidence, test-support, and planning scope: formatting, intent-corpus expectations, the missing explicit `actual_library_collision` field, and keyed source/caller evidence. Do not change production guard behavior, requirements, thresholds, CI policy, or any retained safety stop. Keep the actual-library collision `null/unknown` unless direct evidence proves otherwise.
+- **D-07:** Complete the separately selected Phase 4 evidence-only closure before rerunning source-dependent Phase 3 contracts. Phase 4 must key every core/floor association or typed gap to the exact lane, original identity, and MFA; independently trace the source-coverage caller; and either reproduce the legacy nested SIZING digest recipe from known inputs or preserve that digest claim as unresolved while publishing a separately versioned supplement.
+- **D-08:** Apply checks in increasing cost: format and whitespace checks; a no-new-dependency validator for schema, complete ID sets, keyed association-or-gap partitioning, required provenance, counts, and cross-file digests; focused lane contracts; core CI; then the full floor suite. Stop at the first failure, diagnose its cause, and rerun only affected checks after a fix. Never treat counts or matching hashes alone as identity-level proof.
+- **D-09:** Phase 4 source-body reads require an exact reviewed schedule, planning preflight, and a fresh direct count for that exact request. Keep the five-source-file per-task cap, the 34,000-token compact-context ceiling, no-truncation rule, and fixed 31,000-token reserve. INT-20261117-01 replaces the total budget ceiling only for the remaining Phase 4/Phase 3 recovery with a 150,000 generated-output-token incremental envelope; all historical spending remains recorded and the new reserve cannot be consumed. Do not transfer the earlier one-time exception or add a dependency.
+- **D-10:** Preserve the static-only boundary, manual collision stop, Macro/caller checkpoints, candidate null, implementation unauthorized, aggregate gate open, Walking Skeleton block, and SEC-01 owner/status. Phase 4 evidence does not automatically complete Phase 3 or authorize another phase.
+
 ### the agent's Discretion
 - Choose the precise record schema, filenames, and crosswalk layout; use the existing test/support patterns and keep the output easy to audit.
 - Choose the smallest implementation boundary for a collector and the task/plan grouping, provided all source and evidence remains complete and the inherited limits are met. Fail closed on identity, provenance, caller, membership, or fit gaps.
@@ -46,6 +54,9 @@ This phase is static evidence only. It does not invoke audited OTP functions, ca
 - `.planning/intent/sources/2026-11-11-13-approve-rtt-guard-slice-and-brand-dogfood-roadmap.md` — approved EX-107 slice and the wider requirements it left open.
 - `.planning/intent/sources/2026-11-10-01-rolling-allocation-for-bounded-work.md` — inherited source, task, context, plan, and effort limits.
 - `.planning/intent/sources/2026-11-12-04-continue-global-phase-numbering.md` — global integer phase sequence and preserved historical IDs.
+- `.planning/intent/sources/2026-11-16-05-authorize-bounded-phase3-recovery.md` — current bounded authorization for Plan 03-05 repairs and the separately selected Phase 4 evidence-only closure.
+- `.planning/intent/sources/2026-11-17-01-authorize-rebased-recovery-envelope.md` — supersedes only the budget ceiling for the remaining Phase 4/Phase 3 recovery and requires per-wave usage reconciliation.
+- `.planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-CONTEXT.md` — independently bounded keyed-provenance work and source-read gates.
 
 ### Delivery history and retained obligations
 - `.planning/references/PHASE-DELIVERIES.json` — actual merged v0.2 Phase 1 and v0.3 Phase 2 receipts.
@@ -54,6 +65,9 @@ This phase is static evidence only. It does not invoke audited OTP functions, ca
 - `.planning/migrations/2026-11-11-milestone-reset/CARRY-FORWARD.md` — unfinished guard and product obligations with existing owners.
 - `.planning/milestones/v0.2-CLOSEOUT.md` — bounded EX-010 delivery and its retained limits.
 - `.planning/milestones/v0.3-CLOSEOUT.md` — bounded EX-107 delivery and its retained limits.
+- `.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md` — immutable failed local checks that this remediation must resolve without rewriting the receipt.
+- `.planning/forensics/report-20261116-2234.md` — latest forensic diagnosis of the repeated Phase 3 loop.
+- `.planning/forensics/phase3-recovery-transfer-20261117.json` — exact content-transfer provenance for this isolated candidate.
 
 ### Original membership, prior partitions, and sizing precedent
 - `.planning/migrations/2026-11-11-milestone-reset/ARCHIVE-MANIFEST.json` — immutable archive hashes and byte counts.
@@ -103,6 +117,8 @@ No UI or brand references apply: product UI and brand work are explicitly outsid
 ## Specific Ideas
 
 The owner requested broad, evidence-grounded consideration and a coherent recommendation-first result, and directed that recommendations be followed to reduce decision overhead. That discretion applies to presentation and evidence organization only; the approved scope, static-only boundary, open aggregate gate, and later owner decision remain unchanged. The phase is an engineering evidence task, so UI/UX and brand-design lenses do not apply.
+
+The recovery decision is to fix the known local failures and complete the already selected evidence-only provenance work. Put cheap artifact checks before the slow lane suites, preserve the failed readiness receipt as history, and do not turn any repaired evidence into a runtime-safety claim or aggregate-gate closure.
 </specifics>
 
 <deferred>

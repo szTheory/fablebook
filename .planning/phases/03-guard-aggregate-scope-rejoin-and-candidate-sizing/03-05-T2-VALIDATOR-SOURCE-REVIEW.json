@@ -1,0 +1,22 @@
+{
+  "schema_version": "03-05.task2-source-schedule-review.1",
+  "subject_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-VALIDATOR-SOURCE-SCHEDULE.json",
+  "subject_sha256": "050ed794d73e29db99bd80dca96597d639d04499c7c0cacc1d34af1995934d7b",
+  "reviewer": "independent provenance evidence audit agent",
+  "result": "pass",
+  "findings": [],
+  "verified": [
+    "15 input bindings",
+    "context hash",
+    "single complete 349-line validator selection",
+    "source/span hashes",
+    "exact count payload hashes",
+    "R1 excluded and forbidden to replay",
+    "safety stops preserved"
+  ],
+  "serialized_request_bytes": 22593,
+  "serialized_request_sha256": "c152763b5f97d539329a22f77cba661ae8466d761535d68e010a954b48b23653",
+  "reviewed_at_utc": "2026-11-18T00:12:50.688495+00:00",
+  "source_bodies_read": false,
+  "files_modified_by_reviewer": false
+}

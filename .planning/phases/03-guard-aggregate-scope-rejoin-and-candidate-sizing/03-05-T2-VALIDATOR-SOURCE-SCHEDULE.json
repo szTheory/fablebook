@@ -1,0 +1,157 @@
+{
+  "schema_version": "03-05.task2-source-schedule.1",
+  "generation": "03-05-TASK2-VALIDATOR-R7-20261118",
+  "status": "scheduled",
+  "created_at_utc": "2026-11-18T00:11:16.250144+00:00",
+  "checkout": {
+    "path": "/private/tmp/fablebook-phase3-remediation",
+    "branch": "gsd/phase-03-recovery-and-provenance-closure",
+    "head": "7b333dbe27eff85ddbc206bce03521c255b6d0c2"
+  },
+  "previous_request": {
+    "request_id": "T2-R1",
+    "status": "consumed_incomplete",
+    "replay_forbidden": true,
+    "content_used_for_analysis": false
+  },
+  "inputs": [
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+      "sha256": "d2f6e2559775769d3bfe36705fd9b8ca0ee0ea087589abd0d5611cb9df5f92d0",
+      "bytes": 52379
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-REPLAN-20261117-02.md",
+      "sha256": "bf65184d4417347ea09ff6416ba33336eb0b567eade682c27f0c415ebd40d842",
+      "bytes": 3148
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+      "bytes": 19570
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER-REVISE-01.json",
+      "sha256": "7c7457a7a57e14089ebb7b016038da95dbe28de8178703bde575874f73b0d43a",
+      "bytes": 32129
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER-REVIEW.json",
+      "sha256": "f3b3655991c9f26bb9e4db3783673c7e7e07957205ec239a0e82bab8c4596bbf",
+      "bytes": 794
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-R7-INITIAL-PREFLIGHT.json",
+      "sha256": "a0dff5ece6c723ae07c22c32a0e46a18765b5193d17139d3003bd6139f25a4e5",
+      "bytes": 267
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "sha256": "0f2ee493e5385e9dab7f01a7d686bb55e1e6ae8ab8f1f5a04c3a9da314137139",
+      "bytes": 57770
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-COVERAGE-CALLER-TRACE.json",
+      "sha256": "de8e8ebc299ccab13d35ab77eed6a3f03a07ed5cbb51bb07b4407595b0c515b0",
+      "bytes": 13433
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SIZING-DIGEST-PROOF.json",
+      "sha256": "9d4b00b65b8a1308ffdfcff893ff3bae7067d9c4550dd818e5363e137a422b2d",
+      "bytes": 5819
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-VALIDATION.json",
+      "sha256": "1993b88a992db6b845a9d6fb3040edaeb0ec2cd3ed500dd9c5fc390f0f62fde5",
+      "bytes": 10009
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-R2-SOURCE-EMISSION-RECEIPT.json",
+      "sha256": "b15ffc61559fc34c4bb9b9d6a4d0f21a627ba60f2c20085a70ccbebd0624491f",
+      "bytes": 2248
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-R3-SOURCE-EMISSION-RECEIPT.json",
+      "sha256": "9c4a6c0a9339db65a48d07001a435ff8cb8335e86ce6e2bb053b23871aebec75",
+      "bytes": 2253
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-R4-SOURCE-EMISSION-RECEIPT.json",
+      "sha256": "74dc68a83da89a3b8f4112470a0064f713f38306ef0ece91a918107b8ee7b2e7",
+      "bytes": 1687
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-R5-SOURCE-EMISSION-RECEIPT.json",
+      "sha256": "402725fdda150c119110f0def191819a5fdaf5aef370837fc9e201d90ec3a7cf",
+      "bytes": 1688
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-R6-SOURCE-EMISSION-RECEIPT.json",
+      "sha256": "1019542a2d49f97e9afc64e3ddff8d2455292a86e7e6b0ae5b4682c23552be23",
+      "bytes": 1687
+    }
+  ],
+  "request": {
+    "request_id": "T2-R7",
+    "status": "scheduled",
+    "context_text": "# Phase 3 Plan 03-05 Task 2: isolated validator source review\n\nT2-R1 was consumed once and its combined source delivery was clipped; it is excluded from claims and must not be replayed. T2-R2 through T2-R6 are complete, separately reviewed replacement slices. This is a new request for the validator file only because its bytes were in the clipped R1 response and no analysis used them. Read only this exact file span; do not inspect selected bodies outside it or modify files.\n\nReview the existing Phase 3 standard-library validator source against 03-05-PLAN.md Task 03-05-02 and the current independently reviewed Phase 4 manifest, typed partition, caller/coverage trace and sizing digest proof. Identify the actual --phase4-only, --self-test and --consumer flow, exact supplement schema and keys, filesystem inputs/outputs, unsafe or false-closure paths, and the smallest corrections needed to build and validate read-only keyed effective views and the linked recovery crosswalk. Preserve complete record accounting separately from source resolution and caller closure. Keep unknown-target-set rows explicit, legacy digest unresolved unless proven, actual collision unknown, candidate null and all authority/safety stops. Do not weaken tests/guards, write inputs, execute the helper, invoke audited APIs/callbacks/atom sinks/runtime eval/generated code, add dependencies, or contact services. Only this file is selected.\n\nCurrent Phase 4 generation is ENV-20261117-06-supported-20261117T204102Z; --all, Phase 3 --self-test and --phase4-only pass with valid unresolved gaps. R1 remains excluded; R2-R6 requests have complete delivery receipts. Per-request context fit is checked separately; cumulative output limits are disabled by owner direction.",
+    "context_bytes": 1750,
+    "context_sha256": "15b744684914ffdf6b7d6165cdc1c0b0445c4e404b1fe48648a68e7b2f317b6f",
+    "source_selections": [
+      {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+        "source_sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+        "source_bytes": 19570,
+        "source_span": {
+          "start_line": 1,
+          "end_line": 349,
+          "start_byte": 0,
+          "end_byte_exclusive": 19570,
+          "encoding": "UTF-8",
+          "complete_file": true,
+          "includes_final_newline": true,
+          "span_sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+          "selected_bytes": 19570
+        }
+      }
+    ],
+    "source_file_count": 1,
+    "count_contract": {
+      "model": "gpt-6-luna",
+      "endpoint": "POST https://api.openai.com/v1/responses/input_tokens",
+      "input_assembly": {
+        "prefix": "context_text + two LF + literal # Exact scheduled source selection + one LF",
+        "selection_format": "Each block is ## Source: {path} lines {start_line}-{end_line}, LF, exact UTF-8 source span.",
+        "serialization": "UTF-8 JSON object keys model then input, compact separators, ensure_ascii=false"
+      },
+      "generation_endpoint_called": false,
+      "configured_request_context_tokens": 200000
+    },
+    "safety_stops": {
+      "candidate": null,
+      "implementation_authorized": false,
+      "aggregate_gate": "open",
+      "walking_skeleton": "blocked",
+      "sec_01": "Pending",
+      "macro_caller_ast": "unresolved",
+      "explanation_wording": "unresolved",
+      "no_audited_runtime_paths": true
+    },
+    "count_payload": {
+      "payload_bytes": 21477,
+      "payload_sha256": "35f923c8af520d7761cd4e324c5a1dbaae355c83f91642b54399e4d6af292b69",
+      "serialized_request_bytes": 22593,
+      "serialized_request_sha256": "c152763b5f97d539329a22f77cba661ae8466d761535d68e010a954b48b23653"
+    }
+  },
+  "review_contract": {
+    "independent_review_required": true,
+    "source_body_emission_before_review": false,
+    "fresh_execute_preflight_and_direct_count_required": true
+  },
+  "output_policy": {
+    "aggregate_output_limit_enforced": false,
+    "individual_request_context_fit_required": true,
+    "context_limit_tokens": 200000
+  }
+}

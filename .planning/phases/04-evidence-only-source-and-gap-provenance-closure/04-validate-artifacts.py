@@ -18,7 +18,24 @@ CALLER_TRACE = PH4 / "04-COVERAGE-CALLER-TRACE.json"
 DIGEST_PROOF = PH4 / "04-SIZING-DIGEST-PROOF.json"
 VALIDATION = PH4 / "04-VALIDATION.json"
 REQUEST_GATE = PH4 / "04-R1-REQUEST-GATE.json"
-SESSION_LOG = Path("/Users/jon/.codex/sessions/2026/11/16/rollout-2026-11-16T21-47-09-01a1e766-afb2-77a1-8977-350fde6d15dd.jsonl")
+EVIDENCE_REVIEW = PH4 / "04-EVIDENCE-REVIEW.json"
+SESSION_LOG = Path.home().joinpath(".codex", "sessions", "2026", "11", "16", "rollout-2026-11-16T21-47-09-01a1e766-afb2-77a1-8977-350fde6d15dd.jsonl")
+POST_SNAPSHOT_PATHS = {
+    "test/contract/tier_sweep_test.exs",
+    "test/support/guard_aggregate_reconciliation_evidence.ex",
+}
+ADDITIONAL_REBIND_PATHS = {
+    ".planning/forensics/phase4-budget-reset-20261117.md",
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-01-PLAN.md",
+}
+PRIMARY_REBIND_PATH = ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md"
+SOURCE_SELECTION_DELIMITER = "\n\n# Exact scheduled source selection\n"
+
+
+def request_artifact_path(request_id, suffix):
+    if request_id not in ("R1", "R2", "R3"):
+        raise ValueError("unsupported exact source request id")
+    return PH4 / f"04-{request_id}-{suffix}.json"
 
 
 def _unique_object(pairs):
@@ -105,6 +122,72 @@ def source_closed(value):
     return True
 
 
+def validate_snapshot_advance(record, original, current_sha256, current_bytes):
+    if (record.get("snapshot_sha256") != original.get("current_sha256")
+            or record.get("snapshot_bytes") != original.get("current_bytes")
+            or record.get("current_sha256") != current_sha256
+            or record.get("current_bytes") != current_bytes
+            or not isinstance(current_sha256, str) or len(current_sha256) != 64
+            or type(current_bytes) is not int or current_bytes < 0):
+        raise ValueError("post-snapshot file binding differs from its preserved snapshot or current bytes")
+    return True
+
+
+def validate_exact_paths(records, expected_paths, label):
+    if not isinstance(records, list):
+        raise ValueError(label + " is not a list")
+    paths = []
+    for record in records:
+        if not isinstance(record, dict) or not isinstance(record.get("path"), str):
+            raise ValueError(label + " contains a row without a string path")
+        paths.append(record["path"])
+    if (len(paths) != len(expected_paths) or len(paths) != len(set(paths))
+            or set(paths) != set(expected_paths)):
+        raise ValueError(label + " has missing, duplicate, or unapproved paths")
+    return True
+
+
+def validate_input_rebind(binding, historical, current_sha256, current_bytes):
+    if (binding.get("path") != historical.get("path")
+            or binding.get("original_sha256") != historical.get("sha256")
+            or binding.get("original_bytes") != historical.get("bytes")
+            or binding.get("current_sha256") != current_sha256
+            or binding.get("current_bytes") != current_bytes
+            or not isinstance(current_sha256, str) or len(current_sha256) != 64
+            or type(current_bytes) is not int or current_bytes < 0):
+        raise ValueError("metadata input rebind differs from its original or current bytes")
+    return True
+
+
+def validate_preservation_snapshot(item, current_sha256, current_bytes, advance=None):
+    if advance is None:
+        if (current_sha256 != item.get("current_sha256")
+                or current_bytes != item.get("current_bytes")):
+            raise ValueError("preservation snapshot differs from current bytes")
+        snapshot_sha256 = current_sha256
+    else:
+        validate_snapshot_advance(advance, item, current_sha256, current_bytes)
+        snapshot_sha256 = item.get("current_sha256")
+    if (snapshot_sha256 == item.get("expected_sha256")) != item.get("matches"):
+        raise ValueError("preservation match status differs from its recorded snapshot")
+    return snapshot_sha256
+
+
+def consumed_source_binding_matches(source_sha256, current_sha256, active_sha256, advance=None):
+    if active_sha256 != current_sha256:
+        return False
+    if advance is None:
+        return source_sha256 == current_sha256
+    return (advance.get("current_sha256") == current_sha256
+            and source_sha256 in (advance.get("snapshot_sha256"), current_sha256))
+
+
+def validate_consumed_source_binding(source_sha256, current_sha256, active_sha256, advance=None):
+    if not consumed_source_binding_matches(source_sha256, current_sha256, active_sha256, advance):
+        raise ValueError("consumed source hash is neither current nor the reviewed historical snapshot")
+    return True
+
+
 def self_test():
     checks = 0
 
@@ -150,15 +233,77 @@ def self_test():
     if hashlib.sha256(b"old").hexdigest() == hashlib.sha256(b"new").hexdigest():
         raise AssertionError("stale-hash control failed")
     checks += 1
+    snapshot = {"current_sha256": "a" * 64, "current_bytes": 2}
+    advance = {"snapshot_sha256": "a" * 64, "snapshot_bytes": 2,
+               "current_sha256": "b" * 64, "current_bytes": 3}
+    validate_snapshot_advance(advance, snapshot, "b" * 64, 3)
+    checks += 1
+    rejects(lambda: validate_snapshot_advance(
+        {**advance, "snapshot_sha256": "c" * 64}, snapshot, "b" * 64, 3))
+    rejects(lambda: validate_snapshot_advance(advance, snapshot, "d" * 64, 3))
+    exact_rows = [{"path": "one"}, {"path": "two"}]
+    validate_exact_paths(exact_rows, {"one", "two"}, "test fixture")
+    checks += 1
+    rejects(lambda: validate_exact_paths([{"path": "one"}, {"path": "one"}],
+                                         {"one", "two"}, "test fixture"))
+    rejects(lambda: validate_exact_paths([{"path": "one"}], {"one", "two"}, "test fixture"))
+    input_snapshot = {"path": "plan.md", "sha256": "a" * 64, "bytes": 2}
+    input_rebind = {"path": "plan.md", "original_sha256": "a" * 64,
+                    "original_bytes": 2, "current_sha256": "b" * 64,
+                    "current_bytes": 3}
+    validate_input_rebind(input_rebind, input_snapshot, "b" * 64, 3)
+    checks += 1
+    rejects(lambda: validate_input_rebind(
+        {**input_rebind, "original_sha256": "c" * 64}, input_snapshot, "b" * 64, 3))
+    rejects(lambda: validate_input_rebind(input_rebind, input_snapshot, "d" * 64, 3))
+    preserved = {"expected_sha256": "0" * 64, "current_sha256": "a" * 64,
+                 "current_bytes": 2, "matches": False}
+    advance_preserved = {"snapshot_sha256": "a" * 64, "snapshot_bytes": 2,
+                         "current_sha256": "b" * 64, "current_bytes": 3}
+    if validate_preservation_snapshot(preserved, "b" * 64, 3, advance_preserved) != "a" * 64:
+        raise AssertionError("post-snapshot preservation did not retain the historical mismatch")
+    checks += 1
+    rejects(lambda: validate_preservation_snapshot(
+        preserved, "b" * 64, 3, {**advance_preserved, "snapshot_sha256": "c" * 64}))
+    rejects(lambda: validate_preservation_snapshot(preserved, "b" * 64, 3))
+    reviewed_change = {"snapshot_sha256": "a" * 64, "current_sha256": "b" * 64}
+    if not consumed_source_binding_matches("a" * 64, "b" * 64, "b" * 64, reviewed_change):
+        raise AssertionError("consumed historical source hash did not match the reviewed overlay")
+    checks += 1
+    rejects(lambda: validate_consumed_source_binding("c" * 64, "b" * 64, "b" * 64, reviewed_change))
+    rejects(lambda: validate_consumed_source_binding("b" * 64, "b" * 64, "d" * 64, reviewed_change))
+    consumed_request = {"request_id":"R2","context_bytes":20,"source_bytes":40,"context_sha256":"a" * 64,
+                        "source_sha256":"b" * 64,"source_span":{"span_sha256":"c" * 64}}
+    consumed_schedule = {"sha256":"d" * 64,"generation":"fixture","request":consumed_request}
+    consumed_count = {"status":"pass","generation":"fixture","request_id":"R2",
+                      "payload_bytes":20+len(SOURCE_SELECTION_DELIMITER.encode())+40,
+                      "serialized_request_bytes":100,"serialized_request_sha256":"e" * 64,
+                      "serialized_input_tokens":10,"generated":False,
+                      "generation_endpoint_called":False,"payload_truncated":False,
+                      "fits_configured_context":True,"schedule_sha256":"d" * 64,
+                      "source_sha256":"b" * 64,"source_span":consumed_request["source_span"],
+                      "context_sha256":"a" * 64}
+    if consumed_count_payload_blockers(consumed_schedule, consumed_count):
+        raise AssertionError("historical consumed-count receipt fixture failed")
+    checks += 1
+    rejects(lambda: requires_no_count_blockers(
+        consumed_count_payload_blockers(consumed_schedule,{**consumed_count,"status":"fail"})))
+    rejects(lambda: requires_no_count_blockers(
+        consumed_count_payload_blockers(consumed_schedule,{**consumed_count,"generation":"other"})))
+    rejects(lambda: requires_no_count_blockers(
+        consumed_count_payload_blockers(consumed_schedule,{**consumed_count,"request_id":"R1"})))
+    rejects(lambda: requires_no_count_blockers(
+        consumed_count_payload_blockers(consumed_schedule,
+                                         {**consumed_count,"payload_bytes":1})))
 
-    def gate_fixture():
+    def gate_fixture(request_id="R1"):
         generation = "a" * 64
         schedule_hash = "b" * 64
         review_hash = "c" * 64
         preflight_hash = "d" * 64
         source_hash = "e" * 64
         context_hash = "f" * 64
-        span = {"start_line": 1, "end_line": 20}
+        span = {"start_line": 1, "end_line": 20, "span_sha256": "8" * 64}
         manifest = {"metadata_status": "supported", "partition_outcome": "complete",
                     "generation": generation, "authority": {"status": "corroborated"},
                     "provenance_bridge": {"status": "passed", "sha256": "9" * 64}}
@@ -166,43 +311,103 @@ def self_test():
                     "generation": generation, "sha256": schedule_hash,
                     "created_at_utc": "2026-01-01T00:00:00Z", "author": "executor",
                     "source_file_count": 1,
-                    "request": {"request_id": "R1", "status": "scheduled",
+                    "request": {"request_id": request_id, "status": "scheduled",
                                 "candidate_path": "test/support/helper.ex", "source_span": span,
                                 "source_bytes": 100, "source_sha256": source_hash,
-                                "context_sha256": context_hash, "request_cap_tokens": 34000,
-                                "output_cap_tokens": 2000}}
+                                "context_sha256": context_hash}}
         review = {"status": "pass", "reviewer": "independent-reviewer",
                   "created_at_utc": "2026-01-01T00:01:00Z", "generation": generation,
-                  "request_id": "R1", "sha256": review_hash, "schedule_sha256": schedule_hash,
+                  "request_id": request_id, "sha256": review_hash, "schedule_sha256": schedule_hash,
                   "source_sha256": source_hash, "source_span": span,
                   "context_sha256": context_hash, "findings": []}
         preflight = {"status": "pass", "created_at_utc": "2026-01-01T00:02:00Z",
-                     "generation": generation, "request_id": "R1", "sha256": preflight_hash,
+                     "generation": generation, "request_id": request_id, "sha256": preflight_hash,
                      "stage": "execute", "phase": "4", "exit_code": 0, "errors": [],
                      "schedule_sha256": schedule_hash, "review_sha256": review_hash,
                      "source_sha256": source_hash, "source_span": span,
                      "context_sha256": context_hash}
         count = {"status": "pass", "counted_at_utc": "2026-01-01T00:03:00Z",
-                 "generation": generation, "request_id": "R1", "generated": False,
+                 "generation": generation, "request_id": request_id, "generated": False,
+                 "generation_endpoint_called": False,
                  "payload_truncated": False, "serialized_input_tokens": 1000,
-                 "task_charge_tokens": 17000, "analysis_review_allowance_tokens": 14000,
-                 "output_allowance_tokens": 2000,
+                 "serialized_request_bytes": 2048, "serialized_request_sha256": "7" * 64,
+                 "configured_model_context_tokens": 200000, "fits_configured_context": True,
                  "source_sha256": source_hash, "source_span": span,
                  "context_sha256": context_hash, "schedule_sha256": schedule_hash,
                  "review_sha256": review_hash, "preflight_sha256": preflight_hash}
         ledger = {"status": "measured", "measured_at_utc": "2026-01-01T00:04:00Z",
                   "usage_attributed": True, "cumulative_fit": "measured",
-                  "source_request_count": 0, "working_ceiling": 610000,
+                  "source_request_count": 0, "consumed_request_ids": [], "working_ceiling": 610000,
                   "generated_output_ceiling": 650000, "protected_reserve": 40000,
                   "remaining_working_balance": 560000,
                   "post_reset_usage": {"output_tokens": 50000},
+                  "aggregate_output_budget_policy": "disabled_by_owner",
                   "task_caps": {"04-02-02": 50000}}
         return [manifest, schedule, review, preflight, count, ledger]
 
     fixture = gate_fixture()
+    fixture[5]["remaining_working_balance"] = -1
+    fixture[5]["post_reset_usage"]["output_tokens"] = 900000
     initial_blockers = request_gate_blockers(*fixture, "R1")
     if initial_blockers:
-        raise AssertionError("fully bound one-use request fixture was blocked: " + "; ".join(initial_blockers))
+        raise AssertionError("aggregate output history incorrectly blocked a fully bound request: " + "; ".join(initial_blockers))
+    checks += 1
+    resumed = gate_fixture("R2")
+    resumed[5]["source_request_count"] = 1
+    resumed[5]["consumed_request_ids"] = ["R1"]
+    if request_gate_blockers(*resumed, "R2"):
+        raise AssertionError("a fresh exact R2 request was blocked by the prior incomplete R1 delivery")
+    checks += 1
+    resumed_r3 = gate_fixture("R3")
+    resumed_r3[5]["source_request_count"] = 2
+    resumed_r3[5]["consumed_request_ids"] = ["R1", "R2"]
+    if request_gate_blockers(*resumed_r3, "R3"):
+        raise AssertionError("a disjoint exact R3 request was blocked by prior consumed source spans")
+    checks += 1
+    uncapped = gate_fixture()
+    uncapped[4]["serialized_input_tokens"] = 40000
+    uncapped[5]["post_reset_usage"]["output_tokens"] = 700000
+    uncapped[5]["remaining_working_balance"] = -90000
+    uncapped[5]["remaining_total_balance"] = -50000
+    uncapped[5]["protected_reserve_preserved"] = False
+    if request_gate_blockers(*uncapped, "R1"):
+        raise AssertionError("owner-disabled cumulative token ceiling still blocks a fully counted request")
+    checks += 1
+    informational = gate_fixture()
+    informational[5].update({"status": "informational", "measured_at_utc": None,
+                             "usage_attributed": False, "cumulative_fit": "unmeasured",
+                             "post_reset_usage": {}, "remaining_working_balance": None,
+                             "remaining_total_balance": None, "protected_reserve_preserved": None})
+    if request_gate_blockers(*informational, "R1"):
+        raise AssertionError("informational aggregate counters still block a fully counted request")
+    checks += 1
+    ready = {"status": "one_use_ready", "source_emission": False,
+             "bindings": {"generation": "a" * 64, "request_id": "R1",
+                          "schedule_sha256": "b" * 64, "review_sha256": "c" * 64,
+                          "preflight_sha256": "d" * 64, "count_sha256": "8" * 64,
+                          "source_sha256": "e" * 64, "source_span": {"start_line": 1, "end_line": 20},
+                          "context_sha256": "f" * 64,
+                          "serialized_request_sha256": "7" * 64}}
+    consumed_bindings = dict(ready["bindings"])
+    consumed = {"status": "consumed", "request_id": "R1", "source_emission": True,
+                "source_request_count": 1, "one_use_ready_receipt": ready,
+                "source_emission_receipt": {"status": "consumed_once", "emission_count": 1,
+                    "content_used_for_analysis": True, "tool_output_truncated": False,
+                    "analysis_complete": True, "one_use_ready_receipt_sha256": hashlib.sha256(
+                        json.dumps(ready, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+                    ).hexdigest(), **consumed_bindings}}
+    if consumed_receipt_blockers(consumed, ready["bindings"]):
+        raise AssertionError("a correctly bound one-use source emission was not recognized")
+    incomplete = json.loads(json.dumps(consumed))
+    incomplete.update({"status": "consumed_incomplete"})
+    incomplete["source_emission_receipt"].update({"status": "consumed_once_delivery_incomplete",
+                                                   "tool_output_truncated": True,
+                                                   "analysis_complete": False})
+    if consumed_receipt_blockers(incomplete, ready["bindings"]) or consumed_receipt_status(incomplete) != "consumed_incomplete":
+        raise AssertionError("a truthful truncated one-use delivery was not retained as consumed_incomplete")
+    consumed["source_emission_receipt"]["emission_count"] = 2
+    if not consumed_receipt_blockers(consumed, ready["bindings"]):
+        raise AssertionError("a repeated source emission passed the one-use check")
     checks += 1
     variants = []
     changed = gate_fixture(); changed[2] = {}
@@ -215,19 +420,14 @@ def self_test():
     variants.append(changed)
     changed = gate_fixture(); changed[4]["payload_truncated"] = True
     variants.append(changed)
-    changed = gate_fixture(); changed[5]["usage_attributed"] = False
-    variants.append(changed)
     changed = gate_fixture(); changed[5]["source_request_count"] = 1
+    changed[5]["consumed_request_ids"] = ["R1"]
     variants.append(changed)
-    changed = gate_fixture(); changed[5]["task_caps"]["04-02-02"] = 2500
+    changed = gate_fixture(); changed[5]["aggregate_output_budget_policy"] = "capped"
     variants.append(changed)
-    changed = gate_fixture(); changed[5]["cumulative_fit"] = "unverifiable"
+    changed = gate_fixture(); changed[4]["serialized_request_sha256"] = "invalid"
     variants.append(changed)
-    changed = gate_fixture(); changed[4]["output_allowance_tokens"] = 200000
-    variants.append(changed)
-    changed = gate_fixture(); changed[4]["task_charge_tokens"] = 16999
-    variants.append(changed)
-    changed = gate_fixture(); changed[4]["analysis_review_allowance_tokens"] = 13000
+    changed = gate_fixture(); changed[4]["configured_model_context_tokens"] = 500
     variants.append(changed)
     changed = gate_fixture(); changed[1]["request"]["source_span"] = None
     variants.append(changed)
@@ -235,9 +435,9 @@ def self_test():
     variants.append(changed)
     changed = gate_fixture(); changed[1]["request"]["context_sha256"] = "0" * 64
     variants.append(changed)
-    for invalid in variants:
+    for variant_index, invalid in enumerate(variants):
         if not request_gate_blockers(*invalid, "R1"):
-            raise AssertionError("request-gate negative control unexpectedly passed")
+            raise AssertionError("request-gate negative control unexpectedly passed: " + str(variant_index))
         checks += 1
     return {"status": "pass", "checks": checks, "writes_repository_inputs": False}
 
@@ -288,6 +488,9 @@ def check_provenance_bridge():
             raise ValueError("immutable Phase 4 stop record is missing or changed")
     transfer = bridge.get("transfer_receipt", {})
     readiness = bridge.get("task_readiness", {})
+    expected_session_pointer = "~/" + SESSION_LOG.relative_to(Path.home()).as_posix()
+    if bridge.get("session_log") != expected_session_pointer:
+        raise ValueError("bridge session-log pointer is not normalized and home-relative")
     for record in (transfer, readiness):
         path = safe_path(record.get("path", ""))
         if not path.is_file() or sha256(path) != record.get("sha256"):
@@ -307,6 +510,47 @@ def check_provenance_bridge():
         raise ValueError("bridge includes an extra, missing, or unapproved preservation mismatch")
     if len(mismatch_rows) != 3 or len(bridge_rows) != 3:
         raise ValueError("bridge mismatch set is not exactly the three approved records")
+    post_snapshot = bridge.get("post_snapshot_changes")
+    post_snapshot_by_path = {}
+    if post_snapshot is not None:
+        if post_snapshot.get("schema_version") != "04.post-snapshot-changes.1":
+            raise ValueError("unsupported post-snapshot change record")
+        if post_snapshot.get("source_access") != "closed" or post_snapshot.get("semantic_claims") != []:
+            raise ValueError("post-snapshot changes make a source or semantic claim")
+        if readiness.get("path") != (PH3 / "03-RECOVERY-READINESS.md").relative_to(ROOT).as_posix():
+            raise ValueError("post-snapshot changes are not bound to the Phase 3 readiness record")
+        review_binding = post_snapshot.get("code_review", {})
+        review_path = PH3 / "03-EXECUTION-CODE-REVIEW.md"
+        if (review_binding.get("path") != review_path.relative_to(ROOT).as_posix()
+                or not review_path.is_file() or sha256(review_path) != review_binding.get("sha256")):
+            raise ValueError("post-snapshot changes lack the bound Phase 3 code review")
+        review_text = review_path.read_text(encoding="utf-8")
+        if "\nstatus: clean\n" not in review_text or "\n  total: 0\n" not in review_text:
+            raise ValueError("post-snapshot Phase 3 code review is not clean")
+        reviewed_paths = {line[4:] for line in review_text.splitlines()
+                          if line.startswith("  - test/")}
+        readiness_text = safe_path(readiness["path"]).read_text(encoding="utf-8")
+        readiness_hashes = {}
+        for line in readiness_text.splitlines():
+            cells = [cell.strip().strip("`") for cell in line.split("|")]
+            if len(cells) >= 3 and cells[1].startswith("test/"):
+                readiness_hashes[cells[1]] = cells[2]
+        change_rows = post_snapshot.get("files", [])
+        validate_exact_paths(change_rows, POST_SNAPSHOT_PATHS, "post-snapshot change set")
+        if not POST_SNAPSHOT_PATHS.issubset(reviewed_paths):
+            raise ValueError("Phase 3 code review does not cover every post-snapshot file")
+        original_by_path = {row["path"]: row for row in mismatch_rows}
+        for row in change_rows:
+            path = row.get("path")
+            if path not in original_by_path:
+                raise ValueError("post-snapshot change is outside the original mismatch set")
+            current_path = safe_path(path)
+            current_hash = sha256(current_path)
+            current_bytes = current_path.stat().st_size
+            validate_snapshot_advance(row, original_by_path[path], current_hash, current_bytes)
+            if readiness_hashes.get(path) != current_hash:
+                raise ValueError("Phase 3 readiness does not bind the post-snapshot file hash: " + path)
+            post_snapshot_by_path[path] = row
     for mismatch in mismatch_rows:
         path = mismatch["path"]
         source = transfer_rows.get(path, {})
@@ -317,10 +561,15 @@ def check_provenance_bridge():
                 or mismatch.get("expected_sha256") != bridged.get("old_sha256")
                 or mismatch.get("current_sha256") != bridged.get("current_sha256")
                 or mismatch.get("current_bytes") != bridged.get("current_bytes")
-                or sha256(current_path) != bridged.get("current_sha256")
-                or current_path.stat().st_size != bridged.get("current_bytes")
                 or bridged.get("known_cause") != mismatch.get("known_cause")):
             raise ValueError("preservation bridge old/current hash or byte binding differs: " + path)
+        advanced = post_snapshot_by_path.get(path)
+        if advanced is None:
+            if (sha256(current_path) != bridged.get("current_sha256")
+                    or current_path.stat().st_size != bridged.get("current_bytes")):
+                raise ValueError("preservation bridge current hash or byte binding differs: " + path)
+        else:
+            validate_snapshot_advance(advanced, mismatch, sha256(current_path), current_path.stat().st_size)
         events = bridged.get("events", [])
         if not events:
             raise ValueError("preservation delta lacks saved command evidence: " + path)
@@ -353,7 +602,8 @@ def check_provenance_bridge():
         raise ValueError("bridge is neither pending independent review nor passed")
     return {"status": bridge_status, "source_access": "closed",
             "mismatches": len(bridge_rows), "independent_review": review.get("status"),
-            "subject_sha256": subject_hash}
+            "subject_sha256": subject_hash,
+            "post_snapshot_changes": post_snapshot_by_path}
 
 
 def sha256_bytes(value):
@@ -363,7 +613,7 @@ def sha256_bytes(value):
 def check_metadata_input_reconciliation():
     path = PH4 / "04-METADATA-INPUT-RECONCILIATION.json"
     record = read_json(path)
-    if record.get("schema_version") != "04.metadata-input-reconciliation.1":
+    if record.get("schema_version") != "04.metadata-input-reconciliation.2":
         raise ValueError("unsupported metadata-input reconciliation schema")
     source_closed(record.get("source_access"))
     if record.get("prior_bytes_available") is not False:
@@ -375,14 +625,19 @@ def check_metadata_input_reconciliation():
         raise ValueError("reconciliation is not bound to the immutable original manifest")
     original = read_json(original_path)
     binding = record.get("input_binding", {})
-    historical = next((item for item in original.get("inputs", []) if item.get("path") == binding.get("path")), None)
-    if (historical is None or historical.get("sha256") != binding.get("original_sha256")
-            or historical.get("bytes") != binding.get("original_bytes")):
-        raise ValueError("reconciliation does not preserve the exact historical input binding")
-    current = safe_path(binding.get("path", ""))
-    if (not current.is_file() or sha256(current) != binding.get("current_sha256")
-            or current.stat().st_size != binding.get("current_bytes")):
-        raise ValueError("current metadata input differs from the reconciliation")
+    if binding.get("path") != PRIMARY_REBIND_PATH:
+        raise ValueError("primary metadata input rebind is not the Phase 3 plan")
+    additional = record.get("additional_input_bindings", [])
+    validate_exact_paths(additional, ADDITIONAL_REBIND_PATHS, "additional metadata input rebinds")
+    historical_inputs = {item.get("path"): item for item in original.get("inputs", [])}
+    for current_binding in [binding, *additional]:
+        historical = historical_inputs.get(current_binding.get("path"))
+        if historical is None:
+            raise ValueError("reconciliation input is absent from the immutable original manifest")
+        current = safe_path(current_binding.get("path", ""))
+        if not current.is_file():
+            raise ValueError("reconciled metadata input is missing")
+        validate_input_rebind(current_binding, historical, sha256(current), current.stat().st_size)
     review = record.get("independent_review", {})
     subject = dict(record); subject.pop("independent_review", None)
     subject_hash = json_sha256(subject)
@@ -398,7 +653,8 @@ def check_metadata_input_reconciliation():
     else:
         rebind_status = "review_pending"
     return {"status": rebind_status, "source_access": "closed",
-            "input_path": binding.get("path"), "subject_sha256": subject_hash,
+            "input_paths": [item.get("path") for item in [binding, *additional]],
+            "subject_sha256": subject_hash,
             "prior_bytes_available": False}
 
 
@@ -406,6 +662,8 @@ def check_manifest_partition(manifest, mode):
     if manifest.get("schema_version") != "04.provenance.1":
         raise ValueError("unsupported provenance schema")
     source_closed(manifest.get("source_access"))
+    bridge_post_snapshot = {}
+    documented_historical_inputs = {}
     stop = manifest.get("metadata_stop_receipt", {})
     if mode == "blocked":
         if manifest.get("metadata_status") != "blocked" or manifest.get("partition_outcome") != "unresolved":
@@ -414,10 +672,21 @@ def check_manifest_partition(manifest, mode):
             raise ValueError("exact metadata stop receipt missing")
         if not stop.get("mismatches") or not stop.get("next_actor") or not stop.get("remedy"):
             raise ValueError("stop receipt lacks mismatch, remedy, or next actor")
+        bridge = check_provenance_bridge()
+        rebind_result = check_metadata_input_reconciliation()
+        if bridge.get("status") != "passed" or rebind_result.get("status") not in ("reviewed", "passed"):
+            raise ValueError("historical inputs changed without passed provenance and rebind receipts")
+        bridge_post_snapshot = bridge.get("post_snapshot_changes", {})
+        for path, row in bridge.get("post_snapshot_changes", {}).items():
+            documented_historical_inputs[path] = (row.get("current_sha256"), row.get("current_bytes"))
+        rebind_doc = read_json(PH4 / "04-METADATA-INPUT-RECONCILIATION.json")
+        for row in [rebind_doc.get("input_binding", {}), *rebind_doc.get("additional_input_bindings", [])]:
+            documented_historical_inputs[row.get("path")] = (row.get("current_sha256"), row.get("current_bytes"))
     else:
         bridge = check_provenance_bridge()
         if bridge.get("status") != "passed":
             raise ValueError("supported partition is gated on an independently passed preservation bridge")
+        bridge_post_snapshot = bridge.get("post_snapshot_changes", {})
         binding = manifest.get("provenance_bridge", {})
         if (manifest.get("metadata_status") != "supported" or manifest.get("partition_outcome") != "complete"
                 or binding.get("status") != "passed" or binding.get("sha256") != sha256(PRESERVATION_BRIDGE)):
@@ -445,23 +714,24 @@ def check_manifest_partition(manifest, mode):
             stale = {"path": item["path"], "expected_sha256": item.get("sha256"),
                      "expected_bytes": item.get("bytes"), "current_sha256": current_hash,
                      "current_bytes": current_bytes}
-            allowed_historical_plan = (mode == "blocked" and item["path"] ==
-                ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md")
-            if not allowed_historical_plan:
+            documented = documented_historical_inputs.get(item["path"])
+            if (mode != "blocked" or documented != (current_hash, current_bytes)):
                 raise ValueError("stale/missing input binding: " + item["path"])
             stale_inputs.append(stale)
     if mode == "supported":
         rebind_doc = read_json(PH4 / "04-METADATA-INPUT-RECONCILIATION.json")
         recorded = rebind_doc.get("input_binding", {})
+        additional = rebind_doc.get("additional_input_bindings", [])
         if (rebind_result.get("status") not in ("reviewed", "passed") or len(stale_inputs) != 0
-                or recorded.get("path") != ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md"):
-            raise ValueError("active plan input has not been rebound to current bytes")
-        if sha256(safe_path(recorded["path"])) != recorded.get("current_sha256"):
-            raise ValueError("rebound plan input no longer matches current bytes")
-        active_input = next((item for item in manifest.get("inputs", []) if item.get("path") == recorded.get("path")), None)
-        if (active_input is None or active_input.get("sha256") != recorded.get("current_sha256")
-                or active_input.get("bytes") != recorded.get("current_bytes")):
-            raise ValueError("supported generation did not bind the reconciled current plan bytes")
+                or recorded.get("path") != PRIMARY_REBIND_PATH):
+            raise ValueError("active metadata inputs have not been rebound to current bytes")
+        for item in [recorded, *additional]:
+            if sha256(safe_path(item["path"])) != item.get("current_sha256"):
+                raise ValueError("rebound metadata input no longer matches current bytes: " + item["path"])
+            active_input = next((row for row in manifest.get("inputs", []) if row.get("path") == item.get("path")), None)
+            if (active_input is None or active_input.get("sha256") != item.get("current_sha256")
+                    or active_input.get("bytes") != item.get("current_bytes")):
+                raise ValueError("supported generation did not bind reconciled current metadata input: " + item["path"])
 
     receipt = read_json(PH3 / "03-04-METADATA-GAP-RECEIPT.json")
     found_mismatches = []
@@ -470,10 +740,11 @@ def check_manifest_partition(manifest, mode):
             raise ValueError("preservation expectation differs from immutable receipt")
         path = safe_path(item["path"])
         current = sha256(path) if path.is_file() else None
-        if current != item["current_sha256"] or (current == item["expected_sha256"]) != item["matches"]:
-            raise ValueError("stale current preservation hash: " + item["path"])
-        if current != item["expected_sha256"]:
-            found_mismatches.append((item["path"], item["expected_sha256"], current))
+        snapshot_hash = validate_preservation_snapshot(
+            item, current, path.stat().st_size if path.is_file() else -1,
+            bridge_post_snapshot.get(item["path"]))
+        if snapshot_hash != item["expected_sha256"]:
+            found_mismatches.append((item["path"], item["expected_sha256"], snapshot_hash))
     stated_mismatches = [(item["path"], item["expected_sha256"], item["current_sha256"])
                          for item in manifest["preservation"]["mismatches"]]
     if sorted(found_mismatches) != sorted(stated_mismatches):
@@ -590,29 +861,180 @@ def check_schedule():
 
     active = read_json(PH4 / "04-RESOURCE-LEDGER.json")
     source_closed(active.get("source_access"))
-    if (active.get("generated_output_ceiling") != 650000 or active.get("working_ceiling") != 610000
-            or active.get("protected_reserve") != 40000
-            or active.get("working_ceiling") + active.get("protected_reserve") != active.get("generated_output_ceiling")):
-        raise ValueError("active ENV-06 resource envelope arithmetic changed")
+    if active.get("aggregate_output_budget_policy") != "disabled_by_owner":
+        raise ValueError("aggregate output ceiling policy has not been disabled by the owner")
+    consumed = active.get("consumed_request_ids")
+    if (not isinstance(consumed, list) or len(consumed) != len(set(consumed))
+            or active.get("source_request_count") != len(consumed)
+            or set(consumed) != {"R1", "R2", "R3"}):
+        raise ValueError("active ENV-06 source request ledger is inconsistent")
     usage = active.get("post_reset_usage", {})
     output = usage.get("output_tokens")
-    if (active.get("status") not in ("measured", "measured_with_request_blocked")
-            or not active.get("usage_attributed") or not isinstance(output, int)
-            or active.get("remaining_working_balance") != 610000 - output
-            or active.get("remaining_total_balance") != 650000 - output
-            or active.get("protected_reserve_preserved") is not True
-            or active.get("source_request_count") != 0):
-        raise ValueError("active ENV-06 usage or remaining balance is stale or inconsistent")
-    return {"status": "blocked_consistent", "source_access": "closed",
+    return {"status": "historical_blocked_consistent", "source_access": "closed",
             "historical_env04": {"output_tokens": old_output, "remaining_working": 179000 - old_output},
-            "active_env06": {"output_tokens": output, "remaining_working": 610000 - output},
-            "review": "not_run", "preflight": "not_run", "count": "not_run"}
+            "active_env06_informational": {"output_tokens": output,
+                                            "recorded_working_balance": active.get("remaining_working_balance")},
+            "aggregate_output_budget_policy": active.get("aggregate_output_budget_policy"),
+            "source_request_count": active.get("source_request_count"),
+            "consumed_request_ids": consumed}
+
+
+def source_span_blockers(schedule):
+    request = schedule.get("request", {})
+    span = request.get("source_span", {})
+    try:
+        source_path = safe_path(request.get("candidate_path"))
+        source = source_path.read_bytes()
+    except (OSError, ValueError, TypeError) as exc:
+        return ["scheduled source is unavailable or unsafe: " + str(exc)]
+    if hashlib.sha256(source).hexdigest() != request.get("source_sha256"):
+        return ["current full-source hash differs from the reviewed schedule"]
+    start_line, end_line = span.get("start_line"), span.get("end_line")
+    start_byte, end_byte = span.get("start_byte"), span.get("end_byte_exclusive")
+    if any(type(value) is not int for value in (start_line, end_line, start_byte, end_byte)):
+        return ["scheduled source span has invalid line or byte bounds"]
+    lines = source.splitlines(keepends=True)
+    if start_line < 1 or end_line < start_line or end_line > len(lines):
+        return ["scheduled source line range is outside the current file"]
+    expected_start = sum(len(line) for line in lines[:start_line - 1])
+    expected_end = sum(len(line) for line in lines[:end_line])
+    if start_byte != expected_start or end_byte != expected_end or end_byte < start_byte:
+        return ["scheduled source byte offsets do not match its line range"]
+    selected = source[start_byte:end_byte]
+    if (len(selected) != request.get("source_bytes")
+            or hashlib.sha256(selected).hexdigest() != span.get("span_sha256")):
+        return ["scheduled source span byte count or hash is stale"]
+    try:
+        selected.decode("utf-8")
+    except UnicodeDecodeError:
+        return ["scheduled source span is not valid UTF-8"]
+    context = request.get("context_text")
+    if not isinstance(context, str):
+        return ["exact request context is missing"]
+    context_bytes = context.encode("utf-8")
+    if (len(context_bytes) != request.get("context_bytes")
+            or hashlib.sha256(context_bytes).hexdigest() != request.get("context_sha256")):
+        return ["exact request context bytes or hash are stale"]
+    return []
+
+
+def consumed_request_source_blockers(schedule):
+    request = schedule.get("request", {})
+    path = request.get("candidate_path")
+    source_sha256 = request.get("source_sha256")
+    try:
+        current_path = safe_path(path)
+    except (OSError, ValueError, TypeError) as exc:
+        return ["consumed source path is unavailable or unsafe: " + str(exc)]
+    if not current_path.is_file():
+        return ["consumed source file is missing"]
+    bridge = check_provenance_bridge()
+    if bridge.get("status") != "passed" or bridge.get("source_access") != "closed":
+        return ["consumed source request lacks a passed, closed preservation bridge"]
+    manifest = read_json(PH4 / "04-PROVENANCE-MANIFEST.json")
+    active_input = next((row for row in manifest.get("inputs", []) if row.get("path") == path), None)
+    current_sha256 = sha256(current_path)
+    current_bytes = current_path.stat().st_size
+    if (active_input is None or active_input.get("sha256") != current_sha256
+            or active_input.get("bytes") != current_bytes):
+        return ["current consumed-source bytes are not bound by the active manifest"]
+    advance = bridge.get("post_snapshot_changes", {}).get(path)
+    try:
+        validate_consumed_source_binding(source_sha256, current_sha256,
+                                         active_input.get("sha256"), advance)
+    except ValueError as exc:
+        return [str(exc)]
+    return []
+
+
+def schedule_input_blockers(schedule):
+    blockers = []
+    inputs = schedule.get("inputs")
+    if not isinstance(inputs, list) or not inputs:
+        return ["schedule does not bind its input files"]
+    seen = set()
+    for item in inputs:
+        if not isinstance(item, dict) or not isinstance(item.get("path"), str):
+            blockers.append("schedule contains a malformed input binding")
+            continue
+        path = item["path"]
+        if path in seen:
+            blockers.append("schedule repeats an input binding: " + path)
+            continue
+        seen.add(path)
+        try:
+            file_path = safe_path(path)
+            data = file_path.read_bytes()
+        except (OSError, ValueError, TypeError) as exc:
+            blockers.append("scheduled input is unavailable or unsafe: " + path + ": " + str(exc))
+            continue
+        if len(data) != item.get("bytes") or hashlib.sha256(data).hexdigest() != item.get("sha256"):
+            blockers.append("scheduled input hash/byte binding is stale: " + path)
+    return blockers
+
+
+def consumed_count_payload_blockers(schedule, count):
+    request = schedule.get("request", {})
+    context_bytes = request.get("context_bytes")
+    source_bytes = request.get("source_bytes")
+    expected_payload_bytes = (context_bytes + len(SOURCE_SELECTION_DELIMITER.encode("utf-8")) + source_bytes
+                              if type(context_bytes) is int and type(source_bytes) is int else None)
+    blockers = []
+    if (count.get("status") != "pass"
+            or count.get("generation") != schedule.get("generation")
+            or count.get("request_id") != request.get("request_id")):
+        blockers.append("consumed direct-count status/generation/request identity is invalid")
+    if (expected_payload_bytes is None or type(count.get("payload_bytes")) is not int
+            or count.get("payload_bytes") != expected_payload_bytes):
+        blockers.append("consumed direct-count payload byte receipt is missing or stale")
+    if (type(count.get("serialized_request_bytes")) is not int
+            or count.get("serialized_request_bytes") <= 0
+            or not isinstance(count.get("serialized_request_sha256"), str)
+            or len(count.get("serialized_request_sha256", "")) != 64):
+        blockers.append("consumed direct-count serialized request receipt is incomplete")
+    if (type(count.get("serialized_input_tokens")) is not int
+            or count.get("serialized_input_tokens") <= 0
+            or count.get("generated") is not False
+            or count.get("generation_endpoint_called") is not False
+            or count.get("payload_truncated") is not False
+            or count.get("fits_configured_context") is not True):
+        blockers.append("consumed direct-count context/one-use receipt is invalid")
+    if (count.get("schedule_sha256") != schedule.get("sha256")
+            or count.get("source_sha256") != request.get("source_sha256")
+            or count.get("source_span") != request.get("source_span")
+            or count.get("context_sha256") != request.get("context_sha256")):
+        blockers.append("consumed direct-count schedule/source/context binding is stale")
+    return blockers
+
+
+def requires_no_count_blockers(blockers):
+    if blockers:
+        raise ValueError("; ".join(blockers))
+
+
+def count_payload_blockers(schedule, count):
+    request = schedule.get("request", {})
+    span = request.get("source_span", {})
+    source_path = safe_path(request.get("candidate_path"))
+    data = source_path.read_bytes()
+    selected = data[span["start_byte"]:span["end_byte_exclusive"]].decode("utf-8")
+    input_text = request["context_text"] + SOURCE_SELECTION_DELIMITER + selected
+    model = schedule.get("count_contract", {}).get("model")
+    serialized = json.dumps({"model": model, "input": input_text},
+                            separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    expected = {
+        "payload_bytes": len(input_text.encode("utf-8")),
+        "serialized_request_bytes": len(serialized),
+        "serialized_request_sha256": hashlib.sha256(serialized).hexdigest(),
+    }
+    return ["direct-count " + field + " does not match the exact serialized request"
+            for field, value in expected.items() if count.get(field) != value]
 
 
 def request_gate_blockers(manifest, schedule, review, preflight, count, ledger, request_id):
     blockers = []
-    if request_id != "R1":
-        blockers.append("request id is not the planned R1")
+    if request_id not in ("R1", "R2", "R3"):
+        blockers.append("request id is not an authorized exact request")
     bridge = manifest.get("provenance_bridge", {})
     if (manifest.get("metadata_status") != "supported" or manifest.get("partition_outcome") != "complete"
             or bridge.get("status") != "passed" or len(bridge.get("sha256", "")) != 64):
@@ -625,10 +1047,12 @@ def request_gate_blockers(manifest, schedule, review, preflight, count, ledger, 
     if request.get("request_id") != request_id or request.get("status") not in ("scheduled", "ready"):
         blockers.append("exact request is missing or blocked")
     span = request.get("source_span")
-    if not isinstance(span, dict) or not span or not isinstance(request.get("source_bytes"), int) or request.get("source_bytes") <= 0:
-        blockers.append("exact source span and byte count are missing")
+    if (not isinstance(span, dict) or not span
+            or type(request.get("source_bytes")) is not int or request["source_bytes"] <= 0
+            or not isinstance(span.get("span_sha256"), str) or len(span["span_sha256"]) != 64):
+        blockers.append("exact source span, hash, or byte count is missing")
     if not isinstance(request.get("source_sha256"), str) or len(request["source_sha256"]) != 64:
-        blockers.append("exact source hash is missing")
+        blockers.append("exact full-source hash is missing")
     if schedule.get("source_file_count") != 1 or schedule.get("source_file_count", 0) > 5:
         blockers.append("source-file count is missing or over the five-file cap")
     if review.get("status") != "pass":
@@ -637,14 +1061,14 @@ def request_gate_blockers(manifest, schedule, review, preflight, count, ledger, 
         blockers.append("reviewer is missing or is the schedule author")
     if preflight.get("status") != "pass" or preflight.get("stage") != "execute" or str(preflight.get("phase")) != "4" or preflight.get("exit_code") != 0 or preflight.get("errors") != []:
         blockers.append("fresh Phase 4 execute preflight is not passed")
-    if count.get("status") != "pass" or count.get("generated") is not False or count.get("payload_truncated") is not False:
+    if (count.get("status") != "pass" or count.get("generated") is not False
+            or count.get("generation_endpoint_called") is not False or count.get("payload_truncated") is not False):
         blockers.append("fresh complete no-generation direct count is not passed")
     generation = schedule.get("generation")
     expected_bindings = {"generation": generation, "request_id": request_id,
                          "source_sha256": request.get("source_sha256"),
                          "source_span": span, "context_sha256": request.get("context_sha256")}
-    records = (review, preflight, count)
-    for name, record in zip(("review", "preflight", "count"), records):
+    for name, record in (("review", review), ("preflight", preflight), ("count", count)):
         for field, expected in expected_bindings.items():
             if not expected or record.get(field) != expected:
                 blockers.append(f"{name} has a stale or missing {field} binding")
@@ -662,57 +1086,122 @@ def request_gate_blockers(manifest, schedule, review, preflight, count, ledger, 
     if any(not isinstance(value, str) or not value for value in timestamps) or timestamps != sorted(timestamps):
         blockers.append("schedule, review, preflight and count ordering is missing or stale")
     input_tokens = count.get("serialized_input_tokens")
-    if type(input_tokens) is not int or input_tokens < 0 or input_tokens > 34000:
-        blockers.append("exact serialized request count is missing or exceeds 34,000 tokens")
-    task_charge = count.get("task_charge_tokens")
-    task_cap = ledger.get("task_caps", {}).get("04-02-02")
-    analysis_allowance = count.get("analysis_review_allowance_tokens")
-    if type(analysis_allowance) is not int or analysis_allowance != 14000:
-        blockers.append("analysis/review allowance is not the exact 14,000-token reserve")
-    output_allowance = count.get("output_allowance_tokens")
-    if type(output_allowance) is not int or output_allowance != 2000:
-        blockers.append("R1 output allowance is not the exact 2,000-token reserve")
-    expected_charge = (input_tokens + analysis_allowance + output_allowance
-                       if type(input_tokens) is int and type(analysis_allowance) is int and type(output_allowance) is int
-                       else None)
-    if (type(task_charge) is not int or type(task_cap) is not int or task_cap != 50000
-            or expected_charge is None or task_charge != expected_charge or task_charge > task_cap):
-        blockers.append("task charge does not equal exact input + analysis/review + output allowances within 50,000")
-    usage = ledger.get("post_reset_usage", {})
-    current_output = usage.get("output_tokens")
-    working_ceiling = ledger.get("working_ceiling")
-    if (ledger.get("status") not in ("measured", "measured_with_request_blocked")
-            or not ledger.get("usage_attributed") or ledger.get("cumulative_fit") != "measured"
-            or ledger.get("generated_output_ceiling") != 650000 or ledger.get("protected_reserve") != 40000):
-        blockers.append("cumulative post-reset usage/fit is not freshly measured")
-    if (type(current_output) is not int or working_ceiling != 610000
-            or type(output_allowance) is not int or current_output + output_allowance > working_ceiling):
-        blockers.append("prospective request exceeds or cannot prove the aggregate working ceiling")
-    if ledger.get("remaining_working_balance") != working_ceiling - current_output if type(current_output) is int and type(working_ceiling) is int else True:
-        blockers.append("remaining working balance is not bound to measured usage")
-    if not isinstance(ledger.get("measured_at_utc"), str) or not timestamps[-1] or ledger.get("measured_at_utc") < timestamps[-1]:
-        blockers.append("usage measurement predates the direct count")
-    if ledger.get("source_request_count") != 0:
-        blockers.append("R1 has already been consumed; unchanged retry is forbidden")
+    if type(input_tokens) is not int or input_tokens < 0:
+        blockers.append("exact serialized request token count is missing")
+    model_context = count.get("configured_model_context_tokens")
+    if (type(model_context) is not int or model_context <= 0
+            or type(input_tokens) is not int or input_tokens > model_context
+            or count.get("fits_configured_context") is not True):
+        blockers.append("exact request does not fit the configured model context")
+    if type(count.get("serialized_request_bytes")) is not int or count["serialized_request_bytes"] <= 0:
+        blockers.append("serialized request byte count is missing")
+    if not isinstance(count.get("serialized_request_sha256"), str) or len(count["serialized_request_sha256"]) != 64:
+        blockers.append("serialized request hash is missing")
+    if ledger.get("aggregate_output_budget_policy") != "disabled_by_owner":
+        blockers.append("the owner has not disabled the aggregate output ceiling")
+    consumed_ids = ledger.get("consumed_request_ids")
+    consumed_count = ledger.get("source_request_count")
+    if (not isinstance(consumed_ids, list) or len(consumed_ids) != len(set(consumed_ids))
+            or type(consumed_count) is not int or consumed_count != len(consumed_ids)):
+        blockers.append("source request count and unique consumed request ids are inconsistent")
+    elif request_id in consumed_ids:
+        blockers.append("this exact source request has already been consumed; unchanged retry is forbidden")
     return list(dict.fromkeys(blockers))
 
 
+def consumed_receipt_status(receipt):
+    emission = receipt.get("source_emission_receipt", {})
+    if (receipt.get("status") == "consumed_incomplete"
+            and emission.get("status") == "consumed_once_delivery_incomplete"
+            and emission.get("tool_output_truncated") is True
+            and emission.get("analysis_complete") is False):
+        return "consumed_incomplete"
+    if (receipt.get("status") == "consumed" and emission.get("status") == "consumed_once"
+            and emission.get("tool_output_truncated") is False
+            and emission.get("analysis_complete") is True):
+        return "consumed_verified"
+    return "blocked"
+
+
+def consumed_receipt_blockers(receipt, expected):
+    ready = receipt.get("one_use_ready_receipt", {})
+    emission = receipt.get("source_emission_receipt", {})
+    ready_bindings = ready.get("bindings", {})
+    actual_ready = {key: ready_bindings.get(key) for key in expected}
+    actual_emission = {key: emission.get(key) for key in expected}
+    ready_hash = json_sha256(ready)
+    if (receipt.get("request_id", ready_bindings.get("request_id")) != expected.get("request_id")
+            or receipt.get("status") not in ("consumed", "consumed_incomplete")
+            or receipt.get("source_emission") is not True
+            or type(receipt.get("source_request_count")) is not int
+            or receipt.get("source_request_count") < 1
+            or ready.get("status") != "one_use_ready" or ready.get("source_emission") is not False
+            or actual_ready != expected or actual_emission != expected
+            or emission.get("emission_count") != 1
+            or not emission.get("content_used_for_analysis")
+            or emission.get("one_use_ready_receipt_sha256") != ready_hash
+            or consumed_receipt_status(receipt) == "blocked"):
+        return ["consumed request lacks an exact complete or explicitly incomplete one-use emission receipt"]
+    return []
+
+
 def check_request_gate(request_id):
-    if request_id != "R1":
-        raise ValueError("only the planned R1 request is supported")
+    if request_id not in ("R1", "R2", "R3"):
+        raise ValueError("only separately scheduled R1, R2, and R3 requests are supported")
     check_schedule()
     manifest = read_json(PH4 / "04-PROVENANCE-MANIFEST.json")
-    schedule_path = ACTIVE_SCHEDULE
+    schedule_path = request_artifact_path(request_id, "SCHEDULE")
+    review_path = request_artifact_path(request_id, "SCHEDULE-REVIEW")
+    preflight_path = request_artifact_path(request_id, "EXECUTE-PREFLIGHT")
+    count_path = request_artifact_path(request_id, "DIRECT-COUNT")
+    gate_path = request_artifact_path(request_id, "REQUEST-GATE")
     schedule = read_json(schedule_path) if schedule_path.exists() else {}
     schedule["sha256"] = sha256(schedule_path) if schedule_path.exists() else None
-    review_path = PH4 / "04-R1-SCHEDULE-REVIEW.json"
-    preflight_path = PH4 / "04-R1-EXECUTE-PREFLIGHT.json"
-    count_path = PH4 / "04-R1-DIRECT-COUNT.json"
-    ledger = read_json(PH4 / "04-RESOURCE-LEDGER.json")
     review = read_json(review_path) if review_path.exists() else {}
     preflight = read_json(preflight_path) if preflight_path.exists() else {}
     count = read_json(count_path) if count_path.exists() else {}
+    if review_path.exists():
+        review["sha256"] = sha256(review_path)
+    if preflight_path.exists():
+        preflight["sha256"] = sha256(preflight_path)
+    ledger = read_json(PH4 / "04-RESOURCE-LEDGER.json")
+    consumed_ids = ledger.get("consumed_request_ids", [])
+    if request_id in consumed_ids:
+        receipt = read_json(gate_path) if gate_path.exists() else {}
+        expected = {"generation": schedule.get("generation"), "request_id": request_id,
+                    "schedule_sha256": schedule.get("sha256"),
+                    "review_sha256": sha256(review_path) if review_path.exists() else None,
+                    "preflight_sha256": sha256(preflight_path) if preflight_path.exists() else None,
+                    "count_sha256": sha256(count_path) if count_path.exists() else None,
+                    "source_sha256": schedule.get("request", {}).get("source_sha256"),
+                    "source_span": schedule.get("request", {}).get("source_span"),
+                    "context_sha256": schedule.get("request", {}).get("context_sha256"),
+                    "serialized_request_sha256": count.get("serialized_request_sha256")}
+        errors = consumed_receipt_blockers(receipt, expected)
+        state = consumed_receipt_status(receipt)
+        if errors:
+            return {"status": "blocked", "source_access": "closed", "source_emission": False,
+                    "blockers": errors, "bindings": expected}
+        if state == "consumed_incomplete":
+            return {"status": "consumed_incomplete", "source_access": "closed",
+                    "source_emission": True,
+                    "blockers": ["tool output was truncated; no complete source analysis may claim this request"],
+                    "bindings": expected}
+        errors = consumed_request_source_blockers(schedule) + consumed_count_payload_blockers(schedule, count)
+        if errors:
+            return {"status": "blocked", "source_access": "closed", "source_emission": False,
+                    "blockers": errors, "bindings": expected}
+        return {"status": "consumed_verified", "source_access": "closed",
+                "source_emission": True, "source_request_count": ledger.get("source_request_count"),
+                "bindings": expected}
+    if (type(ledger.get("source_request_count")) is not int
+            or ledger.get("source_request_count") != len(consumed_ids)):
+        return {"status": "blocked", "source_access": "closed", "source_emission": False,
+                "blockers": ["source request count and consumed request ids are inconsistent"]}
     blockers = request_gate_blockers(manifest, schedule, review, preflight, count, ledger, request_id)
+    blockers.extend(schedule_input_blockers(schedule))
+    blockers.extend(source_span_blockers(schedule))
+    blockers.extend(count_payload_blockers(schedule, count))
     bridge = check_provenance_bridge()
     if bridge.get("status") != "passed":
         blockers.append("independent preservation-bridge review has not passed")
@@ -721,33 +1210,35 @@ def check_request_gate(request_id):
             check_supported_partition()
         except (OSError, ValueError, KeyError, TypeError) as exc:
             blockers.append("supported metadata partition failed: " + str(exc))
-    if not blockers:
-        source = safe_path(schedule["request"]["candidate_path"])
-        if not source.is_file() or sha256(source) != schedule["request"].get("source_sha256"):
-            blockers.append("current source bytes differ from the fully reviewed/count-bound schedule")
     original_manifest = read_json(ORIGINAL_MANIFEST)
     stop = original_manifest.get("metadata_stop_receipt", {})
-    return {"schema_version": "04.r1-request-gate.1",
-            "request_id": request_id, "status": "blocked" if blockers else "one_use_ready",
+    return {"schema_version": "04.request-gate.2", "request_id": request_id,
+            "status": "blocked" if blockers else "one_use_ready",
             "source_access": "closed", "source_emission": False,
-            "blockers": blockers,
-            "missing_fields": ["approved provenance bridge", "independent exact schedule review",
-                               "fresh source-request execute preflight", "serialized request token count",
-                               "measured cumulative fit for exact R1 request"] if blockers else [],
-            "gates_not_run": ["source enumeration", "schedule review", "source-request execute preflight",
-                              "direct count", "source emission"] if blockers else [],
+            "blockers": list(dict.fromkeys(blockers)),
+            "missing_fields": ["independent exact schedule review", "fresh Phase 4 execute preflight",
+                               "serialized request token count", "serialized request hash and byte count"] if blockers else [],
+            "gates_not_run": ["schedule review", "source-request execute preflight", "direct count",
+                              "source emission"] if blockers else [],
             "upstream_stop": {"status": stop.get("status"), "reason": stop.get("reason"),
                               "mismatches": stop.get("mismatches", []),
                               "missing_selectors": stop.get("missing_selectors", []),
                               "selectors": manifest.get("selectors"),
                               "unavailable_domains": manifest.get("unavailable_domains")},
-            "bindings": {"generation": schedule.get("generation"),
+            "bindings": {"generation": schedule.get("generation"), "request_id": request_id,
+                         "source_sha256": schedule.get("request", {}).get("source_sha256"),
+                         "source_span": schedule.get("request", {}).get("source_span"),
+                         "context_sha256": schedule.get("request", {}).get("context_sha256"),
                          "manifest_sha256": sha256(PH4 / "04-PROVENANCE-MANIFEST.json"),
-                         "schedule_sha256": schedule["sha256"],
-                         "resource_snapshot_utc": ledger.get("measured_at_utc"),
-                         "post_reset_output_tokens": ledger.get("post_reset_usage", {}).get("output_tokens"),
-                         "remaining_working_tokens": ledger.get("remaining_working_balance")}}
-
+                         "schedule_sha256": schedule.get("sha256"),
+                         "review_sha256": review.get("sha256"),
+                         "preflight_sha256": preflight.get("sha256"),
+                         "count_sha256": sha256(count_path) if count_path.exists() else None,
+                         "serialized_request_sha256": count.get("serialized_request_sha256"),
+                         "consumed_request_ids": consumed_ids,
+                         "informational_usage_snapshot_utc": ledger.get("measured_at_utc"),
+                         "informational_post_reset_output_tokens": ledger.get("post_reset_usage", {}).get("output_tokens"),
+                         "informational_recorded_working_balance": ledger.get("remaining_working_balance")}}
 
 def check_blocked_payloads():
     manifest = read_json(PH4 / "04-PROVENANCE-MANIFEST.json")
@@ -766,6 +1257,198 @@ def check_blocked_payloads():
             raise ValueError(key + " lacks exact missing fields or cause")
     return {"status": "blocked_records_consistent", "source_access": "closed",
             "generation": manifest.get("generation")}
+
+
+def evidence_review_subject():
+    manifest_path = PH4 / "04-PROVENANCE-MANIFEST.json"
+    manifest = read_json(manifest_path)
+    payloads = {}
+    for key, path in (("associations", safe_path(manifest["partitions"]["associations"]["path"])),
+                      ("typed_gaps", safe_path(manifest["partitions"]["typed_gaps"]["path"])),
+                      ("coverage_caller_trace", CALLER_TRACE),
+                      ("sizing_digest_proof", DIGEST_PROOF)):
+        payloads[key] = {"path": path.relative_to(ROOT).as_posix(),
+                         "sha256": sha256(path), "bytes": path.stat().st_size}
+    requests = {}
+    for request_id in ("R1", "R2", "R3"):
+        gate_path = request_artifact_path(request_id, "REQUEST-GATE")
+        schedule_path = request_artifact_path(request_id, "SCHEDULE")
+        review_path = request_artifact_path(request_id, "SCHEDULE-REVIEW")
+        preflight_path = request_artifact_path(request_id, "EXECUTE-PREFLIGHT")
+        count_path = request_artifact_path(request_id, "DIRECT-COUNT")
+        requests[request_id] = {
+            "gate_sha256": sha256(gate_path), "schedule_sha256": sha256(schedule_path),
+            "review_sha256": sha256(review_path), "preflight_sha256": sha256(preflight_path),
+            "count_sha256": sha256(count_path),
+        }
+    return {"generation": manifest.get("generation"),
+            "manifest": {"path": manifest_path.relative_to(ROOT).as_posix(),
+                         "sha256": sha256(manifest_path), "bytes": manifest_path.stat().st_size},
+            "payloads": payloads, "source_requests": requests}
+
+
+def check_final_evidence_payloads():
+    manifest = read_json(PH4 / "04-PROVENANCE-MANIFEST.json")
+    source_closed(manifest.get("source_access"))
+    if manifest.get("metadata_status") != "supported" or manifest.get("partition_outcome") != "complete":
+        raise ValueError("active metadata generation is not structurally supported")
+    for key, path in (("coverage_caller_trace", CALLER_TRACE), ("sizing_digest_proof", DIGEST_PROOF)):
+        binding = manifest.get(key, {})
+        if (binding.get("path") != path.relative_to(ROOT).as_posix()
+                or binding.get("sha256") != sha256(path)
+                or binding.get("bytes") != path.stat().st_size):
+            raise ValueError(key + " raw-byte binding is missing or stale")
+    current_status = manifest.get("current_source_request_status", {})
+    if (current_status.get("path") != CALLER_TRACE.relative_to(ROOT).as_posix()
+            or current_status.get("sha256") != sha256(CALLER_TRACE)
+            or current_status.get("bytes") != CALLER_TRACE.stat().st_size
+            or current_status.get("status_by_request") != {
+                "R1": "consumed_incomplete", "R2": "consumed_verified", "R3": "consumed_verified"}
+            or "preserves the original metadata-stop snapshot" not in current_status.get("snapshot_note", "")):
+        raise ValueError("manifest does not distinguish the original source-gate snapshot from current request status")
+    trace = read_json(CALLER_TRACE)
+    proof = read_json(DIGEST_PROOF)
+    for name, record in (("caller trace", trace), ("digest proof", proof)):
+        source_closed(record.get("source_access"))
+        if record.get("generation") != manifest.get("generation"):
+            raise ValueError(name + " generation is stale")
+    if trace.get("schema_version") != "04.coverage-caller-trace.2":
+        raise ValueError("caller trace schema is stale")
+    if trace.get("record_partition", {}).get("status") != "supported_consistent":
+        raise ValueError("caller trace does not bind the supported record partition")
+    if trace.get("source_resolution", {}).get("status") != "unresolved":
+        raise ValueError("source resolution is incorrectly claimed complete")
+    if trace.get("caller_closure", {}).get("status") != "incomplete":
+        raise ValueError("caller closure is incorrectly claimed complete")
+    if trace.get("claims_not_made") != ["source resolution", "caller closure", "runtime safety", "absence of dynamic callers"]:
+        raise ValueError("caller trace omitted a required limitation")
+    expected_requests = {"R1": "consumed_incomplete", "R2": "consumed_verified", "R3": "consumed_verified"}
+    traced = {item.get("request_id"): item for item in trace.get("source_requests", [])}
+    if set(traced) != set(expected_requests):
+        raise ValueError("caller trace request set differs from the consumed request ledger")
+    gates = {}
+    for request_id, expected_status in expected_requests.items():
+        result = check_request_gate(request_id)
+        if result.get("status") != expected_status:
+            raise ValueError(request_id + " source request status changed")
+        item = traced[request_id]
+        gate_path = request_artifact_path(request_id, "REQUEST-GATE")
+        schedule_path = request_artifact_path(request_id, "SCHEDULE")
+        if (item.get("status") != expected_status
+                or item.get("gate_receipt_sha256") != sha256(gate_path)
+                or item.get("schedule_sha256") != sha256(schedule_path)
+                or item.get("usable_for_claims") != (request_id in ("R2", "R3"))):
+            raise ValueError(request_id + " trace binding or evidence-use status is stale")
+        gates[request_id] = result
+    if proof.get("schema_version") != "04.sizing-digest-proof.2":
+        raise ValueError("sizing digest proof schema is stale")
+    legacy = proof.get("legacy_recipe", {})
+    if (legacy.get("status") != "unresolved" or legacy.get("selector") is not None
+            or legacy.get("field_order") is not None or not legacy.get("encoding")):
+        raise ValueError("legacy digest is not honestly marked unresolved")
+    supplement = proof.get("supplement", {})
+    payload = supplement.get("canonical_payload")
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"),
+                         ensure_ascii=False).encode("utf-8") if isinstance(payload, dict) else b""
+    if (supplement.get("status") != "verified_integrity_only"
+            or supplement.get("encoding") != "UTF-8 JSON; sorted keys; compact separators; no digest field in hashed payload"
+            or hashlib.sha256(encoded).hexdigest() != supplement.get("digest")
+            or len(encoded) != supplement.get("serialized_bytes")):
+        raise ValueError("versioned supplement digest cannot be reproduced from its declared selector")
+    review = read_json(EVIDENCE_REVIEW)
+    subject = evidence_review_subject()
+    if (review.get("schema_version") != "04.evidence-review.1"
+            or review.get("status") != "pass" or review.get("source_access") != "closed"
+            or not review.get("reviewer") or review.get("reviewer") == review.get("author")
+            or review.get("subject_sha256") != json_sha256(subject)
+            or review.get("subject") != subject or review.get("findings") != []):
+        raise ValueError("independent final evidence review is absent, stale, or not clean")
+    return {"status": "pass_with_open_gaps", "source_access": "closed",
+            "generation": manifest.get("generation"), "request_gates": gates,
+            "record_partition": trace["record_partition"],
+            "source_resolution": "unresolved", "caller_closure": "incomplete",
+            "legacy_digest": "unresolved", "supplement_digest": supplement.get("digest"),
+            "independent_review": "pass"}
+
+
+def build_supported_validation():
+    checks = {}
+    probes = {
+        "preservation_bridge": check_provenance_bridge,
+        "input_reconciliation": check_metadata_input_reconciliation,
+        "historical_blocked_partition": check_blocked_partition,
+        "supported_partition": check_supported_partition,
+        "schedule_and_ledger": check_schedule,
+        "final_evidence_payloads": check_final_evidence_payloads,
+    }
+    for name, probe in probes.items():
+        try:
+            checks[name] = {"status": "observed", "result": probe()}
+        except (OSError, ValueError, AssertionError, KeyError, TypeError) as exc:
+            checks[name] = {"status": "failed", "error": str(exc)}
+    failures = [name for name, record in checks.items() if record.get("status") != "observed"]
+    manifest_path = PH4 / "04-PROVENANCE-MANIFEST.json"
+    manifest = read_json(manifest_path)
+    review_hash = sha256(EVIDENCE_REVIEW) if EVIDENCE_REVIEW.exists() else None
+    return {
+        "schema_version": "04.validation.2",
+        "result": "blocked" if failures else "pass_with_open_gaps",
+        "validation_passed": not failures,
+        "full_package_valid": not failures,
+        "source_access": "closed",
+        "generation": manifest.get("generation"),
+        "semantic_closure": "open",
+        "source_resolution": "unresolved",
+        "caller_closure": "incomplete",
+        "candidate": None,
+        "implementation_authorized": False,
+        "checks": checks,
+        "bindings": {"manifest_sha256": sha256(manifest_path),
+                     "evidence_review_sha256": review_hash,
+                     "association_sha256": sha256(safe_path(manifest["partitions"]["associations"]["path"])),
+                     "typed_gaps_sha256": sha256(safe_path(manifest["partitions"]["typed_gaps"]["path"])),
+                     "caller_trace_sha256": sha256(CALLER_TRACE),
+                     "digest_proof_sha256": sha256(DIGEST_PROOF),
+                     "request_gate_sha256s": {rid: sha256(request_artifact_path(rid, "REQUEST-GATE"))
+                                               for rid in ("R1", "R2", "R3")}},
+        "resource_status": {"aggregate_output_budget_policy": "disabled_by_owner",
+                             "informational_usage_snapshot_utc": read_json(PH4 / "04-RESOURCE-LEDGER.json").get("measured_at_utc"),
+                             "source_request_count": 3,
+                             "per_request_context_fit": {rid: read_json(request_artifact_path(rid, "DIRECT-COUNT")).get("fits_configured_context")
+                                                          for rid in ("R1", "R2", "R3")},
+                             "aggregate_output_limit_enforced": False},
+        "missing_fields": [checks[name].get("error") for name in failures],
+        "final_package_check": {"status": "passed" if not failures else "failed",
+                                 "command": "--all", "exit_code": 0 if not failures else 1},
+    }
+
+
+def write_supported_validation():
+    record = build_supported_validation()
+    tmp = VALIDATION.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    tmp.replace(VALIDATION)
+    return {"status": record["result"], "source_access": "closed",
+            "generation": record["generation"],
+            "failed_checks": [name for name, value in record["checks"].items()
+                              if value.get("status") != "observed"]}
+
+
+def check_supported_package():
+    computed = build_supported_validation()
+    saved = read_json(VALIDATION)
+    if (computed.get("validation_passed") is not True
+            or saved.get("schema_version") != "04.validation.2"
+            or saved.get("result") != "pass_with_open_gaps"
+            or saved.get("validation_passed") is not True
+            or saved.get("full_package_valid") is not True
+            or saved.get("bindings") != computed.get("bindings")
+            or saved.get("generation") != computed.get("generation")):
+        raise ValueError("final supported package is stale, incomplete, or failed validation")
+    return {"status": "pass_with_open_gaps", "source_access": "closed",
+            "generation": computed.get("generation"),
+            "validation_sha256": sha256(VALIDATION),
+            "checks": computed["checks"]}
 
 
 def write_blocked_validation():
@@ -787,7 +1470,7 @@ def write_blocked_validation():
         except (OSError, ValueError, AssertionError, KeyError, TypeError) as exc:
             checks[name] = {"status": "failed", "error": str(exc)}
     request_result = checks.get("r1_request_gate", {}).get("result")
-    if isinstance(request_result, dict):
+    if isinstance(request_result, dict) and request_result.get("status") != "consumed_verified":
         REQUEST_GATE.write_text(json.dumps(request_result, indent=2, ensure_ascii=False) + "\n")
     manifest = read_json(manifest_path)
     ledger = read_json(ledger_path)
@@ -801,13 +1484,12 @@ def write_blocked_validation():
                      "digest_proof_sha256": sha256(DIGEST_PROOF),
                      "r1_request_gate_sha256": sha256(REQUEST_GATE),
                      "resource_ledger_sha256": sha256(ledger_path)},
-        "resource_status": {"envelope": ledger.get("envelope"),
-                            "measured_at_utc": ledger.get("measured_at_utc"),
-                            "output_tokens": ledger.get("post_reset_usage", {}).get("output_tokens"),
-                            "remaining_working_balance": ledger.get("remaining_working_balance"),
-                            "r1_fit": "unverifiable", "source_request_count": 0},
+        "resource_status": {"aggregate_output_budget_policy": ledger.get("aggregate_output_budget_policy"),
+                            "informational_usage_snapshot_utc": ledger.get("measured_at_utc"),
+                            "informational_post_reset_output_tokens": ledger.get("post_reset_usage", {}).get("output_tokens"),
+                            "request_context_fit": "not_counted", "source_request_count": 0},
         "missing_fields": ["independent R1 schedule review", "fresh Phase 4 execute preflight",
-                           "direct input count", "current cumulative fit", "caller/source proof",
+                           "exact complete-request input count", "caller/source proof",
                            "legacy digest recipe"],
         "final_package_check": {"status": "not_run", "command": "--all --blocked",
                                  "stdout": None, "exit_code": None},
@@ -838,10 +1520,14 @@ def check_blocked_package():
         content = (PH4 / filename).read_text(encoding="utf-8").lower()
         if "blocked" not in content or "source access: closed" not in content:
             raise ValueError(filename + " does not state the blocked result and closed source gate")
-    if request.get("status") != "blocked":
-        raise ValueError("R1 unexpectedly passed its one-use gate")
-    if gate_receipt.get("status") != "blocked" or gate_receipt.get("source_access") != "closed":
-        raise ValueError("saved R1 request gate is missing or opens source access")
+    if request.get("status") == "blocked":
+        if gate_receipt.get("status") != "blocked" or gate_receipt.get("source_access") != "closed":
+            raise ValueError("saved blocked R1 request gate is missing or opens source access")
+    elif request.get("status") == "consumed_verified":
+        if gate_receipt.get("status") != "consumed" or gate_receipt.get("source_emission") is not True:
+            raise ValueError("consumed R1 has no exact closed one-use emission receipt")
+    else:
+        raise ValueError("R1 is neither blocked before use nor verifiably consumed once")
     return {"status": "blocked_consistent", "source_access": "closed", "bridge": base,
             "historical_partition": historical, "partition": partition,
             "schedule": schedule, "payloads": payloads, "request_gate": request}
@@ -874,12 +1560,10 @@ def main():
         elif args.schedule:
             result = check_schedule()
         elif args.write_validation:
-            if not args.blocked:
-                parser.error("bounded closeout supports only --write-validation --blocked")
-            result = write_blocked_validation()
+            result = write_blocked_validation() if args.blocked else write_supported_validation()
         elif args.request_gate:
             if not args.request:
-                parser.error("--request-gate requires --request R1")
+                parser.error("--request-gate requires --request R1, R2, or R3")
             result = check_request_gate(args.request)
         elif args.all:
             if args.blocked:
@@ -891,10 +1575,10 @@ def main():
                 manifest = read_json(PH4 / "04-PROVENANCE-MANIFEST.json")
                 if manifest.get("metadata_status") == "supported":
                     partition = check_supported_partition()
-                    request = check_request_gate("R1")
-                    result = {"status": "supported_consistent", "source_access": "closed",
+                    package = check_supported_package()
+                    result = {"status": "pass_with_open_gaps", "source_access": "closed",
                               "bridge": bridge, "historical_partition": historical_partition,
-                              "partition": partition, "schedule": schedule, "request_gate": request}
+                              "partition": partition, "schedule": schedule, "package": package}
                 else:
                     result = {"status": "blocked_consistent", "source_access": "closed",
                               "bridge": bridge, "partition": historical_partition, "schedule": schedule}

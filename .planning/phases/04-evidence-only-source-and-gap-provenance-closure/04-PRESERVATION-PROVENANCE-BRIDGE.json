@@ -1,0 +1,231 @@
+{
+  "schema_version": "04.preservation-bridge.1",
+  "status": "review_pending",
+  "author": "Codex",
+  "created_at_utc": "2026-11-17T19:50:00Z",
+  "source_access": "closed",
+  "source_body_read": false,
+  "source_body_emitted": false,
+  "original_records": {
+    "manifest": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST-04-01-ORIGINAL.json",
+      "sha256": "b1b7032366522f250c152b8c6b91282293f5e8f5188d4c8ee7e65f8ed4eb4fd7"
+    },
+    "env04_ledger": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-RESOURCE-LEDGER-ENV04-STOP.json",
+      "sha256": "57bcb84233c2bd06ab02b593d9d59c274d63f77b13fa535fea855d4bea9fd228"
+    }
+  },
+  "transfer_receipt": {
+    "path": ".planning/forensics/phase3-recovery-transfer-20261117.json",
+    "sha256": "3e4e2b44e477dd0a399f3c78ae0d6bf35796010f634733d6ad224ec75ba967bb"
+  },
+  "task_readiness": {
+    "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md",
+    "sha256": "6ad796bc3772c6a5f7977ec69c4e272d370acd1071dbc679983dd19c5a8812f2"
+  },
+  "session_log": "~/.codex/sessions/2026/11/16/rollout-2026-11-16T21-47-09-01a1e766-afb2-77a1-8977-350fde6d15dd.jsonl",
+  "mismatches": [
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md",
+      "old_sha256": "2843c9d29fc3e1b6a86727c905939213f3ac28b679ca75a5a5d499e80ebff478",
+      "old_bytes": 10193,
+      "current_sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24",
+      "current_bytes": 10193,
+      "known_cause": "Plan 03-05 compact-schedule citation spelling correction",
+      "transfer_status": "??",
+      "description": "Five compact-schedule citation spellings normalized; pre/post hashes bound by saved events and readiness receipt.",
+      "observed_outcome": "passed",
+      "exit_status_source": "saved readiness receipt and successful command output event.",
+      "events": [
+        {
+          "line": 3922,
+          "record_type": "custom_tool_call",
+          "call_id": "call_8eae62cb0d724303b95db6dc3705f01e",
+          "record_sha256": "617d26961160adf61d7a07a0eb7779fa3f5fc798aaaa434698e634dc8d131d44",
+          "timestamp": "2026-11-17T07:19:11.147Z"
+        },
+        {
+          "line": 3925,
+          "record_type": "custom_tool_call_output",
+          "call_id": "call_8eae62cb0d724303b95db6dc3705f01e",
+          "record_sha256": "18fcce0e4c2adcee1bdddbece70a14d4f82fa57df22d3d103dac5fb9258b8b72",
+          "timestamp": "2026-11-17T07:19:11.579Z"
+        },
+        {
+          "line": 3929,
+          "record_type": "custom_tool_call",
+          "call_id": "call_64ff80b85eed400c855501a0990ae69a",
+          "record_sha256": "9a75cef35f94254937eea53c616da0a5bba9c8f8fa66c549f88b43b6203b7c32",
+          "timestamp": "2026-11-17T07:19:22.900Z"
+        },
+        {
+          "line": 3932,
+          "record_type": "custom_tool_call_output",
+          "call_id": "call_64ff80b85eed400c855501a0990ae69a",
+          "record_sha256": "a77b3fff4a9921942bbdeb7ee28e4a779c03fde1adff3f8b7b8e72e5366bf6ff",
+          "timestamp": "2026-11-17T07:19:23.010Z"
+        },
+        {
+          "line": 3936,
+          "record_type": "custom_tool_call",
+          "call_id": "call_b5e244b430d54f9cac245a4b498bb91f",
+          "record_sha256": "59a80bb48b951042bf3b619c4e5d5dd16d2686aee95f68741353f7fede4b54f7",
+          "timestamp": "2026-11-17T07:19:30.713Z"
+        },
+        {
+          "line": 3939,
+          "record_type": "custom_tool_call_output",
+          "call_id": "call_b5e244b430d54f9cac245a4b498bb91f",
+          "record_sha256": "3a2e9254fc518f4524a5d0555673643af6c6c54c11846c375a554c046e620902",
+          "timestamp": "2026-11-17T07:19:30.796Z"
+        },
+        {
+          "line": 4003,
+          "record_type": "custom_tool_call",
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "record_sha256": "b0166cff329f0412fcfc9c879ddccc1535a5d647f6b3fe4e42b390fcd0e9c04e",
+          "timestamp": "2026-11-17T07:21:52.422Z"
+        },
+        {
+          "line": 4006,
+          "record_type": "custom_tool_call_output",
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "record_sha256": "4ae9c1a3103b04d86d0cbdf2798bb75284302d5c44b5cb988426f84b574817bd",
+          "timestamp": "2026-11-17T07:21:52.501Z"
+        }
+      ]
+    },
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "old_sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+      "old_bytes": 58768,
+      "current_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "current_bytes": 58839,
+      "known_cause": "Plan 03-05 Task 1 formatting repair",
+      "transfer_status": " M",
+      "description": "Pinned formatter check on the repaired file; only file hash/size metadata is included.",
+      "observed_outcome": "passed",
+      "exit_status_source": "saved readiness receipt; final formatter output includes exit code 0.",
+      "events": [
+        {
+          "line": 3943,
+          "record_type": "custom_tool_call",
+          "call_id": "call_ad02cf5194bd456aa23400409f2a077f",
+          "record_sha256": "4dcdf78e6621d69c0825063a130eede72e4b0a39230325582046f378a17ba3a7",
+          "timestamp": "2026-11-17T07:19:38.634Z"
+        },
+        {
+          "line": 3947,
+          "record_type": "custom_tool_call_output",
+          "call_id": "call_ad02cf5194bd456aa23400409f2a077f",
+          "record_sha256": "a0fe7bef794a5cb1f6527836c59abef5d63503bb8458bb40053a5ade6309826a",
+          "timestamp": "2026-11-17T07:19:39.460Z"
+        },
+        {
+          "line": 4003,
+          "record_type": "custom_tool_call",
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "record_sha256": "b0166cff329f0412fcfc9c879ddccc1535a5d647f6b3fe4e42b390fcd0e9c04e",
+          "timestamp": "2026-11-17T07:21:52.422Z"
+        },
+        {
+          "line": 4006,
+          "record_type": "custom_tool_call_output",
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "record_sha256": "4ae9c1a3103b04d86d0cbdf2798bb75284302d5c44b5cb988426f84b574817bd",
+          "timestamp": "2026-11-17T07:21:52.501Z"
+        }
+      ]
+    },
+    {
+      "path": "test/contract/tier_sweep_test.exs",
+      "old_sha256": "f97ef3bb5cb94e8c47f3baed38d3d6387808488879e5b59980e5e1f620bcf333",
+      "old_bytes": 770007,
+      "current_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+      "current_bytes": 770285,
+      "known_cause": "Plan 03-05 Task 1 formatting repair",
+      "transfer_status": " M",
+      "description": "Pinned formatter check on the repaired file; only file hash/size metadata is included.",
+      "observed_outcome": "passed",
+      "exit_status_source": "saved readiness receipt; final formatter output includes exit code 0.",
+      "events": [
+        {
+          "line": 3943,
+          "record_type": "custom_tool_call",
+          "call_id": "call_ad02cf5194bd456aa23400409f2a077f",
+          "record_sha256": "4dcdf78e6621d69c0825063a130eede72e4b0a39230325582046f378a17ba3a7",
+          "timestamp": "2026-11-17T07:19:38.634Z"
+        },
+        {
+          "line": 3947,
+          "record_type": "custom_tool_call_output",
+          "call_id": "call_ad02cf5194bd456aa23400409f2a077f",
+          "record_sha256": "a0fe7bef794a5cb1f6527836c59abef5d63503bb8458bb40053a5ade6309826a",
+          "timestamp": "2026-11-17T07:19:39.460Z"
+        },
+        {
+          "line": 4003,
+          "record_type": "custom_tool_call",
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "record_sha256": "b0166cff329f0412fcfc9c879ddccc1535a5d647f6b3fe4e42b390fcd0e9c04e",
+          "timestamp": "2026-11-17T07:21:52.422Z"
+        },
+        {
+          "line": 4006,
+          "record_type": "custom_tool_call_output",
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "record_sha256": "4ae9c1a3103b04d86d0cbdf2798bb75284302d5c44b5cb988426f84b574817bd",
+          "timestamp": "2026-11-17T07:21:52.501Z"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "This record reconciles only the three known byte-preservation differences.",
+    "It makes no source, caller-closure, or semantic-correctness claim."
+  ],
+  "independent_review": {
+    "status": "pass",
+    "reviewer": "Independent read-only subagent /root/phase4_bridge_reconcile",
+    "reviewed_at_utc": "2026-11-18T15:02:11Z",
+    "subject_sha256": "03cfd257228da6bb660d5934f7da4b5dcf1561e2aa688b3d1d0f3277f809c24d",
+    "findings": [],
+    "scope_note": "Verified unchanged original stop records and three mismatch rows, exact post-snapshot readiness/code-review bindings, normalized session-log pointer, fail-closed uniqueness controls, and closed source/body stops. Current-file bytes were read only for SHA-256 integrity verification; no source/test/session-log text was displayed or semantically reviewed, and no new source request or emission occurred."
+  },
+  "prior_independent_review": {
+    "status": "pass",
+    "reviewer": "OpenGSD plan-checker subagent env05_plan_review",
+    "reviewer_thread_id": "01a1eaed-eb5b-7953-881e-a94e7060ebdb",
+    "reviewed_at_utc": "2026-11-17T20:25:20.301Z",
+    "subject_sha256": "92e21dcad2383568d357f63eb2694da1180b7393ce8418678bb1b5c69fb441fb",
+    "findings": [],
+    "scope_note": "Scoped bridge assessment passed. The same review returned REVISE for stale budget text in the execution replan; that separate finding is recorded in 04-02-REVIEW-20261117-01.md."
+  },
+  "post_snapshot_changes": {
+    "schema_version": "04.post-snapshot-changes.1",
+    "source_access": "closed",
+    "semantic_claims": [],
+    "scope_note": "These later Phase 3 test/support file changes are separately bound to the clean Phase 3 code review and readiness record. The immutable original Phase 4 mismatch set remains exactly three entries.",
+    "code_review": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-EXECUTION-CODE-REVIEW.md",
+      "sha256": "54bdad47f135c27549caa40d0ba04467ee1c45e5f6787a2b5973e6d2d9823641"
+    },
+    "files": [
+      {
+        "path": "test/contract/tier_sweep_test.exs",
+        "snapshot_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+        "snapshot_bytes": 770285,
+        "current_sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439",
+        "current_bytes": 780065
+      },
+      {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "snapshot_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+        "snapshot_bytes": 58839,
+        "current_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+        "current_bytes": 79280
+      }
+    ]
+  }
+}

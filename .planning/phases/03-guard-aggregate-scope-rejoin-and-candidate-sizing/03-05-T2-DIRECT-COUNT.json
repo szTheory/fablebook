@@ -1,0 +1,74 @@
+{
+  "schema_version": "03-05.task2-direct-count.1",
+  "status": "pass",
+  "counted_at_utc": "2026-11-17T23:54:29.316Z",
+  "endpoint": "https://api.openai.com/v1/responses/input_tokens",
+  "method": "POST",
+  "model": "gpt-6-luna",
+  "http_status": 200,
+  "response_object": "response.input_tokens",
+  "serialized_input_tokens": 27115,
+  "configured_model_context_tokens": 200000,
+  "fits_configured_context": true,
+  "serialized_request_bytes": 118868,
+  "serialized_request_sha256": "5d9c4e5dff5f935d2067fe3a790a6d536fc73ac394bfd95a5cbc26ae5980ac6e",
+  "payload_bytes": 112501,
+  "payload_sha256": "d5a754db3bd397dac78ae0c03e34a4bf6bfe309aa0dda354f3a50588cef4d718",
+  "generation": "03-05-TASK2-20261117T234723Z",
+  "request_id": "T2-R1",
+  "schedule_sha256": "2bbe0a54bc531431c926fcb72a7d819f31e70fdd900d3f1fb5ca2af116319b27",
+  "review_sha256": "2b0d49be0ae299519594fc5f4d0755ae0d18997491b43f4797a13be5bce723d8",
+  "preflight_sha256": "dc94db09759cc4d408ed7082afad88381c44d0ab5ab5c34c4bf3da60f5fb578a",
+  "source_selections": [
+    {
+      "path": "test/contract/tier_sweep_test.exs",
+      "source_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+      "source_span": {
+        "start_line": 5600,
+        "end_line": 6386,
+        "start_byte": 244950,
+        "end_byte_exclusive": 274865,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "703e8ee836be0c9439026d1f77b01104a6994195a89bb7bf22ea88a9c904241d",
+        "selected_bytes": 29915
+      }
+    },
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_span": {
+        "start_line": 1,
+        "end_line": 1610,
+        "start_byte": 0,
+        "end_byte_exclusive": 58839,
+        "encoding": "UTF-8",
+        "complete_file": true,
+        "includes_final_newline": true,
+        "span_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+        "selected_bytes": 58839
+      }
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "source_sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+      "source_span": {
+        "start_line": 1,
+        "end_line": 349,
+        "start_byte": 0,
+        "end_byte_exclusive": 19570,
+        "encoding": "UTF-8",
+        "complete_file": true,
+        "includes_final_newline": true,
+        "span_sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+        "selected_bytes": 19570
+      }
+    }
+  ],
+  "generated": false,
+  "generation_endpoint_called": false,
+  "payload_truncated": false,
+  "credential_source": "existing ignored .env.local; credential value not persisted",
+  "elapsed_ms": 1049
+}

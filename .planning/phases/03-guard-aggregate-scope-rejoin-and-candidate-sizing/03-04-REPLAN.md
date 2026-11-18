@@ -2,10 +2,15 @@
 phase: 03
 plan: 03-04
 date: 2026-11-15
-status: third bounded replan; source-body gate closed
+status: metadata-only supplemental gap route planned; original bounded source stop preserved; no new source reads
 ---
 
 # Plan 03-04 bounded context and source replan
+
+> **Version note:** The original 99,500-token in-limit replan and the later
+> 5,500-token Task 2 ledger below are historical. The active allocation is the
+> one-time 110,000-token recovery envelope in the final section, authorized by
+> INT-20261115-02. No earlier schedule or count authorizes source emission.
 
 ## Trigger and preserved scope
 
@@ -17,20 +22,26 @@ does not lower checks, erase evidence, change candidate scope, or weaken safety
 stops. Each task retains a maximum of five exact source files, including
 rereads.
 
-## Hard context envelope
+## Original in-limit replan envelope — historical after the source-search incident
 
 | Component | Maximum tokens |
 |---|---:|
-| Compact required context, execution framing, exact keyed projections | 38,500 |
+| Compact required context, execution framing, exact keyed projections | 34,000 |
 | Task 03-04-01 complete independent-review source spans, including identity helper | 22,000 |
-| Task 03-04-02 correction and reread spans | 500 |
+| Task 03-04-02 cumulative correction, trace and reread spans | 5,500 |
 | Task 03-04-03 new source-body reads | 0 |
 | Output and bounded verification output | 5,000 |
 | Post-count cushion | 2,000 |
-| **Working envelope** | **68,000** |
+| **Working envelope** | **68,500** |
 | Fixed reserve | 31,000 |
-| **Total planned envelope** | **99,000** |
-| Remaining slack below 100,000 ceiling | 1,000 |
+| **Total planned envelope** | **99,500** |
+| Remaining slack below 100,000 ceiling | 500 |
+
+At the original replan, this allocation was authorized by INT-20261115-01 and the bounded trace
+amendment at the end of this file. The V20 cumulative Task2 source baseline is
+2,387 tokens; 3,113 remain for the entire trace, repair, rereads and review.
+Earlier allocations/count receipts below are historical and remain charged.
+The cumulative output ledger is not reset. Task3 retains zero new source reads.
 
 These are hard caps, not assumed counts. Each task separately may read no more
 than five exact files. Charge every reread. If an accepted finding cannot be
@@ -61,7 +72,7 @@ GSR/D checks through complete keyed queries and hash-bound references.
 
 Apply GSD's under-500k read-depth rule to large summary, verification, and
 report artifacts: use frontmatter/status and only necessary complete
-sections/excerpts, not full bodies. A compact context above 38,500 tokens is a
+sections/excerpts, not full bodies. A compact context above 34,000 tokens is a
 failed gate requiring another replan without evidence reduction.
 
 ## Exact source schedules and body gate
@@ -75,8 +86,8 @@ full helper span within the cap; otherwise record its exact identity,
 consequence, and remedy as an owner-facing gap without claiming complete
 identity review. Persist the
 schedule in the initial metadata section of `03-REVIEW.md`. For Task 2,
-schedule only complete correction/reread spans justified by accepted findings,
-capped at 500 tokens and five exact files, counting every reread; persist
+schedule only complete correction/trace/reread spans justified by accepted findings,
+capped cumulatively at 16,000 tokens and five exact files, counting every reread; persist
 this schedule in `03-SIZING.json` with the correction evidence. Task 3 uses no
 new source bodies and relies on accepted findings, corrected records, and Task
 1/2 interface notes.
@@ -89,10 +100,11 @@ the exact current combined context plus the scheduled spans, review receipts,
 output, cushion, and reserve. Emit source bodies only after all three gates
 pass. Repeat the direct count after every schedule, plan, receipt, or selected
 input change and before each source emission. The compact context cap is
-38,500; Task 1 spans cap at 22,000; Task 2 spans cap at 500; Task 3 new source
-reads are zero; output is 5,000; cushion is 2,000. This totals 68,000 working
-tokens plus the 31,000 reserve = 99,000, leaving 1,000 slack below the 100,000
-ceiling. A mismatch or overage closes the gate; it does not authorize
+34,000; Task 1 spans cap at 22,000; cumulative Task 2 spans cap at 16,000; Task 3 new source
+reads are zero; cumulative output is 5,000; cushion is 2,000. This totals 79,000 working
+tokens plus the 31,000 reserve = 110,000 under the one-time Phase 3 ceiling.
+The current total includes the conservative incident charge recorded at the
+end of this file. A mismatch or overage closes the gate; it does not authorize
 truncation, a different candidate, or unreviewed source acquisition.
 
 ## Token counts and credential boundary
@@ -106,7 +118,7 @@ generation endpoint. Record model, endpoint, exact serialized payload SHA-256,
 response count, and a redacted harness/command. If neither method works, leave
 counts unknown and stop before body emission.
 
-## Safety and authority unchanged
+## Historical V20 allocation and unchanged safety/authority gates
 
 Keep the full independent review, maximum two review passes, accepted finding
 corrections, regression checks, both-lane evidence validation, bundle/report
@@ -297,3 +309,470 @@ the old/new identities and count only the genuinely new support correction
 span plus exact generated output, then refresh execute preflight and direct
 counts. Otherwise keep the finding open with its consequence/remedy and do not
 start Plan 03-05.
+
+## Owner-authorized Task 2 cap reallocation — active
+
+On 2026-11-15 the owner authorized “Replan within limits.” Reallocate 300
+tokens from the existing 1,000-token global slack to Task 2, raising its
+correction/reread cap from 500 to 800. Keep context 38,500; Task 1 spans
+22,000; Task 3 new source reads 0; generated output 5,000; cushion 2,000;
+and the 31,000 reserve unchanged. The new total is 68,300 working + 31,000
+reserve = 99,300, leaving 700 below the 100,000 ceiling.
+
+The prior v4 selection remains fully charged at 611 source tokens, including
+the 2,125-byte Task2 diagnostic reread; no overlap/reuse reclassification is
+made. Its source span now fits the newly authorized 800-token ceiling, but its
+old schedule/input hashes do not authorize patch emission. Rebind current
+STATE, PLAN, REPLAN, REVIEW and SIZING, retain the exact corrected v4 candidate,
+obtain independent review of this reallocation and active schedule, fresh
+execute preflight, and fresh direct context/span/output/combined counts. Only
+after every cap passes may the test hunk run RED and the source correction run
+GREEN. Preserve the source-join finding and all safety stops until the checks
+and required independent review pass. No Plan 03-05 or follow-on implementation
+is authorized if the finding remains unresolved.
+
+## Candidate v6 hunk correction — active; count pending
+
+The v5 candidate's patch application check failed because the existing caller
+test context line had one missing indentation byte. No source was changed.
+Temp-only v6 fixes that context line in addition to v5's newline correction;
+`git apply --check` now passes. Its exact candidate identity is 2,288 bytes,
+SHA-256 `05998c2c9adf88e6e1c3e96998fb94ef4c6e2cb734a522cc34aa64b2a54dbac3`.
+The source semantics, true/false regression, complete 611-token reread and
+800-token cap do not change. Preserve v4/v5 counts and the v5 apply-check
+failure as history. Bind current planning inputs, obtain independent review,
+fresh execute preflight and direct counts before applying this candidate.
+
+## Candidate v8 test map-order correction — active; count pending
+
+The exact current failure log is `03-04-TASK2-INVALID-RED.log`: the v6 test
+failed to compile because the string-key entry followed a keyword entry in a
+map. A temp-only v8 patch reorders those keys, passes `Code.string_to_quoted!`
+on the corrected full test file, and passes `git apply --check` against the
+dirty test-only hunk. No source edit or test run has followed that repair.
+Candidate: 1,132 bytes / SHA-256
+`780d00f33ce8a6d1f3686a8648f7cb68a9f8c431c76506969b46c45090f7c534`.
+Preserve the prior 611-token diagnostic-inclusive source count as history and
+bind the incremental current test span exactly. The cumulative source ceiling
+remains 800; all other caps and safety stops are unchanged. Obtain independent
+metadata review, fresh execute preflight and direct counts before applying v8.
+
+## Candidate v9 exact-line test correction — active; count pending
+
+V8 preserved history but its 193-token incremental span plus prior 611-token
+Task2 selection totaled 804, four above the 800 cap; the patch was not applied.
+Temp-only v9 uses a zero-context **line replacement**, not an insertion: the
+exact current line 5944 is hash-bound, while the module anchor remains bound by
+the prior reviewed/count receipt. `git apply --unidiff-zero --check` and syntax
+parsing of the corrected full test file both pass. Candidate: 909 bytes / SHA
+`9affdec4f4d579ebff5748b9e8ecba4548421956278b5015429b6e86ffc2d371`. Rebind
+current artifacts; cumulative source is prior 611 plus the exact current-line
+reread and must remain ≤800. Obtain independent metadata PASS, execute
+preflight and fresh direct counts before applying.
+
+## Candidate syntax repair after count — fresh gate required
+
+After the owner-authorized v6 count passed, patch inspection found a malformed
+line at the new test boundary: the added `end` had been concatenated with the
+existing caller-test tag. No patch was applied and no test ran. Preserve the
+v4 count as historical; it does not cover corrected candidate bytes. A
+temp-only v5 repairs only that newline and retains the same test placement,
+behavior and two source spans. Bind its exact new bytes/hash, current planning
+inputs, schedule and harness; obtain fresh independent metadata review,
+execute preflight and direct counts before any source edit. Keep all caps and
+safety stops unchanged.
+
+## Candidate v9 RED receipt — valid assertion failure
+
+The v9 test-only correction was applied only after its fresh count passed.
+The focused core run returned exit 2 and an unchanged TAP report; the exact
+target `test source join completeness follows gaps` failed at the
+`source_join_complete` assertion, with no compile/load failure or report parse
+errors. `gsd_run check tdd-red-evidence` returned `RED_EVIDENCE_OK` (109 tests,
+2 pass, 1 target failure; all other selected cases skipped). Full report and
+semantic record are `03-04-TASK2-RED.tap` and `03-04-TASK2-RED.json`. No
+support-source change has occurred. Next bind the post-test tree and
+temp-only support correction, independently review, run execute preflight
+and count all current spans/output/combined under the unchanged 800/5,000/
+99,300 limits before applying the implementation.
+
+## Final Task2 cap reallocation — active v11 schedule; count pending
+
+The v10 fresh post-test count bound the unchanged support span and returned
+95 tokens; cumulative Task2 source was 611 prior +133 v9 +95 =839, exceeding
+the then-active 800 cap. No support source changed. Under the owner's standing
+“Replan within limits” authorization, the final Task2 source cap is now 1,000,
+allocating 200 tokens from the remaining global slack. Other caps remain
+context 38,500, Task1 22,000, Task3 0, output 5,000, cushion 2,000, reserve
+31,000; total working 68,500 + reserve 31,000 =99,500 with 500 below the
+100,000 ceiling. Prior 500/800 failures stay as history; no additional cap
+increase is allowed. Bind the exact current schedule and count harness,
+obtain independent review, run execute preflight and fresh direct counts
+before applying the support correction. If any cap fails again, keep the
+accepted finding open and do not start Plan 03-05.
+
+## V10 support patch verification — focused core test still failing
+
+The final 1,000-cap schedule passed fresh independent review, execute
+preflight and direct counts (context 35,139; Task2 source 839/1,000; output
+1,090/5,000; combined 35,380; projected total 94,206/99,500). The temp-only
+support patch was applied after that gate. The focused core write check then
+failed one target test before its intended source-join assertion: `build.([])`
+raised `MatchError` on `false` in `validate_aggregate_lane!/1` at support line
+138. The runner reported 2/3 passed, 1 failed, 106 excluded. Floor did not run.
+No additional source body has been read. Next bind/review/count the exact
+post-v10 tree and this diagnostic line before any further correction; no cap
+increase is permitted. Preserve the valid RED record and all prior count
+failures. The accepted join finding remains open and Plan 03-05 is blocked.
+
+## V12 diagnostic result and V14 validator correction candidate
+
+The first V12 request counted context and line 138, but its empty-output
+request received HTTP 400 and no combined count ran; no body was inspected.
+That 33-token line count remains charged. V13 skipped the empty output request
+and passed context 33,085, line 138 33, combined 33,112; cumulative Task2
+source is 905/1,000 and total 92,066/99,500. Only after that gate, inspection
+showed line 138 was `true = record["source_join_complete"] == false`, the
+stale invariant that caused the v10 focused test failure. A temp-only V14
+candidate changes that assertion to compare against `target_source_gaps == []`.
+It has not been counted, applied, or reviewed. Bind exact current artifacts
+and patch, independently review, run fresh execute preflight and count before
+any further source edit. No cap increase is allowed.
+
+## V14 GREEN and records refresh — focused core/floor checks pass
+
+V14 passed independent metadata review, execute preflight and direct count:
+context 34,105; exact line span 33; output 103; combined 34,229; cumulative
+Task2 source 938/1,000; cumulative output 1,193/5,000; projected total
+93,113/99,500. The one-line validator patch was applied and `git diff
+--check` passed. Both focused write-mode checks passed: core 3/3 selected and
+floor 3/3 selected, with 106 excluded in each lane. No new source body was
+read after the count. Core/floor machine records changed, but SIZING remains
+unchanged and its stored lane record hashes are stale. Candidate is still
+null and real source_join_complete remains false where evidence gaps persist.
+Next obtain an independent review of the bounded code/test diff, reconcile
+SIZING using the existing records workflow or preserve its exact gap, then
+continue only permitted zero-source-read Task3 report work. No Plan 03-05.
+
+
+## V15 bundle regression blocker — one-line Task2 diagnostic pending count
+
+The fresh zero-source-read Task3 count passed at context 36,195, marker 19,
+combined 36,208 and projected total 95,125/99,500. The first authorized bundle
+write check then failed before report publication: `validate_target_sources!/1`
+raised MatchError at support line 394. The report and machine records were not
+changed by the failed run. No source body was opened. The exact diagnostic is
+test/support/guard_aggregate_reconciliation_evidence.ex line 394, 61 bytes /
+`d17d00204d49b02e495b9719a0569e450bc694a6ae5c3ab0cb8e6f44a1818c49`; full
+support file is 58,768 bytes /
+`54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63`. Prior
+Task2 source charge is 938/1,000, leaving 62. Count the one-line span against
+the exact current context and combined payload with a nonempty diagnostic
+marker. If it passes, inspect only that selection, prepare any correction in
+temp storage, then independently review and recount before applying. Task3
+remains zero source-body reads; candidate remains null and no later plan may
+start.
+
+
+## V15 line 394 diagnostic — counted pass; line 393 only may fit
+
+The fresh direct count passed for exact support line 394: context 37,719;
+span 36; combined 37,749; Task2 cumulative source 974/1,000; projected total
+96,666/99,500. The one selected assertion is `true =
+record["target_source_coverage_complete"] == true`. No further body has been
+read. Only 26 source tokens remain. A metadata-only 43-byte line 393 span is
+identified (`cd292c6d5b35850c08eca37b4ca58758569d9e27628dd448d6fd52e31fe8957a`);
+count it before inspection. If it exceeds the remaining cap or does not resolve
+the expected invariant from already-reviewed context, stop with the exact
+owner-facing gap; no cap increase is authorized.
+
+
+## V16 source cap failed — stop; no further reallocation
+
+Fresh direct count for exact support line 393 passed the context cap but failed
+the final Task2 source cap: 974 previously charged Task2 tokens + 33 for line
+393 = 1,007, exceeding 1,000 by 7. Context was 30,920; combined 30,947;
+projected total 89,900/99,500. The line body was not emitted or inspected. No
+source patch was prepared; the remaining 26-token arithmetic allowance cannot
+cover this selection. The explicit instruction prohibits another cap increase.
+The validator finding at support line 394 remains unresolved, the bundle test
+failed before report publication, and Task3/Plan03-05 remain blocked. Preserve
+the exact owner-facing gap and recommend a separately authorized replan only if
+the owner later wants to reopen this work.
+
+
+## V17 final within-envelope reallocation — active; line 393 count pending
+
+The owner authorized reallocating the remaining 500 global working tokens to
+Task2. Active caps are context 38,500; Task1 22,000; Task2 source 1,500;
+Task3 new source reads 0; output 5,000; cushion 2,000; reserve 31,000. Working
+total is 69,000 plus reserve 31,000 = 100,000 exactly. The reserve is unchanged.
+The V16 1,007-token selection failure and all earlier cap failures remain
+historical. Preserve all 974 tokens of actual prior Task2 reads and do not
+exclude any reread. Obtain fresh independent schedule review, execute preflight
+and direct count for exact support line 393 before opening it. This is the final
+available allocation; no further budget escalation is permitted.
+
+
+### V17 correction to cumulative source ledger
+
+Independent review correctly noted that V16 already counted the line393
+selection as 33 tokens and recorded cumulative Task2 source as 1,007. The V17
+fresh count must preserve that failed attempt and charge the new exact 33-token
+selection again if unchanged: prior 1,007 + fresh span. The 1,500 cap can cover
+both; there are 493 tokens available before the fresh selection. No reread is
+excluded. The 31,000 reserve and 100,000 ceiling are unchanged.
+
+
+### V17 line393 fresh count passed; count the full validator context next
+
+The fresh V17 direct count passed: context 28,377; line393 33; combined 28,404;
+cumulative Task2 source 1,040/1,500; projected total 87,390/100,000. Line393
+was then inspected: `:ok = validate_aggregate_lane!(record)`. The line394
+coverage assertion remains the failure. Before diagnosing or patching, count the
+complete `validate_target_sources!/1` context including every reread; the prior
+line393 and line394 reads remain charged. There is 460 tokens of source allowance
+remaining.
+
+
+### Final V18 validator-context count — pending
+
+V17 line393 was read only after its fresh count. The active cumulative Task2 source baseline is therefore 1,040/1,500, leaving 460. The next exact selection is support lines 392–400, 382 bytes / `3776304570990785c8ab5dedb0ff3246321a9765f99a03411b396c4cb725c841`, full file 58,768 bytes / `54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63`. It includes rereads of lines393–394; charge all span tokens again. Obtain independent metadata PASS, fresh execute preflight and count before opening the body. No source edit or output candidate before a complete passing count.
+
+
+### V18 counted span was not the complete validator — stop before repair
+
+V18 direct count passed for exact lines392–400 (111 tokens), bringing cumulative source to 1,151/1,500 and projected total to 87,948/100,000. That selection was then inspected. Metadata shows the validator continues through line476; unselected lines401–476 are 2,574 bytes / `6954af9f5ebb1bf4ca6e6c686794397d1da52a4fec28b047e5f7deaee54c9d06`, leaving only 349 Task2 source tokens. The remainder has not been token-counted or inspected. The current receipt does not authorize a correction because the complete validator context was not selected. Preserve the finding and candidate=null; no cap increase, report publication, or Plan03-05.
+
+
+### V19 feasibility count failed — final source cap is exhausted
+
+The fresh count-only request for exact support lines401–476 returned 618 tokens. Adding this to the 1,151 prior selected source tokens produces 1,769/1,500, exceeding the final cap by 269. Context 29,549 and projected total 89,291 pass; the Task2 source cap fails. The remainder was not emitted or inspected. No further budget reallocation is authorized. Preserve the line394 owner-facing gap and do not begin Plan03-05.
+
+
+### V20 final within-ceiling reallocation — recount pending
+
+The owner authorized shifting 1,000 tokens from context to Task2 source allowance. Active caps: context 37,500; Task1 22,000; Task2 source 2,500; Task3 reads 0; output 5,000; cushion 2,000; fixed reserve 31,000; total 100,000. V19’s 618-token count failed the prior 1,500 cap and remains historical. Current cumulative source selection baseline is 1,769; a fresh recount of lines401–476 is charged again and would yield 2,387 if unchanged. Obtain exact metadata review, execute preflight and fresh count before inspection. No further allocation increase, candidate output, report publication, or Plan03-05 until all gates pass.
+
+
+### V20 fresh count passed; validator confirms unresolved source coverage
+
+Under the final context37,500 / source2,500 allocation, the fresh 618-token remainder count passes with cumulative selected source 2,387/2,500 and total90,757/100,000. The complete validator was inspected only after the count. It intentionally guards `target_source_coverage_complete == true` and validates source mappings, gaps, per-identity statuses and source hashes. The failure exposes incomplete target-source evidence in the bundle input; it does not identify a narrow safe code correction. Task3 new source reads remain zero. Candidate null, no report publication, no Plan03-05.
+
+## Owner-approved bounded target-source trace — original 99,500-token amendment, now historical
+
+INT-20261115-01 records the owner's approval to trace why target-source coverage
+is incomplete. This reopens only Task03-04-02 within the existing five-plan
+Phase3; Task03-04-03 remains report-only and Plan03-05 remains dependent on
+Plan03-04 completion. It supersedes earlier allocation/no-further-reallocation
+statements for this continuation while preserving all earlier receipts and
+failed selections as charged history.
+
+The active hard allocation is context34,000 + Task1 source22,000 + cumulative
+Task2 source5,500 + Task3 source0 + cumulative output5,000 + cushion2,000 =
+68,500 working; fixed reserve31,000 gives99,500, with500 slack below100,000.
+The V20 source baseline is2,387, leaving3,113 for the entire trace/correction,
+including rereads, patch validation and required independent review. Continue
+the existing output ledger; neither source nor output restarts at zero. The
+five-exact-source-file and existing effort/review caps remain. Reconcile elapsed
+recorded effort before execution; this approval does not invent a new effort window.
+
+The trace starts from current core/floor/SIZING keyed projections and exact
+record identities. Hash-bind complete affected target-source record,
+association and typed-gap identity/key sets through compact manifests; do not
+emit full lane arrays or treat counts/representative examples as coverage.
+Schedule complete source derivation and acquisition spans for the coverage flag,
+including required interfaces, before any body is emitted. Independent metadata
+review, execute preflight and fresh direct context/span/combined count are
+required after the final schedule/receipt/selected-input change. Metadata and
+keyed record projections count against compact context; all source selections,
+including failed attempts and rereads, count against cumulative Task2 source.
+
+Use one bounded root-cause trace to distinguish missing static evidence from a
+deterministic collector/bridge defect. Before longer selectors, run cheap JSON,
+cross-file digest and coverage/gap consistency checks; validate candidate patch
+applicability and syntax before counting/retesting it. A demonstrated narrow
+defect requires valid selected-test RED then GREEN and current regenerated
+lane/SIZING identities through existing write interfaces. Preserve the intended
+complete-coverage validator, all original identities/provenance/gaps and every
+static-only/collision/Macro/authority stop. No production, workflow, dependency,
+guard-disposition or original-receipt changes are included.
+
+Bounded exit: if required evidence is genuinely absent, a complete cause cannot
+be established within the remaining source/output/effort limits, the repair
+expands scope, or the existing independent review cap cannot clear it, record
+the exact missing identities/provenance, consequence and remedy and stop.
+Candidate stays null; no report publication, Plan03-04 completion or Plan03-05
+start is permitted on that exit. If complete target-source inputs and all
+correction gates are established, resume Task3 with zero new source reads and
+its own fresh context count. This amendment is planning only and does not open
+the execution body gate.
+
+Coverage: this trace implements D-01/D-02 and GSR-01/GSR-03 by tracing the
+authoritative lane provenance and existing collector; D-03/GSR-05 retain exact
+gap/fit evidence and no candidate; D-04/GSR-06 preserve later owner authority.
+GSR-02/GSR-04 exact membership, owners, partitions and historical delivery
+receipts remain protected by unchanged Task1 and correction controls.
+
+### Plan-checker scope repair — original SIZING ledger rebound, superseded after incident
+
+The active SIZING budget now agrees with this replan: top-level and correction
+schedule source_token_cap5,500; baseline/cumulative source2,387; remaining3,113;
+context34,000; total99,500. Its prior V20 active allocation is copied unchanged
+to historical_v20_reallocation, and v20_fresh_count_receipt is unchanged.
+Candidate remains null. The active schedule/harness/projection hashes are null,
+direct_count_pending is true and source_emission_authorized is false until
+execution binds the exact current SIZING full hash and active-ledger projection
+hash in independent schedule review and fresh direct counts. Task2 explicitly
+requires this pre-emission ledger rebind/equality check; the planning change is
+not a source-emission receipt.
+
+## One-time budget recovery after unsaved source-search output
+
+The next executor turn accidentally ran an `rg -n` search over
+`test/support/guard_aggregate_reconciliation_evidence.ex` and
+`test/contract/tier_sweep_test.exs` before its new schedule/count gate. The
+output reported 10,353 tokens, was truncated, and was not saved; exact matching
+lines and a content hash cannot be recovered. The executor stopped without
+editing code or running tests. See `03-04-EXECUTION-INCIDENT.md` for the command,
+scope, and accounting decision.
+
+INT-20261115-02 supersedes INT-20261115-01's 100,000-token ceiling only for this
+Phase 3 recovery. Charge all 10,353 reported output tokens conservatively to
+Task 03-04-02 source usage, in addition to V20's preserved 2,387-token baseline.
+The one-time active allocation is context34,000 + Task1 source22,000 + Task2
+source16,000 + Task3 new source0 + output5,000 + cushion2,000 =79,000 working;
+the fixed31,000 reserve yields a110,000 total ceiling. Task2's charged cumulative
+source usage is12,740 and its remaining allowance is3,260. The five-file task
+limit, output cap, effort/review limits, all evidence requirements and all
+safety stops remain unchanged. Future work retains the100,000 ceiling.
+
+This amendment is planning/accounting only. The exact schedule, independent
+plan/schedule review, fresh execute preflight and direct count must bind the
+incident charge and current SIZING hashes before any further source body is
+emitted. Current schedule/review/count authorization is stale; the active body
+gate remains closed. Candidate stays null, the report stays unpublished and
+Plan03-05 stays unstarted.
+
+
+## Current bounded trace stop after current-state count
+
+The current-state schedule and metadata review passed, execute preflight passed, and the direct recount passed with context31,435 tokens, selected spans843, combined32,278 and projected total105,915/110,000. The scheduled helper spans were emitted once and checked with cheap JSON, full-record digest, identity-set and gap-consistency checks; no tests or code edits followed. See `03-04-BOUNDED-TRACE-STOP.md` for the exact findings and remedy.
+
+Task2 usage is now15,308/16,000: V20 baseline2,387 + conservative incident charge10,353 + later selections882 +843 +843. Only692 tokens remain. Keyed target-source association/gap provenance and the coverage-flag caller remain unresolved, and the nested SIZING digest recipe is not established. Candidate remains null; implementation unauthorized; aggregate gate open; report unpublished; Plan03-04 incomplete and Plan03-05 unstarted. STATE changed after the count, so no further source body may be emitted without a new exact schedule, independent review, execute preflight and direct count. No automatic budget increase is authorized.
+
+## INT-20261116-03 active metadata-only recovery route
+
+This amendment replaces only pending Plan03-04 Task2/Task3 execution with a supplemental metadata handoff. Earlier source-trace schedules, count failures/passes and bounded stops above remain historical and unchanged. No source body is newly authorized. Completed Task1 is retained as historical evidence and is not rerun. The original source trace, corrected13MB reconciliation publication, GSR-03/GSR-05 acceptance and Plan03-05 remain blocked. Metadata-route completion is not Phase3 implementation/delivery completion. Phase4 and implementation remain unauthorized.
+
+### Input discovery and dependency
+
+Discovery level0: the route uses installed jq and Python standard library, existing retained metadata and no external library/API, source/code/test change, dependency or archive extraction. The plan preflight passed with no errors and route_phase03 on the existing phase branch. No graph/source discovery is needed for this metadata projection; existing source/graph limitations remain unknown.
+
+Pending Task2 needs the unchanged lane files, SIZING statuses, bounded stop and owner intent; creates the supplemental index/receipt. Pending Task3 needs those outputs; creates the supplemental report/validation receipt. Execution stays wave4 after03-03, with both tasks serial within03-04. Completed Task1 is not rescheduled. No other plan or phase is added. Files modified by execution total4; each task owns2. Parent/orchestrator alone owns canonical STATE/ROADMAP/projection bookkeeping.
+
+The calibrated incremental estimate is raw14,000 tokens ×0.5 =7,000, high confidence from19 samples. It is an estimate for the new route and does not replace measured historical ledger usage. Active caps remain context34,000; Task1 source22,000; cumulative Task2 source16,000; Task3 new source0; cumulative output5,000; cushion2,000; reserve31,000; one-time Phase3 ceiling110,000. Task2 remains15,308 charged/692 remaining. Both pending tasks have zero new source-body reads. Keep actual effort/review/output history and the3–4-hour/two-pass bounds; unknown or exhausted headroom is a stop, not permission to reset. Source-emission schedule/review/preflight/direct-count gates remain closed and unchanged.
+
+### Grounded streamed identity projection
+
+From repository root, for each CORE/FLOOR input use the installed jq projection: jq -cn --stream 'fromstream(2|truncate_stream(inputs | select(.[0][0]=="identity_rows"))) | {identity_id:.identity.id,owner:.identity.owner,baseline_mfas:.baseline_mfas}' followed by that lane-file path. Python consumes one output line at a time, preserving its enumeration index. This reconstructs one identity row at a time and emits only allowed metadata. Do not parse the complete lane document or print complete arrays/reports into context.
+
+Planning baseline from that exact projection: each lane has226 identities; core has2,443 baseline tuples and floor2,354. Empty core lists: EX-097, CN-LANE-001, BD-LANE-001, BD-LANE-002, BD-LANE-003, BD-LANE-004. Empty floor lists: CN-001, EX-054, EX-076, EX-095, EX-116, EX-131, BD-033, CN-LANE-001, BD-LANE-001, BD-LANE-002, BD-LANE-003, BD-LANE-004. These are6+12 identity/lane unknowns, not eighteen invented MFAs or proven empty live sets.
+
+Existing unkeyed observations remain separate: current reconciliation target_source_keys has452 identity/lane entries,450 empty and two populated EX-010 entries. SIZING has aggregate association counts1,844 core/1,802 floor and gap counts1,761 core/1,716 floor with nil reasons. These facts do not bind a gap reason or source identity to any particular baseline tuple. Do not distribute their counts across index keys or label unknown mapping as absent source. The metadata route need not parse the old report body; preserve its full-file digest.
+
+### Supplemental row schema
+
+Use schema_version string03-04.metadata-gap.1 on every JSONL row. Required keys:
+
+| Field | Exact contract |
+|---|---|
+| record_type | known_target_gap or unknown_target_set |
+| lane | core or floor |
+| identity_id | Exact retained identity.id string |
+| owner | Exact retained identity.owner value, including null if retained |
+| identity_row_index | Zero-based index in that lane identity_rows |
+| baseline_mfa_index | Zero-based baseline_mfas index for a known target; null for an unknown list |
+| mfa | Exact three-element [module string,function string,integer arity] array; null only for an unknown target list |
+| target_set_status | known for retained baseline tuples; unknown for empty retained lists |
+| mapping_status | unresolved_mapping for every row |
+| lane_input_sha256 | SHA-256 of the entire retained lane file |
+| missing_fields | Nonempty list of explicit unresolved proof fields; no unsupported absence conclusion |
+| reason | Nonempty typed reason: mapping_not_materialized_in_retained_metadata for a known tuple, target_list_not_established for an unknown list |
+| remedy | Concrete bounded action needed to establish the missing association or target list; source work still requires unchanged gates and separate authority |
+| direct_evidence_refs | Array of exact selected-function metadata references, or empty array; never a source/caller-completeness assertion |
+
+Known rows should identify unresolved target-source association, lane-pinned source identity/provenance, relevant caller/delegate linkage and coverage-derivation/digest-recipe knowledge as applicable. Missing-fields language means unavailable mapping/proof, not absent source. For unknown-list rows require missing_fields to include target_mfa_list; do not attach a selected-function reference to MFA null.
+
+The unique key is (lane,identity_id,mfa), with an identity-level null key for each unknown list. Preserve per-identity tuple membership; the same MFA under different identities is not deduplicated across owners. Any duplicate within the same exact key is a failure to resolve, not permission to discard a row. Do not treat baseline_mfas as a fresh live inventory or overwrite current/delivered/pending sets.
+
+Each direct_evidence_refs item contains exactly selector, lane_input_sha256 and mfa. Selector format: /source_and_caller_evidence/selected_function_evidence/N, where N is the zero-based array index; its mfa must equal the row tuple, and its hash must equal that row lane_input_sha256. Scope is explicitly selected-function metadata only. Derive references by streaming selected-function MFA/index metadata; do not copy narrative source findings or infer identity binding from aggregate source keys/basenames. All missing association/caller proof and unresolved_mapping remain even when a reference exists.
+
+### Supplemental receipt schema
+
+03-04-METADATA-GAP-RECEIPT.json contains schema_version, status=bounded_no_candidate_metadata_only, input_files, preservation_manifest, row_schema, gap_index, limits, result and exact check commands/results. input_files has core/floor/sizing entries containing repo-relative path and full sha256. row_schema records all required fields, types, nullable rules, enums and direct-reference contract above. gap_index has repo-relative path, sha256, total_rows4815, known_target_rows4797, unknown_target_rows18 and per-lane counts.
+
+preservation_manifest maps every protected repo-relative path to its pre-write full SHA-256. Include lane files, SIZING, original reconciliation/review, support/test files, bounded stop, execution incident, source schedules and independent schedule/direct-count receipts. Capture/check these through byte-stream digest operations only; do not decode/emit source bodies. Record current checkout branch/head and existing dirty state without staging or changing those files.
+
+limits contains at least new_source_body_tokens=0, task2_source_charged=15308, task2_source_remaining=692, phase_ceiling=112915, working_cap=81915, reserve=31000, context_cap=33722, cumulative_output_cap=8193, incremental_work_cap=7000 plus Task1/Task2/Task3/cushion caps, actual remaining output/effort and review usage. Unknown actual headroom is a stop. result must equal candidate:null, implementation_authorized:false, aggregate_gate:open, gsr03_complete:false, gsr05_complete:false, phase4_authorized:false. Retain static-only/collision/Macro/wording/SEC-01/Walking Skeleton stops explicitly.
+
+### Independent direct-reference verification
+
+In addition to the runnable Task2 automated command, independently reconstruct the small selected-function MFA/index map by streaming only the selected_function_evidence path. For each row reference, parse selector N, look up the exact same-lane item N, compare its complete MFA tuple, compare full lane-file hash, and reject any malformed selector, duplicate reference, wrong lane, unknown-list reference or missing target tuple. Require every directly matching selected-function metadata entry to be represented once for each matching retained identity/MFA key; compare expected and actual reference maps exactly. Emit only a compact PASS/failure summary, never narratives or complete arrays. Record the actual executable Python/jq command and exit status in both receipts. This is metadata reference integrity, not source verification.
+
+03-04-METADATA-GAP-VALIDATION.json contains status=pass_metadata_only only when checks row_schema, complete_key_equality, unknown_target_sets, direct_evidence_bindings, preservation_hashes and unchanged_limits are all true. Include index_sha256, receipt_sha256, report_sha256; source_proof=false, digest_recipe_established=false, caller_closure=false, gsr03_complete=false, gsr05_complete=false, phase4_authorized=false and candidate=null. Record exact commands/status, current branch/head, input hashes, all not-run limitations and remaining open review findings. Metadata PASS cannot close an existing code finding or discharge the source bundle gate.
+
+### Multi-source coverage audit for the revised plan set
+
+| Source | Item | Plan coverage | Disposition |
+|---|---|---|---|
+| GOAL | Complete two-lane join, source/caller inspectability, complement and measured candidate or exact gap |03-01–03-03 retained;03-04 Task2/Task3 supplemental known-key gap handoff;03-05 retained gate | Bounded no-candidate route covers exact-gap outcome; no full source-proof completion claim |
+| REQ | GSR-01 current inventory/provenance |03-01 historical retained;03-04 receipt preserves input authority | Existing coverage preserved; metadata route is not fresh inventory |
+| REQ | GSR-02 identity/MFA sets |03-02 historical retained;03-04 Task2 exact baseline-key equality and18 unknown sets | No loss/substitution; unknown target sets explicit |
+| REQ | GSR-03 source/caller links or exact missing evidence |03-03 retained;03-04 Task2/Task3 mapping-unknown rows/remedies | Missing knowledge inspectable; source/caller acceptance remains incomplete |
+| REQ | GSR-04 delivery and distinct partitions |03-01–03-03 historical retained;03-04 preservation manifest/report | Never combine/reopen delivered partitions |
+| REQ | GSR-05 candidate fit or concrete gap |03-03 retained;03-04 unchanged ledger/no-candidate handoff | Sizing proof remains incomplete; no fabricated fit or reset |
+| REQ | GSR-06 owner boundary and safety stops |03-04 Task3;03-05 retained/unstarted | No automatic Phase4/implementation |
+| RESEARCH | Lane separation, exact equality, source authority, graph uncertainty, historical partition preservation |03-01–03-03 retained plus03-04 Task2/Task3 | Metadata route preserves all constraints; no new graph/source conclusion |
+| RESEARCH | Exact measured caps, reserve, review/security and delivery gates |03-04 active limits and preservation receipt;03-05 retained | No tests/install/delivery claim; bounded stop retained |
+| CONTEXT | D-01 machine-readable authority and inspectable complete rows |03-04 Task2 index and Task3 linked report | Every retained target plus18 unknown lists inspectable |
+| CONTEXT | D-02 reuse narrow existing tooling; no framework/dependency |03-04 Task2 installed jq/Python only | No collector/code/test/lane change |
+| CONTEXT | D-03 candidate only with proof, otherwise exact gap/remedy |03-04 Task2/Task3 | candidate null |
+| CONTEXT | D-04 explicit later owner decision |03-04 Task3 | No later phase or implementation authority |
+
+No source decision is silently dropped. INT-20261116-03 selects the gap-register outcome; this is not a waiver of GSR-03/GSR-05 or a fabricated completion. Product UI/brand/dogfood, runtime safety, source-proof expansion, dispositions and later implementation remain outside this route.
+
+## Owner-authorized bounded continuation — INT-20261116-04
+
+The owner authorized the metadata-only continuation verbatim: “- Authorize
+the bounded continuation”. This adds up to7,000 incremental working tokens
+and up to four active hours beginning2026-11-17T01:06:32Z. It supersedes the
+prior110,000 ceiling and unknown effort remainder only for this supplemental
+metadata gap register/handoff. It does not authorize source-body reads, code
+changes, tests, implementation, Phase4, reserve consumption or later work.
+
+| Component | Active cap or recorded use |
+|---|---:|
+| Compact context | 33,722 cap;31,435 recorded;2,287 remaining |
+| Task1 source | 22,000 cap;21,172 recorded; no new reads |
+| Task2 source | 16,000 cap;15,308 recorded;692 remaining but source gate closed |
+| Task3 new source | 0 |
+| Cumulative output | 8,193 cap;1,193 recorded;7,000 remaining |
+| Cushion | 2,000 |
+| Working cap | 81,915 |
+| Fixed reserve | 31,000 |
+| One-time metadata-route ceiling | 112,915 |
+
+The working component caps sum to81,915; reserve remains31,000. Enforce the
+7,000-token increment as a shared limit across new task context and emitted
+output, in addition to each component cap and the total ceiling. Record the
+exact context/output projection before writes and stop if the shared increment
+or any component cannot fit. The active effort clock begins at the
+authorization timestamp above and stops after four active hours; do not infer
+or carry forward time from the earlier unrecorded window. Obtain independent
+review of this revised numeric ledger and fresh execute preflight before
+generating any index rows.
+
+### Exit and next actor
+
+After metadata validation, parent/orchestrator updates canonical handoff bookkeeping and reports the bounded no-candidate outcome. The owner acts only on a separately presented scope/phase decision if one is needed. The current source stop stays closed automatically; no confirmation is needed to preserve it. Before any authorized execution, run bin/planning_health --stage execute --phase 3; this is not source-read permission. Do not automatically start Plan03-05 or Phase4.

@@ -1,8 +1,8 @@
 # Rebased recovery work envelope
 
-**Recorded:** 2026-11-17
-**Checkout:** `/private/tmp/fablebook-phase3-remediation`
-**Branch:** `gsd/phase-03-recovery-and-provenance-closure`
+- **Recorded:** 2026-11-17
+- **Checkout:** `/private/tmp/fablebook-phase3-remediation`
+- **Branch:** `gsd/phase-03-recovery-and-provenance-closure`
 **Authorization:** [INT-20261117-01](../intent/sources/2026-11-17-01-authorize-rebased-recovery-envelope.md)
 **Start-point decision:** [INT-20261117-02](../intent/sources/2026-11-17-02-start-budget-after-review.md)
 **Status:** Active from `2026-11-17T13:49:13Z`
@@ -22,16 +22,10 @@ The prior receipt establishes a conservative lower bound of **191,582 output tok
 ## Reconciliation and stop rule
 
 - The owner-selected post-review/preflight start is recorded above. At each completed in-envelope work wave, record every session's task attribution, exact input/output/cached-input counts, session-log SHA-256, and any mixed-purpose allocation method.
+- At each completed in-envelope work wave, record every session's task attribution, exact input/output/cached-input counts, session-log SHA-256, and any mixed-purpose allocation method.
 - Charge every post-reset assistant output token to the 150,000 ceiling. Preserve the 31,000 reserve; stop before either limit is crossed.
 - Recompute balance from measured usage before starting another wave. Plan estimates are projections and do not replace that ledger.
 - Keep the existing exact request gates: source schedule, independent review, fresh execute preflight, direct input-token count, cumulative fit, five exact source files per task, 34,000 compact-context limit, and no truncation. The new ceiling does not waive any gate.
 - If usage attribution, direct count, or cumulative fit cannot be established, keep source access closed, complete only the already-planned truthful blocked metadata package within the remaining envelope, and record the exact blocker and next actor. No automatic cap increase or unchanged retry.
 
 This cap supersedes the Phase 4 100,000-token ceiling only for this bounded recovery envelope. The fixed reserve, evidence-only Phase 4 scope, Phase 3 implementation/candidate stops, and all other project limits remain in force.
-
-## Work-wave 04-01 result — 2026-11-17
-
-- Phase 4 Plan 04-01 completed on the preplanned blocked metadata route in local commits `7b24c19`, `1fbd36c`, and `72c5cdd`. Its compact checks pass for the blocked outcome; see `phases/04-evidence-only-source-and-gap-provenance-closure/04-01-SUMMARY.md`.
-- The validator corroborated 221 archived IDs plus five preserved lane IDs against both 226-row lanes. It recorded three expected/current preservation hash mismatches, 9,716 unresolved rows, and a blocked R1 schedule. No source body, direct count, or source-dependent suite was read or run.
-- Exact executor child-session input/output/cached-input counts and an attributable log hash are unavailable in this runtime. The Phase 4 resource ledger keeps usage and remaining balance null and cumulative fit unverifiable; this is not a zero-use claim.
-- Source access remains closed. Continue only the already-planned Plan 04-02/04-03 blocked-result closeout within their existing per-task caps. Do not start source analysis or Phase 3 source-dependent suites while usage and preservation mismatches remain unresolved.

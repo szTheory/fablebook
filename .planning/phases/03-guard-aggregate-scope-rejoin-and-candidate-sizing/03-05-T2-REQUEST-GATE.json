@@ -1,0 +1,109 @@
+{
+  "schema_version": "03-05.task2-one-use-gate.1",
+  "generation": "03-05-TASK2-20261117T234723Z",
+  "request_id": "T2-R1",
+  "status": "consumed_incomplete",
+  "source_access": "closed",
+  "source_emission": true,
+  "created_at_utc": "2026-11-17T23:55:03Z",
+  "prerequisites": {
+    "phase4_all": "pass_with_open_gaps",
+    "phase3_self_test": "pass",
+    "phase3_phase4_only": "pass",
+    "independent_schedule_review": "pass",
+    "fresh_phase3_execute_preflight": "pass",
+    "direct_count": "pass",
+    "complete_untruncated_source_delivery": "required"
+  },
+  "bindings": {
+    "schedule": "2bbe0a54bc531431c926fcb72a7d819f31e70fdd900d3f1fb5ca2af116319b27",
+    "review": "2b0d49be0ae299519594fc5f4d0755ae0d18997491b43f4797a13be5bce723d8",
+    "preflight": "dc94db09759cc4d408ed7082afad88381c44d0ab5ab5c34c4bf3da60f5fb578a",
+    "count": "e685ce0c2a5f6567cc10807ba8ca26ae30c8bd0c1d55845ffea98f8c6eae2e1a"
+  },
+  "serialized_request": {
+    "input_tokens": 27115,
+    "configured_context_tokens": 200000,
+    "request_bytes": 118868,
+    "request_sha256": "5d9c4e5dff5f935d2067fe3a790a6d536fc73ac394bfd95a5cbc26ae5980ac6e"
+  },
+  "source_selection_count": 3,
+  "cumulative_output_limit_enforced": false,
+  "no_retry_after_emission": true,
+  "consumed_at_utc": "2026-11-17T23:57:14Z",
+  "source_emission_receipt_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-EMISSION-RECEIPT.json",
+  "source_emission_receipt_sha256": "d108cedcce7dd9aa71a041ac0b7519fa3856dbaf61d77a72638855c472ee9b5b",
+  "source_emission_receipt": {
+    "schema_version": "03-05.task2-source-emission.1",
+    "status": "consumed_once_delivery_incomplete",
+    "source_access": "closed",
+    "generation": "03-05-TASK2-20261117T234723Z",
+    "request_id": "T2-R1",
+    "emission_count": 1,
+    "emitted_at_utc": "2026-11-17T23:57:14Z",
+    "schedule_sha256": "2bbe0a54bc531431c926fcb72a7d819f31e70fdd900d3f1fb5ca2af116319b27",
+    "review_sha256": "2b0d49be0ae299519594fc5f4d0755ae0d18997491b43f4797a13be5bce723d8",
+    "preflight_sha256": "dc94db09759cc4d408ed7082afad88381c44d0ab5ab5c34c4bf3da60f5fb578a",
+    "count_sha256": "e685ce0c2a5f6567cc10807ba8ca26ae30c8bd0c1d55845ffea98f8c6eae2e1a",
+    "serialized_request_sha256": "5d9c4e5dff5f935d2067fe3a790a6d536fc73ac394bfd95a5cbc26ae5980ac6e",
+    "source_selections": [
+      {
+        "path": "test/contract/tier_sweep_test.exs",
+        "source_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+        "source_bytes": 770285,
+        "source_span": {
+          "start_line": 5600,
+          "end_line": 6386,
+          "start_byte": 244950,
+          "end_byte_exclusive": 274865,
+          "encoding": "UTF-8",
+          "complete_file": false,
+          "includes_final_newline": true,
+          "span_sha256": "703e8ee836be0c9439026d1f77b01104a6994195a89bb7bf22ea88a9c904241d",
+          "selected_bytes": 29915
+        }
+      },
+      {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+        "source_bytes": 58839,
+        "source_span": {
+          "start_line": 1,
+          "end_line": 1610,
+          "start_byte": 0,
+          "end_byte_exclusive": 58839,
+          "encoding": "UTF-8",
+          "complete_file": true,
+          "includes_final_newline": true,
+          "span_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "selected_bytes": 58839
+        }
+      },
+      {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+        "source_sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+        "source_bytes": 19570,
+        "source_span": {
+          "start_line": 1,
+          "end_line": 349,
+          "start_byte": 0,
+          "end_byte_exclusive": 19570,
+          "encoding": "UTF-8",
+          "complete_file": true,
+          "includes_final_newline": true,
+          "span_sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+          "selected_bytes": 19570
+        }
+      }
+    ],
+    "tool_output_truncated": true,
+    "outer_output_original_tokens": 27224,
+    "outer_output_omitted_tokens": 15252,
+    "analysis_complete": false,
+    "content_used_for_analysis": false,
+    "reason": "The output wrapper omitted a contiguous middle section of the combined source delivery. A completion sentinel appeared after the omission, but the selected source bytes were not fully delivered to the model. No claim is derived from this request; do not retry T2-R1."
+  },
+  "blockers": [
+    "outer tool output truncated; no complete source analysis may claim T2-R1; unchanged retry forbidden"
+  ]
+}

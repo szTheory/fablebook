@@ -1,0 +1,298 @@
+{
+  "schema_version": "04.coverage-caller-trace.2",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "created_at_utc": "2026-11-17T23:37:06Z",
+  "status": "evidence_traced_with_open_semantic_gaps",
+  "source_access": "closed",
+  "evidence_scope": "Exact R2 and R3 helper spans plus the bound Phase 3 metadata projection. R1 is retained as an incomplete delivery receipt and excluded from all source claims.",
+  "record_partition": {
+    "status": "supported_consistent",
+    "association_rows": 0,
+    "typed_gap_rows": 9716,
+    "domain_counts": {
+      "source": 4849,
+      "caller": 4849,
+      "unknown_target_set": 18
+    },
+    "lane_domain_counts": {
+      "core": {
+        "source": 2469,
+        "caller": 2469,
+        "unknown_target_set": 6
+      },
+      "floor": {
+        "source": 2380,
+        "caller": 2380,
+        "unknown_target_set": 12
+      }
+    },
+    "known_mfa_keys": {
+      "core": 2469,
+      "floor": 2380
+    },
+    "unknown_target_sets": 18,
+    "interpretation": "All known source and caller keys have explicit records. This is record accounting only."
+  },
+  "coverage_flag_derivation": {
+    "source_selector": "03-SIZING.json $.lane_records.{core,floor}.target_source_coverage_complete",
+    "observed": {
+      "core": true,
+      "floor": true
+    },
+    "record_completeness": "complete",
+    "source_resolution": "unresolved",
+    "explanation": "The historical boolean reflects association-or-gap partition completeness. It does not mean target source bytes were resolved; the Phase 4 source partition contains zero resolved associations and 4,849 source gaps."
+  },
+  "source_resolution": {
+    "status": "unresolved",
+    "association_rows": 0,
+    "source_gap_rows": 4849,
+    "lane_gap_rows": {
+      "core": 2469,
+      "floor": 2380
+    },
+    "phase3_lane_projection": {
+      "core": {
+        "bounded_remedy": "Bind each lane-pinned source path, size, digest, repository ref, lock, and archive row.",
+        "count": 1761,
+        "reason_counts": {
+          "nil": 1761
+        },
+        "records_sha256": "a75a0cb286886caee632b0c0921c033b1c9c26d1a5751f123800bc336dd11e19"
+      },
+      "floor": {
+        "bounded_remedy": "Bind each lane-pinned source path, size, digest, repository ref, lock, and archive row.",
+        "count": 1716,
+        "reason_counts": {
+          "nil": 1716
+        },
+        "records_sha256": "4d86b6ae80905887a4228e37112e2054d9321e3e5b09ca6bb92f6811c35f6495"
+      }
+    },
+    "explanation": "The full Phase 4 source partition has zero resolved associations and 4,849 source-gap rows. The Phase 3 sizing projection separately records 1,761 core and 1,716 floor target-source gaps. Available selectors do not establish that these are the same key domain, so the difference is left unresolved and the counts are not reconciled."
+  },
+  "caller_closure": {
+    "status": "incomplete",
+    "derivation": "R2 binds the static caller record builder and required-gap derivation. R3 binds the crosswalk validator and canonical digest/sanitization helpers. No helper was executed and no audited target, callback, atom sink, or generated-code path was invoked.",
+    "lane_evidence": {
+      "core": {
+        "complete": false,
+        "recommendation_gate": false,
+        "record_count": 1763,
+        "edge_count": 2,
+        "required_gap_count": 5287,
+        "required_gap_reasons": {
+          "callback_and_delegate_provenance_unreviewed": 1763,
+          "current_graph_reconciliation_missing": 1763,
+          "selected_graph_observation_missing": 1761
+        },
+        "records_sha256": "228063881a46f8a66035f8febdfbf7f0eb0a73ca05209da0ddc6da281d593ee4",
+        "required_gaps_sha256": "8bced82c8f3409740770de6ef9b42eca4b28e591852238a6a14d763bf73fec73",
+        "matched_mfa_count": 2,
+        "graph_observation_bundle": {
+          "log_sha256": "d5e639793b6ce955a361ff7866f0a5a04f4909e33fcf4fa8e752bc13862ecfc7",
+          "path": ".planning/milestones/v0.2-phases/01-bounded-guard-continuation/01-GRAPH-OBSERVATIONS.json",
+          "scope": "saved selected projection only; current graph completeness is unproven",
+          "selected_mfas": [
+            [
+              "inets",
+              "enable_trace",
+              2
+            ],
+            [
+              "inets",
+              "enable_trace",
+              3
+            ]
+          ],
+          "selected_original_id": "EX-010",
+          "sha256": "b4b820ad94d460921c9d2f1aa869df7a281cd67d8ac7f8f3de82c9845b47198f"
+        }
+      },
+      "floor": {
+        "complete": false,
+        "recommendation_gate": false,
+        "record_count": 1718,
+        "edge_count": 2,
+        "required_gap_count": 5152,
+        "required_gap_reasons": {
+          "callback_and_delegate_provenance_unreviewed": 1718,
+          "current_graph_reconciliation_missing": 1718,
+          "selected_graph_observation_missing": 1716
+        },
+        "records_sha256": "658b806e2ca6b556d9a5bc70206895a19ef28ab996bb09c53c30ef6a15a0d0a6",
+        "required_gaps_sha256": "44d0247676b2183b00706ce5f6837e21ae7e559f9971892cbb85be47347dc4a4",
+        "matched_mfa_count": 2,
+        "graph_observation_bundle": {
+          "log_sha256": "e201174ee369657e682a2a975434507e1bed11c496875c446464212095d6f694",
+          "path": ".planning/milestones/v0.2-phases/01-bounded-guard-continuation/01-GRAPH-OBSERVATIONS.json",
+          "scope": "saved selected projection only; current graph completeness is unproven",
+          "selected_mfas": [
+            [
+              "inets",
+              "enable_trace",
+              2
+            ],
+            [
+              "inets",
+              "enable_trace",
+              3
+            ]
+          ],
+          "selected_original_id": "EX-010",
+          "sha256": "b4b820ad94d460921c9d2f1aa869df7a281cd67d8ac7f8f3de82c9845b47198f"
+        }
+      }
+    },
+    "unavailable_domains": {
+      "graph": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      },
+      "callback": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      },
+      "delegate": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      }
+    },
+    "explanation": "Saved selected graph observations exist for the two EX-010 MFAs only; current graph reconciliation and callback/delegate provenance remain unproven. A nonzero edge count is not caller closure."
+  },
+  "source_requests": [
+    {
+      "request_id": "R1",
+      "status": "consumed_incomplete",
+      "usable_for_claims": false,
+      "reason": "First complete-file emission was truncated by the outer tool wrapper; no analysis claim is derived from R1 and it is never replayed.",
+      "schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R1-SCHEDULE.json",
+      "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+      "review_sha256": "70e65fbb7916ab14bd1be8999cfdd8b3139be668a45020893d6c58852cacca89",
+      "preflight_sha256": "e6c116784ccc90eb0d28d9b73cde1917cfa0876be5c1f2edc933cfcfedb41f61",
+      "count_sha256": "9a3b453f6bca90e198984b456eba02f8d94ba3ce032c9ad6b7760d5ad6f210e7",
+      "gate_receipt_sha256": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_span": {
+        "start_line": 1,
+        "end_line": 1610,
+        "start_byte": 0,
+        "end_byte_exclusive": 58839,
+        "encoding": "UTF-8",
+        "complete_file": true,
+        "includes_final_newline": true
+      },
+      "context_sha256": "98ee0eb217e847b0979ce12df298a773a3e19acf14234ec71803f4dbf5d23499",
+      "serialized_request_sha256": "c5eb152daf61e23e3ad559b3d04e007dcaa12d511660d95f2068e111a4e98918",
+      "serialized_input_tokens": 50419,
+      "configured_model_context_tokens": 200000,
+      "fits_configured_context": true
+    },
+    {
+      "request_id": "R2",
+      "status": "consumed_verified",
+      "usable_for_claims": true,
+      "reason": "Complete, exact scheduled span was delivered once after independent review, fresh execute preflight, and direct count.",
+      "schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-SCHEDULE.json",
+      "schedule_sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d",
+      "review_sha256": "0c3a4b7cce143094ce68671f33f9497292048fd431aa26739edc68ccca5b32c8",
+      "preflight_sha256": "3e432a5d7af46b6b247a93af213e0da7bda695c7701b0d6a92b95728dea51a9b",
+      "count_sha256": "53ff5f91edb9c1cae7463e70d699fe8ca1357df8fb34033c5c5bd33168007dbd",
+      "gate_receipt_sha256": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_span": {
+        "start_line": 521,
+        "end_line": 1113,
+        "start_byte": 19368,
+        "end_byte_exclusive": 41762,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "a1440abd808ba06ee624cb97a780e022abd20ec76f9f972fa2e1c078d523ab89"
+      },
+      "context_sha256": "506ab62930b34f2cef0ee3f1bf5cb336cb628a400bfe17f1f2d37aac5ffea244",
+      "serialized_request_sha256": "0502007524607fe66074a0a71684ca7424fa4fb48ed6414f0d9b58a0f5d83470",
+      "serialized_input_tokens": 43186,
+      "configured_model_context_tokens": 200000,
+      "fits_configured_context": true
+    },
+    {
+      "request_id": "R3",
+      "status": "consumed_verified",
+      "usable_for_claims": true,
+      "reason": "Complete, exact scheduled span was delivered once after independent review, fresh execute preflight, and direct count.",
+      "schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-SCHEDULE.json",
+      "schedule_sha256": "b996dc547c4e0a34ea9fdf250ab83bb1d633f128686b1026fdd6073e4681900c",
+      "review_sha256": "170b42086a01ac9b769b0e086bc301d68000d056258bb199294335554a8e3ddb",
+      "preflight_sha256": "3ba9f1a3f1424211af7fdad1bd66b34ea1088bf030b303dca68547fa881a449b",
+      "count_sha256": "336fb7fe776d50195641bf4ecc054ee4a1fa447e351d9e5116166d6c1439e625",
+      "gate_receipt_sha256": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_span": {
+        "start_line": 1114,
+        "end_line": 1497,
+        "start_byte": 41762,
+        "end_byte_exclusive": 54843,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "8256f4866d59d66300950c641fefafe2c1ad9f7384ff39ab19add1ea05df75df"
+      },
+      "context_sha256": "e012fa88baf557875cb9cf33a80de19b68ec0e85d818ede2cc5051f4ee75a43f",
+      "serialized_request_sha256": "43e3ee1c513ec37fd4c822a0b50d2d6acdac6d6ee0dd45bcd8ffcaa9fc457feb",
+      "serialized_input_tokens": 42598,
+      "configured_model_context_tokens": 200000,
+      "fits_configured_context": true
+    }
+  ],
+  "resource_policy": {
+    "aggregate_output_budget_policy": "disabled_by_owner",
+    "configured_per_request_context_tokens": 200000,
+    "aggregate_output_limit_enforced": false,
+    "counting": "Each exact serialized request was directly counted. Counts establish individual request-context fit only."
+  },
+  "bound_evidence": {
+    "sizing": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-SIZING.json",
+      "sha256": "2ad9d75a45800786bba116166eb64ca304781c101ae0bdfe851a32cc172430bb",
+      "bytes": 38400
+    },
+    "core_lane": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
+      "sha256": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd",
+      "bytes": 1418156
+    },
+    "floor_lane": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json",
+      "sha256": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d",
+      "bytes": 1390810
+    },
+    "associations": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "typed_gaps": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+      "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+      "bytes": 19633625
+    },
+    "helper_source": {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "bytes": 58839
+    }
+  },
+  "claims_not_made": [
+    "source resolution",
+    "caller closure",
+    "runtime safety",
+    "absence of dynamic callers"
+  ]
+}

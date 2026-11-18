@@ -1,0 +1,59 @@
+{
+  "schema_version": "03-05.task2-one-use-gate.1",
+  "generation": "03-05-TASK2-REMAINDER-REVISE-01-20261118",
+  "request_id": "T2-R5",
+  "status": "consumed_once_emission_in_progress",
+  "source_access": "open_for_this_emission_only",
+  "source_emission": true,
+  "created_at_utc": "2026-11-18T00:06:39.559170+00:00",
+  "prerequisites": {
+    "phase4_all": "pass_with_open_gaps",
+    "phase3_self_test": "pass",
+    "phase3_phase4_only": "pass_with_open_gaps",
+    "independent_schedule_review": "pass",
+    "fresh_phase3_execute_preflight": "pass",
+    "direct_count": "pass",
+    "complete_untruncated_source_delivery": "required"
+  },
+  "bindings": {
+    "schedule": "7c7457a7a57e14089ebb7b016038da95dbe28de8178703bde575874f73b0d43a",
+    "review": "f3b3655991c9f26bb9e4db3783673c7e7e07957205ec239a0e82bab8c4596bbf",
+    "preflight": "fc4ea3403d41b8ad7c76c5ecc666772d244ced0f7f4f600af53ba299282ba2e5",
+    "count": "644b46e4faf55546d73064d822c4b738e24f65770c3cbcf4ef9f8f6e68194fbf",
+    "phase4_validation": "1993b88a992db6b845a9d6fb3040edaeb0ec2cd3ed500dd9c5fc390f0f62fde5"
+  },
+  "serialized_request": {
+    "input_tokens": 3896,
+    "configured_context_tokens": 200000,
+    "request_bytes": 16055,
+    "request_sha256": "3fa8bfd8705b818d5ad22ca2c92995aae162cbd0cc9f88318e2d1b8e8a2e2467"
+  },
+  "source_selections": [
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_bytes": 58839,
+      "source_span": {
+        "start_line": 1114,
+        "end_line": 1486,
+        "start_byte": 41762,
+        "end_byte_exclusive": 54508,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "f49f669d2031ace8fb0ca6df536de06d40c75b9f06ea8dbfb25e3b604e4719ad",
+        "selected_bytes": 12746
+      }
+    }
+  ],
+  "source_selection_count": 1,
+  "cumulative_output_limit_enforced": false,
+  "no_retry_after_emission": true,
+  "previous_request_exclusion": {
+    "request_id": "T2-R1",
+    "status": "consumed_incomplete",
+    "replay_forbidden": true,
+    "content_used_for_analysis": false
+  },
+  "consumed_at_utc": "2026-11-18T00:08:09.157424+00:00"
+}

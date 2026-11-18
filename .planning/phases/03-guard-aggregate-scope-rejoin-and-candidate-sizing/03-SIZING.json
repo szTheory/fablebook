@@ -117,7 +117,7 @@
       "membership_join_complete": true,
       "record": {
         "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
-        "sha256": "ef5fb7e08ced66c8669d6c0896140d98c74186763561ab1a5cbe5358937a250a"
+        "sha256": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd"
       },
       "required_evidence_gaps": {
         "bounded_remedy": "Complete current lane-pinned graph reconciliation and review callback/delegate provenance.",
@@ -260,7 +260,7 @@
       "membership_join_complete": true,
       "record": {
         "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json",
-        "sha256": "47e6b9137353d12396ece7e52f94fc904fdf2ef6ba6557dafb3a822f0ed5a121"
+        "sha256": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d"
       },
       "required_evidence_gaps": {
         "bounded_remedy": "Complete current lane-pinned graph reconciliation and review callback/delegate provenance.",
@@ -335,17 +335,17 @@
     }
   },
   "measurements": {
-    "combined_payload_sha256": "6fa45eff7d6fac8c0fababf36ce9858e810632cc294d34ec66d7f8005dd9d36b",
-    "combined_tokens": 43310,
-    "context_payload_sha256": "d794963538c8459e203f416d60882e1eee3c7429c381825d061aab89dad3d2eb",
-    "context_tokens": 35202,
+    "combined_payload_sha256": "d4f506338a55faa555347de2c9f1e994ab4f34a6e4fb48d124cb6cf5268d496e",
+    "combined_tokens": 32278,
+    "context_payload_sha256": "ccc41bc381bd6cfaac5a6a1b26ac884ba4c3be61f44e0492271d654bbbd5107b",
+    "context_tokens": 31435,
     "cushion_tokens": 2000,
     "effort_upper_working_days": 3,
     "endpoint": "POST /v1/responses/input_tokens",
     "framing_tokens": 85,
     "lane_record_sha256s": {
-      "core": "ef5fb7e08ced66c8669d6c0896140d98c74186763561ab1a5cbe5358937a250a",
-      "floor": "47e6b9137353d12396ece7e52f94fc904fdf2ef6ba6557dafb3a822f0ed5a121"
+      "core": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd",
+      "floor": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d"
     },
     "membership_set_metadata": {
       "core": {
@@ -387,8 +387,375 @@
     "plan_count": 5,
     "reserve_tokens": 31000,
     "source_file_count": 2,
-    "task1_source_tokens": 8023,
-    "task1_span_payload_sha256": "393a1fc7dcab55d86644ab4f3e49341a7321b02589b75be9d525582aec07c875",
+    "task1_source_tokens": 21172,
+    "task1_span_payload_sha256": "ef1d84f91dbe93dafb018a8567c161a9482eac7621a2bf4c1fd39d967f5a94ef",
+    "task2_correction_schedule": {
+      "active_reallocation": {
+        "date": "2026-11-15",
+        "owner_authorization": "INT-20261115-02",
+        "context_cap": 34000,
+        "task1_span_cap": 22000,
+        "source_token_cap": 16000,
+        "task3_new_source_reads": 0,
+        "output_cap": 5000,
+        "cushion": 2000,
+        "reserve": 31000,
+        "working_cap": 79000,
+        "total_cap": 110000,
+        "hard_ceiling": 110000,
+        "baseline_source_tokens": 2387,
+        "prior_cumulative_source_tokens": 2387,
+        "prior_source_tokens": 2387,
+        "fresh_source_tokens": 2568,
+        "cumulative_source_tokens": 15308,
+        "remaining_source_tokens": 692,
+        "cumulative_output_tokens": 1193,
+        "remaining_output_tokens": 3807,
+        "active_operation": "bounded two-span trace stopped with identity-level source/gap provenance and coverage-flag caller still unresolved; no further source emission authorized",
+        "active_schedule_sha256": "1bd31ee4c2f28356094de9e51c380a16937a7d24fb0d60724dbf82922196d4fa",
+        "count_harness_sha256": null,
+        "sizing_projection_sha256": null,
+        "source_emission_authorized": false,
+        "blocker": "The bounded trace did not recover keyed source/gap provenance or the coverage-flag caller. The current state changed after the passing count, so any further selection requires a new exact schedule, independent review, execute preflight, and direct count. Only 692 Task 2 source tokens remain; no automatic budget increase is authorized.",
+        "prior_hard_ceiling": 100000,
+        "incident_source_charge_tokens": 10353,
+        "last_count_receipt": "03-04-BOUNDED-TRACE-STOP.md",
+        "last_count_receipt_sha256": "3ca0f5b5312c45e5efca8ff2a22fd3e7913a4a7d004948b4500e714d09db0167",
+        "last_count_tokens": 32278,
+        "last_count_projected_total": 105915
+      },
+      "historical_v20_reallocation": {
+        "date": "2026-11-15",
+        "owner_authorization": "Replan within limits",
+        "tokens_reallocated_from_context": 1000,
+        "context_cap": 37500,
+        "task1_span_cap": 22000,
+        "source_token_cap": 2500,
+        "task3_new_source_reads": 0,
+        "output_cap": 5000,
+        "cushion": 2000,
+        "reserve": 31000,
+        "working_cap": 69000,
+        "total_cap": 100000,
+        "prior_cumulative_source_tokens": 1769,
+        "remaining_source_tokens": 113,
+        "active_operation": "count passed and full validator inspected; stop at target-source evidence gap.",
+        "active_schedule_sha256": "c9dbd313a598a0ff5a5a9d78ca8af0e2d9aa444a9d56c0f20067c5924bc04699",
+        "count_harness_sha256": "8456b747fc1206b916f13e788d0bfb85605d1793b097d028555f8fddf0e31da5",
+        "source_emission_authorized": false,
+        "blocker": "Full validator requires target_source_coverage_complete=true and validates associated source records/gaps/statuses; current Task3 bundle input fails this deliberate completeness guard. Task3 prohibits further source reads; no narrow safe fix from the counted scope. Preserve owner-facing evidence gap.",
+        "prior_source_tokens": 1769,
+        "fresh_source_tokens": 618,
+        "cumulative_source_tokens": 2387
+      },
+      "candidate_apply_check": "pass using git apply --unidiff-zero",
+      "candidate_output_tokens": 1193,
+      "candidate_patch_bytes": 909,
+      "candidate_patch_path": "/private/tmp/fablebook_plan03_04_task2_candidate_v9_testfix.patch",
+      "candidate_patch_sha256": "9affdec4f4d579ebff5748b9e8ecba4548421956278b5015429b6e86ffc2d371",
+      "candidate_patch_version": 9,
+      "candidate_syntax_check": "pass",
+      "count_receipts": {
+        "combined_payload_sha256": "152b2ee8d982b170fd0a16ad3e3e12672dfd6c93d80bab67b95895518aaf702a",
+        "combined_tokens": 34229,
+        "context_cap_pass": true,
+        "context_payload_sha256": "53a34dcb22c8e905ebf7481b1faa23a39c5c5ceeb27d90c4ad0d73162dee7f6a",
+        "context_tokens": 34105,
+        "count_harness_sha256": "12e5ae279010b77f5a755ebd14778707577117adc4e92df7462a6002414677bd",
+        "latest_output_selection_payload_sha256": "c028ed3cf3c351cf0f03171593e9f63fc471222634a850e69cc74bce81b9132e",
+        "latest_output_selection_tokens": 103,
+        "latest_source_selection_payload_sha256": "36c387424f95fc819b34621537e0b5e0c7115a5e45e3c875045ad1c48f05d8c7",
+        "latest_source_selection_tokens": 33,
+        "output_cap_pass": true,
+        "projected_total_tokens": 93113,
+        "schedule_sha256": "c86ecf770d997f38b1e86b91fe53c429ec8b22fb31711363c4d2d54dc23b0a0f",
+        "task1_span_cap_pass": true,
+        "task1_span_tokens": 21172,
+        "task2_cumulative_output_tokens": 1193,
+        "task2_cumulative_source_tokens": 938,
+        "task2_span_cap_pass": true,
+        "task3_zero_read_cap_pass": true,
+        "total_cap_pass": true
+      },
+      "diagnostic_read": {
+        "bytes": 2125,
+        "counted_conservatively_in_v4": true,
+        "lines": "5905-5960",
+        "sha256": "c6c5fa526f2ebaf6f19e76abe650a79b3a65a76f1472cc715fd24a3c1103a6b3"
+      },
+      "direct_count_pending": true,
+      "followup_diagnostic": {
+        "candidate": null,
+        "candidate_patch": null,
+        "count_receipt": {
+          "all_caps_pass": true,
+          "combined_payload_sha256": "1ab889f131a630d19379e4ab08bbd6c5a57de87c021e026cee4679823f4063fa",
+          "combined_tokens": 37749,
+          "context_payload_sha256": "824a3a6e655fd4518c2f70546c7d9b08b5deb56cd099d576678ffc2a9d7f77d8",
+          "context_tokens": 37719,
+          "cumulative_source_tokens": 974,
+          "harness_sha256": "37abeeee19170e6dda633aed276df9faf9f85e3e9335f1ba4f285d791f198e3f",
+          "projected_total_tokens": 96666,
+          "schedule_sha256": "136e0d7208a2cedfadf6553394c81774cbb76f2449cfe99783601d83a0ea6373",
+          "source_selection_payload_sha256": "39c5a4b12e98011b48a865d6db13e81d7d690966e30efca7ad63cfc78f077a17",
+          "source_selection_tokens": 36
+        },
+        "count_required_before_body_emission": true,
+        "final_status": "V17 line393 count passed and was inspected; cumulative source 1040. V18 exact validator-context count pending.",
+        "implementation_authorized": false,
+        "inspected_line_394": "true = record[\"target_source_coverage_complete\"] == true",
+        "next_selection": {
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "lines": "392-400",
+          "bytes": 382,
+          "sha256": "3776304570990785c8ab5dedb0ff3246321a9765f99a03411b396c4cb725c841",
+          "full_file_bytes": 58768,
+          "full_file_sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+          "rereads_included": true
+        },
+        "next_selection_count_receipt": {
+          "combined_payload_sha256": "c17c1da16db3dff63e58713718bd2befad111fd08413bb2219e9b5031f60a30e",
+          "combined_tokens": 30947,
+          "context_payload_sha256": "f71b00dccc3cc4e41b48fb49736bb2bce20cbec44dbfd62c07c1927a950a2470",
+          "context_tokens": 30920,
+          "cumulative_source_tokens": 1007,
+          "harness_sha256": "3580eef199367c913546d152aeeee72d2bccd579a35f6105872569ab0b71e02b",
+          "projected_total_tokens": 89900,
+          "schedule_sha256": "c76c66e086acc9df52fbf619fd737f80f24c6bfaee9a29aa207e31d1350297c6",
+          "source_body_emitted": false,
+          "source_cap_pass": false,
+          "source_selection_payload_sha256": "e7050b4d296983af9e40c6f58d99abda12e44482eb9750fe855f831933abe221",
+          "source_selection_tokens": 33
+        },
+        "prior_failed_line393_selection_tokens": 33,
+        "prior_source_tokens_for_v17": 1007,
+        "prior_task2_source_tokens": 938,
+        "remaining_source_cap_tokens": 460,
+        "selection": {
+          "bytes": 61,
+          "lines": "394",
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "sha256": "d17d00204d49b02e495b9719a0569e450bc694a6ae5c3ab0cb8e6f44a1818c49"
+        },
+        "task3_new_source_reads": 0,
+        "trigger": "Task3 bundle-write check failed in validate_target_sources!/1 at support line 394; report was not published.",
+        "v17_cumulative_formula": "1007 + fresh line393 span tokens",
+        "v17_fresh_count_receipt": {
+          "all_caps_pass": true,
+          "combined_payload_sha256": "4bf288bd18d0574c2f5941f57883dbe552785cd1a2385a9673da5e633647df2c",
+          "combined_tokens": 28404,
+          "context_payload_sha256": "5493c12afa3b688acb88a711c42b064e4a5f246f3b69562c019ff64a58de9246",
+          "context_tokens": 28377,
+          "cumulative_source_tokens": 1040,
+          "fresh_line393_payload_sha256": "e7050b4d296983af9e40c6f58d99abda12e44482eb9750fe855f831933abe221",
+          "fresh_line393_tokens": 33,
+          "harness_sha256": "177c6f29cddc93e21c583f82086e24fb9dbdb530b7246aa9ce218c53d609b20f",
+          "line393_emitted_after_count": true,
+          "projected_total_tokens": 87390,
+          "schedule_sha256": "471e052b6ecd67b755669f7248e62855c4fb0fd93584a92886b1f3142703d120"
+        },
+        "v18_count_receipt": {
+          "context_tokens": 28824,
+          "source_selection_tokens": 111,
+          "combined_tokens": 28929,
+          "cumulative_source_tokens": 1151,
+          "projected_total_tokens": 87948,
+          "context_payload_sha256": "82da42f7551d76472fe7b7d35cce8a8116eee047dcdc2cfad99b6208d19fd439",
+          "source_payload_sha256": "50f8528414d4eb6763f56ff3b7600f9d2dbafd1d250ab5de8b16739c839712b8",
+          "combined_payload_sha256": "109c3f27633f00e797b43253a668befcb33a595f5a8abc63bfc460040057c70e",
+          "schedule_sha256": "fe391f4ea28c9138586e070e8183da3b3e835e03abd1452ba16929e549e1a7a5",
+          "harness_sha256": "f02901ea6a2b3f1c0ba56718c79bf1e72dc87b231d35ef5bf165285c0647a399",
+          "all_caps_pass": true
+        },
+        "complete_validator_boundary": {
+          "selected_lines": "392-400",
+          "unselected_remainder_lines": "401-476",
+          "next_function_line": 477,
+          "remainder_bytes": 2574,
+          "remainder_sha256": "6954af9f5ebb1bf4ca6e6c686794397d1da52a4fec28b047e5f7deaee54c9d06",
+          "remainder_inspected": false,
+          "remaining_source_tokens": 349
+        },
+        "v19_feasibility_count_receipt": {
+          "context_tokens": 29549,
+          "source_selection_tokens": 618,
+          "combined_tokens": 30161,
+          "prior_cumulative_source_tokens": 1151,
+          "cumulative_source_tokens": 1769,
+          "projected_total_tokens": 89291,
+          "context_payload_sha256": "e79b6428a3b2d531ee01c882b8e3054a63091fe41be20b7cd774476377f5965d",
+          "source_payload_sha256": "3273858a7b05c3a8ca665a5f86523099f007f57131e676534a0c4dfe4a3ee683",
+          "combined_payload_sha256": "8d76f3576ad3a5d1a24bac3a8835602ccd31d1c5e347cf2a01f2da51c2b0806e",
+          "schedule_sha256": "a0f9c2eff271fdb61a471fcfa1ee9562282f1050b2fa5075b68e41113f06256a",
+          "harness_sha256": "463393f8eff3d359f56f20f0a3ef60a12a82478beb1e9a060c3c26b06ba35f8e",
+          "source_cap_pass": false,
+          "projected_total_pass": true,
+          "body_emitted": false
+        },
+        "v20_fresh_count_receipt": {
+          "context_tokens": 30397,
+          "source_selection_tokens": 618,
+          "combined_tokens": 31009,
+          "prior_cumulative_source_tokens": 1769,
+          "cumulative_source_tokens": 2387,
+          "projected_total_tokens": 90757,
+          "context_payload_sha256": "9948e9897986a4bb88300e434950204760d02851c575dcde2319feae105085d2",
+          "source_payload_sha256": "3273858a7b05c3a8ca665a5f86523099f007f57131e676534a0c4dfe4a3ee683",
+          "combined_payload_sha256": "071a3d279315ebeffda0c6e4be495293826f5be86af172c734ca5479b54505fe",
+          "schedule_sha256": "c9dbd313a598a0ff5a5a9d78ca8af0e2d9aa444a9d56c0f20067c5924bc04699",
+          "harness_sha256": "8456b747fc1206b916f13e788d0bfb85605d1793b097d028555f8fddf0e31da5",
+          "all_caps_pass": true,
+          "body_emitted_after_count": true,
+          "narrow_fix_identified": false
+        }
+      },
+      "historical_count_receipts": [
+        {
+          "label": "superseded v9 draft receipt; retained for history",
+          "receipt": {
+            "candidate_output_payload_sha256": "250edbf84760cdf7c67c59fa70487201de05c4d80ddc97f6e84642aea606a6d9",
+            "candidate_output_tokens": 639,
+            "combined_payload_sha256": "460abad6a479a547dd1d7c8b49d8dc621fb9b9e2c3008f294b3a9cd1577d81bd",
+            "combined_tokens": 39573,
+            "context_cap_pass": true,
+            "context_payload_sha256": "2080cd66a37eaf0a24e90ff0b6e71ac81a422f1ae9d07076712a56cd18634091",
+            "context_tokens": 38335,
+            "count_harness_sha256": "09c29d9210b4d61b0de3afd47d887ac175d385b12427f0eb9dd0774e2f9b1f32",
+            "output_cap_pass": true,
+            "projected_total_tokens": 98106,
+            "schedule_sha256": "db428855f12abbae923fb974cdd0e6697f83258fe4967495c88151fabeefe291",
+            "source_payload_sha256": "7186a70d6d43b1cc5b6b8039adf95f2cd99ee7bfa268281f90db3e861ed3eeb5",
+            "source_tokens": 611,
+            "task1_span_cap_pass": true,
+            "task1_span_tokens": 21172,
+            "task2_span_cap_pass": true,
+            "task3_zero_read_cap_pass": true,
+            "total_cap_pass": true
+          }
+        }
+      ],
+      "historical_v4_count_receipt": {
+        "candidate_output_payload_sha256": "65f19e763707a4ca1aa405b3af6657d7d6920990c3293ed497811578e51f53fa",
+        "candidate_output_tokens": 638,
+        "combined_payload_sha256": "d39033d17fcb9ee66c2c02e6cacfd745117a1b809c05aee3db857bb73b9d0f7c",
+        "combined_tokens": 35306,
+        "context_payload_sha256": "79474c3463b6fb8d449647b95b0596e0c03dbad37fa7c6b35e8533578e97f18e",
+        "context_tokens": 34069,
+        "projected_total_tokens": 72668,
+        "schedule_sha256": "a7b4dd86dbaa784eafd06def2f952587ee5f094bf9be0038293e443791b26381",
+        "source_payload_sha256": "7186a70d6d43b1cc5b6b8039adf95f2cd99ee7bfa268281f90db3e861ed3eeb5",
+        "source_tokens": 611,
+        "status": "historical; 500-token cap failed"
+      },
+      "historical_v6_count_status": "Valid size count for v6 candidate only; focused test compilation failed before target execution. See 03-04-TASK2-INVALID-RED.log.",
+      "historical_v8_count_receipt": {
+        "combined_payload_sha256": "7e970cf42bfe6c61f28d8f69f8e4f6cb2b8032c6bbb75dcc70bf48629c0f835c",
+        "combined_tokens": 34908,
+        "context_payload_sha256": "49ff88314c2789e4a7726ee1fa2d18f3f1cd4a81502d87b245f984ce022c07cf",
+        "context_tokens": 34373,
+        "harness_sha256": "ce82f221bb9360bc8ab4e78222ed5f064f046f728c00fa7efe05ca0ca9170893",
+        "incremental_source_tokens": 193,
+        "output_payload_sha256": "e0378fcae9dab12710c88cdab21178a5c38e99f4146db1cb30029b0345672625",
+        "output_tokens": 354,
+        "prior_source_tokens": 611,
+        "projected_total_tokens": 93698,
+        "schedule_sha256": "db95bd8a2fb4d7514aa58e11a17ce8e0a8965aeead465cd7571c629347f207c",
+        "source_cap_pass": false,
+        "status": "failed cumulative Task2 source cap by 4; candidate not applied"
+      },
+      "output_token_cap": 5000,
+      "previous_attempts": [
+        {
+          "candidate_patch_bytes": 2402,
+          "candidate_patch_sha256": "147d8ef69e1bee8115b3365f40e70c4467a5eb42aea6fe55f8c4bcd32d5d62bf",
+          "combined_input_tokens": 759,
+          "output_cap_pass": true,
+          "output_upper_bound_tokens": 759,
+          "source_cap_pass": null,
+          "source_tokens": 759,
+          "task2_cap_pass": null,
+          "version": 1
+        },
+        {
+          "candidate_patch_bytes": 2292,
+          "candidate_patch_sha256": "2c3c51eb1a7ff53e268d38b81e660539ec93d1d6ef775e8389d40db267b86660",
+          "combined_input_tokens": 743,
+          "output_cap_pass": true,
+          "output_upper_bound_tokens": 743,
+          "source_cap_pass": null,
+          "source_tokens": 743,
+          "task2_cap_pass": null,
+          "version": 2
+        }
+      ],
+      "regression": {
+        "anchor_lines": "5936-5937",
+        "anchor_sha256": "194b0665bb52289e99a0dbf328a40727dbd8c74673b0e15eeb61ab7725fd0998",
+        "candidate_patch_sha256": "9affdec4f4d579ebff5748b9e8ecba4548421956278b5015429b6e86ffc2d371",
+        "direct_count_pending": true,
+        "path": "test/contract/tier_sweep_test.exs",
+        "placement_before_line": 5936,
+        "reused_task1_span": {
+          "bytes": 7797,
+          "lines": "5936-6137",
+          "sha256": "39d0c8cb47e88d1a42b4849e2afe0736439eb65aff2dbac41f0490ea5a94798c"
+        }
+      },
+      "reuse_interpretation_review": {
+        "reason": "Task2 diagnostic reread must remain counted under including every reread; v4 611-token source count exceeds 500-token cap",
+        "schedule_sha256": "09caf25576d2aabb550dfc0ddfb1b09766b1dfa2391510ccda26cf194147f076",
+        "status": "blocked",
+        "v5_direct_count_run": false
+      },
+      "source_token_cap": 16000,
+      "source_tokens": 15308,
+      "baseline_source_tokens": 2387,
+      "remaining_source_tokens": 692,
+      "source_emission_authorized": false,
+      "support_span": {
+        "bytes": 297,
+        "lines": "383-390",
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "sha256": "598d385a248ecd5951dbbd51e1ee9e673dca862aa51f2010a257260dc6853912"
+      },
+      "context_token_cap": 34000,
+      "current_trace_count_status": "passed; bounded two-span source trace emitted once; root cause unresolved; later STATE update closes further body reads until new gates pass",
+      "incident_source_charge": {
+        "receipt": "03-04-EXECUTION-INCIDENT.md",
+        "reported_tool_output_tokens": 10353,
+        "charged_tokens": 10353,
+        "charge_method": "charge full truncated unsaved rg output to Task 2 source account as a conservative bound",
+        "exact_source_selection_recoverable": false
+      },
+      "selection_charges": {
+        "v20_baseline_tokens": 2387,
+        "conservative_incident_charge_tokens": 10353,
+        "first_failed_count_selection_tokens": 882,
+        "compact_context_selection_tokens": 843,
+        "current_state_recount_selection_tokens": 843,
+        "charged_total_tokens": 15308
+      },
+      "latest_trace_count": {
+        "status": "passed; bounded two-span source trace emitted once; root cause unresolved; later STATE update closes further body reads until new gates pass",
+        "schedule_sha256": "1bd31ee4c2f28356094de9e51c380a16937a7d24fb0d60724dbf82922196d4fa",
+        "state_before_count_sha256": "003a4c427b0ecadc92cba612b862df0ba5bf908748961cdbb9f5171c13d65def",
+        "context_bytes": 102046,
+        "context_sha256": "ccc41bc381bd6cfaac5a6a1b26ac884ba4c3be61f44e0492271d654bbbd5107b",
+        "context_tokens": 31435,
+        "selected_source_bytes": 3399,
+        "selected_source_sha256": "d4b3318e7bac3114d65fde8acda9607346a12b99a863cad1e1ef0a8fc3fed5cd",
+        "selected_source_tokens": 843,
+        "combined_bytes": 105482,
+        "combined_sha256": "d4f506338a55faa555347de2c9f1e994ab4f34a6e4fb48d124cb6cf5268d496e",
+        "combined_tokens": 32278,
+        "projected_total_tokens": 105915,
+        "cumulative_task2_source_tokens": 15308,
+        "remaining_task2_source_tokens": 692,
+        "incident_receipt": "03-04-EXECUTION-INCIDENT.md",
+        "trace_stop_receipt": "03-04-BOUNDED-TRACE-STOP.md",
+        "trace_stop_receipt_sha256": "3ca0f5b5312c45e5efca8ff2a22fd3e7913a4a7d004948b4500e714d09db0167"
+      }
+    },
     "task2_reuse_receipt": {
       "combined_payload_sha256": "561305eb66edc64a23e497249a455878751c30f310f503abf35ca6f716701e03",
       "context_payload_sha256": "23a3758e6aa1bffd98a88cec3c22768b3ddaaf85cc1b55cc32cd5e71b8312a84",
@@ -403,85 +770,31 @@
       "total_tokens": 87657,
       "working_tokens": 56657
     },
-    "task2_source_tokens": 611,
+    "task2_source_tokens": 15308,
+    "current_trace_count_status": "passed; bounded two-span source trace emitted once; root cause unresolved; later STATE update closes further body reads until new gates pass",
     "task_count": 2,
-    "total_tokens": 81310,
-    "working_tokens": 50310,
-    "task2_correction_schedule": {
-      "candidate_patch_bytes": 2285,
-      "candidate_patch_sha256": "ad4206158f28e7193c85c58a291cb4a60d0dd375a52dfbb23456638e271326df",
-      "source_token_cap": 500,
-      "source_tokens": 611,
-      "support_span": {
-        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
-        "lines": "383-390",
-        "bytes": 297,
-        "sha256": "598d385a248ecd5951dbbd51e1ee9e673dca862aa51f2010a257260dc6853912"
-      },
-      "regression": {
-        "candidate_patch_sha256": "ad4206158f28e7193c85c58a291cb4a60d0dd375a52dfbb23456638e271326df",
-        "direct_count_pending": false,
-        "path": "test/contract/tier_sweep_test.exs",
-        "placement_before_line": 5936,
-        "anchor_lines": "5936-5937",
-        "anchor_sha256": "194b0665bb52289e99a0dbf328a40727dbd8c74673b0e15eeb61ab7725fd0998",
-        "reused_task1_span": {
-          "lines": "5936-6137",
-          "bytes": 7797,
-          "sha256": "39d0c8cb47e88d1a42b4849e2afe0736439eb65aff2dbac41f0490ea5a94798c"
-        }
-      },
-      "direct_count_pending": false,
-      "count_receipts": {
-        "context_tokens": 34069,
-        "context_payload_sha256": "79474c3463b6fb8d449647b95b0596e0c03dbad37fa7c6b35e8533578e97f18e",
-        "source_tokens": 611,
-        "source_payload_sha256": "7186a70d6d43b1cc5b6b8039adf95f2cd99ee7bfa268281f90db3e861ed3eeb5",
-        "candidate_output_tokens": 638,
-        "candidate_output_payload_sha256": "65f19e763707a4ca1aa405b3af6657d7d6920990c3293ed497811578e51f53fa",
-        "combined_tokens": 35306,
-        "combined_payload_sha256": "d39033d17fcb9ee66c2c02e6cacfd745117a1b809c05aee3db857bb73b9d0f7c",
-        "projected_total_tokens": 72668,
-        "schedule_sha256": "a7b4dd86dbaa784eafd06def2f952587ee5f094bf9be0038293e443791b26381"
-      },
-      "previous_attempts": [
-        {
-          "version": 1,
-          "candidate_patch_bytes": 2402,
-          "candidate_patch_sha256": "147d8ef69e1bee8115b3365f40e70c4467a5eb42aea6fe55f8c4bcd32d5d62bf",
-          "source_tokens": 759,
-          "task2_cap_pass": null,
-          "source_cap_pass": null,
-          "combined_input_tokens": 759,
-          "output_upper_bound_tokens": 759,
-          "output_cap_pass": true
-        },
-        {
-          "version": 2,
-          "candidate_patch_bytes": 2292,
-          "candidate_patch_sha256": "2c3c51eb1a7ff53e268d38b81e660539ec93d1d6ef775e8389d40db267b86660",
-          "source_tokens": 743,
-          "task2_cap_pass": null,
-          "source_cap_pass": null,
-          "combined_input_tokens": 743,
-          "output_upper_bound_tokens": 743,
-          "output_cap_pass": true
-        }
-      ],
-      "output_token_cap": 5000,
-      "candidate_output_tokens": 638,
-      "diagnostic_read": {
-        "lines": "5905-5960",
-        "bytes": 2125,
-        "sha256": "c6c5fa526f2ebaf6f19e76abe650a79b3a65a76f1472cc715fd24a3c1103a6b3",
-        "counted_conservatively_in_v4": true
-      },
-      "reuse_interpretation_review": {
-        "status": "blocked",
-        "schedule_sha256": "09caf25576d2aabb550dfc0ddfb1b09766b1dfa2391510ccda26cf194147f076",
-        "reason": "Task2 diagnostic reread must remain counted under including every reread; v4 611-token source count exceeds 500-token cap",
-        "v5_direct_count_run": false
-      }
+    "total_tokens": 105915,
+    "working_tokens": 74915,
+    "pre_incident_total_tokens": 93113,
+    "pre_incident_working_tokens": 62113,
+    "latest_trace_count": {
+      "status": "passed; bounded two-span source trace emitted once; root cause unresolved; later STATE update closes further body reads until new gates pass",
+      "schedule_sha256": "1bd31ee4c2f28356094de9e51c380a16937a7d24fb0d60724dbf82922196d4fa",
+      "state_before_count_sha256": "003a4c427b0ecadc92cba612b862df0ba5bf908748961cdbb9f5171c13d65def",
+      "context_bytes": 102046,
+      "context_sha256": "ccc41bc381bd6cfaac5a6a1b26ac884ba4c3be61f44e0492271d654bbbd5107b",
+      "context_tokens": 31435,
+      "selected_source_bytes": 3399,
+      "selected_source_sha256": "d4b3318e7bac3114d65fde8acda9607346a12b99a863cad1e1ef0a8fc3fed5cd",
+      "selected_source_tokens": 843,
+      "combined_bytes": 105482,
+      "combined_sha256": "d4f506338a55faa555347de2c9f1e994ab4f34a6e4fb48d124cb6cf5268d496e",
+      "combined_tokens": 32278,
+      "projected_total_tokens": 105915,
+      "cumulative_task2_source_tokens": 15308,
+      "remaining_task2_source_tokens": 692,
+      "incident_receipt": "03-04-EXECUTION-INCIDENT.md",
+      "trace_stop_receipt": "03-04-BOUNDED-TRACE-STOP.md"
     }
   },
   "owner_decision": {
@@ -493,5 +806,6 @@
     ]
   },
   "schema": "fablebook.guard-aggregate-candidate-sizing/1",
-  "source_join_complete": false
+  "source_join_complete": false,
+  "source_token_cap": 16000
 }

@@ -1,0 +1,21 @@
+{
+  "schema_version": "03-05.task2-direct-count.1",
+  "request_id": "T2-R4",
+  "schedule_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER-REVISE-01.json",
+  "schedule_sha256": "7c7457a7a57e14089ebb7b016038da95dbe28de8178703bde575874f73b0d43a",
+  "review_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER-REVIEW.json",
+  "review_sha256": "f3b3655991c9f26bb9e4db3783673c7e7e07957205ec239a0e82bab8c4596bbf",
+  "preflight_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-R4-EXECUTE-PREFLIGHT.json",
+  "preflight_sha256": "73bafc1ca79d1cff860cfe6ab265df2f7055b154febe811aa1adf9d100c14d6c",
+  "endpoint": "POST https://api.openai.com/v1/responses/input_tokens",
+  "model": "gpt-6-luna",
+  "http_status": 200,
+  "input_tokens": 3952,
+  "context_limit_tokens": 200000,
+  "payload_bytes": 17668,
+  "payload_sha256": "7ccccecf75981c994a9f02d6cbfbb14a7ee762de5b6a541c99bdfb81667fd9f2",
+  "serialized_request_bytes": 18602,
+  "serialized_request_sha256": "27a952f8cf9b08484661909e32e978cf87e6df55d9b70653b31de30cf175b89c",
+  "generation_endpoint_called": false,
+  "counted_at_utc": "2026-11-18T00:05:47.326373+00:00"
+}

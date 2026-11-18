@@ -1388,6 +1388,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   alias Fablebook.Test.DebuggerSettings
   alias Fablebook.Test.ExternalTransformEvidence
   alias Fablebook.Test.GeneratorDispatchIntegrationEvidence
+  alias Fablebook.Test.GuardAggregateReconciliationEvidence
   alias Fablebook.Test.InetsTraceCoreEvidence
   alias Fablebook.Test.InetsTraceFloorEvidence
   alias Fablebook.Test.InetsTraceIntegrationEvidence
@@ -5221,7 +5222,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert length(aggregate_rows) == 226
 
     record =
-      Fablebook.Test.GuardAggregateReconciliationEvidence.build_lane!(
+      GuardAggregateReconciliationEvidence.build_lane!(
         Map.merge(input, %{
           aggregate_rows: aggregate_rows,
           delivery_receipts: delivery_receipts,
@@ -5235,10 +5236,10 @@ defmodule Fablebook.Contract.TierSweepTest do
         })
       )
 
-    assert :ok = Fablebook.Test.GuardAggregateReconciliationEvidence.validate_lane!(record)
+    assert :ok = GuardAggregateReconciliationEvidence.validate_lane!(record)
 
     assert :ok =
-             Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(record)
+             GuardAggregateReconciliationEvidence.validate_aggregate_lane!(record)
 
     assert record["membership_join_complete"]
     assert record["source_join_complete"] == false
@@ -5260,7 +5261,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     first_row = hd(record["identity_rows"])
 
     assert_raise MatchError, fn ->
-      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(
+      GuardAggregateReconciliationEvidence.validate_aggregate_lane!(
         Map.update!(record, "identity_rows", &[hd(&1) | &1])
       )
     end
@@ -5275,7 +5276,7 @@ defmodule Fablebook.Contract.TierSweepTest do
           )
         end)
 
-      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(mutated)
+      GuardAggregateReconciliationEvidence.validate_aggregate_lane!(mutated)
     end
 
     ex010_original = Enum.find(record["identity_rows"], &(&1["identity"]["id"] == "EX-010"))
@@ -5288,7 +5289,7 @@ defmodule Fablebook.Contract.TierSweepTest do
             Map.put(
               row,
               "live_mfas",
-              Fablebook.Test.GuardAggregateReconciliationEvidence.equal_count_mfa_mutation!(
+              GuardAggregateReconciliationEvidence.equal_count_mfa_mutation!(
                 row["live_mfas"],
                 ["synthetic", "different", 0]
               )
@@ -5306,13 +5307,11 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert ex010_mutated["live_mfas"] != ex010_original["live_mfas"]
 
     assert_raise MatchError, fn ->
-      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(
-        equal_count_mutation
-      )
+      GuardAggregateReconciliationEvidence.validate_aggregate_lane!(equal_count_mutation)
     end
 
     assert_raise MatchError, fn ->
-      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_aggregate_lane!(
+      GuardAggregateReconciliationEvidence.validate_aggregate_lane!(
         Map.put(record, "lane", if(lane == "core", do: "floor", else: "core"))
       )
     end
@@ -5339,146 +5338,118 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp aggregate_identity_rows!(lane, ledger, exported, delivery_receipts) do
     identities = ledger.exclusions ++ ledger.metadata
-
-    Enum.map(identities, fn identity ->
-      refs = identity.current_replacement_refs
-
-      baseline =
-        if identity.identity_class == :exclusion,
-          do: parse_mfa_strings!(identity.lane_matches[lane]),
-          else: []
-
-      replacement_live =
-        if identity.identity_class == :exclusion do
-          refs
-          |> Enum.flat_map(
-            &aggregate_reference_mfas!(&1, lane, ledger.current_values, exported, baseline)
-          )
-          |> Enum.uniq()
-          |> Enum.sort()
-        else
-          assert_aggregate_metadata_refs!(refs, ledger.current_values)
-          []
-        end
-
-      if identity.id == "EX-165" do
-        :ok =
-          Fablebook.Test.GuardAggregateReconciliationEvidence.validate_creator_match_set!(
-            "EX-165",
-            replacement_live,
-            baseline,
-            baseline
-          )
-      end
-
-      original_live =
-        if identity.identity_class == :exclusion and identity.id not in ["CN-001", "CN-004"] do
-          refs
-          |> Enum.reject(
-            &(String.starts_with?(&1, "source:") and identity.id in ["CN-001", "CN-004"])
-          )
-          |> Enum.flat_map(
-            &aggregate_reference_mfas!(&1, lane, ledger.current_values, exported, baseline)
-          )
-          |> Enum.uniq()
-          |> Enum.sort()
-        else
-          []
-        end
-
-      {delivered_scope, delivered_owner, row_receipts, historical_partition} =
-        case identity.id do
-          "EX-010" ->
-            {InetsTraceIntegrationEvidence.selected_mfas() |> Enum.to_list(), "v0.2/1",
-             [Enum.find(delivery_receipts, &(&1["milestone"] == "v0.2" and &1["phase"] == "1"))],
-             []}
-
-          "EX-107" ->
-            {[
-               {:asn1ct_rtt, :assert_defined, 1},
-               {:asn1ct_rtt, :code, 0},
-               {:asn1ct_rtt, :dependencies, 1}
-             ], "v0.3/2",
-             [Enum.find(delivery_receipts, &(&1["milestone"] == "v0.3" and &1["phase"] == "2"))],
-             @asn1_expected_selected_mfas}
-
-          _ ->
-            {[], nil, [], []}
-        end
-
-      delivered_scope = Enum.uniq(delivered_scope) |> Enum.sort()
-
-      row = %{
-        identity: identity,
-        baseline_mfas: baseline,
-        original_live_mfas: original_live,
-        replacement_live_mfas: replacement_live,
-        delivered_scope_mfas: delivered_scope,
-        delivered_slice_owner: delivered_owner,
-        delivery_refs: Enum.map(row_receipts, &aggregate_delivery_ref!/1),
-        mapping_status: "complete"
-      }
-
-      if historical_partition == [] do
-        row
-      else
-        row
-        |> Map.put(:historical_partition_mfas, historical_partition)
-        |> Map.put(:historical_partition_name, "historical_13")
-      end
-    end)
+    Enum.map(identities, &aggregate_identity_row!(&1, lane, ledger, exported, delivery_receipts))
   end
 
-  defp aggregate_reference_mfas!("creator:" <> ref, lane, _current_values, exported, baseline) do
-    case Fablebook.Test.GuardAggregateReconciliationEvidence.creator_reference_scope!(
-           "creator:" <> ref,
-           lane
-         ) do
-      :current_lane ->
-        [id, _ref_lane] = String.split(ref, ":")
-        [record] = Enum.filter(@creator_audit, &(&1.original_id == id and &1.lane == lane))
-        matches = Enum.uniq(record.matched_mfas) |> Enum.sort()
-        true = matches != []
-        true = MapSet.subset?(MapSet.new(matches), exported)
-        matcher = Map.get(record, :original_matcher) || Map.get(record, :matcher)
-        true = not is_nil(matcher)
+  defp aggregate_identity_row!(identity, lane, ledger, exported, delivery_receipts) do
+    refs = identity.current_replacement_refs
+    baseline = aggregate_baseline_mfas!(identity, lane)
 
-        expected =
-          case id do
-            "EX-159" ->
-              Enum.filter(exported, &creator_original_match?(matcher, &1))
-              |> Enum.reject(&(elem(&1, 1) in [:module_info, :__info__]))
+    replacement_live =
+      aggregate_replacement_mfas!(identity, refs, lane, ledger, exported, baseline)
 
-            "EX-165" ->
-              Enum.filter(exported, &creator_original_match?({:leex, [:file]}, &1))
-              |> Enum.reject(&(elem(&1, 1) in [:module_info, :__info__]))
+    :ok = validate_special_creator_row!(identity, replacement_live, baseline)
+    original_live = aggregate_original_mfas!(identity, refs, lane, ledger, exported, baseline)
 
-            "EX-089" ->
-              Enum.filter(exported, fn
-                {:yecc, function, _arity} -> function not in [:module_info, :__info__]
-                _ -> false
-              end)
+    {delivered_scope, delivered_owner, receipts, historical_partition} =
+      aggregate_delivery_scope(identity.id, delivery_receipts)
 
-            "NEW-" <> _ ->
-              case matcher do
-                {:mfa, mfa} -> Enum.filter(exported, &(&1 == mfa))
-                _ -> raise ArgumentError, "unsupported logger creator matcher #{inspect(matcher)}"
-              end
-          end
+    row = %{
+      identity: identity,
+      baseline_mfas: baseline,
+      original_live_mfas: original_live,
+      replacement_live_mfas: replacement_live,
+      delivered_scope_mfas: Enum.uniq(delivered_scope) |> Enum.sort(),
+      delivered_slice_owner: delivered_owner,
+      delivery_refs: Enum.map(receipts, &aggregate_delivery_ref!/1),
+      mapping_status: "complete"
+    }
 
-        :ok =
-          Fablebook.Test.GuardAggregateReconciliationEvidence.validate_creator_match_set!(
-            id,
-            matches,
-            expected,
-            baseline
-          )
-
-        matches
-
-      :other_lane ->
-        []
+    if historical_partition == [] do
+      row
+    else
+      Map.merge(row, %{
+        historical_partition_mfas: historical_partition,
+        historical_partition_name: "historical_13"
+      })
     end
+  end
+
+  defp aggregate_baseline_mfas!(%{identity_class: :exclusion} = identity, lane),
+    do: parse_mfa_strings!(identity.lane_matches[lane])
+
+  defp aggregate_baseline_mfas!(_identity, _lane), do: []
+
+  defp aggregate_replacement_mfas!(
+         %{identity_class: :exclusion},
+         refs,
+         lane,
+         ledger,
+         exported,
+         baseline
+       ) do
+    refs
+    |> Enum.flat_map(
+      &aggregate_reference_mfas!(&1, lane, ledger.current_values, exported, baseline)
+    )
+    |> Enum.uniq()
+    |> Enum.sort()
+  end
+
+  defp aggregate_replacement_mfas!(_identity, refs, _lane, ledger, _exported, _baseline) do
+    assert_aggregate_metadata_refs!(refs, ledger.current_values)
+    []
+  end
+
+  defp validate_special_creator_row!(%{id: "EX-165"}, replacement_live, baseline) do
+    GuardAggregateReconciliationEvidence.validate_creator_match_set!(
+      "EX-165",
+      replacement_live,
+      baseline,
+      baseline
+    )
+  end
+
+  defp validate_special_creator_row!(_identity, _replacement_live, _baseline), do: :ok
+
+  defp aggregate_original_mfas!(
+         %{identity_class: :exclusion, id: id},
+         refs,
+         lane,
+         ledger,
+         exported,
+         baseline
+       )
+       when id not in ["CN-001", "CN-004"] do
+    refs
+    |> Enum.flat_map(
+      &aggregate_reference_mfas!(&1, lane, ledger.current_values, exported, baseline)
+    )
+    |> Enum.uniq()
+    |> Enum.sort()
+  end
+
+  defp aggregate_original_mfas!(_identity, _refs, _lane, _ledger, _exported, _baseline), do: []
+
+  defp aggregate_delivery_scope("EX-010", delivery_receipts) do
+    receipt = Enum.find(delivery_receipts, &(&1["milestone"] == "v0.2" and &1["phase"] == "1"))
+    {InetsTraceIntegrationEvidence.selected_mfas() |> Enum.to_list(), "v0.2/1", [receipt], []}
+  end
+
+  defp aggregate_delivery_scope("EX-107", delivery_receipts) do
+    receipt = Enum.find(delivery_receipts, &(&1["milestone"] == "v0.3" and &1["phase"] == "2"))
+
+    {[
+       {:asn1ct_rtt, :assert_defined, 1},
+       {:asn1ct_rtt, :code, 0},
+       {:asn1ct_rtt, :dependencies, 1}
+     ], "v0.3/2", [receipt], @asn1_expected_selected_mfas}
+  end
+
+  defp aggregate_delivery_scope(_identity_id, _delivery_receipts), do: {[], nil, [], []}
+
+  defp aggregate_reference_mfas!("creator:" <> ref, lane, _current_values, exported, baseline) do
+    aggregate_creator_reference_mfas!(ref, lane, exported, baseline)
   end
 
   defp aggregate_reference_mfas!("source:" <> ref, _lane, current_values, exported, _baseline) do
@@ -5501,6 +5472,56 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp aggregate_reference_mfas!(ref, _lane, _current_values, _exported, _baseline),
     do: raise(ArgumentError, "unsupported current replacement reference #{inspect(ref)}")
+
+  defp aggregate_creator_reference_mfas!(ref, lane, exported, baseline) do
+    case GuardAggregateReconciliationEvidence.creator_reference_scope!("creator:" <> ref, lane) do
+      :current_lane ->
+        [id, _ref_lane] = String.split(ref, ":")
+        [record] = Enum.filter(@creator_audit, &(&1.original_id == id and &1.lane == lane))
+        matches = Enum.uniq(record.matched_mfas) |> Enum.sort()
+        true = matches != []
+        true = MapSet.subset?(MapSet.new(matches), exported)
+        matcher = Map.get(record, :original_matcher) || Map.get(record, :matcher)
+        true = not is_nil(matcher)
+        expected = expected_creator_matches!(id, matcher, exported)
+
+        :ok =
+          GuardAggregateReconciliationEvidence.validate_creator_match_set!(
+            id,
+            matches,
+            expected,
+            baseline
+          )
+
+        matches
+
+      :other_lane ->
+        []
+    end
+  end
+
+  defp expected_creator_matches!("EX-159", matcher, exported) do
+    Enum.filter(exported, &creator_original_match?(matcher, &1))
+    |> Enum.reject(&(elem(&1, 1) in [:module_info, :__info__]))
+  end
+
+  defp expected_creator_matches!("EX-165", _matcher, exported) do
+    Enum.filter(exported, &creator_original_match?({:leex, [:file]}, &1))
+    |> Enum.reject(&(elem(&1, 1) in [:module_info, :__info__]))
+  end
+
+  defp expected_creator_matches!("EX-089", _matcher, exported) do
+    Enum.filter(exported, fn
+      {:yecc, function, _arity} -> function not in [:module_info, :__info__]
+      _ -> false
+    end)
+  end
+
+  defp expected_creator_matches!("NEW-" <> _id, {:mfa, mfa}, exported),
+    do: Enum.filter(exported, &(&1 == mfa))
+
+  defp expected_creator_matches!("NEW-" <> _id, matcher, _exported),
+    do: raise(ArgumentError, "unsupported logger creator matcher #{inspect(matcher)}")
 
   defp assert_aggregate_metadata_refs!(refs, current_values) do
     Enum.each(refs, fn ref ->
@@ -5534,7 +5555,7 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp parse_mfa_strings!(values) do
     values
-    |> Enum.map(&Fablebook.Test.GuardAggregateReconciliationEvidence.parse_mfa_identity!/1)
+    |> Enum.map(&GuardAggregateReconciliationEvidence.parse_mfa_identity!/1)
     |> Enum.uniq()
     |> Enum.sort()
   end
@@ -5570,22 +5591,20 @@ defmodule Fablebook.Contract.TierSweepTest do
       lock_sha256: String.duplicate("a", 64)
     }
 
-    record = Fablebook.Test.GuardAggregateReconciliationEvidence.build_lane!(input)
+    record = GuardAggregateReconciliationEvidence.build_lane!(input)
 
     assert_raise KeyError, fn ->
-      Fablebook.Test.GuardAggregateReconciliationEvidence.build_lane!(
-        Map.delete(input, :delivery)
-      )
+      GuardAggregateReconciliationEvidence.build_lane!(Map.delete(input, :delivery))
     end
 
     assert_raise MatchError, fn ->
-      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_lane!(
+      GuardAggregateReconciliationEvidence.validate_lane!(
         Map.put(record, "source_and_caller_evidence", Map.put(lane_evidence, "lane", "other"))
       )
     end
 
     assert_raise MatchError, fn ->
-      Fablebook.Test.GuardAggregateReconciliationEvidence.check_bundle!(
+      GuardAggregateReconciliationEvidence.check_bundle!(
         [record, record, record],
         %{}
       )
@@ -5615,11 +5634,128 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> File.read!()
       |> Jason.decode!()
 
-    report = Fablebook.Test.GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor)
+    phase4_directory =
+      Path.expand(
+        "../../phases/04-evidence-only-source-and-gap-provenance-closure",
+        directory
+      )
+
+    phase4_manifest_path = Path.join(phase4_directory, "04-PROVENANCE-MANIFEST.json")
+    phase4_validation_path = Path.join(phase4_directory, "04-VALIDATION.json")
+    phase4_review_path = Path.join(phase4_directory, "04-EVIDENCE-REVIEW.json")
+    phase4_trace_path = Path.join(phase4_directory, "04-COVERAGE-CALLER-TRACE.json")
+    phase4_digest_path = Path.join(phase4_directory, "04-SIZING-DIGEST-PROOF.json")
+    phase4_manifest = phase4_manifest_path |> File.read!() |> Jason.decode!()
+    phase4_validation = phase4_validation_path |> File.read!() |> Jason.decode!()
+    phase4_review = phase4_review_path |> File.read!() |> Jason.decode!()
+    phase4_trace = phase4_trace_path |> File.read!() |> Jason.decode!()
+    phase4_digest = phase4_digest_path |> File.read!() |> Jason.decode!()
+
+    phase4_associations_path =
+      Path.join(phase4_directory, "04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl")
+
+    phase4_gaps_path = Path.join(phase4_directory, "04-TYPED-GAPS-ENV06.jsonl")
+
+    file_sha256 = fn path ->
+      bytes = File.read!(path)
+      :crypto.hash(:sha256, bytes) |> Base.encode16(case: :lower)
+    end
+
+    phase4_associations =
+      phase4_associations_path
+      |> File.stream!()
+      |> Enum.reject(&(String.trim(&1) == ""))
+      |> Enum.map(&Jason.decode!/1)
+
+    phase4_typed_gaps =
+      phase4_gaps_path
+      |> File.stream!()
+      |> Enum.with_index(1)
+      |> Enum.map(fn {line, line_number} ->
+        line |> Jason.decode!() |> Map.put("phase4_line", line_number)
+      end)
+
+    phase4_supplement = %{
+      "schema" => "fablebook.phase4.keyed-evidence-supplement/1",
+      "generation" => phase4_manifest["generation"],
+      "status" =>
+        if(phase4_validation["validation_passed"] and phase4_validation["full_package_valid"],
+          do: "pass_with_open_gaps",
+          else: "fail"
+        ),
+      "source_access" => phase4_manifest["source_access"],
+      "record_partition_complete" =>
+        phase4_trace["record_partition"]["status"] == "supported_consistent",
+      "source_resolution" => phase4_trace["source_resolution"]["status"],
+      "caller_closure" => phase4_trace["caller_closure"]["status"],
+      "legacy_digest" => phase4_digest["legacy_recipe"]["status"],
+      "candidate" => nil,
+      "implementation_authorized" => false,
+      "independent_review" => phase4_review["status"],
+      "source_associations" => phase4_associations,
+      "typed_gaps" => phase4_typed_gaps,
+      "unknown_target_sets" =>
+        Map.new(["core", "floor"], fn lane ->
+          {lane, phase4_manifest["lanes"][lane]["unknown_baseline_target_ids"]}
+        end),
+      "producer_helper_source_identity" =>
+        phase4_digest["supplement"]["canonical_payload"]["selector"][
+          "helper_source_identity"
+        ],
+      "proof" => %{
+        "manifest_sha256" => file_sha256.(phase4_manifest_path),
+        "validation_sha256" => file_sha256.(phase4_validation_path),
+        "review_sha256" => file_sha256.(phase4_review_path),
+        "trace_sha256" => file_sha256.(phase4_trace_path),
+        "trace_path" => Path.relative_to(phase4_trace_path, File.cwd!()),
+        "digest_proof_sha256" => file_sha256.(phase4_digest_path),
+        "supplement_digest" => phase4_digest["supplement"]["digest"]
+      }
+    }
+
+    core_with_supplement =
+      GuardAggregateReconciliationEvidence.attach_target_sources!(
+        core,
+        [],
+        String.duplicate("a", 64),
+        phase4_supplement
+      )
+
+    floor_with_supplement =
+      GuardAggregateReconciliationEvidence.attach_target_sources!(
+        floor,
+        [],
+        String.duplicate("a", 64),
+        phase4_supplement
+      )
+
+    lane_report =
+      GuardAggregateReconciliationEvidence.render_crosswalk!(
+        core_with_supplement,
+        floor_with_supplement
+      )
+
+    assert lane_report["source_join_complete"] == false
+
+    report =
+      GuardAggregateReconciliationEvidence.render_crosswalk!(
+        core,
+        floor,
+        phase4_supplement
+      )
 
     assert report["scope"] == "complete-original-ledger"
     assert report["membership_join_complete"]
     assert report["source_join_complete"] == false
+    assert report["record_partition_complete"]
+    assert report["source_resolution"] == "unresolved"
+    assert report["caller_closure"] == "incomplete"
+    assert report["target_source_coverage_complete"] == false
+    assert report["caller_closure_complete"] == false
+    assert report["legacy_digest"] == "unresolved"
+    assert report["candidate"] == nil
+    assert report["implementation_authorized"] == false
+    assert report["phase4_supplement"]["typed_gap_count"] == 9_716
     assert length(report["rows"]) == 226
     assert is_map(report["source_crosswalk"])
     assert length(report["source_crosswalk"]["rows"]) == 452
@@ -5627,9 +5763,99 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert length(report["static_caller_crosswalk"]["rows"]) == 3_481
 
     assert :ok =
-             Fablebook.Test.GuardAggregateReconciliationEvidence.check_bundle!(
+             GuardAggregateReconciliationEvidence.validate_target_sources!(
+               core,
+               phase4_supplement
+             )
+
+    assert :ok =
+             GuardAggregateReconciliationEvidence.validate_static_callers!(
+               floor,
+               phase4_supplement
+             )
+
+    effective_core =
+      GuardAggregateReconciliationEvidence.attach_target_sources!(
+        core,
+        [],
+        String.duplicate("a", 64),
+        phase4_supplement
+      )
+
+    assert effective_core["record_partition_complete"]
+    assert effective_core["target_source_coverage_complete"] == false
+    assert length(effective_core["phase4_unknown_target_sets"]) == 6
+
+    assert GuardAggregateReconciliationEvidence.attach_static_callers!(
+             floor,
+             %{},
+             phase4_supplement
+           )["caller_closure_complete"] == false
+
+    source_gap_index =
+      Enum.find_index(
+        phase4_typed_gaps,
+        &(&1["lane"] == "core" and &1["domain"] == "source")
+      )
+
+    corrupt_supplement =
+      Map.put(
+        phase4_supplement,
+        "typed_gaps",
+        List.delete_at(phase4_typed_gaps, source_gap_index)
+      )
+
+    assert_raise MatchError, fn ->
+      GuardAggregateReconciliationEvidence.render_crosswalk!(
+        core,
+        floor,
+        corrupt_supplement
+      )
+    end
+
+    stale_proof =
+      put_in(
+        phase4_supplement,
+        ["proof", "digest_proof_sha256"],
+        String.duplicate("0", 64)
+      )
+
+    assert_raise MatchError, fn ->
+      GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor, stale_proof)
+    end
+
+    stale_gap_generation =
+      Map.update!(phase4_supplement, "typed_gaps", fn [gap | rest] ->
+        [Map.put(gap, "generation", "stale-generation") | rest]
+      end)
+
+    assert_raise MatchError, fn ->
+      GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor, stale_gap_generation)
+    end
+
+    stale_gap_input =
+      Map.update!(phase4_supplement, "typed_gaps", fn [gap | rest] ->
+        [Map.put(gap, "input_sha256", String.duplicate("0", 64)) | rest]
+      end)
+
+    assert_raise MatchError, fn ->
+      GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor, stale_gap_input)
+    end
+
+    stale_gap_pointer =
+      Map.update!(phase4_supplement, "typed_gaps", fn [gap | rest] ->
+        [Map.put(gap, "input_pointer", "/identity_rows/999") | rest]
+      end)
+
+    assert_raise MatchError, fn ->
+      GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor, stale_gap_pointer)
+    end
+
+    assert :ok =
+             GuardAggregateReconciliationEvidence.check_bundle!(
                [core, floor],
-               report
+               report,
+               phase4_supplement
              )
 
     lane_record_sha256s =
@@ -5685,11 +5911,14 @@ defmodule Fablebook.Contract.TierSweepTest do
       "lane_record_sha256s" => lane_record_sha256s,
       "task2_reuse_receipt" => %{
         "schedule_sha256" => "20a4489ca75b33c86e5b50e67787ecb78b39ca2cf84616df43ab2dc338a23313",
-        "sizing_input_sha256" => "96763b2312124fa5109a204bd51063cd425bbda60c83930e32e27557e8f3711a",
+        "sizing_input_sha256" =>
+          "96763b2312124fa5109a204bd51063cd425bbda60c83930e32e27557e8f3711a",
         "context_tokens" => 41_459,
-        "context_payload_sha256" => "23a3758e6aa1bffd98a88cec3c22768b3ddaaf85cc1b55cc32cd5e71b8312a84",
+        "context_payload_sha256" =>
+          "23a3758e6aa1bffd98a88cec3c22768b3ddaaf85cc1b55cc32cd5e71b8312a84",
         "context_plus_reuse_tokens" => 41_634,
-        "combined_payload_sha256" => "561305eb66edc64a23e497249a455878751c30f310f503abf35ca6f716701e03",
+        "combined_payload_sha256" =>
+          "561305eb66edc64a23e497249a455878751c30f310f503abf35ca6f716701e03",
         "reused_task1_span_tokens" => 8_023,
         "new_source_body_reads" => 0,
         "working_tokens" => 56_657,
@@ -5699,14 +5928,28 @@ defmodule Fablebook.Contract.TierSweepTest do
       }
     }
 
-    sizing =
-      Fablebook.Test.GuardAggregateReconciliationEvidence.build_sizing_record!(
+    sizing_core =
+      GuardAggregateReconciliationEvidence.attach_static_callers!(
         core,
+        nil,
+        phase4_supplement
+      )
+
+    sizing_floor =
+      GuardAggregateReconciliationEvidence.attach_static_callers!(
         floor,
+        nil,
+        phase4_supplement
+      )
+
+    sizing =
+      GuardAggregateReconciliationEvidence.build_sizing_record!(
+        sizing_core,
+        sizing_floor,
         measurements
       )
 
-    assert :ok = Fablebook.Test.GuardAggregateReconciliationEvidence.validate_sizing!(sizing)
+    assert :ok = GuardAggregateReconciliationEvidence.validate_sizing!(sizing)
     assert sizing["candidate"] == nil
     assert sizing["candidates"] == []
     assert sizing["evidence_complete"] == false
@@ -5727,7 +5970,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       )
 
     assert {:error, :stale_lane_record} =
-             Fablebook.Test.GuardAggregateReconciliationEvidence.validate_sizing!(stale_sizing)
+             GuardAggregateReconciliationEvidence.validate_sizing!(stale_sizing)
 
     Enum.each(["core", "floor"], fn lane ->
       expected = membership_set_metadata[lane]["pending_complement"]
@@ -5780,9 +6023,10 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert String.contains?(stored, "This plan authorizes no later increment")
 
     assert :ok =
-             Fablebook.Test.GuardAggregateReconciliationEvidence.check_bundle!(
+             GuardAggregateReconciliationEvidence.check_bundle!(
                [core, floor],
-               report
+               report,
+               phase4_supplement
              )
   end
 
@@ -5803,7 +6047,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     original = path |> File.read!() |> Jason.decode!()
 
     enriched =
-      Fablebook.Test.GuardAggregateReconciliationEvidence.attach_target_sources!(
+      GuardAggregateReconciliationEvidence.attach_target_sources!(
         original,
         evidence.manifest["files"],
         SweepEvidence.archive_sha256()
@@ -5812,7 +6056,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     assert enriched["membership_sha256"] == original["membership_sha256"]
     assert enriched["identity_rows"] == original["identity_rows"]
 
-    assert Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(enriched) ==
+    assert GuardAggregateReconciliationEvidence.validate_target_sources!(enriched) ==
              :ok
 
     expected_targets =
@@ -5852,7 +6096,7 @@ defmodule Fablebook.Contract.TierSweepTest do
         | "target_source_records" => [Map.put(first_source, "lane", other_lane) | other_sources]
       }
 
-      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
+      GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
     end
 
     assert_raise MatchError, fn ->
@@ -5863,7 +6107,7 @@ defmodule Fablebook.Contract.TierSweepTest do
           ]
       }
 
-      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
+      GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
     end
 
     assert_raise MatchError, fn ->
@@ -5872,7 +6116,7 @@ defmodule Fablebook.Contract.TierSweepTest do
         | "target_source_records" => [first_source, first_source | other_sources]
       }
 
-      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
+      GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
     end
 
     assert_raise MatchError, fn ->
@@ -5881,7 +6125,7 @@ defmodule Fablebook.Contract.TierSweepTest do
         | "target_source_associations" => tl(enriched["target_source_associations"])
       }
 
-      Fablebook.Test.GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
+      GuardAggregateReconciliationEvidence.validate_target_sources!(changed)
     end
 
     assert_raise SweepEvidence.Error, fn ->
@@ -5908,10 +6152,10 @@ defmodule Fablebook.Contract.TierSweepTest do
       if Enum.all?([core, floor], &(&1["target_source_coverage_complete"] == true)) and
            System.get_env("FABLEBOOK_GUARD_AGGREGATE_REPORT_WRITE") == "1" do
         report =
-          Fablebook.Test.GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor)
+          GuardAggregateReconciliationEvidence.render_crosswalk!(core, floor)
 
         report =
-          Fablebook.Test.GuardAggregateReconciliationEvidence.with_source_crosswalk!(
+          GuardAggregateReconciliationEvidence.with_source_crosswalk!(
             report,
             [core, floor]
           )
@@ -5933,9 +6177,96 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation_records
+  test "source join completeness follows gaps" do
+    e = GuardAggregateReconciliationEvidence
+    id = %{id: "EX-010", identity_class: :exclusion, owner: "m", current_replacement_refs: ["r"]}
+
+    ev = fn lane ->
+      %{
+        lane: lane,
+        selected_function_evidence: [],
+        reviews: [],
+        exact_sources: [],
+        matched_mfas: [],
+        delegate_edges: [],
+        remainder_mfas: []
+      }
+    end
+
+    build = fn lane, ms ->
+      row = %{
+        identity: id,
+        baseline_mfas: [],
+        original_live_mfas: ms,
+        replacement_live_mfas: ms,
+        delivered_scope_mfas: [],
+        mapping_status: "complete"
+      }
+
+      r =
+        e.build_lane!(%{
+          lane: lane,
+          identity: id,
+          selected_mfas: ms,
+          live_mfas: ms,
+          lane_evidence: ev.(lane),
+          delivery: %{status: :merged, ci_run: "x"},
+          runtime: %{},
+          lock_sha256: String.duplicate("a", 64),
+          aggregate_rows: [row],
+          delivery_receipts: [%{}, %{}],
+          inventory_universe: %{"exported_mfas" => ms, count: max(length(ms), 1)},
+          live_nonoriginal_entries: %{}
+        })
+
+      e.attach_target_sources!(r, [], String.duplicate("b", 64))
+    end
+
+    with_caller_gap = fn record, lane ->
+      gap = %{
+        "key" => "caller-gap:fixture-#{lane}",
+        "lane" => lane,
+        "identity_id" => "EX-010",
+        "mfa" => nil,
+        "reason" => "current_graph_reconciliation_missing",
+        "remedy" => "Fixture keeps caller closure explicitly incomplete."
+      }
+
+      caller_evidence = %{
+        "schema" => "guard-aggregate-static-caller-evidence/1",
+        "lane" => lane,
+        "graph_observation" => %{"scope" => "test fixture"},
+        "edges" => [],
+        "source_records" => [],
+        "records" => [],
+        "required_evidence_gaps" => [gap],
+        "complete" => false,
+        "recommendation_gate" => false
+      }
+
+      record
+      |> Map.put("static_caller_evidence", caller_evidence)
+      |> Map.put("required_evidence_gaps", [gap])
+    end
+
+    c = build.("core", [])
+    assert c["target_source_gaps"] == [] and c["source_join_complete"]
+    assert hd(c["target_source_associations"])["status"] == "not_applicable"
+    g = build.("core", [["p", "f", 0]])
+    assert g["target_source_gaps"] != [] and not g["source_join_complete"]
+
+    floor = build.("floor", []) |> with_caller_gap.("floor")
+    complete_source_core = with_caller_gap.(c, "core")
+    crosswalk = e.render_crosswalk!(complete_source_core, floor)
+    assert crosswalk["source_join_complete"]
+  end
+
+  @tag :guard_aggregate_reconciliation
   @tag :guard_aggregate_reconciliation_callers
   test "caller graph records preserve exact observations and explicit gaps" do
-    module = Fablebook.Test.GuardAggregateReconciliationEvidence
+    module = GuardAggregateReconciliationEvidence
     Code.ensure_loaded!(module)
     assert function_exported?(module, :attach_static_callers!, 2)
 
@@ -5952,6 +6283,13 @@ defmodule Fablebook.Contract.TierSweepTest do
 
       record_path = Path.join(directory, "03-#{String.upcase(lane)}-AGGREGATE-EVIDENCE.json")
       original = record_path |> File.read!() |> Jason.decode!()
+
+      sourced =
+        module.attach_target_sources!(
+          original,
+          evidence.manifest["files"],
+          SweepEvidence.archive_sha256()
+        )
 
       graph_path =
         Path.expand(
@@ -5973,7 +6311,12 @@ defmodule Fablebook.Contract.TierSweepTest do
           :crypto.hash(:sha256, graph_bytes) |> Base.encode16(case: :lower)
         )
 
-      enriched = apply(module, :attach_static_callers!, [original, graph_observation])
+      enriched =
+        GuardAggregateReconciliationEvidence.attach_static_callers!(
+          sourced,
+          graph_observation
+        )
+
       caller_evidence = enriched["static_caller_evidence"]
       records = caller_evidence["records"]
       known = Enum.filter(records, &(&1["identity_id"] == "EX-010"))
@@ -6007,14 +6350,16 @@ defmodule Fablebook.Contract.TierSweepTest do
       other_lane = if lane == "core", do: "floor", else: "core"
 
       assert_raise MatchError, fn ->
-        apply(module, :attach_static_callers!, [
-          original,
+        GuardAggregateReconciliationEvidence.attach_static_callers!(
+          sourced,
           Map.put(graph_observation, "lane", other_lane)
-        ])
+        )
       end
 
       missing_edges = Map.put(graph_observation, "active_projection_edges", [])
-      missing_edge_record = apply(module, :attach_static_callers!, [original, missing_edges])
+
+      missing_edge_record =
+        GuardAggregateReconciliationEvidence.attach_static_callers!(sourced, missing_edges)
 
       assert Enum.any?(
                missing_edge_record["static_caller_evidence"]["records"],
@@ -6032,7 +6377,12 @@ defmodule Fablebook.Contract.TierSweepTest do
           [hd(edges) | Enum.reverse(edges)]
         end)
 
-      permuted_record = apply(module, :attach_static_callers!, [original, duplicated_permuted])
+      permuted_record =
+        GuardAggregateReconciliationEvidence.attach_static_callers!(
+          sourced,
+          duplicated_permuted
+        )
+
       assert permuted_record["static_caller_evidence"]["edges"] == caller_evidence["edges"]
 
       cycle_edge = %{
@@ -6050,7 +6400,8 @@ defmodule Fablebook.Contract.TierSweepTest do
           [cycle_edge | edges]
         end)
 
-      cycle_record = apply(module, :attach_static_callers!, [original, cycle_graph])
+      cycle_record =
+        GuardAggregateReconciliationEvidence.attach_static_callers!(sourced, cycle_graph)
 
       assert Enum.count(
                cycle_record["static_caller_evidence"]["edges"],
@@ -6058,8 +6409,10 @@ defmodule Fablebook.Contract.TierSweepTest do
              ) == 2
 
       no_delegate_record =
-        put_in(original, ["source_and_caller_evidence", "delegate_edges"], [])
-        |> then(&apply(module, :attach_static_callers!, [&1, graph_observation]))
+        put_in(sourced, ["source_and_caller_evidence", "delegate_edges"], [])
+        |> then(
+          &GuardAggregateReconciliationEvidence.attach_static_callers!(&1, graph_observation)
+        )
 
       assert Enum.any?(
                no_delegate_record["static_caller_evidence"]["required_evidence_gaps"],
@@ -6072,7 +6425,7 @@ defmodule Fablebook.Contract.TierSweepTest do
         put_in(enriched, ["static_caller_evidence", "required_evidence_gaps"], [])
 
       assert_raise MatchError, fn ->
-        apply(module, :validate_static_callers!, [invalid_gaps])
+        GuardAggregateReconciliationEvidence.validate_static_callers!(invalid_gaps)
       end
 
       if System.get_env("FABLEBOOK_GUARD_AGGREGATE_CALLER_WRITE") == "1" do
@@ -6094,7 +6447,10 @@ defmodule Fablebook.Contract.TierSweepTest do
             )
 
           enriched_record =
-            apply(module, :attach_static_callers!, [output_record, output_observation])
+            GuardAggregateReconciliationEvidence.attach_static_callers!(
+              output_record,
+              output_observation
+            )
 
           temporary = output_path <> ".tmp"
           File.write!(temporary, Jason.encode_to_iodata!(enriched_record, pretty: true))
@@ -6135,6 +6491,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :guard_aggregate_reconciliation
   test "caller-chain index preserves duplicate edges and lowest caller arity" do
     start_mfa = {:fablebook_index_target, :run, 9}
     caller = {:fablebook_index_middle, :route}
@@ -6191,8 +6548,9 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
   end
 
+  @tag :guard_aggregate_reconciliation
   test "sizing validation fails closed on unknown limits and incomplete candidate evidence" do
-    module = Fablebook.Test.GuardAggregateReconciliationEvidence
+    module = GuardAggregateReconciliationEvidence
 
     measurement = %{
       "context_tokens" => 52_000,
@@ -6216,7 +6574,8 @@ defmodule Fablebook.Contract.TierSweepTest do
       "source_join_complete" => false,
       "caller_closure_complete" => false,
       "global_gaps" => ["source_or_caller_evidence_incomplete"],
-      "lanes" => %{}
+      "lanes" => %{},
+      "actual_library_collision" => nil
     }
 
     assert :ok = module.validate_sizing!(base)

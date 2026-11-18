@@ -1,0 +1,21 @@
+{
+  "schema_version": "03-05.task2-source-schedule-review.1",
+  "subject_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER-REVISE-01.json",
+  "subject_sha256": "7c7457a7a57e14089ebb7b016038da95dbe28de8178703bde575874f73b0d43a",
+  "reviewer": "independent provenance evidence audit agent",
+  "result": "pass",
+  "findings": [],
+  "verified": [
+    "26 input bindings",
+    "five context hashes",
+    "five serialized count payloads",
+    "seven source span hashes",
+    "R3 includes line 5991 tag",
+    "R2-R6 pairwise disjoint",
+    "R1 excluded and replay forbidden",
+    "safety stops preserved"
+  ],
+  "reviewed_at_utc": "2026-11-18T00:05:17.770038+00:00",
+  "source_bodies_read": false,
+  "files_modified_by_reviewer": false
+}

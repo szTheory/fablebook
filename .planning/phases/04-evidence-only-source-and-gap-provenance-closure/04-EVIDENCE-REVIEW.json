@@ -1,0 +1,78 @@
+{
+  "schema_version": "04.evidence-review.1",
+  "status": "pass",
+  "source_access": "closed",
+  "author": "Codex",
+  "reviewer": "Independent read-only subagent /root/phase4_bridge_reconcile",
+  "reviewed_at_utc": "2026-11-18T15:05:50Z",
+  "subject_sha256": "625979635144238a12805d367d84aef31180c12b9c4abf818bd0565790860595",
+  "subject": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "manifest": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "sha256": "eb7da0f14c0e596ec8c359c6301f00966f46403fda281053d85dee514b786af6",
+      "bytes": 57770
+    },
+    "payloads": {
+      "associations": {
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "typed_gaps": {
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+        "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+        "bytes": 19633625
+      },
+      "coverage_caller_trace": {
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-COVERAGE-CALLER-TRACE.json",
+        "sha256": "de8e8ebc299ccab13d35ab77eed6a3f03a07ed5cbb51bb07b4407595b0c515b0",
+        "bytes": 13433
+      },
+      "sizing_digest_proof": {
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SIZING-DIGEST-PROOF.json",
+        "sha256": "9d4b00b65b8a1308ffdfcff893ff3bae7067d9c4550dd818e5363e137a422b2d",
+        "bytes": 5819
+      }
+    },
+    "source_requests": {
+      "R1": {
+        "gate_sha256": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15",
+        "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+        "review_sha256": "70e65fbb7916ab14bd1be8999cfdd8b3139be668a45020893d6c58852cacca89",
+        "preflight_sha256": "e6c116784ccc90eb0d28d9b73cde1917cfa0876be5c1f2edc933cfcfedb41f61",
+        "count_sha256": "9a3b453f6bca90e198984b456eba02f8d94ba3ce032c9ad6b7760d5ad6f210e7"
+      },
+      "R2": {
+        "gate_sha256": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930",
+        "schedule_sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d",
+        "review_sha256": "0c3a4b7cce143094ce68671f33f9497292048fd431aa26739edc68ccca5b32c8",
+        "preflight_sha256": "3e432a5d7af46b6b247a93af213e0da7bda695c7701b0d6a92b95728dea51a9b",
+        "count_sha256": "53ff5f91edb9c1cae7463e70d699fe8ca1357df8fb34033c5c5bd33168007dbd"
+      },
+      "R3": {
+        "gate_sha256": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482",
+        "schedule_sha256": "b996dc547c4e0a34ea9fdf250ab83bb1d633f128686b1026fdd6073e4681900c",
+        "review_sha256": "170b42086a01ac9b769b0e086bc301d68000d056258bb199294335554a8e3ddb",
+        "preflight_sha256": "3ba9f1a3f1424211af7fdad1bd66b34ea1088bf030b303dca68547fa881a449b",
+        "count_sha256": "336fb7fe776d50195641bf4ecc054ee4a1fa447e351d9e5116166d6c1439e625"
+      }
+    }
+  },
+  "scope": [
+    "R1 incomplete exclusion",
+    "R2/R3 exact request bindings",
+    "record partition versus source/caller closure",
+    "legacy and supplement digest claims",
+    "aggregate output policy and individual request context fit",
+    "candidate, implementation and Phase 3 safety stops"
+  ],
+  "review_summary": "PASS. The independent reviewer confirmed the refreshed manifest and bridge hashes bind cleanly; payload/request maps are unchanged. Source and caller meanings remain unresolved/incomplete; candidate stays null, implementation unauthorized, and safety stops closed. Current-file bytes were read only for SHA-256 integrity verification; no source/test text was displayed or semantically reviewed, and no new source request or emission occurred. The saved validation receipt still bound the previous manifest at review time and is regenerated as a derived check now.",
+  "findings": [],
+  "prior_review": {
+    "reviewer": "Independent read-only subagent /root/phase4_evidence_review",
+    "reviewed_at_utc": "2026-11-17T23:42:44Z",
+    "subject_sha256": "61af0538fb573929a2aefb5365104324139a8dcdd296b58f01195b4a444f4b9f",
+    "review_summary": "PASS after correcting the status-snapshot label and leaving the differing source-gap count scopes unreconciled."
+  }
+}

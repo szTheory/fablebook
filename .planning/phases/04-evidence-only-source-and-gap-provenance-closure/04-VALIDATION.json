@@ -1,0 +1,298 @@
+{
+  "schema_version": "04.validation.2",
+  "result": "pass_with_open_gaps",
+  "validation_passed": true,
+  "full_package_valid": true,
+  "source_access": "closed",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "semantic_closure": "open",
+  "source_resolution": "unresolved",
+  "caller_closure": "incomplete",
+  "candidate": null,
+  "implementation_authorized": false,
+  "checks": {
+    "preservation_bridge": {
+      "status": "observed",
+      "result": {
+        "status": "passed",
+        "source_access": "closed",
+        "mismatches": 3,
+        "independent_review": "pass",
+        "subject_sha256": "03cfd257228da6bb660d5934f7da4b5dcf1561e2aa688b3d1d0f3277f809c24d",
+        "post_snapshot_changes": {
+          "test/contract/tier_sweep_test.exs": {
+            "path": "test/contract/tier_sweep_test.exs",
+            "snapshot_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+            "snapshot_bytes": 770285,
+            "current_sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439",
+            "current_bytes": 780065
+          },
+          "test/support/guard_aggregate_reconciliation_evidence.ex": {
+            "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+            "snapshot_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+            "snapshot_bytes": 58839,
+            "current_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+            "current_bytes": 79280
+          }
+        }
+      }
+    },
+    "input_reconciliation": {
+      "status": "observed",
+      "result": {
+        "status": "reviewed",
+        "source_access": "closed",
+        "input_paths": [
+          ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+          ".planning/forensics/phase4-budget-reset-20261117.md",
+          ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-01-PLAN.md"
+        ],
+        "subject_sha256": "ae135bf73a897028446acba9fa513790d2136f8597955e034e3e64b75395a4e5",
+        "prior_bytes_available": false
+      }
+    },
+    "historical_blocked_partition": {
+      "status": "observed",
+      "result": {
+        "status": "blocked_consistent",
+        "source_access": "closed",
+        "typed_gap_rows": 9716,
+        "known_keys": {
+          "core": 2469,
+          "floor": 2380
+        },
+        "unknown_target_sets": 18,
+        "preservation_mismatches": 3,
+        "stale_input_bindings": [
+          {
+            "path": ".planning/forensics/phase4-budget-reset-20261117.md",
+            "expected_sha256": "c812b255e634b1b26c25aa3395e10b1148f6898bed6886ebbefd32cd96e2694d",
+            "expected_bytes": 4576,
+            "current_sha256": "6e3af6b72b7be24c98d5ca7d0729486efe9ae865b4b9422ad38c997ebc314e09",
+            "current_bytes": 4576
+          },
+          {
+            "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+            "expected_sha256": "6ba22a179f7d1b0f60af8b98d6d1046ec9f90c6f9ac37310b82c4e85bc2e1f56",
+            "expected_bytes": 51447,
+            "current_sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5",
+            "current_bytes": 52172
+          },
+          {
+            "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-01-PLAN.md",
+            "expected_sha256": "0a4dc49c0de12cc7e7124bec2374fa97efd23bee6da7f495f97f30a4ab5265b6",
+            "expected_bytes": 25867,
+            "current_sha256": "e0225186b6da35fa07cc7ffc61cc15d92c63776e7a0b1e1ff85358c5bd5d1eee",
+            "current_bytes": 25857
+          },
+          {
+            "path": "test/contract/tier_sweep_test.exs",
+            "expected_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+            "expected_bytes": 770285,
+            "current_sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439",
+            "current_bytes": 780065
+          },
+          {
+            "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+            "expected_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+            "expected_bytes": 58839,
+            "current_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+            "current_bytes": 79280
+          }
+        ]
+      }
+    },
+    "supported_partition": {
+      "status": "observed",
+      "result": {
+        "status": "supported_consistent",
+        "source_access": "closed",
+        "typed_gap_rows": 9716,
+        "known_keys": {
+          "core": 2469,
+          "floor": 2380
+        },
+        "unknown_target_sets": 18,
+        "preservation_mismatches": 3,
+        "stale_input_bindings": []
+      }
+    },
+    "schedule_and_ledger": {
+      "status": "observed",
+      "result": {
+        "status": "historical_blocked_consistent",
+        "source_access": "closed",
+        "historical_env04": {
+          "output_tokens": 159613,
+          "remaining_working": 19387
+        },
+        "active_env06_informational": {
+          "output_tokens": 648042,
+          "recorded_working_balance": -38042
+        },
+        "aggregate_output_budget_policy": "disabled_by_owner",
+        "source_request_count": 3,
+        "consumed_request_ids": [
+          "R1",
+          "R2",
+          "R3"
+        ]
+      }
+    },
+    "final_evidence_payloads": {
+      "status": "observed",
+      "result": {
+        "status": "pass_with_open_gaps",
+        "source_access": "closed",
+        "generation": "ENV-20261117-06-supported-20261117T204102Z",
+        "request_gates": {
+          "R1": {
+            "status": "consumed_incomplete",
+            "source_access": "closed",
+            "source_emission": true,
+            "blockers": [
+              "tool output was truncated; no complete source analysis may claim this request"
+            ],
+            "bindings": {
+              "generation": "ENV-20261117-06-supported-20261117T204102Z",
+              "request_id": "R1",
+              "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+              "review_sha256": "70e65fbb7916ab14bd1be8999cfdd8b3139be668a45020893d6c58852cacca89",
+              "preflight_sha256": "e6c116784ccc90eb0d28d9b73cde1917cfa0876be5c1f2edc933cfcfedb41f61",
+              "count_sha256": "9a3b453f6bca90e198984b456eba02f8d94ba3ce032c9ad6b7760d5ad6f210e7",
+              "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+              "source_span": {
+                "start_line": 1,
+                "end_line": 1610,
+                "start_byte": 0,
+                "end_byte_exclusive": 58839,
+                "encoding": "UTF-8",
+                "complete_file": true,
+                "includes_final_newline": true
+              },
+              "context_sha256": "98ee0eb217e847b0979ce12df298a773a3e19acf14234ec71803f4dbf5d23499",
+              "serialized_request_sha256": "c5eb152daf61e23e3ad559b3d04e007dcaa12d511660d95f2068e111a4e98918"
+            }
+          },
+          "R2": {
+            "status": "consumed_verified",
+            "source_access": "closed",
+            "source_emission": true,
+            "source_request_count": 3,
+            "bindings": {
+              "generation": "ENV-20261117-06-supported-20261117T204102Z",
+              "request_id": "R2",
+              "schedule_sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d",
+              "review_sha256": "0c3a4b7cce143094ce68671f33f9497292048fd431aa26739edc68ccca5b32c8",
+              "preflight_sha256": "3e432a5d7af46b6b247a93af213e0da7bda695c7701b0d6a92b95728dea51a9b",
+              "count_sha256": "53ff5f91edb9c1cae7463e70d699fe8ca1357df8fb34033c5c5bd33168007dbd",
+              "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+              "source_span": {
+                "start_line": 521,
+                "end_line": 1113,
+                "start_byte": 19368,
+                "end_byte_exclusive": 41762,
+                "encoding": "UTF-8",
+                "complete_file": false,
+                "includes_final_newline": true,
+                "span_sha256": "a1440abd808ba06ee624cb97a780e022abd20ec76f9f972fa2e1c078d523ab89"
+              },
+              "context_sha256": "506ab62930b34f2cef0ee3f1bf5cb336cb628a400bfe17f1f2d37aac5ffea244",
+              "serialized_request_sha256": "0502007524607fe66074a0a71684ca7424fa4fb48ed6414f0d9b58a0f5d83470"
+            }
+          },
+          "R3": {
+            "status": "consumed_verified",
+            "source_access": "closed",
+            "source_emission": true,
+            "source_request_count": 3,
+            "bindings": {
+              "generation": "ENV-20261117-06-supported-20261117T204102Z",
+              "request_id": "R3",
+              "schedule_sha256": "b996dc547c4e0a34ea9fdf250ab83bb1d633f128686b1026fdd6073e4681900c",
+              "review_sha256": "170b42086a01ac9b769b0e086bc301d68000d056258bb199294335554a8e3ddb",
+              "preflight_sha256": "3ba9f1a3f1424211af7fdad1bd66b34ea1088bf030b303dca68547fa881a449b",
+              "count_sha256": "336fb7fe776d50195641bf4ecc054ee4a1fa447e351d9e5116166d6c1439e625",
+              "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+              "source_span": {
+                "start_line": 1114,
+                "end_line": 1497,
+                "start_byte": 41762,
+                "end_byte_exclusive": 54843,
+                "encoding": "UTF-8",
+                "complete_file": false,
+                "includes_final_newline": true,
+                "span_sha256": "8256f4866d59d66300950c641fefafe2c1ad9f7384ff39ab19add1ea05df75df"
+              },
+              "context_sha256": "e012fa88baf557875cb9cf33a80de19b68ec0e85d818ede2cc5051f4ee75a43f",
+              "serialized_request_sha256": "43e3ee1c513ec37fd4c822a0b50d2d6acdac6d6ee0dd45bcd8ffcaa9fc457feb"
+            }
+          }
+        },
+        "record_partition": {
+          "status": "supported_consistent",
+          "association_rows": 0,
+          "typed_gap_rows": 9716,
+          "domain_counts": {
+            "source": 4849,
+            "caller": 4849,
+            "unknown_target_set": 18
+          },
+          "lane_domain_counts": {
+            "core": {
+              "source": 2469,
+              "caller": 2469,
+              "unknown_target_set": 6
+            },
+            "floor": {
+              "source": 2380,
+              "caller": 2380,
+              "unknown_target_set": 12
+            }
+          },
+          "known_mfa_keys": {
+            "core": 2469,
+            "floor": 2380
+          },
+          "unknown_target_sets": 18,
+          "interpretation": "All known source and caller keys have explicit records. This is record accounting only."
+        },
+        "source_resolution": "unresolved",
+        "caller_closure": "incomplete",
+        "legacy_digest": "unresolved",
+        "supplement_digest": "16deed38c690d0e9df3508a453b6a8c34ac7c1f207784b6a3c414d4c1e8d6bfe",
+        "independent_review": "pass"
+      }
+    }
+  },
+  "bindings": {
+    "manifest_sha256": "eb7da0f14c0e596ec8c359c6301f00966f46403fda281053d85dee514b786af6",
+    "evidence_review_sha256": "035739821a5a47c8a0ae159a172d85bdfe22f940bf4d0181d9b2be36c6e112b8",
+    "association_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "typed_gaps_sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+    "caller_trace_sha256": "de8e8ebc299ccab13d35ab77eed6a3f03a07ed5cbb51bb07b4407595b0c515b0",
+    "digest_proof_sha256": "9d4b00b65b8a1308ffdfcff893ff3bae7067d9c4550dd818e5363e137a422b2d",
+    "request_gate_sha256s": {
+      "R1": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15",
+      "R2": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930",
+      "R3": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482"
+    }
+  },
+  "resource_status": {
+    "aggregate_output_budget_policy": "disabled_by_owner",
+    "informational_usage_snapshot_utc": "2026-11-17T22:09:56.859Z",
+    "source_request_count": 3,
+    "per_request_context_fit": {
+      "R1": true,
+      "R2": true,
+      "R3": true
+    },
+    "aggregate_output_limit_enforced": false
+  },
+  "missing_fields": [],
+  "final_package_check": {
+    "status": "passed",
+    "command": "--all",
+    "exit_code": 0
+  }
+}

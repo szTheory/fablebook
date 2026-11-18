@@ -560,6 +560,23 @@ may still publish the current validated records with zero new source-body
 reads, retaining `candidate=null` and every safety stop. Plan 03-05 remains
 unstarted.
 
+## Owner-authorized Task 2 cap reallocation — fresh count pending
+
+The owner explicitly authorized “Replan within limits.” Reallocate 300 tokens
+from the prior 1,000-token slack to Task 2: its source correction/reread cap is
+now 800. All other allowances remain unchanged: context 38,500; Task1 22,000;
+Task3 source reads 0; output 5,000; cushion 2,000; reserve 31,000. New projected
+maximum is 99,300, preserving 700 tokens below the 100,000 ceiling.
+
+The v4 611-token source selection, including the full accidental diagnostic
+read, is retained as counted; no Task1-span exclusion is used. It is within
+the newly authorized cap, but v4's old schedule/count receipts do not authorize
+emission. Bind the same exact corrected v4 patch and complete reread span in a
+new schedule, independently review the reallocation/schedule, run fresh execute
+preflight and direct counts, then proceed with RED/GREEN only after all gates
+pass. Preserve the source-join finding and all existing stops until the
+correction and review pass.
+
 ## Task 3 zero-source-read report publication — PASS; Task 2 finding remains open
 
 Task 3 received independent metadata PASS and fresh execute preflight. The
@@ -582,3 +599,227 @@ its consequence and bounded remedy; `candidate=null`, implementation
 unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending,
 static-only, collision stop and Macro checkpoints remain unchanged. No
 follow-on implementation or Plan 03-05 is authorized.
+
+## Candidate syntax repair after v6 count — pending
+
+After the v6 count passed (context 36,555; source reread 611; candidate output
+638; projected total 96,326 / 99,300), inspection found that the candidate's
+test hunk concatenated the new block's closing `end` with the existing caller
+test tag. The candidate was not applied and no tests ran. A temp-only v5
+changes that boundary newline only; candidate bytes are 2,287, SHA-256
+`da85e456a9a7cbb85bb25fdedbbd8fbd8adaf4ec3ea3b7be276b6aa02a636b42`.
+V6 counts and review do not authorize v5 emission. Rebind current state,
+schedule, sizing and candidate; obtain independent metadata PASS, fresh
+execute preflight and direct counts. Preserve the 611-token reread and all
+limits/stops; no source edit or test has been run.
+
+## Candidate v6 hunk correction — fresh review/count pending
+
+The v5 candidate failed `git apply --check`: its existing caller-test context
+line had one missing indentation byte. No source was modified. Temp-only v6
+repairs that context and passes the non-mutating patch applicability check.
+It is 2,288 bytes / SHA-256
+`05998c2c9adf88e6e1c3e96998fb94ef4c6e2cb734a522cc34aa64b2a54dbac3`.
+V4/v5 counts do not bind v6. The full 611-token diagnostic-inclusive
+selection remains required under the 800 cap. Obtain fresh metadata review,
+execute preflight and direct count before source edits; no test has run.
+
+## Task 2 invalid RED — compilation failure
+
+After the v6 count passed, only the counted test hunk was applied. The focused
+core command exited 1 during compilation, before the target test could run.
+The TAP formatter therefore produced no report and this is invalid RED; GREEN
+is blocked. The full captured output and exact command are preserved in
+`03-04-TASK2-INVALID-RED.log`. Elixir reported `SyntaxError` at
+`test/contract/tier_sweep_test.exs:5944:306`: `unexpected expression after
+keyword list` for `inventory_universe: %{count: max(...), "exported_mfas" =>
+ms}`. No implementation source was changed. The exact v6 count remains a
+valid size receipt for that candidate, but no behavior has been verified.
+Candidate remains null; preserve all scope and safety stops. Stop here; do
+not start Plan 03-05.
+
+## Candidate v8 test map-order correction — pending
+
+The captured v6 attempt is invalid RED because compilation failed before the
+target test. Temp-only v8 corrects map-key order and passes an Elixir syntax
+parse of the corrected full test file plus `git apply --check`; no test source
+correction has been applied and no rerun occurred. Candidate identity:
+1,132 bytes / SHA-256
+`780d00f33ce8a6d1f3686a8648f7cb68a9f8c431c76506969b46c45090f7c534`.
+Bind current State/REPLAN/REVIEW/SIZING, dirty test-file identity, exact
+incremental lines 5943–5945 and the prior 611-token source receipt. Cumulative
+Task2 rereads must stay ≤800. Obtain fresh independent metadata PASS, execute
+preflight and direct count before applying the patch or running tests.
+
+## Candidate v9 exact-line test correction — pending
+
+V8's direct count measured 611 prior + 193 incremental source tokens, failing
+the cumulative 800 cap by four; v8 was not applied. Temp-only v9 selects only
+the current changed line 5944 (363B, SHA-256
+`76a4371ffa978f0a3d37bcac688560677304c0607f9afef35d168d0a7be54121`) and
+retains the prior reviewed module-anchor receipt. The correction patch is
+909B, SHA-256
+`9affdec4f4d579ebff5748b9e8ecba4548421956278b5015429b6e86ffc2d371`; it
+passes `git apply --unidiff-zero --check` and full-file syntax parsing. No
+workspace change or new test run occurred. Rebind current inputs, review,
+preflight and recount before applying; cumulative source must remain ≤800.
+
+## Task 2 RED evidence — passed
+
+The corrected in-module regression compiled and executed. Its exact target
+assertion failed because `source_join_complete` was false for a gap-free
+identity; the TAP classifier returned `RED_EVIDENCE_OK`, with no report or
+load errors. The unchanged complete report and semantic assessment are in
+`03-04-TASK2-RED.tap` and `03-04-TASK2-RED.json`. This is valid test evidence;
+the support implementation remains unchanged pending a fresh exact-tree
+metadata review, execute preflight and count. Candidate remains null until
+the correction and downstream evidence gates pass.
+
+## Task 2 source-cap reallocation — pending fresh count
+
+The first fresh post-test support count used 95 source tokens and exceeded
+the earlier 800 cap when cumulative prior Task2 reads were included (839).
+The candidate remained unapplied. The owner then authorized a final 1,000
+source-token Task2 cap, preserving all other limits and a 99,500 total
+projection with 500 slack under the 100,000 ceiling. This authorizes only a
+fresh reviewed schedule/count for the same bounded correction; it does not
+clear the source-join finding or change any stop. A further cap failure leaves
+the finding open and blocks Plan 03-05.
+
+## V10 GREEN verification — failed before intended assertion
+
+After its passing count, v10 was applied and the focused core write command
+failed 1 of 3 selected tests (2 passed, 106 excluded). The gap-free test raised
+`MatchError` on `false` in `validate_aggregate_lane!/1` at support line 138,
+before reaching its source-join assertion. This is not a valid GREEN result;
+the floor check was not run. The valid pre-implementation RED remains
+unchanged. No further implementation edit may occur until the exact current
+tree and diagnostic line are independently reviewed, preflighted and counted
+under the final 1,000-token cap. The finding remains open and Plan 03-05 is
+blocked.
+
+## V13 validator diagnostic — exact assertion identified
+
+The v13 source diagnostic passed under the final caps and revealed the stale
+line 138 invariant: it hard-coded `source_join_complete == false`. The valid
+regression expects the flag to match canonical empty gaps. A one-line
+temp-only V14 patch changes that check to compare with `target_source_gaps ==
+[]`; it remains uncounted and unapplied. The 1,000-token cap now has 95
+remaining after prior charges. New patch bytes, complete context and combined
+count require independent review and fresh execute preflight before GREEN.
+
+## V14 implementation result — core/floor pass
+
+The validator now checks `source_join_complete` against canonical empty gaps.
+The valid regression and the nonempty-gap false case pass in both focused
+core and floor write-mode checks; all three selected tests pass in each lane
+(106 excluded). `git diff --check` is clean. The V14 source correction was
+counted and applied within the final 1,000-token cap. The core/floor machine
+records were regenerated; SIZING still carries old lane-record digests, so its
+projection must be reconciled before report publication. Candidate remains
+null; the actual lanes still have source evidence gaps, so the high-level
+readiness gates remain open. Independent review of the code/test diff and
+bounded Task3 report review remain required; Plan 03-05 is blocked.
+
+
+## V14 SIZING reconciliation — metadata PASS; final package review pending
+
+The earlier V14 section's note that SIZING carried old lane hashes is
+superseded by the metadata-only reconciliation. Current SIZING binds core
+`70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd` and floor
+`955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d`; its
+14-key projection is 20,098 bytes /
+`e9c49dc21e4ce8c211a402d72c99a4add758af4bd5fdfe70ff1dd5d57c70a395`.
+Independent metadata review passed the SIZING/schedule/STATE bindings.
+Candidate remains null; actual lane joins and scope remain incomplete;
+implementation is unauthorized and all safety stops remain. The Task2 source
+correction/regression checks passed in core and floor. Task3 report publication
+and final independent package disposition still require fresh count and review.
+
+
+## Task3 bundle check — second validation invariant blocks publication
+
+The Task3 V4 direct count passed (context 36,195; marker 19; combined 36,208;
+projected total 95,125/99,500). The authorized bundle-write selector failed
+0/1 at `validate_target_sources!/1`, support line 394, with MatchError false.
+Report publication did not occur and the follow-on core/floor checks were not
+run. This is a newly observed implementation blocker after the first focused
+record selectors passed. The 61-byte exact line is scheduled as Task2
+diagnostic within the remaining 62 source tokens; its body remains unread
+until fresh independent schedule review, execute preflight and direct count.
+Task3 remains zero new source-body reads; existing finding and all stops stay
+open.
+
+
+## V15 line 394 diagnostic — source assertion confirmed; narrow context remains
+
+Count passed for support line 394 (36 tokens; cumulative Task2 source 974/1,000).
+Its exact text is `true = record["target_source_coverage_complete"] == true`.
+This validator invariant failed in the authorized bundle test. The adjacent
+43-byte line 393 may be counted within the remaining 26 tokens; no broader
+source reread is allowed. The report remains unpublished, and no source patch
+has been prepared or applied. If one adjacent line is insufficient for a
+correct fix, leave the finding open and block Plan 03-05.
+
+
+## V16 final cap failure — owner-facing gap remains
+
+The line 393 count is 33 tokens, making cumulative Task2 source selection
+1,007/1,000. It was not emitted. No cap increase is allowed. The required
+coverage validator assertion at line 394 remains open; Task3 bundle publication
+failed before writing the report, so no final report or package disposition can
+be certified. Preserve candidate=null, implementation unauthorized, aggregate
+gate open, Walking Skeleton blocked, SEC-01 Pending and all collision/Macro
+stops. Plan 03-04 cannot be marked complete and Plan 03-05 must not start.
+
+
+## V17 final reallocation — within ceiling; fresh diagnostic gate pending
+
+The owner authorized the final 500-token reallocation from global working slack,
+raising Task2 source cap to 1,500 and the working ceiling to 69,000. The fixed
+31,000 reserve is unchanged; total 100,000. Previous 974 actual source tokens
+and the failed 1,007 selection receipt remain in history. Line 393 remains
+unread; independent schedule review, execute preflight and fresh count are
+required before inspection. All safety and candidate stops remain.
+
+
+### V17 ledger correction — prior failed span is retained
+
+The previous 33-token line393 count is part of the active cumulative source
+ledger (1,007), despite its body not being emitted. The fresh V17 count must
+add to 1,007; it must not restart at 974. The revised 1,500 cap can accommodate
+the repeated selection, preserving the full reread history.
+
+
+### V17 fresh count — line393 read; line394 finding remains
+
+The fresh line393 count passed within the final reallocation. Its exact text is
+`:ok = validate_aggregate_lane!(record)`. Cumulative source is 1,040/1,500.
+The bundle selector still fails at line394; count the full validator context
+including all rereads before further inspection. Preserve every prior count and
+keep the candidate null.
+
+
+## V18 handoff correction — validator context count pending
+
+V17 line393 was counted and then inspected; statements saying it is unread are superseded. Cumulative Task2 source is 1,040/1,500, leaving 460. The next selection is the exact support `validate_target_sources!/1` context at lines392–400, 382 bytes / `3776304570990785c8ab5dedb0ff3246321a9765f99a03411b396c4cb725c841` (full identity 58,768 bytes / `54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63`). The selection rereads lines393–394 and both repeat counts must be charged. No further inspection/source edit until fresh metadata review, execute preflight and direct count pass. Candidate remains null; the report gate is blocked by the line394 validator failure.
+
+
+## V18 count receipt and remaining validator gap
+
+The V18 reviewed schedule/harness count passed for lines392–400: context 28,824; selected span 111; combined 28,929; cumulative Task2 source 1,151/1,500; projected total 87,948/100,000. The counted span is not the complete `validate_target_sources!/1` function. It continues through line476; the remaining lines401–476 are 2,574 bytes and have not been counted or inspected. Only 349 source tokens remain. No safe fix can be chosen without reviewing the complete validator under the same hard cap. Candidate remains null; bundle report unpublished; no Plan03-05.
+
+
+### V19 feasibility count failed — final source cap is exhausted
+
+The fresh count-only request for exact support lines401–476 returned 618 tokens. Adding this to the 1,151 prior selected source tokens produces 1,769/1,500, exceeding the final cap by 269. Context 29,549 and projected total 89,291 pass; the Task2 source cap fails. The remainder was not emitted or inspected. No further budget reallocation is authorized. Preserve the line394 owner-facing gap and do not begin Plan03-05.
+
+
+## V20 allocation replan — fresh validator remainder count pending
+
+Context cap is now 37,500 and Task2 source cap 2,500 after reallocating 1,000 within the fixed 69,000 working envelope; reserve remains 31,000 and total 100,000. Preserve V19’s 618-token failed count as history and current cumulative 1,769; a new count of the same exact remainder must be added, producing 2,387 if unchanged. The source remainder has not been inspected. Candidate remains null; no source correction/report/Plan03-05 until schedule review and count pass.
+
+
+### V20 fresh count passed; validator confirms unresolved source coverage
+
+Under the final context37,500 / source2,500 allocation, the fresh 618-token remainder count passes with cumulative selected source 2,387/2,500 and total90,757/100,000. The complete validator was inspected only after the count. It intentionally guards `target_source_coverage_complete == true` and validates source mappings, gaps, per-identity statuses and source hashes. The failure exposes incomplete target-source evidence in the bundle input; it does not identify a narrow safe code correction. Task3 new source reads remain zero. Candidate null, no report publication, no Plan03-05.

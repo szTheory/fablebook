@@ -1,10 +1,10 @@
 {
   "schema_version": "04.provenance.1",
-  "generation": "3116508059d7f7303339ba18ce7c6ce538a65e43d95d4cab8e95225a8091e904",
-  "created_at_utc": "2026-11-17T14:12:39Z",
-  "metadata_status": "blocked",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "created_at_utc": "2026-11-17T20:41:40Z",
+  "metadata_status": "supported",
   "source_access": "closed",
-  "partition_outcome": "unresolved",
+  "partition_outcome": "complete",
   "authority": {
     "status": "corroborated_metadata_only",
     "archive_path": ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json",
@@ -1183,7 +1183,7 @@
   "inputs": [
     {
       "path": ".planning/forensics/phase4-budget-reset-20261117.md",
-      "sha256": "c812b255e634b1b26c25aa3395e10b1148f6898bed6886ebbefd32cd96e2694d",
+      "sha256": "6e3af6b72b7be24c98d5ca7d0729486efe9ae865b4b9422ad38c997ebc314e09",
       "bytes": 4576
     },
     {
@@ -1303,8 +1303,8 @@
     },
     {
       "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
-      "sha256": "6ba22a179f7d1b0f60af8b98d6d1046ec9f90c6f9ac37310b82c4e85bc2e1f56",
-      "bytes": 51447
+      "sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5",
+      "bytes": 52172
     },
     {
       "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
@@ -1338,8 +1338,8 @@
     },
     {
       "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-01-PLAN.md",
-      "sha256": "0a4dc49c0de12cc7e7124bec2374fa97efd23bee6da7f495f97f30a4ab5265b6",
-      "bytes": 25867
+      "sha256": "e0225186b6da35fa07cc7ffc61cc15d92c63776e7a0b1e1ff85358c5bd5d1eee",
+      "bytes": 25857
     },
     {
       "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-CONTEXT.md",
@@ -1353,13 +1353,13 @@
     },
     {
       "path": "test/contract/tier_sweep_test.exs",
-      "sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
-      "bytes": 770285
+      "sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439",
+      "bytes": 780065
     },
     {
       "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
-      "sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
-      "bytes": 58839
+      "sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+      "bytes": 79280
     }
   ],
   "preservation": {
@@ -2125,14 +2125,14 @@
   },
   "partitions": {
     "associations": {
-      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS.jsonl",
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
       "rows": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "typed_gaps": {
-      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS.jsonl",
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
       "rows": 9716,
-      "sha256": "9c5e018d6fea75e55ae3dcb71561188b571c66a5faf84b8749d9a707b2ed9dc9",
+      "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
       "counts": {
         "source": 4849,
         "caller": 4849,
@@ -2228,5 +2228,37 @@
     "walking_skeleton": "blocked",
     "static_only": true,
     "actual_library_collision": "unknown"
+  },
+  "provenance_bridge": {
+    "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PRESERVATION-PROVENANCE-BRIDGE.json",
+    "sha256": "064d03a2514f68a739a0731808054bf1976579592befff982ce488924470fbf7",
+    "status": "passed"
+  },
+  "metadata_input_reconciliation": {
+    "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-METADATA-INPUT-RECONCILIATION.json",
+    "sha256": "36701cc4c7702acbce6bb5c3b205af3b42dab6e5158a02625a44daf580e7ad05",
+    "status": "reviewed",
+    "prior_bytes_available": false
+  },
+  "coverage_caller_trace": {
+    "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-COVERAGE-CALLER-TRACE.json",
+    "sha256": "de8e8ebc299ccab13d35ab77eed6a3f03a07ed5cbb51bb07b4407595b0c515b0",
+    "bytes": 13433
+  },
+  "sizing_digest_proof": {
+    "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SIZING-DIGEST-PROOF.json",
+    "sha256": "9d4b00b65b8a1308ffdfcff893ff3bae7067d9c4550dd818e5363e137a422b2d",
+    "bytes": 5819
+  },
+  "current_source_request_status": {
+    "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-COVERAGE-CALLER-TRACE.json",
+    "sha256": "de8e8ebc299ccab13d35ab77eed6a3f03a07ed5cbb51bb07b4407595b0c515b0",
+    "bytes": 13433,
+    "status_by_request": {
+      "R1": "consumed_incomplete",
+      "R2": "consumed_verified",
+      "R3": "consumed_verified"
+    },
+    "snapshot_note": "The source_gates field preserves the original metadata-stop snapshot. Current request execution receipts are recorded in this linked trace."
   }
 }

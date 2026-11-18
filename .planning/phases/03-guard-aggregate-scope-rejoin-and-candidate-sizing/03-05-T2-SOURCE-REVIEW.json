@@ -1,0 +1,59 @@
+{
+  "schema_version": "03-05.task2-schedule-review.1",
+  "status": "pass",
+  "source_access": "closed",
+  "author": "Codex",
+  "reviewer": "Independent provenance reviewer /root/provenance_evidence_audit",
+  "reviewer_thread_id": "/root/provenance_evidence_audit",
+  "reviewed_at_utc": "2026-11-17T23:52:30Z",
+  "schedule_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE.json",
+  "schedule_sha256": "2bbe0a54bc531431c926fcb72a7d819f31e70fdd900d3f1fb5ca2af116319b27",
+  "generation": "03-05-TASK2-20261117T234723Z",
+  "request_id": "T2-R1",
+  "findings": [],
+  "checks": {
+    "input_bindings": 18,
+    "source_selection_count": 3,
+    "complete_contract_test_blocks": [
+      {
+        "name": "two lane records reproduce the complete original-identity crosswalk",
+        "start_line": 5602,
+        "end_line": 5790
+      },
+      {
+        "name": "target source links preserve exact identities and enumerate every gap",
+        "start_line": 5794,
+        "end_line": 5937
+      },
+      {
+        "name": "source join completeness follows gaps",
+        "start_line": 5941,
+        "end_line": 5989
+      },
+      {
+        "name": "caller graph records preserve exact observations and explicit gaps",
+        "start_line": 5992,
+        "end_line": 6191
+      },
+      {
+        "name": "caller-chain index preserves duplicate edges and lowest caller arity",
+        "start_line": 6193,
+        "end_line": 6247
+      },
+      {
+        "name": "sizing validation fails closed on unknown limits and incomplete candidate evidence",
+        "start_line": 6249,
+        "end_line": 6386
+      }
+    ],
+    "retained_checkpoints": [
+      "Macro caller-AST",
+      "explanation/wording"
+    ],
+    "cumulative_output_limit_enforced": false
+  },
+  "serialized_request_metadata_from_schedule_review": {
+    "bytes": 118868,
+    "sha256": "5d9c4e5dff5f935d2067fe3a790a6d536fc73ac394bfd95a5cbc26ae5980ac6e"
+  }
+}
