@@ -1,0 +1,20 @@
+{
+  "findings": [],
+  "full_helper_identity_matches": true,
+  "input_bindings_verified": 56,
+  "manifest_bridge_binding_matches": true,
+  "payload_hash_match": true,
+  "retained_safety_stops": "unchanged",
+  "reviewed_at_utc": "2026-11-18T20:39:43.854Z",
+  "reviewer": "/root/r6_schedule_independent_check",
+  "reviewer_role": "independent metadata-only schedule reviewer",
+  "schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-SCHEDULE.json",
+  "schedule_sha256": "74bbd6a9554c5fac9b08eda5790b8a3d6f2897a03c072a080455dec97dc31c22",
+  "schema_version": "04.r6-independent-schedule-review.1",
+  "selected_span_byte_line_hash_match": true,
+  "source_body_access": "metadata only",
+  "source_body_emitted": false,
+  "source_body_read": false,
+  "source_chunks_is_null_for_single_bounded_result": true,
+  "status": "pass"
+}

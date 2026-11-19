@@ -1,6 +1,6 @@
 # CI and release efficiency
 
-Owner direction: INT-20261029-08 and INT-20261029-09. This is the standing home for CI/CD timing reviews, measured opportunities, and resolved performance decisions.
+Owner direction: INT-20261029-08, INT-20261029-09, and INT-20261118-01. This is the standing home for CI/CD timing reviews, measured opportunities, and resolved performance decisions. Review it after each completed CI or release/CD run; use measured history, preserve quality, and do not trigger a run just to produce a receipt.
 
 ## Operating policy
 
@@ -62,3 +62,21 @@ A scoped test-only change builds a map from caller/callee function pairs to the 
 The pending-MFA identities and all non-path inventory rows matched across baseline and indexed runs. Caller-chain paths differed between independent runs with both the old and new implementation (70 pending rows in the old pair; 31 in the indexed pair). That observed variation means a receipt hash is not a byte-for-byte cross-run equivalence check for caller paths. The untagged core tier-sweep module passed 53 tests, and the focused index fixture passed on both core and floor (one selected, 52 excluded in each lane; graph setup measured 20.932 s and 20.032 s). It pins duplicate handling, lowest-arity tie-breaking against the previous scan semantics, start-arity preservation, single-node fallback, and missing-edge failure. PR CI must still pass on both exact lanes before retaining the change; compare its core/floor job durations with the current-main baseline then.
 
 No dependency, cache, workflow, runtime lane, security check, or test exclusion changed. The optimization is in an isolated branch pending its exact-head CI run.
+
+## Phase 2 delivery timing review — 2026-11-13
+
+The prerequisite PR #87's post-merge main run [43445896621](https://github.com/szTheory/fablebook/actions/runs/43445896621) completed with core in 10m27s and floor in 10m14s; both required lanes overlapped. PR #88's final-head run [43449606316](https://github.com/szTheory/fablebook/actions/runs/43449606316) completed with core in 7m54s and floor in 12m12s, also in parallel.
+
+After PR #88 merged, main run [43451903473](https://github.com/szTheory/fablebook/actions/runs/43451903473) completed in about 11m36s. Core ran for 10m10s (the mix ci step took 9m49s); floor ran for 11m28s (the prod_guard test step took 11m06s). They overlapped from 15:22:08Z; floor was the critical path, with ci-gate finishing five seconds later. Dialyzer took 19s, security 29s, and the gate 3s. ci-health and nightly were skipped. The paired release-please workflow completed successfully; no package publish or deployment was part of this run.
+
+Core and floor already run concurrently, setup was brief, and these few samples do not establish a repeatable trend that justifies removing work or changing coverage. The latest floor test exceeded the 600s timing objective, but timing-only overages remain non-blocking under the existing policy. No safe low-risk CI change is justified by these measurements; keep both lanes and their current gates.
+
+## Local act preflight — 2026-11-18
+
+The PR job subset was attempted with `act` 0.2.87. The installed version could not parse the unrelated scheduled/manual `ci-health` job's `concurrency.queue` field, so a temporary copy excluded only that job. The first run was blocked by the sandbox rejecting writes to the default `~/.cache/act`; a retry used a scoped cache under `/private/tmp` and reused the existing runner image. Jobs then failed during `setup-beam`: `act` reported ARM64 OTP builds inside the requested amd64 runner container (`erlexec` was not found). The test, Dialyzer and security steps did not run, so this is an `act` environment limitation, not a candidate result. No project workflow was changed. Do not spend another cycle coercing this local runner; the existing focused/core/floor receipts cover the phase code, and hosted PR CI remains the required Linux runner evidence.
+
+## Phase 3 recovery iteration review — 2026-11-19
+
+The local verification order now has a concrete fast-feedback lesson. Run the Phase 3/4 validator self-tests and cross-artifact checks first, then formatting/Credo and the focused planning-intent corpus check, then the focused core/floor selections, and only then the full core and floor lanes. The focused intent check took 14.6s for 22 passing checks; the core CI run took 413s total, and a prior failed core run spent about 419s before finding malformed intent frontmatter. Running the intent check first could have caught that failure roughly 404s earlier; this is an estimate from those two recorded durations, not a repeat benchmark. The earlier Credo failure was a formatting-only issue and likewise belongs before long test stages.
+
+Current local measurements: the core focused selection took 60s, floor focused took 53.6s, core CI took 413s total (403.5s test stage), and the full floor suite took 403.2s. Core and floor are already separate lanes, and hosted CI is still needed on the final PR head. This single sample does not justify changing job concurrency, adding caches or dependencies, or removing coverage. Keep both lanes and every gate. The `act` setup failure above is a runner/toolchain mismatch; hosted Actions is the useful remaining check, so no further local `act` attempt is planned.

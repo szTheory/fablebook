@@ -1,18 +1,23 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.3 — Bounded ASN.1 RTT Guard Evidence",
+  "milestone": "v0.4 — Guard Aggregate Reconciliation — Fablebook",
   "phases": [
     {
-      "number": "2",
-      "name": "Bounded ASN.1 RTT guard evidence",
-      "status": "in_progress"
+      "number": "3",
+      "name": "Guard aggregate scope rejoin and candidate sizing",
+      "status": "complete"
+    },
+    {
+      "number": "4",
+      "name": "Evidence-only source and gap provenance closure",
+      "status": "pending"
     }
   ],
   "next": {
-    "command": "$gsd-progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 1 of 1 · 0% · executing"
+    "command": "$gsd-new-milestone",
+    "label": "Start a new milestone",
+    "reason": "All phases complete — start a new milestone"
   },
-  "updated_at": "2026-11-13T06:00:41.172Z"
+  "updated_at": "2026-11-19T01:37:21.937Z"
 }

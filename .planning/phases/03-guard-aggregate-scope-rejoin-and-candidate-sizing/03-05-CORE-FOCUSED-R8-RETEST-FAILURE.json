@@ -1,0 +1,60 @@
+{
+  "schema_version": "03-05-focused-failure.1",
+  "recorded_at_utc": "2026-11-18T23:29:05Z",
+  "command": "bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors",
+  "status": "failed",
+  "exit_code": 2,
+  "selection": {
+    "selected": 9,
+    "passed": 8,
+    "failed": 1,
+    "excluded": 100,
+    "duration_seconds": 52.4
+  },
+  "failure": {
+    "test": "two lane records reproduce the complete original-identity crosswalk",
+    "file": "test/contract/tier_sweep_test.exs",
+    "line": 5621,
+    "error": "MatchError: false",
+    "stack_file": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "stack_line": 1829,
+    "cause": "The Phase 4 manifest now binds the live helper through post_observation_revision; the helper still compared the manifest input hash/bytes to the pre-edit R8 snapshot instead of validating the nested R8 snapshot and current revision identities separately."
+  },
+  "inputs": {
+    "test/support/guard_aggregate_reconciliation_evidence.ex": {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "sha256": "eb4305c5aef3c0a60d8d7ef378498fef670a633c7e9e574de2a3e07bf68fbf71",
+      "bytes": 85202
+    },
+    "test/contract/tier_sweep_test.exs": {
+      "path": "test/contract/tier_sweep_test.exs",
+      "sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439",
+      "bytes": 780065
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "sha256": "4350a76a18bf3c5142d3c56a0b65e14f42ebf8d4e4aff67efd0ae64d4f17cd45",
+      "bytes": 60706
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-RECONCILIATION.md": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-RECONCILIATION.md",
+      "sha256": "a5d1252b2ec9445e3e64e336f904838e592b06ee465ebef9e463d0d4726d7b88",
+      "bytes": 7928669
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "sha256": "8f24557f45af89547f7f0fdd632d1dc075f4de5eb233c57f46d7cf4a0d5436c4",
+      "bytes": 60825
+    }
+  },
+  "log": {
+    "path": "/private/tmp/fablebook-phase3-core-focused-R8-retest.log",
+    "bytes": 1352,
+    "sha256": "bc54c4b0dab66b8eca123565d924c4e504856cd10898c6716a6b58928cdc8263",
+    "filtered_otp_inventory_lines": 318422,
+    "filter_note": "Only FABLEBOOK_OTP_INVENTORY_V2 diagnostic lines were omitted; test output and failure summary retained."
+  },
+  "later_gates": "not_run",
+  "no_retest_before_fix": true,
+  "source_request": "R8 reused only as the already-consumed pre-edit observation; no new source body request."
+}

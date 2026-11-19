@@ -1,0 +1,188 @@
+{
+  "schema_version": "04.r2-request-gate.2",
+  "request_id": "R2",
+  "status": "consumed",
+  "source_access": "closed",
+  "source_emission": true,
+  "blockers": [],
+  "missing_fields": [],
+  "gates_not_run": [],
+  "upstream_stop": {
+    "status": "blocked",
+    "reason": "The immutable Phase 3 preservation manifest differs from current bytes for the compact citation correction and two Plan 03-05 Task 1 formatting repairs.",
+    "mismatches": [
+      {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md",
+        "expected_sha256": "2843c9d29fc3e1b6a86727c905939213f3ac28b679ca75a5a5d499e80ebff478",
+        "current_sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24",
+        "current_bytes": 10193,
+        "matches": false,
+        "known_cause": "Plan 03-05 compact-schedule citation spelling correction"
+      },
+      {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "expected_sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+        "current_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+        "current_bytes": 58839,
+        "matches": false,
+        "known_cause": "Plan 03-05 Task 1 formatting repair"
+      },
+      {
+        "path": "test/contract/tier_sweep_test.exs",
+        "expected_sha256": "f97ef3bb5cb94e8c47f3baed38d3d6387808488879e5b59980e5e1f620bcf333",
+        "current_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+        "current_bytes": 770285,
+        "matches": false,
+        "known_cause": "Plan 03-05 Task 1 formatting repair"
+      }
+    ],
+    "missing_selectors": [
+      "independent exact schedule review",
+      "fresh source-request execute preflight",
+      "serialized request token count",
+      "exact post-reset session usage attribution"
+    ],
+    "selectors": {
+      "archived_ids": "/lanes/{core,floor}/rows/*/id",
+      "preserved_lane_ids": "current IDs absent from the archived 221 rows",
+      "stop_ids": "03-04-TASK2-GATE-STOP.md sorted-ID JSON block",
+      "lane_ids": "/identity_rows/*/identity/id",
+      "baseline_mfas": "/identity_rows/*/baseline_mfas",
+      "live_mfas": "/identity_rows/*/live_mfas"
+    },
+    "unavailable_domains": {
+      "graph": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      },
+      "callback": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      },
+      "delegate": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      }
+    }
+  },
+  "bindings": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "request_id": "R2",
+    "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+    "source_span": {
+      "start_line": 521,
+      "end_line": 1113,
+      "start_byte": 19368,
+      "end_byte_exclusive": 41762,
+      "encoding": "UTF-8",
+      "complete_file": false,
+      "includes_final_newline": true,
+      "span_sha256": "a1440abd808ba06ee624cb97a780e022abd20ec76f9f972fa2e1c078d523ab89"
+    },
+    "context_sha256": "506ab62930b34f2cef0ee3f1bf5cb336cb628a400bfe17f1f2d37aac5ffea244",
+    "manifest_sha256": "efe4005d20cdd2df4f31bf8c051e4156994aea3bbd46fbf16220a6e7b7d08934",
+    "schedule_sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d",
+    "review_sha256": "0c3a4b7cce143094ce68671f33f9497292048fd431aa26739edc68ccca5b32c8",
+    "preflight_sha256": "3e432a5d7af46b6b247a93af213e0da7bda695c7701b0d6a92b95728dea51a9b",
+    "count_sha256": "53ff5f91edb9c1cae7463e70d699fe8ca1357df8fb34033c5c5bd33168007dbd",
+    "serialized_request_sha256": "0502007524607fe66074a0a71684ca7424fa4fb48ed6414f0d9b58a0f5d83470",
+    "consumed_request_ids": [
+      "R1"
+    ],
+    "informational_usage_snapshot_utc": "2026-11-17T22:09:56.859Z",
+    "informational_post_reset_output_tokens": 648042,
+    "informational_recorded_working_balance": -38042
+  },
+  "created_at_utc": "2026-11-17T23:07:02.733Z",
+  "source_request_count": 2,
+  "consumed_request_ids": [
+    "R1",
+    "R2"
+  ],
+  "one_use_ready_receipt": {
+    "schema_version": "04.r2-one-use-ready.1",
+    "request_id": "R2",
+    "status": "one_use_ready",
+    "source_emission": false,
+    "bindings": {
+      "generation": "ENV-20261117-06-supported-20261117T204102Z",
+      "request_id": "R2",
+      "schedule_sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d",
+      "review_sha256": "0c3a4b7cce143094ce68671f33f9497292048fd431aa26739edc68ccca5b32c8",
+      "preflight_sha256": "3e432a5d7af46b6b247a93af213e0da7bda695c7701b0d6a92b95728dea51a9b",
+      "count_sha256": "53ff5f91edb9c1cae7463e70d699fe8ca1357df8fb34033c5c5bd33168007dbd",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_span": {
+        "start_line": 521,
+        "end_line": 1113,
+        "start_byte": 19368,
+        "end_byte_exclusive": 41762,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "a1440abd808ba06ee624cb97a780e022abd20ec76f9f972fa2e1c078d523ab89"
+      },
+      "context_sha256": "506ab62930b34f2cef0ee3f1bf5cb336cb628a400bfe17f1f2d37aac5ffea244",
+      "serialized_request_sha256": "0502007524607fe66074a0a71684ca7424fa4fb48ed6414f0d9b58a0f5d83470"
+    }
+  },
+  "analysis_status": "complete_for_scheduled_span",
+  "source_emission_receipt": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "request_id": "R2",
+    "schedule_sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d",
+    "review_sha256": "0c3a4b7cce143094ce68671f33f9497292048fd431aa26739edc68ccca5b32c8",
+    "preflight_sha256": "3e432a5d7af46b6b247a93af213e0da7bda695c7701b0d6a92b95728dea51a9b",
+    "count_sha256": "53ff5f91edb9c1cae7463e70d699fe8ca1357df8fb34033c5c5bd33168007dbd",
+    "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+    "source_span": {
+      "start_line": 521,
+      "end_line": 1113,
+      "start_byte": 19368,
+      "end_byte_exclusive": 41762,
+      "encoding": "UTF-8",
+      "complete_file": false,
+      "includes_final_newline": true,
+      "span_sha256": "a1440abd808ba06ee624cb97a780e022abd20ec76f9f972fa2e1c078d523ab89"
+    },
+    "context_sha256": "506ab62930b34f2cef0ee3f1bf5cb336cb628a400bfe17f1f2d37aac5ffea244",
+    "serialized_request_sha256": "0502007524607fe66074a0a71684ca7424fa4fb48ed6414f0d9b58a0f5d83470",
+    "status": "consumed_once",
+    "emission_count": 1,
+    "content_used_for_analysis": true,
+    "source_body_emitted_once": true,
+    "source_bytes": 22394,
+    "source_lines": 593,
+    "tool_output_truncated": false,
+    "analysis_complete": true,
+    "generation_endpoint_called": false,
+    "one_use_ready_receipt_sha256": "6f09d854d26d1752a6b544d7032ef4624623650239484ae2133427582dc50726",
+    "ledger_snapshot_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-RESOURCE-LEDGER-PRE-COUNT.json",
+    "ledger_snapshot_sha256": "5156dd5b813fcf330a30e79803041f5b170022f3fb6e65ba1090966e0fc7f009",
+    "emitted_at_utc": "2026-11-17T23:13:55.984Z",
+    "delivery_attempts": [
+      {
+        "attempt": 1,
+        "result": "wrapper_error_before_assistant_receipt",
+        "error": "ReferenceError: TextEncoder is not defined",
+        "source_analysis_received": false
+      },
+      {
+        "attempt": 2,
+        "result": "complete_marked_output",
+        "source_bytes": 22394,
+        "source_lines": 593,
+        "source_sha256": "a1440abd808ba06ee624cb97a780e022abd20ec76f9f972fa2e1c078d523ab89",
+        "tool_output_truncated": false,
+        "source_analysis_received": true
+      }
+    ]
+  },
+  "consumed_at_utc": "2026-11-17T23:13:55.984Z"
+}

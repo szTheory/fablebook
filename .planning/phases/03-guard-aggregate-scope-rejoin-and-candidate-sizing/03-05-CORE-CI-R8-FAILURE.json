@@ -1,0 +1,41 @@
+{
+  "schema_version": "03-05.core-ci-failure/1",
+  "receipt_id": "03-05-CORE-CI-R8-FAILURE",
+  "status": "failed",
+  "command": "MIX_ENV=test bin/lane core mix ci",
+  "started_at_utc": null,
+  "completed_at_utc": "2026-11-19T00:02:07.229782+00:00",
+  "exit_code": 4,
+  "failing_stage": "Credo strict readability analysis",
+  "observed_findings": [
+    "Four integer literals larger than 9999 in test/support/guard_aggregate_reconciliation_evidence.ex lacked underscores.",
+    "Compile completed; Credo exited with four readability issues; test stages were not reached."
+  ],
+  "checkout": {
+    "branch": "gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+    "head": "7317bd0ea112dbe9c2a60e15322ec6bfccc4681d"
+  },
+  "helper_identity_at_failure": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "sha256": "add4fc21d05cc3ec2a4915b4ecfbb2976e0e95ad6ad800a215e5a3a916678585",
+    "bytes": 86689
+  },
+  "other_inputs": {
+    "validator": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "sha256": "8d39106a4431638fcd53ff3064c90f22bdecd31e9d63aebcf77ec72716ad7812",
+      "bytes": 64572
+    },
+    "plan": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+      "sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5",
+      "bytes": 52172
+    }
+  },
+  "log": {
+    "path": "/private/tmp/fablebook-phase3-core-ci-R8-full.log",
+    "sha256": "df034dc9f89fce4599d244db3c47a1e6c7980372807ff6747c283334591336b7",
+    "bytes": 1417
+  },
+  "next_action": "Apply equivalent Elixir integer digit separators; preserve numeric values; rerun cheap format/Credo/self-test checks, rebind Phase 4 current-helper metadata, then retry core CI once on the repaired generation."
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "03-05.validator-review.1",
+  "status": "pass",
+  "reviewed_at_utc": "2026-11-18T23:50:34Z",
+  "reviewer": "/root/phase3_security_audit",
+  "reviewer_role": "independent focused validator reviewer",
+  "subject": {
+    "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+    "sha256": "8d39106a4431638fcd53ff3064c90f22bdecd31e9d63aebcf77ec72716ad7812",
+    "bytes": 64572
+  },
+  "findings": [],
+  "scope_note": "Verified the live manifest input and revision receipt bind the current helper and preserved R8 snapshot separately. The R8 source span bounds use scheduled source-file bytes/lines, never offsets from edited live bytes. All three focused failures, R2/R3 historical schedules, and unresolved claims/stops remain exact. Negative fixtures fail closed on stale/mismatched span and identity bindings. No tests or source files were read."
+}

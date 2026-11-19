@@ -1,46 +1,39 @@
-# Requirements: v0.3 Bounded ASN.1 RTT Guard Evidence
+# Requirements: Fablebook
 
-**Defined:** 2026-11-12  
-**Milestone goal:** Establish source-backed dispositions for three pending EX-107 RTT functions on both pinned lanes while preserving the original row and every wider safety gate.  
-**Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, is visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
+## Milestone v0.4: Guard Aggregate Reconciliation
 
-## v0.3 Requirements
+**Goal:** Produce a current, source-linked rejoin of the complete surviving guard scope on both pinned lanes, then size a bounded candidate for the next owner decision.
 
-### Bounded guard evidence
+### Guard Scope Reconciliation
 
-- [ ] **GRC-04**: Before executable phase planning, the reviewed context revalidates the complete current EX-107 match set independently on core and floor, confirms the approved selection (`asn1ct_rtt:assert_defined/1`, `code/0`, and `dependencies/1`) and exact remaining complement against the archived evidence, and records the lane-specific source identities. Any membership or identity mismatch stops the slice for rescoping; counts alone do not establish membership. Existing source, context, task, plan, and effort bounds remain in force. (INT-20261111-13, INT-20261111-01, INT-20261110-01, ADR 0021)
-
-- [ ] **GRC-05**: For each selected function on each lane, the evidence records exact source spans, its direct caller path, and a source-backed disposition. Each function has individually non-vacuous positive and negative controls. The large literal table in `code/0` is checked by the bounded byte-only procedure outside the prompt; audited APIs are never invoked, and runtime behavior, dynamic callers, and native internals remain unproven. (INT-20261111-13, INT-20261110-01, ADR 0004, ADR 0021)
-
-- [ ] **GRC-06**: The selected slice is delivered through the existing reviewed-candidate, exact-head, and required CI gates. Preserve EX-107's complete identity, selected/remainder partition, inherited limits, and every existing safety stop. Completion applies only to this slice: it does not close the full EX-107 row or guard aggregate, unblock Walking Skeleton, resolve SEC-01, or authorize automatic follow-up work. (INT-20261111-13, INT-20261111-01, INT-20261110-01, ADR 0021)
+- [x] **GSR-01**: A repeatable read-only procedure, using existing support or a narrowly scoped collector if needed, inventories the current target modules and exports on core and floor using the pinned runtimes and records lane identity and inventory provenance. It does not invoke audited OTP functions, callbacks, atom sinks, or generated code paths. (INT-20261113-02, INT-20261111-13, INT-20261111-01, ADR 0004, ADR 0021)
+- [x] **GSR-02**: The rejoin maps every original guard exclusion identity to its current row owner and exact live per-lane MFA set, preserving delivered dispositions and reporting exact missing, added, and pending members. Counts alone do not establish equality; the full selected and pending complements are inspectable. (INT-20261113-02, INT-20261111-01, INT-20261111-13, ADR 0021)
+- [x] **GSR-03**: For surviving scope on both lanes, the evidence links each row's matched targets to exact source identities and relevant caller/delegate paths. Missing source, caller, or provenance evidence is reported as an open gap and prevents candidate selection. (INT-20261113-02, INT-20261111-01, ADR 0021)
+- [x] **GSR-04**: The output preserves prior delivery receipts and keeps distinct historical partitions distinct, including the delivered EX-010 scope and EX-107's 3/174 and historical 13/164/161 partitions. It does not reinterpret a prior slice as aggregate closure. (INT-20261113-02, INT-20261112-03, INT-20261111-13, ADR 0021)
+- [x] **GSR-05**: The rejoin produces current source-file, context-token, and effort sizing for a candidate bounded increment. Any proposal fits the 100,000-token planning limit, at most five exact-source files per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan; otherwise it reports the concrete gap without truncation or substitution. (INT-20261113-02, INT-20261110-01, INT-20261111-13, ADR 0021)
+- [x] **GSR-06**: The milestone ends with an inspectable owner decision point for any later guard implementation. It preserves the actual-library collision stop, the static-only boundary, SEC-01 ownership, the open aggregate gate, and the Walking Skeleton block. It does not add guard dispositions or claim aggregate closure. (INT-20261113-02, INT-20261111-01, INT-20261111-13, ADR 0004, ADR 0021)
 
 ## Future Requirements
 
-No additional future requirement is promoted into v0.3. The full EX-107 row, installed-wide remainder, guard aggregate, Walking Skeleton prerequisites, SEC-01, acknowledged unresolved deferrals, and product commitments retain their existing owners and status in the [product requirements](references/PRODUCT-REQUIREMENTS.md), [planning gates](references/PLANNING-GATES.json), and [carry-forward register](migrations/2026-11-11-milestone-reset/CARRY-FORWARD.md).
+- A separately selected and measured guard implementation increment, if the owner chooses one after reviewing GSR-01 through GSR-06.
+- Complete aggregate-scoped acceptance and installed-wide proof before the Walking Skeleton can start.
+- Controls and first bundle work for SEC-01 under its existing owner.
 
 ## Out of Scope
 
-| Item | Reason |
-|---|---|
-| Invoking the audited functions or claiming runtime safety | This milestone establishes static source and caller evidence only; ADR 0004 remains in force. |
-| Closing EX-107 as a whole, the guard aggregate, or the installed-wide remainder | Only the approved three-function slice is in scope; the complete row and pending complement remain visible. |
-| Unblocking Walking Skeleton or resolving SEC-01 | Their separate aggregate and Controls / first-bundle owners remain unchanged. |
-| Selecting or automatically starting another guard increment | Each bounded milestone requires a fresh owner decision. |
-| Implementing Fablebook or Logistify brand canon, catalogs, screens, or demo flows | These are later product-roadmap work with separate prerequisites and milestone approval. |
+- Repeating the delivered EX-010 or EX-107 implementation slices.
+- Runtime safety claims, audited API invocation, dynamic caller absence, native internals, or SEC-01 closure.
+- Changing the manual actual-library-collision stop, Macro caller-AST checkpoint, explanation-wording review, or any other inherited safety boundary.
+- Walking Skeleton, product UI, brand canon, demo app, or dogfood implementation.
+- Replacing the original ledger, weakening a gate, or adding a general-purpose audit framework.
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|---|---|---|
-| GRC-04 | Phase 2 | Pending (local full core/floor suites pass; exact reviewed-head verification remains) |
-| GRC-05 | Phase 2 | Pending (local full core/floor suites pass; exact reviewed-head verification remains) |
-| GRC-06 | Phase 2 | Pending (local readiness passes; the Phase 2 PR and exact-head hosted delivery receipts remain pending) |
-
-**Coverage:**
-- v0.3 requirements: 3 total
-- Mapped to phases: 3
-- Unmapped: 0
-
----
-*Requirements approved: 2026-11-12*  
-*Last updated: 2026-11-12 after roadmap approval, traceability mapping and phase-number correction.*
+| Requirement | Phase | Outcome |
+|---|---:|---|
+| GSR-01 | Phase 3 | Repeatable read-only inventory with exact lane provenance |
+| GSR-02 | Phase 3 | Full original-row to exact per-lane MFA rejoin |
+| GSR-03 | Phase 3 | Source identity and caller/delegate crosswalk |
+| GSR-04 | Phase 3 | Delivered receipts and historical partitions preserved |
+| GSR-05 | Phase 3 | Current sizing and bounded candidate or concrete fit gap |
+| GSR-06 | Phase 3 | Owner decision point with all safety stops intact |

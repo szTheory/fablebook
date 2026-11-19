@@ -1,0 +1,22 @@
+{
+  "schema_version": "03-05.task2-source-schedule-review.1",
+  "subject_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER.json",
+  "subject_sha256": "8b6283cf2396d6c94672471582e8e523e392645bfafde5f4c5eb797f924fbb11",
+  "reviewer": "independent provenance evidence audit agent",
+  "result": "revise",
+  "findings": [
+    {
+      "request_id": "T2-R3",
+      "severity": "required",
+      "finding": "The selected contract span starts at line 5992 and omits the immediately preceding @tag at line 5991; preserve and check the existing guard_aggregate_reconciliation tag by extending the span start to 5991."
+    },
+    {
+      "scope": "R2-R6",
+      "severity": "required",
+      "finding": "The contexts call each replacement slice disjoint without qualifying that some spans overlap the consumed-incomplete R1 body. State explicitly that R2-R6 are pairwise disjoint, may overlap R1, and R1 remains excluded and unreplayed."
+    }
+  ],
+  "source_bodies_read": false,
+  "files_modified_by_reviewer": false,
+  "reviewed_at_utc": "2026-11-18T00:02:58.600796+00:00"
+}

@@ -1,0 +1,107 @@
+{
+  "schema_version": "04.r6-schedule-review.1",
+  "created_at_utc": "2026-11-18T20:34:22Z",
+  "schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-SCHEDULE.json",
+  "schedule_sha256": "74bbd6a9554c5fac9b08eda5790b8a3d6f2897a03c072a080455dec97dc31c22",
+  "schedule_bytes": 17908,
+  "request_id": "R6",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "source_sha256": "15a9f27f05492b8a5cdf39eeff267595c95ce18925ea983d5b3d6c68c6d31edf",
+  "context_sha256": "a87967a2dbbdaf2f9ed30429757e52c85ad7ca3f84609e62f238afe761d452ab",
+  "reviewer": "/root/phase3_security_audit",
+  "reviewer_role": "independent metadata-only provenance schedule reviewer",
+  "reviewed_at_utc": "2026-11-18T20:26:41Z",
+  "independent_of_schedule_author": true,
+  "status": "pass",
+  "findings": [],
+  "input_binding_count": 56,
+  "input_file_hashes_recomputed": 55,
+  "helper_input_binding_matches_schedule_manifest_and_prior_review": true,
+  "source_body_access": "metadata-only; no helper content displayed or analyzed",
+  "source_body_read": false,
+  "source_body_analyzed": false,
+  "source_body_emitted": false,
+  "source_identity": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "sha256": "15a9f27f05492b8a5cdf39eeff267595c95ce18925ea983d5b3d6c68c6d31edf",
+    "bytes": 83785,
+    "full_hash_matches_schedule_and_manifest_input": true,
+    "current_helper_bytes_read_for_this_review": false,
+    "prior_review_hash_binding_preserved": true
+  },
+  "source_span": {
+    "complete_file": false,
+    "encoding": "UTF-8",
+    "end_byte_exclusive": 71388,
+    "end_line": 1915,
+    "includes_final_newline": true,
+    "span_sha256": "ab130b8e64c9b1a5c880cd00c0135002f7c473aeb5938ec1a1f52a903fc193e0",
+    "start_byte": 63660,
+    "start_line": 1748
+  },
+  "source_span_validation": {
+    "bytes": 7728,
+    "line_and_byte_boundaries_match_preserved_review": true,
+    "span_hash_matches_preserved_review": true,
+    "source_chunks": null,
+    "selected_span_and_payload_bindings_unchanged_from_preserved_review": true
+  },
+  "request_payload": {
+    "framing": "UTF-8 context_text + two LF + \"# Exact scheduled source selection\" + one LF + exact selected span bytes",
+    "context_bytes": 1257,
+    "context_sha256": "a87967a2dbbdaf2f9ed30429757e52c85ad7ca3f84609e62f238afe761d452ab",
+    "payload_bytes": 9022,
+    "payload_sha256": "d7523333743ace6303c6a5d934523dd01ca72daac0d6c3338df22b51291528a7",
+    "matches_declared_hash": true,
+    "payload_hash_matches_preserved_direct_count": true,
+    "payload_recomputed_from_helper_bytes_in_this_review": false,
+    "generation": false,
+    "no_truncation": true,
+    "configured_context_tokens": 200000
+  },
+  "request_history": [
+    {"request_id": "R1", "status": "consumed_incomplete", "usable_for_claims": false},
+    {"request_id": "R2", "status": "consumed_verified", "usable_for_claims": true},
+    {"request_id": "R3", "status": "consumed_verified", "usable_for_claims": true},
+    {"request_id": "R4", "status": "consumed_incomplete", "usable_for_claims": false},
+    {"request_id": "R5", "status": "consumed_verified", "usable_for_claims": true}
+  ],
+  "execution_order": {
+    "fresh_execute_preflight_current_for_revision_1": false,
+    "direct_count_current_for_revision_1": false,
+    "prior_preflight_and_count_preserved_as_revise_00": true,
+    "fresh_execute_preflight_and_direct_count_required_before_gate": true,
+    "one_use_gate_present": false,
+    "source_emission": false,
+    "schedule_review_precedes_preflight_and_direct_count": true,
+    "replay_allowed": false
+  },
+  "preservation_bridge": {
+    "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PRESERVATION-PROVENANCE-BRIDGE.json",
+    "sha256": "ec77d4c49c10cfe886141bceefdb1ca093bad9aa49890dc2d69aa1bb73fb9c3c",
+    "matches_schedule_input": true,
+    "independent_review_status": "pass",
+    "independent_review_subject_sha256": "8b3ef5be8d0252b601fce9cbc822fb9ac6a2986b31394a61721ae04757f0d875"
+  },
+  "revision": {
+    "number": 1,
+    "supersedes_schedule_sha256": "e3d93f9429ce4bc3910b9e85087e139bd3f5552d5587e42bf091cb2037ffa57c",
+    "preserved_prior_review": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-SCHEDULE-REVIEW-REVISE-00.json",
+    "source_chunks_is_null_for_single_bounded_result": true,
+    "no_source_emission": true
+  },
+  "retained_safety_stops": [
+    "generator_revision_mismatch unresolved",
+    "source resolution unresolved",
+    "caller closure incomplete",
+    "legacy digest unresolved",
+    "candidate null",
+    "implementation unauthorized",
+    "actual-library collision unknown",
+    "Macro caller-AST and explanation checkpoints unresolved",
+    "aggregate gate open",
+    "Walking Skeleton blocked",
+    "SEC-01 Pending",
+    "all other existing safety stops"
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "candidate_fit": "not established; candidate remains null",
+  "claims_not_made": [
+    "legacy digest reproduction",
+    "source resolution",
+    "caller closure",
+    "candidate fit"
+  ],
+  "created_at_utc": "2026-11-18T22:40:28Z",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "generator_revision_mismatch": {
+    "claim_scope": "current-helper identity only",
+    "current_request_observation": {
+      "bytes": 83805,
+      "claim_scope": "current-helper identity only",
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "request_id": "R8",
+      "sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+      "source_span": {
+        "complete_file": false,
+        "encoding": "UTF-8",
+        "start_line": 1748,
+        "end_line": 1923,
+        "start_byte": 63660,
+        "end_byte_exclusive": 71408,
+        "span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+        "includes_final_newline": true
+      },
+      "status": "consumed_verified"
+    },
+    "historical_producer_identity": {
+      "bytes": 58839,
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "request_ids": [
+        "R2",
+        "R3"
+      ],
+      "sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6"
+    },
+    "reason": "R2/R3 preserve historical producer identity; R5 is the complete pre-repair helper snapshot; R6 preserves the pre-format helper span; R7 delivery is unverified and excluded; R8 verifies the current helper identity span only. Historical/current generator revision mismatch remains unresolved; source resolution and caller closure remain incomplete.",
+    "status": "unresolved"
+  },
+  "legacy_recipe": {
+    "digest": null,
+    "encoding": ":erlang.term_to_binary(value, [:deterministic]) followed by SHA-256 and lowercase hexadecimal encoding, as observed in the R3 helper span",
+    "field_order": null,
+    "reason": "The retained sizing projection contains nested digest outputs and summary hashes, not the exact Erlang term values passed to digest/1. The legacy selector and field order cannot be reproduced from retained inputs.",
+    "selector": null,
+    "status": "unresolved"
+  },
+  "schema_version": "04.sizing-digest-proof.2",
+  "source_access": "closed",
+  "source_requests": {
+    "R1": {
+      "gate_receipt_sha256": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15",
+      "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+      "status": "consumed_incomplete"
+    },
+    "R2": {
+      "gate_receipt_sha256": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930",
+      "schedule_sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d",
+      "status": "consumed_verified"
+    },
+    "R3": {
+      "gate_receipt_sha256": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482",
+      "schedule_sha256": "b996dc547c4e0a34ea9fdf250ab83bb1d633f128686b1026fdd6073e4681900c",
+      "status": "consumed_verified"
+    },
+    "R4": {
+      "gate_receipt_sha256": "d4b3b1d6fa9995543b969b01f6d9227a50eb3b7fc78ca1285630cef2c2645cde",
+      "schedule_sha256": "858a5cf3c6a15e4bcd9c805123edcac74c314ebc04669f45fd3f39275d5010a0",
+      "status": "consumed_incomplete"
+    },
+    "R5": {
+      "gate_receipt_sha256": "12ba9d4efb78c955a4f8c1267866285bb3e92f465ce03d7c84b11b72854dba6e",
+      "schedule_sha256": "5dc83e36116092d808e3db0e1d590953d10fae19db0bb0b39dcc3794943ad604",
+      "status": "consumed_verified"
+    },
+    "R6": {
+      "gate_receipt_sha256": "5e30216d14d1ce465f49bd846f4dcda4cc914cd610de1a7feebda4c259570d08",
+      "schedule_sha256": "74bbd6a9554c5fac9b08eda5790b8a3d6f2897a03c072a080455dec97dc31c22",
+      "status": "consumed_verified"
+    }
+  },
+  "status": "legacy_unresolved_with_versioned_integrity_supplement",
+  "supplement": {
+    "canonical_payload": {
+      "generation": "ENV-20261117-06-supported-20261117T204102Z",
+      "meaning": "Integrity digest for this explicitly versioned evidence selection. It is not the historical nested digest and does not prove source resolution, caller closure, or candidate fit.",
+      "schema": "fablebook.phase4.sizing-integrity-supplement/1",
+      "selector": {
+        "R2_span": {
+          "context_sha256": "506ab62930b34f2cef0ee3f1bf5cb336cb628a400bfe17f1f2d37aac5ffea244",
+          "count_sha256": "53ff5f91edb9c1cae7463e70d699fe8ca1357df8fb34033c5c5bd33168007dbd",
+          "request_id": "R2",
+          "schedule_sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d",
+          "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "source_span": {
+            "complete_file": false,
+            "encoding": "UTF-8",
+            "end_byte_exclusive": 41762,
+            "end_line": 1113,
+            "includes_final_newline": true,
+            "span_sha256": "a1440abd808ba06ee624cb97a780e022abd20ec76f9f972fa2e1c078d523ab89",
+            "start_byte": 19368,
+            "start_line": 521
+          }
+        },
+        "R3_span": {
+          "context_sha256": "e012fa88baf557875cb9cf33a80de19b68ec0e85d818ede2cc5051f4ee75a43f",
+          "count_sha256": "336fb7fe776d50195641bf4ecc054ee4a1fa447e351d9e5116166d6c1439e625",
+          "request_id": "R3",
+          "schedule_sha256": "b996dc547c4e0a34ea9fdf250ab83bb1d633f128686b1026fdd6073e4681900c",
+          "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "source_span": {
+            "complete_file": false,
+            "encoding": "UTF-8",
+            "end_byte_exclusive": 54843,
+            "end_line": 1497,
+            "includes_final_newline": true,
+            "span_sha256": "8256f4866d59d66300950c641fefafe2c1ad9f7384ff39ab19add1ea05df75df",
+            "start_byte": 41762,
+            "start_line": 1114
+          }
+        },
+        "association_partition": {
+          "bytes": 0,
+          "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "core_lane_evidence": {
+          "bytes": 1418156,
+          "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
+          "sha256": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd"
+        },
+        "floor_lane_evidence": {
+          "bytes": 1390810,
+          "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json",
+          "sha256": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d"
+        },
+        "helper_source_identity": {
+          "bytes": 58839,
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6"
+        },
+        "phase3_sizing": {
+          "bytes": 38400,
+          "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-SIZING.json",
+          "sha256": "2ad9d75a45800786bba116166eb64ca304781c101ae0bdfe851a32cc172430bb"
+        },
+        "typed_gap_partition": {
+          "bytes": 19633625,
+          "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+          "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011"
+        }
+      }
+    },
+    "digest": "16deed38c690d0e9df3508a453b6a8c34ac7c1f207784b6a3c414d4c1e8d6bfe",
+    "digest_algorithm": "SHA-256 lowercase hexadecimal",
+    "encoding": "UTF-8 JSON; sorted keys; compact separators; no digest field in hashed payload",
+    "schema": "fablebook.phase4.sizing-integrity-supplement/1",
+    "selector": "canonical_payload.selector",
+    "serialized_bytes": 2832,
+    "status": "verified_integrity_only"
+  }
+}

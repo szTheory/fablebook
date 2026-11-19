@@ -1,0 +1,149 @@
+{
+  "schema_version": "04.r8-one-use-ready.1",
+  "created_at_utc": "2026-11-18T22:26:37Z",
+  "request_id": "R8",
+  "status": "one_use_ready",
+  "source_emission": false,
+  "bindings": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "request_id": "R8",
+    "source_sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+    "source_span": {
+      "complete_file": false,
+      "encoding": "UTF-8",
+      "start_line": 1748,
+      "end_line": 1923,
+      "start_byte": 63660,
+      "end_byte_exclusive": 71408,
+      "span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+      "includes_final_newline": true
+    },
+    "context_sha256": "c0bea83bc853994c12f0d546b1c22499181689d5e5baec6a41dbd2ced06d99d6",
+    "manifest_sha256": "0dfd5c808914746aca9f4b33b139b5d5884791e287655a9d1e25afc8410d3414",
+    "schedule_sha256": "869b30595af03c58ceabf4af69f7fec516968198305d2119ea4f09d65a4d9633",
+    "review_sha256": "bce06ff31bed8f0fc3e669809fb7112ed26fdada2107a59c58ea97077304071e",
+    "preflight_sha256": "17a85639f8700a3b0361579fa58331f70e3a233d76b620483cc7636d06d0d53f",
+    "count_sha256": "4e4ed6e2c92e9e761236be6569857b13771f4f288a56acabe127d47c5281e8c1",
+    "serialized_request_sha256": "8d0bcb9cf040be997402e049ee58ee294d9bbd12f3353fe3174ee85df467635c",
+    "consumed_request_ids": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6",
+      "R7"
+    ],
+    "informational_usage_snapshot_utc": "2026-11-18T20:43:31.026Z",
+    "informational_post_reset_output_tokens": 648042,
+    "informational_recorded_working_balance": -38042
+  },
+  "gate_result": {
+    "schema_version": "04.request-gate.2",
+    "request_id": "R8",
+    "status": "one_use_ready",
+    "source_access": "closed",
+    "source_emission": false,
+    "blockers": [],
+    "missing_fields": [],
+    "gates_not_run": [],
+    "upstream_stop": {
+      "status": "blocked",
+      "reason": "The immutable Phase 3 preservation manifest differs from current bytes for the compact citation correction and two Plan 03-05 Task 1 formatting repairs.",
+      "mismatches": [
+        {
+          "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md",
+          "expected_sha256": "2843c9d29fc3e1b6a86727c905939213f3ac28b679ca75a5a5d499e80ebff478",
+          "current_sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24",
+          "current_bytes": 10193,
+          "matches": false,
+          "known_cause": "Plan 03-05 compact-schedule citation spelling correction"
+        },
+        {
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "expected_sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+          "current_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "current_bytes": 58839,
+          "matches": false,
+          "known_cause": "Plan 03-05 Task 1 formatting repair"
+        },
+        {
+          "path": "test/contract/tier_sweep_test.exs",
+          "expected_sha256": "f97ef3bb5cb94e8c47f3baed38d3d6387808488879e5b59980e5e1f620bcf333",
+          "current_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+          "current_bytes": 770285,
+          "matches": false,
+          "known_cause": "Plan 03-05 Task 1 formatting repair"
+        }
+      ],
+      "missing_selectors": [
+        "independent exact schedule review",
+        "fresh source-request execute preflight",
+        "serialized request token count",
+        "exact post-reset session usage attribution"
+      ],
+      "selectors": {
+        "archived_ids": "/lanes/{core,floor}/rows/*/id",
+        "baseline_mfas": "/identity_rows/*/baseline_mfas",
+        "lane_ids": "/identity_rows/*/identity/id",
+        "live_mfas": "/identity_rows/*/live_mfas",
+        "preserved_lane_ids": "current IDs absent from the archived 221 rows",
+        "stop_ids": "03-04-TASK2-GATE-STOP.md sorted-ID JSON block"
+      },
+      "unavailable_domains": {
+        "callback": {
+          "expected_keys": null,
+          "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows.",
+          "selector": null,
+          "status": "not_keyed_in_retained_metadata"
+        },
+        "delegate": {
+          "expected_keys": null,
+          "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows.",
+          "selector": null,
+          "status": "not_keyed_in_retained_metadata"
+        },
+        "graph": {
+          "expected_keys": null,
+          "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows.",
+          "selector": null,
+          "status": "not_keyed_in_retained_metadata"
+        }
+      }
+    },
+    "bindings": {
+      "generation": "ENV-20261117-06-supported-20261117T204102Z",
+      "request_id": "R8",
+      "source_sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+      "source_span": {
+        "complete_file": false,
+        "encoding": "UTF-8",
+        "start_line": 1748,
+        "end_line": 1923,
+        "start_byte": 63660,
+        "end_byte_exclusive": 71408,
+        "span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+        "includes_final_newline": true
+      },
+      "context_sha256": "c0bea83bc853994c12f0d546b1c22499181689d5e5baec6a41dbd2ced06d99d6",
+      "manifest_sha256": "0dfd5c808914746aca9f4b33b139b5d5884791e287655a9d1e25afc8410d3414",
+      "schedule_sha256": "869b30595af03c58ceabf4af69f7fec516968198305d2119ea4f09d65a4d9633",
+      "review_sha256": "bce06ff31bed8f0fc3e669809fb7112ed26fdada2107a59c58ea97077304071e",
+      "preflight_sha256": "17a85639f8700a3b0361579fa58331f70e3a233d76b620483cc7636d06d0d53f",
+      "count_sha256": "4e4ed6e2c92e9e761236be6569857b13771f4f288a56acabe127d47c5281e8c1",
+      "serialized_request_sha256": "8d0bcb9cf040be997402e049ee58ee294d9bbd12f3353fe3174ee85df467635c",
+      "consumed_request_ids": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6",
+        "R7"
+      ],
+      "informational_usage_snapshot_utc": "2026-11-18T20:43:31.026Z",
+      "informational_post_reset_output_tokens": 648042,
+      "informational_recorded_working_balance": -38042
+    }
+  }
+}

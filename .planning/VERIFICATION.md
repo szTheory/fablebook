@@ -11,6 +11,7 @@ Owner direction: INT-20261029-08. Applies to every GSD discussion, plan, executi
 7. Hand off only irreducible human judgment (such as accepting a visual baseline or the owner's preference), inaccessible authority, or a real unresolved product decision. State the exact residual and why tools cannot resolve it. Keep existing gates, visual-baseline rules and honesty requirements intact.
 8. Whenever CI is in scope or a run finishes, inspect the measured critical path and current history for recurring, low-risk iteration-time improvements (queue time, duplicated work, avoidable serialization, cache misses and slow setup/test steps). Preserve all quality gates, required coverage and thresholds. Change CI only when the evidence shows a repeatable gain with no loss of coverage; otherwise record that no safe low-hanging improvement was found. Do not trigger extra runs only to create a receipt; batch CI evidence with substantive changes.
 9. Treat CI duration budgets as feedback-time objectives unless the owner has explicitly approved them as release gates. A timing-only overage stays visible in reporting and a performance issue; it does not become a quality-regression release blocker or prevent phase closure. Preserve correctness, security, compatibility, required-check and release-smoke gates.
+10. For serial GSD work, stay in the current checkout. `--ws` selects a logical workstream; it does not create filesystem isolation. Use another worktree only for actual parallel work or a concrete isolation need. Keep assistant/session context limits separate from owner-approved project source, effort, reserve and safety budgets; do not stop authorized work on an extra cumulative assistant-side ceiling or ask for repeated small budget increases. If a project budget really needs revision, measure the complete remaining authorized work once and propose one viable bounded path.
 
 INT-20261029-05 still applies: finish the requested GSD step and show its next command; the owner chooses when to advance. Autonomous verification does not enable workflow auto-advance.
 
@@ -19,6 +20,16 @@ INT-20261029-09: End every GSD response with a concrete next command and its pur
 ## Historical release-pipeline Phase 1 receipt
 
 `milestones/v0.1-phases/01-release-pipeline-ci-gate-and-guards/01-UAT.md` maps acceptance to executable checks and live read-only evidence. `test/contract/ci_health_test.exs` exercises `bin/ci_health` through a fake GitHub CLI, including percentile boundaries, history eligibility, drift and regression reporting; it runs in the existing core/floor test suites. Existing package, prod-guard, release-workflow, ban and planning contracts remain the primary proofs. Consult this historical receipt before proposing another release-pipeline walkthrough; it is not the active v0.2 guard Phase 1.
+
+## Automation-first verification defaults — INT-20261118-01
+
+Before creating or continuing UAT, map every checkpoint to the current phase's stated deliverable and its existing receipts. Separate current-phase acceptance from a later product decision or authorization. When an already-approved decision covers the current bounded result, do not ask the owner to repeat it. Convert machine-checkable expectations into deterministic local checks with negative controls where useful, mark them source: automated, and keep genuinely irreducible owner judgment or authority as the only human handoff. A future decision that is not needed for the current deliverable remains a recorded stop; it does not become a UAT blocker.
+
+Use the cheapest useful evidence first: diff and schema checks, hashes and provenance bindings, then a focused test or seam, then integration/smoke checks, then the full required suites. Stop at the first failure and fix its cause before proceeding. Reuse a passing receipt only when its tested revision, dependencies, environment, and guarded inputs are unchanged; otherwise rerun only the checks invalidated by the change. One-off or throwaway checks are welcome when they answer a real question, but do not add them to CI unless they protect recurring behavior.
+
+For serial work, stay in the current checkout. The --ws flag selects a logical GSD workstream, not a filesystem checkout. Use another worktree only for real parallel work or a concrete isolation/preservation need; preserve dirty recovery checkouts and follow their recorded transfer instructions.
+
+This policy applies to verification, review, CI, and release/CD. After each completed CI or release run, use the measured critical path and comparable history to look for safe reductions in queue time, repeated setup/work, serialization, retries, or output volume. Make recurring changes only when they improve feedback time without reducing coverage, security, or release confidence; record when the evidence supports no change. See CI-PERFORMANCE.md.
 
 ## CI efficiency review
 

@@ -1,0 +1,68 @@
+{
+  "compact_request_count": 0,
+  "compact_request_tokens": null,
+  "count_status": "not_run",
+  "cumulative_fit": "unverifiable",
+  "effective_at_utc": "2026-11-17T13:49:13Z",
+  "generated_output_ceiling": 150000,
+  "paths_redacted": true,
+  "planned_remaining_allocations": {
+    "03-05-tasks-2-and-3": 20000,
+    "04-02-and-04-03": 29000,
+    "note": "Existing plan caps; not measured usage. This exceeds the 37,200 child-only working balance before unknown parent output.",
+    "total": 49000
+  },
+  "post_reset_usage": {
+    "cached_input_tokens": null,
+    "input_tokens": null,
+    "measured_child_session": {
+      "cached_input_tokens": 8490752,
+      "first_usage_at_utc": "2026-11-17T13:54:24.574Z",
+      "input_tokens": 8660005,
+      "latest_usage_at_utc": "2026-11-17T14:47:52.189Z",
+      "output_tokens": 81800,
+      "session_log_path": "~/.codex/sessions/2026/11/17/rollout-2026-11-17T08-53-51-01a1e9c9-1241-7733-b115-68ff213e25db.jsonl",
+      "session_log_sha256": "d9d7c2001307ed44399d11b2c61d86215ae645e8257a91650306245ae34d4a63",
+      "thread_id": "01a1e9c9-1241-7733-b115-68ff213e25db"
+    },
+    "output_tokens": null,
+    "plan_cap_review": {
+      "04-01-01": 8000,
+      "04-01-02": 3000,
+      "measured_child_output_across_04-01_and_04-02_setup": 81800,
+      "note": "The child session output exceeds the combined 11,000 token allocation; the exact task-level split and parent output are unavailable.",
+      "overrun": true,
+      "per_task_split": null
+    },
+    "reason": "Child-session output is measured, but the root/orchestrator output is unavailable and the child work spans 04-01 plus 04-02 setup. Full cumulative use and remaining balance cannot be established; preserve the 31,000 reserve and stop before further plans.",
+    "session_attribution": "Partial: executor child measured; parent/orchestrator and aggregate totals are unavailable",
+    "session_log_path": null,
+    "session_log_sha256": null,
+    "task_attribution": "Phase 4 Plan 04-01 execution plus Plan 04-02 setup; task split is not measurable"
+  },
+  "protected_reserve": 31000,
+  "protected_reserve_preserved": null,
+  "remaining_total_balance": null,
+  "remaining_working_balance": null,
+  "reset_receipt": ".planning/forensics/phase4-budget-reset-20261117.md",
+  "reset_receipt_sha256": "c812b255e634b1b26c25aa3395e10b1148f6898bed6886ebbefd32cd96e2694d",
+  "review_status": "not_run",
+  "schema_version": "04.resource-ledger.1",
+  "source_access": "closed",
+  "source_request_count": 0,
+  "source_request_execute_preflight": "not_run",
+  "source_snapshot_sha256": "7e3e10c292a7ed10ce04cb677f8f21b874b1ee6475339ec5e9c2e67414cdff3d",
+  "starting_generated_output_usage": 0,
+  "status": "cumulative_usage_unverifiable",
+  "stop_rule": "Measured child output exceeds the Plan 04-01 combined task allocation, while parent/orchestrator output and total balance are unavailable. Do not continue Plan 04-02 or Phase 3 under this envelope until a measured, affordable replan is approved. Source access, direct count and source-dependent suites remain closed.",
+  "task_caps": {
+    "03-05-remaining": 20000,
+    "04-01-01": 8000,
+    "04-01-02": 3000,
+    "04-02-01": 3000,
+    "04-02-02": 18000,
+    "04-03-01": 5000,
+    "04-03-02": 3000
+  },
+  "working_ceiling": 119000
+}

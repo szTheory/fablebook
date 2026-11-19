@@ -558,6 +558,10 @@ defmodule Fablebook.Contract.CiShapeTest do
         ignored?(filters, "test/fixtures/x.ex"),
         {:ignore_filters, "mix.exs", "test/fixtures/x.ex"}
       ) ++
+      check(
+        ignored?(filters, "test/support/git_diff.ex"),
+        {:ignore_filters, "mix.exs", "test/support/git_diff.ex"}
+      ) ++
       for(
         path <- ~w(test/contract/x_test.exs test/planning/x_test.exs),
         ignored?(filters, path),
@@ -623,7 +627,10 @@ defmodule Fablebook.Contract.CiShapeTest do
   defp wiring_config do
     [
       aliases: [ci: ["format --check-formatted", @ci_test_step]],
-      test_ignore_filters: [&String.starts_with?(&1, "test/fixtures/")]
+      test_ignore_filters: [
+        &String.starts_with?(&1, "test/fixtures/"),
+        &String.starts_with?(&1, "test/support/")
+      ]
     ]
   end
 

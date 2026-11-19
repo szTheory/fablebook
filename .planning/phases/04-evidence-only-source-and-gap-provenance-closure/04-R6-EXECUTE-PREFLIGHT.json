@@ -1,0 +1,33 @@
+{
+  "command": "bin/planning_health --stage execute --phase 4",
+  "context_sha256": "a87967a2dbbdaf2f9ed30429757e52c85ad7ca3f84609e62f238afe761d452ab",
+  "created_at_utc": "2026-11-18T20:37:53.866Z",
+  "errors": [],
+  "exit_code": 0,
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "phase": "4",
+  "request_id": "R6",
+  "resource_ledger_snapshot_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-RESOURCE-LEDGER-PRE-COUNT.json",
+  "resource_ledger_snapshot_sha256": "a3ad13be17828b5655b4296e9fc26e683281f55d430818b04e4f95eeb6fc00c3",
+  "review_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-SCHEDULE-REVIEW.json",
+  "review_sha256": "1d028770bf3c6a72fa149a0a0ad787de706b84760c5e18d5e2c432a36ce3c71f",
+  "schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-SCHEDULE.json",
+  "schedule_sha256": "74bbd6a9554c5fac9b08eda5790b8a3d6f2897a03c072a080455dec97dc31c22",
+  "schema_version": "04.r6-execute-preflight.1",
+  "source_chunks_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+  "source_sha256": "15a9f27f05492b8a5cdf39eeff267595c95ce18925ea983d5b3d6c68c6d31edf",
+  "source_span": {
+    "complete_file": false,
+    "encoding": "UTF-8",
+    "end_byte_exclusive": 71388,
+    "end_line": 1915,
+    "includes_final_newline": true,
+    "span_sha256": "ab130b8e64c9b1a5c880cd00c0135002f7c473aeb5938ec1a1f52a903fc193e0",
+    "start_byte": 63660,
+    "start_line": 1748
+  },
+  "stage": "execute",
+  "status": "pass",
+  "stderr": "",
+  "stdout": "{\"errors\":[],\"stage\":\"execute\",\"milestone\":\"v0.4\",\"phase\":\"4\",\"route_phase\":\"03\"}"
+}

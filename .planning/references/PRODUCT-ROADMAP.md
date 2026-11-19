@@ -2,18 +2,53 @@
 
 This is the rolling product roadmap outside the active milestone. Executable phase IDs use one project-wide integer sequence: v0.2 Phase 1 was delivered and v0.3 is Phase 2. The roadmap's phase values and dependency references are milestone-local slots until activation; allocate global IDs after the highest delivered phase and update the selected map, gates, seeds and dependencies when a milestone activates. Milestone names/keys are stable planning references; versions are assigned on activation. These are carried commitments, not approved executable plans or shipped features. INT-20261111-01 split the oversized cycle; INT-20261112-04 sets the continuing numbering policy. Original wording and IDs remain in milestones/v0.1-ROADMAP.md.
 
-v0.2 delivered its selected EX-010 increment. Active v0.3 is a bounded EX-107 RTT source-evidence increment; neither milestone closes the complete guard aggregate or unlocks the Walking Skeleton. Further guard increments must be sized and approved one at a time while that gate remains open. Do not insert nested decimal phases or silently weaken acceptance to advance.
+v0.2 delivered its selected EX-010 increment. v0.3 is archived locally after its bounded EX-107 RTT source-evidence slice. Neither milestone closes the complete guard aggregate or unlocks the Walking Skeleton. No milestone is active. Further guard increments must be sized and approved one at a time; there is no automatic follow-up. Do not insert nested decimal phases or silently weaken acceptance to advance.
 
 ## Rolling outlook
 
-This is sequencing guidance, not a set of activated milestones. Preserve the dependency map and gate owners below. Versions are assigned when each milestone starts. Owner direction and source-custody decisions are recorded in INT-20261111-13; the source intakes remain authoritative for exact versions, hashes, and review limits.
+This is sequencing guidance, not a set of activated milestones. Preserve typed prerequisites and delivery gates below. Versions are assigned when each milestone starts. The owner’s broader UI quality and dogfood direction is captured in INT-20261113-01; the earlier brand and adopter direction remains in INT-20261111-13.
 
 | Horizon | Recommended direction |
 |---|---|
-| Immediate | Complete the bounded v0.3 guard slice. Keep the aggregate open, Walking Skeleton blocked, SEC-01 pending, and all five acknowledged v0.2 deferrals unresolved. |
-| Near | After the aggregate-scoped proof passes, start the Walking Skeleton, then deliver the Story model/catalog, Controls, Canvas fidelity, and Workbench foundations in the existing dependency order. |
-| Mid | Complete the Design canon foundations. Dogfood Fablebook's own identity on its appropriate surfaces while keeping workbench chrome ink-on-neutral. Then use Logistify as the first adopter demo: one shared brand canon and three distinct Books, starting with the operator console, then the shipper portal and driver app. Make jobs/personas, product terms, cases and state coverage, Journeys, Screens, and components inspectable in the catalog. |
-| Later | Add Chatly and Clinicly after the Logistify family and canon foundations, then continue the mapped bundle, checks, motion, installer, hardening, remaining-twin, dogfood, and clearance work. |
+| Immediate | v0.3 is complete and archived locally on main. Recommendation: first decide whether to fund a fresh, read-only scope reconciliation for one possible guard-recovery increment. The latest receipts do not select a next slice; the current lane membership, source identities, exact selection and complement must be rejoined before a milestone is activated. Until the aggregate closes, the Walking Skeleton and product UI implementation remain blocked. |
+| Near | Once the guard aggregate passes, complete the Walking Skeleton and browser-runner spike. Then follow the existing order: Story model and catalog, render seam and rules, Controls and first bundle, Canvas and host fidelity, and Workbench foundations. Keep quality evidence inside each slice. |
+| Mid | Build the canon foundations, then the Fablebook brand book and Logistify family. Keep workbench chrome ink-on-neutral and brand the preview. After Fablebook can render trustworthy catalog context, use mailglass for real AI-assisted design iterations and accrue_admin next. Separately, use Logistify as the authored showcase: one shared brand canon and three distinct Books, starting with the operator console. |
+| Later | Add Chatly and Clinicly after the Logistify family and canon foundations. Continue the mapped bundles, checks, visual regression, motion, installer, hardening, remaining twins, dogfood and clearance work in the dependency order below. |
+
+These horizons retain the existing product sequence; they do not activate or renumber future phases.
+
+## Guard prerequisite and next-scope boundary
+
+The product blocker is the open guard-aggregate gate, which blocks the Walking Skeleton. v0.2 completed its selected EX-010 set, inets:enable_trace/2 and /3, without closing other row owners. v0.3 selected three of the 177 EX-107 matches per lane: asn1ct_rtt:assert_defined/1, code/0 and dependencies/1. The other 174 remain in the full-row complement. The older 13/164/161 partition is separate and must not be substituted for that 3/174 partition.
+
+The archived aggregate inventory and old EX-165 Leex candidate are historical sizing evidence, not a current next-scope selection. Before an increment can be proposed, the owner decides whether to fund further guard work; then the full surviving row/function sets and source identities must be rejoined on both pinned lanes, with one exact selected family, its complete complement, caller/delegate evidence and fresh source/context/effort sizing. Preserve the inherited limits: 100,000 planning tokens, at most five exact source files per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. Keep guard PRs contract-only, never invoke audited APIs, and preserve the real-library collision stop.
+
+A bounded increment closes only its named selection. Walking Skeleton requires the complete original aggregate plus installed-wide acceptance. Do not generate an automatic sequence of increments or describe a partial row as aggregate closure.
+
+## Recommended quality loop for UI slices
+
+This is a cross-cutting product direction, not a newly activated requirement set. The aim is to turn a sourced job into inspectable, realistic UI evidence, then use bounded automation to find and fix defects with little repeated owner input.
+
+1. Start from the business goal, target persona and job, product vocabulary, accepted brand rules, and source provenance. Treat brandbook examples as input rather than proof of product behavior. Keep unclear naming or conflicting recommendations visible for an owner decision.
+2. Model the job across Fablebook’s existing hierarchy: Primitive, Pattern, Area, Screen; connect screens with Journeys. Make components, sections, control groups, pages, screens, states and user flows traceable to the job and terminology.
+3. Render through the real host pipeline. Keep the catalog’s own neutral chrome distinct from each preview’s brand. Exercise mobile widths, desktop widths, themes, long content, and the accepted state classes, including happy, empty, one, many, boundary, loading, error, denied, stale, long, internationalized and huge content where they apply.
+4. Produce repeatable evidence for accessibility, contrast, focus and keyboard use, target size, overflow, responsive layout, terminology and voice, onboarding completion, Journey dead ends and copy drift, and deterministic visual captures. Missing coverage stays visible; a waiver has a reason.
+5. Give an LLM a deterministic, cited bundle with the job, brand and glossary context, relevant screens, screenshots, markup, accessibility tree, measurements and current findings. Ask for a focused critique such as layout, typography, copy, accessibility, brand consistency or Journey usability. Keep recommendations advisory and actionable.
+6. Fix the findings, rerun the same checks, record the verdict and reason, and ratchet unresolved findings down. A person judges spacing, alignment, proximity, grouping, breathing room and type hierarchy against the brand book, resolves ambiguity with a rationale, and accepts visual baselines; baselines are never accepted automatically.
+
+The intended catalog structure, browser checks, evidence bundles, and baseline rules remain those in the accepted product requirements and ADRs. This roadmap does not add an LLM API or replace owner review.
+
+## Dogfood and authored-showcase tracks
+
+The real adopter and the fictional demo serve different proofs. ADR 0020 names the mailglass demo as the first migration and dogfood target because it has the most stories and establishes the migration method; accrue_admin follows. Select the exact high-reuse screen only after inspecting the mailglass catalog. Clearance C4 requires at least three owner design iterations driven by Fablebook bundles in a dogfood repository.
+
+The authored showcase remains Logistify’s operator console first, then its shipper portal and driver app. The shared canon must preserve the three Books’ different jobs and constraints. Chatly and Clinicly follow the Logistify family. Keep this track separate from evidence that the product works in a real adopter repo.
+
+## Current brandbook inventory
+
+The formal Fablebook brand book has not been authored. The preserved snapshot at commit 71d93704fcd5689fc9c600e558b47ebfe01a6a8d contains docs/brand/fablebook-demo/index.html, a manual three-brand preview that the preserved review does not treat as an importer contract, signed-off UI, accessibility proof or source of truth. The snapshot also contains books for Chatly, Logistify, Clinicly, Finanza, Shopadelic and an extra Classwell pack. No Snow brand book was found in the current checkout or that snapshot. If Snow is an intended source, identify its repository or artifact before planning to integrate it.
+
+These source books are preserved outside the tracked main tree. Before integration, make exact versions reproducible from pinned, hash-checked source files and records. Keep reuse rights, fonts, artwork and name clearance open until their destination and terms are reviewed. The current workbench chrome remains governed by accepted ADR 0013 and UX-DESIGN; the manual prototype does not override those decisions.
 
 ### Brand source custody and mapping
 

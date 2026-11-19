@@ -1,46 +1,60 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.3
-milestone_name: Bounded ASN.1 RTT Guard Evidence
-current_phase: 2
-current_phase_name: Bounded ASN.1 RTT guard evidence
-status: executing
-stopped_at: "The owner chose separate deliveries. Automated UAT is complete in `02-UAT.md`; both local full lanes passed on PR-shaped tree `3c87cdb`, and remote PR #88 source head `2e35c62135c436a2ef953381024f82c237db188f` passed hosted checks in [run 43362320210](https://github.com/szTheory/fablebook/actions/runs/43362320210). Security audit closed 11/16 threats; only high T-02-08 remains open because PR #87 and #88 are unmerged and actual merge/main receipts are absent. Four collision threats are not presently triggered because the phase adds no production guard; D-06/manual stop remains binding for future guard work. The local candidate branch has two validation-document commits after the hosted head; they do not alter tests or runtime code. Formal phase verification is stopped at the security gate. Next: owner reviews/merges #87, then #88 targets/rebases onto main, runs required checks on the final head, and records merge/main receipts. Keep GRC-04/05/06, static-only limits, full EX-107 remainder, Walking Skeleton block and SEC-01 Pending unchanged."
-last_updated: "2026-11-13T06:00:33.611Z"
-last_activity: 2026-11-13
-last_activity_desc: Phase 2 UAT and security audit recorded; T-02-08 remains open for merge/main receipts
-state_head: 005f8f112f422323517a58817c1602e9a7fcb45e
+milestone: v0.4
+milestone_name: Guard Aggregate Reconciliation — Fablebook
+current_phase: 04
+current_phase_name: Evidence-only source and gap provenance closure
+current_plan: 2
+status: "Phase 3 locally verified and complete; PR #90 delivery remains open; Phase 04 is next but not started."
+last_updated: "2026-11-19T01:32:27Z"
+last_activity: 2026-11-19
+last_activity_desc: Phase 3 goal verification passed 21/21; Phase 04 is next and has not started
+state_head: 7317bd0ea112dbe9c2a60e15322ec6bfccc4681d
 progress:
-  total_phases: 1
-  completed_phases: 0
-  total_plans: 5
-  completed_plans: 5
-  percent: 0
+  total_phases: 2
+  completed_phases: 1
+  total_plans: 8
+  completed_plans: 6
+  percent: 50
+resumed_at: 2026-11-17 under owner direction INT-20261117-11
 ---
 
 # Project State
 
 ## Project Reference
 
-See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md) and the
+See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
+[v0.3 closeout](milestones/v0.3-CLOSEOUT.md), the
+[worktree reconciliation](references/WORKTREE-RECONCILIATION-2026-11-13.md), and the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 2 — Bounded ASN.1 RTT guard evidence
+**Current focus:** Finish hosted delivery for verified Phase 3; Phase 04 remains unstarted.
 
 ## Current Position
 
-Phase: 2 (Bounded ASN.1 RTT guard evidence) — EXECUTING
-Plan: 5 of 5
-Status: Automated UAT complete; security gate blocks formal verification pending merge/main receipts
-Last activity: 2026-11-13 — Recorded Phase 2 UAT and security findings
+Phase: 04 — Evidence-only source and gap provenance closure
+Current Plan: 2
+Status: Phase 3 verification passed 21/21 and Phase 3 is marked complete. The next phase is ready but has not started; the current operational gate is final-head hosted CI for PR #90 and the owner's merge decision.
+Last activity: 2026-11-19 — automated Phase 3 verification and both UAT checks passed; safety stops remain open.
 
-Progress: [░░░░░░░░░░] 0%
+## Active Handoff
+
+- Checkout: `/Users/jon/projects/fablebook`, branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; primary checkout preserved and no additional worktree used. The local candidate reconciles with existing PR #90; final delivery remains on that PR.
+- Current local evidence is recorded in [03-RECOVERY-READINESS.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md) and [03-05-SUMMARY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-SUMMARY.md). Core CI passed 459 tests with 10 excluded; the full floor suite passed 467 with 2 excluded; both focused selections passed 9 each. Phase 4 `--all` and Phase 3 `--consumer` pass with source access closed and open evidence gaps preserved.
+- Phase 3 verification reports 21/21 must-haves passed, both automated UAT checks pass, and the security record has no open threats. No human UAT is useful for this evidence-only result.
+- R8 was consumed once for the exact reviewed helper span. No source body was reread and no request was replayed. The raw R8 body is not archived for rereading; the final review records this limitation. R7 remains consumed delivery-unverified and excluded from claims. No further source request is authorized by this recovery.
+- PR #90 remains the delivery vehicle and is unmerged. Its hosted final-head checks are the delivery gate; their live status is recorded on the PR. The owner merges only after all required checks pass. No merge/main CI or delivery receipt is claimed for the current candidate.
+- Safety stops unchanged: static-only boundary; actual library collision unknown; Macro caller-AST and explanation wording unresolved; candidate null; implementation unauthorized; aggregate gate open; Walking Skeleton blocked; SEC-01 pending. Do not invoke audited OTP/runtime paths.
+- Next actor: Codex completes the authorized PR #90 hosted-check path; after required checks are green, the owner decides whether to merge. Phase 04 execution has not started. No new source request, runtime target execution, guard increment, or implementation starts automatically. Existing source/caller, collision, Macro, candidate, implementation, aggregate, Walking Skeleton and SEC-01 stops remain unchanged.
+- Budget policy: INT-20261117-11 removes the cumulative assistant-output ceiling and reserve stop. Counters are informational; exact-source count, review, preflight, provenance and security gates remain active.
+- Delivery boundary: Phase 3 is complete by goal verification, while hosted delivery remains a separate gate. Use existing PR #90 for exact-head hosted checks; record the delivery receipt only after merge. Phase 04 is next but is not automatically executed.
 
 ## Performance Metrics
 
 - v0.3 plans drafted: 5; independent plan review passed; all five plans executed.
-- Ten tasks are grouped across five plans and four waves. The local full core/floor suites pass on PR-shaped tree `3c87cdb`; remote PR #88 source head `2e35c62` passed hosted core/floor/security/dialyzer/gate checks. Automated UAT is complete. Formal verification is stopped by high threat T-02-08 pending merge/main receipts.
+- Ten tasks were grouped across five plans and four waves. Phase 2 verification passed 5/5 must-haves with no unresolved human checks. PR #88 reviewed head `ded4af612df3346b8516f4a027772ed3d2bbd53f` merged as `3817912c861286608183c057d2e38ff7a260bd6e`; final-head CI [43449606316](https://github.com/szTheory/fablebook/actions/runs/43449606316) and main CI [43451903473](https://github.com/szTheory/fablebook/actions/runs/43451903473) passed. PR #87’s prerequisite delivery and main CI also passed; see [02-UAT.md](milestones/v0.3-phases/02-bounded-asn-1-rtt-guard-evidence/02-UAT.md), [02-SECURITY.md](milestones/v0.3-phases/02-bounded-asn-1-rtt-guard-evidence/02-SECURITY.md), and [delivery registry](references/PHASE-DELIVERIES.json).
+- The v0.3 milestone audit reports all three requirements and the evidence integration flow pass; six tracked items remain nonblocking debt. See [v0.3-MILESTONE-AUDIT.md](milestones/v0.3-MILESTONE-AUDIT.md).
 
 **Per-Plan Metrics:**
 
@@ -51,20 +65,23 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02 P03 | 16min | 2 tasks | 1 file |
 | Phase 02 P04 | 9min | 2 tasks | 1 files |
 | Phase 02 P05 | 90min | 2 tasks | 5 files |
+| Phase 03 P02 | not reconstructed across resumed sessions | 2 tasks | 6 files |
+| Phase 03 P03 | not captured | 2 tasks | 8 files |
 
 ## Accumulated Context
 
 ### Decisions and gates
 
+- Owner’s systematic UI quality and AI-assisted dogfood direction, including recommendation-first continuity, is recorded in INT-20261113-01 and PRODUCT-ROADMAP.md. The real mailglass dogfood and authored Logistify showcase are separate proofs; v0.4 now owns the guard aggregate reconciliation prerequisite.
 - Use one global sequence of ordinary integer phases across active-era milestones: v0.2 Phase 1, v0.3 Phase 2, then continue from the highest delivered integer when a later milestone activates. Historical dotted IDs are evidence identities, never executable routes (INT-20261112-04).
 - v0.3 owns only `asn1ct_rtt:assert_defined/1`, `code/0` and `dependencies/1` on both pinned lanes under GRC-04–06. Independently revalidate the complete EX-107 sets, exact selection/complement and lane source identities in reviewed context before planning; a mismatch stops for rescoping (INT-20261111-13).
-- Preserve the 100,000-token planning bound, at most five total exact source files read per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. Count re-read source; do not truncate source/caller evidence to fit. The large `code/0` literal table uses its bounded byte-only check outside the prompt (INT-20261110-01, INT-20261111-13).
-- Only GRC-01–03 and selected EX-010 tracing-front static coverage close. The complete guard aggregate, installed-wide remainder and unfinished source/caller coverage remain open. Walking skeleton remains blocked.
+- Preserve the standard 100,000-token bound for other work, at most five exact source files per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. Recovery budgets ENV-03 and ENV-04 are one-time, scoped envelopes; ENV-04 is recorded in the active renewal receipt with a protected 31,000-token reserve. Count re-read source; do not truncate source/caller evidence to fit. The large `code/0` literal table uses its bounded byte-only check outside the prompt (INT-20261110-01, INT-20261111-13).
+- GRC-04–06 are complete for the bounded Phase 2 slice; the complete EX-107 row, guard aggregate, installed-wide remainder and unfinished source/caller coverage remain open. Walking Skeleton remains blocked.
 - SEC-01 remains Pending with Controls and first bundle / its first local slot; allocate the global integer when that milestone activates. Callback implementations, dynamic callers and native internals remain outside static proof.
 - Preserve original source/context/effort limits, actual-library-collision stops, Macro caller-AST and explanation checkpoints. Do not resume the halted old five-slot decomposition.
 - Five older artifacts are acknowledged and unresolved. Three legacy deferrals retain immutable original bytes and statuses; the new closeout receipt owns their acknowledgement. No quality threshold, requirement or safety stop is waived.
 - Scheduled UAT/observations, clearance C1–C10 and visual acceptance retain their existing owners. Missing scheduled history remains not-run. See [CARRY-FORWARD.md](migrations/2026-11-11-milestone-reset/CARRY-FORWARD.md).
-- Preserve the dirty primary checkout, old recovery worktrees and separate brand-intake branch/assets. No release, deployment, brand application or new scope is included.
+- The previous primary checkout changes are preserved on a local archive branch before `~/projects/fablebook` returns to `main`; old recovery worktrees and the separate brand-intake branch/assets remain preserved. No release, deployment, brand application or new scope is included.
 
 ### Pending Todos
 
@@ -72,7 +89,11 @@ No additional work is promoted into v0.3. Wider product work remains in the sepa
 
 ### Blockers and concerns
 
-The pre-plan membership/source-identity, connected-source, context-sizing, and effort gates passed for the exact pinned-lane scope. The owner selected disjoint outputs: core owns `test/support/asn1_rtt_core_evidence.ex` and `test/contract/asn1_rtt_core_guard_test.exs`; floor owns `test/support/asn1_rtt_floor_evidence.ex` and `test/contract/asn1_rtt_floor_guard_test.exs`; integration owns the dedicated `test/contract/asn1_rtt_integration_test.exs` with evidence assertions inline. `test/support/sweep_evidence.ex` remains the read-only archive resolver. Plans 02-01 through 02-05 are complete. Both full pinned-lane suites pass on the PR-shaped local candidate tree; the exact Phase 2 PR head still needs hosted CI and delivery verification. The actual-library collision stop, static-only boundary, full EX-107 remainder, Walking Skeleton block, and SEC-01 Pending status are unchanged.
+The pre-plan membership/source-identity, connected-source, context-sizing, and effort gates passed for the exact pinned-lane scope. Core, floor, and integration outputs are complete; independent review, focused/full lane receipts, exact PR-head CI, merged PR/main CI, and 5/5 goal verification support GRC-04–06. High-severity delivery threat T-02-08 is closed. Four medium collision-verification findings remain explicitly open below the configured high blocking threshold; no actual collision is claimed, no production guard was added, and the manual owner stop remains binding. The static-only boundary, full EX-107 remainder, Walking Skeleton block, and SEC-01 Pending status are unchanged.
+
+### Roadmap Evolution
+
+- Phase 4: Evidence-only source and gap provenance closure remains separate from Phase 3 delivery. INT-20261117-01 rebases only their bounded recovery budget; Phase 4 still adds evidence only and does not close Phase 3.
 
 ## Delivered work and archive
 
@@ -132,51 +153,40 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: IN-02 smoke route positive control | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: SEC-02 fixture-only story-beam exclusion | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: scheduled security registry failure | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
+| seeds | SEED-261112-sln | dormant; acknowledged at close | 2026-11-13 | v0.3 |
+| deferred_items | Phase 02 / deferred-items.md: local act concurrency.queue limitation | deferred; acknowledged at close | 2026-11-13 | v0.3 |
 
 ## Session Continuity
 
-Working checkout: `/private/tmp/fablebook-phase2-candidate` on
-`gsd/phase2-bounded-asn1-rtt-evidence`, stacked on the green test-only prerequisite PR #87. The preserved primary checkout remains on `gsd/phase-1-bounded-guard-continuation` with unrelated dirty user material untouched.
-Actual main contains approved PR #85 implementation and PR #86 compatibility
-maintenance. Local history incorporates that main commit without restoring old
-active phase paths. Phase 2 implementation artifacts are in open PR #88 at remote
-head `2e35c62`; the local candidate is at `5776488` with two validation-document
-commits plus local verification reports. Keep the open delivery stop until #87
-merges and #88 is retargeted/rebased to main, then carry receipts with the next
-substantive push. Do not trigger a receipt-only CI loop. Preserve this checkout.
-
-Separate brand intake: `origin/agent-brand-intake-261111` at `1ad8bde`;
-[the intake handoff](references/fablebook-brand-intake.md) owns future use.
-INT-20261111-06, INT-20261111-07 and INT-20261111-08 and the handoff pointer are retained unchanged. Assets are
-unapplied; source/instructions/seed/brief remain on their separate branch.
-
-Last session: 2026-11-13T06:00:33Z
-
-Stopped at: Phase 2 automated UAT is complete. Local full core/floor suites pass on the recorded PR-shaped tree and remote PR #88 source head has green hosted checks. `02-SECURITY.md` records one open high threat, T-02-08, because PR #87/#88 remain unmerged and no hosted main receipt exists. The old partial UAT in the primary checkout is preserved as historical; this separate-delivery candidate has superseding complete automated evidence. GRC-04/05/06 remain pending; static-only boundaries, future collision stop, full EX-107 remainder, Walking Skeleton block and SEC-01 Pending remain unchanged.
-
-Next action: Owner reviews/merges green prerequisite PR #87. Then retarget/rebase PR #88 onto main, confirm required hosted checks on that final candidate head, complete formal phase verification, and record actual merge/main receipts. Do not mark Phase 2 verified or delivered before that evidence exists.
-Do not execute the delivered v0.2 Phase 1 again, automatically select another
-guard increment, bypass the Walking Skeleton block or close SEC-01. Generated
-state.json was refreshed through the SDK publisher after the canonical state
-update. It
-remains advisory and cannot override the canonical stopping point or authorize
-phase discussion.
-
-Resume file: None
+This handoff supersedes the earlier temporary-checkout note. Work remains in the current Phase 3 checkout; no additional worktree was created. Phase 4 remains semantically open: zero source associations, 9,716 typed gaps, unresolved source resolution, incomplete caller closure, unresolved legacy digest, and candidate null. R7 is consumed with delivery unverified and cannot be replayed; INT-20261118-04 authorizes exactly one new R8 request for the same bounded span. The cumulative output stop was removed by INT-20261117-11; all other safety gates remain binding.
 
 ## Decisions
 
 - [Phase 02]: Core evidence reuses the locked lane-specific resolver and pins full file and span digests for the RTT targets and direct callers.
-- [Phase 02]: GRC-04 and GRC-05 remain pending until floor-lane evidence and cross-lane reconciliation complete their full requirement scope.
+- [Phase 02]: GRC-04–06 passed within the bounded selected slice; full EX-107 and wider safety obligations stay open.
 - [Phase 02]: Floor evidence binds exact spans and callers for all three selected RTT functions to the pinned floor archive.
 - [Phase 02]: Floor code/0 literal data is validated only by anchored byte grammar; runtime behavior, dynamic callers, native internals, and SEC-01 remain unproven.
 - [Phase 02]: Use the immutable audit-budget records as exact membership baselines and compare each live lane against its own set.
 - [Phase 02]: Keep the Phase 2 3/174 partition separate from the historical 13/164/161 partition.
 - [Phase 02]: Use lane-specific selectors for floor and integration checks so each run resolves its pinned source set.
 - [Phase 02]: Static source evidence does not establish runtime behavior, dynamic callers, native internals, or SEC-01 safety.
-- [Phase 02]: The owner selected separate deliveries. Planning tests are isolated in PR #87 from guarded Phase 2 outputs in PR #88; both local full lanes and remote hosted core/floor checks pass for their recorded heads.
-- [Phase 02]: T-02-11 and T-02-SC close for their recorded events. Collision findings are not presently triggered because no production guard was added; preserve the manual D-06 owner stop for future guard work. T-02-08 remains open until actual merge/main evidence is reconciled.
+- [Phase 02]: The owner selected separate deliveries. PR #87 and PR #88 both merged with matching final-head/main CI receipts; final Phase 2 verification binds to the reviewed source slice and preserves wider gates.
+- [Phase 02]: T-02-08 is closed against actual merge/main receipts. T-02-11 and T-02-SC close for their recorded events; four medium collision-verification limitations remain open below the high blocking threshold, with the manual D-06 owner stop binding.
+- [Phase 03]: Preserve only lane/hash-scoped caller edges when source identity is proven; record all other graph and callback coverage as keyed gaps.
+- [Phase 03]: Treat the saved EX-010 graph projection as scoped historical evidence, not a complete current graph or a dynamic-caller absence claim.
+- [Phase 03]: Keep candidate null and recommendation disabled while any required source, graph, callback, or delegate gap remains.
+- [Phase 03]: Keep candidate null because both evidence lanes remain incomplete and candidate-specific effort is unknown against the three-working-day limit.
+- [Phase 03]: Bind all scope counts and pending-complement digests to the immutable lane records and compact keyed projection.
 
 ### Blockers
 
-- Formal phase verification is held at the security gate by T-02-08. PR #87 is green but unmerged; PR #88 is stacked on it. After the owner merges #87, rebase/retarget #88 to `main`, confirm its exact-head hosted checks and actual main CI, then complete phase verification. Do not change the static-only boundary or mark GRC-04/05/06 complete before their own acceptance evidence.
+- The metadata index records membership, not source proof. Keyed target-source/gap provenance, coverage-flag caller derivation and the nested SIZING digest recipe remain unresolved. Candidate remains null; implementation unauthorized; aggregate gate open; SEC-01 Pending; Walking Skeleton blocked.
+
+## Operator Next Steps
+
+- Phase 3's local goal verification, security record, and automated UAT are complete. Codex handles the authorized PR #90 hosted-check path; the owner decides on merge after required checks pass. Phase 04 is next but unstarted, and any guard increment remains a separate owner decision.
+
+
+## Latest handoff — Phase 3 recovery
+
+Checkout: `/Users/jon/projects/fablebook`, branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; Phase 3 is locally verified and marked complete, with final PR #90 hosted delivery still open. The one authorized R8 request is consumed; current-tree local suites and Phase 4/Phase 3 consistency checks pass. Phase 04 is next but has not started. Codex handles the hosted-check path; the owner decides on merge after all required checks pass.

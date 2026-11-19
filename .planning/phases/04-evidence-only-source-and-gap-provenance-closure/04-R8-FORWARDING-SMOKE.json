@@ -1,0 +1,12 @@
+{
+  "schema_version": "04.r8-forwarding-smoke.1",
+  "request_id": "R8",
+  "created_at_utc": "2026-11-18T22:16:08Z",
+  "command": "python3 -c print marker through functions.exec -> exec_command -> direct text(r.output)",
+  "status": "pass",
+  "exit_code": 0,
+  "forwarded_marker": "R8_DIRECT_FORWARD_SMOKE_OK",
+  "source_body_read": false,
+  "source_body_emitted": false,
+  "wrapper_rule": "No TextEncoder or post-emission processing; direct forwarding only."
+}

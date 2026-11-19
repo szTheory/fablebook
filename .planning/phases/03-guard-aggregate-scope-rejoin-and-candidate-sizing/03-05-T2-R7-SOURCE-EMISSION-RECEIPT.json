@@ -1,0 +1,38 @@
+{
+  "schema_version": "03-05.task2-source-emission.1",
+  "status": "consumed_once_delivery_complete",
+  "source_access": "closed",
+  "generation": "03-05-TASK2-VALIDATOR-R7-20261118",
+  "request_id": "T2-R7",
+  "emission_count": 1,
+  "emitted_at_utc": "2026-11-18T00:13:31.177169+00:00",
+  "schedule_sha256": "050ed794d73e29db99bd80dca96597d639d04499c7c0cacc1d34af1995934d7b",
+  "review_sha256": "b89f2a88d43efd379f1874f2e36d4ab682d7f4c98229c36eeb414a1d50cf99ab",
+  "preflight_sha256": "2bf52e20d787297ee0cd32e88f922d9dc419eba09e81937e57a4cbddafd87b19",
+  "count_sha256": "4dac2b85368ae595aa4aa5f7eb4c1e3b5a48abcd21db5874b7cb013176f61788",
+  "gate_sha256": "a8b4b974fcdd5c6ed27c028aad91e0c93ff275da9d8678d224103a212c3db917",
+  "serialized_request_sha256": "c152763b5f97d539329a22f77cba661ae8466d761535d68e010a954b48b23653",
+  "source_selections": [
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "source_sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+      "source_bytes": 19570,
+      "source_span": {
+        "start_line": 1,
+        "end_line": 349,
+        "start_byte": 0,
+        "end_byte_exclusive": 19570,
+        "encoding": "UTF-8",
+        "complete_file": true,
+        "includes_final_newline": true,
+        "span_sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+        "selected_bytes": 19570
+      }
+    }
+  ],
+  "tool_output_truncated": false,
+  "completion_sentinel_observed": true,
+  "analysis_complete": true,
+  "content_used_for_analysis": true,
+  "reason": "The exact validator source and completion sentinel were delivered in one bounded tool result. This new request does not replay or derive claims from T2-R1."
+}

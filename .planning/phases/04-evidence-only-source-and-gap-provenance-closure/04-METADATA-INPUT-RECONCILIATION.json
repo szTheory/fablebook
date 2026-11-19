@@ -1,0 +1,60 @@
+{
+  "schema_version": "04.metadata-input-reconciliation.2",
+  "status": "review_pending",
+  "source_access": "closed",
+  "created_at_utc": "2026-11-17T20:14:30Z",
+  "original_manifest": {
+    "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST-04-01-ORIGINAL.json",
+    "sha256": "b1b7032366522f250c152b8c6b91282293f5e8f5188d4c8ee7e65f8ed4eb4fd7"
+  },
+  "input_binding": {
+    "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+    "original_sha256": "6ba22a179f7d1b0f60af8b98d6d1046ec9f90c6f9ac37310b82c4e85bc2e1f56",
+    "original_bytes": 51447,
+    "current_sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5",
+    "current_bytes": 52172
+  },
+  "prior_bytes_available": false,
+  "claim": "Prior input bytes are unavailable. This receipt preserves their exact historical hashes and sizes, records current bytes for independent review, and does not claim semantic equivalence or that the prior content is known. It does not authorize source access; the active generation must preserve original authority, selectors, and safety stops.",
+  "independent_review": {
+    "status": "pass",
+    "reviewer": "Independent read-only subagent /root/phase4_bridge_reconcile",
+    "reviewed_at_utc": "2026-11-18T14:34:45Z",
+    "subject_sha256": "ae135bf73a897028446acba9fa513790d2136f8597955e034e3e64b75395a4e5",
+    "findings": [],
+    "conditions": [
+      "Prior input bytes are unavailable; no semantic equivalence is claimed.",
+      "Keep retained authority, selectors, safety stops, and source access unchanged."
+    ]
+  },
+  "author": "Codex",
+  "additional_input_bindings": [
+    {
+      "path": ".planning/forensics/phase4-budget-reset-20261117.md",
+      "original_sha256": "c812b255e634b1b26c25aa3395e10b1148f6898bed6886ebbefd32cd96e2694d",
+      "original_bytes": 4576,
+      "current_sha256": "6e3af6b72b7be24c98d5ca7d0729486efe9ae865b4b9422ad38c997ebc314e09",
+      "current_bytes": 4576
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-01-PLAN.md",
+      "original_sha256": "0a4dc49c0de12cc7e7124bec2374fa97efd23bee6da7f495f97f30a4ab5265b6",
+      "original_bytes": 25867,
+      "current_sha256": "e0225186b6da35fa07cc7ffc61cc15d92c63776e7a0b1e1ff85358c5bd5d1eee",
+      "current_bytes": 25857
+    }
+  ],
+  "prior_independent_review": {
+    "status": "pass",
+    "reviewer": "OpenGSD plan-checker subagent env05_plan_review",
+    "reviewer_thread_id": "01a1eaed-eb5b-7953-881e-a94e7060ebdb",
+    "reviewed_at_utc": "2026-11-17T20:25:20.301Z",
+    "subject_sha256": "b3af224de3658f2efd66b0d13d9e5762232a4af883adbb8fe9130d6840edc14b",
+    "findings": [],
+    "conditions": [
+      "Use the current plan hash only in a fresh generation.",
+      "Keep retained authority and selectors exactly unchanged.",
+      "Pass the supported partition check before any R1 gate."
+    ]
+  }
+}

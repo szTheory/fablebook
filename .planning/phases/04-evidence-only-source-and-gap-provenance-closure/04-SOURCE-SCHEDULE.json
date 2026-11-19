@@ -1,0 +1,51 @@
+{
+  "schema_version": "04.source-schedule.1",
+  "generation": "3116508059d7f7303339ba18ce7c6ce538a65e43d95d4cab8e95225a8091e904",
+  "status": "blocked",
+  "source_access": "closed",
+  "review_status": "not_run",
+  "source_request_execute_preflight": "not_run",
+  "direct_count_status": "not_run",
+  "cumulative_fit": "unverifiable",
+  "request_cap_tokens": 34000,
+  "output_cap_tokens": 2000,
+  "requests": [
+    {
+      "request_id": "R1",
+      "owner_task": "04-02-02",
+      "status": "blocked",
+      "candidate_path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "requested_scope": "Complete helper file line 1 through exact EOF as proposed by the plan; EOF and spans were not enumerated on this blocked branch.",
+      "source_span": null,
+      "source_bytes": null,
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "missing_fields": [
+        "approved provenance bridge",
+        "independent schedule review",
+        "fresh source-request preflight",
+        "serialized request count",
+        "measured cumulative fit"
+      ],
+      "source_access": "closed",
+      "reason": "Preservation mismatch and usage attribution remain unresolved."
+    }
+  ],
+  "task_caps": {
+    "04-01-01": 8000,
+    "04-01-02": 3000,
+    "04-02-01": 3000,
+    "04-02-02": 18000,
+    "04-03-01": 5000,
+    "04-03-02": 3000,
+    "03-05-remaining": 20000
+  },
+  "required_gate_order": [
+    "provenance bridge",
+    "independent review",
+    "fresh execute preflight",
+    "direct request count",
+    "measured cumulative fit"
+  ],
+  "no_truncation": true,
+  "no_source_body_emitted": true
+}

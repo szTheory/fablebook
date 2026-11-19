@@ -1,0 +1,75 @@
+{
+  "schema_version": "03-05.task2-one-use-gate.1",
+  "generation": "03-05-TASK2-REMAINDER-REVISE-01-20261118",
+  "request_id": "T2-R2",
+  "status": "consumed_once_emission_in_progress",
+  "source_access": "open_for_this_emission_only",
+  "source_emission": true,
+  "created_at_utc": "2026-11-18T00:06:39.558163+00:00",
+  "prerequisites": {
+    "phase4_all": "pass_with_open_gaps",
+    "phase3_self_test": "pass",
+    "phase3_phase4_only": "pass_with_open_gaps",
+    "independent_schedule_review": "pass",
+    "fresh_phase3_execute_preflight": "pass",
+    "direct_count": "pass",
+    "complete_untruncated_source_delivery": "required"
+  },
+  "bindings": {
+    "schedule": "7c7457a7a57e14089ebb7b016038da95dbe28de8178703bde575874f73b0d43a",
+    "review": "f3b3655991c9f26bb9e4db3783673c7e7e07957205ec239a0e82bab8c4596bbf",
+    "preflight": "c6820d8dfec00187ced15107079253be1c0af155e4a74cb118d0786cee14df6b",
+    "count": "8ca41466c455bfb61220f883701c059745d5c4d3aca88ce0d3bb9eff780fdc92",
+    "phase4_validation": "1993b88a992db6b845a9d6fb3040edaeb0ec2cd3ed500dd9c5fc390f0f62fde5"
+  },
+  "serialized_request": {
+    "input_tokens": 9079,
+    "configured_context_tokens": 200000,
+    "request_bytes": 39314,
+    "request_sha256": "67bafb01cbbd91b4ab62657fe4b163e7c766cd52059423ae1a196954064ee583"
+  },
+  "source_selections": [
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_bytes": 58839,
+      "source_span": {
+        "start_line": 1,
+        "end_line": 519,
+        "start_byte": 0,
+        "end_byte_exclusive": 19367,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "e454831cc345a749ac46d0df90653fa94b2274c022f89e160c3ba5f3feb69909",
+        "selected_bytes": 19367
+      }
+    },
+    {
+      "path": "test/contract/tier_sweep_test.exs",
+      "source_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+      "source_bytes": 770285,
+      "source_span": {
+        "start_line": 5600,
+        "end_line": 5989,
+        "start_byte": 244950,
+        "end_byte_exclusive": 260155,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "3328954fce1a91ffbd95925a866394b3140e2bc1e8e04450c23f1a1cea45b5d6",
+        "selected_bytes": 15205
+      }
+    }
+  ],
+  "source_selection_count": 2,
+  "cumulative_output_limit_enforced": false,
+  "no_retry_after_emission": true,
+  "previous_request_exclusion": {
+    "request_id": "T2-R1",
+    "status": "consumed_incomplete",
+    "replay_forbidden": true,
+    "content_used_for_analysis": false
+  },
+  "consumed_at_utc": "2026-11-18T00:06:56.447258+00:00"
+}

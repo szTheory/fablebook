@@ -15,7 +15,10 @@ defmodule Fablebook.MixProject do
       lockfile: lockfile(),
       aliases: aliases(),
       elixirc_paths: elixirc_paths(Mix.env()),
-      test_ignore_filters: [&String.starts_with?(&1, "test/fixtures/")],
+      test_ignore_filters: [
+        &String.starts_with?(&1, "test/fixtures/"),
+        &String.starts_with?(&1, "test/support/")
+      ],
       dialyzer: [plt_local_path: "priv/plts", plt_core_path: "priv/plts", plt_add_apps: [:mix]],
       package: package(),
       docs: [

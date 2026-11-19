@@ -1,0 +1,59 @@
+{
+  "schema_version": "03-05.task2-one-use-gate.1",
+  "generation": "03-05-TASK2-REMAINDER-REVISE-01-20261118",
+  "request_id": "T2-R6",
+  "status": "consumed_once_emission_in_progress",
+  "source_access": "open_for_this_emission_only",
+  "source_emission": true,
+  "created_at_utc": "2026-11-18T00:06:39.559364+00:00",
+  "prerequisites": {
+    "phase4_all": "pass_with_open_gaps",
+    "phase3_self_test": "pass",
+    "phase3_phase4_only": "pass_with_open_gaps",
+    "independent_schedule_review": "pass",
+    "fresh_phase3_execute_preflight": "pass",
+    "direct_count": "pass",
+    "complete_untruncated_source_delivery": "required"
+  },
+  "bindings": {
+    "schedule": "7c7457a7a57e14089ebb7b016038da95dbe28de8178703bde575874f73b0d43a",
+    "review": "f3b3655991c9f26bb9e4db3783673c7e7e07957205ec239a0e82bab8c4596bbf",
+    "preflight": "756e37ac6aef742971cabb75e2f67ffdd3f5dfa939b052299255a4cc68b9987b",
+    "count": "2eea6502b2d4aab0fe896f8d6bf1b0f0332b007ad97649559624ba320a40aa82",
+    "phase4_validation": "1993b88a992db6b845a9d6fb3040edaeb0ec2cd3ed500dd9c5fc390f0f62fde5"
+  },
+  "serialized_request": {
+    "input_tokens": 1647,
+    "configured_context_tokens": 200000,
+    "request_bytes": 7136,
+    "request_sha256": "242030704b33ddaa2b7f1b340b7dca979f11b3751cb0799545505f853c8c900b"
+  },
+  "source_selections": [
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_bytes": 58839,
+      "source_span": {
+        "start_line": 1488,
+        "end_line": 1610,
+        "start_byte": 54509,
+        "end_byte_exclusive": 58839,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "0fdbc8a008e7d1a9c45eead066193c8e4ab2372f6eecef8df40e3b8f6d72a44b",
+        "selected_bytes": 4330
+      }
+    }
+  ],
+  "source_selection_count": 1,
+  "cumulative_output_limit_enforced": false,
+  "no_retry_after_emission": true,
+  "previous_request_exclusion": {
+    "request_id": "T2-R1",
+    "status": "consumed_incomplete",
+    "replay_forbidden": true,
+    "content_used_for_analysis": false
+  },
+  "consumed_at_utc": "2026-11-18T00:08:25.619893+00:00"
+}

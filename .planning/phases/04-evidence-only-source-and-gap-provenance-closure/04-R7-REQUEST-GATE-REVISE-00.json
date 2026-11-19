@@ -1,0 +1,40 @@
+{
+  "schema_version": "04.r7-request-gate-attempt.1",
+  "request_id": "R7",
+  "attempt": "REVISE-00",
+  "command": "python3 .planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-validate-artifacts.py --request-gate --request R7",
+  "status": "blocked",
+  "exit_code": 1,
+  "source_access": "closed",
+  "source_emission": false,
+  "one_use_consumed": false,
+  "blockers": [
+    "schedule, review, preflight and count ordering is missing or stale"
+  ],
+  "cause": "The independent schedule review receipt contains reviewed_at_utc but omitted created_at_utc; the gate requires schedule.created_at_utc <= review.created_at_utc <= preflight.created_at_utc <= count.counted_at_utc.",
+  "bindings": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "schedule_sha256": "a79efca942f13f366ef3f8d72152ea5aec6cca92f57251bd7e406434cab5b70e",
+    "review_sha256": "7c4b7ffd7c9fc134ec9d176651eb3d38a14bdefb072ce75d00d223224957c7b9",
+    "preflight_sha256": "3e69850364e74e0c6f182fcf527663b95a827f4009743ceab78bbad144ded5d7",
+    "count_sha256": "4a66ef086bb99807fd9836eca42dc727d6126141b46ce1b8ec6b2f0ffe797e91",
+    "source_sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+    "source_span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+    "context_sha256": "077114d4c8b8696ca8930d47727e6a0719d9f60ed84fb0ccf18073a756b53cbc",
+    "serialized_request_sha256": "1651b7c554ba718eb3808db46c4e7fe5e6e18a86e65061ae763497b8f77e73eb",
+    "consumed_request_ids": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6"
+    ]
+  },
+  "remedy": "Preserve this pre-emission blocker; add the required review creation timestamp from the independent reviewer, then take a fresh Phase 4 execute preflight and no-generation direct count before another gate evaluation.",
+  "gates_not_run": [
+    "one-use source emission"
+  ],
+  "historical_source_body_read": false,
+  "historical_source_body_emitted": false
+}

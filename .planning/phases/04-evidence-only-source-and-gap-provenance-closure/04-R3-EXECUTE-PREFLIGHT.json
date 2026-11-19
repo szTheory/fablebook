@@ -1,0 +1,28 @@
+{
+  "schema_version": "04.r3-execute-preflight.1",
+  "status": "pass",
+  "created_at_utc": "2026-11-17T23:22:31.078Z",
+  "command": "bin/planning_health --stage execute --phase 4",
+  "stage": "execute",
+  "phase": "4",
+  "exit_code": 0,
+  "stdout": "{\"errors\":[],\"stage\":\"execute\",\"milestone\":\"v0.4\",\"phase\":\"4\",\"route_phase\":\"03\"}",
+  "stderr": "",
+  "errors": [],
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "request_id": "R3",
+  "schedule_sha256": "b996dc547c4e0a34ea9fdf250ab83bb1d633f128686b1026fdd6073e4681900c",
+  "review_sha256": "170b42086a01ac9b769b0e086bc301d68000d056258bb199294335554a8e3ddb",
+  "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+  "source_span": {
+    "start_line": 1114,
+    "end_line": 1497,
+    "start_byte": 41762,
+    "end_byte_exclusive": 54843,
+    "encoding": "UTF-8",
+    "complete_file": false,
+    "includes_final_newline": true,
+    "span_sha256": "8256f4866d59d66300950c641fefafe2c1ad9f7384ff39ab19add1ea05df75df"
+  },
+  "context_sha256": "e012fa88baf557875cb9cf33a80de19b68ec0e85d818ede2cc5051f4ee75a43f"
+}

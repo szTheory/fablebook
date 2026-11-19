@@ -1,0 +1,79 @@
+{
+  "schema_version": "04.r3-schedule-review.1",
+  "status": "pass",
+  "reviewer": "provenance_evidence_audit",
+  "reviewer_role": "independent provenance reviewer",
+  "independent_of_schedule_author": true,
+  "created_at_utc": "2026-11-17T23:22:09.938Z",
+  "source_body_access": "metadata-only",
+  "source_body_read": false,
+  "source_body_emitted": false,
+  "source_body_analyzed": false,
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "request_id": "R3",
+  "schedule_sha256": "b996dc547c4e0a34ea9fdf250ab83bb1d633f128686b1026fdd6073e4681900c",
+  "schedule_bytes": 144600,
+  "source_path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+  "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+  "source_file_bytes": 58839,
+  "source_file_lines": 1610,
+  "source_span": {
+    "start_line": 1114,
+    "end_line": 1497,
+    "start_byte": 41762,
+    "end_byte_exclusive": 54843,
+    "encoding": "UTF-8",
+    "complete_file": false,
+    "includes_final_newline": true,
+    "span_sha256": "8256f4866d59d66300950c641fefafe2c1ad9f7384ff39ab19add1ea05df75df"
+  },
+  "source_bytes": 13081,
+  "span_sha256": "8256f4866d59d66300950c641fefafe2c1ad9f7384ff39ab19add1ea05df75df",
+  "context_bytes": 123977,
+  "context_sha256": "e012fa88baf557875cb9cf33a80de19b68ec0e85d818ede2cc5051f4ee75a43f",
+  "input_bindings_verified": 24,
+  "stale_bindings": [],
+  "planned_outputs_verified": [
+    "04-COVERAGE-CALLER-TRACE.json",
+    "04-SIZING-DIGEST-PROOF.json",
+    "04-PROVENANCE-MANIFEST.json",
+    "04-validate-artifacts.py",
+    "04-RESOURCE-LEDGER.json"
+  ],
+  "r1_status_verified": "consumed_incomplete",
+  "r1_request_gate_sha256": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15",
+  "r2_status_verified": "consumed",
+  "r2_request_gate_sha256": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930",
+  "resource_ledger_binding": {
+    "current": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-RESOURCE-LEDGER.json",
+      "bytes": 8472,
+      "sha256": "79495fcbf3194ace3bccdd79372d8f0003a1643ee97825cf6497101116ecc62b"
+    },
+    "context_projection_sha256": "d82ba898b6dea5dd56c46b4ffcbd6a21fc2217f0b4a146ef2a1ddba501a010ea",
+    "consumed_request_ids": [
+      "R1",
+      "R2"
+    ],
+    "source_request_count": 2,
+    "historical_r2_pre_count": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-RESOURCE-LEDGER-PRE-COUNT.json",
+      "bytes": 6901,
+      "sha256": "5156dd5b813fcf330a30e79803041f5b170022f3fb6e65ba1090966e0fc7f009"
+    }
+  },
+  "prior_revise_binding": {
+    "schedule": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-SCHEDULE-REVISE-01.json",
+      "bytes": 142210,
+      "sha256": "d05036585a931ce5c3fbc00db062afab9b7490acb0ba141cdd9e8602eb589096"
+    },
+    "review": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-SCHEDULE-REVIEW-REVISE-01.json",
+      "bytes": 3345,
+      "sha256": "d0c245b32f84275d8718c564035f3ae09b721d5a39e6c4104b43005bafff9a0f"
+    }
+  },
+  "findings": [],
+  "review_summary": "All 24 exact input bindings match current bytes. The only changes from the first reviewed schedule are the current ledger projection, explicit revision history, and preserved first schedule and review bindings. The embedded ledger now records both R1 and R2 as consumed, and the prior pre-count ledger remains historical. The exact R3 span is unchanged, adjacent to and disjoint from R2. The closed one-use, security, and no-generation count controls remain in force, with cumulative output ceilings disabled. Source access stays closed pending fresh preflight and direct count."
+}

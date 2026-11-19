@@ -1,0 +1,63 @@
+{
+  "schema_version": "04.r8-source-analysis.1",
+  "request_id": "R8",
+  "status": "complete",
+  "scope": "selected current-helper identity-validation span only",
+  "source_access": "closed",
+  "source": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+    "bytes": 83805,
+    "span": {
+      "complete_file": false,
+      "encoding": "UTF-8",
+      "start_line": 1748,
+      "end_line": 1923,
+      "start_byte": 63660,
+      "end_byte_exclusive": 71408,
+      "span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+      "includes_final_newline": true
+    },
+    "span_bytes": 7748,
+    "delivered_bytes": 7748,
+    "delivered_span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+    "begin_sentinel_observed": true,
+    "end_sentinel_observed": true,
+    "tool_output_truncated": false
+  },
+  "observations": [
+    "The helper validates Phase 4 manifest, validation, review, trace, digest bindings, generation, integrity-only supplement, and producer identity.",
+    "The producer identity check preserves R2/R3 historical identity and the unresolved generator-revision mismatch.",
+    "The current-observation branch is hard-coded to R6 and 04-R6-SCHEDULE.json, so the consumer needs to follow R8 before the helper contract can pass."
+  ],
+  "claims_not_made": [
+    "source resolution",
+    "caller closure",
+    "historical digest reproduction",
+    "runtime safety",
+    "absence of dynamic callers"
+  ],
+  "safety_stops_preserved": {
+    "source_resolution": "unresolved",
+    "caller_closure": "incomplete",
+    "legacy_digest": "unresolved",
+    "candidate": null,
+    "implementation_authorized": false,
+    "actual_library_collision": "unknown",
+    "aggregate_gate": "open",
+    "walking_skeleton": "blocked",
+    "sec_01": "pending"
+  },
+  "analyzed_at_utc": "2026-11-18T22:40:28Z",
+  "request_gate_sha256": "153fe652987402f80585e3976cb3192392485b987753d044528508acd697d4d0",
+  "delivery_observation": {
+    "method": "single direct-forward tool result; no post-emission transform",
+    "begin_sentinel_observed": true,
+    "end_sentinel_observed": true,
+    "delivered_bytes": 7748,
+    "delivered_span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+    "raw_output_capture_retained": false,
+    "replay_allowed": false,
+    "note": "The complete source result was observed inline and analyzed once. The project retains the one-use receipt and exact source/span bindings, not a second copy of the source body."
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "schema_version": "03-04.metadata-gap-validation.1",
+  "status": "pass_metadata_only",
+  "validated_at_utc": "2026-11-17T02:01:49Z",
+  "branch": "gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+  "head": "46e0b350b3ccd38a72660c5844616ec4c1d063c2",
+  "plan_sha256": "b284a03591d78e50a43b2cc401f8dea55bd7c3ca2f9ee087377972002fbf2c70",
+  "checks": {
+    "row_schema": true,
+    "complete_key_equality": true,
+    "unknown_target_sets": true,
+    "direct_evidence_bindings": true,
+    "preservation_hashes": true,
+    "unchanged_limits": true
+  },
+  "check_details": {
+    "expected_row_count": true,
+    "known_counts": true,
+    "unknown_counts": true,
+    "all_schema": true,
+    "known_reason": true,
+    "unknown_reason": true,
+    "refs_exact_same_lane_mfa": true,
+    "every_selected_match_represented": true,
+    "preservation_manifest_unchanged": true,
+    "preexisting_status_preserved": true
+  },
+  "row_counts": {
+    "core_known": 2443,
+    "floor_known": 2354,
+    "core_unknown_target_set": 6,
+    "floor_unknown_target_set": 12,
+    "total": 4815
+  },
+  "input_hashes": {
+    "core": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd",
+    "floor": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d",
+    "sizing": "2ad9d75a45800786bba116166eb64ca304781c101ae0bdfe851a32cc172430bb"
+  },
+  "index_sha256": "297aa1633f7fe24d679e5e660bb3d15382cac8cce3bda8ac4e7d841435243f77",
+  "receipt_sha256": "05ead38c3ad0e5c8ed38ae79c919fbdf410a934438131454c54c824413374b5b",
+  "report_sha256": "d95894f76ff1c88d7953a24fc6d742267b03b178943587ed9466ed17fe6f0ae0",
+  "artifact_sha256": {
+    "03-04-METADATA-GAPS.jsonl": "297aa1633f7fe24d679e5e660bb3d15382cac8cce3bda8ac4e7d841435243f77",
+    "03-04-METADATA-GAP-RECEIPT.json": "05ead38c3ad0e5c8ed38ae79c919fbdf410a934438131454c54c824413374b5b",
+    "03-04-METADATA-GAP-REPORT.md": "d95894f76ff1c88d7953a24fc6d742267b03b178943587ed9466ed17fe6f0ae0"
+  },
+  "preservation_manifest_sha256": "9e5f789e0b308b814ae9bb1c7092f8e4f1404f94d7c945da561bcbdf2efe65e4",
+  "preservation_manifest_unchanged": true,
+  "preexisting_status_preserved": true,
+  "limits": {
+    "incremental_working_tokens": 7000,
+    "active_hours": 4,
+    "context_cap": 33722,
+    "context_recorded_at_start": 31435,
+    "shared_context_plus_new_output_cap": 7000,
+    "task1_source_cap": 22000,
+    "task1_source_recorded_at_start": 21172,
+    "task2_source_cap": 16000,
+    "task2_source_recorded_at_start": 15308,
+    "task2_source_gate": "closed",
+    "new_source_reads": 0,
+    "reserve_tokens": 31000,
+    "total_ceiling": 112915,
+    "task3_new_source_tokens": 0,
+    "cumulative_output_cap": 8193,
+    "cumulative_output_recorded_at_start": 1193,
+    "cumulative_output_remaining_at_start": 7000,
+    "cushion_tokens": 2000,
+    "working_cap": 81915,
+    "context_remaining_at_start": 2287,
+    "task_prompt_input_tokens": 812,
+    "context_remaining_after_counted_prompt": 1475,
+    "shared_increment_remaining_after_counted_prompt": 6188,
+    "elapsed_active_seconds": 1689,
+    "remaining_active_seconds": 11083,
+    "plan_review_usage": {
+      "passes_used": 2,
+      "passes_max": 2,
+      "latest_status": "pass",
+      "plan_sha256": "b284a03591d78e50a43b2cc401f8dea55bd7c3ca2f9ee087377972002fbf2c70"
+    },
+    "new_source_body_tokens": 0,
+    "task2_source_charged": 15308,
+    "task2_source_remaining": 692,
+    "phase_ceiling": 112915,
+    "reserve": 31000,
+    "incremental_work_cap": 7000,
+    "elapsed_active_seconds_at_handoff": 3317
+  },
+  "result": {
+    "candidate": null,
+    "implementation_authorized": false,
+    "aggregate_gate": "open",
+    "gsr03_complete": false,
+    "gsr05_complete": false,
+    "phase4_authorized": false
+  },
+  "source_proof": false,
+  "digest_recipe_established": false,
+  "caller_closure": false,
+  "gsr03_complete": false,
+  "gsr05_complete": false,
+  "phase4_authorized": false,
+  "candidate": null,
+  "verification_commands": [
+    {
+      "name": "metadata_schema_complete_key_unknown_set_and_preservation_check",
+      "source_plan": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-PLAN.md",
+      "source_plan_sha256": "b284a03591d78e50a43b2cc401f8dea55bd7c3ca2f9ee087377972002fbf2c70",
+      "automated_block": 1,
+      "command_sha256": "3ec174a83f32bdaaf54e20d8c0c68a4790b07d9d3048568743535693ebf1b6c0",
+      "exit_status": 0,
+      "summary": "PASS metadata schema, complete key equality, unknown sets, hashes and unchanged limits; no source proof"
+    },
+    {
+      "name": "exact_same_lane_selected_function_reference_check",
+      "command": "python3 /private/tmp/fablebook-phase3-gap-direct-ref-check.py",
+      "script_sha256": "1989a851c50aaa12d4557cabd7835b5a32eda092871e0df6b1ba848d47694513",
+      "exit_status": 0,
+      "summary": "PASS: core 2,443 known keys/2 expected direct refs; floor 2,354 known keys/2 expected direct refs; MFA/index metadata only"
+    },
+    {
+      "name": "final_artifact_hash_and_authority_check",
+      "source_plan": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-PLAN.md",
+      "source_plan_sha256": "b284a03591d78e50a43b2cc401f8dea55bd7c3ca2f9ee087377972002fbf2c70",
+      "automated_block": 2,
+      "command_sha256": "8146eb6a1ac6f23a1138189f540c2525fd20cd6fe6956a4c9415e51a385f05ec",
+      "exit_status": 0,
+      "summary": "PASS supplemental handoff hash and authority bindings; original Phase 3 stop remains"
+    }
+  ],
+  "not_run": [
+    "Application tests",
+    "Contract tests",
+    "Source/caller provenance trace",
+    "Digest-recipe recovery",
+    "Code changes",
+    "Plan03-05",
+    "Phase 4"
+  ],
+  "remaining_open_findings": [
+    "Keyed target-source mapping remains unresolved",
+    "Coverage-flag caller derivation remains unresolved",
+    "Nested SIZING digest recipe is not established",
+    "Candidate fit remains unknown",
+    "SEC-01 remains Pending",
+    "Walking Skeleton remains blocked",
+    "Static-only, collision, Macro and wording stops remain"
+  ],
+  "limitations": [
+    "Metadata membership does not prove source presence or absence",
+    "Selected-function references are exact MFA metadata pointers only",
+    "The original reconciliation/report was not regenerated",
+    "This does not complete GSR-03 or GSR-05 or authorize implementation/Phase 4"
+  ],
+  "check_command_results": {
+    "metadata_schema_complete_key_unknown_set_and_preservation_check": 0,
+    "exact_same_lane_selected_function_reference_check": 0,
+    "final_artifact_hash_and_authority_check": 0
+  },
+  "handoff": {
+    "checkout": "~/projects/fablebook",
+    "branch": "gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+    "head": "46e0b350b3ccd38a72660c5844616ec4c1d063c2",
+    "current_milestone": "v0.4 Guard Aggregate Reconciliation",
+    "milestone_key": "guard-recovery",
+    "current_phase": 3,
+    "origin_main_head": "3817912c861286608183c057d2e38ff7a260bd6e",
+    "delivered_work": "Plans 03-01 through 03-04 metadata route; Phase 1 and Phase 2 delivery receipts are present in the branch ledger",
+    "unfinished_work": [
+      "Original keyed target-source/gap provenance remains unresolved",
+      "Coverage-flag caller derivation remains unresolved",
+      "Nested SIZING digest recipe remains unresolved",
+      "GSR-03/GSR-05 remain incomplete",
+      "Plan03-05 is unstarted"
+    ],
+    "unchanged_stops": [
+      "candidate=null",
+      "implementation_authorized=false",
+      "aggregate_gate=open",
+      "SEC-01 Pending",
+      "Walking Skeleton blocked",
+      "source-body reads closed",
+      "Phase 4 unauthorized"
+    ],
+    "next_action": "Owner reviews the metadata gap report and decides whether to define/authorize any later bounded work; do not auto-run Plan03-05 or Phase 4",
+    "next_actor": "owner",
+    "recorded_at_utc": "2026-11-17T02:01:49Z",
+    "elapsed_active_seconds_at_handoff": 3317
+  }
+}

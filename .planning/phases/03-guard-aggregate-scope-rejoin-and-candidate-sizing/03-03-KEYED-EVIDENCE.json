@@ -1,0 +1,216 @@
+{
+  "schema": "fablebook.guard-aggregate-sizing-keyed-evidence/1",
+  "generation": "09f46024e419d4fe81c273befabe0019ab953e5a6f8c4dd1c01c114df184709b",
+  "candidate": null,
+  "implementation_authorized": false,
+  "source_closure_complete": false,
+  "caller_closure_complete": false,
+  "selection": {
+    "core": [],
+    "floor": []
+  },
+  "no_candidate_reason": "Both lanes lack source and caller closure; no pending scope has complete source sizes and graph/delegate evidence to rank.",
+  "bounded_remedy": "Bind exact lane-pinned source paths, sizes, digests, repository refs, locks, and archive rows for source gaps; complete current graph reconciliation and callback/delegate provenance for required gaps; then rerun the evidence join and fresh fit without automatically selecting an alternative.",
+  "lanes": {
+    "core": {
+      "record": {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
+        "bytes": 12107528,
+        "sha256": "ef5fb7e08ced66c8669d6c0896140d98c74186763561ab1a5cbe5358937a250a"
+      },
+      "identity": {
+        "id": "EX-010",
+        "identity_class": "exclusion",
+        "owner": "v0.2/1",
+        "remaining_semantic_owner": "01.1.1.4",
+        "semantic_status": "inets_trace_retained"
+      },
+      "membership_join_complete": true,
+      "source_join_complete": false,
+      "target_source_coverage_complete": true,
+      "scope_complete": false,
+      "stops": {
+        "aggregate_gate": "open",
+        "candidate": null,
+        "implementation_authorized": false,
+        "scope_complete": false,
+        "sec_01": "Pending",
+        "walking_skeleton": "blocked"
+      },
+      "inventory_universe": {
+        "count": 50568,
+        "exported_mfas_sha256": "028e54a3f2bbb892d17d3d831c0789b5c12a91870c26a1519a642450cbb95a81"
+      },
+      "existing_selected_mfas": [["inets", "enable_trace", 2], ["inets", "enable_trace", 3]],
+      "identity_rows": {
+        "selector": "identity_rows",
+        "count": 226,
+        "sha256": "605757f7e904da585c1f914af1fbb54dec168d80ca3217f4fa3eba10f5aa318a"
+      },
+      "pending_complement": {
+        "selector": "unique_sorted_union(identity_rows[*].pending_mfas)",
+        "set_difference": "unique_sorted_union(identity_rows[*].original_live_mfas) minus unique_sorted_union(identity_rows[*].delivered_scope_mfas)",
+        "original_live_mfas": {
+          "selector": "unique_sorted_union(identity_rows[*].original_live_mfas)",
+          "unique_mfas": 1754,
+          "canonical_mfa_set_sha256": "d2c6b170422f1c0fe2c64992a343814ecd55e6006513bbd6f4a4a66a9b36aef2"
+        },
+        "delivered_scope_mfas": {
+          "selector": "unique_sorted_union(identity_rows[*].delivered_scope_mfas)",
+          "unique_mfas": 5,
+          "canonical_mfa_set_sha256": "ed87d6cc8721622f09cf6b4461e694945d6a5e7825fa1ce340bd72d6cbddd0af"
+        },
+        "new_selected_mfas": [],
+        "unique_mfas": 1749,
+        "canonical_mfa_set_sha256": "d95ac86383d315efb443dd80d95cc5715f5234b824bf5f4bceb132d9858e9d44",
+        "source_record_sha256": "ef5fb7e08ced66c8669d6c0896140d98c74186763561ab1a5cbe5358937a250a"
+      },
+      "target_source_associations": {
+        "selector": "target_source_associations",
+        "count": 1844,
+        "sha256": "d39e9ff342b1ad34743cc82af78be292d60c8f94064a67bce0f590423529f8fd"
+      },
+      "target_source_gaps": {
+        "selector": "target_source_gaps[*]",
+        "count": 1761,
+        "status_counts": {"source_mapping_not_present_in_scoped_findings": 1761},
+        "records_sha256": "0c69e8ca9031fe57d4d85c939fdbabd5bb02e9a4be0f8d9b1fe2232bf9b138f1",
+        "remedy_rule": "Bind each lane-pinned source path, size, digest, repository ref, lock, and archive row."
+      },
+      "required_evidence_gaps": {
+        "selector": "required_evidence_gaps[*]",
+        "count": 5287,
+        "reason_counts": {
+          "callback_and_delegate_provenance_unreviewed": 1763,
+          "current_graph_reconciliation_missing": 1763,
+          "selected_graph_observation_missing": 1761
+        },
+        "records_sha256": "b14b0f1c4d10f23b9818d1380174ca41bf37b0141438a98a84c4274da6d29a09",
+        "remedy_rule": "Complete current lane-pinned graph reconciliation and review callback/delegate provenance."
+      },
+      "source_and_caller_evidence": {
+        "selector": "source_and_caller_evidence",
+        "bytes": 6802,
+        "sha256": "ce0c3b6f044c7c807d3252776942abbd52ac17cb621c237d5265ee4733361704",
+        "exact_source_count": 3,
+        "matched_mfa_count": 2,
+        "selected_function_evidence_count": 2,
+        "delegate_edge_count": 2,
+        "review_count": 3,
+        "remainder_mfa_count": 0
+      },
+      "static_caller_evidence": {
+        "schema": "guard-aggregate-static-caller-evidence/1",
+        "complete": false,
+        "edge_count": 2,
+        "edges_sha256": "d575308d3232fbb02612526ce07bc8ed93a72f4357ef9990743b2edc86d80d1f",
+        "record_count": 1763,
+        "records_sha256": "8fbed32506b29c0e974a53f70692d05aa5b525c1f8ae9044b23e66794236fdc8",
+        "graph_observation_count": 6,
+        "graph_observations_sha256": "2aebf375fe8dfd9f6ce85669463d8cd1e96ae9c6dec282d8ab972f0c29701f8d",
+        "required_gap_count": 5287,
+        "required_gaps_sha256": "b14b0f1c4d10f23b9818d1380174ca41bf37b0141438a98a84c4274da6d29a09"
+      }
+    },
+    "floor": {
+      "record": {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json",
+        "bytes": 11828076,
+        "sha256": "47e6b9137353d12396ece7e52f94fc904fdf2ef6ba6557dafb3a822f0ed5a121"
+      },
+      "identity": {
+        "id": "EX-010",
+        "identity_class": "exclusion",
+        "owner": "v0.2/1",
+        "remaining_semantic_owner": "01.1.1.4",
+        "semantic_status": "inets_trace_retained"
+      },
+      "membership_join_complete": true,
+      "source_join_complete": false,
+      "target_source_coverage_complete": true,
+      "scope_complete": false,
+      "stops": {
+        "aggregate_gate": "open",
+        "candidate": null,
+        "implementation_authorized": false,
+        "scope_complete": false,
+        "sec_01": "Pending",
+        "walking_skeleton": "blocked"
+      },
+      "inventory_universe": {
+        "count": 48449,
+        "exported_mfas_sha256": "875de4d1961dec08cac9600fb063e2b647234900198f1c5461a4d2fc32b04b19"
+      },
+      "existing_selected_mfas": [["inets", "enable_trace", 2], ["inets", "enable_trace", 3]],
+      "identity_rows": {
+        "selector": "identity_rows",
+        "count": 226,
+        "sha256": "83aa082723e4c62b52e37ab2ca966f25271f33fd7dce98f86761e3cce0e45bca"
+      },
+      "pending_complement": {
+        "selector": "unique_sorted_union(identity_rows[*].pending_mfas)",
+        "set_difference": "unique_sorted_union(identity_rows[*].original_live_mfas) minus unique_sorted_union(identity_rows[*].delivered_scope_mfas)",
+        "original_live_mfas": {
+          "selector": "unique_sorted_union(identity_rows[*].original_live_mfas)",
+          "unique_mfas": 1709,
+          "canonical_mfa_set_sha256": "d0f9fc159fa9c01e695df6b84891a8629db20e2af50c559fba2e9b7052d6dd45"
+        },
+        "delivered_scope_mfas": {
+          "selector": "unique_sorted_union(identity_rows[*].delivered_scope_mfas)",
+          "unique_mfas": 5,
+          "canonical_mfa_set_sha256": "ed87d6cc8721622f09cf6b4461e694945d6a5e7825fa1ce340bd72d6cbddd0af"
+        },
+        "new_selected_mfas": [],
+        "unique_mfas": 1704,
+        "canonical_mfa_set_sha256": "668eb9d03c554c7fc9f3c5c7a581066a8d192e7670ab72f046f7f6658d5da0e6",
+        "source_record_sha256": "47e6b9137353d12396ece7e52f94fc904fdf2ef6ba6557dafb3a822f0ed5a121"
+      },
+      "target_source_associations": {
+        "selector": "target_source_associations",
+        "count": 1802,
+        "sha256": "d72132772e03bab8f4e5be2ae9f9f6acdb0457254c4944367de05727558f076d"
+      },
+      "target_source_gaps": {
+        "selector": "target_source_gaps[*]",
+        "count": 1716,
+        "status_counts": {"source_mapping_not_present_in_scoped_findings": 1716},
+        "records_sha256": "73de98741f1dfebdacd0c7973af2a752ac86de67d0e1879f18c74fb145046203",
+        "remedy_rule": "Bind each lane-pinned source path, size, digest, repository ref, lock, and archive row."
+      },
+      "required_evidence_gaps": {
+        "selector": "required_evidence_gaps[*]",
+        "count": 5152,
+        "reason_counts": {
+          "callback_and_delegate_provenance_unreviewed": 1718,
+          "current_graph_reconciliation_missing": 1718,
+          "selected_graph_observation_missing": 1716
+        },
+        "records_sha256": "74ba1e4f8234f1035ded0a30cbcbc95ba88641f17c2e09bc52279743e827e0fb",
+        "remedy_rule": "Complete current lane-pinned graph reconciliation and review callback/delegate provenance."
+      },
+      "source_and_caller_evidence": {
+        "selector": "source_and_caller_evidence",
+        "bytes": 6278,
+        "sha256": "ec9b93d0ed8c7018ef8e1e5f5487b2b03d395641f153af7c7146b2fabe4dc667",
+        "exact_source_count": 3,
+        "matched_mfa_count": 2,
+        "selected_function_evidence_count": 2,
+        "delegate_edge_count": 2,
+        "review_count": 3,
+        "remainder_mfa_count": 0
+      },
+      "static_caller_evidence": {
+        "schema": "guard-aggregate-static-caller-evidence/1",
+        "complete": false,
+        "edge_count": 2,
+        "edges_sha256": "cfeb7c2cc8eab3db7c2e1d5b83e11e5f44a3b9f61f59f1f55f70eb00f691d9c8",
+        "record_count": 1718,
+        "records_sha256": "8ee0ad829995c564069409c04aa6a602df1abf7018eafea8d86af63e3a09cfe0",
+        "graph_observation_count": 6,
+        "graph_observations_sha256": "79856b44e0cd424f398f54fce1a55050d4ea953a84f8a61c66c1c927017f12dc",
+        "required_gap_count": 5152,
+        "required_gaps_sha256": "74ba1e4f8234f1035ded0a30cbcbc95ba88641f17c2e09bc52279743e827e0fb"
+      }
+    }
+  }
+}

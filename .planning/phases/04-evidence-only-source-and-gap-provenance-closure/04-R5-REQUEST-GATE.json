@@ -1,0 +1,271 @@
+{
+  "schema_version": "04.request-gate.2",
+  "request_id": "R5",
+  "status": "consumed",
+  "source_access": "closed",
+  "source_emission": true,
+  "blockers": [],
+  "missing_fields": [],
+  "gates_not_run": [],
+  "upstream_stop": {
+    "status": "blocked",
+    "reason": "The immutable Phase 3 preservation manifest differs from current bytes for the compact citation correction and two Plan 03-05 Task 1 formatting repairs.",
+    "mismatches": [
+      {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md",
+        "expected_sha256": "2843c9d29fc3e1b6a86727c905939213f3ac28b679ca75a5a5d499e80ebff478",
+        "current_sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24",
+        "current_bytes": 10193,
+        "matches": false,
+        "known_cause": "Plan 03-05 compact-schedule citation spelling correction"
+      },
+      {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "expected_sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+        "current_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+        "current_bytes": 58839,
+        "matches": false,
+        "known_cause": "Plan 03-05 Task 1 formatting repair"
+      },
+      {
+        "path": "test/contract/tier_sweep_test.exs",
+        "expected_sha256": "f97ef3bb5cb94e8c47f3baed38d3d6387808488879e5b59980e5e1f620bcf333",
+        "current_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+        "current_bytes": 770285,
+        "matches": false,
+        "known_cause": "Plan 03-05 Task 1 formatting repair"
+      }
+    ],
+    "missing_selectors": [
+      "independent exact schedule review",
+      "fresh source-request execute preflight",
+      "serialized request token count",
+      "exact post-reset session usage attribution"
+    ],
+    "selectors": {
+      "archived_ids": "/lanes/{core,floor}/rows/*/id",
+      "preserved_lane_ids": "current IDs absent from the archived 221 rows",
+      "stop_ids": "03-04-TASK2-GATE-STOP.md sorted-ID JSON block",
+      "lane_ids": "/identity_rows/*/identity/id",
+      "baseline_mfas": "/identity_rows/*/baseline_mfas",
+      "live_mfas": "/identity_rows/*/live_mfas"
+    },
+    "unavailable_domains": {
+      "graph": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      },
+      "callback": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      },
+      "delegate": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      }
+    }
+  },
+  "bindings": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "request_id": "R5",
+    "source_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+    "source_span": {
+      "complete_file": true,
+      "encoding": "UTF-8",
+      "start_line": 1,
+      "end_line": 2182,
+      "start_byte": 0,
+      "end_byte_exclusive": 79280,
+      "span_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+      "includes_final_newline": true
+    },
+    "context_sha256": "a9830e7f0f4a7932bea12269afa946ff6af77594d0c267db82e7926a8f1a6f82",
+    "manifest_sha256": "eb7da0f14c0e596ec8c359c6301f00966f46403fda281053d85dee514b786af6",
+    "schedule_sha256": "5dc83e36116092d808e3db0e1d590953d10fae19db0bb0b39dcc3794943ad604",
+    "review_sha256": "f3d3a64bf63ccd8a5ea32d782024ac1636558d8eae03aff5f87bb2de732678a4",
+    "preflight_sha256": "c51395698d5603be4d0d4201da9a78cd8b76a84f251c5ce2f68650f0f7e37f88",
+    "count_sha256": "2c963a617777e3c9805b032132f05e5ca742c6bff37234b5dee38d039aa0c5a6",
+    "serialized_request_sha256": "c10d7d413268f887806d3bc6a666d0f8f539d44dc80430b7c354e56d0ed4bcd1",
+    "consumed_request_ids": [
+      "R1",
+      "R2",
+      "R3",
+      "R4"
+    ],
+    "informational_usage_snapshot_utc": "2026-11-18T19:02:56.596Z",
+    "informational_post_reset_output_tokens": 648042,
+    "informational_recorded_working_balance": -38042
+  },
+  "created_at_utc": "2026-11-18T19:14:40.749Z",
+  "one_use_ready_receipt": {
+    "schema_version": "04.r5-one-use-ready.1",
+    "status": "one_use_ready",
+    "source_emission": false,
+    "request_id": "R5",
+    "created_at_utc": "2026-11-18T19:14:40.749Z",
+    "bindings": {
+      "generation": "ENV-20261117-06-supported-20261117T204102Z",
+      "request_id": "R5",
+      "schedule_sha256": "5dc83e36116092d808e3db0e1d590953d10fae19db0bb0b39dcc3794943ad604",
+      "review_sha256": "f3d3a64bf63ccd8a5ea32d782024ac1636558d8eae03aff5f87bb2de732678a4",
+      "preflight_sha256": "c51395698d5603be4d0d4201da9a78cd8b76a84f251c5ce2f68650f0f7e37f88",
+      "count_sha256": "2c963a617777e3c9805b032132f05e5ca742c6bff37234b5dee38d039aa0c5a6",
+      "source_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+      "source_span": {
+        "complete_file": true,
+        "encoding": "UTF-8",
+        "start_line": 1,
+        "end_line": 2182,
+        "start_byte": 0,
+        "end_byte_exclusive": 79280,
+        "span_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+        "includes_final_newline": true
+      },
+      "context_sha256": "a9830e7f0f4a7932bea12269afa946ff6af77594d0c267db82e7926a8f1a6f82",
+      "serialized_request_sha256": "c10d7d413268f887806d3bc6a666d0f8f539d44dc80430b7c354e56d0ed4bcd1"
+    }
+  },
+  "analysis_status": "complete",
+  "source_emission_receipt": {
+    "status": "consumed_once",
+    "request_id": "R5",
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "emitted_at_utc": "2026-11-18T19:42:09Z",
+    "emission_count": 1,
+    "source_body_emitted_once": true,
+    "content_used_for_analysis": true,
+    "analysis_complete": true,
+    "tool_output_truncated": false,
+    "completion_sentinel_observed": true,
+    "source_bytes": 79280,
+    "source_lines": 2182,
+    "source_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+    "source_span": {
+      "complete_file": true,
+      "encoding": "UTF-8",
+      "start_line": 1,
+      "end_line": 2182,
+      "start_byte": 0,
+      "end_byte_exclusive": 79280,
+      "span_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+      "includes_final_newline": true
+    },
+    "source_analysis_received": true,
+    "source_bytes_delivered": 79280,
+    "delivery_attempts": [
+      {
+        "attempt": 1,
+        "method": "six independent bounded tool outputs",
+        "chunk_count": 6,
+        "all_chunk_hashes_and_sentinels_verified": true,
+        "reassembled_bytes": 79280,
+        "reassembled_lines": 2182,
+        "reassembled_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+        "tool_output_truncated": false
+      }
+    ],
+    "non_emitting_setup_attempts": [
+      {
+        "attempt": 1,
+        "result": "stdin closed before chunk 1; no source text or sentinel emitted; gate remained unused"
+      }
+    ],
+    "chunks": [
+      {
+        "index": 1,
+        "start_line": 1,
+        "end_line": 349,
+        "start_byte": 0,
+        "end_byte_exclusive": 13975,
+        "bytes": 13975,
+        "sha256": "5291523a979c067386f31c9793694ff31dac66171de25df5bb178b02bcbb2c6f",
+        "begin_sentinel_observed": true,
+        "end_sentinel_observed": true,
+        "tool_result_truncated": false
+      },
+      {
+        "index": 2,
+        "start_line": 350,
+        "end_line": 788,
+        "start_byte": 13975,
+        "end_byte_exclusive": 27957,
+        "bytes": 13982,
+        "sha256": "3c1da5f85902af88a6504185ce97f624a87697c180a3574bcd5e77b8793e8059",
+        "begin_sentinel_observed": true,
+        "end_sentinel_observed": true,
+        "tool_result_truncated": false
+      },
+      {
+        "index": 3,
+        "start_line": 789,
+        "end_line": 1174,
+        "start_byte": 27957,
+        "end_byte_exclusive": 41915,
+        "bytes": 13958,
+        "sha256": "7d4a751c5f3c26f75289911ef40637197ca3f6fee630acc267c7341acadefaaa",
+        "begin_sentinel_observed": true,
+        "end_sentinel_observed": true,
+        "tool_result_truncated": false
+      },
+      {
+        "index": 4,
+        "start_line": 1175,
+        "end_line": 1559,
+        "start_byte": 41915,
+        "end_byte_exclusive": 55860,
+        "bytes": 13945,
+        "sha256": "65dc38d76606ea6495fd1470df49b88647728ec5d1ad7b96d64226c0584fa7e5",
+        "begin_sentinel_observed": true,
+        "end_sentinel_observed": true,
+        "tool_result_truncated": false
+      },
+      {
+        "index": 5,
+        "start_line": 1560,
+        "end_line": 1924,
+        "start_byte": 55860,
+        "end_byte_exclusive": 69825,
+        "bytes": 13965,
+        "sha256": "f339eb9b4420f5953d5b173c37b4d866ec3b8772c616926925af356a98df27d8",
+        "begin_sentinel_observed": true,
+        "end_sentinel_observed": true,
+        "tool_result_truncated": false
+      },
+      {
+        "index": 6,
+        "start_line": 1925,
+        "end_line": 2182,
+        "start_byte": 69825,
+        "end_byte_exclusive": 79280,
+        "bytes": 9455,
+        "sha256": "b027796f3de44f470468044ecc2f4942f523c7ce1e745a4edfa6a6305e482f4b",
+        "begin_sentinel_observed": true,
+        "end_sentinel_observed": true,
+        "tool_result_truncated": false
+      }
+    ],
+    "one_use_ready_receipt_sha256": "6677ffc4662480f782840c89c02f6fae8e030794c664ac5a7ddedf0e429caf35",
+    "schedule_sha256": "5dc83e36116092d808e3db0e1d590953d10fae19db0bb0b39dcc3794943ad604",
+    "review_sha256": "f3d3a64bf63ccd8a5ea32d782024ac1636558d8eae03aff5f87bb2de732678a4",
+    "preflight_sha256": "c51395698d5603be4d0d4201da9a78cd8b76a84f251c5ce2f68650f0f7e37f88",
+    "count_sha256": "2c963a617777e3c9805b032132f05e5ca742c6bff37234b5dee38d039aa0c5a6",
+    "context_sha256": "a9830e7f0f4a7932bea12269afa946ff6af77594d0c267db82e7926a8f1a6f82",
+    "serialized_request_sha256": "c10d7d413268f887806d3bc6a666d0f8f539d44dc80430b7c354e56d0ed4bcd1",
+    "source_body_emission_note": "One complete full-file source emission delivered in six contiguous, nonoverlapping chunks. Each separate tool result matched its scheduled byte span, line range, hash and sentinels. Reassembled full source hash matched. A prior setup attempt closed stdin before emitting chunk 1 and delivered no source text; it did not consume the one-use emission."
+  },
+  "source_request_count": 5,
+  "consumed_request_ids": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+  ],
+  "consumed_at_utc": "2026-11-18T19:42:09Z"
+}

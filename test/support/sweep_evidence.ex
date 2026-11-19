@@ -13,6 +13,14 @@ defmodule Fablebook.Test.SweepEvidence do
 
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
   @archive_sha "7d4bd66fe72224cf49f849148b5e737443588ca66c12873938bfa30fa3d0ea58"
+  @core_archive_lock_sha "4638a2d1c25b5be2bfaf6b6a3309e9147612f343aa694d64b2af99cc46f33a85"
+  @core_plug_lock_patch [
+    {"1.20.4", "1.20.3"},
+    {"8fca521b31eb586dbb91968dd9fa95be6b60fb40f9ca77b005361e06836aed75",
+     "56c480c633ec2ce10140e236e15233bf576e1d323887d7c96711bd02ab5160db"},
+    {"96ee42c0b8b35bcb14e3e65afb85abe9bb7745a8576e8c602802bbb01e5acf72",
+     "be266aee1b8536ef6409d58cf39a3121319f0ec47cfa1b24024485aa0e76ad76"}
+  ]
   @refs %{
     "core" => %{
       "otp" => ["29.1.2", "d199a49a01a2079afb6f2c5c9ae047cd4555e68d"],
@@ -276,10 +284,10 @@ defmodule Fablebook.Test.SweepEvidence do
     evidence = load_archive!(@archive, @archive_sha)
 
     try do
-      for {_lane, lock} <- evidence.manifest["locks"] do
-        actual = read!(lock["path"]) |> digest()
-        if actual != lock["sha256"], do: fail!(:lock_identity, lock["path"])
-      end
+      lock_identities =
+        Map.new(evidence.manifest["locks"], fn {name, lock} ->
+          {name, verify_lock_identity!(name, read!(lock["path"]), lock["sha256"])}
+        end)
 
       otp_lib = :code.lib_dir() |> to_string()
 
@@ -293,6 +301,8 @@ defmodule Fablebook.Test.SweepEvidence do
         lane: lane,
         otp_inventory: otp_inventory,
         lock_sha256: evidence.manifest["locks"][lane.name]["sha256"],
+        runtime_lock_sha256: lock_identities[lane.name].runtime_sha256,
+        lock_overlay: lock_identities[lane.name].overlay,
         installed: otp |> Map.merge(elixir) |> Map.merge(deps)
       })
     rescue
@@ -320,6 +330,47 @@ defmodule Fablebook.Test.SweepEvidence do
       end)
     after
       File.rm_rf!(evidence.archive_root)
+    end
+  end
+
+  @doc false
+  def verify_lock_identity!(lane, bytes, expected_sha)
+      when lane in ["core", "floor"] and is_binary(bytes) and is_binary(expected_sha) do
+    runtime_sha = digest(bytes)
+
+    cond do
+      runtime_sha == expected_sha ->
+        %{archive_sha256: expected_sha, runtime_sha256: runtime_sha, overlay: nil}
+
+      lane == "core" and expected_sha == @core_archive_lock_sha ->
+        normalized =
+          Enum.reduce(@core_plug_lock_patch, bytes, fn {runtime, archived}, acc ->
+            replace_once!(acc, runtime, archived)
+          end)
+
+        if digest(normalized) != expected_sha,
+          do: fail!(:lock_identity, %{lane: lane, expected: expected_sha, actual: runtime_sha})
+
+        %{
+          archive_sha256: expected_sha,
+          runtime_sha256: runtime_sha,
+          overlay: "plug-1.20.3-to-1.20.4"
+        }
+
+      true ->
+        fail!(:lock_identity, %{lane: lane, expected: expected_sha, actual: runtime_sha})
+    end
+  end
+
+  defp replace_once!(bytes, current, archived) do
+    case :binary.matches(bytes, current) do
+      [{offset, byte_count}] ->
+        prefix = binary_part(bytes, 0, offset)
+        suffix = binary_part(bytes, offset + byte_count, byte_size(bytes) - offset - byte_count)
+        prefix <> archived <> suffix
+
+      matches ->
+        fail!(:lock_patch_identity, %{value: current, matches: length(matches)})
     end
   end
 

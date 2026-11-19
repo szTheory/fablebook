@@ -1,0 +1,126 @@
+{
+  "attempt": 0,
+  "bindings": {
+    "consumed_request_ids": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5"
+    ],
+    "context_sha256": "a87967a2dbbdaf2f9ed30429757e52c85ad7ca3f84609e62f238afe761d452ab",
+    "count_sha256": "a438f88757a73617282050b9d4c19d3848aed381037b8079ad202c6153751cd9",
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "informational_post_reset_output_tokens": 648042,
+    "informational_recorded_working_balance": -38042,
+    "informational_usage_snapshot_utc": "2026-11-18T19:42:51Z",
+    "manifest_sha256": "3d14cf938fb3d9c4b12100fd92e8c448d66bae59cfe9ea965df91f9e4221c58c",
+    "preflight_sha256": "d76186cc99bfb0d5f34a58c124ee30472b6eaa40eab6adaa166d123ff5bc5256",
+    "request_id": "R6",
+    "review_sha256": "19ac8d04b6834d264afa15fe8cf2be0f9314d7ab8a607d6133b3353ef874ddf8",
+    "schedule_sha256": "e3d93f9429ce4bc3910b9e85087e139bd3f5552d5587e42bf091cb2037ffa57c",
+    "serialized_request_sha256": "f3321a1e99bc5733e1a5a9befd9b4ceab5b67f99857a2cddeb0f653c6777ec03",
+    "source_sha256": "15a9f27f05492b8a5cdf39eeff267595c95ce18925ea983d5b3d6c68c6d31edf",
+    "source_span": {
+      "complete_file": false,
+      "encoding": "UTF-8",
+      "end_byte_exclusive": 71388,
+      "end_line": 1915,
+      "includes_final_newline": true,
+      "span_sha256": "ab130b8e64c9b1a5c880cd00c0135002f7c473aeb5938ec1a1f52a903fc193e0",
+      "start_byte": 63660,
+      "start_line": 1748
+    }
+  },
+  "blockers": [
+    "review has a stale or missing source_sha256 binding",
+    "review has a stale or missing source_span binding",
+    "review has a stale or missing context_sha256 binding",
+    "schedule, review, preflight and count ordering is missing or stale",
+    "chunked source delivery needs at least two exact chunks",
+    "supported metadata partition failed: supported manifest lacks its exact bridge binding"
+  ],
+  "captured_at_utc": "2026-11-18T20:31:54.781Z",
+  "gates_not_run": [
+    "schedule review",
+    "source-request execute preflight",
+    "direct count",
+    "source emission"
+  ],
+  "missing_fields": [
+    "independent exact schedule review",
+    "fresh Phase 4 execute preflight",
+    "serialized request token count",
+    "serialized request hash and byte count"
+  ],
+  "request_id": "R6",
+  "schedule_sha256": "e3d93f9429ce4bc3910b9e85087e139bd3f5552d5587e42bf091cb2037ffa57c",
+  "schema_version": "04.r6-precount-gate-attempt.1",
+  "source_access": "closed",
+  "source_emission": false,
+  "status": "blocked",
+  "upstream_stop": {
+    "mismatches": [
+      {
+        "current_bytes": 10193,
+        "current_sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24",
+        "expected_sha256": "2843c9d29fc3e1b6a86727c905939213f3ac28b679ca75a5a5d499e80ebff478",
+        "known_cause": "Plan 03-05 compact-schedule citation spelling correction",
+        "matches": false,
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md"
+      },
+      {
+        "current_bytes": 58839,
+        "current_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+        "expected_sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+        "known_cause": "Plan 03-05 Task 1 formatting repair",
+        "matches": false,
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex"
+      },
+      {
+        "current_bytes": 770285,
+        "current_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+        "expected_sha256": "f97ef3bb5cb94e8c47f3baed38d3d6387808488879e5b59980e5e1f620bcf333",
+        "known_cause": "Plan 03-05 Task 1 formatting repair",
+        "matches": false,
+        "path": "test/contract/tier_sweep_test.exs"
+      }
+    ],
+    "missing_selectors": [
+      "independent exact schedule review",
+      "fresh source-request execute preflight",
+      "serialized request token count",
+      "exact post-reset session usage attribution"
+    ],
+    "reason": "The immutable Phase 3 preservation manifest differs from current bytes for the compact citation correction and two Plan 03-05 Task 1 formatting repairs.",
+    "selectors": {
+      "archived_ids": "/lanes/{core,floor}/rows/*/id",
+      "baseline_mfas": "/identity_rows/*/baseline_mfas",
+      "lane_ids": "/identity_rows/*/identity/id",
+      "live_mfas": "/identity_rows/*/live_mfas",
+      "preserved_lane_ids": "current IDs absent from the archived 221 rows",
+      "stop_ids": "03-04-TASK2-GATE-STOP.md sorted-ID JSON block"
+    },
+    "status": "blocked",
+    "unavailable_domains": {
+      "callback": {
+        "expected_keys": null,
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows.",
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata"
+      },
+      "delegate": {
+        "expected_keys": null,
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows.",
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata"
+      },
+      "graph": {
+        "expected_keys": null,
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows.",
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata"
+      }
+    }
+  }
+}

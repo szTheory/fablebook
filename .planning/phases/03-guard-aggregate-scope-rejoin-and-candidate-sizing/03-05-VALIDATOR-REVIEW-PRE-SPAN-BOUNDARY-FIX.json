@@ -1,0 +1,14 @@
+{
+  "schema_version": "03-05.validator-review.1",
+  "status": "pass",
+  "reviewed_at_utc": "2026-11-18T23:35:29Z",
+  "reviewer": "/root/phase3_security_audit",
+  "reviewer_role": "independent focused validator reviewer",
+  "subject": {
+    "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+    "sha256": "3abf579454598fd52ec7bf16db7d0fa53ded00bf183ff82086fe5f1b0d1c1567",
+    "bytes": 61844
+  },
+  "findings": [],
+  "scope_note": "Verified the live Phase 4 helper input and nested post-observation receipt bind the exact current helper and the R8 pre-edit snapshot separately. The first and follow-up failure receipts, R8 schedule/span, and historical R2/R3 identities remain exact. Production checks and negative fixtures fail closed on stale, duplicate, or mismatched mappings. Unresolved source/caller/digest claims and safety stops remain unchanged. No tests or source files were read."
+}
