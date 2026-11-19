@@ -31,6 +31,11 @@ ADDITIONAL_REBIND_PATHS = {
 PRIMARY_REBIND_PATH = ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md"
 SOURCE_SELECTION_DELIMITER = "\n\n# Exact scheduled source selection\n"
 SOURCE_REQUEST_IDS = ("R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8")
+STABLE_CONSUMER_PATHS = {
+    "associations": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS.jsonl",
+    "typed_gaps": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS.jsonl",
+}
+PRESERVED_TYPED_GAPS_PATH = ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-GEN-3116508059.jsonl"
 
 
 def request_artifact_path(request_id, suffix):
@@ -189,6 +194,22 @@ def validate_consumed_source_binding(source_sha256, current_sha256, active_sha25
     return True
 
 
+def require_same_payload(active_sha256, active_bytes, stable_sha256, stable_bytes, label):
+    if (not isinstance(active_sha256, str) or len(active_sha256) != 64
+            or active_sha256 != stable_sha256 or type(active_bytes) is not int
+            or active_bytes != stable_bytes):
+        raise ValueError(label + " stable consumer path does not match the active payload")
+    return True
+
+
+def partition_payload_path(manifest, key, mode):
+    recorded = manifest.get("partitions", {}).get(key, {}).get("path")
+    if (mode == "blocked" and key == "typed_gaps"
+            and recorded == STABLE_CONSUMER_PATHS["typed_gaps"]):
+        return PRESERVED_TYPED_GAPS_PATH
+    return recorded
+
+
 def self_test():
     checks = 0
 
@@ -226,6 +247,19 @@ def self_test():
     rejects(lambda: exact_partition([key], [], [("floor", "EX-001", ("Elixir.Mod", "run", 1))]))
     rejects(lambda: exact_partition([key], [key], [key]))
     rejects(lambda: exact_partition([key], [], [key, key]))
+    if not require_same_payload("a" * 64, 12, "a" * 64, 12, "fixture"):
+        raise AssertionError("matching stable consumer payload was rejected")
+    checks += 1
+    rejects(lambda: require_same_payload("a" * 64, 12, "b" * 64, 12, "fixture"))
+    rejects(lambda: require_same_payload("a" * 64, 12, "a" * 64, 13, "fixture"))
+    partition_fixture = {"partitions": {"typed_gaps": {
+        "path": STABLE_CONSUMER_PATHS["typed_gaps"]}}}
+    if partition_payload_path(partition_fixture, "typed_gaps", "blocked") != PRESERVED_TYPED_GAPS_PATH:
+        raise AssertionError("blocked historical partition did not select its preserved generation path")
+    checks += 1
+    if partition_payload_path(partition_fixture, "typed_gaps", "supported") != STABLE_CONSUMER_PATHS["typed_gaps"]:
+        raise AssertionError("supported partition did not keep the stable consumer path")
+    checks += 1
     rejects(lambda: exact_unknown(["EX-001", "CN-001"], ["EX-001"]))
     if sorted(("baseline", "live")) != sorted(set(("baseline", "live"))):
         raise AssertionError("overlapping membership roles were lost")
@@ -883,8 +917,10 @@ def check_manifest_partition(manifest, mode):
         if len(expected[lane]) != projection["union_key_count"] or len(unknown[lane]) != len(projection["unknown_baseline_target_ids"]):
             raise ValueError(lane + " key/unknown count changed")
 
-    assoc_path = safe_path(manifest["partitions"]["associations"]["path"])
-    gap_path = safe_path(manifest["partitions"]["typed_gaps"]["path"])
+    assoc_path = safe_path(partition_payload_path(manifest, "associations", mode))
+    original_gap_relative_path = manifest["partitions"]["typed_gaps"]["path"]
+    gap_relative_path = partition_payload_path(manifest, "typed_gaps", mode)
+    gap_path = safe_path(gap_relative_path)
     associations = read_jsonl(assoc_path)
     gaps = [row for _, row in read_jsonl(gap_path)]
     if sha256(assoc_path) != manifest["partitions"]["associations"]["sha256"]:
@@ -926,11 +962,21 @@ def check_manifest_partition(manifest, mode):
                 raise ValueError("source gap lost a membership role")
             if sorted(domains["caller"][key].get("membership_roles", [])) != expected_roles:
                 raise ValueError("caller gap lost a membership role")
+    historical_path_overrides = {}
+    if gap_relative_path != original_gap_relative_path:
+        historical_path_overrides["typed_gaps"] = {
+            "original_manifest_path": original_gap_relative_path,
+            "preserved_generation_path": gap_relative_path,
+            "sha256": sha256(gap_path),
+            "bytes": gap_path.stat().st_size,
+            "generation": manifest.get("generation"),
+        }
     return {"status": "blocked_consistent" if mode == "blocked" else "supported_consistent",
             "source_access": "closed", "typed_gap_rows": len(gaps),
             "known_keys": {lane: len(expected[lane]) for lane in ("core", "floor")},
             "unknown_target_sets": sum(len(values) for values in unknown.values()),
-            "preservation_mismatches": len(found_mismatches), "stale_input_bindings": stale_inputs}
+            "preservation_mismatches": len(found_mismatches), "stale_input_bindings": stale_inputs,
+            "historical_path_overrides": historical_path_overrides}
 
 
 def check_blocked_partition():
@@ -1443,6 +1489,27 @@ def check_blocked_payloads():
             "generation": manifest.get("generation")}
 
 
+def stable_consumer_payload_bindings(manifest):
+    result = {}
+    for key, stable_relative_path in STABLE_CONSUMER_PATHS.items():
+        active = manifest.get("partitions", {}).get(key, {})
+        active_path = safe_path(active.get("path"))
+        stable_path = safe_path(stable_relative_path)
+        active_hash = sha256(active_path)
+        stable_hash = sha256(stable_path)
+        active_bytes = active_path.stat().st_size
+        stable_bytes = stable_path.stat().st_size
+        require_same_payload(active_hash, active_bytes, stable_hash, stable_bytes, key)
+        result[key] = {
+            "active_path": active_path.relative_to(ROOT).as_posix(),
+            "stable_path": stable_path.relative_to(ROOT).as_posix(),
+            "sha256": stable_hash,
+            "bytes": stable_bytes,
+            "generation": manifest.get("generation"),
+        }
+    return result
+
+
 def evidence_review_subject():
     manifest_path = PH4 / "04-PROVENANCE-MANIFEST.json"
     manifest = read_json(manifest_path)
@@ -1468,7 +1535,9 @@ def evidence_review_subject():
     return {"generation": manifest.get("generation"),
             "manifest": {"path": manifest_path.relative_to(ROOT).as_posix(),
                          "sha256": sha256(manifest_path), "bytes": manifest_path.stat().st_size},
-            "payloads": payloads, "source_requests": requests}
+            "payloads": payloads,
+            "stable_consumer_payloads": stable_consumer_payload_bindings(manifest),
+            "source_requests": requests}
 
 
 def check_final_evidence_payloads():
@@ -1476,6 +1545,7 @@ def check_final_evidence_payloads():
     source_closed(manifest.get("source_access"))
     if manifest.get("metadata_status") != "supported" or manifest.get("partition_outcome") != "complete":
         raise ValueError("active metadata generation is not structurally supported")
+    stable_consumers = stable_consumer_payload_bindings(manifest)
     for key, path in (("coverage_caller_trace", CALLER_TRACE), ("sizing_digest_proof", DIGEST_PROOF)):
         binding = manifest.get(key, {})
         if (binding.get("path") != path.relative_to(ROOT).as_posix()
@@ -1570,6 +1640,7 @@ def check_final_evidence_payloads():
         raise ValueError("independent final evidence review is absent, stale, or not clean")
     return {"status": "pass_with_open_gaps", "source_access": "closed",
             "generation": manifest.get("generation"), "request_gates": gates,
+            "stable_consumer_payloads": stable_consumers,
             "record_partition": trace["record_partition"],
             "source_resolution": "unresolved", "caller_closure": "incomplete",
             "legacy_digest": "unresolved", "supplement_digest": supplement.get("digest"),
@@ -1612,6 +1683,7 @@ def build_supported_validation():
                      "evidence_review_sha256": review_hash,
                      "association_sha256": sha256(safe_path(manifest["partitions"]["associations"]["path"])),
                      "typed_gaps_sha256": sha256(safe_path(manifest["partitions"]["typed_gaps"]["path"])),
+                     "stable_consumer_payloads": stable_consumer_payload_bindings(manifest),
                      "caller_trace_sha256": sha256(CALLER_TRACE),
                      "digest_proof_sha256": sha256(DIGEST_PROOF),
                      "request_gate_sha256s": {rid: sha256(request_artifact_path(rid, "REQUEST-GATE"))

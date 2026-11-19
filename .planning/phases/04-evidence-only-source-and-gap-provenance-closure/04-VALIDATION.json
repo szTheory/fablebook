@@ -99,7 +99,16 @@
             "current_sha256": "2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb",
             "current_bytes": 86693
           }
-        ]
+        ],
+        "historical_path_overrides": {
+          "typed_gaps": {
+            "original_manifest_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS.jsonl",
+            "preserved_generation_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-GEN-3116508059.jsonl",
+            "sha256": "9c5e018d6fea75e55ae3dcb71561188b571c66a5faf84b8749d9a707b2ed9dc9",
+            "bytes": 19847377,
+            "generation": "3116508059d7f7303339ba18ce7c6ce538a65e43d95d4cab8e95225a8091e904"
+          }
+        }
       }
     },
     "supported_partition": {
@@ -114,7 +123,8 @@
         },
         "unknown_target_sets": 18,
         "preservation_mismatches": 3,
-        "stale_input_bindings": []
+        "stale_input_bindings": [],
+        "historical_path_overrides": {}
       }
     },
     "schedule_and_ledger": {
@@ -373,6 +383,22 @@
             }
           }
         },
+        "stable_consumer_payloads": {
+          "associations": {
+            "active_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+            "stable_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS.jsonl",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0,
+            "generation": "ENV-20261117-06-supported-20261117T204102Z"
+          },
+          "typed_gaps": {
+            "active_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+            "stable_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS.jsonl",
+            "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+            "bytes": 19633625,
+            "generation": "ENV-20261117-06-supported-20261117T204102Z"
+          }
+        },
         "record_partition": {
           "association_rows": 0,
           "domain_counts": {
@@ -411,9 +437,25 @@
   },
   "bindings": {
     "manifest_sha256": "24bd4c93c6fbfaa599de664365acbae266720f95d86dd18c4cb36bb009ae8c23",
-    "evidence_review_sha256": "5d2d7b86ccdd7d8ada934b83f4fd040d05bef15e739422bbcc494d3825164637",
+    "evidence_review_sha256": "9130a1cecc82fc999963a265d333637cd8da50145b8f540af3517aede3cc21ee",
     "association_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "typed_gaps_sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+    "stable_consumer_payloads": {
+      "associations": {
+        "active_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+        "stable_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "generation": "ENV-20261117-06-supported-20261117T204102Z"
+      },
+      "typed_gaps": {
+        "active_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+        "stable_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS.jsonl",
+        "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+        "bytes": 19633625,
+        "generation": "ENV-20261117-06-supported-20261117T204102Z"
+      }
+    },
     "caller_trace_sha256": "1341aef104a635bb00511413185e3e946b53a8992052ad42432b88ba3a8cf5fa",
     "digest_proof_sha256": "f745a2c074e006a384c3df5ca3ea0df1d025e2b096877ea413ea09025681370d",
     "request_gate_sha256s": {
