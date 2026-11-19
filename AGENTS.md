@@ -8,6 +8,10 @@ The owner has granted standing authorization across Fablebook OpenGSD phases, pl
 
 - Avoid unexplained OpenGSD jargon; describe concrete work, inputs, coverage and estimates.
 
+## Merge authority and milestone continuity
+
+The owner authorizes Codex to squash-merge Fablebook phase and milestone PRs once the exact PR head has green required CI and the scoped work is complete. Do not ask again; follow branch protection and any merge queue. For the currently authorized milestone, continue the remaining approved work through delivery and milestone closeout without pausing for routine approvals. Preserve recorded safety stops and stop before starting another milestone or deploying. See intent record `INT-20261119-04`.
+
 ## Phase recovery
 
 Before declaring a requested phase missing, inspect the checkout branch and fetch the current default branch; reconcile merged planning PRs and preserved worktrees. A stale local checkout is not evidence that an approved phase does not exist. Preserve unrelated working changes when recovering its plan.

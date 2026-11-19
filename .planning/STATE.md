@@ -4,10 +4,10 @@ milestone: v0.5
 milestone_name: Bounded EX-177 Provenance Follow-through
 current_phase: 06
 status: completed
-stopped_at: PR #94 has green hosted CI and awaits owner review/merge before PR #93 can be updated and rerun
-last_updated: "2026-11-19T18:08:35Z"
+stopped_at: Phase 6 candidate incorporates PR #94 and awaits the fresh exact-head CI run for PR #93
+last_updated: "2026-11-19T18:19:11Z"
 last_activity: 2026-11-19
-last_activity_desc: "Separate test compatibility PR #94 passed hosted CI; PR #93 remains blocked until #94 is merged"
+last_activity_desc: "PR #94 merged; intent and archived-path checks pass on the reconciled Phase 6 branch"
 state_head: faf84e257292ae34f4d1ca77ac8fad5eb18d39f5
 progress:
   total_phases: 1
@@ -29,24 +29,24 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** v0.5 delivery — compatibility PR #94 is green but awaits owner merge; then update PR #93 and obtain fresh exact-head CI
+**Current focus:** v0.5 delivery — push the reconciled Phase 6 candidate to PR #93, obtain green exact-head CI, and complete the v0.5 closeout
 
 ## Current Position
 
 Phase: 06
 Plan: Not started
-Status: Local phase verification passed; compatibility PR #94 is green; PR #93 still needs a fresh hosted run after #94 merges
-Last activity: 2026-11-19 — hosted CI passed for the separate compatibility PR on its reviewed head
+Status: Local phase verification passed; PR #94 is merged; local intent and archived-path checks pass; PR #93 needs a fresh hosted run
+Last activity: 2026-11-19 — post-merge Phase 6 checks passed on the reconciled branch
 
 
 ## Active Handoff
 
 - Checkout: `~/projects/fablebook`, branch `gsd/phase-6-bounded-ex-177-provenance-supplement`; no worktree was created. The PR carries the eight pre-existing local-main commits plus Phase 6 authorization, implementation, verification, and delivery-tracking commits. Local `main` remains unchanged. Two additive intent-source metadata corrections are committed locally as `d53364a` and are not yet on PR #93.
 - Delivered locally: Phase 6 Plan 06-01 produced the exact four-key supplement and standard-library checker. The `--check` and `--self-test` commands pass; validation has zero gaps, security has zero open threats, and the goal verifier passed 5/5 must-haves. The source-review hook skipped because no source files remained after the project's `.planning/` exclusions. Archived Phase 4/5 inputs remain unchanged.
-- Remaining: PR #93 is open at `faf84e2`. Exact-head CI [run 44562711455](https://github.com/szTheory/fablebook/actions/runs/44562711455) failed: security and Dialyzer passed; core and floor failed because tests read Phase 3 evidence under `.planning/phases/03-...` after the v0.4 closeout moved it byte-for-byte to `.planning/milestones/v0.4-phases/03-...`. Core also flagged missing frontmatter on INT-20261119-02/-03; those metadata corrections are in local commit `d53364a`, and the focused intent suite passed 22/22. Separate compatibility PR [#94](https://github.com/szTheory/fablebook/pull/94) is open at `2165c89`; hosted [run 44582183055](https://github.com/szTheory/fablebook/actions/runs/44582183055) passed core, floor, security, Dialyzer, and ci-gate. It remains unmerged. After owner merge, update PR #93 with `d53364a` and require a fresh exact-head hosted CI. `act` 0.2.87 cannot load the existing `concurrency.queue` syntax. Keep v0.5 open until PR #93 has a passing final-head CI, merges, and its delivery receipt is recorded.
+- Remaining: PR #93 is open at `faf84e2`; its prior [run 44562711455](https://github.com/szTheory/fablebook/actions/runs/44562711455) failed because tests read Phase 3 evidence from the former active path, and core flagged missing frontmatter on INT-20261119-02/-03. The intent corrections are in local commit `d53364a`. Compatibility PR [#94](https://github.com/szTheory/fablebook/pull/94), exact head `2165c89`, passed [hosted run 44582183055](https://github.com/szTheory/fablebook/actions/runs/44582183055) and was squash-merged as `6ca51ac` on 2026-11-19. The Phase 6 branch now includes that merge; the remote PR #93 still needs the local documentation/intent updates pushed and fresh exact-head CI. `act` 0.2.87 cannot load the existing `concurrency.queue` syntax. Continue until PR #93 has green final-head CI, is squash-merged, and its delivery receipt is recorded, then finish the bounded v0.5 closeout. Do not advance to another milestone.
 - Scope remains limited to the four EX-177 source/caller keys and exact 9,712-row complement. Do not reread source bodies, consume R9, search for more callers, invoke audited runtime paths, or make product changes. One observed `run/1` call per lane is not exhaustive caller closure.
 - Stops remain unchanged: candidate fit unresolved and candidate null; implementation unauthorized; aggregate gate open; R9 denied and unconsumed; actual library collision unknown; Macro caller-AST and explanation unresolved; SEC-01 Pending; Walking Skeleton blocked; legacy digest unresolved; automatic follow-up disabled.
-- **Next actor: Owner.** Review and merge test-only compatibility PR #94, whose exact head `2165c89` has green hosted CI. The test change preserves the provenance-sensitive helper and archived evidence. Assistant resumes after the merge to push the local Phase 6 metadata correction, update PR #93, and obtain fresh hosted CI. Do not merge PR #93 until that run is green; no new phase or milestone starts automatically.
+- **Next actor: Assistant.** Push the updated Phase 6 branch to PR #93 and wait for its exact-head hosted checks. If they are green, squash-merge PR #93, append the actual delivery receipt, and complete the v0.5 milestone audit/closeout. INT-20261119-04 records the owner's merge and active-milestone authorization. Preserve the four-key and 9,712-row limits and all existing safety stops; do not start another milestone.
 
 ## Performance Metrics
 
@@ -159,8 +159,8 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-19T18:09:34Z
-**Stopped at:** Phase 06 verified locally; compatibility PR #94 passed hosted CI and awaits owner merge; PR #93 needs a fresh exact-head run afterward
+**Last session:** 2026-11-19T18:19:11Z
+**Stopped at:** Phase 06 verified locally; compatibility PR #94 merged; update and rerun PR #93, then close v0.5
 **Resume file:** .planning/phases/06-bounded-ex-177-provenance-supplement/06-VERIFICATION.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5 is also complete and verified for the bounded EX-177 slice: four source/caller rows remain open because current source identity/span metadata is absent; the other 9,712 rows remain unchanged. R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was read or emitted. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
@@ -191,4 +191,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- The [active handoff](#active-handoff) records green compatibility PR #94 and the remaining Phase 6 delivery steps for PR #93. Historical v0.4 disposition and delivery details remain in the [closeout receipt](milestones/v0.4-CLOSEOUT.md).
+- The [active handoff](#active-handoff) records merged compatibility PR #94 and the remaining Phase 6 delivery and v0.5 closeout steps. Historical v0.4 disposition and delivery details remain in the [closeout receipt](milestones/v0.4-CLOSEOUT.md).

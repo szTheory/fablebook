@@ -110,3 +110,5 @@ This run is slower than the latest successful main runs (8m44s, 10m51s and 10m56
 Exact compatibility PR head `2165c89843837705670a5b54756705ab3eee4e0a` passed [CI run 44582183055](https://github.com/szTheory/fablebook/actions/runs/44582183055). The run reached `ci-gate` in 9m20s with negligible queue time. Core took 8m50s and floor 9m12s while running concurrently; floor was the critical path. Security took 36s, Dialyzer 21s, and `ci-gate` 3s. `nightly` and `ci-health` were skipped as configured.
 
 Compared with PR #92, core improved by 35s and floor by 5s; one run is not enough to infer a recurring improvement. Core and floor already overlap, and their test steps dominate setup. All required checks passed with full coverage, so no safe workflow change is indicated. The two earlier PR #94 attempts found a provenance-helper identity change and an unsupported ExUnit cleanup macro; the final candidate preserves the historical helper bytes and uses `on_exit` cleanup.
+
+PR #94 was squash-merged as `6ca51ac` after the exact-head checks passed. No additional main run was needed because the required PR checks covered the merged tree.
