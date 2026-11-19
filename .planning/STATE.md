@@ -1,20 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.4
-milestone_name: Guard Aggregate Reconciliation — Fablebook
-status: complete
-last_updated: "2026-11-19T14:00:18Z"
+milestone: v0.5
+milestone_name: Bounded EX-177 Provenance Follow-through
+status: planning
+last_updated: "2026-11-19T14:16:19.711Z"
 last_activity: 2026-11-19
-last_activity_desc: Milestone v0.4 completed and archived
-state_head: df9bba9fbf5fa6efd665e7d5bfea7e827d3035c0
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
-  percent: 100
-resumed_at: 2026-11-17 under owner direction INT-20261117-11
-current_phase: null
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -29,22 +25,23 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** v0.4 is archived. Codex is continuing the owner-authorized EX-177 planning boundary; the wider guard aggregate gate remains open.
+**Current focus:** v0.5 is defining one bounded EX-177 evidence supplement from already reviewed discovery; the wider guard aggregate gate remains open.
 
 ## Current Position
 
-Phase: Between milestones
+Phase: Not started (defining requirements)
 Plan: —
-Status: v0.4 complete; next scope authorized for planning, subject to typed gates
-Last activity: 2026-11-19 — Milestone v0.4 completed and archived
+Status: Defining requirements
+Last activity: 2026-11-19 — Milestone v0.5 started
+
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `main`, HEAD `df9bba9fbf5fa6efd665e7d5bfea7e827d3035c0`. v0.4 is archived locally; PRs #90–#92 have merged receipts and green exact-head CI. No additional worktree was created.
-- The owner approved the v0.4 closeout override and chose to carry the audit items as debt. Phase 3's historical 21/21 pass remains unchanged despite its stale fingerprint. Phase 4's old `gaps_found` report remains unchanged and acknowledged; the current stable and ENV06 payload files match and the package receipt passes. The same three v0.1 deferred items remain unchanged under the prior immutable-source exception.
-- The owner authorized planning a bounded EX-177 continuation after closeout. [INT-20261119-01](intent/sources/2026-11-19-01-authorize-bounded-source-discovery.md) and its [discovery report](research/2026-11-19-ex177-source-discovery.md) record the exact target span and one direct caller per lane. Package-wide caller closure remains unproven; the four selected rows and 9,712-row complement stay fixed. Phase 5 R9 remains denied and unconsumed.
+- Checkout: `~/projects/fablebook`, branch `main`, v0.4 tagged locally at closeout commit `2887a082a9ec1861eafff4b2bf80d97adc34f788`; no tag was pushed. The v0.4 archive contains the phase evidence and the requirements file; no additional worktree was created.
+- The owner approved the v0.4 closeout override and chose to carry the audit items as debt. Phase 3's historical 21/21 pass remains unchanged despite its stale fingerprint. Phase 4's historical `gaps_found` report remains acknowledged with the original verdict; current payload equality and validation evidence are recorded in the closeout. The same three v0.1 deferrals remain unchanged under the prior immutable-source exception.
+- v0.5 is authorized for planning only under INT-20261119-02. Its scope is the four selected EX-177 source/caller keys and the unchanged 9,712-row complement. Use the reviewed [discovery report](research/2026-11-19-ex177-source-discovery.md) and archived Phase 5 receipts; do not reread source bodies or consume R9. One observed `run/1` call per lane is not exhaustive caller closure.
 - Stops remain: candidate null; implementation unauthorized; aggregate gate open; actual library collision unknown; Macro caller-AST and explanation wording unresolved; SEC-01 pending; Walking Skeleton blocked; legacy digest unresolved. Do not invoke audited OTP/runtime paths.
-- **Next actor: Codex.** Repair the between-milestone state, run `milestone-start` preflight, and continue the authorized planning workflow only if typed gates pass. If the gate requires a broader owner decision, record the precise blocker and ask only about that change.
+- **Next actor: Codex.** Finish the v0.5 requirements and one-phase roadmap, run the phase-6 discussion preflight, and stop before execution. If a gate requires new source authority or broader caller search, record the exact blocker and hand that decision to the owner.
 
 ## Performance Metrics
 

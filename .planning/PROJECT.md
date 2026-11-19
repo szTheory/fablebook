@@ -18,6 +18,17 @@ If everything else fails, a scenario must still render with production fidelity 
 
 v0.4 closed locally on 2026-11-19 as a bounded evidence milestone delivered through PRs #90–#92 with green exact-head hosted CI. Its six requirements are satisfied; source and caller gaps, legacy digest uncertainty, and the wider guard gate remain open. The override closeout preserves Phase 3's historical pass without rerunning it and carries the Phase 4 stale report and prior v0.1 deferrals. This is not a package release or runtime-safety proof. See the [v0.4 archive](milestones/v0.4-ROADMAP.md), [audit](milestones/v0.4-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.4-phases/), and [closeout receipt](milestones/v0.4-CLOSEOUT.md).
 
+## Current Milestone: v0.5 Bounded EX-177 Provenance Follow-through
+
+**Goal:** Make the already reviewed EX-177 source and observed-caller facts machine-readable for exactly four existing rows while preserving the 9,712-row complement and every unresolved safety stop.
+
+**Target features:**
+- Bind the two lane-specific package identities, target file hashes and spans, and the observed direct `run/1` caller from the saved discovery report.
+- Keep the four selected rows and 9,712-row complement explicit; one observed caller does not prove complete caller closure.
+- Add a small standard-library consistency check for the supplementary record, with no new dependency, product code, source reread, runtime call, or CI lane.
+
+This is a planning-only scope. Phase execution, another source request, broader caller search, implementation, candidate promotion, aggregate closure, and automatic follow-up are not authorized here.
+
 ## Current State
 
 v0.2 Guard coverage recovery is complete and archived (2026-11-11 local).
@@ -49,15 +60,19 @@ Phase 3 fingerprint override and chose to carry the stale Phase 4 gap report and
 three existing v0.1 deferrals. Candidate remains null, implementation remains
 unauthorized, and the aggregate gate stays open. See [INT-20261119-02](intent/sources/2026-11-19-02-v04-closeout-and-continuation.md).
 
-## Next Milestone Goals
+## Current Milestone Scope
 
-The owner authorized planning a bounded continuation of the EX-177 discovery scope in [INT-20261119-01](intent/sources/2026-11-19-01-authorize-bounded-source-discovery.md). Use the current [discovery report](research/2026-11-19-ex177-source-discovery.md) as evidence: the exact helper span and one direct caller are known on both lanes, while package-wide caller closure and candidate fit remain unproven. Keep the four selected rows and 9,712-row complement explicit. No new milestone or phase is active until the typed planning gates pass; no runtime invocation, implementation, aggregate closure, or automatic follow-on is authorized.
+The owner authorized this bounded planning continuation in [INT-20261119-02](intent/sources/2026-11-19-02-v04-closeout-and-continuation.md). Use the [discovery report](research/2026-11-19-ex177-source-discovery.md) and archived Phase 5 receipts as the source of recorded facts; do not repeat source reads or consume R9. Candidate fit, complete caller closure, and the aggregate gate remain open.
 
 Use the archived [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md) for its acceptance history. The wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md).
 
 ## Requirements
 
 The lists below summarize the wider v1 product vision; they are not a live progress ledger. Use the archived [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md), [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md), and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
+
+### Current milestone acceptance
+
+- [ ] **GSR-07**: A supplementary record binds exactly the four selected EX-177 source/caller rows to the two pinned lane identities, file hash and byte count, target definition span, and observed direct-caller span. It preserves the 9,712-row complement and explicitly leaves exhaustive caller closure, candidate fit, and the aggregate gate open. (INT-20261119-01, INT-20261119-02, ADR 0021)
 
 ### Validated
 
@@ -486,4 +501,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-19 after v0.4 Guard Aggregate Reconciliation closeout; the guard gate remains open pending complete aggregate proof.*
+*Last updated: 2026-11-19 at the start of v0.5 Bounded EX-177 Provenance Follow-through; the guard gate remains open pending complete aggregate proof.*
