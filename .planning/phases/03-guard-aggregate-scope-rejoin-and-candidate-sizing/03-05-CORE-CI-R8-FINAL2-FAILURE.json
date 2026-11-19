@@ -1,0 +1,74 @@
+{
+  "receipt_id": "03-05-CORE-CI-R8-FINAL2-FAILURE",
+  "status": "failed",
+  "command": "MIX_ENV=test bin/lane core mix ci",
+  "started_at_utc": "2026-11-19T00:25:09Z",
+  "completed_at_utc": "2026-11-19T00:32:19Z",
+  "exit_code": 2,
+  "duration_seconds": 419.0,
+  "stages": {
+    "compile": "passed",
+    "credo_strict": "passed",
+    "dependency_cycles": "passed",
+    "docs": "passed",
+    "core_tests": "failed",
+    "floor_tests": "excluded_by_core_lane"
+  },
+  "tests": {
+    "passed": 457,
+    "total_selected": 459,
+    "failed": 2,
+    "excluded": 10,
+    "first_failure": "test/planning/intent_test.exs:145: canonical citation ID INT-20261118-04 was unknown because its source file was not recognized as a valid intent source",
+    "second_failure": "test/planning/intent_test.exs:140: 2026-11-18-04-authorize-one-recovery-request.md lacked required YAML frontmatter fields id, date, source, captured_by and context"
+  },
+  "affected_artifact": {
+    "path": ".planning/intent/sources/2026-11-18-04-authorize-one-recovery-request.md",
+    "bytes": 813,
+    "sha256": "7220de6666812b423df1681b377d4b92d2b1e245e773200dc4299f172dbf1cd1"
+  },
+  "code_under_test": {
+    "helper": {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "bytes": 86693,
+      "sha256": "2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb"
+    },
+    "validator": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "bytes": 64572,
+      "sha256": "8d39106a4431638fcd53ff3064c90f22bdecd31e9d63aebcf77ec72716ad7812"
+    },
+    "plan": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+      "bytes": 52172,
+      "sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5"
+    }
+  },
+  "phase4_generation": {
+    "manifest": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "bytes": 60908,
+      "sha256": "598be0ccac147ab1ac5d64cd46f9a78a1bf919a1b985a299753a3d53ad1e6fac"
+    },
+    "validation": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-VALIDATION.json",
+      "bytes": 20684,
+      "sha256": "a2d7a13b3cb22d884d4985995016c8f0abb36a9775e73fc7354c8af437cf92c7"
+    },
+    "evidence_review": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-EVIDENCE-REVIEW.json",
+      "bytes": 6936,
+      "sha256": "493c8efdfd90a01dbec7cbc7b90ccde642c826365b8fcbadd500cf0dbaf7d0ee"
+    }
+  },
+  "log": {
+    "path": "/private/tmp/fablebook-phase3-core-ci-R8-final2-full.log",
+    "bytes": 60446099,
+    "sha256": "35aba76bdf364510df10e9cf7fa80c0db54581be1850d22c52aebfd75e9a2cb3"
+  },
+  "checkout": {
+    "branch": "gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+    "head": "7317bd0ea112dbe9c2a60e15322ec6bfccc4681d"
+  },
+  "scope_disposition": "The intent source already records the owner-approved bounded R8 request; its frontmatter is malformed. Repair only that existing source record to the established five-key frontmatter schema, preserve the recorded reply and scope text verbatim, do not edit test/planning/intent_test.exs, then run that test file before retrying core CI. Focused aggregate receipts remain valid because their executable inputs are unchanged; full floor suite remains not-run."
+}

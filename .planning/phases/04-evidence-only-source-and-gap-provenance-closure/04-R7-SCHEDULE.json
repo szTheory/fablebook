@@ -1,0 +1,414 @@
+{
+  "schema_version": "04.r7-source-schedule.1",
+  "schedule_revision": {
+    "revision": 1,
+    "previous_request": "R6",
+    "reason": "R6 is consumed-verified for the pre-format helper. The owner authorized exactly one fresh R7 request because formatter-only normalization changed bytes within R6’s consumed span. R7 is limited to the same identity-validation function and caller context; no other source scope is added."
+  },
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "created_at_utc": "2026-11-18T21:31:21Z",
+  "author": "Codex orchestrator",
+  "status": "scheduled",
+  "source_access": "closed",
+  "source_emission": false,
+  "source_file_count": 1,
+  "inputs": [
+    {
+      "path": ".planning/STATE.md",
+      "bytes": 18397,
+      "sha256": "e4bbab29078e970081f83d1e30e9141924bd590f67a2e7d65cba841da77516f9"
+    },
+    {
+      "path": ".planning/intent/sources/2026-11-17-11-remove-cumulative-token-stop.md",
+      "bytes": 1145,
+      "sha256": "07424920d0be775a2978f1d72d4c00ad55be1dc95119164b4028062c2f6ea2f0"
+    },
+    {
+      "path": ".planning/intent/sources/2026-11-18-03-authorize-scoped-phase4-helper-refresh.md",
+      "bytes": 897,
+      "sha256": "d7cfc5b8bbf3cc168a948e923fd0641998f7653173c90ff650ffb32eb8c46bab"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+      "bytes": 52172,
+      "sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-REPLAN-20261118-02.md",
+      "bytes": 2594,
+      "sha256": "0bd465295d7a38e32c767708c631ab481dfe7cc09e6f78743dde272fea2e345d"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-REPLAN-20261118-03.md",
+      "bytes": 2249,
+      "sha256": "03f86fd60e4f937219b0b9dd8349c323f81e442a93a09ff29e9e7fe86e606e52"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-REPLAN-20261118-04.md",
+      "bytes": 3301,
+      "sha256": "daaf41f4dddb2f7a804c2e07f0191cb0b3dca2e7c54140a8715020e8d97a3527"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "bytes": 55327,
+      "sha256": "96e621d0838e8753ab6cd080142adb6641a062ab9a1c9cde79b774c8361fdf6d"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-EXECUTION-CODE-REVIEW.md",
+      "bytes": 1254,
+      "sha256": "41dd048d04fa8bb4c0d4dd795fb29c03c6159988c472547d78bcf6535639d673"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md",
+      "bytes": 8039,
+      "sha256": "9c60c729e3d473c259a87499036857509b7f887f44b9ec724fb004848610c2b6"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-SIZING.json",
+      "bytes": 38400,
+      "sha256": "2ad9d75a45800786bba116166eb64ca304781c101ae0bdfe851a32cc172430bb"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-02-PLAN.md",
+      "bytes": 26503,
+      "sha256": "bb5d342485ef72ec8a41015d4229c0644fcb187a8c86ea7dc98eeab42d7b2250"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261117-09.md",
+      "bytes": 1910,
+      "sha256": "9837acfa53ebb2e18152575eee487c1d20afcfe8153cfdf25001173f6e4f77ab"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261118-02.md",
+      "bytes": 2393,
+      "sha256": "83757fe6c8bb41dfaeb5f9cdbbd4a4901d6a86f97be8be88e49b8d541ec568fe"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261118-03.md",
+      "bytes": 3456,
+      "sha256": "cecd98c41142ca5d84d3d835fb53c2dfc36d487f71f778b0c0ce0f53f35c2c6a"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261118-04.md",
+      "bytes": 3211,
+      "sha256": "bdc33e0fcf63f859884fda2f67c0cd8291a92e2f0fd6b43dee8d7258538154ea"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-COVERAGE-CALLER-TRACE.json",
+      "bytes": 19653,
+      "sha256": "b289539ae42fab45cd39053d49eda49ef53140cc2cb5b3677205f116f2850afb"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-EVIDENCE-REVIEW.json",
+      "bytes": 4681,
+      "sha256": "2d20b3567475eeb7a50591e92fc8814df03e539cfd18aeabba3e847f9e9632ac"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PRESERVATION-PROVENANCE-BRIDGE.json",
+      "bytes": 13307,
+      "sha256": "69cf3f5020318bc908f099c063d39207c8e555d28f8f039f31b507b5cbfe36ce"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST-04-01-ORIGINAL.json",
+      "bytes": 56172,
+      "sha256": "b1b7032366522f250c152b8c6b91282293f5e8f5188d4c8ee7e65f8ed4eb4fd7"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "bytes": 61348,
+      "sha256": "0dfd5c808914746aca9f4b33b139b5d5884791e287655a9d1e25afc8410d3414"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R1-DIRECT-COUNT.json",
+      "bytes": 1513,
+      "sha256": "9a3b453f6bca90e198984b456eba02f8d94ba3ce032c9ad6b7760d5ad6f210e7"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R1-EXECUTE-PREFLIGHT.json",
+      "bytes": 1062,
+      "sha256": "e6c116784ccc90eb0d28d9b73cde1917cfa0876be5c1f2edc933cfcfedb41f61"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R1-REQUEST-GATE.json",
+      "bytes": 7422,
+      "sha256": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R1-SCHEDULE-REVIEW.json",
+      "bytes": 1398,
+      "sha256": "70e65fbb7916ab14bd1be8999cfdd8b3139be668a45020893d6c58852cacca89"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R1-SCHEDULE.json",
+      "bytes": 133247,
+      "sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-DIRECT-COUNT.json",
+      "bytes": 1477,
+      "sha256": "53ff5f91edb9c1cae7463e70d699fe8ca1357df8fb34033c5c5bd33168007dbd"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-EXECUTE-PREFLIGHT.json",
+      "bytes": 1122,
+      "sha256": "3e432a5d7af46b6b247a93af213e0da7bda695c7701b0d6a92b95728dea51a9b"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-REQUEST-GATE.json",
+      "bytes": 8271,
+      "sha256": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-RESOURCE-LEDGER-PRE-COUNT.json",
+      "bytes": 6901,
+      "sha256": "5156dd5b813fcf330a30e79803041f5b170022f3fb6e65ba1090966e0fc7f009"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-SCHEDULE-REVIEW.json",
+      "bytes": 2313,
+      "sha256": "0c3a4b7cce143094ce68671f33f9497292048fd431aa26739edc68ccca5b32c8"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-SCHEDULE.json",
+      "bytes": 139215,
+      "sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-DIRECT-COUNT.json",
+      "bytes": 1478,
+      "sha256": "336fb7fe776d50195641bf4ecc054ee4a1fa447e351d9e5116166d6c1439e625"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-EXECUTE-PREFLIGHT.json",
+      "bytes": 1123,
+      "sha256": "3ba9f1a3f1424211af7fdad1bd66b34ea1088bf030b303dca68547fa881a449b"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-REQUEST-GATE.json",
+      "bytes": 8092,
+      "sha256": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-RESOURCE-LEDGER-PRE-COUNT.json",
+      "bytes": 8472,
+      "sha256": "79495fcbf3194ace3bccdd79372d8f0003a1643ee97825cf6497101116ecc62b"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-SCHEDULE-REVIEW-REVISE-01.json",
+      "bytes": 3345,
+      "sha256": "d0c245b32f84275d8718c564035f3ae09b721d5a39e6c4104b43005bafff9a0f"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-SCHEDULE-REVIEW.json",
+      "bytes": 3758,
+      "sha256": "170b42086a01ac9b769b0e086bc301d68000d056258bb199294335554a8e3ddb"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-SCHEDULE-REVISE-01.json",
+      "bytes": 142210,
+      "sha256": "d05036585a931ce5c3fbc00db062afab9b7490acb0ba141cdd9e8602eb589096"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-SCHEDULE.json",
+      "bytes": 144600,
+      "sha256": "b996dc547c4e0a34ea9fdf250ab83bb1d633f128686b1026fdd6073e4681900c"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R4-DIRECT-COUNT.json",
+      "bytes": 1556,
+      "sha256": "deea8b08366b6fbba3db92afde0b9add618526b5e44d233fd92e7764cae31a77"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R4-EXECUTE-PREFLIGHT.json",
+      "bytes": 1588,
+      "sha256": "29e149dbcf3e7d4839b1a95c6a74e5aa23202f5894311e1bd07e5549de4e7108"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R4-REQUEST-GATE.json",
+      "bytes": 8382,
+      "sha256": "d4b3b1d6fa9995543b969b01f6d9227a50eb3b7fc78ca1285630cef2c2645cde"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R4-RESOURCE-LEDGER-PRE-COUNT.json",
+      "bytes": 9504,
+      "sha256": "04148f7b4cff381059c9d6d77355255a189da7babb12b58186837e539780e74e"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R4-SCHEDULE-REVIEW.json",
+      "bytes": 1892,
+      "sha256": "1268becd645e420d7d427257f02a4fa87fb4bf14a3b4874dc1e07631ecef6c92"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R4-SCHEDULE.json",
+      "bytes": 15382,
+      "sha256": "858a5cf3c6a15e4bcd9c805123edcac74c314ebc04669f45fd3f39275d5010a0"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-DIRECT-COUNT.json",
+      "bytes": 1650,
+      "sha256": "2c963a617777e3c9805b032132f05e5ca742c6bff37234b5dee38d039aa0c5a6"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-EXECUTE-PREFLIGHT.json",
+      "bytes": 1682,
+      "sha256": "c51395698d5603be4d0d4201da9a78cd8b76a84f251c5ce2f68650f0f7e37f88"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-REQUEST-GATE.json",
+      "bytes": 10946,
+      "sha256": "12ba9d4efb78c955a4f8c1267866285bb3e92f465ce03d7c84b11b72854dba6e"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-RESOURCE-LEDGER-PRE-COUNT.json",
+      "bytes": 10909,
+      "sha256": "719591e63d3019747c67705e22872f7b6cb95f1a81cf55bee462b069dc14e7c7"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-SCHEDULE-REVIEW.json",
+      "bytes": 3576,
+      "sha256": "f3d3a64bf63ccd8a5ea32d782024ac1636558d8eae03aff5f87bb2de732678a4"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-SCHEDULE.json",
+      "bytes": 18655,
+      "sha256": "5dc83e36116092d808e3db0e1d590953d10fae19db0bb0b39dcc3794943ad604"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-DIRECT-COUNT.json",
+      "bytes": 1655,
+      "sha256": "920c3bfd41fbd7de2923c1e8bbb53bcb20315bec0116150608886de6e6e54015"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-EXECUTE-PREFLIGHT.json",
+      "bytes": 1690,
+      "sha256": "aa1c1bc9f329196d7dd640f725457ce1bb90b8bc26d3763eebb6a500d1e9ad9a"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-REQUEST-GATE-READY.json",
+      "bytes": 6015,
+      "sha256": "22464207a965153111f2929aca3095d828de86054287ea682e94c2f92ebb6086"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-REQUEST-GATE.json",
+      "bytes": 8407,
+      "sha256": "5e30216d14d1ce465f49bd846f4dcda4cc914cd610de1a7feebda4c259570d08"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-RESOURCE-LEDGER-PRE-COUNT.json",
+      "bytes": 13046,
+      "sha256": "a3ad13be17828b5655b4296e9fc26e683281f55d430818b04e4f95eeb6fc00c3"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-SCHEDULE-REVIEW-INDEPENDENT-02.json",
+      "bytes": 860,
+      "sha256": "7daff66fb642e914e45bb65e5b46d55b74864ae21a364574b7beac900aafd153"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-SCHEDULE-REVIEW.json",
+      "bytes": 4854,
+      "sha256": "1d028770bf3c6a72fa149a0a0ad787de706b84760c5e18d5e2c432a36ce3c71f"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-SCHEDULE.json",
+      "bytes": 17908,
+      "sha256": "74bbd6a9554c5fac9b08eda5790b8a3d6f2897a03c072a080455dec97dc31c22"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-RESOURCE-LEDGER.json",
+      "bytes": 14812,
+      "sha256": "18f637e08c4c4ccaec4cbf302ce2e910934c94eda41f3f063563915f9d9454ff"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SIZING-DIGEST-PROOF.json",
+      "bytes": 7940,
+      "sha256": "370d2af393133f5fa43969081a6ffc6d5f1a522555d9dfc4f09467f802dc9a10"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SOURCE-SCHEDULE.json",
+      "bytes": 1651,
+      "sha256": "9bafbb7b057e92657da80c4ef35d85d94d61b2f734eb661f0372eaff8f3238ae"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+      "bytes": 19633625,
+      "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-VALIDATION.json",
+      "bytes": 17382,
+      "sha256": "dd7ed4b8aca15e0e8fa22e5b132b777aa47be117b61a92997b0798d948d85876"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-validate-artifacts.py",
+      "bytes": 101042,
+      "sha256": "b4c29da06f4d176306566f5f187324439f24083f8d6a886d5295c09066c1d626"
+    },
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "bytes": 83805,
+      "sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370"
+    }
+  ],
+  "request": {
+    "request_id": "R7",
+    "status": "scheduled",
+    "candidate_path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "requested_scope": "Only the exact formatted identity-validation function and caller-context span, lines 1748-1923 and bytes [63660,71408); full helper identity is separately bound.",
+    "source_sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+    "source_file_bytes": 83805,
+    "source_file_lines": 2287,
+    "source_span": {
+      "complete_file": false,
+      "encoding": "UTF-8",
+      "start_line": 1748,
+      "end_line": 1923,
+      "start_byte": 63660,
+      "end_byte_exclusive": 71408,
+      "span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+      "includes_final_newline": true
+    },
+    "source_bytes": 7748,
+    "source_chunks": null,
+    "context_text": "Phase 4 R7 is one bounded, one-use current-helper identity observation authorized by INT-20261118-03 and the owner’s explicit confirmation of one R7 refresh. It follows formatter-only normalization that changed bytes inside consumed R6. Read only the exact scheduled span, lines 1748–1923 (bytes [63660,71408)), from test/support/guard_aggregate_reconciliation_evidence.ex; the full helper identity and span are separately hash-bound. R2/R3 remain immutable historical producer records at SHA-256 75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6 (58,839 bytes). R5 remains the complete pre-repair snapshot at SHA-256 5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1. R6 remains the pre-format observation at SHA-256 15a9f27f05492b8a5cdf39eeff267595c95ce18925ea983d5b3d6c68c6d31edf (83,785 bytes), selected span SHA-256 ab130b8e64c9b1a5c880cd00c0135002f7c473aeb5938ec1a1f52a903fc193e0. The formatted helper is SHA-256 734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370 (83,805 bytes); the R7 span SHA-256 is 2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682. Verify only that historical producer identity remains distinct from the current helper identity and that the R7 span matches the scheduled identity-validation function and caller context. Keep generator_revision_mismatch unresolved. Do not claim source resolution, caller closure, legacy digest reproduction, candidate fit, implementation authority, collision resolution, runtime safety or absence of dynamic callers. Do not read any other source/test body, invoke code, callbacks, audited targets, runtime/library paths, or install packages. This request does not authorize Phase 4 implementation.",
+    "context_serialization": "UTF-8 exact string; context SHA-256 is over exact UTF-8 bytes.",
+    "context_bytes": 1721,
+    "context_sha256": "077114d4c8b8696ca8930d47727e6a0719d9f60ed84fb0ccf18073a756b53cbc",
+    "request_payload_framing": "UTF-8 context_text + two LF + \"# Exact scheduled source selection\" + one LF + exact selected span bytes",
+    "request_payload_sha256": "1332c84c24b080cdc5be9129f6cbde834eabbcb0598fc2ebe03400af07821192",
+    "source_request_limit_policy": "One logical R7 emission of the exact selected span; no replay if incomplete. Cumulative output ceilings are disabled by owner; exact source identity, direct count, context fit, independent review, fresh execute preflight, no-truncation, one-use, and retained safety gates remain active.",
+    "emission_delivery": {
+      "mode": "one_bounded_tool_result",
+      "max_output_bytes": 10000,
+      "one_logical_emission": true,
+      "required_begin_and_end_sentinels": true,
+      "verify_span_hash_before_analysis": true
+    },
+    "planned_outputs": [
+      "04-COVERAGE-CALLER-TRACE.json",
+      "04-SIZING-DIGEST-PROOF.json",
+      "04-PROVENANCE-MANIFEST.json",
+      "04-validate-artifacts.py",
+      "04-RESOURCE-LEDGER.json",
+      "03-05-validate-evidence.py"
+    ]
+  },
+  "review_contract": {
+    "required_result": "PASS or REVISE with exact bindings",
+    "reviewer_must_be_independent_of_author": true,
+    "source_body_access_for_review": "metadata-only; recompute current input hashes/bytes, full R7 helper identity, selected function-span hash/bounds, exact request framing, exact R1-R6 consumed history, and unchanged safety stops; do not read, display, or analyze helper source"
+  },
+  "count_contract": {
+    "model": "gpt-6-luna",
+    "configured_context_tokens": 200000,
+    "endpoint": "POST https://api.openai.com/v1/responses/input_tokens",
+    "generation": false,
+    "no_truncation": true,
+    "fit_semantics": "per-request context fit only; cumulative output ceiling and reserve are disabled by owner",
+    "payload_assembly": "UTF-8 context_text + two LF + \"# Exact scheduled source selection\" + one LF + exact selected span bytes decoded as UTF-8"
+  }
+}

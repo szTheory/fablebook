@@ -1,0 +1,35 @@
+{
+  "schema_version": "04.r1-schedule-review.1",
+  "status": "pass",
+  "reviewer": "provenance_evidence_audit",
+  "reviewer_role": "independent provenance reviewer",
+  "independent_of_schedule_author": true,
+  "source_body_access": "metadata-only",
+  "source_body_read": false,
+  "source_body_emitted": false,
+  "created_at_utc": "2026-11-17T22:32:07.436Z",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "request_id": "R1",
+  "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+  "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+  "source_span": {
+    "start_line": 1,
+    "end_line": 1610,
+    "start_byte": 0,
+    "end_byte_exclusive": 58839,
+    "encoding": "UTF-8",
+    "complete_file": true,
+    "includes_final_newline": true
+  },
+  "context_sha256": "98ee0eb217e847b0979ce12df298a773a3e19acf14234ec71803f4dbf5d23499",
+  "input_bindings_verified": 9,
+  "planned_outputs_verified": [
+    "04-COVERAGE-CALLER-TRACE.json",
+    "04-SIZING-DIGEST-PROOF.json",
+    "04-PROVENANCE-MANIFEST.json",
+    "04-validate-artifacts.py",
+    "04-RESOURCE-LEDGER.json"
+  ],
+  "findings": [],
+  "review_summary": "Corrected bridge projection binds the actual original records, transfer receipt, task readiness, mismatches, limits and passing independent review; one complete one-use request; no aggregate output stop."
+}

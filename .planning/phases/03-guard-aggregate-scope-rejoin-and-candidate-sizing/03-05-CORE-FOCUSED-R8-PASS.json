@@ -1,0 +1,80 @@
+{
+  "receipt_id": "03-05-CORE-FOCUSED-R8-FINAL3",
+  "status": "passed",
+  "command": "bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors",
+  "started_at_utc": null,
+  "completed_at_utc": "2026-11-18T23:59:26.656304+00:00",
+  "exit_code": 0,
+  "selection": {
+    "passed": 9,
+    "failed": 0,
+    "excluded": 100,
+    "duration_seconds": 53.5,
+    "selection_tag": "guard_aggregate_reconciliation"
+  },
+  "checkout": {
+    "branch": "gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+    "head": "7317bd0ea112dbe9c2a60e15322ec6bfccc4681d",
+    "working_tree": "dirty; all pre-existing changes preserved"
+  },
+  "inputs": [
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+      "bytes": 52172,
+      "sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "bytes": 64572,
+      "sha256": "8d39106a4431638fcd53ff3064c90f22bdecd31e9d63aebcf77ec72716ad7812"
+    },
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "bytes": 86689,
+      "sha256": "add4fc21d05cc3ec2a4915b4ecfbb2976e0e95ad6ad800a215e5a3a916678585"
+    },
+    {
+      "path": "test/contract/tier_sweep_test.exs",
+      "bytes": 780065,
+      "sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-RECONCILIATION.md",
+      "bytes": 7928669,
+      "sha256": "72ee55fa0dd12942fd8f134ce7ee1171610802c37d9ebf4858d1ffc39ca6cf93"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-POST-R8-HELPER-REVISION.json",
+      "bytes": 4201,
+      "sha256": "52d6d23017b80b4b432f188a630af02d419eff4fb9e0272089699cc63d38098b"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "bytes": 60843,
+      "sha256": "bf156f63c7342726d0424d8478e09c0fed877b9ef76914c6c7ba94dfaf3c5857"
+    },
+    {
+      "path": "bin/lane",
+      "bytes": 5284,
+      "sha256": "973aebcfdb769347b835cb3b0b4cfb85451badb0affcb6ec01c84855aff02fae"
+    },
+    {
+      "path": "mix.lock",
+      "bytes": 8245,
+      "sha256": "31c244c80a750309f4cc82c8840fdf78bba642ba78a00df31b3acfe208b94112"
+    }
+  ],
+  "log": {
+    "path": "/private/tmp/fablebook-phase3-core-focused-R8-final3-full.log",
+    "bytes": 60438293,
+    "sha256": "9f828656cf9c806fc22a6d8646b7133b7d57db973b448dddb4a9b7b33d44b05d"
+  },
+  "log_handling": {
+    "complete_unfiltered_runner_output": true,
+    "total_lines": 318430,
+    "otp_inventory_diagnostic_lines": 318422,
+    "diagnostics_were_not_removed_from_this_full_log": true
+  },
+  "runtime": "core lane via bin/lane; warnings-as-errors; background execution",
+  "scope_note": "Focused core aggregate reconciliation selection only. Does not establish full core CI, floor lane results, hosted CI, source resolution, caller closure, candidate eligibility, or Phase 3 completion."
+}

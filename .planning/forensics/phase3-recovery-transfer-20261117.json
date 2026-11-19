@@ -1,0 +1,335 @@
+{
+  "schema": "fablebook.phase3-recovery-transfer/1",
+  "source_branch": "gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+  "source_head": "46e0b350b3ccd38a72660c5844616ec4c1d063c2",
+  "source_tree": "332cc131090b7302c714414395bf75ad2f602f8b",
+  "main": "a9fe24c50c144d5e9e252408d14aec8a13ea2b3f",
+  "origin_main": "3817912c861286608183c057d2e38ff7a260bd6e",
+  "candidate_branch": "gsd/phase-03-recovery-and-provenance-closure",
+  "transfer": {
+    "file_count": 44,
+    "content_files_copied": 43,
+    "deleted_files": 0,
+    "generated_projection": {
+      "path": ".planning/state.json",
+      "source_sha256": "9ccfecb4397af3f331d2895959df9fcaa64314452fb90e1d9243d58c9c8fadaa",
+      "copied": false,
+      "regenerated_from": [
+        ".planning/STATE.md",
+        ".planning/ROADMAP.md"
+      ]
+    },
+    "snapshot_manifest_sha256": "28249bcedaa571bdef0717d96c05e385c193d4a4e103007e86271fdadf39eea4",
+    "files": [
+      {
+        "status": " M",
+        "path": ".planning/ROADMAP.md",
+        "bytes": 4198,
+        "sha256": "486bec73e8a4a5ff0347b7e6c83193a888ea120af4c2f6afeacd972e6e426799",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/STATE.md",
+        "bytes": 19199,
+        "sha256": "f9cd3be5022ddc1b430ba0f5ed2395ee15d1c6419429af80f5adae901fb49f43",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE.md",
+        "bytes": 143142,
+        "sha256": "757445a0ed8e74fbc0d69740bb19ee784df74552900577a9c463d7309ca6abe5",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-PLAN.md",
+        "bytes": 23407,
+        "sha256": "b284a03591d78e50a43b2cc401f8dea55bd7c3ca2f9ee087377972002fbf2c70",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-REPLAN.md",
+        "bytes": 60316,
+        "sha256": "59ababf0f6a913b168249c65a4a07a59ded421b4f3f1c138fbc416960f1ee37e",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
+        "bytes": 1418156,
+        "sha256": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json",
+        "bytes": 1390810,
+        "sha256": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-REVIEW.md",
+        "bytes": 54645,
+        "sha256": "800f366aa2c5628e7634f4648e4084c86e50710ad64efbb53c97a0f4e7467ff9",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-SIZING.json",
+        "bytes": 38400,
+        "sha256": "2ad9d75a45800786bba116166eb64ca304781c101ae0bdfe851a32cc172430bb",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-VALIDATION.md",
+        "bytes": 14929,
+        "sha256": "264bbda9a00e50303b8e7b3fc3bd4a8df6d3d9088a15b9447016a94fd745ef2e",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": ".planning/state.json",
+        "bytes": 564,
+        "sha256": "9ccfecb4397af3f331d2895959df9fcaa64314452fb90e1d9243d58c9c8fadaa",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": "test/contract/tier_sweep_test.exs",
+        "bytes": 770007,
+        "sha256": "f97ef3bb5cb94e8c47f3baed38d3d6387808488879e5b59980e5e1f620bcf333",
+        "symlink": false
+      },
+      {
+        "status": " M",
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "bytes": 58768,
+        "sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/forensics/report-20261116-1930.md",
+        "bytes": 7320,
+        "sha256": "d9ef90978da525a6f2e7518a4af52d582fb31a4cc36f4c7199db56d8118104f1",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/forensics/report-20261116-2234.md",
+        "bytes": 10597,
+        "sha256": "117d0d67127ba9084b735b7695fa6925448307c47b4e3fb457b000fe268b1a2d",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/intent/sources/2026-11-15-01-trace-target-source-coverage.md",
+        "bytes": 717,
+        "sha256": "1cca0d01eaa888eda315db831de2f10b676d35e5340e15810e7ae4aa170a4d99",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/intent/sources/2026-11-15-02-authorize-phase3-recovery-envelope.md",
+        "bytes": 1381,
+        "sha256": "4eed1d66f2fa9830c8fe1877bddf95c5d9aab2d7ade5b8ad0891699d5b1681a4",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/intent/sources/2026-11-16-01-select-evidence-only-closure.md",
+        "bytes": 914,
+        "sha256": "e649c1199b67a48a52c8c495887b3846adc1f28ec94edf67a873859fb763d985",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/intent/sources/2026-11-16-03-metadata-gap-recovery.md",
+        "bytes": 1228,
+        "sha256": "174744778176a965460865f1e4140835b117ae7495cd1c27876462744ed60fc4",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/intent/sources/2026-11-16-04-authorize-metadata-continuation.md",
+        "bytes": 991,
+        "sha256": "d214f528db9e3a6018a0947733f421b6fa6ac3e97a0c85c2c19c38f0c64b2173",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-ACTIVE-SCHEDULE-REVIEW.md",
+        "bytes": 884,
+        "sha256": "1cbd44b9bcb72f6a42f0aee686fe49872bd4adacb25025246919fbf26370cbcd",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-BOUNDED-TRACE-STOP.md",
+        "bytes": 5607,
+        "sha256": "3ca0f5b5312c45e5efca8ff2a22fd3e7913a4a7d004948b4500e714d09db0167",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-BUDGET-REVIEW.md",
+        "bytes": 1966,
+        "sha256": "e373d62732a62317284cad1a209c50f1a5e66fd598fa53eaa0ee71f4b1def66e",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-COMPACT-DIRECT-COUNT-RECEIPT.md",
+        "bytes": 4529,
+        "sha256": "6f536ce2c552b470d3497164f641e19f354d034ad858f8b556a1b2ede1405442",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-COMPACT-SCHEDULE-REVIEW-RECEIPT.md",
+        "bytes": 1242,
+        "sha256": "53e06a047e2d5bc4e4e5e7964f6f69c67a3e4ac75dee98bf91d28dfa25f98307",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-INCIDENT.md",
+        "bytes": 2194,
+        "sha256": "0c5c79523a1a589db79aad64a09ed2a67f2cf049a15531b8485eb83a1ddfca6e",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-ACTIVE.md",
+        "bytes": 15687,
+        "sha256": "9e09560dd50b71d95f5f1e3b397cce48441cbc1fd6c42d0c110471f107d25a9a",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md",
+        "bytes": 10193,
+        "sha256": "2843c9d29fc3e1b6a86727c905939213f3ac28b679ca75a5a5d499e80ebff478",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-RECOUNT.md",
+        "bytes": 7247,
+        "sha256": "5b8c075aa2774dc4332f3011b99ae6afdaed5c0d8141e269988065f9bbd71cef",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-PLAN-REVIEW-RECEIPT.md",
+        "bytes": 3345,
+        "sha256": "77e3ffb14f7ce1baeba2951f62763bf9d1f1905341138b158a443c8413540253",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-RECEIPT.json",
+        "bytes": 14895,
+        "sha256": "05ead38c3ad0e5c8ed38ae79c919fbdf410a934438131454c54c824413374b5b",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-REPORT.md",
+        "bytes": 2549,
+        "sha256": "d95894f76ff1c88d7953a24fc6d742267b03b178943587ed9466ed17fe6f0ae0",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-VALIDATION.json",
+        "bytes": 7894,
+        "sha256": "0d6a050d4e2254bd05e346bbafbe4e1c8e4edbd6f031ea2abb85fa47e29f17d2",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAPS.jsonl",
+        "bytes": 3281081,
+        "sha256": "297aa1633f7fe24d679e5e660bb3d15382cac8cce3bda8ac4e7d841435243f77",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-RECOUNT-SCHEDULE-REVIEW-RECEIPT.md",
+        "bytes": 1211,
+        "sha256": "22fab5e644d2f00ef69030cf12f4e1d4b1aef8e15d6ede32f81bcb7fcb61541e",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-SUMMARY.md",
+        "bytes": 2893,
+        "sha256": "61cf9600ec0cd5ff2980637a3d36139b56a063b4036232a17862e148e63dc391",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-GATE-STOP.md",
+        "bytes": 5862,
+        "sha256": "a346d6edd4610b91cbd09033f980eaee4512f8e065bc864a91429f71cc4eda7a",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-INVALID-RED.log",
+        "bytes": 2209,
+        "sha256": "b19bf4a186e6785f6cfea90d3809731ac66907def6536b27fb02ccef7c1e74c9",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-RED.json",
+        "bytes": 15103,
+        "sha256": "ee9ed7fd31bab020062b98455c6a71a7e943173c7f853d01a4b97769a72c1fd7",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-RED.tap",
+        "bytes": 14139,
+        "sha256": "057cc0b9208e7900bc338bd30f4c52d80303604f999369bdc534bd503cfec7ee",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md",
+        "bytes": 6326,
+        "sha256": "c11648cbc449a6319c9bc0541198f80bc4c07c2deab48b84b60533d4a2d90250",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/.gitkeep",
+        "bytes": 1,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-CONTEXT.md",
+        "bytes": 7868,
+        "sha256": "74b971dbf8accdc357799828675ee9ea20100b6582f32b05432e12b48c5a1716",
+        "symlink": false
+      },
+      {
+        "status": "??",
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-DISCUSSION-LOG.md",
+        "bytes": 1308,
+        "sha256": "c332b0b6024aad8690d99d9f177ea9e27566f76877ba07e2ec8e680535272fde",
+        "symlink": false
+      }
+    ]
+  },
+  "safety": "Original dirty worktree left untouched; no reset, stash, or clean. Snapshot is byte-bound; planning state projection was regenerated through the SDK publisher."
+}

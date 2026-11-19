@@ -1,0 +1,466 @@
+{
+  "schema_version": "03-05.task2-source-schedule-bundle.1",
+  "generation": "03-05-TASK2-REMAINDER-REVISE-01-20261118",
+  "status": "scheduled",
+  "source_access": "closed",
+  "author": "Codex",
+  "created_at_utc": "2026-11-17T23:59:01Z",
+  "checkout": {
+    "branch": "gsd/phase-03-recovery-and-provenance-closure",
+    "head": "7b333dbe27eff85ddbc206bce03521c255b6d0c2"
+  },
+  "previous_request": {
+    "request_id": "T2-R1",
+    "status": "consumed_incomplete",
+    "replay_forbidden": true,
+    "receipt_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-EMISSION-RECEIPT.json",
+    "receipt_sha256": "d108cedcce7dd9aa71a041ac0b7519fa3856dbaf61d77a72638855c472ee9b5b",
+    "schedule_sha256": "2bbe0a54bc531431c926fcb72a7d819f31e70fdd900d3f1fb5ca2af116319b27",
+    "review_sha256": "2b0d49be0ae299519594fc5f4d0755ae0d18997491b43f4797a13be5bce723d8",
+    "preflight_sha256": "dc94db09759cc4d408ed7082afad88381c44d0ab5ab5c34c4bf3da60f5fb578a",
+    "count_sha256": "e685ce0c2a5f6567cc10807ba8ca26ae30c8bd0c1d55845ffea98f8c6eae2e1a",
+    "gate_sha256": "65e76a3a5fa5b0d41acf1c83b8aff662f1146f102cc74667b0d5f0919817c1eb"
+  },
+  "inputs": [
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+      "sha256": "d2f6e2559775769d3bfe36705fd9b8ca0ee0ea087589abd0d5611cb9df5f92d0",
+      "bytes": 52379
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-REPLAN-20261117-01.md",
+      "sha256": "09f09292e60326a9342a330578cf2961f6f193aeb6d3d0b6b262669b764ae2ae",
+      "bytes": 1018
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-REPLAN-20261117-02.md",
+      "sha256": "bf65184d4417347ea09ff6416ba33336eb0b567eade682c27f0c415ebd40d842",
+      "bytes": 3148
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md",
+      "sha256": "b8f675812a8cece0bf56166cb06d8579aace67e038ee1112694b2d3244ce65e5",
+      "bytes": 3874
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-SIZING.json",
+      "sha256": "2ad9d75a45800786bba116166eb64ca304781c101ae0bdfe851a32cc172430bb",
+      "bytes": 38400
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
+      "sha256": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd",
+      "bytes": 1418156
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json",
+      "sha256": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d",
+      "bytes": 1390810
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-REVIEW.md",
+      "sha256": "800f366aa2c5628e7634f4648e4084c86e50710ad64efbb53c97a0f4e7467ff9",
+      "bytes": 54645
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "sha256": "0f2ee493e5385e9dab7f01a7d686bb55e1e6ae8ab8f1f5a04c3a9da314137139",
+      "bytes": 57770
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+      "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+      "bytes": 19633625
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-COVERAGE-CALLER-TRACE.json",
+      "sha256": "de8e8ebc299ccab13d35ab77eed6a3f03a07ed5cbb51bb07b4407595b0c515b0",
+      "bytes": 13433
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SIZING-DIGEST-PROOF.json",
+      "sha256": "9d4b00b65b8a1308ffdfcff893ff3bae7067d9c4550dd818e5363e137a422b2d",
+      "bytes": 5819
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-EVIDENCE-REVIEW.json",
+      "sha256": "e62369700d3b1b6cc1ede06048b0cce587bb5cfc77740dd7f317dbe47b4c5edf",
+      "bytes": 3742
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-VALIDATION.json",
+      "sha256": "1993b88a992db6b845a9d6fb3040edaeb0ec2cd3ed500dd9c5fc390f0f62fde5",
+      "bytes": 10009
+    },
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "bytes": 58839
+    },
+    {
+      "path": "test/contract/tier_sweep_test.exs",
+      "sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+      "bytes": 770285
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "sha256": "4e60fe0227b4e02a9a6d4118c32b6606819191ad20a6857ace26f08ac77bea0f",
+      "bytes": 19570
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE.json",
+      "sha256": "2bbe0a54bc531431c926fcb72a7d819f31e70fdd900d3f1fb5ca2af116319b27",
+      "bytes": 12174
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-REVIEW.json",
+      "sha256": "2b0d49be0ae299519594fc5f4d0755ae0d18997491b43f4797a13be5bce723d8",
+      "bytes": 1965
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-EXECUTE-PREFLIGHT.json",
+      "sha256": "dc94db09759cc4d408ed7082afad88381c44d0ab5ab5c34c4bf3da60f5fb578a",
+      "bytes": 640
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-DIRECT-COUNT.json",
+      "sha256": "e685ce0c2a5f6567cc10807ba8ca26ae30c8bd0c1d55845ffea98f8c6eae2e1a",
+      "bytes": 2895
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-REQUEST-GATE.json",
+      "sha256": "65e76a3a5fa5b0d41acf1c83b8aff662f1146f102cc74667b0d5f0919817c1eb",
+      "bytes": 4801
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-EMISSION-RECEIPT.json",
+      "sha256": "d108cedcce7dd9aa71a041ac0b7519fa3856dbaf61d77a72638855c472ee9b5b",
+      "bytes": 2966
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER.json",
+      "sha256": "8b6283cf2396d6c94672471582e8e523e392645bfafde5f4c5eb797f924fbb11",
+      "bytes": 30494
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER-REVIEW-REVISE-01.json",
+      "sha256": "f3f1c6faa02477cac196accb946fba8e14f92eb35f5a0968ea04f5ff095ed88a",
+      "bytes": 1128
+    }
+  ],
+  "requests": [
+    {
+      "request_id": "T2-R2",
+      "status": "scheduled",
+      "context_text": "# Phase 3 Plan 03-05 Task 2 bounded source analysis\n\nPhase 4 `--all` and Phase 3 `--self-test` / `--phase4-only` pass on generation ENV-20261117-06-supported-20261117T204102Z. Record accounting is complete: 0 source associations, 4,849 source gaps, 4,849 caller gaps, and 18 identity-level unknown target sets. Source resolution, caller closure, legacy digest reproduction, candidate fit and implementation remain unresolved. Candidate remains null.\n\nThe preceding request T2-R1 was directly counted at 27,115 tokens against 200,000 but its combined tool output was truncated. Its receipt is `consumed_incomplete`; do not use any R1 content for claims and do not retry it. This is a fresh replacement slice. Requests R2-R6 are pairwise disjoint from each other, but some spans overlap the unusable R1 body. R1 remains excluded from claims and is never replayed. Analyze only the exact spans below; do not execute the helper or any audited OTP API, callback, atom sink, runtime-eval, or generated-code path.\n\nImplement only the 03-05-02 changes: fix the shared sizing fixture’s missing explicit `actual_library_collision: nil`; thread an explicit validated Phase 4 supplement through existing source/caller/render paths; compare exact lane/identity/MFA keys before constructing read-only effective views; keep record completeness separate from source resolution and caller closure; add the existing `guard_aggregate_reconciliation` tag to the five selected regression tests if absent; preserve every prior assertion, historical record, default arity and fail-closed stop. Do not add a scanner/dependency or overwrite preserved lane JSON.\n\nCarry the exact keyed unresolved graph/callback/delegate and source gaps into the recovery crosswalk. Do not claim the historical nested digest is reproduced; use the separately versioned integrity supplement only for its declared scope. Keep actual library collision unknown, candidate null, implementation unauthorized, aggregate open, Walking Skeleton blocked, SEC-01 Pending, and the Macro caller-AST and explanation/wording checkpoints unresolved and unwaived. Stop if either checkpoint requires an owner decision.\n\nAfter source changes, run the cheap validator and formatter before any suite. `--consumer` must pass before focused core, focused floor, core CI, or full floor checks. Stop at the first failure and fix the cause before scoped retest.",
+      "context_bytes": 2394,
+      "context_sha256": "c809db62bbba94dbed3c83570412fadb954dbe4eab4ee33e1499ca47b633d9ed",
+      "source_selections": [
+        {
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "source_bytes": 58839,
+          "source_span": {
+            "start_line": 1,
+            "end_line": 519,
+            "start_byte": 0,
+            "end_byte_exclusive": 19367,
+            "encoding": "UTF-8",
+            "complete_file": false,
+            "includes_final_newline": true,
+            "span_sha256": "e454831cc345a749ac46d0df90653fa94b2274c022f89e160c3ba5f3feb69909",
+            "selected_bytes": 19367
+          }
+        },
+        {
+          "path": "test/contract/tier_sweep_test.exs",
+          "source_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+          "source_bytes": 770285,
+          "source_span": {
+            "start_line": 5600,
+            "end_line": 5989,
+            "start_byte": 244950,
+            "end_byte_exclusive": 260155,
+            "encoding": "UTF-8",
+            "complete_file": false,
+            "includes_final_newline": true,
+            "span_sha256": "3328954fce1a91ffbd95925a866394b3140e2bc1e8e04450c23f1a1cea45b5d6",
+            "selected_bytes": 15205
+          }
+        }
+      ],
+      "source_file_count": 2,
+      "count_contract": {
+        "model": "gpt-6-luna",
+        "endpoint": "POST https://api.openai.com/v1/responses/input_tokens",
+        "input_assembly": {
+          "prefix": "context_text + two LF + literal # Exact scheduled source selection + one LF",
+          "selection_format": "In listed order, each block is ## Source: {path} lines {start_line}-{end_line}, LF, exact UTF-8 source span. Join blocks with two LF.",
+          "serialization": "UTF-8 JSON object keys model then input, compact separators, ensure_ascii=false"
+        },
+        "generation_endpoint_called": false,
+        "configured_request_context_tokens": 200000
+      },
+      "safety_stops": {
+        "candidate": null,
+        "implementation_authorized": false,
+        "aggregate_gate": "open",
+        "walking_skeleton": "blocked",
+        "sec_01": "Pending",
+        "macro_caller_ast": "unresolved",
+        "explanation_wording": "unresolved"
+      },
+      "count_payload": {
+        "payload_bytes": 37145,
+        "payload_sha256": "082e6c3a0380209bd08bf2c1e79de6cd27c0d85e49e4b137475598a49801da1d",
+        "serialized_request_bytes": 39314,
+        "serialized_request_sha256": "67bafb01cbbd91b4ab62657fe4b163e7c766cd52059423ae1a196954064ee583"
+      }
+    },
+    {
+      "request_id": "T2-R3",
+      "status": "scheduled",
+      "context_text": "# Phase 3 Plan 03-05 Task 2 bounded source analysis\n\nPhase 4 `--all` and Phase 3 `--self-test` / `--phase4-only` pass on generation ENV-20261117-06-supported-20261117T204102Z. Record accounting is complete: 0 source associations, 4,849 source gaps, 4,849 caller gaps, and 18 identity-level unknown target sets. Source resolution, caller closure, legacy digest reproduction, candidate fit and implementation remain unresolved. Candidate remains null.\n\nThe preceding request T2-R1 was directly counted at 27,115 tokens against 200,000 but its combined tool output was truncated. Its receipt is `consumed_incomplete`; do not use any R1 content for claims and do not retry it. This is a fresh replacement slice. Requests R2-R6 are pairwise disjoint from each other, but some spans overlap the unusable R1 body. R1 remains excluded from claims and is never replayed. Analyze only the exact spans below; do not execute the helper or any audited OTP API, callback, atom sink, runtime-eval, or generated-code path.\n\nImplement only the 03-05-02 changes: fix the shared sizing fixture’s missing explicit `actual_library_collision: nil`; thread an explicit validated Phase 4 supplement through existing source/caller/render paths; compare exact lane/identity/MFA keys before constructing read-only effective views; keep record completeness separate from source resolution and caller closure; add the existing `guard_aggregate_reconciliation` tag to the five selected regression tests if absent; preserve every prior assertion, historical record, default arity and fail-closed stop. Do not add a scanner/dependency or overwrite preserved lane JSON.\n\nCarry the exact keyed unresolved graph/callback/delegate and source gaps into the recovery crosswalk. Do not claim the historical nested digest is reproduced; use the separately versioned integrity supplement only for its declared scope. Keep actual library collision unknown, candidate null, implementation unauthorized, aggregate open, Walking Skeleton blocked, SEC-01 Pending, and the Macro caller-AST and explanation/wording checkpoints unresolved and unwaived. Stop if either checkpoint requires an owner decision.\n\nAfter source changes, run the cheap validator and formatter before any suite. `--consumer` must pass before focused core, focused floor, core CI, or full floor checks. Stop at the first failure and fix the cause before scoped retest.",
+      "context_bytes": 2394,
+      "context_sha256": "c809db62bbba94dbed3c83570412fadb954dbe4eab4ee33e1499ca47b633d9ed",
+      "source_selections": [
+        {
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "source_bytes": 58839,
+          "source_span": {
+            "start_line": 521,
+            "end_line": 726,
+            "start_byte": 19368,
+            "end_byte_exclusive": 26605,
+            "encoding": "UTF-8",
+            "complete_file": false,
+            "includes_final_newline": true,
+            "span_sha256": "4799221e68974609734ee8010c763032d70278101001f28e737f103af9c3e513",
+            "selected_bytes": 7237
+          }
+        },
+        {
+          "path": "test/contract/tier_sweep_test.exs",
+          "source_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+          "source_bytes": 770285,
+          "source_span": {
+            "start_line": 5991,
+            "end_line": 6386,
+            "start_byte": 260156,
+            "end_byte_exclusive": 274865,
+            "encoding": "UTF-8",
+            "complete_file": false,
+            "includes_final_newline": true,
+            "span_sha256": "b776f6d8f5fe052cc15816f52dd92592a4a7c2ea89e854d1bdda5d8227a5418e",
+            "selected_bytes": 14709
+          }
+        }
+      ],
+      "source_file_count": 2,
+      "count_contract": {
+        "model": "gpt-6-luna",
+        "endpoint": "POST https://api.openai.com/v1/responses/input_tokens",
+        "input_assembly": {
+          "prefix": "context_text + two LF + literal # Exact scheduled source selection + one LF",
+          "selection_format": "In listed order, each block is ## Source: {path} lines {start_line}-{end_line}, LF, exact UTF-8 source span. Join blocks with two LF.",
+          "serialization": "UTF-8 JSON object keys model then input, compact separators, ensure_ascii=false"
+        },
+        "generation_endpoint_called": false,
+        "configured_request_context_tokens": 200000
+      },
+      "safety_stops": {
+        "candidate": null,
+        "implementation_authorized": false,
+        "aggregate_gate": "open",
+        "walking_skeleton": "blocked",
+        "sec_01": "Pending",
+        "macro_caller_ast": "unresolved",
+        "explanation_wording": "unresolved"
+      },
+      "count_payload": {
+        "payload_bytes": 24521,
+        "payload_sha256": "74d60cce67abf24d2f074592365e82ba7d18c1bdd96834c8e570934e478cd796",
+        "serialized_request_bytes": 25794,
+        "serialized_request_sha256": "04e4fad0b55eb34e91b854fd43889916938a801c1fd69b38c2af8a3747dba1df"
+      }
+    },
+    {
+      "request_id": "T2-R4",
+      "status": "scheduled",
+      "context_text": "# Phase 3 Plan 03-05 Task 2 bounded source analysis\n\nPhase 4 `--all` and Phase 3 `--self-test` / `--phase4-only` pass on generation ENV-20261117-06-supported-20261117T204102Z. Record accounting is complete: 0 source associations, 4,849 source gaps, 4,849 caller gaps, and 18 identity-level unknown target sets. Source resolution, caller closure, legacy digest reproduction, candidate fit and implementation remain unresolved. Candidate remains null.\n\nThe preceding request T2-R1 was directly counted at 27,115 tokens against 200,000 but its combined tool output was truncated. Its receipt is `consumed_incomplete`; do not use any R1 content for claims and do not retry it. This is a fresh replacement slice. Requests R2-R6 are pairwise disjoint from each other, but some spans overlap the unusable R1 body. R1 remains excluded from claims and is never replayed. Analyze only the exact spans below; do not execute the helper or any audited OTP API, callback, atom sink, runtime-eval, or generated-code path.\n\nImplement only the 03-05-02 changes: fix the shared sizing fixture’s missing explicit `actual_library_collision: nil`; thread an explicit validated Phase 4 supplement through existing source/caller/render paths; compare exact lane/identity/MFA keys before constructing read-only effective views; keep record completeness separate from source resolution and caller closure; add the existing `guard_aggregate_reconciliation` tag to the five selected regression tests if absent; preserve every prior assertion, historical record, default arity and fail-closed stop. Do not add a scanner/dependency or overwrite preserved lane JSON.\n\nCarry the exact keyed unresolved graph/callback/delegate and source gaps into the recovery crosswalk. Do not claim the historical nested digest is reproduced; use the separately versioned integrity supplement only for its declared scope. Keep actual library collision unknown, candidate null, implementation unauthorized, aggregate open, Walking Skeleton blocked, SEC-01 Pending, and the Macro caller-AST and explanation/wording checkpoints unresolved and unwaived. Stop if either checkpoint requires an owner decision.\n\nAfter source changes, run the cheap validator and formatter before any suite. `--consumer` must pass before focused core, focused floor, core CI, or full floor checks. Stop at the first failure and fix the cause before scoped retest.",
+      "context_bytes": 2394,
+      "context_sha256": "c809db62bbba94dbed3c83570412fadb954dbe4eab4ee33e1499ca47b633d9ed",
+      "source_selections": [
+        {
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "source_bytes": 58839,
+          "source_span": {
+            "start_line": 728,
+            "end_line": 1112,
+            "start_byte": 26606,
+            "end_byte_exclusive": 41761,
+            "encoding": "UTF-8",
+            "complete_file": false,
+            "includes_final_newline": true,
+            "span_sha256": "581607ae3ebafb565d7032b79c6bd207158631b2aa89d7f80031590fee4e7d58",
+            "selected_bytes": 15155
+          }
+        }
+      ],
+      "source_file_count": 1,
+      "count_contract": {
+        "model": "gpt-6-luna",
+        "endpoint": "POST https://api.openai.com/v1/responses/input_tokens",
+        "input_assembly": {
+          "prefix": "context_text + two LF + literal # Exact scheduled source selection + one LF",
+          "selection_format": "In listed order, each block is ## Source: {path} lines {start_line}-{end_line}, LF, exact UTF-8 source span. Join blocks with two LF.",
+          "serialization": "UTF-8 JSON object keys model then input, compact separators, ensure_ascii=false"
+        },
+        "generation_endpoint_called": false,
+        "configured_request_context_tokens": 200000
+      },
+      "safety_stops": {
+        "candidate": null,
+        "implementation_authorized": false,
+        "aggregate_gate": "open",
+        "walking_skeleton": "blocked",
+        "sec_01": "Pending",
+        "macro_caller_ast": "unresolved",
+        "explanation_wording": "unresolved"
+      },
+      "count_payload": {
+        "payload_bytes": 17668,
+        "payload_sha256": "7ccccecf75981c994a9f02d6cbfbb14a7ee762de5b6a541c99bdfb81667fd9f2",
+        "serialized_request_bytes": 18602,
+        "serialized_request_sha256": "27a952f8cf9b08484661909e32e978cf87e6df55d9b70653b31de30cf175b89c"
+      }
+    },
+    {
+      "request_id": "T2-R5",
+      "status": "scheduled",
+      "context_text": "# Phase 3 Plan 03-05 Task 2 bounded source analysis\n\nPhase 4 `--all` and Phase 3 `--self-test` / `--phase4-only` pass on generation ENV-20261117-06-supported-20261117T204102Z. Record accounting is complete: 0 source associations, 4,849 source gaps, 4,849 caller gaps, and 18 identity-level unknown target sets. Source resolution, caller closure, legacy digest reproduction, candidate fit and implementation remain unresolved. Candidate remains null.\n\nThe preceding request T2-R1 was directly counted at 27,115 tokens against 200,000 but its combined tool output was truncated. Its receipt is `consumed_incomplete`; do not use any R1 content for claims and do not retry it. This is a fresh replacement slice. Requests R2-R6 are pairwise disjoint from each other, but some spans overlap the unusable R1 body. R1 remains excluded from claims and is never replayed. Analyze only the exact spans below; do not execute the helper or any audited OTP API, callback, atom sink, runtime-eval, or generated-code path.\n\nImplement only the 03-05-02 changes: fix the shared sizing fixture’s missing explicit `actual_library_collision: nil`; thread an explicit validated Phase 4 supplement through existing source/caller/render paths; compare exact lane/identity/MFA keys before constructing read-only effective views; keep record completeness separate from source resolution and caller closure; add the existing `guard_aggregate_reconciliation` tag to the five selected regression tests if absent; preserve every prior assertion, historical record, default arity and fail-closed stop. Do not add a scanner/dependency or overwrite preserved lane JSON.\n\nCarry the exact keyed unresolved graph/callback/delegate and source gaps into the recovery crosswalk. Do not claim the historical nested digest is reproduced; use the separately versioned integrity supplement only for its declared scope. Keep actual library collision unknown, candidate null, implementation unauthorized, aggregate open, Walking Skeleton blocked, SEC-01 Pending, and the Macro caller-AST and explanation/wording checkpoints unresolved and unwaived. Stop if either checkpoint requires an owner decision.\n\nAfter source changes, run the cheap validator and formatter before any suite. `--consumer` must pass before focused core, focused floor, core CI, or full floor checks. Stop at the first failure and fix the cause before scoped retest.",
+      "context_bytes": 2394,
+      "context_sha256": "c809db62bbba94dbed3c83570412fadb954dbe4eab4ee33e1499ca47b633d9ed",
+      "source_selections": [
+        {
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "source_bytes": 58839,
+          "source_span": {
+            "start_line": 1114,
+            "end_line": 1486,
+            "start_byte": 41762,
+            "end_byte_exclusive": 54508,
+            "encoding": "UTF-8",
+            "complete_file": false,
+            "includes_final_newline": true,
+            "span_sha256": "f49f669d2031ace8fb0ca6df536de06d40c75b9f06ea8dbfb25e3b604e4719ad",
+            "selected_bytes": 12746
+          }
+        }
+      ],
+      "source_file_count": 1,
+      "count_contract": {
+        "model": "gpt-6-luna",
+        "endpoint": "POST https://api.openai.com/v1/responses/input_tokens",
+        "input_assembly": {
+          "prefix": "context_text + two LF + literal # Exact scheduled source selection + one LF",
+          "selection_format": "In listed order, each block is ## Source: {path} lines {start_line}-{end_line}, LF, exact UTF-8 source span. Join blocks with two LF.",
+          "serialization": "UTF-8 JSON object keys model then input, compact separators, ensure_ascii=false"
+        },
+        "generation_endpoint_called": false,
+        "configured_request_context_tokens": 200000
+      },
+      "safety_stops": {
+        "candidate": null,
+        "implementation_authorized": false,
+        "aggregate_gate": "open",
+        "walking_skeleton": "blocked",
+        "sec_01": "Pending",
+        "macro_caller_ast": "unresolved",
+        "explanation_wording": "unresolved"
+      },
+      "count_payload": {
+        "payload_bytes": 15260,
+        "payload_sha256": "51231adaf81ffe603ed29f37dd16fd969211c9731b41836128190fae3e267fd6",
+        "serialized_request_bytes": 16055,
+        "serialized_request_sha256": "3fa8bfd8705b818d5ad22ca2c92995aae162cbd0cc9f88318e2d1b8e8a2e2467"
+      }
+    },
+    {
+      "request_id": "T2-R6",
+      "status": "scheduled",
+      "context_text": "# Phase 3 Plan 03-05 Task 2 bounded source analysis\n\nPhase 4 `--all` and Phase 3 `--self-test` / `--phase4-only` pass on generation ENV-20261117-06-supported-20261117T204102Z. Record accounting is complete: 0 source associations, 4,849 source gaps, 4,849 caller gaps, and 18 identity-level unknown target sets. Source resolution, caller closure, legacy digest reproduction, candidate fit and implementation remain unresolved. Candidate remains null.\n\nThe preceding request T2-R1 was directly counted at 27,115 tokens against 200,000 but its combined tool output was truncated. Its receipt is `consumed_incomplete`; do not use any R1 content for claims and do not retry it. This is a fresh replacement slice. Requests R2-R6 are pairwise disjoint from each other, but some spans overlap the unusable R1 body. R1 remains excluded from claims and is never replayed. Analyze only the exact spans below; do not execute the helper or any audited OTP API, callback, atom sink, runtime-eval, or generated-code path.\n\nImplement only the 03-05-02 changes: fix the shared sizing fixture’s missing explicit `actual_library_collision: nil`; thread an explicit validated Phase 4 supplement through existing source/caller/render paths; compare exact lane/identity/MFA keys before constructing read-only effective views; keep record completeness separate from source resolution and caller closure; add the existing `guard_aggregate_reconciliation` tag to the five selected regression tests if absent; preserve every prior assertion, historical record, default arity and fail-closed stop. Do not add a scanner/dependency or overwrite preserved lane JSON.\n\nCarry the exact keyed unresolved graph/callback/delegate and source gaps into the recovery crosswalk. Do not claim the historical nested digest is reproduced; use the separately versioned integrity supplement only for its declared scope. Keep actual library collision unknown, candidate null, implementation unauthorized, aggregate open, Walking Skeleton blocked, SEC-01 Pending, and the Macro caller-AST and explanation/wording checkpoints unresolved and unwaived. Stop if either checkpoint requires an owner decision.\n\nAfter source changes, run the cheap validator and formatter before any suite. `--consumer` must pass before focused core, focused floor, core CI, or full floor checks. Stop at the first failure and fix the cause before scoped retest.",
+      "context_bytes": 2394,
+      "context_sha256": "c809db62bbba94dbed3c83570412fadb954dbe4eab4ee33e1499ca47b633d9ed",
+      "source_selections": [
+        {
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "source_bytes": 58839,
+          "source_span": {
+            "start_line": 1488,
+            "end_line": 1610,
+            "start_byte": 54509,
+            "end_byte_exclusive": 58839,
+            "encoding": "UTF-8",
+            "complete_file": false,
+            "includes_final_newline": true,
+            "span_sha256": "0fdbc8a008e7d1a9c45eead066193c8e4ab2372f6eecef8df40e3b8f6d72a44b",
+            "selected_bytes": 4330
+          }
+        }
+      ],
+      "source_file_count": 1,
+      "count_contract": {
+        "model": "gpt-6-luna",
+        "endpoint": "POST https://api.openai.com/v1/responses/input_tokens",
+        "input_assembly": {
+          "prefix": "context_text + two LF + literal # Exact scheduled source selection + one LF",
+          "selection_format": "In listed order, each block is ## Source: {path} lines {start_line}-{end_line}, LF, exact UTF-8 source span. Join blocks with two LF.",
+          "serialization": "UTF-8 JSON object keys model then input, compact separators, ensure_ascii=false"
+        },
+        "generation_endpoint_called": false,
+        "configured_request_context_tokens": 200000
+      },
+      "safety_stops": {
+        "candidate": null,
+        "implementation_authorized": false,
+        "aggregate_gate": "open",
+        "walking_skeleton": "blocked",
+        "sec_01": "Pending",
+        "macro_caller_ast": "unresolved",
+        "explanation_wording": "unresolved"
+      },
+      "count_payload": {
+        "payload_bytes": 6844,
+        "payload_sha256": "82782a0a50d972ab2b8f39f845209590f59686ab23c37d649098881e1138c0da",
+        "serialized_request_bytes": 7136,
+        "serialized_request_sha256": "242030704b33ddaa2b7f1b340b7dca979f11b3751cb0799545505f853c8c900b"
+      }
+    }
+  ],
+  "review_contract": {
+    "independent_review_required": true,
+    "source_body_emission_before_review": false,
+    "per_request_preflight_and_direct_count_required": true
+  },
+  "output_policy": {
+    "aggregate_output_limit_enforced": false,
+    "individual_request_context_fit_required": true,
+    "context_limit_tokens": 200000
+  },
+  "supersedes": {
+    "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER.json",
+    "sha256": "8b6283cf2396d6c94672471582e8e523e392645bfafde5f4c5eb797f924fbb11",
+    "review_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER-REVIEW-REVISE-01.json",
+    "review_sha256": "f3f1c6faa02477cac196accb946fba8e14f92eb35f5a0968ea04f5ff095ed88a"
+  }
+}

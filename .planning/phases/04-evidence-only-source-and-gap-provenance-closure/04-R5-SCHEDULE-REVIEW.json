@@ -1,0 +1,103 @@
+{
+  "schema_version": "04.r5-schedule-review.1",
+  "created_at_utc": "2026-11-18T19:12:57.812Z",
+  "status": "pass",
+  "reviewer": "/root/phase3_security_audit",
+  "reviewer_role": "independent metadata-only provenance schedule reviewer",
+  "independent_of_schedule_author": true,
+  "request_id": "R5",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-SCHEDULE.json",
+  "schedule_sha256": "5dc83e36116092d808e3db0e1d590953d10fae19db0bb0b39dcc3794943ad604",
+  "schedule_bytes": 18655,
+  "superseded_schedule_sha256": "ea82d0515c857408298576ed4595084ca55a61ac553eee3f51b27faf877d227b",
+  "source_path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+  "source_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+  "source_bytes": 79280,
+  "source_file_lines": 2182,
+  "source_span": {
+    "complete_file": true,
+    "encoding": "UTF-8",
+    "start_line": 1,
+    "end_line": 2182,
+    "start_byte": 0,
+    "end_byte_exclusive": 79280,
+    "span_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+    "includes_final_newline": true
+  },
+  "source_chunks": [
+    {
+      "index": 1,
+      "start_line": 1,
+      "end_line": 349,
+      "start_byte": 0,
+      "end_byte_exclusive": 13975,
+      "bytes": 13975,
+      "sha256": "5291523a979c067386f31c9793694ff31dac66171de25df5bb178b02bcbb2c6f"
+    },
+    {
+      "index": 2,
+      "start_line": 350,
+      "end_line": 788,
+      "start_byte": 13975,
+      "end_byte_exclusive": 27957,
+      "bytes": 13982,
+      "sha256": "3c1da5f85902af88a6504185ce97f624a87697c180a3574bcd5e77b8793e8059"
+    },
+    {
+      "index": 3,
+      "start_line": 789,
+      "end_line": 1174,
+      "start_byte": 27957,
+      "end_byte_exclusive": 41915,
+      "bytes": 13958,
+      "sha256": "7d4a751c5f3c26f75289911ef40637197ca3f6fee630acc267c7341acadefaaa"
+    },
+    {
+      "index": 4,
+      "start_line": 1175,
+      "end_line": 1559,
+      "start_byte": 41915,
+      "end_byte_exclusive": 55860,
+      "bytes": 13945,
+      "sha256": "65dc38d76606ea6495fd1470df49b88647728ec5d1ad7b96d64226c0584fa7e5"
+    },
+    {
+      "index": 5,
+      "start_line": 1560,
+      "end_line": 1924,
+      "start_byte": 55860,
+      "end_byte_exclusive": 69825,
+      "bytes": 13965,
+      "sha256": "f339eb9b4420f5953d5b173c37b4d866ec3b8772c616926925af356a98df27d8"
+    },
+    {
+      "index": 6,
+      "start_line": 1925,
+      "end_line": 2182,
+      "start_byte": 69825,
+      "end_byte_exclusive": 79280,
+      "bytes": 9455,
+      "sha256": "b027796f3de44f470468044ecc2f4942f523c7ce1e745a4edfa6a6305e482f4b"
+    }
+  ],
+  "source_chunks_verified": 6,
+  "context_sha256": "a9830e7f0f4a7932bea12269afa946ff6af77594d0c267db82e7926a8f1a6f82",
+  "context_bytes": 3389,
+  "input_bindings_verified": 44,
+  "request_payload_bytes": 82706,
+  "request_payload_sha256": "a41a2176c3ae0960f7ac1cb5b07d2fda91e85e0320fb5b5ec9a564cf3f1f601a",
+  "source_body_access": "metadata-only",
+  "source_body_read": false,
+  "source_body_emitted": false,
+  "source_body_analyzed": false,
+  "verified": [
+    "all 44 revised input hashes and byte counts",
+    "validator R5 allowlist and R6 denial binding",
+    "complete helper identity and exact full-file span",
+    "six ordered, contiguous, non-overlapping chunks with line/byte/hash bindings",
+    "exact complete request payload framing and hash",
+    "R4 consumed-incomplete history, immutable R1-R3 receipts, and preserved safety stops"
+  ],
+  "findings": []
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": "03-05-focused-failure.1",
+  "recorded_at_utc": "2026-11-18T23:42:30Z",
+  "command": "bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors",
+  "status": "failed",
+  "exit_code": 2,
+  "selection": {
+    "selected": 9,
+    "passed": 8,
+    "failed": 1,
+    "excluded": 100,
+    "duration_seconds": 48.7
+  },
+  "failure": {
+    "test": "two lane records reproduce the complete original-identity crosswalk",
+    "file": "test/contract/tier_sweep_test.exs",
+    "line": 5621,
+    "error": "MatchError: false",
+    "stack_file": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "stack_line": 1968,
+    "cause": "The R8 schedule span is a pre-edit observation. The helper compared its saved start_byte against line offsets in the edited live helper, so a valid source revision made the historical byte boundary check fail."
+  },
+  "inputs": {
+    "test/support/guard_aggregate_reconciliation_evidence.ex": {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "sha256": "2ee75c2c70990314f8d8905f26d7f074f21cc506159198184a34582297b44999",
+      "bytes": 86734
+    },
+    "test/contract/tier_sweep_test.exs": {
+      "path": "test/contract/tier_sweep_test.exs",
+      "sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439",
+      "bytes": 780065
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "sha256": "3abf579454598fd52ec7bf16db7d0fa53ded00bf183ff82086fe5f1b0d1c1567",
+      "bytes": 61844
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-RECONCILIATION.md": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-RECONCILIATION.md",
+      "sha256": "c80da63ee629584b4313b575e1c0f793a8ce714275916cbb36f3187547f33634",
+      "bytes": 7928669
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "sha256": "a3651c50a94e947ae0bc27f75853041256a67c849216c5463fec16198b645dad",
+      "bytes": 60811
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-POST-R8-HELPER-REVISION.json": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-POST-R8-HELPER-REVISION.json",
+      "sha256": "40641260db427327b15c6b596a8b7e55726426e628e185d4ff01eacbc40cb625",
+      "bytes": 2995
+    }
+  },
+  "log": {
+    "path": "/private/tmp/fablebook-phase3-core-focused-R8-final.log",
+    "bytes": 1352,
+    "sha256": "3aede302fe4d1f96c7c3ba56892aa4418e9434572247ea914125ce8ce07d3f0c",
+    "filtered_otp_inventory_lines": 318422,
+    "filter_note": "Only FABLEBOOK_OTP_INVENTORY_V2 diagnostic lines were omitted; test output and failure summary retained."
+  },
+  "later_gates": "not_run",
+  "no_retest_before_fix": true,
+  "source_request": "R8 remains the single consumed pre-edit observation; no new source body request."
+}

@@ -11,7 +11,7 @@ updated: 2026-11-13
 
 ## Position
 
-- Checkout: `/Users/jon/projects/fablebook`, branch `main`.
+- Checkout: `~/projects/fablebook`, branch `main`.
 - Milestone and phase: v0.4 Phase 3, Guard aggregate scope rejoin and candidate sizing.
 - Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107 retain their merged receipts.
 - Current execution: Plan 03-01, Task 03-01-01, Wave 1; 0/2 tasks complete.

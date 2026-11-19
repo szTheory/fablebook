@@ -1,0 +1,36 @@
+{
+  "schema_version": "03-05-focused-failure.1",
+  "recorded_at_utc": "2026-11-18T22:57:46Z",
+  "command": "bin/lane core test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors",
+  "status": "failed",
+  "exit_code": 2,
+  "selection": {
+    "selected": 9,
+    "passed": 8,
+    "failed": 1,
+    "excluded": 100,
+    "duration_seconds": 53.0
+  },
+  "failure": {
+    "test": "two lane records reproduce the complete original-identity crosswalk",
+    "file": "test/contract/tier_sweep_test.exs",
+    "line": 5621,
+    "error": "MatchError: false",
+    "stack_file": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "stack_line": 1837,
+    "cause": "The Phase 4 trace now identifies R8 as the current helper observation, but the helper still asserts request_id == R6."
+  },
+  "inputs": {
+    "test/support/guard_aggregate_reconciliation_evidence.ex": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+    "test/contract/tier_sweep_test.exs": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439",
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py": "a1d1c07c2dcd1964679476170c762a0a9e54de85d4972eb59c6c55adf7cd90f7",
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-RECONCILIATION.md": "1f8b1425a6b28818026ad20ddc80db55f4de5b59972c482c05b6a40d5d5226b9"
+  },
+  "log": {
+    "path": "/private/tmp/fablebook-phase3-core-focused-R8.log",
+    "bytes": 60439452,
+    "sha256": "05e2e3352fcc32feec60262394d3cb636650cee6da3740f7e0af0e21219ddbd6"
+  },
+  "later_gates": "not_run",
+  "no_retest_before_fix": true
+}

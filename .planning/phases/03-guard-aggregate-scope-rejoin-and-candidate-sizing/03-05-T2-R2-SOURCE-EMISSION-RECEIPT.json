@@ -1,0 +1,54 @@
+{
+  "schema_version": "03-05.task2-source-emission.1",
+  "status": "consumed_once_delivery_complete",
+  "source_access": "closed",
+  "generation": "03-05-TASK2-REMAINDER-REVISE-01-20261118",
+  "request_id": "T2-R2",
+  "emission_count": 1,
+  "emitted_at_utc": "2026-11-18T00:06:56.447258+00:00",
+  "schedule_sha256": "7c7457a7a57e14089ebb7b016038da95dbe28de8178703bde575874f73b0d43a",
+  "review_sha256": "f3b3655991c9f26bb9e4db3783673c7e7e07957205ec239a0e82bab8c4596bbf",
+  "preflight_sha256": "c6820d8dfec00187ced15107079253be1c0af155e4a74cb118d0786cee14df6b",
+  "count_sha256": "8ca41466c455bfb61220f883701c059745d5c4d3aca88ce0d3bb9eff780fdc92",
+  "gate_sha256": "2a4f325226aa6e6f6629fb8d95850a462d78b45003ad2896d6518bd251b24169",
+  "serialized_request_sha256": "67bafb01cbbd91b4ab62657fe4b163e7c766cd52059423ae1a196954064ee583",
+  "source_selections": [
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_bytes": 58839,
+      "source_span": {
+        "start_line": 1,
+        "end_line": 519,
+        "start_byte": 0,
+        "end_byte_exclusive": 19367,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "e454831cc345a749ac46d0df90653fa94b2274c022f89e160c3ba5f3feb69909",
+        "selected_bytes": 19367
+      }
+    },
+    {
+      "path": "test/contract/tier_sweep_test.exs",
+      "source_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+      "source_bytes": 770285,
+      "source_span": {
+        "start_line": 5600,
+        "end_line": 5989,
+        "start_byte": 244950,
+        "end_byte_exclusive": 260155,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "3328954fce1a91ffbd95925a866394b3140e2bc1e8e04450c23f1a1cea45b5d6",
+        "selected_bytes": 15205
+      }
+    }
+  ],
+  "tool_output_truncated": false,
+  "completion_sentinel_observed": true,
+  "analysis_complete": false,
+  "content_used_for_analysis": false,
+  "reason": "Both exact source spans and the completion sentinel were delivered in one bounded tool result."
+}

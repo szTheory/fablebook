@@ -1,0 +1,211 @@
+{
+  "schema_version": "04.resource-ledger.1",
+  "envelope": "ENV-20261117-06",
+  "effective_at_utc": "2026-11-17T21:22:12.376Z",
+  "measured_at_utc": "2026-11-17T22:09:56.859Z",
+  "generated_output_ceiling": 650000,
+  "working_ceiling": 610000,
+  "protected_reserve": 40000,
+  "starting_generated_output_usage": 0,
+  "post_reset_usage": {
+    "output_tokens": 648042,
+    "session_attribution": "Informational exact parent counter delta plus completed audit/review threads at 2026-11-17T22:09:56.859Z. Aggregate assistant-output limits were removed by INT-20261117-11.",
+    "sessions": [
+      {
+        "thread_id": "01a1e766-afb2-77a1-8977-350fde6d15dd",
+        "role": "parent",
+        "counter": "payload.thread_token_usage.output_tokens",
+        "baseline_at_utc": "2026-11-17T18:46:55.030Z",
+        "baseline_output_tokens": 1057978,
+        "current_at_utc": "2026-11-17T22:09:56.859Z",
+        "current_output_tokens": 1647171,
+        "delta_output_tokens": 589193,
+        "status": "active"
+      },
+      {
+        "thread_id": "01a1ead9-74fe-7122-85b0-2678600cea2c",
+        "role": "completed provenance audit",
+        "counter": "payload.thread_token_usage.output_tokens",
+        "baseline_output_tokens": 0,
+        "current_output_tokens": 8726,
+        "delta_output_tokens": 8726,
+        "status": "completed"
+      },
+      {
+        "thread_id": "01a1eaed-eb5b-7953-881e-a94e7060ebdb",
+        "role": "plan reviewer, including ENV-05 baseline and ENV-06 continuation",
+        "counter": "payload.thread_token_usage.output_tokens",
+        "env05_baseline_output_tokens": 17229,
+        "current_output_tokens": 50123,
+        "env06_increment_output_tokens": 32894,
+        "env06_allowance": 20000,
+        "env06_overrun": 12894,
+        "status": "completed"
+      }
+    ],
+    "accounting_note": "The cumulative ENV-06 usage is the reconciled total recorded in the renewal receipt. The review allowance overrun is already included; no additional review will be dispatched."
+  },
+  "remaining_working_balance": -38042,
+  "remaining_total_balance": 1958,
+  "protected_reserve_preserved": false,
+  "usage_attributed": true,
+  "status": "measured",
+  "source_access": "closed",
+  "cumulative_fit": "measured",
+  "source_request_count": 3,
+  "compact_request_count": 0,
+  "compact_request_tokens": null,
+  "count_status": "R1 count passed with incomplete output delivery; R2 and R3 direct counts passed and their exact scheduled source spans were delivered once without truncation.",
+  "source_request_fit": "Aggregate assistant-output ceilings and reserves are disabled by owner direction. R1 input count 50419, R2 input count 43186, and R3 input count 42598 each fit the configured 200000-token request context; R1 remains consumed_incomplete, R2 and R3 were delivered once.",
+  "source_request_execute_preflight": "pass",
+  "review_status": "bridge and metadata rebind passed; R1 schedule review passed",
+  "planned_remaining_allocations": {
+    "R1_max_generated_output": 16000,
+    "04-03_tasks_1_and_2_max_output": 4000,
+    "03-05_tasks_2_and_3_max_output": 38000,
+    "all_caps_total": 58000,
+    "current_working_balance": 5882,
+    "minimum_future_contingency": 10000,
+    "current_shortfall_including_contingency": 62118,
+    "note": "Prior token-budget allocations are historical. Owner removed aggregate/output ceilings; exact request provenance and source gates remain."
+  },
+  "task_caps": {
+    "04-02-01": {
+      "lifetime_cap": 220000,
+      "prior_charge": 65606,
+      "continuation_charge_at_stop": 183628,
+      "measured_lifetime_charge_at_stop": 249234,
+      "overrun": 29234,
+      "status": "complete; do not repeat"
+    },
+    "04-02-02_R1": {
+      "combined_cap": 50000,
+      "input_max": 34000,
+      "analysis_review_allowance": 14000,
+      "output_allowance": 2000,
+      "generated_output_max": 16000
+    },
+    "04-03-01": 3000,
+    "04-03-02": 1000,
+    "03-05-02_and_03": 38000,
+    "parent_orchestration": {
+      "historical_lifetime_cap": 50000,
+      "historical_charge_at_2026_11_17T20_30Z": 32685,
+      "current_bookkeeping": "charged to remaining phase task caps; no separate allowance"
+    }
+  },
+  "task_execution_baseline": {
+    "task": "Plan 04-02 Task 1 continuation",
+    "baseline_at_utc": "2026-11-17T19:46:08Z",
+    "parent_output_baseline": 1230582,
+    "parent_output_current_at_snapshot": 1414210,
+    "output_since_baseline": 183628,
+    "previously_charged": 65606,
+    "measured_lifetime_charge_at_snapshot": 249234,
+    "lifetime_cap": 220000,
+    "remaining_at_snapshot": -29234,
+    "mode": "existing parent thread",
+    "overrun": 29234,
+    "stopped_at_utc": "2026-11-17T20:44:53.762Z"
+  },
+  "reset_receipt": ".planning/forensics/phase4-budget-renewal-05-20261117.md",
+  "reset_receipt_sha256": "5bf7584b664b6516bdd635ed77afede810ec9c28351dde78dbda9047ff0b4b6d",
+  "stop_rule": "No cumulative assistant-output ceiling or reserve blocks execution under INT-20261117-11. Keep exact source identity/span/hash, one-use count, review, preflight, no-truncation, file-scope and security gates. Do not read a source body before the ordered R1 gates pass.",
+  "active_replan": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-02-REPLAN-20261117-07.md",
+  "active_replan_sha256": "60bb9d019fc0d531d4006da7e3a7770bdbfe2b6a0bf61395633d62677c8c90d6",
+  "aggregate_output_budget_policy": "disabled_by_owner",
+  "source_emission_receipt": {
+    "status": "consumed_once_delivery_incomplete",
+    "emission_count": 1,
+    "content_used_for_analysis": true,
+    "emitted_at_utc": "2026-11-17T22:40:04.756Z",
+    "one_use_ready_receipt_sha256": "a309ecb42a62a717747d63551262acc40d1c739e6be5f77a19b1d51a142e3214",
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "request_id": "R1",
+    "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+    "review_sha256": "70e65fbb7916ab14bd1be8999cfdd8b3139be668a45020893d6c58852cacca89",
+    "preflight_sha256": "e6c116784ccc90eb0d28d9b73cde1917cfa0876be5c1f2edc933cfcfedb41f61",
+    "count_sha256": "9a3b453f6bca90e198984b456eba02f8d94ba3ce032c9ad6b7760d5ad6f210e7",
+    "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+    "source_span": {
+      "start_line": 1,
+      "end_line": 1610,
+      "start_byte": 0,
+      "end_byte_exclusive": 58839,
+      "encoding": "UTF-8",
+      "complete_file": true,
+      "includes_final_newline": true
+    },
+    "context_sha256": "98ee0eb217e847b0979ce12df298a773a3e19acf14234ec71803f4dbf5d23499",
+    "serialized_request_sha256": "c5eb152daf61e23e3ad559b3d04e007dcaa12d511660d95f2068e111a4e98918",
+    "generation_endpoint_called": false,
+    "source_body_emitted_once": true,
+    "source_bytes": 58839,
+    "tool_output_truncated": true,
+    "tool_output_original_tokens": 14710,
+    "tool_output_token_limit": 10000,
+    "analysis_complete": false,
+    "failure": "The functions.exec outer output budget truncated the source tool result; approximately 4,710 source tokens were omitted from the executor context."
+  },
+  "consumed_request_ids": [
+    "R1",
+    "R2",
+    "R3"
+  ],
+  "source_request_history": [
+    {
+      "request_id": "R1",
+      "status": "consumed_incomplete",
+      "serialized_input_tokens": 50419,
+      "configured_model_context_tokens": 200000,
+      "fits_configured_context": true,
+      "delivery_status": "tool_output_truncated",
+      "analysis_complete": false,
+      "retry": "forbidden"
+    },
+    {
+      "request_id": "R2",
+      "status": "consumed_once",
+      "serialized_input_tokens": 43186,
+      "configured_model_context_tokens": 200000,
+      "fits_configured_context": true,
+      "delivery_status": "complete_marked_output",
+      "source_bytes": 22394,
+      "source_span_sha256": "a1440abd808ba06ee624cb97a780e022abd20ec76f9f972fa2e1c078d523ab89",
+      "analysis_complete": true,
+      "delivery_attempts": 2
+    },
+    {
+      "request_id": "R3",
+      "status": "consumed_once",
+      "serialized_input_tokens": 42598,
+      "configured_model_context_tokens": 200000,
+      "fits_configured_context": true,
+      "delivery_status": "complete_marked_output",
+      "source_bytes": 13081,
+      "source_span_sha256": "8256f4866d59d66300950c641fefafe2c1ad9f7384ff39ab19add1ea05df75df",
+      "analysis_complete": true,
+      "delivery_attempts": 1
+    }
+  ],
+  "source_emission_receipts": [
+    {
+      "request_id": "R2",
+      "status": "consumed_once",
+      "gate_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-REQUEST-GATE.json",
+      "gate_sha256_after_emission": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930",
+      "receipt_sha256": "ed427e1c69bcf73b634086bca7a8f6ab88f53e9e60f93b4f6133e0400953e6e0",
+      "resource_ledger_snapshot_sha256": "5156dd5b813fcf330a30e79803041f5b170022f3fb6e65ba1090966e0fc7f009",
+      "emitted_at_utc": "2026-11-17T23:13:55.984Z"
+    },
+    {
+      "request_id": "R3",
+      "status": "consumed_once",
+      "gate_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-REQUEST-GATE.json",
+      "gate_sha256_after_emission": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482",
+      "receipt_sha256": "089fa6443981194f886cb1f5a54e1b4c4dfcade99e02b9581974cb9eb01546bc",
+      "resource_ledger_snapshot_sha256": "79495fcbf3194ace3bccdd79372d8f0003a1643ee97825cf6497101116ecc62b",
+      "emitted_at_utc": "2026-11-17T23:24:09.013Z"
+    }
+  ]
+}

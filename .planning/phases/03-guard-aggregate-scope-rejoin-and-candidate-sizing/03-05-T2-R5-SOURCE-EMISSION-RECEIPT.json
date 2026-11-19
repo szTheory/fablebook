@@ -1,0 +1,38 @@
+{
+  "schema_version": "03-05.task2-source-emission.1",
+  "status": "consumed_once_delivery_complete",
+  "source_access": "closed",
+  "generation": "03-05-TASK2-REMAINDER-REVISE-01-20261118",
+  "request_id": "T2-R5",
+  "emission_count": 1,
+  "emitted_at_utc": "2026-11-18T00:08:09.157424+00:00",
+  "schedule_sha256": "7c7457a7a57e14089ebb7b016038da95dbe28de8178703bde575874f73b0d43a",
+  "review_sha256": "f3b3655991c9f26bb9e4db3783673c7e7e07957205ec239a0e82bab8c4596bbf",
+  "preflight_sha256": "fc4ea3403d41b8ad7c76c5ecc666772d244ced0f7f4f600af53ba299282ba2e5",
+  "count_sha256": "644b46e4faf55546d73064d822c4b738e24f65770c3cbcf4ef9f8f6e68194fbf",
+  "gate_sha256": "5f1b3622c8c2815e90e0bf27abe6af18157e32d5bbafdc879c3345b9abe006c9",
+  "serialized_request_sha256": "3fa8bfd8705b818d5ad22ca2c92995aae162cbd0cc9f88318e2d1b8e8a2e2467",
+  "source_selections": [
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_bytes": 58839,
+      "source_span": {
+        "start_line": 1114,
+        "end_line": 1486,
+        "start_byte": 41762,
+        "end_byte_exclusive": 54508,
+        "encoding": "UTF-8",
+        "complete_file": false,
+        "includes_final_newline": true,
+        "span_sha256": "f49f669d2031ace8fb0ca6df536de06d40c75b9f06ea8dbfb25e3b604e4719ad",
+        "selected_bytes": 12746
+      }
+    }
+  ],
+  "tool_output_truncated": false,
+  "completion_sentinel_observed": true,
+  "analysis_complete": false,
+  "content_used_for_analysis": false,
+  "reason": "The exact source span and completion sentinel were delivered in one bounded tool result."
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "04.r5-execute-preflight.1",
+  "request_id": "R5",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "command": "bin/planning_health --stage execute --phase 4",
+  "stage": "execute",
+  "phase": "4",
+  "created_at_utc": "2026-11-18T19:13:15.829Z",
+  "status": "pass",
+  "exit_code": 0,
+  "stdout": "{\"errors\":[],\"stage\":\"execute\",\"milestone\":\"v0.4\",\"phase\":\"4\",\"route_phase\":\"03\"}",
+  "stderr": "",
+  "errors": [],
+  "schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-SCHEDULE.json",
+  "schedule_sha256": "5dc83e36116092d808e3db0e1d590953d10fae19db0bb0b39dcc3794943ad604",
+  "review_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-SCHEDULE-REVIEW.json",
+  "review_sha256": "f3d3a64bf63ccd8a5ea32d782024ac1636558d8eae03aff5f87bb2de732678a4",
+  "context_sha256": "a9830e7f0f4a7932bea12269afa946ff6af77594d0c267db82e7926a8f1a6f82",
+  "source_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+  "source_span": {
+    "complete_file": true,
+    "encoding": "UTF-8",
+    "start_line": 1,
+    "end_line": 2182,
+    "start_byte": 0,
+    "end_byte_exclusive": 79280,
+    "span_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+    "includes_final_newline": true
+  },
+  "source_chunks_sha256": "33dc4aa1c41a4dafeae24909a59c060a1bf4891175446e03ece25df3abed2d70",
+  "resource_ledger_snapshot_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-RESOURCE-LEDGER-PRE-COUNT.json",
+  "resource_ledger_snapshot_sha256": "719591e63d3019747c67705e22872f7b6cb95f1a81cf55bee462b069dc14e7c7"
+}

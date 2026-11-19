@@ -1,0 +1,16 @@
+{
+  "schema_version": "03-05.task2-request-preflight.1",
+  "request_id": "T2-R5",
+  "schedule_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER-REVISE-01.json",
+  "schedule_sha256": "7c7457a7a57e14089ebb7b016038da95dbe28de8178703bde575874f73b0d43a",
+  "review_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-SOURCE-SCHEDULE-REMAINDER-REVIEW.json",
+  "review_sha256": "f3b3655991c9f26bb9e4db3783673c7e7e07957205ec239a0e82bab8c4596bbf",
+  "result": {
+    "errors": [],
+    "stage": "execute",
+    "milestone": "v0.4",
+    "phase": "3",
+    "route_phase": "03"
+  },
+  "checked_at_utc": "2026-11-18T00:05:19.275451+00:00"
+}

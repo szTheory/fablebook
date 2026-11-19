@@ -58,7 +58,7 @@ Next: independent review of the small interface-handoff re-slice returned PASS. 
 
 ## Latest execution checkpoint — 2026-11-14
 
-Canonical checkout remains `/Users/jon/projects/fablebook`, branch `main`, at `884684b`. Task 03-01-04 remains committed; Task 03-01-05 has made no source edits, tests, or commits. The previous next action to read the Task03 collector is historical and superseded: its input contract is already recorded in `03-01-03-SOURCE-NOTES.md`. The outstanding implementation gap is the exact current matcher and creator-reference-to-MFA mapping.
+Canonical checkout remains `~/projects/fablebook`, branch `main`, at `884684b`. Task 03-01-04 remains committed; Task 03-01-05 has made no source edits, tests, or commits. The previous next action to read the Task03 collector is historical and superseded: its input contract is already recorded in `03-01-03-SOURCE-NOTES.md`. The outstanding implementation gap is the exact current matcher and creator-reference-to-MFA mapping.
 
 A revised schedule is recorded in the latest section of `03-01-05-REPLAN.md` and the Task05 instructions in `03-01-PLAN.md`. Task05 event1 will read only four exact complete helper ranges from `TierSweepTest`, measured at 3,149 tokens under a 3,200 cap. Task05 event2 will inspect the completed aggregate test and final collector together under a 3,134 cap. The complete schedule uses at most 12,000 source tokens and retains the 5,000-token output allowance, 31,000-token reserve and 100,000-token ceiling. The direct combined count of 57,564 predates this checkpoint addition and the review; refresh it after independent review and execute preflight.
 

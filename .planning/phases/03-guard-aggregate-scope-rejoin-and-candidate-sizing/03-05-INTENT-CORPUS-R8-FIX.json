@@ -1,0 +1,41 @@
+{
+  "receipt_id": "03-05-INTENT-CORPUS-R8-FIX",
+  "status": "passed",
+  "cause": "The existing owner-authorization note used bullets for metadata instead of the canonical YAML frontmatter required by the intent corpus; therefore its cited INT ID was absent from parsed source IDs.",
+  "change": "Converted the existing metadata into the five required frontmatter keys. Kept the exact owner reply and approved scope in the document body; changed no test or guard.",
+  "previous_source_identity": {
+    "path": ".planning/intent/sources/2026-11-18-04-authorize-one-recovery-request.md",
+    "sha256": "7220de6666812b423df1681b377d4b92d2b1e245e773200dc4299f172dbf1cd1",
+    "bytes": 813
+  },
+  "current_source_identity": {
+    "path": ".planning/intent/sources/2026-11-18-04-authorize-one-recovery-request.md",
+    "bytes": 783,
+    "sha256": "280e09e00975ad56ffa03df08ac2b683ccb47df762065f0c224e7f0ac803c088"
+  },
+  "source_failure_receipt": {
+    "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-CORE-CI-R8-FINAL2-FAILURE.json",
+    "sha256": "aeba526a8c5aedc956d4e92cd9db2f8d99b1d7067d3d5630f46472f3c6e988f5"
+  },
+  "focused_verification": {
+    "command": "bin/lane core test test/planning/intent_test.exs --warnings-as-errors",
+    "started_at_utc": "2026-11-19T00:35:00Z",
+    "completed_at_utc": "2026-11-19T00:35:16Z",
+    "exit_code": 0,
+    "passed": 22,
+    "failed": 0,
+    "excluded": 0,
+    "duration_seconds": 14.6,
+    "test_file": {
+      "path": "test/planning/intent_test.exs",
+      "bytes": 15226,
+      "sha256": "ccff3b119cb6a12460a73c2539117079036a33607e8349a1234d4f72528b78ff"
+    },
+    "log": {
+      "path": "/private/tmp/fablebook-phase3-intent-focused-R8-fix.log",
+      "bytes": 190,
+      "sha256": "3724b39622a4d844cd5042ccd18d123b02b39bef6b8d5388e672b006b2b4034a"
+    }
+  },
+  "scope_note": "The focused planning corpus cases pass; full core CI must pass before the full floor suite may start."
+}

@@ -1,0 +1,31 @@
+{
+  "request_id": "R8",
+  "status": "emission_in_progress",
+  "created_at_utc": "2026-11-18T22:27:27Z",
+  "one_use_ready_receipt_sha256": "424508a6d2723e3f2b8cdfcac36e7bc5f739b7aa3120d508ea52fbeba458c7e4",
+  "bindings": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "request_id": "R8",
+    "schedule_sha256": "869b30595af03c58ceabf4af69f7fec516968198305d2119ea4f09d65a4d9633",
+    "review_sha256": "bce06ff31bed8f0fc3e669809fb7112ed26fdada2107a59c58ea97077304071e",
+    "preflight_sha256": "17a85639f8700a3b0361579fa58331f70e3a233d76b620483cc7636d06d0d53f",
+    "count_sha256": "4e4ed6e2c92e9e761236be6569857b13771f4f288a56acabe127d47c5281e8c1",
+    "source_sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+    "source_span": {
+      "complete_file": false,
+      "encoding": "UTF-8",
+      "start_line": 1748,
+      "end_line": 1923,
+      "start_byte": 63660,
+      "end_byte_exclusive": 71408,
+      "span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+      "includes_final_newline": true
+    },
+    "context_sha256": "c0bea83bc853994c12f0d546b1c22499181689d5e5baec6a41dbd2ced06d99d6",
+    "serialized_request_sha256": "8d0bcb9cf040be997402e049ee58ee294d9bbd12f3353fe3174ee85df467635c"
+  },
+  "source_bytes": 7748,
+  "source_span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+  "emission_attempts": 1,
+  "source_replay_allowed": false
+}

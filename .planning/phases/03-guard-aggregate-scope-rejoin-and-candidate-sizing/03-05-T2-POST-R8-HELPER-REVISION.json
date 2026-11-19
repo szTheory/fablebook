@@ -1,0 +1,107 @@
+{
+  "schema_version": "03-05.post-r8-helper-revision/1",
+  "status": "verified",
+  "request_id": "R8",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "previous_helper_identity": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+    "bytes": 83805
+  },
+  "current_helper_identity": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "sha256": "2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb",
+    "bytes": 86693
+  },
+  "source_schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R8-SCHEDULE.json",
+  "source_schedule_sha256": "869b30595af03c58ceabf4af69f7fec516968198305d2119ea4f09d65a4d9633",
+  "source_span": {
+    "complete_file": false,
+    "encoding": "UTF-8",
+    "start_line": 1748,
+    "end_line": 1923,
+    "start_byte": 63660,
+    "end_byte_exclusive": 71408,
+    "span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+    "includes_final_newline": true
+  },
+  "failure_receipt_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-CORE-FOCUSED-R8-FAILURE.json",
+  "failure_receipt_sha256": "5965083654495bc092e7f59e9dde4a6bb5536f7e6d4e9eb43651d1c21e26f69c",
+  "change": {
+    "reason": "The third focused core run exposed a stale span check: R8 byte/line offsets were compared to the edited live helper. R8 is a pre-edit observation, and those boundaries must be validated against its schedule and source-file size, not current helper bytes.",
+    "from_request_id": "R6",
+    "to_request_id": "R8",
+    "previous_revision_identity": {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "sha256": "2ee75c2c70990314f8d8905f26d7f074f21cc506159198184a34582297b44999",
+      "bytes": 86734
+    },
+    "scope": "Keep the R8 snapshot/span immutable. Validate byte and line range against R8 schedule metadata, verify the live helper by its current hash/size, and bind both the first and subsequent focused failure receipts.",
+    "claims_unchanged": [
+      "source resolution unresolved",
+      "caller closure incomplete",
+      "legacy digest unresolved",
+      "candidate null",
+      "implementation unauthorized",
+      "actual library collision unknown",
+      "aggregate gate open",
+      "Walking Skeleton blocked",
+      "SEC-01 Pending"
+    ]
+  },
+  "recorded_at_utc": "2026-11-18T23:47:09Z",
+  "previous_revision_identity": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "sha256": "2ee75c2c70990314f8d8905f26d7f074f21cc506159198184a34582297b44999",
+    "bytes": 86734
+  },
+  "followup_failure_receipt_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-CORE-FOCUSED-R8-RETEST-FAILURE.json",
+  "followup_failure_receipt_sha256": "88ef306496528cc787ed8c9dde111ecd7d22e5653d89a9cdbd1b25f293c1d000",
+  "additional_failure_receipt_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-CORE-FOCUSED-R8-RETEST-FAILURE-02.json",
+  "additional_failure_receipt_sha256": "475eabb831a5fa0cbd81fffa081b4bfdea5e103623f9ff7e1fa287c82668ff52",
+  "prior_revision_history": [
+    {
+      "identity": {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "sha256": "eb4305c5aef3c0a60d8d7ef378498fef670a633c7e9e574de2a3e07bf68fbf71",
+        "bytes": 85202
+      },
+      "failure_receipt_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-CORE-FOCUSED-R8-RETEST-FAILURE.json",
+      "failure_receipt_sha256": "88ef306496528cc787ed8c9dde111ecd7d22e5653d89a9cdbd1b25f293c1d000"
+    },
+    {
+      "identity": {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "sha256": "2ee75c2c70990314f8d8905f26d7f074f21cc506159198184a34582297b44999",
+        "bytes": 86734
+      },
+      "failure_receipt_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-CORE-FOCUSED-R8-RETEST-FAILURE-02.json",
+      "failure_receipt_sha256": "475eabb831a5fa0cbd81fffa081b4bfdea5e103623f9ff7e1fa287c82668ff52"
+    }
+  ],
+  "local_followup_revisions": [
+    {
+      "change_kind": "format_only",
+      "trigger_receipt": {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-CORE-CI-R8-FAILURE.json",
+        "sha256": "27cf044e2e61f3e1966e128c31399ca003fabb3f5d0b0446337614b6c6369959"
+      },
+      "previous_helper_identity": {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "sha256": "add4fc21d05cc3ec2a4915b4ecfbb2976e0e95ad6ad800a215e5a3a916678585",
+        "bytes": 86689
+      },
+      "current_helper_identity": {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "sha256": "2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb",
+        "bytes": 86693
+      },
+      "change": "Grouped four byte-offset integer literals with Elixir digit separators: 19368\u219219_368, 41762\u219241_762 (two occurrences), 54843\u219254_843. Integer values are unchanged; no source body or additional source span was requested or emitted.",
+      "checks_before_rebinding": [
+        "MIX_ENV=test bin/lane core mix format --check-formatted test/contract/tier_sweep_test.exs test/support/guard_aggregate_reconciliation_evidence.ex: exit 0",
+        "MIX_ENV=test bin/lane core mix credo --strict: exit 0, no issues",
+        "python3 .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py --self-test: pass, 38 controls"
+      ]
+    }
+  ]
+}

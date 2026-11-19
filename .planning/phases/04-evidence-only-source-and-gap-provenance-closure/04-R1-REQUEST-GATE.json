@@ -1,0 +1,160 @@
+{
+  "schema_version": "04.r1-request-gate.1",
+  "status": "consumed_incomplete",
+  "source_access": "closed",
+  "source_emission": true,
+  "source_request_count": 1,
+  "one_use_ready_receipt": {
+    "schema_version": "04.r1-request-gate.1",
+    "request_id": "R1",
+    "status": "one_use_ready",
+    "source_access": "closed",
+    "source_emission": false,
+    "blockers": [],
+    "missing_fields": [],
+    "gates_not_run": [],
+    "upstream_stop": {
+      "status": "blocked",
+      "reason": "The immutable Phase 3 preservation manifest differs from current bytes for the compact citation correction and two Plan 03-05 Task 1 formatting repairs.",
+      "mismatches": [
+        {
+          "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md",
+          "expected_sha256": "2843c9d29fc3e1b6a86727c905939213f3ac28b679ca75a5a5d499e80ebff478",
+          "current_sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24",
+          "current_bytes": 10193,
+          "matches": false,
+          "known_cause": "Plan 03-05 compact-schedule citation spelling correction"
+        },
+        {
+          "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+          "expected_sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+          "current_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+          "current_bytes": 58839,
+          "matches": false,
+          "known_cause": "Plan 03-05 Task 1 formatting repair"
+        },
+        {
+          "path": "test/contract/tier_sweep_test.exs",
+          "expected_sha256": "f97ef3bb5cb94e8c47f3baed38d3d6387808488879e5b59980e5e1f620bcf333",
+          "current_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+          "current_bytes": 770285,
+          "matches": false,
+          "known_cause": "Plan 03-05 Task 1 formatting repair"
+        }
+      ],
+      "missing_selectors": [
+        "independent exact schedule review",
+        "fresh source-request execute preflight",
+        "serialized request token count",
+        "exact post-reset session usage attribution"
+      ],
+      "selectors": {
+        "archived_ids": "/lanes/{core,floor}/rows/*/id",
+        "preserved_lane_ids": "current IDs absent from the archived 221 rows",
+        "stop_ids": "03-04-TASK2-GATE-STOP.md sorted-ID JSON block",
+        "lane_ids": "/identity_rows/*/identity/id",
+        "baseline_mfas": "/identity_rows/*/baseline_mfas",
+        "live_mfas": "/identity_rows/*/live_mfas"
+      },
+      "unavailable_domains": {
+        "graph": {
+          "expected_keys": null,
+          "selector": null,
+          "status": "not_keyed_in_retained_metadata",
+          "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+        },
+        "callback": {
+          "expected_keys": null,
+          "selector": null,
+          "status": "not_keyed_in_retained_metadata",
+          "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+        },
+        "delegate": {
+          "expected_keys": null,
+          "selector": null,
+          "status": "not_keyed_in_retained_metadata",
+          "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+        }
+      }
+    },
+    "bindings": {
+      "generation": "ENV-20261117-06-supported-20261117T204102Z",
+      "request_id": "R1",
+      "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "source_span": {
+        "start_line": 1,
+        "end_line": 1610,
+        "start_byte": 0,
+        "end_byte_exclusive": 58839,
+        "encoding": "UTF-8",
+        "complete_file": true,
+        "includes_final_newline": true
+      },
+      "context_sha256": "98ee0eb217e847b0979ce12df298a773a3e19acf14234ec71803f4dbf5d23499",
+      "manifest_sha256": "efe4005d20cdd2df4f31bf8c051e4156994aea3bbd46fbf16220a6e7b7d08934",
+      "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+      "review_sha256": "70e65fbb7916ab14bd1be8999cfdd8b3139be668a45020893d6c58852cacca89",
+      "preflight_sha256": "e6c116784ccc90eb0d28d9b73cde1917cfa0876be5c1f2edc933cfcfedb41f61",
+      "count_sha256": "9a3b453f6bca90e198984b456eba02f8d94ba3ce032c9ad6b7760d5ad6f210e7",
+      "serialized_request_sha256": "c5eb152daf61e23e3ad559b3d04e007dcaa12d511660d95f2068e111a4e98918",
+      "informational_usage_snapshot_utc": "2026-11-17T22:09:56.859Z",
+      "informational_post_reset_output_tokens": 648042,
+      "informational_recorded_working_balance": -38042
+    },
+    "exit_code": 0
+  },
+  "source_emission_receipt": {
+    "status": "consumed_once_delivery_incomplete",
+    "emission_count": 1,
+    "content_used_for_analysis": true,
+    "emitted_at_utc": "2026-11-17T22:40:04.756Z",
+    "one_use_ready_receipt_sha256": "a309ecb42a62a717747d63551262acc40d1c739e6be5f77a19b1d51a142e3214",
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "request_id": "R1",
+    "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+    "review_sha256": "70e65fbb7916ab14bd1be8999cfdd8b3139be668a45020893d6c58852cacca89",
+    "preflight_sha256": "e6c116784ccc90eb0d28d9b73cde1917cfa0876be5c1f2edc933cfcfedb41f61",
+    "count_sha256": "9a3b453f6bca90e198984b456eba02f8d94ba3ce032c9ad6b7760d5ad6f210e7",
+    "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+    "source_span": {
+      "start_line": 1,
+      "end_line": 1610,
+      "start_byte": 0,
+      "end_byte_exclusive": 58839,
+      "encoding": "UTF-8",
+      "complete_file": true,
+      "includes_final_newline": true
+    },
+    "context_sha256": "98ee0eb217e847b0979ce12df298a773a3e19acf14234ec71803f4dbf5d23499",
+    "serialized_request_sha256": "c5eb152daf61e23e3ad559b3d04e007dcaa12d511660d95f2068e111a4e98918",
+    "generation_endpoint_called": false,
+    "source_body_emitted_once": true,
+    "source_bytes": 58839,
+    "tool_output_truncated": true,
+    "tool_output_original_tokens": 14710,
+    "tool_output_token_limit": 10000,
+    "analysis_complete": false,
+    "failure": "The functions.exec outer output budget truncated the source tool result; approximately 4,710 source tokens were omitted from the executor context."
+  },
+  "bindings": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "request_id": "R1",
+    "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+    "review_sha256": "70e65fbb7916ab14bd1be8999cfdd8b3139be668a45020893d6c58852cacca89",
+    "preflight_sha256": "e6c116784ccc90eb0d28d9b73cde1917cfa0876be5c1f2edc933cfcfedb41f61",
+    "count_sha256": "9a3b453f6bca90e198984b456eba02f8d94ba3ce032c9ad6b7760d5ad6f210e7",
+    "source_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+    "source_span": {
+      "start_line": 1,
+      "end_line": 1610,
+      "start_byte": 0,
+      "end_byte_exclusive": 58839,
+      "encoding": "UTF-8",
+      "complete_file": true,
+      "includes_final_newline": true
+    },
+    "context_sha256": "98ee0eb217e847b0979ce12df298a773a3e19acf14234ec71803f4dbf5d23499",
+    "serialized_request_sha256": "c5eb152daf61e23e3ad559b3d04e007dcaa12d511660d95f2068e111a4e98918"
+  },
+  "analysis_status": "incomplete_tool_output_truncated"
+}

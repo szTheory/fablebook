@@ -1,0 +1,101 @@
+{
+  "receipt_id": "03-05-FLOOR-FOCUSED-R8-FINAL2-PASS",
+  "status": "passed",
+  "command": "bin/lane floor test test/contract/tier_sweep_test.exs --only guard_aggregate_reconciliation --warnings-as-errors",
+  "started_at_utc": "2026-11-19T00:23:37Z",
+  "completed_at_utc": "2026-11-19T00:24:32Z",
+  "exit_code": 0,
+  "selection": {
+    "discovered_test_cases": 109,
+    "passed": 9,
+    "failed": 0,
+    "excluded": 100,
+    "duration_seconds": 53.6,
+    "selection_tag": "guard_aggregate_reconciliation"
+  },
+  "checkout": {
+    "branch": "gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+    "head": "7317bd0ea112dbe9c2a60e15322ec6bfccc4681d",
+    "working_tree": "dirty; preserved"
+  },
+  "inputs": [
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md",
+      "bytes": 52172,
+      "sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+      "bytes": 64572,
+      "sha256": "8d39106a4431638fcd53ff3064c90f22bdecd31e9d63aebcf77ec72716ad7812"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-EXECUTION-CODE-REVIEW.md",
+      "bytes": 3129,
+      "sha256": "4813130de1240597ede6dfcc443d0eba1fc87cf028d9dc382b9dabc69638a630"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-POST-R8-HELPER-REVISION.json",
+      "bytes": 5676,
+      "sha256": "6049a4dcd6dd73835a8bef6e9f60bb08de577b2958a0cdaa8900b7a81f07f8dc"
+    },
+    {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-RECONCILIATION.md",
+      "bytes": 7928669,
+      "sha256": "8ab9525fc030032decea637797207a0ceff3ffe3db346f7dc90e6a6d42782655"
+    },
+    {
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "bytes": 86693,
+      "sha256": "2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb"
+    },
+    {
+      "path": "test/contract/tier_sweep_test.exs",
+      "bytes": 780065,
+      "sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "bytes": 60908,
+      "sha256": "598be0ccac147ab1ac5d64cd46f9a78a1bf919a1b985a299753a3d53ad1e6fac"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-VALIDATION.json",
+      "bytes": 20684,
+      "sha256": "a2d7a13b3cb22d884d4985995016c8f0abb36a9775e73fc7354c8af437cf92c7"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-EVIDENCE-REVIEW.json",
+      "bytes": 6936,
+      "sha256": "493c8efdfd90a01dbec7cbc7b90ccde642c826365b8fcbadd500cf0dbaf7d0ee"
+    },
+    {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PRESERVATION-PROVENANCE-BRIDGE.json",
+      "bytes": 15397,
+      "sha256": "8f8fe47137ecd115ce2703fbb6eb41b2044becba84b82eed566284f6cb0a8b56"
+    },
+    {
+      "path": "bin/lane",
+      "bytes": 5284,
+      "sha256": "973aebcfdb769347b835cb3b0b4cfb85451badb0affcb6ec01c84855aff02fae"
+    },
+    {
+      "path": "mix.lock",
+      "bytes": 8245,
+      "sha256": "31c244c80a750309f4cc82c8840fdf78bba642ba78a00df31b3acfe208b94112"
+    }
+  ],
+  "log": {
+    "path": "/private/tmp/fablebook-phase3-floor-focused-R8-final2-full.log",
+    "bytes": 54871992,
+    "sha256": "e9e1f7ba90674b878e171a54e353e4385c58ed1227838117214f1bb7e937ce35"
+  },
+  "log_handling": {
+    "complete_unfiltered_runner_output": true,
+    "total_lines": 292661,
+    "otp_inventory_diagnostic_lines": 292652,
+    "diagnostics_were_not_removed": true
+  },
+  "runtime": "floor lane via bin/lane; warnings-as-errors; background execution",
+  "scope_note": "Current helper and reviewed Phase 4 generation. Focused aggregate reconciliation selection only; full core CI, full floor suite, hosted CI and semantic closure are not established."
+}

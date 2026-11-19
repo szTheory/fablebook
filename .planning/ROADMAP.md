@@ -9,7 +9,7 @@
 
 ## Phases
 
-- [ ] **Phase 3: Guard aggregate scope rejoin and candidate sizing** — Reconcile the complete current two-lane scope and size a bounded next decision.
+- [x] **Phase 3: Guard aggregate scope rejoin and candidate sizing** — Reconcile the complete current two-lane scope and size a bounded next decision. (completed 2026-11-18)
 - [ ] **Phase 4: Evidence-only source and gap provenance closure** — Complete the lane-pinned source and typed-gap provenance needed to explain Phase 3's coverage and digest gaps.
 
 **Milestone key:** guard-recovery
@@ -51,7 +51,6 @@
 **Requirements:** GSR-03, GSR-05
 **Depends on:** Phase 3's recorded bounded trace stop; Phase 4 supplies evidence only and does not close Phase 3 or authorize a guard implementation.
 **Boundaries:** Static evidence only. No audited OTP APIs, callbacks, atom sinks, runtime evaluation, generated-code paths, guard behavior changes, candidate promotion, aggregate closure, or automatic follow-on. Preserve the collision and Macro stops, SEC-01 Pending status, and Walking Skeleton block.
-**Plans:** 0 plans
+**Plans:** 3 plans exist under `.planning/phases/04-evidence-only-source-and-gap-provenance-closure/`.
 
-Plans:
-- [ ] To be planned with the standard 100,000-token ceiling and fixed 31,000-token reserve.
+The owner approved a one-time 150,000 generated-output-token recovery envelope under [INT-20261117-01](intent/sources/2026-11-17-01-authorize-rebased-recovery-envelope.md); its historical receipt is [here](forensics/phase4-budget-reset-20261117.md). Measured telemetry later showed 181,047 parent-thread output tokens plus 81,800 from its executor child under that envelope, exceeding it by 112,847. On 2026-11-17 the owner authorized one additional 80,000-token envelope under [INT-20261117-04](intent/sources/2026-11-17-04-authorize-recovery-envelope.md), with the 31,000 reserve protected and a 49,000 working ceiling. Its baseline, scope, and stop rule are in [the continuation receipt](forensics/phase4-budget-renewal-20261117.md). The 80,000-token envelope was later measured at 60,773 parent output tokens, entering its reserve by 11,773 before a plan task started. The owner then authorized a fresh 90,000-token envelope under [INT-20261117-05](intent/sources/2026-11-17-05-authorize-second-recovery-envelope.md), with a 59,000 working ceiling and 31,000 reserve; see [renewal receipt 2](forensics/phase4-budget-renewal-02-20261117.md). This applies to the same remaining Phase 4/Phase 3 recovery scope. All source-read, evidence-only, and safety gates remain active.

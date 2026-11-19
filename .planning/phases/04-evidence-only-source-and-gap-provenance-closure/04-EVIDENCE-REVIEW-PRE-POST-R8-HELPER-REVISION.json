@@ -1,0 +1,102 @@
+{
+  "schema_version": "04.evidence-review.1",
+  "author": "Codex orchestrator",
+  "reviewer": "/root/phase3_security_audit",
+  "created_at_utc": "2026-11-18T22:52:05Z",
+  "source_access": "closed",
+  "status": "pass",
+  "subject": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "manifest": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "sha256": "6ececbd884e7561cd60743f46049edcb992b96e6c1a6020aa645e347fc77ad1e",
+      "bytes": 60047
+    },
+    "payloads": {
+      "associations": {
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "typed_gaps": {
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+        "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+        "bytes": 19633625
+      },
+      "coverage_caller_trace": {
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-COVERAGE-CALLER-TRACE.json",
+        "sha256": "1341aef104a635bb00511413185e3e946b53a8992052ad42432b88ba3a8cf5fa",
+        "bytes": 22951
+      },
+      "sizing_digest_proof": {
+        "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SIZING-DIGEST-PROOF.json",
+        "sha256": "f745a2c074e006a384c3df5ca3ea0df1d025e2b096877ea413ea09025681370d",
+        "bytes": 8001
+      }
+    },
+    "source_requests": {
+      "R1": {
+        "gate_sha256": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15",
+        "schedule_sha256": "f7e1aa9c4d586d03d6f1a2fe139e5f474e276596dc25a41c21f970073723b6f1",
+        "review_sha256": "70e65fbb7916ab14bd1be8999cfdd8b3139be668a45020893d6c58852cacca89",
+        "preflight_sha256": "e6c116784ccc90eb0d28d9b73cde1917cfa0876be5c1f2edc933cfcfedb41f61",
+        "count_sha256": "9a3b453f6bca90e198984b456eba02f8d94ba3ce032c9ad6b7760d5ad6f210e7"
+      },
+      "R2": {
+        "gate_sha256": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930",
+        "schedule_sha256": "9c04385fadd32662bf3fa9b03cb9f6cb0d749376b2f9b1e33ff44e8848cafa6d",
+        "review_sha256": "0c3a4b7cce143094ce68671f33f9497292048fd431aa26739edc68ccca5b32c8",
+        "preflight_sha256": "3e432a5d7af46b6b247a93af213e0da7bda695c7701b0d6a92b95728dea51a9b",
+        "count_sha256": "53ff5f91edb9c1cae7463e70d699fe8ca1357df8fb34033c5c5bd33168007dbd"
+      },
+      "R3": {
+        "gate_sha256": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482",
+        "schedule_sha256": "b996dc547c4e0a34ea9fdf250ab83bb1d633f128686b1026fdd6073e4681900c",
+        "review_sha256": "170b42086a01ac9b769b0e086bc301d68000d056258bb199294335554a8e3ddb",
+        "preflight_sha256": "3ba9f1a3f1424211af7fdad1bd66b34ea1088bf030b303dca68547fa881a449b",
+        "count_sha256": "336fb7fe776d50195641bf4ecc054ee4a1fa447e351d9e5116166d6c1439e625"
+      },
+      "R4": {
+        "gate_sha256": "d4b3b1d6fa9995543b969b01f6d9227a50eb3b7fc78ca1285630cef2c2645cde",
+        "schedule_sha256": "858a5cf3c6a15e4bcd9c805123edcac74c314ebc04669f45fd3f39275d5010a0",
+        "review_sha256": "1268becd645e420d7d427257f02a4fa87fb4bf14a3b4874dc1e07631ecef6c92",
+        "preflight_sha256": "29e149dbcf3e7d4839b1a95c6a74e5aa23202f5894311e1bd07e5549de4e7108",
+        "count_sha256": "deea8b08366b6fbba3db92afde0b9add618526b5e44d233fd92e7764cae31a77"
+      },
+      "R5": {
+        "gate_sha256": "12ba9d4efb78c955a4f8c1267866285bb3e92f465ce03d7c84b11b72854dba6e",
+        "schedule_sha256": "5dc83e36116092d808e3db0e1d590953d10fae19db0bb0b39dcc3794943ad604",
+        "review_sha256": "f3d3a64bf63ccd8a5ea32d782024ac1636558d8eae03aff5f87bb2de732678a4",
+        "preflight_sha256": "c51395698d5603be4d0d4201da9a78cd8b76a84f251c5ce2f68650f0f7e37f88",
+        "count_sha256": "2c963a617777e3c9805b032132f05e5ca742c6bff37234b5dee38d039aa0c5a6"
+      },
+      "R6": {
+        "gate_sha256": "5e30216d14d1ce465f49bd846f4dcda4cc914cd610de1a7feebda4c259570d08",
+        "schedule_sha256": "74bbd6a9554c5fac9b08eda5790b8a3d6f2897a03c072a080455dec97dc31c22",
+        "review_sha256": "1d028770bf3c6a72fa149a0a0ad787de706b84760c5e18d5e2c432a36ce3c71f",
+        "preflight_sha256": "aa1c1bc9f329196d7dd640f725457ce1bb90b8bc26d3763eebb6a500d1e9ad9a",
+        "count_sha256": "920c3bfd41fbd7de2923c1e8bbb53bcb20315bec0116150608886de6e6e54015"
+      },
+      "R7": {
+        "gate_sha256": "43296e1d0058c231c8d16b5e83e31c7b6cf0bc61ddde9dd86937333db39027eb",
+        "schedule_sha256": "a79efca942f13f366ef3f8d72152ea5aec6cca92f57251bd7e406434cab5b70e",
+        "review_sha256": "19cc843c9d0b9ffb830b419d14187805c9efc5abb45ee09d2ce714bd1ce2353d",
+        "preflight_sha256": "e3dac41764fdb7164985d86ded721115bb44446142d61fc60f2fb70d87e5a836",
+        "count_sha256": "75f332a95e507f35969f1cd19bfd4cb7a8127bb807a07a56f38ff30c72d98722"
+      },
+      "R8": {
+        "gate_sha256": "153fe652987402f80585e3976cb3192392485b987753d044528508acd697d4d0",
+        "schedule_sha256": "869b30595af03c58ceabf4af69f7fec516968198305d2119ea4f09d65a4d9633",
+        "review_sha256": "bce06ff31bed8f0fc3e669809fb7112ed26fdada2107a59c58ea97077304071e",
+        "preflight_sha256": "17a85639f8700a3b0361579fa58331f70e3a233d76b620483cc7636d06d0d53f",
+        "count_sha256": "4e4ed6e2c92e9e761236be6569857b13771f4f288a56acabe127d47c5281e8c1"
+      }
+    }
+  },
+  "subject_sha256": "41cc02edb62c14e186ac222feec0e4c9f0a7f73ba3001a80c9b9209854b648a1",
+  "findings": [],
+  "review_notes": [
+    "Independent metadata review confirmed R8 one-use gate, exact source/span bindings, request history, and preserved safety stops.",
+    "The R8 source body was observed inline with both sentinels and directly forwarded; no raw body copy is retained. The one-use receipt records the observed byte count and scheduled span hash. R8 cannot be replayed."
+  ]
+}

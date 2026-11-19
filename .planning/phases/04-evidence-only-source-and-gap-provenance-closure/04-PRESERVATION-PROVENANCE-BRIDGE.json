@@ -1,0 +1,295 @@
+{
+  "author": "Codex",
+  "created_at_utc": "2026-11-17T19:50:00Z",
+  "independent_review": {
+    "status": "pass",
+    "reviewer": "/root/phase3_security_audit",
+    "reviewer_role": "independent metadata-only bridge reviewer",
+    "reviewed_at_utc": "2026-11-19T01:06:21Z",
+    "subject_sha256": "6aa0d231205df539dbecc803ffa703c8d746c4e7b99380b9653225a1a5a6f914",
+    "findings": [],
+    "scope_note": "PASS. Independently checked the final readiness binding, preserved mismatch rows, current helper/review identities, closed source boundary, and absence of semantic closure claims."
+  },
+  "limits": [
+    "This record reconciles only the three known byte-preservation differences.",
+    "It makes no source, caller-closure, or semantic-correctness claim."
+  ],
+  "mismatches": [
+    {
+      "current_bytes": 10193,
+      "current_sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24",
+      "description": "Five compact-schedule citation spellings normalized; pre/post hashes bound by saved events and readiness receipt.",
+      "events": [
+        {
+          "call_id": "call_8eae62cb0d724303b95db6dc3705f01e",
+          "line": 3922,
+          "record_sha256": "617d26961160adf61d7a07a0eb7779fa3f5fc798aaaa434698e634dc8d131d44",
+          "record_type": "custom_tool_call",
+          "timestamp": "2026-11-17T07:19:11.147Z"
+        },
+        {
+          "call_id": "call_8eae62cb0d724303b95db6dc3705f01e",
+          "line": 3925,
+          "record_sha256": "18fcce0e4c2adcee1bdddbece70a14d4f82fa57df22d3d103dac5fb9258b8b72",
+          "record_type": "custom_tool_call_output",
+          "timestamp": "2026-11-17T07:19:11.579Z"
+        },
+        {
+          "call_id": "call_64ff80b85eed400c855501a0990ae69a",
+          "line": 3929,
+          "record_sha256": "9a75cef35f94254937eea53c616da0a5bba9c8f8fa66c549f88b43b6203b7c32",
+          "record_type": "custom_tool_call",
+          "timestamp": "2026-11-17T07:19:22.900Z"
+        },
+        {
+          "call_id": "call_64ff80b85eed400c855501a0990ae69a",
+          "line": 3932,
+          "record_sha256": "a77b3fff4a9921942bbdeb7ee28e4a779c03fde1adff3f8b7b8e72e5366bf6ff",
+          "record_type": "custom_tool_call_output",
+          "timestamp": "2026-11-17T07:19:23.010Z"
+        },
+        {
+          "call_id": "call_b5e244b430d54f9cac245a4b498bb91f",
+          "line": 3936,
+          "record_sha256": "59a80bb48b951042bf3b619c4e5d5dd16d2686aee95f68741353f7fede4b54f7",
+          "record_type": "custom_tool_call",
+          "timestamp": "2026-11-17T07:19:30.713Z"
+        },
+        {
+          "call_id": "call_b5e244b430d54f9cac245a4b498bb91f",
+          "line": 3939,
+          "record_sha256": "3a2e9254fc518f4524a5d0555673643af6c6c54c11846c375a554c046e620902",
+          "record_type": "custom_tool_call_output",
+          "timestamp": "2026-11-17T07:19:30.796Z"
+        },
+        {
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "line": 4003,
+          "record_sha256": "b0166cff329f0412fcfc9c879ddccc1535a5d647f6b3fe4e42b390fcd0e9c04e",
+          "record_type": "custom_tool_call",
+          "timestamp": "2026-11-17T07:21:52.422Z"
+        },
+        {
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "line": 4006,
+          "record_sha256": "4ae9c1a3103b04d86d0cbdf2798bb75284302d5c44b5cb988426f84b574817bd",
+          "record_type": "custom_tool_call_output",
+          "timestamp": "2026-11-17T07:21:52.501Z"
+        }
+      ],
+      "exit_status_source": "saved readiness receipt and successful command output event.",
+      "known_cause": "Plan 03-05 compact-schedule citation spelling correction",
+      "observed_outcome": "passed",
+      "old_bytes": 10193,
+      "old_sha256": "2843c9d29fc3e1b6a86727c905939213f3ac28b679ca75a5a5d499e80ebff478",
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md",
+      "transfer_status": "??"
+    },
+    {
+      "current_bytes": 58839,
+      "current_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+      "description": "Pinned formatter check on the repaired file; only file hash/size metadata is included.",
+      "events": [
+        {
+          "call_id": "call_ad02cf5194bd456aa23400409f2a077f",
+          "line": 3943,
+          "record_sha256": "4dcdf78e6621d69c0825063a130eede72e4b0a39230325582046f378a17ba3a7",
+          "record_type": "custom_tool_call",
+          "timestamp": "2026-11-17T07:19:38.634Z"
+        },
+        {
+          "call_id": "call_ad02cf5194bd456aa23400409f2a077f",
+          "line": 3947,
+          "record_sha256": "a0fe7bef794a5cb1f6527836c59abef5d63503bb8458bb40053a5ade6309826a",
+          "record_type": "custom_tool_call_output",
+          "timestamp": "2026-11-17T07:19:39.460Z"
+        },
+        {
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "line": 4003,
+          "record_sha256": "b0166cff329f0412fcfc9c879ddccc1535a5d647f6b3fe4e42b390fcd0e9c04e",
+          "record_type": "custom_tool_call",
+          "timestamp": "2026-11-17T07:21:52.422Z"
+        },
+        {
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "line": 4006,
+          "record_sha256": "4ae9c1a3103b04d86d0cbdf2798bb75284302d5c44b5cb988426f84b574817bd",
+          "record_type": "custom_tool_call_output",
+          "timestamp": "2026-11-17T07:21:52.501Z"
+        }
+      ],
+      "exit_status_source": "saved readiness receipt; final formatter output includes exit code 0.",
+      "known_cause": "Plan 03-05 Task 1 formatting repair",
+      "observed_outcome": "passed",
+      "old_bytes": 58768,
+      "old_sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+      "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+      "transfer_status": " M"
+    },
+    {
+      "current_bytes": 770285,
+      "current_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+      "description": "Pinned formatter check on the repaired file; only file hash/size metadata is included.",
+      "events": [
+        {
+          "call_id": "call_ad02cf5194bd456aa23400409f2a077f",
+          "line": 3943,
+          "record_sha256": "4dcdf78e6621d69c0825063a130eede72e4b0a39230325582046f378a17ba3a7",
+          "record_type": "custom_tool_call",
+          "timestamp": "2026-11-17T07:19:38.634Z"
+        },
+        {
+          "call_id": "call_ad02cf5194bd456aa23400409f2a077f",
+          "line": 3947,
+          "record_sha256": "a0fe7bef794a5cb1f6527836c59abef5d63503bb8458bb40053a5ade6309826a",
+          "record_type": "custom_tool_call_output",
+          "timestamp": "2026-11-17T07:19:39.460Z"
+        },
+        {
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "line": 4003,
+          "record_sha256": "b0166cff329f0412fcfc9c879ddccc1535a5d647f6b3fe4e42b390fcd0e9c04e",
+          "record_type": "custom_tool_call",
+          "timestamp": "2026-11-17T07:21:52.422Z"
+        },
+        {
+          "call_id": "call_065137ff18af4900866d5ca92d1d3bb1",
+          "line": 4006,
+          "record_sha256": "4ae9c1a3103b04d86d0cbdf2798bb75284302d5c44b5cb988426f84b574817bd",
+          "record_type": "custom_tool_call_output",
+          "timestamp": "2026-11-17T07:21:52.501Z"
+        }
+      ],
+      "exit_status_source": "saved readiness receipt; final formatter output includes exit code 0.",
+      "known_cause": "Plan 03-05 Task 1 formatting repair",
+      "observed_outcome": "passed",
+      "old_bytes": 770007,
+      "old_sha256": "f97ef3bb5cb94e8c47f3baed38d3d6387808488879e5b59980e5e1f620bcf333",
+      "path": "test/contract/tier_sweep_test.exs",
+      "transfer_status": " M"
+    }
+  ],
+  "original_records": {
+    "env04_ledger": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-RESOURCE-LEDGER-ENV04-STOP.json",
+      "sha256": "57bcb84233c2bd06ab02b593d9d59c274d63f77b13fa535fea855d4bea9fd228"
+    },
+    "manifest": {
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST-04-01-ORIGINAL.json",
+      "sha256": "b1b7032366522f250c152b8c6b91282293f5e8f5188d4c8ee7e65f8ed4eb4fd7"
+    }
+  },
+  "post_snapshot_changes": {
+    "code_review": {
+      "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-EXECUTION-CODE-REVIEW.md",
+      "sha256": "4813130de1240597ede6dfcc443d0eba1fc87cf028d9dc382b9dabc69638a630"
+    },
+    "files": [
+      {
+        "current_bytes": 780065,
+        "current_sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439",
+        "path": "test/contract/tier_sweep_test.exs",
+        "snapshot_bytes": 770285,
+        "snapshot_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6"
+      },
+      {
+        "current_bytes": 86693,
+        "current_sha256": "2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb",
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "snapshot_bytes": 58839,
+        "snapshot_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6"
+      }
+    ],
+    "schema_version": "04.post-snapshot-changes.1",
+    "scope_note": "Phase 3 R8 remains the immutable pre-edit observation. The live helper is separately hash-bound through the R8 revision receipt and local formatting follow-up. The R8 source span remains checked against its schedule byte/line bounds, not edited live-file offsets. Failure receipts remain preserved. The original three Phase 4 mismatch/stop rows remain exact; source access stays closed and no semantic claim is added.",
+    "semantic_claims": [],
+    "source_access": "closed"
+  },
+  "prior_independent_review": {
+    "findings": [],
+    "reviewed_at_utc": "2026-11-17T20:25:20.301Z",
+    "reviewer": "OpenGSD plan-checker subagent env05_plan_review",
+    "reviewer_thread_id": "01a1eaed-eb5b-7953-881e-a94e7060ebdb",
+    "scope_note": "Scoped bridge assessment passed. The same review returned REVISE for stale budget text in the execution replan; that separate finding is recorded in 04-02-REVIEW-20261117-01.md.",
+    "status": "pass",
+    "subject_sha256": "92e21dcad2383568d357f63eb2694da1180b7393ce8418678bb1b5c69fb441fb"
+  },
+  "prior_independent_reviews": [
+    {
+      "findings": [],
+      "reviewed_at_utc": "2026-11-18T15:02:11Z",
+      "reviewer": "Independent read-only subagent /root/phase4_bridge_reconcile",
+      "scope_note": "Verified unchanged original stop records and three mismatch rows, exact post-snapshot readiness/code-review bindings, normalized session-log pointer, fail-closed uniqueness controls, and closed source/body stops. Current-file bytes were read only for SHA-256 integrity verification; no source/test/session-log text was displayed or semantically reviewed, and no new source request or emission occurred.",
+      "status": "pass",
+      "subject_sha256": "03cfd257228da6bb660d5934f7da4b5dcf1561e2aa688b3d1d0f3277f809c24d"
+    },
+    {
+      "findings": [],
+      "reviewed_at_utc": "2026-11-18T21:28:29Z",
+      "reviewer": "/root/phase3_security_audit",
+      "reviewer_role": "independent metadata-only bridge reviewer",
+      "scope_note": "PASS. The original three stop/mismatch rows and transfer bindings remain exact. Current readiness and helper identity/size metadata match. The prior bridge reviews remain preserved. Semantic claims are empty, source access is closed, and source-body read/emission are false.",
+      "status": "pass",
+      "subject_sha256": "7bddfae8d9d74789d0661d1bae4cc4d37d87b9684f7fb849743ad72ec68d22c3"
+    },
+    {
+      "findings": [],
+      "reviewed_at_utc": "2026-11-18T23:14:13Z",
+      "reviewer": "/root/phase3_security_audit",
+      "reviewer_role": "independent metadata-only bridge reviewer",
+      "scope_note": "PASS. The original three mismatch rows, immutable stop records and prior reviews remain intact. Readiness and clean code-review hashes match. Post-snapshot hashes/sizes bind both preserved snapshots to live bytes. R8 remains the immutable pre-edit observation; the separate reviewed revision binds the live helper without adding source or closure claims. Source access remains closed and semantic claims are empty.",
+      "status": "pass",
+      "subject_sha256": "9cd9041121f414896527882ae55f7e18d640dfc364b7e4e2eeaf32d359b47014"
+    },
+    {
+      "findings": [],
+      "reviewed_at_utc": "2026-11-18T23:38:18Z",
+      "reviewer": "/root/phase3_security_audit",
+      "reviewer_role": "independent metadata-only bridge reviewer",
+      "scope_note": "PASS. The three original mismatches and stop records remain unchanged; readiness and clean-review bindings match current helper/contract bytes. The R8 pre-edit snapshot, live-helper revision receipt, both focused failures and manifest nested receipt binding remain exact. Source access is closed and no semantic closure claim was added.",
+      "status": "pass",
+      "subject_sha256": "bc78c7718688aa630031d581c4547c17d7345642c36bdf154f82d7b8e780b276"
+    }
+  ],
+  "review_history": [
+    {
+      "findings": [],
+      "reviewed_at_utc": "2026-11-18T20:18:54Z",
+      "reviewer": "/root/phase3_security_audit",
+      "scope_note": "Verified original stop records and the exact three preservation mismatches, current post-snapshot helper hash/size, and current readiness/code-review bindings. No source body was read or emitted and no semantic claim was added.",
+      "status": "pass",
+      "subject_sha256": "8b3ef5be8d0252b601fce9cbc822fb9ac6a2986b31394a61721ae04757f0d875"
+    },
+    {
+      "findings": [],
+      "reviewed_at_utc": "2026-11-18T20:58:38Z",
+      "reviewer": "/root/phase3_security_audit",
+      "scope_note": "Verified the unchanged three original preservation mismatches and original stop records, transfer/readiness/code-review hash bindings, current helper hash/size metadata, closed source access, and empty semantic-claims list. No helper or test source body was read or emitted.",
+      "status": "pass",
+      "subject_sha256": "2494dedddebd89e62cf87091b1f9acefb9bddcfa64c621bdc2d57d1e09fa663a"
+    },
+    {
+      "findings": [],
+      "reviewed_at_utc": "2026-11-18T21:03:41Z",
+      "reviewer": "/root/phase3_security_audit",
+      "scope_note": "Verified the unchanged three original preservation mismatches and bound stop records, transfer/code-review/current-helper hash and size metadata, the new readiness hash, closed source access, and empty semantic-claims list. No helper or test source body was read or emitted.",
+      "status": "pass",
+      "subject_sha256": "3086e70b64af35ab60bd0dea5498a2131e70ab2add78eb9a0b5b5825eb090091"
+    }
+  ],
+  "schema_version": "04.preservation-bridge.1",
+  "session_log": "~/.codex/sessions/2026/11/16/rollout-2026-11-16T21-47-09-01a1e766-afb2-77a1-8977-350fde6d15dd.jsonl",
+  "source_access": "closed",
+  "source_body_emitted": false,
+  "source_body_read": false,
+  "status": "passed",
+  "task_readiness": {
+    "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md",
+    "sha256": "74b8e6c5fa61390556ba7e0db7fdf12f60ac9684adcb1c3b6a4c297eb7a48f09"
+  },
+  "transfer_receipt": {
+    "path": ".planning/forensics/phase3-recovery-transfer-20261117.json",
+    "sha256": "3e4e2b44e477dd0a399f3c78ae0d6bf35796010f634733d6ad224ec75ba967bb"
+  }
+}

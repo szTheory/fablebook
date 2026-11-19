@@ -38,14 +38,14 @@
     "sizing": "2ad9d75a45800786bba116166eb64ca304781c101ae0bdfe851a32cc172430bb"
   },
   "index_sha256": "297aa1633f7fe24d679e5e660bb3d15382cac8cce3bda8ac4e7d841435243f77",
-  "receipt_sha256": "7cd7edbe7fc311f03296bc41209c0c2c977b4dcebceaf4bb0128896fbb3063af",
+  "receipt_sha256": "05ead38c3ad0e5c8ed38ae79c919fbdf410a934438131454c54c824413374b5b",
   "report_sha256": "d95894f76ff1c88d7953a24fc6d742267b03b178943587ed9466ed17fe6f0ae0",
   "artifact_sha256": {
     "03-04-METADATA-GAPS.jsonl": "297aa1633f7fe24d679e5e660bb3d15382cac8cce3bda8ac4e7d841435243f77",
-    "03-04-METADATA-GAP-RECEIPT.json": "7cd7edbe7fc311f03296bc41209c0c2c977b4dcebceaf4bb0128896fbb3063af",
+    "03-04-METADATA-GAP-RECEIPT.json": "05ead38c3ad0e5c8ed38ae79c919fbdf410a934438131454c54c824413374b5b",
     "03-04-METADATA-GAP-REPORT.md": "d95894f76ff1c88d7953a24fc6d742267b03b178943587ed9466ed17fe6f0ae0"
   },
-  "preservation_manifest_sha256": "52c87bc12f25b798a0335b42a751b0041c6e2aa88d96eb437dadc4fdb4920291",
+  "preservation_manifest_sha256": "9e5f789e0b308b814ae9bb1c7092f8e4f1404f94d7c945da561bcbdf2efe65e4",
   "preservation_manifest_unchanged": true,
   "preexisting_status_preserved": true,
   "limits": {

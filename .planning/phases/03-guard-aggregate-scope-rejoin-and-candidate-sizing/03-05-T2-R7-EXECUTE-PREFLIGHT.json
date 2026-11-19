@@ -1,0 +1,16 @@
+{
+  "schema_version": "03-05.task2-request-preflight.1",
+  "request_id": "T2-R7",
+  "schedule_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-VALIDATOR-SOURCE-SCHEDULE.json",
+  "schedule_sha256": "050ed794d73e29db99bd80dca96597d639d04499c7c0cacc1d34af1995934d7b",
+  "review_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-T2-VALIDATOR-SOURCE-REVIEW.json",
+  "review_sha256": "b89f2a88d43efd379f1874f2e36d4ab682d7f4c98229c36eeb414a1d50cf99ab",
+  "result": {
+    "errors": [],
+    "stage": "execute",
+    "milestone": "v0.4",
+    "phase": "3",
+    "route_phase": "03"
+  },
+  "checked_at_utc": "2026-11-18T00:12:51.068162+00:00"
+}

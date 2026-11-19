@@ -312,7 +312,7 @@ Every item below is a v1.0 commitment.
   - It breaks on every Phoenix/LiveView minor.
   - It has no manifest in test, no viewport control and weak CSP.
   - Open asks include auto-generated stories, agent export and visual regression.
-  - Details: `docs/research/LESSONS-LEARNED.md`.
+  - Details: `docs/research/LESSONS-LEARNED.md`; Fablebook's audit of the 2026-11-18 Scrypath handoff is in [SCRYPATH-HANDOFF-AUDIT-2026-11-18.md](research/SCRYPATH-HANDOFF-AUDIT-2026-11-18.md).
 - **Other ecosystems:**
   - Storybook 9–10 reorganized around "stories as tests" and AI manifests/MCP after criticism of its bloat.
   - Ladle showed that batteries included, URL state and instant boot win users.

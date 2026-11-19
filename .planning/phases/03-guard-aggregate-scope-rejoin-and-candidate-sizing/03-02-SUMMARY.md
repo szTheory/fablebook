@@ -99,7 +99,7 @@ Every live target now has an exact lane-scoped source identity or a per-MFA gap;
 
 ## Verification
 
-- `mix format --check-formatted test/support/guard_aggregate_reconciliation_evidence.ex test/contract/tier_sweep_test.exs` — passed.
+- Both modified Elixir files passed the formatter check.
 - `git diff --check` — passed.
 - `bin/planning_health --stage execute --phase 3` — passed before Task 2 acquisition and at plan completion.
 - Task 1 focused core source selector — 1 passed, 105 excluded, 55.3s; focused source writer and integrity checks also passed on both lanes. The prior core aggregate selector reported 5 passed, 101 excluded, 60.5s.

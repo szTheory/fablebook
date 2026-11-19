@@ -21,8 +21,8 @@ Run cheap JSON/schema, complete ID-set, cross-file digest, and keyed row/count c
 - **D-03:** Trace the caller that computes source coverage and establish the stored nested SIZING digest recipe against the complete records.
 
 ### Limits and bounded outcome
-- **D-04:** Use the standard 100,000-token ceiling with the fixed 31,000-token reserve. Do not increase the budget. Retain the 34,000-token compact-context ceiling, the five-exact-source-file cap per task, and the no-truncation rule. Allocate source tokens only after exact spans, independent metadata review, execute preflight, and fresh direct count are bound.
-- **D-05:** Run cheap consistency checks before long tests or suites. If the selected evidence does not fit or required provenance is unavailable, record the exact gap and stop; do not fabricate rows, select a candidate, or request automatic budget expansion.
+- **D-04:** Under INT-20261117-01 and INT-20261117-02, use an incremental ceiling of 150,000 generated output tokens for this bounded Phase 4 plus Phase 3 recovery. The owner selected a start after independent plan review and passing execute preflight; the exact start and initial balance are recorded in `../../forensics/phase4-budget-reset-20261117.md`. Protect the fixed 31,000-token reserve, leaving at most 119,000 tokens available for work. The prior 191,582-token lower bound and unmeasured plan-reset setup are sunk historical usage. Reconcile exact input/output usage and attribution after each in-envelope wave; charge all new assistant output to the cap. Retain the 34,000-token compact-context ceiling, the five-exact-source-file cap per task, and the no-truncation rule. Allocate source tokens only after exact spans, independent metadata review, execute preflight, fresh direct count, and measured remaining fit are bound.
+- **D-05:** Run cheap consistency checks before long tests or suites. If the selected evidence does not fit or required provenance is unavailable, record the exact gap and stop; do not fabricate rows or select a candidate. The single owner-approved incremental envelope is the only budget change; no automatic extension or retry is authorized.
 - **D-06:** Preserve Phase 3's stop and all safety gates. Phase 4 evidence does not automatically resume or complete Phase 3 and does not authorize implementation or another follow-on.
 
 ### the agent's Discretion
@@ -42,6 +42,8 @@ Run cheap JSON/schema, complete ID-set, cross-file digest, and keyed row/count c
 - `.planning/REQUIREMENTS.md` — GSR-03/GSR-05 acceptance and the complete aggregate limits.
 - `.planning/STATE.md` — current Phase 3 stop, limits, and owners.
 - `.planning/intent/sources/2026-11-16-01-select-evidence-only-closure.md` — owner selection of a separate evidence-only scope under 100k, with no implementation or budget increase.
+- `.planning/intent/sources/2026-11-16-05-authorize-bounded-phase3-recovery.md` — current authorization to carry out this already-selected evidence-only closure while preserving Phase 4's original resource and safety limits.
+- `.planning/intent/sources/2026-11-17-01-authorize-rebased-recovery-envelope.md` — newer owner authorization superseding only the Phase 4/Phase 3 recovery budget ceiling; the exact replacement envelope is recorded in `../../forensics/phase4-budget-reset-20261117.md`.
 - `.planning/intent/sources/2026-11-14-01-cheap-checks-and-bottlenecks.md` — cheap consistency checks before long processes and bounded replanning at bottlenecks.
 - `.planning/intent/sources/2026-11-15-02-authorize-phase3-recovery-envelope.md` — Phase 3-only 110k exception; future work retains 100k.
 
@@ -53,6 +55,7 @@ Run cheap JSON/schema, complete ID-set, cross-file digest, and keyed row/count c
 - `.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-SIZING.json` — active source ledger and lane evidence counts.
 - `.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json` and `.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json` — current lane records and digests.
 - `.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CONTEXT.md` — reusable lane-specific evidence and source-resolution patterns.
+- `.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md` — the exact consumer artifact paths and validation contract Phase 4 must satisfy before source-dependent Phase 3 checks resume.
 
 ### Safety, verification, and lifecycle
 - `docs/adr/0004-no-eval-no-new-atoms.md` — static-only safety boundary.
@@ -85,6 +88,8 @@ Run cheap JSON/schema, complete ID-set, cross-file digest, and keyed row/count c
 ## Specific Ideas
 
 The owner asked for cheap consistency checks before any long test or process and for work to replan around the narrow bottleneck. The existing Phase 3 stop identifies the immediate bottleneck: keyed lane-pinned associations/gaps, the coverage-flag caller, and the nested SIZING digest recipe are absent or unresolved.
+
+Phase 3's revised final plan names the consumer interface explicitly: `04-PROVENANCE-MANIFEST.json`, `04-TARGET-SOURCE-ASSOCIATIONS.jsonl`, `04-TYPED-GAPS.jsonl`, `04-COVERAGE-CALLER-TRACE.json`, `04-SIZING-DIGEST-PROOF.json`, and `04-VALIDATION.json`. Keep these names stable and make their validation evidence available before Phase 3's source-dependent contracts run.
 </specifics>
 
 <deferred>

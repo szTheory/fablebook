@@ -2,21 +2,21 @@
 gsd_state_version: "1.0"
 milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
-current_phase: 03
-current_phase_name: Guard aggregate scope rejoin and candidate sizing
-current_plan: 5
-status: "Phase 3 local execution complete; phase verification pending"
-stopped_at: "Plan 03-05 checks and handoff reconciliation complete; verifier pending"
-last_updated: "2026-11-18T17:37:41Z"
-last_activity: 2026-11-18
-last_activity_desc: Plan 03-05 local checks passed; canonical handoff refreshed
-state_head: 46e0b350b3ccd38a72660c5844616ec4c1d063c2
+current_phase: 04
+current_phase_name: Evidence-only source and gap provenance closure
+current_plan: 2
+status: "Phase 3 locally verified and complete; PR #90 delivery remains open; Phase 04 is next but not started."
+last_updated: "2026-11-19T01:32:27Z"
+last_activity: 2026-11-19
+last_activity_desc: Phase 3 goal verification passed 21/21; Phase 04 is next and has not started
+state_head: 7317bd0ea112dbe9c2a60e15322ec6bfccc4681d
 progress:
   total_phases: 2
-  completed_phases: 0
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  completed_phases: 1
+  total_plans: 8
+  completed_plans: 6
+  percent: 50
+resumed_at: 2026-11-17 under owner direction INT-20261117-11
 ---
 
 # Project State
@@ -29,29 +29,26 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 03 — Guard aggregate scope rejoin and candidate sizing
+**Current focus:** Finish hosted delivery for verified Phase 3; Phase 04 remains unstarted.
 
 ## Current Position
 
-Phase: 03 (Guard aggregate scope rejoin and candidate sizing) — OPEN; local execution is complete and phase verification is pending
-Current Plan: 5
-Total Plans in Phase: 5
-Progress: 5/5 plans complete ([██████████] 100%)
-Plan: 5 of 5; local readiness and handoff checks are complete
-Status: Phase-level verification is in progress; hosted candidate/main CI and merge receipts remain pending
-Last activity: 2026-11-18 — Corrected core/floor checks passed; phase verification is pending
+Phase: 04 — Evidence-only source and gap provenance closure
+Current Plan: 2
+Status: Phase 3 verification passed 21/21 and Phase 3 is marked complete. The next phase is ready but has not started; the current operational gate is final-head hosted CI for PR #90 and the owner's merge decision.
+Last activity: 2026-11-19 — automated Phase 3 verification and both UAT checks passed; safety stops remain open.
 
 ## Active Handoff
 
-- Current checkout: `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`, HEAD `46e0b350b3ccd38a72660c5844616ec4c1d063c2`; fetched `origin/main` is `3817912c861286608183c057d2e38ff7a260bd6e` (v0.3 Phase 2 closeout). Phase 3 work remains local and unmerged; no commit, push or PR was made. The old worktree at `~/.claude/worktrees/agent-planning-main-261111` remains preserved and was not resumed, reset, stashed, cleaned, or removed.
-- Delivered: v0.2 Phase 1 EX-010 and v0.3 Phase 2 EX-107, with merged PR and hosted CI receipts in PHASE-DELIVERIES.json. A read-only pinned-lane probe reconfirmed those delivered row memberships.
-- Delivered in this phase: Plans 03-01 through 03-04 are complete. Plan03-04's metadata route produced and validated [the gap report](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-REPORT.md), [the index](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAPS.jsonl), [the receipt](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-RECEIPT.json), and [the validation record](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-VALIDATION.json). This route only exposes retained metadata membership and unresolved mappings.
-- Plan 03-05 local execution: Complete. Cheap format/metadata/intent/CI-shape/Credo checks and full pinned core/floor suites passed on the reviewed local tree; see [readiness](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md), [summary](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-SUMMARY.md), and [recovery code review](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-CODE-REVIEW.md). Phase verification is pending; hosted candidate/main CI and merge receipts remain pending.
-- Evidence still unresolved: 4,797 known target mappings and 18 unknown target sets remain unproven. GSR-03/GSR-05 remain incomplete; no source bodies were read to fill those gaps, and no guard fix was authorized.
-- Safety stops unchanged: static-only evidence; no audited OTP APIs, callbacks, atom sinks, runtime eval or generated-code paths; stop on an actual-library collision; preserve Macro caller-AST and explanation checkpoints; `candidate=null`; `implementation_authorized=false`; `aggregate_gate=open`; Walking Skeleton blocked; SEC-01 Pending.
-- Next action: finish the current phase verification, then run the approved Phase 3 delivery path (review, local action feasibility, PR candidate CI, and merge/main CI receipts). The owner has authorized routine Phase 3 verification and delivery; no user action is needed for these steps. Keep candidate and implementation gates closed, preserve all collision/source/caller/SEC-01 stops, and do not enter Phase 4 automatically.
-- Scope decision provenance: INT-20261113-02, bounded trace approval INT-20261115-01, one-time Phase 3 budget authorization INT-20261115-02, metadata-only recovery direction INT-20261116-03, and bounded continuation authorization INT-20261116-04. Requirements and bounded exit: ROADMAP.md, REQUIREMENTS.md and03-04-REPLAN.md.
-
+- Checkout: `/Users/jon/projects/fablebook`, branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; primary checkout preserved and no additional worktree used. The local candidate reconciles with existing PR #90; final delivery remains on that PR.
+- Current local evidence is recorded in [03-RECOVERY-READINESS.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md) and [03-05-SUMMARY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-SUMMARY.md). Core CI passed 459 tests with 10 excluded; the full floor suite passed 467 with 2 excluded; both focused selections passed 9 each. Phase 4 `--all` and Phase 3 `--consumer` pass with source access closed and open evidence gaps preserved.
+- Phase 3 verification reports 21/21 must-haves passed, both automated UAT checks pass, and the security record has no open threats. No human UAT is useful for this evidence-only result.
+- R8 was consumed once for the exact reviewed helper span. No source body was reread and no request was replayed. The raw R8 body is not archived for rereading; the final review records this limitation. R7 remains consumed delivery-unverified and excluded from claims. No further source request is authorized by this recovery.
+- PR #90 remains the delivery vehicle and is unmerged. Its hosted final-head checks are the delivery gate; their live status is recorded on the PR. The owner merges only after all required checks pass. No merge/main CI or delivery receipt is claimed for the current candidate.
+- Safety stops unchanged: static-only boundary; actual library collision unknown; Macro caller-AST and explanation wording unresolved; candidate null; implementation unauthorized; aggregate gate open; Walking Skeleton blocked; SEC-01 pending. Do not invoke audited OTP/runtime paths.
+- Next actor: Codex completes the authorized PR #90 hosted-check path; after required checks are green, the owner decides whether to merge. Phase 04 execution has not started. No new source request, runtime target execution, guard increment, or implementation starts automatically. Existing source/caller, collision, Macro, candidate, implementation, aggregate, Walking Skeleton and SEC-01 stops remain unchanged.
+- Budget policy: INT-20261117-11 removes the cumulative assistant-output ceiling and reserve stop. Counters are informational; exact-source count, review, preflight, provenance and security gates remain active.
+- Delivery boundary: Phase 3 is complete by goal verification, while hosted delivery remains a separate gate. Use existing PR #90 for exact-head hosted checks; record the delivery receipt only after merge. Phase 04 is next but is not automatically executed.
 
 ## Performance Metrics
 
@@ -78,7 +75,7 @@ Last activity: 2026-11-18 — Corrected core/floor checks passed; phase verifica
 - Owner’s systematic UI quality and AI-assisted dogfood direction, including recommendation-first continuity, is recorded in INT-20261113-01 and PRODUCT-ROADMAP.md. The real mailglass dogfood and authored Logistify showcase are separate proofs; v0.4 now owns the guard aggregate reconciliation prerequisite.
 - Use one global sequence of ordinary integer phases across active-era milestones: v0.2 Phase 1, v0.3 Phase 2, then continue from the highest delivered integer when a later milestone activates. Historical dotted IDs are evidence identities, never executable routes (INT-20261112-04).
 - v0.3 owns only `asn1ct_rtt:assert_defined/1`, `code/0` and `dependencies/1` on both pinned lanes under GRC-04–06. Independently revalidate the complete EX-107 sets, exact selection/complement and lane source identities in reviewed context before planning; a mismatch stops for rescoping (INT-20261111-13).
-- Preserve the 100,000-token planning bound, at most five total exact source files read per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. Count re-read source; do not truncate source/caller evidence to fit. The large `code/0` literal table uses its bounded byte-only check outside the prompt (INT-20261110-01, INT-20261111-13).
+- Preserve the standard 100,000-token bound for other work, at most five exact source files per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan. Recovery budgets ENV-03 and ENV-04 are one-time, scoped envelopes; ENV-04 is recorded in the active renewal receipt with a protected 31,000-token reserve. Count re-read source; do not truncate source/caller evidence to fit. The large `code/0` literal table uses its bounded byte-only check outside the prompt (INT-20261110-01, INT-20261111-13).
 - GRC-04–06 are complete for the bounded Phase 2 slice; the complete EX-107 row, guard aggregate, installed-wide remainder and unfinished source/caller coverage remain open. Walking Skeleton remains blocked.
 - SEC-01 remains Pending with Controls and first bundle / its first local slot; allocate the global integer when that milestone activates. Callback implementations, dynamic callers and native internals remain outside static proof.
 - Preserve original source/context/effort limits, actual-library-collision stops, Macro caller-AST and explanation checkpoints. Do not resume the halted old five-slot decomposition.
@@ -96,7 +93,7 @@ The pre-plan membership/source-identity, connected-source, context-sizing, and e
 
 ### Roadmap Evolution
 
-- Phase 4 added: Evidence-only source and gap provenance closure selected by owner under the standard 100,000-token ceiling; Phase 3 remains stopped and Phase 4 adds evidence only.
+- Phase 4: Evidence-only source and gap provenance closure remains separate from Phase 3 delivery. INT-20261117-01 rebases only their bounded recovery budget; Phase 4 still adds evidence only and does not close Phase 3.
 
 ## Delivered work and archive
 
@@ -161,16 +158,7 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Active planning target: v0.4 Phase 3 in `~/projects/fablebook` on branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`, HEAD `46e0b350b3ccd38a72660c5844616ec4c1d063c2`. Plans 03-01 through 03-05 have local summaries and recorded evidence; Phase 3 verification is active. Plan 03-05's full core/floor suites and quick checks pass. No commit, push, hosted CI, or delivery registry row exists yet. Candidate remains null, implementation unauthorized, aggregate gate open, Walking Skeleton blocked, SEC-01 Pending, and all source/caller/collision/Macro stops remain binding.
-
-Last session: 2026-11-18T17:41:48Z
-Stopped at: Local Plan 03-05 checks and canonical handoff reconciliation complete; phase verification is running, followed by routine Phase 3 delivery.
-
-The inherited Phase 3 project reserve remains intact and is tracked separately from assistant context; no assistant-side cumulative ceiling is applied. Plan 03-05 validation logs and hashes are in `03-READINESS.md`; no failed check was repeated, and the known local `act` parser limitation was reused without another attempt. `git diff --check HEAD` and planning preflight passed; the base-to-main diff check reports inherited whitespace in planning/archive Markdown, which was left unchanged. The generated `state.json` was refreshed from canonical owners and now recommends verification; the canonical route and preflight also resolve to Phase 03.
-
-Next action: phase verifier completes `.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-VERIFICATION.md`, then proceed through authorized Phase 3 review and hosted delivery. Do not enter Phase 4 or alter the retained product gates as part of this closeout.
-
-Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md
+This handoff supersedes the earlier temporary-checkout note. Work remains in the current Phase 3 checkout; no additional worktree was created. Phase 4 remains semantically open: zero source associations, 9,716 typed gaps, unresolved source resolution, incomplete caller closure, unresolved legacy digest, and candidate null. R7 is consumed with delivery unverified and cannot be replayed; INT-20261118-04 authorizes exactly one new R8 request for the same bounded span. The cumulative output stop was removed by INT-20261117-11; all other safety gates remain binding.
 
 ## Decisions
 
@@ -196,4 +184,9 @@ Resume file: .planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizi
 
 ## Operator Next Steps
 
-- Agent next: complete Phase 3 verification and then the authorized delivery checks for the reviewed candidate. No owner action is needed for routine closeout. Once this bounded phase is delivered, the next command is `$gsd-progress` to identify the next approved project action; Phase 4 still requires its own start gate and is not auto-started here.
+- Phase 3's local goal verification, security record, and automated UAT are complete. Codex handles the authorized PR #90 hosted-check path; the owner decides on merge after required checks pass. Phase 04 is next but unstarted, and any guard increment remains a separate owner decision.
+
+
+## Latest handoff — Phase 3 recovery
+
+Checkout: `/Users/jon/projects/fablebook`, branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; Phase 3 is locally verified and marked complete, with final PR #90 hosted delivery still open. The one authorized R8 request is consumed; current-tree local suites and Phase 4/Phase 3 consistency checks pass. Phase 04 is next but has not started. Codex handles the hosted-check path; the owner decides on merge after all required checks pass.

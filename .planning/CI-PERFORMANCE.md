@@ -1,6 +1,6 @@
 # CI and release efficiency
 
-Owner direction: INT-20261029-08 and INT-20261029-09. This is the standing home for CI/CD timing reviews, measured opportunities, and resolved performance decisions.
+Owner direction: INT-20261029-08, INT-20261029-09, and INT-20261118-01. This is the standing home for CI/CD timing reviews, measured opportunities, and resolved performance decisions. Review it after each completed CI or release/CD run; use measured history, preserve quality, and do not trigger a run just to produce a receipt.
 
 ## Operating policy
 
@@ -71,3 +71,12 @@ After PR #88 merged, main run [43451903473](https://github.com/szTheory/fableboo
 
 Core and floor already run concurrently, setup was brief, and these few samples do not establish a repeatable trend that justifies removing work or changing coverage. The latest floor test exceeded the 600s timing objective, but timing-only overages remain non-blocking under the existing policy. No safe low-risk CI change is justified by these measurements; keep both lanes and their current gates.
 
+## Local act preflight — 2026-11-18
+
+The PR job subset was attempted with `act` 0.2.87. The installed version could not parse the unrelated scheduled/manual `ci-health` job's `concurrency.queue` field, so a temporary copy excluded only that job. The first run was blocked by the sandbox rejecting writes to the default `~/.cache/act`; a retry used a scoped cache under `/private/tmp` and reused the existing runner image. Jobs then failed during `setup-beam`: `act` reported ARM64 OTP builds inside the requested amd64 runner container (`erlexec` was not found). The test, Dialyzer and security steps did not run, so this is an `act` environment limitation, not a candidate result. No project workflow was changed. Do not spend another cycle coercing this local runner; the existing focused/core/floor receipts cover the phase code, and hosted PR CI remains the required Linux runner evidence.
+
+## Phase 3 recovery iteration review — 2026-11-19
+
+The local verification order now has a concrete fast-feedback lesson. Run the Phase 3/4 validator self-tests and cross-artifact checks first, then formatting/Credo and the focused planning-intent corpus check, then the focused core/floor selections, and only then the full core and floor lanes. The focused intent check took 14.6s for 22 passing checks; the core CI run took 413s total, and a prior failed core run spent about 419s before finding malformed intent frontmatter. Running the intent check first could have caught that failure roughly 404s earlier; this is an estimate from those two recorded durations, not a repeat benchmark. The earlier Credo failure was a formatting-only issue and likewise belongs before long test stages.
+
+Current local measurements: the core focused selection took 60s, floor focused took 53.6s, core CI took 413s total (403.5s test stage), and the full floor suite took 403.2s. Core and floor are already separate lanes, and hosted CI is still needed on the final PR head. This single sample does not justify changing job concurrency, adding caches or dependencies, or removing coverage. Keep both lanes and every gate. The `act` setup failure above is a runner/toolchain mismatch; hosted Actions is the useful remaining check, so no further local `act` attempt is planned.

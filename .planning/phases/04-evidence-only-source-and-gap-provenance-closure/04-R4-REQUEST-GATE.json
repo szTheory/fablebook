@@ -1,0 +1,192 @@
+{
+  "schema_version": "04.request-gate.2",
+  "request_id": "R4",
+  "status": "consumed_incomplete",
+  "source_access": "closed",
+  "source_emission": true,
+  "blockers": [
+    "scheduled source output was truncated; no source analysis was performed"
+  ],
+  "missing_fields": [
+    "complete helper delivery for analysis"
+  ],
+  "gates_not_run": [],
+  "upstream_stop": {
+    "status": "blocked",
+    "reason": "The immutable Phase 3 preservation manifest differs from current bytes for the compact citation correction and two Plan 03-05 Task 1 formatting repairs.",
+    "mismatches": [
+      {
+        "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md",
+        "expected_sha256": "2843c9d29fc3e1b6a86727c905939213f3ac28b679ca75a5a5d499e80ebff478",
+        "current_sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24",
+        "current_bytes": 10193,
+        "matches": false,
+        "known_cause": "Plan 03-05 compact-schedule citation spelling correction"
+      },
+      {
+        "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+        "expected_sha256": "54a0fa2ccc965bdad9cf1b2a1b5ce6c927a5b2b7b0eaa02fd54e119cb9f94b63",
+        "current_sha256": "75d23e5b48d17c632fd42c3d052aea7b1f25531ca359d897fc40ae577f61bbd6",
+        "current_bytes": 58839,
+        "matches": false,
+        "known_cause": "Plan 03-05 Task 1 formatting repair"
+      },
+      {
+        "path": "test/contract/tier_sweep_test.exs",
+        "expected_sha256": "f97ef3bb5cb94e8c47f3baed38d3d6387808488879e5b59980e5e1f620bcf333",
+        "current_sha256": "e717d215220ae4930451bcbd96df5c3d8d173a645bc203193bed4e5a637786e6",
+        "current_bytes": 770285,
+        "matches": false,
+        "known_cause": "Plan 03-05 Task 1 formatting repair"
+      }
+    ],
+    "missing_selectors": [
+      "independent exact schedule review",
+      "fresh source-request execute preflight",
+      "serialized request token count",
+      "exact post-reset session usage attribution"
+    ],
+    "selectors": {
+      "archived_ids": "/lanes/{core,floor}/rows/*/id",
+      "preserved_lane_ids": "current IDs absent from the archived 221 rows",
+      "stop_ids": "03-04-TASK2-GATE-STOP.md sorted-ID JSON block",
+      "lane_ids": "/identity_rows/*/identity/id",
+      "baseline_mfas": "/identity_rows/*/baseline_mfas",
+      "live_mfas": "/identity_rows/*/live_mfas"
+    },
+    "unavailable_domains": {
+      "graph": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      },
+      "callback": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      },
+      "delegate": {
+        "expected_keys": null,
+        "selector": null,
+        "status": "not_keyed_in_retained_metadata",
+        "reason": "No exact lane/identity/MFA keyed record exists; do not infer or fabricate rows."
+      }
+    }
+  },
+  "bindings": {
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "request_id": "R4",
+    "source_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+    "source_span": {
+      "complete_file": true,
+      "encoding": "UTF-8",
+      "start_line": 1,
+      "end_line": 2182,
+      "start_byte": 0,
+      "end_byte_exclusive": 79280,
+      "span_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+      "includes_final_newline": true
+    },
+    "context_sha256": "f745c0296ee6ba70e0d72a79259b89f99efeef2886f26e8e83784fcf1936ef6c",
+    "manifest_sha256": "eb7da0f14c0e596ec8c359c6301f00966f46403fda281053d85dee514b786af6",
+    "schedule_sha256": "858a5cf3c6a15e4bcd9c805123edcac74c314ebc04669f45fd3f39275d5010a0",
+    "review_sha256": "1268becd645e420d7d427257f02a4fa87fb4bf14a3b4874dc1e07631ecef6c92",
+    "preflight_sha256": "29e149dbcf3e7d4839b1a95c6a74e5aa23202f5894311e1bd07e5549de4e7108",
+    "count_sha256": "deea8b08366b6fbba3db92afde0b9add618526b5e44d233fd92e7764cae31a77",
+    "serialized_request_sha256": "2438229274352678a4e4800cc8124a17cc6c34100be9d6fbab38d509439f7962",
+    "consumed_request_ids": [
+      "R1",
+      "R2",
+      "R3"
+    ],
+    "informational_usage_snapshot_utc": "2026-11-17T22:09:56.859Z",
+    "informational_post_reset_output_tokens": 648042,
+    "informational_recorded_working_balance": -38042
+  },
+  "created_at_utc": "2026-11-18T18:57:38.087Z",
+  "one_use_ready_receipt": {
+    "schema_version": "04.r4-one-use-ready.1",
+    "status": "one_use_ready",
+    "source_emission": false,
+    "request_id": "R4",
+    "created_at_utc": "2026-11-18T18:57:38.087Z",
+    "bindings": {
+      "generation": "ENV-20261117-06-supported-20261117T204102Z",
+      "request_id": "R4",
+      "schedule_sha256": "858a5cf3c6a15e4bcd9c805123edcac74c314ebc04669f45fd3f39275d5010a0",
+      "review_sha256": "1268becd645e420d7d427257f02a4fa87fb4bf14a3b4874dc1e07631ecef6c92",
+      "preflight_sha256": "29e149dbcf3e7d4839b1a95c6a74e5aa23202f5894311e1bd07e5549de4e7108",
+      "count_sha256": "deea8b08366b6fbba3db92afde0b9add618526b5e44d233fd92e7764cae31a77",
+      "source_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+      "source_span": {
+        "complete_file": true,
+        "encoding": "UTF-8",
+        "start_line": 1,
+        "end_line": 2182,
+        "start_byte": 0,
+        "end_byte_exclusive": 79280,
+        "span_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+        "includes_final_newline": true
+      },
+      "context_sha256": "f745c0296ee6ba70e0d72a79259b89f99efeef2886f26e8e83784fcf1936ef6c",
+      "serialized_request_sha256": "2438229274352678a4e4800cc8124a17cc6c34100be9d6fbab38d509439f7962"
+    }
+  },
+  "analysis_status": "incomplete_delivery",
+  "source_emission_receipt": {
+    "status": "consumed_once_delivery_incomplete",
+    "request_id": "R4",
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "emitted_at_utc": "2026-11-18T19:02:56.596Z",
+    "emission_count": 1,
+    "source_body_emitted_once": true,
+    "content_used_for_analysis": false,
+    "analysis_complete": false,
+    "tool_output_truncated": true,
+    "completion_sentinel_observed": true,
+    "source_bytes": 79280,
+    "source_lines": 2182,
+    "source_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+    "source_span": {
+      "complete_file": true,
+      "encoding": "UTF-8",
+      "start_line": 1,
+      "end_line": 2182,
+      "start_byte": 0,
+      "end_byte_exclusive": 79280,
+      "span_sha256": "5aeb1631123bfaf1a6914c3e324486adef3369b762bbdc0a57a7f93d2d16e1f1",
+      "includes_final_newline": true
+    },
+    "source_analysis_received": false,
+    "source_bytes_delivered": null,
+    "delivery_attempts": [
+      {
+        "attempt": 1,
+        "result": "tool_output_truncated",
+        "source_analysis_received": false,
+        "tool_output_truncated": true,
+        "completion_sentinel_observed": true,
+        "scheduled_source_bytes": 79280,
+        "delivered_source_bytes": null
+      }
+    ],
+    "one_use_ready_receipt_sha256": "e97f30f6bbe9d934463a13517932ea5a0cc006883638e077f71b6cc020abffdd",
+    "schedule_sha256": "858a5cf3c6a15e4bcd9c805123edcac74c314ebc04669f45fd3f39275d5010a0",
+    "review_sha256": "1268becd645e420d7d427257f02a4fa87fb4bf14a3b4874dc1e07631ecef6c92",
+    "preflight_sha256": "29e149dbcf3e7d4839b1a95c6a74e5aa23202f5894311e1bd07e5549de4e7108",
+    "count_sha256": "deea8b08366b6fbba3db92afde0b9add618526b5e44d233fd92e7764cae31a77",
+    "context_sha256": "f745c0296ee6ba70e0d72a79259b89f99efeef2886f26e8e83784fcf1936ef6c",
+    "serialized_request_sha256": "2438229274352678a4e4800cc8124a17cc6c34100be9d6fbab38d509439f7962",
+    "source_body_emission_note": "The model-facing tool wrapper truncated the middle of the complete helper output. The full hash and end sentinel were observed, but the analysis agent received no complete source body and made no claims. R4 is consumed-incomplete; no retry."
+  },
+  "source_request_count": 4,
+  "consumed_request_ids": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+  ],
+  "consumed_at_utc": "2026-11-18T19:02:56.596Z"
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "03-05.post-r8-helper-revision/1",
+  "status": "verified",
+  "request_id": "R8",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "previous_helper_identity": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "sha256": "734ec4f26aaae55a93ced922f72857471e899e63f0569c55339d0787b2402370",
+    "bytes": 83805
+  },
+  "current_helper_identity": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "sha256": "eb4305c5aef3c0a60d8d7ef378498fef670a633c7e9e574de2a3e07bf68fbf71",
+    "bytes": 85202
+  },
+  "source_schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R8-SCHEDULE.json",
+  "source_schedule_sha256": "869b30595af03c58ceabf4af69f7fec516968198305d2119ea4f09d65a4d9633",
+  "source_span": {
+    "complete_file": false,
+    "encoding": "UTF-8",
+    "start_line": 1748,
+    "end_line": 1923,
+    "start_byte": 63660,
+    "end_byte_exclusive": 71408,
+    "span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+    "includes_final_newline": true
+  },
+  "failure_receipt_path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-CORE-FOCUSED-R8-FAILURE.json",
+  "failure_receipt_sha256": "5965083654495bc092e7f59e9dde4a6bb5536f7e6d4e9eb43651d1c21e26f69c",
+  "change": {
+    "reason": "The first focused core run failed because the exact current-helper validator still pinned its observation request and schedule to R6 after Phase 4 R8 became the current observation.",
+    "from_request_id": "R6",
+    "to_request_id": "R8",
+    "from_schedule": "04-R6-SCHEDULE.json",
+    "to_schedule": "04-R8-SCHEDULE.json",
+    "scope": "Bind the captured R8 helper snapshot to its R8 schedule, then separately bind the narrowly corrected live helper to this revision receipt.",
+    "claims_unchanged": [
+      "source resolution unresolved",
+      "caller closure incomplete",
+      "legacy digest unresolved",
+      "candidate null",
+      "implementation unauthorized",
+      "actual library collision unknown",
+      "aggregate gate open",
+      "Walking Skeleton blocked",
+      "SEC-01 Pending"
+    ]
+  },
+  "recorded_at_utc": "2026-11-18T23:01:35Z"
+}

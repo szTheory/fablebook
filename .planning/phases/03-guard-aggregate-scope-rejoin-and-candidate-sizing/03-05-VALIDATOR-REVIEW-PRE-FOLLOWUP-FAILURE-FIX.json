@@ -1,0 +1,14 @@
+{
+  "schema_version": "03-05.validator-review.1",
+  "status": "pass",
+  "reviewed_at_utc": "2026-11-18T23:25:34Z",
+  "reviewer": "/root/phase3_security_audit",
+  "reviewer_role": "independent focused validator reviewer",
+  "subject": {
+    "path": ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-validate-evidence.py",
+    "sha256": "4350a76a18bf3c5142d3c56a0b65e14f42ebf8d4e4aff67efd0ae64d4f17cd45",
+    "bytes": 60706
+  },
+  "findings": [],
+  "scope_note": "Verified that the current helper input is uniquely bound to its live hash/bytes and post-observation revision receipt; the R8 pre-edit observation/span, R8 schedule and focused-failure hashes, and historical R2/R3 schedules stay distinct and exact. Production checks and negative fixtures fail closed on stale, duplicate or mismatched mappings. Unresolved source/caller/digest claims and safety stops remain unchanged. No tests or source files were read."
+}

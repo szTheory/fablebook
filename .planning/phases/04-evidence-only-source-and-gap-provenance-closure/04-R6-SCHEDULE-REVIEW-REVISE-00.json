@@ -1,0 +1,78 @@
+{
+  "schema_version": "04.r6-schedule-review.1",
+  "schedule_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-SCHEDULE.json",
+  "schedule_sha256": "e3d93f9429ce4bc3910b9e85087e139bd3f5552d5587e42bf091cb2037ffa57c",
+  "schedule_bytes": 17628,
+  "request_id": "R6",
+  "generation": "ENV-20261117-06-supported-20261117T204102Z",
+  "reviewer": "/root/phase3_security_audit",
+  "reviewer_role": "independent metadata-only provenance schedule reviewer",
+  "reviewed_at_utc": "2026-11-18T20:26:41Z",
+  "independent_of_schedule_author": true,
+  "status": "pass",
+  "findings": [],
+  "input_bindings_verified": 56,
+  "source_body_access": "metadata-only; no helper content displayed or analyzed",
+  "source_body_read": false,
+  "source_body_analyzed": false,
+  "source_body_emitted": false,
+  "source_identity": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "sha256": "15a9f27f05492b8a5cdf39eeff267595c95ce18925ea983d5b3d6c68c6d31edf",
+    "bytes": 83785,
+    "full_hash_matches_schedule_and_manifest_input": true
+  },
+  "source_span": {
+    "complete_file": false,
+    "encoding": "UTF-8",
+    "start_line": 1748,
+    "end_line": 1915,
+    "start_byte": 63660,
+    "end_byte_exclusive": 71388,
+    "bytes": 7728,
+    "sha256": "ab130b8e64c9b1a5c880cd00c0135002f7c473aeb5938ec1a1f52a903fc193e0",
+    "line_and_byte_boundaries_match": true,
+    "span_hash_matches": true,
+    "includes_final_newline": true
+  },
+  "request_payload": {
+    "framing": "UTF-8 context_text + two LF + \"# Exact scheduled source selection\" + one LF + exact selected span bytes",
+    "context_bytes": 1257,
+    "context_sha256": "a87967a2dbbdaf2f9ed30429757e52c85ad7ca3f84609e62f238afe761d452ab",
+    "payload_bytes": 9022,
+    "payload_sha256": "d7523333743ace6303c6a5d934523dd01ca72daac0d6c3338df22b51291528a7",
+    "matches_declared_hash": true,
+    "generation": false,
+    "no_truncation": true,
+    "configured_context_tokens": 200000
+  },
+  "request_history": [
+    {"request_id": "R1", "status": "consumed_incomplete", "usable_for_claims": false},
+    {"request_id": "R2", "status": "consumed_verified", "usable_for_claims": true},
+    {"request_id": "R3", "status": "consumed_verified", "usable_for_claims": true},
+    {"request_id": "R4", "status": "consumed_incomplete", "usable_for_claims": false},
+    {"request_id": "R5", "status": "consumed_verified", "usable_for_claims": true}
+  ],
+  "execution_order": {
+    "fresh_execute_preflight_present": false,
+    "direct_count_present": false,
+    "one_use_gate_present": false,
+    "source_emission": false,
+    "schedule_review_precedes_preflight_and_direct_count": true,
+    "replay_allowed": false
+  },
+  "retained_safety_stops": [
+    "generator_revision_mismatch unresolved",
+    "source resolution unresolved",
+    "caller closure incomplete",
+    "legacy digest unresolved",
+    "candidate null",
+    "implementation unauthorized",
+    "actual-library collision unknown",
+    "Macro caller-AST and explanation checkpoints unresolved",
+    "aggregate gate open",
+    "Walking Skeleton blocked",
+    "SEC-01 Pending",
+    "all other existing safety stops"
+  ]
+}

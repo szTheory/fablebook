@@ -1,0 +1,42 @@
+{
+  "schema_version": "04.r7-emission-failure.1",
+  "created_at_utc": "2026-11-18T21:47:56Z",
+  "request_id": "R7",
+  "authorization_scope": "one bounded current-helper span refresh; consumed once",
+  "status": "consumed_delivery_unverified",
+  "replay_allowed": false,
+  "one_use_ready_sha256": "1b03819f64298555972a6ffbdfb577d6b8a223bf9e4d18229ffe6aaf0c0eb282",
+  "source_span": {
+    "complete_file": false,
+    "encoding": "UTF-8",
+    "start_line": 1748,
+    "end_line": 1923,
+    "start_byte": 63660,
+    "end_byte_exclusive": 71408,
+    "span_sha256": "2861e6e06895760381c8ae3bd0fa7e5d9bc126493fc1173cb4ddbeaaec147682",
+    "includes_final_newline": true
+  },
+  "nested_exec_command_returned_markers": true,
+  "outer_wrapper_error": "ReferenceError: TextEncoder is not defined",
+  "delivered_bytes_verified": false,
+  "delivered_sha256_verified": false,
+  "source_analysis_performed": false,
+  "suites_run": false,
+  "project_preflights": [
+    {
+      "phase": "3",
+      "exit_code": 0,
+      "stdout": "{\"errors\":[],\"stage\":\"execute\",\"milestone\":\"v0.4\",\"phase\":\"3\",\"route_phase\":\"03\"}",
+      "stderr": ""
+    },
+    {
+      "phase": "4",
+      "exit_code": 0,
+      "stdout": "{\"errors\":[],\"stage\":\"execute\",\"milestone\":\"v0.4\",\"phase\":\"4\",\"route_phase\":\"03\"}",
+      "stderr": ""
+    }
+  ],
+  "root_cause": "The outer JS wrapper called TextEncoder after invoking the source-emission command; TextEncoder is absent in this functions.exec runtime. The exception occurred before text(out) forwarded the nested command output to the model.",
+  "lesson": "Preflight wrapper/runtime APIs before one-use emission, or avoid all post-emission processing and immediately forward the captured output. A one-use source tool result must not depend on an unverified wrapper feature.",
+  "next_action": "Stop source-dependent work pending an owner decision. If a new request is authorized, use direct forwarding with no post-emission transformation, and confirm markers/byte count/hash before analysis."
+}
