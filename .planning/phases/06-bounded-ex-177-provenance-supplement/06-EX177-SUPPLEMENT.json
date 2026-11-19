@@ -1,0 +1,163 @@
+{
+  "schema": "fablebook.ex177-provenance-supplement/1",
+  "phase": "06",
+  "requirement": "GSR-07",
+  "source_boundary": {
+    "recorded_source_paths_are_values_only": true,
+    "claim": "The Phoenix source paths below are provenance values only. The checker never uses them as filesystem targets."
+  },
+  "provenance": {
+    "reviewed_discovery": ".planning/research/2026-11-19-ex177-source-discovery.md",
+    "archived_phase5_scope": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-CONTEXT.md",
+    "archived_phase5_result": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-R9-RESULT.json",
+    "phase4_keyed_gaps": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+    "phase4_lane_manifest": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+    "planning_gates": ".planning/references/PLANNING-GATES.json"
+  },
+  "selected_keys": [
+    "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+    "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller",
+    "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+    "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller"
+  ],
+  "lanes": {
+    "core": {
+      "runtime": {
+        "elixir": "1.20.4",
+        "otp": "29.1.2"
+      },
+      "phoenix": {
+        "version": "1.8.16",
+        "lock_file": "mix.lock"
+      },
+      "source": {
+        "recorded_value": "_build/lanes/core/deps/phoenix/lib/mix/tasks/phx.gen.context.ex",
+        "bytes": 14760,
+        "sha256": "c7c6dc0e75b25769db626143ad37d43b9c45234190e13a6352b0a6629e05b73e"
+      },
+      "helper_definition": {
+        "module": "Elixir.Mix.Tasks.Phx.Gen.Context",
+        "function": "prompt_for_code_injection",
+        "arity": 1,
+        "start_line": 445,
+        "end_line": 451
+      },
+      "observed_direct_call": {
+        "caller_function": "run",
+        "caller_arity": 1,
+        "call_line": 131,
+        "caller_start_line": 112,
+        "caller_end_line": 136
+      }
+    },
+    "floor": {
+      "runtime": {
+        "elixir": "1.18.5",
+        "otp": "27.3.4.9"
+      },
+      "phoenix": {
+        "version": "1.8.9",
+        "lock_file": "mix.floor.lock"
+      },
+      "source": {
+        "recorded_value": "_build/lanes/floor/deps/phoenix/lib/mix/tasks/phx.gen.context.ex",
+        "bytes": 14760,
+        "sha256": "c7c6dc0e75b25769db626143ad37d43b9c45234190e13a6352b0a6629e05b73e"
+      },
+      "helper_definition": {
+        "module": "Elixir.Mix.Tasks.Phx.Gen.Context",
+        "function": "prompt_for_code_injection",
+        "arity": 1,
+        "start_line": 445,
+        "end_line": 451
+      },
+      "observed_direct_call": {
+        "caller_function": "run",
+        "caller_arity": 1,
+        "call_line": 131,
+        "caller_start_line": 112,
+        "caller_end_line": 136
+      }
+    }
+  },
+  "observations": [
+    {
+      "key": "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+      "lane": "core",
+      "domain": "source",
+      "mfa": ["Elixir.Mix.Tasks.Phx.Gen.Context", "prompt_for_code_injection", 1],
+      "evidence_refs": [
+        {"path": ".planning/research/2026-11-19-ex177-source-discovery.md", "section": "Lane and source identity; Observed spans"},
+        {"path": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-CONTEXT.md", "section": "Phase Boundary; D-01 through D-04"},
+        {"path": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-R9-RESULT.json", "field": "selected_gap_keys"},
+        {"path": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl", "selector": "gap_key=core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source"}
+      ]
+    },
+    {
+      "key": "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller",
+      "lane": "core",
+      "domain": "caller",
+      "mfa": ["Elixir.Mix.Tasks.Phx.Gen.Context", "prompt_for_code_injection", 1],
+      "evidence_refs": [
+        {"path": ".planning/research/2026-11-19-ex177-source-discovery.md", "section": "Lane and source identity; Observed spans"},
+        {"path": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-CONTEXT.md", "section": "Phase Boundary; D-01 through D-04"},
+        {"path": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-R9-RESULT.json", "field": "selected_gap_keys"},
+        {"path": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl", "selector": "gap_key=core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller"}
+      ]
+    },
+    {
+      "key": "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+      "lane": "floor",
+      "domain": "source",
+      "mfa": ["Elixir.Mix.Tasks.Phx.Gen.Context", "prompt_for_code_injection", 1],
+      "evidence_refs": [
+        {"path": ".planning/research/2026-11-19-ex177-source-discovery.md", "section": "Lane and source identity; Observed spans"},
+        {"path": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-CONTEXT.md", "section": "Phase Boundary; D-01 through D-04"},
+        {"path": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-R9-RESULT.json", "field": "selected_gap_keys"},
+        {"path": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl", "selector": "gap_key=floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source"}
+      ]
+    },
+    {
+      "key": "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller",
+      "lane": "floor",
+      "domain": "caller",
+      "mfa": ["Elixir.Mix.Tasks.Phx.Gen.Context", "prompt_for_code_injection", 1],
+      "evidence_refs": [
+        {"path": ".planning/research/2026-11-19-ex177-source-discovery.md", "section": "Lane and source identity; Observed spans"},
+        {"path": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-CONTEXT.md", "section": "Phase Boundary; D-01 through D-04"},
+        {"path": ".planning/milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-R9-RESULT.json", "field": "selected_gap_keys"},
+        {"path": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl", "selector": "gap_key=floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller"}
+      ]
+    }
+  ],
+  "complement": {
+    "path": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+    "predicate": "All archived raw JSONL rows whose gap_key is outside selected_keys.",
+    "rows": 9712,
+    "digest_algorithm": "SHA-256 over concatenated raw line bytes",
+    "sha256": "dd95380d2114a10a54ddbb79cc6ec5aab4805a52847dcacb4e2ca3daeda653b5"
+  },
+  "caller_closure": {
+    "observed_direct_calls_per_lane": 1,
+    "exhaustive": false,
+    "statement": "One observed direct run/1 call per lane does not establish exhaustive caller closure; external callers, dynamic edges, callbacks, and delegates remain open."
+  },
+  "preserved_stops": {
+    "candidate_fit": "unresolved",
+    "candidate": null,
+    "aggregate_gate": "open",
+    "r9": {
+      "id": "R9",
+      "authorization": "denied",
+      "one_use_gate_validation": "valid_denial",
+      "consumption": "not_consumed"
+    },
+    "walking_skeleton": "blocked",
+    "sec_01": "Pending",
+    "actual_library_collision": "unknown",
+    "macro_caller_ast": "unresolved",
+    "macro_explanation": "unresolved",
+    "legacy_digest": "unresolved",
+    "automatic_followup": false
+  }
+}

@@ -1,3 +1,11 @@
+---
+id: INT-20261119-02
+date: 2026-11-19
+source: Owner selections in the active Codex conversation.
+captured_by: Codex
+context: Owner approved the v0.4 closeout override, the carry-forward boundaries, and planning for the bounded EX-177 continuation.
+---
+
 # INT-20261119-02 — v0.4 closeout and continuation boundary
 
 **Date:** 2026-11-19
