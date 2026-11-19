@@ -5,15 +5,15 @@ milestone_name: Bounded EX-177 Provenance Follow-through
 current_phase: 6
 current_phase_name: Bounded EX-177 provenance supplement
 status: planning
-stopped_at: Phase 6 context gathered
-last_updated: "2026-11-19T14:30:52.249Z"
+stopped_at: Phase 6 plan reviewed; execution not authorized
+last_updated: "2026-11-19T15:00:20.093Z"
 last_activity: 2026-11-19
 last_activity_desc: Phase 6 roadmap recorded for the approved planning scope
-state_head: 746b378570be477b2bd14806107e692673200aab
+state_head: bd8be73173026e0cace4fbcdc2525d0fe05806cf
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
+  total_plans: 1
   completed_plans: 0
   percent: 0
 ---
@@ -30,23 +30,24 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Plan the Phase 6 supplement for the four reviewed EX-177 source and caller keys. The wider guard aggregate gate remains open.
+**Current focus:** Phase 6's bounded EX-177 supplement plan is reviewed and ready. Execution awaits the owner's separate authorization; the wider guard aggregate gate remains open.
 
 ## Current Position
 
-Phase: 6 (Bounded EX-177 provenance supplement)
-Plan: —
-Status: Ready for Phase 6 discussion and planning
-Last activity: 2026-11-19 — Mapped GSR-07 to Phase 6 in the v0.5 roadmap
+Phase: 6 (Bounded EX-177 provenance supplement) — READY TO EXECUTE
+Plan: 06-01-PLAN.md (one plan; independent review passed)
+Status: Ready to execute; waiting for separate owner authorization
+Last activity: 2026-11-19 — Phase 6 plan passed coverage and plan-review gates
 
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `main`, v0.4 tagged locally at closeout commit `2887a082a9ec1861eafff4b2bf80d97adc34f788`; no tag was pushed. The v0.4 archive contains the phase evidence and the requirements file; no additional worktree was created.
-- The owner approved the v0.4 closeout override and chose to carry the audit items as debt. Phase 3's historical 21/21 pass remains unchanged despite its stale fingerprint. Phase 4's historical `gaps_found` report remains acknowledged with the original verdict; current payload equality and validation evidence are recorded in the closeout. The same three v0.1 deferrals remain unchanged under the prior immutable-source exception.
-- v0.5 is authorized for planning only under INT-20261119-02. Its scope is the four selected EX-177 source/caller keys and the unchanged 9,712-row complement. Use the reviewed [discovery report](research/2026-11-19-ex177-source-discovery.md) and archived Phase 5 receipts; do not reread source bodies or consume R9. One observed `run/1` call per lane is not exhaustive caller closure.
-- Stops remain: candidate null; implementation unauthorized; aggregate gate open; actual library collision unknown; Macro caller-AST and explanation wording unresolved; SEC-01 pending; Walking Skeleton blocked; legacy digest unresolved. Do not invoke audited OTP/runtime paths.
-- **Next actor: Codex.** Refresh the generated planning snapshot and run `bin/planning_health --stage discuss --phase 6` before discussing and planning the saved-evidence supplement. If a required fact is missing or the saved records disagree, record the exact blocker for the owner. Execution is outside the current authorization and requires the owner's separate decision.
+- Checkout: `~/projects/fablebook`, branch `main`; no worktree was created. v0.4 is archived and tagged locally at `2887a082a9ec1861eafff4b2bf80d97adc34f788`; the tag was not pushed. Phase 3's historical pass, Phase 4's acknowledged `gaps_found` report, and the carried v0.1 audit debt remain unchanged.
+- Delivered: v0.4 closeout and the single reviewed Phase 6 plan. Phase 6 implementation and GSR-07 acceptance remain unfinished; no application code changed and no Phase 6 test or suite ran.
+- Phase 6 scope is limited to the four selected EX-177 source/caller keys and unchanged 9,712-row complement. Use the reviewed [discovery report](research/2026-11-19-ex177-source-discovery.md) and archived Phase 5 receipts. Do not reread source bodies, consume R9, search for more callers, or invoke audited runtime paths. One observed `run/1` call per lane is not exhaustive caller closure.
+- Stops remain: candidate null; implementation unauthorized; aggregate gate open; actual library collision unknown; Macro caller-AST and explanation wording unresolved; SEC-01 pending; Walking Skeleton blocked; legacy digest unresolved.
+- **Next actor: Owner.** Phase 6 execution is outside INT-20261119-02's planning-only authorization and needs a separate decision. After authorization, run `$gsd-execute-phase 6` to execute the one bounded plan and its local checks. No additional discussion or planning is needed.
+- The generated `.planning/state.json` still recommends planning because its generic smart-entry route reads the milestone status. The live roadmap analysis reports Phase 6 as `planned`, and `init.execute-phase 6` finds one runnable plan. Do not replan from that cached recommendation; the only remaining boundary is the owner's execution authorization.
 
 ## Performance Metrics
 
@@ -158,9 +159,9 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-19T14:30:52.225Z
-**Stopped at:** Phase 6 context gathered
-**Resume file:** .planning/phases/06-bounded-ex-177-provenance-supplement/06-CONTEXT.md
+**Last session:** 2026-11-19T15:00:20.077Z
+**Stopped at:** Phase 6 plan reviewed; execution not authorized
+**Resume file:** .planning/phases/06-bounded-ex-177-provenance-supplement/06-01-PLAN.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5 is also complete and verified for the bounded EX-177 slice: four source/caller rows remain open because current source identity/span metadata is absent; the other 9,712 rows remain unchanged. R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was read or emitted. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 

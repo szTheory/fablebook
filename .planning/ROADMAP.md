@@ -64,7 +64,8 @@ See the [archived roadmap](milestones/v0.2-ROADMAP.md) and [closeout](milestones
 3. A local standard-library consistency check confirms the four-key membership, lane identities, recorded source and caller facts, and the exact pending 9,712-row complement binding with SHA-256 `dd95380d2114a10a54ddbb79cc6ec5aab4805a52847dcacb4e2ca3daeda653b5`. The archived evidence and complement retain their original bytes and status.
 4. The supplement leaves candidate fit unresolved, candidate null, the guard aggregate gate open, and R9 denied and unconsumed. Walking Skeleton remains blocked, SEC-01 remains pending, actual library collision stays unknown, and the Macro caller-AST, Macro explanation, and legacy digest questions remain open.
 
-**Plans:** TBD
+**Plans:** 0/1 plans executed
+- [ ] 06-01-PLAN.md
 
 Saved lane facts from the reviewed discovery report:
 
@@ -79,8 +80,8 @@ Saved lane facts from the reviewed discovery report:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 6. Bounded EX-177 provenance supplement | 0/TBD | Ready for planning | - |
+| 6. Bounded EX-177 provenance supplement | 0/1 | Planned; awaiting execution authorization | - |
 
 ## Next
 
-Run `bin/planning_health --stage discuss --phase 6` before Phase 6 discussion and planning. Stop at the execution boundary for the owner's decision. The [product roadmap](references/PRODUCT-ROADMAP.md) retains future product scope.
+Phase 6 has one reviewed plan and passed requirement/decision coverage. Execution is the next action, but it requires the owner's separate authorization under INT-20261119-02. After authorization, run `$gsd-execute-phase 6`. The [product roadmap](references/PRODUCT-ROADMAP.md) retains future product scope.
