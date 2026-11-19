@@ -21,6 +21,8 @@ Known verification overrides: 0 newly acknowledged; 3 inherited v0.1 deferred re
 | Phase 6 | [#93](https://github.com/szTheory/fablebook/pull/93) | `3970a381945cfcf63eb69c456a5b2a7465d8352d` | `b8852ac22aac1cb2b8151d85b189889ca0774aa8` | [44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030) |
 | Test compatibility | [#94](https://github.com/szTheory/fablebook/pull/94) | `2165c89843837705670a5b54756705ab3eee4e0a` | `6ca51acdc00f2bfa586aea6b4d68167c7974cfec` | [44582183055](https://github.com/szTheory/fablebook/actions/runs/44582183055) |
 
+**Archive closeout:** [PR #95](https://github.com/szTheory/fablebook/pull/95), reviewed head `860f080add7e2b0c333b2748a6d4ed0e020510aa`, squash-merged as `d5a8dc0b856e5c8223524c4fd3f849bd27c4c859` after green [hosted CI 44599528602](https://github.com/szTheory/fablebook/actions/runs/44599528602). The annotated `v0.5` tag points to this merge and remains local.
+
 [Roadmap](milestones/v0.5-ROADMAP.md), [requirements](milestones/v0.5-REQUIREMENTS.md), [audit](milestones/v0.5-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.5-phases/), and [closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
 **What's next:** No next milestone is selected; the owner chooses the next bounded scope after its typed prerequisites pass.
