@@ -36,6 +36,11 @@ defmodule Fablebook.Test.GuardAggregateEvidencePaths do
     evidence_dir!("Phase 4", @phase4_archive, @phase4_legacy, @phase4_required_files)
   end
 
+  # This path is evidence identity saved before archival, not the file's current storage path.
+  def phase4_recorded_trace_path do
+    Path.join(@phase4_legacy, "04-COVERAGE-CALLER-TRACE.json")
+  end
+
   def phase3_writable_evidence_dir! do
     legacy = expand!(@phase3_legacy)
 

@@ -1,21 +1,11 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.4 — Guard Aggregate Reconciliation — Fablebook",
+  "milestone": "v0.5 — Bounded EX-177 Provenance Follow-through",
   "phases": [
     {
-      "number": "3",
-      "name": "Guard aggregate scope rejoin and candidate sizing",
-      "status": "complete"
-    },
-    {
-      "number": "4",
-      "name": "Evidence-only source and gap provenance closure",
-      "status": "complete"
-    },
-    {
-      "number": "5",
-      "name": "Bounded two-lane source provenance slice",
+      "number": "6",
+      "name": "Bounded EX-177 provenance supplement",
       "status": "complete"
     }
   ],
@@ -24,5 +14,5 @@
     "label": "Start a new milestone",
     "reason": "All phases complete — start a new milestone"
   },
-  "updated_at": "2026-11-19T06:47:54.089Z"
+  "updated_at": "2026-11-19T18:36:00.921Z"
 }

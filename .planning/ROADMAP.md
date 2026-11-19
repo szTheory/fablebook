@@ -1,72 +1,87 @@
-# Roadmap: v0.4 Guard Aggregate Reconciliation — Fablebook
+# Roadmap: Fablebook
 
 ## Milestones
 
-- 🔄 **v0.4 Guard Aggregate Reconciliation** — active; Phase 3 owns the current full-scope rejoin and next-scope sizing.
-- ✅ **v0.3 Bounded ASN.1 RTT Guard Evidence** — Phase 2 shipped 2026-11-13; [full roadmap and phase details](milestones/v0.3-ROADMAP.md).
-- ✅ **v0.2 Guard coverage recovery** — Phase 1 shipped 2026-11-11; [full roadmap and phase details](milestones/v0.2-ROADMAP.md).
+- 🚧 **v0.5 Bounded EX-177 Provenance Follow-through** — Phase 6 verification passed; PR #93 is open, and its last hosted exact-head CI failed because contract tests still reference Phase 3's former active path after archival. A separate test-compatibility decision is pending.
+- ✅ **v0.4 Guard Aggregate Reconciliation** — bounded development milestone archived 2026-11-19; `override_closeout`; wider guard gate remains open. [Roadmap](milestones/v0.4-ROADMAP.md) · [closeout](milestones/v0.4-CLOSEOUT.md)
+- ✅ **v0.3 Bounded ASN.1 RTT Guard Evidence** — shipped locally 2026-11-13; [full roadmap and phase details](milestones/v0.3-ROADMAP.md).
+- ✅ **v0.2 Guard coverage recovery** — shipped locally 2026-11-11; [full roadmap and phase details](milestones/v0.2-ROADMAP.md).
 - ⚠️ **v0.1 Legacy planning cycle** — superseded and incomplete; [historical roadmap](milestones/v0.1-ROADMAP.md).
 
-## Phases
-
-- [x] **Phase 3: Guard aggregate scope rejoin and candidate sizing** — Reconcile the complete current two-lane scope and size a bounded next decision. (completed 2026-11-18)
-- [x] **Phase 4: Evidence-only source and gap provenance closure** — Complete the lane-pinned source and typed-gap provenance needed to explain Phase 3's coverage and digest gaps. (completed 2026-11-19)
-- [x] **Phase 5: Bounded two-lane source provenance slice** — Resolve one exact two-lane source and direct-caller evidence slice with explicit complement and preserved safety gates. (completed 2026-11-19)
+## v0.5 Bounded EX-177 Provenance Follow-through
 
 **Milestone key:** guard-recovery
 
-### Phase 3: Guard aggregate scope rejoin and candidate sizing
+This increment makes the reviewed static EX-177 discovery usable in later guard decisions. The open aggregate gate continues to block Walking Skeleton and permits this bounded planning increment. [Planning gates](references/PLANNING-GATES.json)
 
-**Goal:** The owner can inspect the complete current row-to-MFA join on core and floor, lane-specific source identities and caller/delegate paths, exact pending complements, and measured sizing for a possible bounded guard increment. If the evidence or fit is insufficient, the phase reports the exact gap and selects no implementation slice.
+## Phases
 
-**Depends on:** Delivered v0.2 Phase 1 and v0.3 Phase 2 receipts are reusable only within their proven scopes. This phase continues global numbering at 3 and does not reopen delivered work.
+- [x] **Phase 6: Bounded EX-177 provenance supplement** - Record reviewed observations for four existing keys and preserve the exact pending complement. (completed 2026-11-19)
 
-**Requirements:** GSR-01, GSR-02, GSR-03, GSR-04, GSR-05, GSR-06.
+<details>
+<summary>✅ v0.4 Guard Aggregate Reconciliation (Phases 3–5) — ARCHIVED 2026-11-19</summary>
 
-**Success criteria:**
-1. The read-only inventory records both pinned lane identities and provenance, with the complete current target inventory needed by the original exclusion set.
-2. Every original exclusion identity maps to its current owner and exact live per-lane MFA set, with additions, missing members, delivered rows, and pending complements inspectable.
-3. Each surviving row's target set links to exact per-lane sources and relevant caller/delegate paths, or lists the specific missing evidence.
-4. Historical EX-010 and EX-107 partitions and the actual merged delivery receipts remain distinct and traceable; no bounded slice is represented as aggregate closure.
-5. Current source-file, context-token, and effort sizing either yields a candidate within inherited limits or names the concrete fit gap and leaves the next owner decision explicit.
+- [x] Phase 3: Guard aggregate scope rejoin and candidate sizing (5/5 plans) — completed 2026-11-18.
+- [x] Phase 4: Evidence-only source and gap provenance closure (3/3 plans) — completed 2026-11-19.
+- [x] Phase 5: Bounded two-lane source provenance slice (1/1 plan) — completed 2026-11-19.
 
-**Boundaries:** Static evidence only. No audited API, callback, atom-sink, or generated-code invocation. Preserve the actual-library collision stop, SEC-01 Pending status, the open guard gate, and the Walking Skeleton block. Product UI and brand work remain outside this milestone.
+See the [archived roadmap](milestones/v0.4-ROADMAP.md), [requirements](milestones/v0.4-REQUIREMENTS.md), [audit](milestones/v0.4-MILESTONE-AUDIT.md), and [phase evidence](milestones/v0.4-phases/).
+
+</details>
 
 <details>
 <summary>✅ v0.3 Bounded ASN.1 RTT Guard Evidence (Phase 2) — SHIPPED 2026-11-13</summary>
 
 - [x] Phase 2: Bounded ASN.1 RTT guard evidence (5/5 plans) — completed 2026-11-13.
 
+See the [archived roadmap](milestones/v0.3-ROADMAP.md) and [closeout](milestones/v0.3-CLOSEOUT.md).
+
 </details>
 
 <details>
 <summary>✅ v0.2 Guard coverage recovery (Phase 1) — SHIPPED 2026-11-11</summary>
 
-- [x] Phase 1: Bounded guard continuation — completed 2026-11-11.
+- [x] Phase 1: Bounded guard continuation (3/3 plans) — completed 2026-11-11.
+
+See the [archived roadmap](milestones/v0.2-ROADMAP.md) and [closeout](milestones/v0.2-CLOSEOUT.md).
 
 </details>
 
-### Phase 4: Evidence-only source and gap provenance closure
+## Phase Details
 
-**Goal:** For all 226 identities on core and floor, produce complete lane-pinned target-source association and typed-gap rows; trace the caller that derives source-coverage status; and establish the nested SIZING digest recipe. If inputs are missing or evidence cannot fit within inherited limits, report exact identity/provenance gaps and leave candidate null.
-**Requirements:** GSR-03, GSR-05
-**Depends on:** Phase 3's recorded bounded trace stop; Phase 4 supplies evidence only and does not close Phase 3 or authorize a guard implementation.
-**Boundaries:** Static evidence only. No audited OTP APIs, callbacks, atom sinks, runtime evaluation, generated-code paths, guard behavior changes, candidate promotion, aggregate closure, or automatic follow-on. Preserve the collision and Macro stops, SEC-01 Pending status, and Walking Skeleton block.
-**Plans:** 3 plans exist under `.planning/phases/04-evidence-only-source-and-gap-provenance-closure/`.
-**Verification:** Goal verification passed 4/4. The active record package and stable consumer paths validate; source, caller, and legacy-digest gaps remain open, and candidate stays null. See [04-VERIFICATION.md](phases/04-evidence-only-source-and-gap-provenance-closure/04-VERIFICATION.md) and [04-HANDOFF.md](phases/04-evidence-only-source-and-gap-provenance-closure/04-HANDOFF.md). This completes Phase 04's bounded evidence handoff; it does not close Phase 3's wider safety gates or complete the v0.4 milestone.
+### Phase 6: Bounded EX-177 provenance supplement
 
-**Budget note:** Earlier recovery-envelope numbers are historical. INT-20261117-11 removed the cumulative assistant-output ceiling and reserve stop; counters are informational. Exact source identity/span, per-request count, independent review, one-use, provenance, context-fit, and security gates remain active. See the [recovery record](forensics/phase4-budget-reset-20261117.md) for the history.
+**Goal:** The owner can use a supplementary machine-readable record to trace previously reviewed source and observed-caller facts for exactly four existing EX-177 keys, with the exact 9,712-row pending complement preserved.
 
-### Phase 5: Bounded two-lane source provenance slice
+**Depends on:** Delivered v0.4 Phase 5 evidence and its saved scope, as well as the separately reviewed discovery report. These records are the inputs for the supplement. [Archived result](milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-R9-RESULT.json) · [Archived plan](milestones/v0.4-phases/05-bounded-two-lane-source-provenance-slice/05-01-PLAN.md) · [Discovery report](research/2026-11-19-ex177-source-discovery.md)
 
-**Goal:** For the exact EX-177 target `Elixir.Mix.Tasks.Phx.Gen.Context.prompt_for_code_injection/1`, reconcile the retained core and floor membership, then produce lane-pinned source association and bounded direct-caller evidence or exact keyed gaps. Preserve the full unselected complement. If the source identity, caller set, context fit, or any request gate cannot be established within inherited limits, stop before source emission and record the concrete gap.
-**Requirements:** GSR-03
-**Depends on:** Delivered Phase 4 evidence handoff; Phase 4 remains record-valid with open semantic gaps.
-**Plans:** 1/1 plans executed exists under `.planning/phases/05-bounded-two-lane-source-provenance-slice/`.
-- [x] 05-01-PLAN.md
+**Requirements:** GSR-07
 
-**Selected scope:** EX-177, one exact MFA on core and floor; four current typed-gap rows (source and caller per lane) selected from 9,716. The pending complement is the other 9,712 rows, including all 18 unknown-target-set rows and the remaining 225 identities per lane.
-**Boundaries:** Static evidence only. One fresh source request may be consumed only after exact identity/span review, independent schedule review, fresh direct count, execute preflight, and a one-use gate. Maximum five exact source files per task; do not replay a consumed or truncated request. No audited API, callback, atom sink, runtime evaluation, generated-code invocation, guard behavior change, candidate promotion, implementation, aggregate closure, or automatic follow-on. The legacy nested digest remains unresolved unless its exact inputs become available within this selected slice; do not reread the helper to guess its recipe.
+**Success Criteria** (what must be TRUE):
 
-**Wave 1**
-- [ ] [05-01-PLAN.md](phases/05-bounded-two-lane-source-provenance-slice/05-01-PLAN.md) — EX-177 scope, gated source request, and keyed evidence or stop result.
+1. The record contains exactly the four existing EX-177 keys for `Elixir.Mix.Tasks.Phx.Gen.Context.prompt_for_code_injection/1`, with one `source` row and one `caller` row on each of `core` and `floor`. Every observation cites the saved discovery and its archived Phase 5 scope.
+2. Both lane entries identify their pinned runtime and Phoenix package, exact target file path, file byte count and SHA-256, complete helper definition at lines 445–451, and the direct call at line 131 inside `run/1` at lines 112–136. The record identifies these values as previously reviewed observations and states that one observed direct `run/1` call per lane is insufficient to establish exhaustive caller closure.
+3. A local standard-library consistency check confirms the four-key membership, lane identities, recorded source and caller facts, and the exact pending 9,712-row complement binding with SHA-256 `dd95380d2114a10a54ddbb79cc6ec5aab4805a52847dcacb4e2ca3daeda653b5`. The archived evidence and complement retain their original bytes and status.
+4. The supplement leaves candidate fit unresolved, candidate null, the guard aggregate gate open, and R9 denied and unconsumed. Walking Skeleton remains blocked, SEC-01 remains pending, actual library collision stays unknown, and the Macro caller-AST, Macro explanation, and legacy digest questions remain open.
+
+**Plans:** 1/1 plans complete
+- [x] 06-01-PLAN.md
+
+Saved lane facts from the reviewed discovery report:
+
+| Lane | Pinned runtime | Phoenix | Recorded target file | Bytes | SHA-256 |
+|------|----------------|---------|----------------------|------:|---------|
+| Core | Elixir 1.20.4 / OTP 29.1.2 | 1.8.16 (`mix.lock`) | `_build/lanes/core/deps/phoenix/lib/mix/tasks/phx.gen.context.ex` | 14,760 | `c7c6dc0e75b25769db626143ad37d43b9c45234190e13a6352b0a6629e05b73e` |
+| Floor | Elixir 1.18.5 / OTP 27.3.4.9 | 1.8.9 (`mix.floor.lock`) | `_build/lanes/floor/deps/phoenix/lib/mix/tasks/phx.gen.context.ex` | 14,760 | `c7c6dc0e75b25769db626143ad37d43b9c45234190e13a6352b0a6629e05b73e` |
+
+**Boundaries:** Planning is the only authorized stage. The saved discovery report and archived Phase 5 evidence supply the facts. Source rereads, R9 or any new source request, package-wide caller search, audited API or runtime invocation, callback or generated-code execution, product or guard implementation, candidate promotion, aggregate closure, a new CI lane or dependency, and automatic follow-up are outside this scope. If the saved records disagree or leave a required fact missing, identify the exact discrepancy and stop for the owner.
+
+## Progress
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 6. Bounded EX-177 provenance supplement | 1/1 | Complete    | 2026-11-19 |
+
+## Next
+
+Phase 6 verification passed 5/5 must-haves; its focused checks pass, security has zero open threats, and the source-review hook skipped because the phase contains no reviewable source files after `.planning/` exclusions. PR #93 is open. Exact-head hosted run [44562711455](https://github.com/szTheory/fablebook/actions/runs/44562711455) passed security and Dialyzer but failed core/floor guard tests because they still reference Phase 3 evidence at its pre-archive path. Local `act` 0.2.87 could not load the existing CI workflow because it rejects the `concurrency.queue` mapping. A separate test-compatibility change needs an owner decision; keep v0.5 open until an authorized fix passes final-head CI, the PR is merged, and its delivery receipt is recorded. The [product roadmap](references/PRODUCT-ROADMAP.md) retains future product scope; no follow-on phase is authorized.

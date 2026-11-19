@@ -5704,7 +5704,7 @@ defmodule Fablebook.Contract.TierSweepTest do
         "validation_sha256" => file_sha256.(phase4_validation_path),
         "review_sha256" => file_sha256.(phase4_review_path),
         "trace_sha256" => file_sha256.(phase4_trace_path),
-        "trace_path" => Path.relative_to(phase4_trace_path, File.cwd!()),
+        "trace_path" => GuardAggregateEvidencePaths.phase4_recorded_trace_path(),
         "digest_proof_sha256" => file_sha256.(phase4_digest_path),
         "supplement_digest" => phase4_digest["supplement"]["digest"]
       }

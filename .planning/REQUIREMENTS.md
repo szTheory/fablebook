@@ -1,39 +1,43 @@
 # Requirements: Fablebook
 
-## Milestone v0.4: Guard Aggregate Reconciliation
+**Milestone:** v0.5 Bounded EX-177 Provenance Follow-through
+**Defined:** 2026-11-19
+**Core Value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
 
-**Goal:** Produce a current, source-linked rejoin of the complete surviving guard scope on both pinned lanes, then size a bounded candidate for the next owner decision.
+## v1 Requirements
 
-### Guard Scope Reconciliation
+### EX-177 provenance supplement
 
-- [x] **GSR-01**: A repeatable read-only procedure, using existing support or a narrowly scoped collector if needed, inventories the current target modules and exports on core and floor using the pinned runtimes and records lane identity and inventory provenance. It does not invoke audited OTP functions, callbacks, atom sinks, or generated code paths. (INT-20261113-02, INT-20261111-13, INT-20261111-01, ADR 0004, ADR 0021)
-- [x] **GSR-02**: The rejoin maps every original guard exclusion identity to its current row owner and exact live per-lane MFA set, preserving delivered dispositions and reporting exact missing, added, and pending members. Counts alone do not establish equality; the full selected and pending complements are inspectable. (INT-20261113-02, INT-20261111-01, INT-20261111-13, ADR 0021)
-- [x] **GSR-03**: For surviving scope on both lanes, the evidence links each row's matched targets to exact source identities and relevant caller/delegate paths. Missing source, caller, or provenance evidence is reported as an open gap and prevents candidate selection. (INT-20261113-02, INT-20261111-01, ADR 0021)
-- [x] **GSR-04**: The output preserves prior delivery receipts and keeps distinct historical partitions distinct, including the delivered EX-010 scope and EX-107's 3/174 and historical 13/164/161 partitions. It does not reinterpret a prior slice as aggregate closure. (INT-20261113-02, INT-20261112-03, INT-20261111-13, ADR 0021)
-- [x] **GSR-05**: The rejoin produces current source-file, context-token, and effort sizing for a candidate bounded increment. Any proposal fits the 100,000-token planning limit, at most five exact-source files per task, 2–3 tasks per plan, at most five plans per phase, and roughly three working days per plan; otherwise it reports the concrete gap without truncation or substitution. (INT-20261113-02, INT-20261110-01, INT-20261111-13, ADR 0021)
-- [x] **GSR-06**: The milestone ends with an inspectable owner decision point for any later guard implementation. It preserves the actual-library collision stop, the static-only boundary, SEC-01 ownership, the open aggregate gate, and the Walking Skeleton block. It does not add guard dispositions or claim aggregate closure. (INT-20261113-02, INT-20261111-01, INT-20261111-13, ADR 0004, ADR 0021)
+- [x] **GSR-07**: A supplementary machine-readable record binds exactly the four selected EX-177 source/caller keys to the two pinned lane identities, the discovered source path, byte count and SHA-256, the target definition span, and the one observed direct-caller span. It preserves the 9,712-row complement and its recorded digest, states that one observed caller does not prove complete caller closure, and leaves candidate fit and the aggregate gate open. It uses the existing reviewed discovery report and does not repeat source reads or consume R9. (INT-20261119-01, INT-20261119-02, ADR 0021)
 
 ## Future Requirements
 
-- A separately selected and measured guard implementation increment, if the owner chooses one after reviewing GSR-01 through GSR-06.
-- Complete aggregate-scoped acceptance and installed-wide proof before the Walking Skeleton can start.
-- Controls and first bundle work for SEC-01 under its existing owner.
+- Complete direct, dynamic, delegated, callback, or package-wide caller closure only after a separately authorized bounded scope.
+- Establish candidate fit and complete aggregate-scoped proof under their existing owners and gates.
 
 ## Out of Scope
 
-- Repeating the delivered EX-010 or EX-107 implementation slices.
-- Runtime safety claims, audited API invocation, dynamic caller absence, native internals, or SEC-01 closure.
-- Changing the manual actual-library-collision stop, Macro caller-AST checkpoint, explanation-wording review, or any other inherited safety boundary.
-- Walking Skeleton, product UI, brand canon, demo app, or dogfood implementation.
-- Replacing the original ledger, weakening a gate, or adding a general-purpose audit framework.
+| Feature | Reason |
+|---------|--------|
+| Package-wide caller search or claims that all callers are known | Outside the four-row authorization; one direct caller per lane is only an observation. |
+| New source request, R9 consumption, OTP/runtime invocation, callback, or generated-code execution | The current owner approval is planning-only and the discovery report leaves R9 unconsumed. |
+| Guard implementation, candidate promotion, aggregate closure, or Walking Skeleton activation | Existing safety stops and typed prerequisites remain in force. |
+| Editing archived Phase 5 receipts or changing the four-row selection or 9,712-row complement | Historical evidence and scope are preserved. |
+| New dependency, product-code change, or recurring CI lane | This is a bounded evidence-record planning scope. |
 
 ## Traceability
 
-| Requirement | Phase | Outcome |
-|---|---:|---|
-| GSR-01 | Phase 3 | Repeatable read-only inventory with exact lane provenance |
-| GSR-02 | Phase 3 | Full original-row to exact per-lane MFA rejoin |
-| GSR-03 | Phase 3 | Source identity and caller/delegate crosswalk |
-| GSR-04 | Phase 3 | Delivered receipts and historical partitions preserved |
-| GSR-05 | Phase 3 | Current sizing and bounded candidate or concrete fit gap |
-| GSR-06 | Phase 3 | Owner decision point with all safety stops intact |
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| GSR-07 | Phase 6 | Complete |
+
+The [Phase 6 roadmap](ROADMAP.md#phase-6-bounded-ex-177-provenance-supplement) owns delivery of GSR-07.
+
+**Coverage:**
+- v1 requirements: 1 total
+- Mapped to phases: 1
+- Unmapped: 0
+
+---
+*Requirements defined: 2026-11-19*
+*Last updated: 2026-11-19 after v0.5 scope selection*
