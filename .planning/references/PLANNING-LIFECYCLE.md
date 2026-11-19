@@ -2,6 +2,8 @@
 
 Authority: INT-20261111-01, INT-20261111-03 and INT-20261112-04. The latest intent supersedes only the phase-numbering clause of INT-20261111-01. This project rule applies to every milestone; it does not start a new phase or replace OpenGSD's quality gates.
 
+At each new milestone boundary, first follow [MILESTONE-START-RESEARCH.md](MILESTONE-START-RESEARCH.md): reconcile current branch and delivery receipts, typed gates, intent/ADR and relevant source intakes; fan out bounded read-only research across applicable lenses; synthesize one immediate recommendation and refresh the directional rolling roadmap. This stays upstream of executable scope. Activate requirements and phase plans only for the owner-selected milestone after its typed prerequisites pass. Track sourcebooks, applied canon, Fablebook Books/scenarios, runnable demos, and adopter dogfood as distinct product states. See INT-20261119-06.
+
 ## One owner for each fact
 
 | Fact | Owner | Derived views / proof |

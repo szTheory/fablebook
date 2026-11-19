@@ -2,11 +2,13 @@
 gsd_state_version: "1.0"
 milestone: v0.6
 milestone_name: Guard Scope Reconciliation
+current_phase: 7
+current_phase_name: Guard Scope Reconciliation
 status: planning
-last_updated: "2026-11-19T23:10:08.365Z"
+last_updated: "2026-11-19T23:15:38Z"
 last_activity: 2026-11-19
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -27,26 +29,26 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** between milestones; no next milestone is selected
+**Current focus:** v0.6 Phase 7 — Guard Scope Reconciliation
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-11-19 — Milestone v0.6 started
+Phase: 7 of 7 (Guard Scope Reconciliation)
+Plan: Not started
+Status: Roadmap ready; phase discussion next
+Last activity: 2026-11-19 — v0.6 Phase 7 roadmap created
 
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `main`. It includes `origin/main` closeout merge `d5a8dc0b856e5c8223524c4fd3f849bd27c4c859` and retains the preserved local history through reconciliation merges. No preserved checkout was reset, stashed, cleaned, or removed.
-- Delivered: Phase 6 Plan 06-01 produced the exact four-key supplement and standard-library checker. Its 5/5 verification and focused checks pass; archived Phase 4/5 evidence remains unchanged. PR #93 reviewed head `3970a381945cfcf63eb69c456a5b2a7465d8352d` passed exact-head hosted [CI 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030) and squash-merged as `b8852ac22aac1cb2b8151d85b189889ca0774aa8`; the delivery receipt is appended. The audit found the artifact flow wired and GSR-07 satisfied.
-- Also delivered: PR #94 separately repaired the test helper's archived-evidence path expectation and merged as `6ca51ac` after green [hosted CI 44582183055](https://github.com/szTheory/fablebook/actions/runs/44582183055). This leaves historical phase evidence bytes unchanged.
-- Delivered: Archive closeout PR [#95](https://github.com/szTheory/fablebook/pull/95), reviewed head `860f080add7e2b0c333b2748a6d4ed0e020510aa`, passed exact-head [hosted CI 44599528602](https://github.com/szTheory/fablebook/actions/runs/44599528602) and squash-merged as `d5a8dc0b856e5c8223524c4fd3f849bd27c4c859`. The local annotated `v0.5` tag points to this merge and was not pushed.
-- Remaining: no work remains within v0.5. No next milestone is selected; the owner chooses any later bounded scope after its typed prerequisites pass.
-- Scope remains limited to the four EX-177 source/caller keys and exact 9,712-row complement. Do not reread source bodies, consume R9, search for more callers, invoke audited runtime paths, or make product changes. One observed `run/1` call per lane is not exhaustive caller closure.
-- Stops remain unchanged: candidate fit unresolved and candidate null; implementation unauthorized; aggregate gate open; R9 denied and unconsumed; actual library collision unknown; Macro caller-AST and explanation unresolved; SEC-01 Pending; Walking Skeleton blocked; legacy digest unresolved; automatic follow-up disabled.
-- **Next actor: Owner.** Choose any future bounded scope and required milestone only when ready; the assistant must not start a new milestone automatically. Preserve the four-key and 9,712-row limits, the three inherited deferred items, and every existing safety stop.
+- Checkout: `~/projects/fablebook`, branch `main`; this is the canonical planning checkout. The v0.5 closeout and Phase 6 delivery are recorded in the immutable milestone archive and [delivery registry](references/PHASE-DELIVERIES.json).
+- Delivered: v0.5 Phase 6 and its closeout. Phase 6 merged as PR #93 with green exact-head hosted CI; PRs #94 and #95 separately delivered compatibility and closeout work. No preserved recovery checkout was reset, stashed, cleaned, or removed.
+- Current: v0.6 Guard Scope Reconciliation, global Phase 7. The owner selected this bounded scope and autonomous completion. The roadmap maps RSC-01–RSC-04 exclusively to Phase 7.
+- Remaining: complete read-only reconciliation of the full relevant membership and pinned source identities on both lanes; record one proposed family and its complete complement; capture bounded caller/delegate evidence and explicit gaps; refresh sizing and recommend the next owner decision.
+- Limits: no guard implementation, audited runtime API calls, generated-code execution, R9 consumption, package-wide caller search, exhaustive caller-closure claim, candidate promotion, aggregate closure, Walking Skeleton, product UI/Books, or automatic follow-on. Keep each inherited source and budget limit in force.
+- Stops remain active: actual-library-collision owner stop; candidate null and implementation unauthorized; Macro caller-AST and explanation gaps; SEC-01 Pending; legacy digest unresolved; aggregate gate open; Walking Skeleton blocked.
+- Next action: `$gsd-discuss-phase 7`, then continue the approved phase workflow through plan, execution, verification, review and delivery. At phase exit, present the evidence and recommendation and stop for the owner's decision.
+- **Next actor: Assistant.** Continue v0.6 autonomously within the approved scope; the owner acts only at the Phase 7 exit decision boundary.
 
 ## Performance Metrics
 

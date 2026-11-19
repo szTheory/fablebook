@@ -5,6 +5,7 @@
 2. `GLOSSARY.md`, the only source of vocabulary. Never call a scenario a "variant" or "variation".
 3. `docs/adr/README.md` (locked decisions)
 4. `.planning/VERIFICATION.md` when discussing, planning, executing, reviewing, verifying or resuming work; automate acceptance checks and reuse recorded evidence before handing work to the owner.
+5. `.planning/references/MILESTONE-START-RESEARCH.md` whenever starting or recommending a milestone; it defines the evidence-first fan-out, rolling roadmap, and product-progress vocabulary.
 
 GSD researchers, synthesizers and the roadmapper also read `FABLEBOOK-SEED.md`, `docs/adr/*` and `docs/research/*` before writing anything. Every REQ keeps its INT/ADR citations.
 
@@ -13,6 +14,8 @@ Verbatim intent (`.planning/intent/sources/`) > ADR > REQUIREMENTS > PROJECT. Wh
 
 ## Recording intent
 When the owner gives direction, add a verbatim entry to `.planning/intent/sources/` (`id: INT-YYYYMMDD-NN`, `date`, `source`, `captured_by`, `context`). Entries are add-only. Corrections use `supersedes:`.
+
+At every new-milestone start, reconcile delivery receipts and gates, fan out bounded research across relevant lenses with an adversarial pass, prefer primary sources, synthesize one immediate recommendation, and refresh the directional rolling roadmap before executable GSD work. Keep future work directional until separately activated and its typed prerequisites pass. Distinguish sourcebooks, applied canon, Fablebook Books/scenarios, runnable demos, and adopter dogfood in progress reports.
 
 ## Non-negotiables
 - Never lower a quality gate to finish a phase. Split the phase instead.

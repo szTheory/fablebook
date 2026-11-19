@@ -2,7 +2,7 @@
 
 This is the rolling product roadmap outside the active milestone. Executable phase IDs use one project-wide integer sequence: v0.2 Phase 1 was delivered and v0.3 is Phase 2. The roadmap's phase values and dependency references are milestone-local slots until activation; allocate global IDs after the highest delivered phase and update the selected map, gates, seeds and dependencies when a milestone activates. Milestone names/keys are stable planning references; versions are assigned on activation. These are carried commitments, not approved executable plans or shipped features. INT-20261111-01 split the oversized cycle; INT-20261112-04 sets the continuing numbering policy. Original wording and IDs remain in milestones/v0.1-ROADMAP.md.
 
-v0.2 delivered its selected EX-010 increment. v0.3 is archived locally after its bounded EX-107 RTT source-evidence slice. Neither milestone closes the complete guard aggregate or unlocks the Walking Skeleton. No milestone is active. Further guard increments must be sized and approved one at a time; there is no automatic follow-up. Do not insert nested decimal phases or silently weaken acceptance to advance.
+v0.2–v0.5 delivered bounded evidence, provenance, compatibility, and closeout work; none closes the complete guard aggregate or unlocks the Walking Skeleton. v0.6 Phase 7 is selected as a read-only reconciliation of current memberships/source identities, one proposed family plus complete complement, bounded caller/delegate evidence, and fresh sizing. It ends with an owner decision. Further guard increments must be individually justified and authorized; there is no automatic follow-up. Do not insert nested decimal phases or silently weaken acceptance to advance.
 
 ## Rolling outlook
 
@@ -10,9 +10,9 @@ This is sequencing guidance, not a set of activated milestones. Preserve typed p
 
 | Horizon | Recommended direction |
 |---|---|
-| Immediate | v0.3 is complete and archived locally on main. Recommendation: first decide whether to fund a fresh, read-only scope reconciliation for one possible guard-recovery increment. The latest receipts do not select a next slice; the current lane membership, source identities, exact selection and complement must be rejoined before a milestone is activated. Until the aggregate closes, the Walking Skeleton and product UI implementation remain blocked. |
-| Near | Once the guard aggregate passes, complete the Walking Skeleton and browser-runner spike. Then follow the existing order: Story model and catalog, render seam and rules, Controls and first bundle, Canvas and host fidelity, and Workbench foundations. Keep quality evidence inside each slice. |
-| Mid | Build the canon foundations, then the Fablebook brand book and Logistify family. Keep workbench chrome ink-on-neutral and brand the preview. After Fablebook can render trustworthy catalog context, use mailglass for real AI-assisted design iterations and accrue_admin next. Separately, use Logistify as the authored showcase: one shared brand canon and three distinct Books, starting with the operator console. |
+| Immediate | Complete v0.6 Phase 7 read-only reconciliation. It supplies a current proposed family/complement, evidence gaps and sizing for an explicit owner decision; it does not close the aggregate or produce a demo. Until the full aggregate and installed-wide acceptance pass, the Walking Skeleton and product UI implementation remain blocked. |
+| Near | At Phase 7 exit, decide whether a single next guard increment is worth doing; authorize only one at a time. Once the full guard aggregate passes, complete the Walking Skeleton and browser-runner spike, then follow the existing order: Story model/catalog, render seam/rules, Controls/first bundle, Canvas/host fidelity, and neutral Workbench foundations. |
+| Mid | Build the canon foundations, then apply the existing Fablebook 2.1 sourcebook and create the Logistify family in Fablebook. Keep workbench chrome ink-on-neutral and brand the preview. After Fablebook can render trustworthy catalog context, use mailglass for real AI-assisted design iterations and accrue_admin next. Separately, use Logistify as the authored showcase: one shared brand canon and three distinct Books, starting with the operator console. |
 | Later | Add Chatly and Clinicly after the Logistify family and canon foundations. Continue the mapped bundles, checks, visual regression, motion, installer, hardening, remaining twins, dogfood and clearance work in the dependency order below. |
 
 These horizons retain the existing product sequence; they do not activate or renumber future phases.
@@ -46,13 +46,13 @@ The authored showcase remains Logistify’s operator console first, then its shi
 
 ## Current brandbook inventory
 
-The formal Fablebook brand book has not been authored. The preserved snapshot at commit 71d93704fcd5689fc9c600e558b47ebfe01a6a8d contains docs/brand/fablebook-demo/index.html, a manual three-brand preview that the preserved review does not treat as an importer contract, signed-off UI, accessibility proof or source of truth. The snapshot also contains books for Chatly, Logistify, Clinicly, Finanza, Shopadelic and an extra Classwell pack. No Snow brand book was found in the current checkout or that snapshot. If Snow is an intended source, identify its repository or artifact before planning to integrate it.
+Fablebook has an authored upstream sourcebook at pinned version 2.1; it was read and recorded in [fablebook-brand-intake.md](fablebook-brand-intake.md), with its assets staged but unapplied. Logistify has an authored v1.0 sourcebook with pinned hashes and review limits recorded in [logistify-brand-intake.md](logistify-brand-intake.md); its source files are not present in current `main`. A preserved snapshot at commit 71d93704fcd5689fc9c600e558b47ebfe01a6a8d contains a static three-brand preview and books for Chatly, Logistify, Clinicly, Finanza, Shopadelic and Classwell; this is not a Fablebook importer contract, signed-off UI, accessibility proof, or runnable Fablebook demo. No Snow sourcebook was found in the current checkout or that snapshot. If Snow is intended, identify its repository or artifact before planning integration.
 
 These source books are preserved outside the tracked main tree. Before integration, make exact versions reproducible from pinned, hash-checked source files and records. Keep reuse rights, fonts, artwork and name clearance open until their destination and terms are reviewed. The current workbench chrome remains governed by accepted ADR 0013 and UX-DESIGN; the manual prototype does not override those decisions.
 
 ### Brand source custody and mapping
 
-Before Design canon and adopter Books consumes these sources, make the exact versions reproducible in the reviewed repository from pinned, hash-checked JSON, tokens, HTML, and records where present. Use the existing brand intakes as the source of provenance; do not depend on mutable latest downloads or a local-only clone. Do not copy all artwork or fonts by default: destination and reuse terms remain review items. The current v0.3 guard milestone does not move brand source files.
+Before Design canon and adopter Books consumes these sources, make the exact versions reproducible in the reviewed repository from pinned, hash-checked JSON, tokens, HTML, and records where present. Use the existing brand intakes as the source of provenance; do not depend on mutable latest downloads or a local-only clone. Do not copy all artwork or fonts by default: destination and reuse terms remain review items. The current v0.6 guard milestone does not move brand source files.
 
 Treat each brandbook's product recommendations as source input, not evidence of an implemented product. Source `flows` and `cases` need an explicit mapping to Fablebook's model before canon work; Fablebook's GLOSSARY owns UI terminology. A Logistify Route is a shipment-domain object, not a Fablebook Journey. The books should remain three Books with different jobs and screen constraints under the shared Logistify brand canon.
 
@@ -73,7 +73,7 @@ Treat each brandbook's product recommendations as source input, not evidence of 
 | Design canon and adopter Books | 1 | Canon core | 14 |
 | Design canon and adopter Books | 2 | Foundations, Themes, Directions, citations, coverage and To review | 15 |
 | Design canon and adopter Books | 3 | Canon lints, tokens task and DESIGN.md | 16 |
-| Design canon and adopter Books | 4 | Content track I - Fablebook brand book and the Logistify family | 17 |
+| Design canon and adopter Books | 4 | Content track I - Apply the Fablebook sourcebook and build the Logistify family | 17 |
 | Design canon and adopter Books | 5 | Content track II - Chatly and Clinicly | 18 |
 | Design canon and adopter Books | 6 | Bundle core with canon | 19 |
 | Checks and visual regression | 1 | Probe, Evidence and the Checks tab | 20 |
@@ -364,20 +364,20 @@ Legacy Phase 16. Future, not activated.
   5. The StreamData invariants for cast, URL state, id stability, manifest determinism, no new atoms, bounded render, frontmatter, contrast maths and telemetry metadata all run in CI.
 **Plans**: 4 (estimate)
 
-### Design canon and adopter Books / local slot 4: Content track I - Fablebook brand book and the Logistify family
+### Design canon and adopter Books / local slot 4: Content track I - Apply the Fablebook sourcebook and build the Logistify family
 
 Legacy Phase 17. Future, not activated.
 
-**Goal**: Fablebook has its own brand book, and the Logistify product family exists as three full Books under one brand canon.
+**Goal**: Fablebook's existing pinned v2.1 sourcebook is mapped into accepted product canon and brand surfaces, and the Logistify family exists as three full Books under one shared brand canon.
 **Mode:** mvp
 **Depends on**: Design canon and adopter Books / local slot 3
 **Requirements**: DOCS-04
 **Partial delivery**: QA-06 (Logistify's three Books; completes in Hardening and remaining twins / local slot 2).
 **UI hint**: yes
 **Success Criteria** (what must be TRUE):
-  1. Fablebook's brand book is built through the two-session external brand-book source process and covers the mark, docs site, README, Hex page and social card, while the workbench chrome stays ink-on-neutral.
+  1. The authored upstream Fablebook v2.1 sourcebook is made reproducible from its pinned provenance and integrated without reauthoring it; conflicts and asset rights are recorded, only approved assets are copied, and the accepted mark, docs, README, Hex page and social card follow its mapped rules while Workbench chrome stays ink-on-neutral.
   2. In `hosts/operator`, Logistify's brand canon and its three product Books (operator console, shipper portal, driver app) each have personas, jobs, terms, a Shell, Areas and Screens in a visually distinct, dense style with real en, de and fr switching.
-  3. The Logistify Books pass the canon lints, citation checks and coverage report, and Foundations shows their cards; a hand-authored minimal-token fallback keeps the phase mergeable if a brand book slips.
+  3. The Logistify Books pass the canon lints, citation checks and coverage report, and Foundations shows their cards. If an asset has unresolved rights or provenance, keep that asset out and record the gap without discarding the authored sourcebook or blocking unrelated canon work.
 **Plans**: 4 (estimate)
 
 ### Design canon and adopter Books / local slot 5: Content track II - Chatly and Clinicly

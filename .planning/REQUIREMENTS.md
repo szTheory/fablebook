@@ -34,16 +34,16 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RSC-01 | TBD | Pending |
-| RSC-02 | TBD | Pending |
-| RSC-03 | TBD | Pending |
-| RSC-04 | TBD | Pending |
+| RSC-01 | Phase 7 | Pending |
+| RSC-02 | Phase 7 | Pending |
+| RSC-03 | Phase 7 | Pending |
+| RSC-04 | Phase 7 | Pending |
 
 **Coverage:**
 - v1 requirements: 4 total
-- Mapped to phases: pending roadmapper
-- Unmapped: pending roadmapper
+- Mapped to phases: 4
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-11-19*
-*Last updated: 2026-11-19 after v0.6 scope selection*
+*Last updated: 2026-11-19 after v0.6 Phase 7 roadmap creation*

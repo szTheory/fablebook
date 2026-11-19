@@ -198,7 +198,7 @@ Every item is a v1.0 commitment. 1.0 ships only after the clearance soak (`.plan
 - [ ] **DOCS-01**: Exactly the 12 ExDoc guides listed in ADR 0019, plus cheatsheets and `llms.txt`. Troubleshooting headings are the canonical error strings. (ADR 0019, INT-20261028-01)
 - [ ] **DOCS-02**: Comparison and migration content for phoenix_storybook and Storybook, plus security-model and limits sections. (ADR 0019)
 - [ ] **DOCS-03**: `UPGRADING.md` per minor release, a compatibility matrix, and a deprecation policy. (ADR 0019, ADR 0007)
-- [ ] **DOCS-04**: Fablebook's own brand book is made with external brand-book source through the two-session process. It covers the mark, docs site, README, Hex page and social card. The workbench chrome stays ink-on-neutral. (ADR 0013, INT-20261028-15)
+- [ ] **DOCS-04**: Fablebook's authored upstream v2.1 sourcebook is pinned and integrated into accepted product canon and mapped brand surfaces without reauthoring it. Asset provenance and rights are reviewed before copying; the workbench chrome stays ink-on-neutral. (ADR 0013, INT-20261028-15, INT-20261119-05)
 
 ### A11Y
 
