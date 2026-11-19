@@ -1,0 +1,173 @@
+{
+  "actual_library_collision": "unknown",
+  "aggregate_gate": "open",
+  "candidate": null,
+  "complement": {
+    "count": 9712,
+    "sha256": "dd95380d2114a10a54ddbb79cc6ec5aab4805a52847dcacb4e2ca3daeda653b5"
+  },
+  "implementation_authorized": false,
+  "legacy_digest": "unresolved",
+  "macro_caller_ast": "unresolved",
+  "macro_explanation": "unresolved",
+  "one_use_gate_sha256": "4cf7014861cb7e94046e229d467c06f56a23a5f64a22d4bd707f71959bb5398e",
+  "one_use_gate_validation": "valid_denial",
+  "preflight_receipt_validation": "valid_not_run_after_prior_stop",
+  "readiness_sha256": "489cce918c08db649792d4f8cb00c5ae473e93c5ac21b70a22a25a9261ecf02b",
+  "request_consumption": "not_consumed",
+  "request_id": "R9",
+  "review_sha256": "b1110bd4e091b8be4d828bb3c08809912af5b076f4008f54c3950764bb726c25",
+  "schema_version": "05.r9.result.1",
+  "scope_payload_sha256": "e5c2c9555c120858fa1f07d6505cd3e5c3ba8b2d30f3a317fdc882b689950ddd",
+  "sec_01": "Pending",
+  "selected_gap_keys": [
+    "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+    "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller",
+    "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+    "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller"
+  ],
+  "selected_unresolved_rows": [
+    {
+      "domain": "source",
+      "gap_key": "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+      "lane": "core",
+      "reason": [
+        "The exact EX-177 current source path, source hash, package/archive revision, and complete span are null in both pinned Phase 4 lane gap records.",
+        "Phase 3 retains only the historical locator phoenix/lib/mix/tasks/phx.gen.context.ex:445; it is not current lane identity/span proof.",
+        "No retained Phase 3/4 symbol or span index is bound to EX-177, so a metadata-only schedule cannot be produced without opening source bodies to discover it."
+      ],
+      "source_body_reads": 0,
+      "source_path": null,
+      "source_sha256": null,
+      "source_span": null
+    },
+    {
+      "domain": "caller",
+      "gap_key": "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller",
+      "lane": "core",
+      "reason": [
+        "The exact EX-177 current source path, source hash, package/archive revision, and complete span are null in both pinned Phase 4 lane gap records.",
+        "Phase 3 retains only the historical locator phoenix/lib/mix/tasks/phx.gen.context.ex:445; it is not current lane identity/span proof.",
+        "No retained Phase 3/4 symbol or span index is bound to EX-177, so a metadata-only schedule cannot be produced without opening source bodies to discover it."
+      ],
+      "source_body_reads": 0,
+      "source_path": null,
+      "source_sha256": null,
+      "source_span": null
+    },
+    {
+      "domain": "source",
+      "gap_key": "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+      "lane": "floor",
+      "reason": [
+        "The exact EX-177 current source path, source hash, package/archive revision, and complete span are null in both pinned Phase 4 lane gap records.",
+        "Phase 3 retains only the historical locator phoenix/lib/mix/tasks/phx.gen.context.ex:445; it is not current lane identity/span proof.",
+        "No retained Phase 3/4 symbol or span index is bound to EX-177, so a metadata-only schedule cannot be produced without opening source bodies to discover it."
+      ],
+      "source_body_reads": 0,
+      "source_path": null,
+      "source_sha256": null,
+      "source_span": null
+    },
+    {
+      "domain": "caller",
+      "gap_key": "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller",
+      "lane": "floor",
+      "reason": [
+        "The exact EX-177 current source path, source hash, package/archive revision, and complete span are null in both pinned Phase 4 lane gap records.",
+        "Phase 3 retains only the historical locator phoenix/lib/mix/tasks/phx.gen.context.ex:445; it is not current lane identity/span proof.",
+        "No retained Phase 3/4 symbol or span index is bound to EX-177, so a metadata-only schedule cannot be produced without opening source bodies to discover it."
+      ],
+      "source_body_reads": 0,
+      "source_path": null,
+      "source_sha256": null,
+      "source_span": null
+    }
+  ],
+  "source_access": "closed",
+  "source_body_reads": 0,
+  "source_discovery": "metadata_only",
+  "source_emission": "not_run",
+  "static_only": true,
+  "status": "stopped",
+  "stop_reasons": [
+    "The exact EX-177 current source path, source hash, package/archive revision, and complete span are null in both pinned Phase 4 lane gap records.",
+    "Phase 3 retains only the historical locator phoenix/lib/mix/tasks/phx.gen.context.ex:445; it is not current lane identity/span proof.",
+    "No retained Phase 3/4 symbol or span index is bound to EX-177, so a metadata-only schedule cannot be produced without opening source bodies to discover it."
+  ],
+  "validation_order": [
+    {
+      "check": "scope-self-test",
+      "command": "python3 05-validate-evidence.py --self-test --scope",
+      "controls": 28,
+      "status": "passed"
+    },
+    {
+      "check": "exact-scope",
+      "command": "python3 05-validate-evidence.py --scope",
+      "complement_count": 9712,
+      "selected_rows": 4,
+      "status": "passed"
+    },
+    {
+      "check": "phase4-freshness-reuse",
+      "command": "reuse saved 04-VALIDATION.json receipt; no broad --all rerun",
+      "input_count": 36,
+      "status": "passed"
+    },
+    {
+      "check": "metadata-schedule",
+      "command": "python3 05-validate-evidence.py --metadata-schedule",
+      "source_emission": "not_run",
+      "status": "stopped_as_planned"
+    },
+    {
+      "check": "schedule-review",
+      "status": "not_run_after_metadata_stop"
+    },
+    {
+      "check": "security-review",
+      "status": "not_run_after_metadata_stop"
+    },
+    {
+      "check": "request-execute-preflight",
+      "command": "per-request Phase 5 preflight",
+      "phase_execute_preflight": "passed",
+      "status": "not_run_after_metadata_stop"
+    },
+    {
+      "check": "direct-count",
+      "generation": false,
+      "status": "not_run_after_metadata_stop"
+    },
+    {
+      "check": "one-use-gate",
+      "command": "python3 05-validate-evidence.py --one-use-gate",
+      "request_consumed": false,
+      "status": "passed_denied_before_count"
+    },
+    {
+      "check": "result-shape",
+      "source_emission": "not_run",
+      "status": "passed"
+    },
+    {
+      "check": "phase5-whitespace",
+      "command": "python3 05-validate-evidence.py --whitespace",
+      "file_count": 14,
+      "status": "passed"
+    },
+    {
+      "check": "git-diff-check",
+      "command": "git diff --check",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "check": "phase3-suites",
+      "reason": "evidence-only metadata scope; suites do not establish source identity or caller closure",
+      "status": "not_run_by_plan"
+    }
+  ],
+  "walking_skeleton": "blocked"
+}

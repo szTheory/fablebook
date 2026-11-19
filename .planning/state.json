@@ -12,12 +12,17 @@
       "number": "4",
       "name": "Evidence-only source and gap provenance closure",
       "status": "complete"
+    },
+    {
+      "number": "5",
+      "name": "Bounded two-lane source provenance slice",
+      "status": "complete"
     }
   ],
   "next": {
-    "command": "$gsd-progress --next",
-    "label": "Advance to the next step (verify)",
-    "reason": "Phase 2 of 2 · 100% · ready to verify"
+    "command": "$gsd-new-milestone",
+    "label": "Start a new milestone",
+    "reason": "All phases complete — start a new milestone"
   },
-  "updated_at": "2026-11-19T03:22:04.194Z"
+  "updated_at": "2026-11-19T06:47:54.089Z"
 }

@@ -1,0 +1,23 @@
+{
+  "denial_reasons": [
+    "The exact EX-177 current source path, source hash, package/archive revision, and complete span are null in both pinned Phase 4 lane gap records.",
+    "Phase 3 retains only the historical locator phoenix/lib/mix/tasks/phx.gen.context.ex:445; it is not current lane identity/span proof.",
+    "No retained Phase 3/4 symbol or span index is bound to EX-177, so a metadata-only schedule cannot be produced without opening source bodies to discover it."
+  ],
+  "readiness_file_sha256": "489cce918c08db649792d4f8cb00c5ae473e93c5ac21b70a22a25a9261ecf02b",
+  "request_consumed": false,
+  "request_id": "R9",
+  "review_file_sha256": "b1110bd4e091b8be4d828bb3c08809912af5b076f4008f54c3950764bb726c25",
+  "schema_version": "05.r9.one-use-gate.1",
+  "selected_scope_payload_sha256": "e5c2c9555c120858fa1f07d6505cd3e5c3ba8b2d30f3a317fdc882b689950ddd",
+  "serialized_request_sha256": null,
+  "source_emission": "not_run",
+  "source_span_sha256s": {},
+  "status": "denied_before_count",
+  "subreceipt_sha256": {
+    "direct_count": "2f272807718d454a38a047123f96ee6bea7c384f7ecd62a85c3f18bcd4cd9a52",
+    "execute_preflight": "7af6b5a21a7bed716b87a2385509832bffd7c509bae8640375af47e30a676d72",
+    "schedule_review": "b72e155d9036aaa03efd04497e2555487b0d0bf2a467247dfbfd76b0f0a0ea55",
+    "security_review": "b72e155d9036aaa03efd04497e2555487b0d0bf2a467247dfbfd76b0f0a0ea55"
+  }
+}
