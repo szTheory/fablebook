@@ -32,6 +32,10 @@ gaps:
         issue: "Active generation is ENV-20261117-06-supported-20261117T204102Z; size is 19,633,625 bytes and its hash, not the stable path's hash, is bound by 04-VALIDATION.json."
     missing:
       - "Publish or bind the active ENV06 typed-gap generation at the exact stable consumer path, then refresh the manifest/validation bindings and obtain review of the resulting exact generation."
+audit_acknowledged:
+  milestone: v0.4
+  at: 2026-11-19
+  status: gaps_found
 ---
 
 # Phase 4: Evidence-only source and gap provenance closure — Verification

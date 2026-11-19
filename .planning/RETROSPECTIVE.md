@@ -1,5 +1,51 @@
 # Project Retrospective
 
+## Milestone: v0.4 — Guard Aggregate Reconciliation
+
+**Shipped:** 2026-11-19 local (bounded development milestone)
+**Phases:** 3 | **Plans:** 9 | **Implementation tasks:** 14
+
+### What Was Built
+
+- Rejoined 226 original identities per pinned lane and preserved exact live, historical, delivered and pending MFA partitions.
+- Produced lane-pinned provenance or keyed gaps across the 9,716-row source/caller set, then selected four EX-177 rows with the other 9,712 preserved as a hash-bound complement.
+- Delivered through PRs #90–#92 with exact-head hosted CI. The aggregate gate remains open, candidate remains null, and implementation remains unauthorized.
+- A separately authorized discovery recorded the exact EX-177 helper span and one direct caller on each lane; broader caller closure remains open. See the [closeout](milestones/v0.4-CLOSEOUT.md) and [discovery report](research/2026-11-19-ex177-source-discovery.md).
+
+### What Worked
+
+- Cheap byte equality, hash, JSON-schema and planning preflight checks found actionable mismatches before any long suite. The current Phase 4 stable payload equals ENV06, and its current validation receipt passes; no suite was needed to answer that question.
+- Keeping one primary checkout avoided handoff and merge overhead while the work was sequential. No extra worktree was needed.
+- Reviewing exact-head hosted CI and the merged receipt at closeout prevented unnecessary reruns. The old Phase 3 result and append-sensitive Phase 5 validator were preserved instead of rewritten.
+- The owner decision was captured once in an intent record; the stale historical Phase 3 report was not used to restart a completed phase.
+
+### What Was Inefficient
+
+- An assistant-side cumulative output ceiling was mistakenly set to the same size as the project execution budget. It caused repeated ceiling increases and a run that stopped before useful work. INT-20261117-11 removed that assistant-side ceiling; do not restore it or keep extending it. Keep only the scoped source, provenance, count, context-fit and one-use gates that protect evidence.
+- Some long test work happened before cheap checks established that the requested suite could answer the blocker. Future work should first verify exact input identity, hash, span, lane, schema and the specific question a suite will answer; skip the suite when it cannot resolve that question.
+- The closeout CLI left active phase fields after moving phase directories. The post-archive preflight caught the transition mismatch; canonical STATE.md was reset to a supported between-milestones state and `state.json` refreshed. Run the appropriate start preflight after completing the archive transition.
+- The generic audit writer cannot acknowledge a table-shaped deferred item. Follow the existing immutable-archive exception, record the carry in a closeout receipt, and keep the original bytes unchanged.
+
+### Patterns Established
+
+- Run the cheapest relevant check first: exact file/hash/span and schema consistency before source counts, focused checks before broad suites, and a clear decision about whether a full suite can change the answer.
+- Separate immutable phase evidence from append-only delivery receipts; never rerun an old validator if a receipt append would rewrite its historical result.
+- Close a bounded milestone against its own requirements while carrying wider gates and safety stops forward unchanged.
+- Keep one workspace for sequential work. Add parallel workspaces only when work is truly independent and concurrent.
+
+### Key Lessons
+
+1. Diagnose the actual bottleneck before changing any budget or limit. A context limit, source-size cap and project execution allowance serve different purposes; never make one a copy of another.
+2. Check whether the expensive operation can answer the open question. If a test cannot establish missing source identity or caller coverage, stop before running it.
+3. After a milestone archive moves files, refresh the generated state projection and check the explicit between-milestone route before starting the next scope.
+4. A closeout override records a decision; it does not change the report verdict, fix a gap, close the aggregate gate or authorize implementation.
+
+### Cost Observations
+
+- v0.4 contains three phases, nine plans and 14 tasks. Model usage, session count and billed token cost were not recorded, so no cost estimate is available.
+- PR #92 hosted CI took about 9.5 minutes; the core lane was the critical path. One sample did not justify a cache, concurrency, dependency or coverage change. Keep measuring each hosted CI receipt and optimize only repeatable, safe bottlenecks.
+- The local `act` compatibility limitation remains documented. Hosted exact-head receipts passed; closeout did not rerun suites or add dependencies.
+
 ## Milestone: v0.3 — Bounded ASN.1 RTT Guard Evidence
 
 **Shipped:** 2026-11-13 local (bounded development milestone)
@@ -89,5 +135,6 @@ Recorded implementation intervals total 219 minutes; source summaries use diff-s
 | v0.1 legacy | Superseded and incomplete; no whole-product ship claim | Preserve all evidence and unfinished acceptance under the numbering reset |
 | v0.2 | Selected increment delivered and archived | Sequential bounded milestone; explicit carry-forward gates and immutable delivery facts |
 | v0.3 | Selected increment delivered and archived; scoped audit records nonblocking debt | Per-lane source evidence and integration partitions; explicit between-milestone state validation |
+| v0.4 | Aggregate rejoin and three bounded evidence phases delivered; wider gate remains open | Measure the true bottleneck, run exact consistency checks before long suites, preserve stale reports, and transition explicitly to between-milestone state |
 
-The shared lesson is to keep scope and delivery evidence explicit. Two bounded milestones have completed under this format; that sample does not support a statistically meaningful performance trend.
+The shared lesson is to keep scope, delivery evidence and unresolved gates explicit. Three bounded milestones have completed under this format; that sample does not support a statistically meaningful performance trend.

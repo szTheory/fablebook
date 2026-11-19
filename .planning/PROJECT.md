@@ -14,9 +14,9 @@ If everything else fails, a scenario must still render with production fidelity 
 
 **Design canon milestone / local slot 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
 
-## Last Shipped Milestone: v0.3 Bounded ASN.1 RTT Guard Evidence
+## Last Shipped Milestone: v0.4 Guard Aggregate Reconciliation
 
-v0.3 shipped on 2026-11-13 as bounded static evidence for three selected ASN.1 RTT functions on both pinned lanes. It records exact source and caller evidence, lane-specific controls, and reviewed delivery receipts. It does not establish runtime behavior or close the full EX-107 row, the guard aggregate, Walking Skeleton, or SEC-01. See the [v0.3 archive](milestones/v0.3-ROADMAP.md) and [closeout receipt](milestones/v0.3-CLOSEOUT.md).
+v0.4 closed locally on 2026-11-19 as a bounded evidence milestone delivered through PRs #90–#92 with green exact-head hosted CI. Its six requirements are satisfied; source and caller gaps, legacy digest uncertainty, and the wider guard gate remain open. The override closeout preserves Phase 3's historical pass without rerunning it and carries the Phase 4 stale report and prior v0.1 deferrals. This is not a package release or runtime-safety proof. See the [v0.4 archive](milestones/v0.4-ROADMAP.md), [audit](milestones/v0.4-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.4-phases/), and [closeout receipt](milestones/v0.4-CLOSEOUT.md).
 
 ## Current State
 
@@ -33,26 +33,31 @@ The closeout is `override_closeout` for two newly acknowledged artifacts and fiv
 items carried from v0.2. The frozen v0.1 source and all wider owners remain intact.
 The complete guard aggregate and installed-wide remainder stay open; Walking
 Skeleton remains blocked; SEC-01 remains Pending with Controls and first bundle /
-its first local slot. v0.4 Guard Aggregate Reconciliation is now selected; it begins with a full current lane rejoin and candidate sizing, without repeating the delivered EX-010 or EX-107 implementation slices. See the [v0.3
+its first local slot. See the [v0.3
 requirements](milestones/v0.3-REQUIREMENTS.md), [audit](milestones/v0.3-MILESTONE-AUDIT.md),
 [phase evidence](milestones/v0.3-phases/), [closeout receipt](milestones/v0.3-CLOSEOUT.md),
 [full product register](references/PRODUCT-REQUIREMENTS.md), and [future product
 roadmap](references/PRODUCT-ROADMAP.md).
 
-## Current Milestone: v0.4 Guard Aggregate Reconciliation
+v0.4 is archived as a bounded static-evidence milestone: Phase 3 rejoined the
+two-lane identity and MFA sets; Phase 4 preserved a complete typed-gap package
+with open source, caller, and digest gaps; Phase 5 selected four EX-177 rows and
+kept the other 9,712 rows as the exact complement. The later authorized discovery
+identified the exact Phoenix helper span and one direct caller on each lane, but
+did not establish package-wide caller closure. The owner approved the stale
+Phase 3 fingerprint override and chose to carry the stale Phase 4 gap report and
+three existing v0.1 deferrals. Candidate remains null, implementation remains
+unauthorized, and the aggregate gate stays open. See [INT-20261119-02](intent/sources/2026-11-19-02-v04-closeout-and-continuation.md).
 
-**Goal:** Rejoin the complete surviving guard exclusion scope against both pinned lanes, with exact source and caller evidence and a bounded next-scope estimate.
+## Next Milestone Goals
 
-**Target features:**
-- A repeatable read-only inventory that joins current lane membership to original row identities, preserving delivered rows and exact pending complements.
-- Per-lane source identities and caller/delegate paths, with missing or mismatched evidence made explicit.
-- Current source, context, and effort sizing for a candidate guard increment within inherited limits; no candidate is selected when evidence or fit is insufficient.
+The owner authorized planning a bounded continuation of the EX-177 discovery scope in [INT-20261119-01](intent/sources/2026-11-19-01-authorize-bounded-source-discovery.md). Use the current [discovery report](research/2026-11-19-ex177-source-discovery.md) as evidence: the exact helper span and one direct caller are known on both lanes, while package-wide caller closure and candidate fit remain unproven. Keep the four selected rows and 9,712-row complement explicit. No new milestone or phase is active until the typed planning gates pass; no runtime invocation, implementation, aggregate closure, or automatic follow-on is authorized.
 
-This milestone does not repeat EX-010 or EX-107 implementation, change guard dispositions, close the aggregate gate, resolve SEC-01, or start product UI work. The active requirements are in [REQUIREMENTS.md](REQUIREMENTS.md); the wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md).
+Use the archived [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md) for its acceptance history. The wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md).
 
 ## Requirements
 
-The lists below summarize the wider v1 product vision; they are not a live progress ledger. The current v0.4 milestone acceptance is in [REQUIREMENTS.md](REQUIREMENTS.md). Use the archived [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md) and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
+The lists below summarize the wider v1 product vision; they are not a live progress ledger. Use the archived [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md), [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md), and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
 
 ### Validated
 
@@ -297,7 +302,8 @@ Every item below is a v1.0 commitment.
 
 - **Delivered v0.2:** Contract/static evidence only; no production code, workflow or dependency changes. Independent exact-lane findings and symmetric selection feed the existing Elixir/Phoenix core/floor test lanes. Full delivery and diff measurements are in milestones/v0.2-CLOSEOUT.md.
 - **Delivered v0.3:** Five test/support files add 816 lines of source-backed static evidence and controls; no runtime library code changed. The existing Elixir/Phoenix core/floor lanes and their hosted delivery gates remain in use.
-- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; five previously acknowledged artifacts and two v0.3 acknowledgements remain unresolved under their existing owners. No new scope is inferred.
+- **Delivered v0.4:** Planning and evidence artifacts only; no application source, dependencies, or runtime behavior changed. Three phases, nine plans and 14 tasks delivered through PRs #90–#92. The aggregate gate, candidate-null decision, actual-library collision stop, Macro checkpoints, SEC-01 owner and Walking Skeleton block remain unchanged.
+- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.4's closeout and carried audit debt are recorded in its receipt. The next authorized action is planning-only and remains subject to typed gates; no extra scope is inferred.
 
 - **Ecosystem (verified 2026-10-28):**
   - Phoenix 1.8.16 and LiveView 1.2.13 are current; there is no Phoenix 1.9.
@@ -364,6 +370,7 @@ Every item below is a v1.0 commitment.
 
 | Decision | Rationale | Outcome |
 |---|---|---|
+| Keep the v0.4 evidence milestone bounded and carry unresolved records explicitly (INT-20261119-02) | Preserve the historical Phase 3 pass and archived v0.1 evidence while allowing a useful new planning boundary | v0.4 is locally archived under `override_closeout`; the stale Phase 3 and Phase 4 reports remain unchanged, the old deferred source hash is preserved, and the guard aggregate remains open. The authorized EX-177 continuation can be planned only if typed gates pass. |
 | Retain the selected tracing-front matcher (v0.2 / Phase 1, INT-20261111-11) | Independent exact-lane source review distinguishes caller callbacks and the fixed native boundary from evaluator or atom-creation behavior | PR #85 delivers static dispositions and individual both-lane witnesses with green candidate/main CI. Only EX-010 advances; runtime safety and aggregate/product gates remain open. |
 | Close only the verified ASN.1 RTT slice (v0.3 / Phase 2, INT-20261111-13) | Exact lane membership, source/caller evidence and individual controls can be independently checked against final delivery receipts | v0.3 is archived under `override_closeout`; GRC-04–06 passed after reviewed PR #88 and green final-head/main CI. The full EX-107 remainder, runtime limits, collision owner stop and wider gates stay open; no next scope is selected. |
 | Validate lane-selection policy before expensive suites (v0.2 / Phase 1) | Broad tests exposed two wrong-lane tests and an unsupported custom exclusion | Symmetric core/floor tags, wrong-lane and unrelated-tag negatives, cheap CI-shape/lint first and a final focused review preserve coverage while avoiding repeated broad failures. |
@@ -479,4 +486,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-13 after v0.4 Guard Aggregate Reconciliation was selected; the guard gate remains open pending complete aggregate proof.*
+*Last updated: 2026-11-19 after v0.4 Guard Aggregate Reconciliation closeout; the guard gate remains open pending complete aggregate proof.*

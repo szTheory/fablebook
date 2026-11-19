@@ -1,72 +1,43 @@
-# Roadmap: v0.4 Guard Aggregate Reconciliation — Fablebook
+# Roadmap: Fablebook
 
 ## Milestones
 
-- 🔄 **v0.4 Guard Aggregate Reconciliation** — active; Phase 3 owns the current full-scope rejoin and next-scope sizing.
-- ✅ **v0.3 Bounded ASN.1 RTT Guard Evidence** — Phase 2 shipped 2026-11-13; [full roadmap and phase details](milestones/v0.3-ROADMAP.md).
-- ✅ **v0.2 Guard coverage recovery** — Phase 1 shipped 2026-11-11; [full roadmap and phase details](milestones/v0.2-ROADMAP.md).
+- ✅ **v0.4 Guard Aggregate Reconciliation** — bounded development milestone archived 2026-11-19; `override_closeout`; wider guard gate remains open. [Roadmap](milestones/v0.4-ROADMAP.md) · [closeout](milestones/v0.4-CLOSEOUT.md)
+- ✅ **v0.3 Bounded ASN.1 RTT Guard Evidence** — shipped locally 2026-11-13; [full roadmap and phase details](milestones/v0.3-ROADMAP.md).
+- ✅ **v0.2 Guard coverage recovery** — shipped locally 2026-11-11; [full roadmap and phase details](milestones/v0.2-ROADMAP.md).
 - ⚠️ **v0.1 Legacy planning cycle** — superseded and incomplete; [historical roadmap](milestones/v0.1-ROADMAP.md).
 
 ## Phases
 
-- [x] **Phase 3: Guard aggregate scope rejoin and candidate sizing** — Reconcile the complete current two-lane scope and size a bounded next decision. (completed 2026-11-18)
-- [x] **Phase 4: Evidence-only source and gap provenance closure** — Complete the lane-pinned source and typed-gap provenance needed to explain Phase 3's coverage and digest gaps. (completed 2026-11-19)
-- [x] **Phase 5: Bounded two-lane source provenance slice** — Resolve one exact two-lane source and direct-caller evidence slice with explicit complement and preserved safety gates. (completed 2026-11-19)
+<details>
+<summary>✅ v0.4 Guard Aggregate Reconciliation (Phases 3–5) — ARCHIVED 2026-11-19</summary>
 
-**Milestone key:** guard-recovery
+- [x] Phase 3: Guard aggregate scope rejoin and candidate sizing (5/5 plans) — completed 2026-11-18.
+- [x] Phase 4: Evidence-only source and gap provenance closure (3/3 plans) — completed 2026-11-19.
+- [x] Phase 5: Bounded two-lane source provenance slice (1/1 plan) — completed 2026-11-19.
 
-### Phase 3: Guard aggregate scope rejoin and candidate sizing
+See the [archived roadmap](milestones/v0.4-ROADMAP.md), [requirements](milestones/v0.4-REQUIREMENTS.md), [audit](milestones/v0.4-MILESTONE-AUDIT.md), and [phase evidence](milestones/v0.4-phases/).
 
-**Goal:** The owner can inspect the complete current row-to-MFA join on core and floor, lane-specific source identities and caller/delegate paths, exact pending complements, and measured sizing for a possible bounded guard increment. If the evidence or fit is insufficient, the phase reports the exact gap and selects no implementation slice.
-
-**Depends on:** Delivered v0.2 Phase 1 and v0.3 Phase 2 receipts are reusable only within their proven scopes. This phase continues global numbering at 3 and does not reopen delivered work.
-
-**Requirements:** GSR-01, GSR-02, GSR-03, GSR-04, GSR-05, GSR-06.
-
-**Success criteria:**
-1. The read-only inventory records both pinned lane identities and provenance, with the complete current target inventory needed by the original exclusion set.
-2. Every original exclusion identity maps to its current owner and exact live per-lane MFA set, with additions, missing members, delivered rows, and pending complements inspectable.
-3. Each surviving row's target set links to exact per-lane sources and relevant caller/delegate paths, or lists the specific missing evidence.
-4. Historical EX-010 and EX-107 partitions and the actual merged delivery receipts remain distinct and traceable; no bounded slice is represented as aggregate closure.
-5. Current source-file, context-token, and effort sizing either yields a candidate within inherited limits or names the concrete fit gap and leaves the next owner decision explicit.
-
-**Boundaries:** Static evidence only. No audited API, callback, atom-sink, or generated-code invocation. Preserve the actual-library collision stop, SEC-01 Pending status, the open guard gate, and the Walking Skeleton block. Product UI and brand work remain outside this milestone.
+</details>
 
 <details>
 <summary>✅ v0.3 Bounded ASN.1 RTT Guard Evidence (Phase 2) — SHIPPED 2026-11-13</summary>
 
 - [x] Phase 2: Bounded ASN.1 RTT guard evidence (5/5 plans) — completed 2026-11-13.
 
+See the [archived roadmap](milestones/v0.3-ROADMAP.md) and [closeout](milestones/v0.3-CLOSEOUT.md).
+
 </details>
 
 <details>
 <summary>✅ v0.2 Guard coverage recovery (Phase 1) — SHIPPED 2026-11-11</summary>
 
-- [x] Phase 1: Bounded guard continuation — completed 2026-11-11.
+- [x] Phase 1: Bounded guard continuation (3/3 plans) — completed 2026-11-11.
+
+See the [archived roadmap](milestones/v0.2-ROADMAP.md) and [closeout](milestones/v0.2-CLOSEOUT.md).
 
 </details>
 
-### Phase 4: Evidence-only source and gap provenance closure
+## Next
 
-**Goal:** For all 226 identities on core and floor, produce complete lane-pinned target-source association and typed-gap rows; trace the caller that derives source-coverage status; and establish the nested SIZING digest recipe. If inputs are missing or evidence cannot fit within inherited limits, report exact identity/provenance gaps and leave candidate null.
-**Requirements:** GSR-03, GSR-05
-**Depends on:** Phase 3's recorded bounded trace stop; Phase 4 supplies evidence only and does not close Phase 3 or authorize a guard implementation.
-**Boundaries:** Static evidence only. No audited OTP APIs, callbacks, atom sinks, runtime evaluation, generated-code paths, guard behavior changes, candidate promotion, aggregate closure, or automatic follow-on. Preserve the collision and Macro stops, SEC-01 Pending status, and Walking Skeleton block.
-**Plans:** 3 plans exist under `.planning/phases/04-evidence-only-source-and-gap-provenance-closure/`.
-**Verification:** Goal verification passed 4/4. The active record package and stable consumer paths validate; source, caller, and legacy-digest gaps remain open, and candidate stays null. See [04-VERIFICATION.md](phases/04-evidence-only-source-and-gap-provenance-closure/04-VERIFICATION.md) and [04-HANDOFF.md](phases/04-evidence-only-source-and-gap-provenance-closure/04-HANDOFF.md). This completes Phase 04's bounded evidence handoff; it does not close Phase 3's wider safety gates or complete the v0.4 milestone.
-
-**Budget note:** Earlier recovery-envelope numbers are historical. INT-20261117-11 removed the cumulative assistant-output ceiling and reserve stop; counters are informational. Exact source identity/span, per-request count, independent review, one-use, provenance, context-fit, and security gates remain active. See the [recovery record](forensics/phase4-budget-reset-20261117.md) for the history.
-
-### Phase 5: Bounded two-lane source provenance slice
-
-**Goal:** For the exact EX-177 target `Elixir.Mix.Tasks.Phx.Gen.Context.prompt_for_code_injection/1`, reconcile the retained core and floor membership, then produce lane-pinned source association and bounded direct-caller evidence or exact keyed gaps. Preserve the full unselected complement. If the source identity, caller set, context fit, or any request gate cannot be established within inherited limits, stop before source emission and record the concrete gap.
-**Requirements:** GSR-03
-**Depends on:** Delivered Phase 4 evidence handoff; Phase 4 remains record-valid with open semantic gaps.
-**Plans:** 1/1 plans executed exists under `.planning/phases/05-bounded-two-lane-source-provenance-slice/`.
-- [x] 05-01-PLAN.md
-
-**Selected scope:** EX-177, one exact MFA on core and floor; four current typed-gap rows (source and caller per lane) selected from 9,716. The pending complement is the other 9,712 rows, including all 18 unknown-target-set rows and the remaining 225 identities per lane.
-**Boundaries:** Static evidence only. One fresh source request may be consumed only after exact identity/span review, independent schedule review, fresh direct count, execute preflight, and a one-use gate. Maximum five exact source files per task; do not replay a consumed or truncated request. No audited API, callback, atom sink, runtime evaluation, generated-code invocation, guard behavior change, candidate promotion, implementation, aggregate closure, or automatic follow-on. The legacy nested digest remains unresolved unless its exact inputs become available within this selected slice; do not reread the helper to guess its recipe.
-
-**Wave 1**
-- [ ] [05-01-PLAN.md](phases/05-bounded-two-lane-source-provenance-slice/05-01-PLAN.md) — EX-177 scope, gated source request, and keyed evidence or stop result.
+No milestone or phase is active. The owner authorized planning for the bounded EX-177 discovery continuation after v0.4 closeout; it must pass the typed planning gates before it is added here. The [product roadmap](references/PRODUCT-ROADMAP.md) remains the source for future product scope.

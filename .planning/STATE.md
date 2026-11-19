@@ -2,20 +2,19 @@
 gsd_state_version: "1.0"
 milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
-current_phase: 5
-current_plan: Not started
-status: completed
-last_updated: "2026-11-19T05:54:18.646Z"
+status: complete
+last_updated: "2026-11-19T14:00:18Z"
 last_activity: 2026-11-19
-last_activity_desc: Phase 5 complete
-state_head: b1cd9b410b556608c87047bd871fa38bf954e32e
+last_activity_desc: Milestone v0.4 completed and archived
+state_head: df9bba9fbf5fa6efd665e7d5bfea7e827d3035c0
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
   completed_plans: 9
-  percent: 67
+  percent: 100
 resumed_at: 2026-11-17 under owner direction INT-20261117-11
+current_phase: null
 ---
 
 # Project State
@@ -23,33 +22,29 @@ resumed_at: 2026-11-17 under owner direction INT-20261117-11
 ## Project Reference
 
 See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
+[v0.4 closeout](milestones/v0.4-CLOSEOUT.md),
+[v0.4 audit](milestones/v0.4-MILESTONE-AUDIT.md),
 [v0.3 closeout](milestones/v0.3-CLOSEOUT.md), the
 [worktree reconciliation](references/WORKTREE-RECONCILIATION-2026-11-13.md), and the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 5 — Bounded two-lane source provenance slice
+**Current focus:** v0.4 is archived. Codex is continuing the owner-authorized EX-177 planning boundary; the wider guard aggregate gate remains open.
 
 ## Current Position
 
-Phase: 5
-Current Plan: Not started
-Status: All phases complete
-Last activity: 2026-11-19 — Phase 5 complete
+Phase: Between milestones
+Plan: —
+Status: v0.4 complete; next scope authorized for planning, subject to typed gates
+Last activity: 2026-11-19 — Milestone v0.4 completed and archived
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `gsd/phase-05-bounded-two-lane-source-provenance-slice`, HEAD `b1cd9b410b556608c87047bd871fa38bf954e32e`; Phase 4 delivery bookkeeping and Phase 5 planning artifacts are local for this phase PR. No additional worktree was created.
-- Phase 04 verification passed 4/4. The current [validation](phases/04-evidence-only-source-and-gap-provenance-closure/04-VALIDATION.json) reports `pass_with_open_gaps`; the stable typed-gap file matches ENV06 byte-for-byte, and the old generation remains preserved separately. The exact review and final `--all` package check pass.
-- Phase 3 verification reports 21/21 must-haves passed, both automated UAT checks pass, and the security record has no open threats. No human UAT is useful for this evidence-only result.
-- R1–R8 remain consumed with their recorded delivery statuses; R7 is delivery-unverified and excluded from claims. The owner authorized one bounded Phase 5 scope in [INT-20261118-05](intent/sources/2026-11-18-05-authorize-one-bounded-evidence-scope.md). The exact EX-177 request remains closed until the independent schedule/security reviews, fresh preflight, direct count, and one-use gate all pass; at most one unique R9 request may be consumed.
-- PR #90 reviewed head `def07c39af01f95952070ed5156f0d605c399a7a` squash-merged as `488387b1d446f5c03bdf11bb20e7f0c1e7087b88`; exact-head [hosted CI run 44438380336](https://github.com/szTheory/fablebook/actions/runs/44438380336) passed core, floor, Dialyzer, security, and `ci-gate`. Its merge-commit main CI passed in run 44441004623.
-- PR #91 reviewed head `3d72641d978c5a0cbce62219590227a7d0efbea7` squash-merged as `b1cd9b410b556608c87047bd871fa38bf954e32e`; exact-head [hosted CI run 44451045250](https://github.com/szTheory/fablebook/actions/runs/44451045250) passed core, floor, Dialyzer, security, and `ci-gate`. The squash commit inherited the ship-note `[ci skip]`, so GitHub did not start a second main push run; its tree matches the checked PR head. The delivery receipt is in [PHASE-DELIVERIES.json](references/PHASE-DELIVERIES.json) and will be carried on the next substantive push.
-- Safety stops unchanged: static-only boundary; actual library collision unknown; Macro caller-AST and explanation wording unresolved; candidate null; implementation unauthorized; aggregate gate open; Walking Skeleton blocked; SEC-01 pending. Do not invoke audited OTP/runtime paths.
-- Phase 5 plan review passed with no findings. Its exact slice is EX-177 on both lanes: four selected source/caller rows, with the other 9,712 rows retained as the full pending complement. The legacy digest remains unresolved.
-- Next actor: Codex executes Phase 5 Plan 01 under the reviewed gates. Source output remains not-run until every per-request review, count, execute-preflight, security, and one-use check passes. A failed gate ends this one bounded scope; no retry, family swap, or automatic follow-on occurs.
-- Budget policy: INT-20261117-11 removes the cumulative assistant-output ceiling and reserve stop. Counters are informational; exact-source count, review, preflight, provenance and security gates remain active.
-- Delivery boundary: Phases 3 and 04 are delivered. The bounded Phase 04 handoff does not close the wider v0.4 gate. Phase 5 is authorized only for the one selected EX-177 evidence slice; implementation and runtime target execution remain unauthorized.
+- Checkout: `~/projects/fablebook`, branch `main`, HEAD `df9bba9fbf5fa6efd665e7d5bfea7e827d3035c0`. v0.4 is archived locally; PRs #90–#92 have merged receipts and green exact-head CI. No additional worktree was created.
+- The owner approved the v0.4 closeout override and chose to carry the audit items as debt. Phase 3's historical 21/21 pass remains unchanged despite its stale fingerprint. Phase 4's old `gaps_found` report remains unchanged and acknowledged; the current stable and ENV06 payload files match and the package receipt passes. The same three v0.1 deferred items remain unchanged under the prior immutable-source exception.
+- The owner authorized planning a bounded EX-177 continuation after closeout. [INT-20261119-01](intent/sources/2026-11-19-01-authorize-bounded-source-discovery.md) and its [discovery report](research/2026-11-19-ex177-source-discovery.md) record the exact target span and one direct caller per lane. Package-wide caller closure remains unproven; the four selected rows and 9,712-row complement stay fixed. Phase 5 R9 remains denied and unconsumed.
+- Stops remain: candidate null; implementation unauthorized; aggregate gate open; actual library collision unknown; Macro caller-AST and explanation wording unresolved; SEC-01 pending; Walking Skeleton blocked; legacy digest unresolved. Do not invoke audited OTP/runtime paths.
+- **Next actor: Codex.** Repair the between-milestone state, run `milestone-start` preflight, and continue the authorized planning workflow only if typed gates pass. If the gate requires a broader owner decision, record the precise blocker and ask only about that change.
 
 ## Performance Metrics
 
@@ -150,6 +145,7 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 | Category | Item | Status | Deferred At | Milestone |
 |----------|------|--------|-------------|-----------|
+| verification_gaps | Phase 04 / 04-VERIFICATION-GAPS-FOUND.md | stale historical report; acknowledged, underlying verdict preserved | 2026-11-19 | v0.4 |
 | debug_sessions | ci-timing-release-blocker | diagnosed; writer acknowledgement | 2026-11-11 | v0.2 |
 | seeds | SEED-261110-iry | dormant; writer acknowledgement | 2026-11-11 | v0.2 |
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: IN-02 smoke route positive control | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
@@ -186,9 +182,9 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- Phase 5 verification passed and the plan is complete. Ship the reviewed change from this checkout with `$gsd-ship 5`; run `bin/planning_health --stage ship --phase 5` first. The owner authorized autonomous CI and squash merge when the exact-head required checks are green. No additional owner action is needed for this delivery.
+- Codex is authorized to plan the bounded EX-177 continuation after closeout. First make the canonical state recognize the completed v0.4 archive, then pass `bin/planning_health --stage milestone-start` and satisfy the typed owner gates before activating any milestone or integer phase.
 
 
-## Latest handoff — Phase 5 verified; shipping
+## Latest handoff — v0.4 archived; bounded EX-177 planning authorized
 
-Checkout: `~/projects/fablebook`, branch `gsd/phase-05-bounded-two-lane-source-provenance-slice`, based on main at `b1cd9b410b556608c87047bd871fa38bf954e32e`. PR #91 is merged with exact-head CI passed. Phase 3 and Phase 4 are delivered; Phase 5's one plan is complete, code-reviewed, security-checked, validation-checked, and goal-verified. Its four EX-177 source/caller rows remain precise open gaps because no current source path/hash/span index is retained; the 9,712-row complement is unchanged. R9 was not consumed, and no source body was read or emitted. Candidate remains null, implementation unauthorized, aggregate open, actual collision unknown, Macro checkpoints unresolved, SEC-01 Pending, Walking Skeleton blocked, and legacy digest unresolved. No automatic next phase is authorized. Next actor: Codex runs `bin/planning_health --stage ship --phase 5`, then `$gsd-ship 5`, uses local `act` where feasible, pushes the reviewed candidate, obtains hosted exact-head CI, and squash-merges if required checks are green. The owner need not review or approve that green PR again.
+Checkout: `~/projects/fablebook`, branch `main`, HEAD `df9bba9fbf5fa6efd665e7d5bfea7e827d3035c0`. v0.4 is archived locally under `override_closeout`; its audit reports 6/6 requirements satisfied and the aggregate gate remains open. Phase 3's stale historical fingerprint is preserved; Phase 4's stale historical gap report is acknowledged without changing its verdict; the three v0.1 deferred items remain byte-for-byte unchanged. The bounded EX-177 discovery is recorded, but package-wide caller closure remains open and R9 remains unconsumed. Candidate null, implementation unauthorized, collision unknown, Macro checkpoints unresolved, SEC-01 pending, Walking Skeleton blocked, legacy digest unresolved. **Next actor: Codex** to pass the typed milestone-start gate and plan only the authorized bounded continuation; no new scope, implementation, runtime call, aggregate closure, or automatic follow-on is authorized.
