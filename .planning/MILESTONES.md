@@ -1,5 +1,32 @@
 # Milestone history
 
+## v0.5 Bounded EX-177 Provenance Follow-through (Shipped: 2026-11-19)
+
+**Delivered:** Exactly four reviewed EX-177 source/caller observations and their saved provenance are machine-readable; the exact 9,712-row complement and all existing safety stops remain preserved.
+
+**Phases completed:** Phase 6 (1 phase, 1 plan, 1 task)
+
+**Closeout:** `override_closeout`; scoped audit status is `tech_debt` with 1/1 requirement, 1/1 phase, 1/1 integration, and 1/1 evidence flow satisfied; no critical gaps.
+
+Known verification overrides: 0 newly acknowledged; 3 inherited v0.1 deferred records remain unresolved under the prior immutable-source exception; 4 acknowledgement records from earlier closes remain carried forward.
+
+**Key accomplishments:**
+- Four reviewed EX-177 source/caller observations are machine-readable, with the 9,712-row complement and all existing stops preserved.
+- Added a standard-library checker that validates lane facts, exact membership, the pending complement, and preserved stops while keeping Phoenix source paths as values.
+- Delivered Phase 6 through reviewed PR #93 with green exact-head hosted CI; separately merged test compatibility PR #94 with green hosted CI.
+- Archived the complete phase evidence and audit without changing historical Phase 4/5 evidence or the three inherited v0.1 deferred records.
+
+| Delivery | PR | Reviewed head | Merged commit | Exact-head CI |
+|---|---:|---|---|---|
+| Phase 6 | [#93](https://github.com/szTheory/fablebook/pull/93) | `3970a381945cfcf63eb69c456a5b2a7465d8352d` | `b8852ac22aac1cb2b8151d85b189889ca0774aa8` | [44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030) |
+| Test compatibility | [#94](https://github.com/szTheory/fablebook/pull/94) | `2165c89843837705670a5b54756705ab3eee4e0a` | `6ca51acdc00f2bfa586aea6b4d68167c7974cfec` | [44582183055](https://github.com/szTheory/fablebook/actions/runs/44582183055) |
+
+[Roadmap](milestones/v0.5-ROADMAP.md), [requirements](milestones/v0.5-REQUIREMENTS.md), [audit](milestones/v0.5-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.5-phases/), and [closeout receipt](milestones/v0.5-CLOSEOUT.md).
+
+**What's next:** No next milestone is selected; the owner chooses the next bounded scope after its typed prerequisites pass.
+
+---
+
 ## v0.4 Guard Aggregate Reconciliation — Fablebook (Shipped: 2026-11-19)
 
 **Phases completed:** 3 phases, 9 plans, 14 tasks
