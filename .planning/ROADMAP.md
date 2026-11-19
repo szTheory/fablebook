@@ -2,7 +2,7 @@
 
 ## Milestones
 
-- 🚧 **v0.5 Bounded EX-177 Provenance Follow-through** — Phase 6 verification passed; reviewed PR and hosted CI delivery pending.
+- 🚧 **v0.5 Bounded EX-177 Provenance Follow-through** — Phase 6 verification passed; PR #93 is open and hosted exact-head CI is pending.
 - ✅ **v0.4 Guard Aggregate Reconciliation** — bounded development milestone archived 2026-11-19; `override_closeout`; wider guard gate remains open. [Roadmap](milestones/v0.4-ROADMAP.md) · [closeout](milestones/v0.4-CLOSEOUT.md)
 - ✅ **v0.3 Bounded ASN.1 RTT Guard Evidence** — shipped locally 2026-11-13; [full roadmap and phase details](milestones/v0.3-ROADMAP.md).
 - ✅ **v0.2 Guard coverage recovery** — shipped locally 2026-11-11; [full roadmap and phase details](milestones/v0.2-ROADMAP.md).
@@ -84,4 +84,4 @@ Saved lane facts from the reviewed discovery report:
 
 ## Next
 
-Phase 6 verification passed 5/5 must-haves; its focused checks pass, security has zero open threats, and the source-review hook skipped because the phase contains no reviewable source files after `.planning/` exclusions. Run feasible local CI, then prepare the reviewed PR and hosted exact-head CI under the existing standing authorization. Keep v0.5 open until the PR is merged and its delivery receipt is recorded. The [product roadmap](references/PRODUCT-ROADMAP.md) retains future product scope; no follow-on phase is authorized.
+Phase 6 verification passed 5/5 must-haves; its focused checks pass, security has zero open threats, and the source-review hook skipped because the phase contains no reviewable source files after `.planning/` exclusions. PR #93 is open. Local `act` 0.2.87 could not load the existing CI workflow because it rejects the `concurrency.queue` mapping; hosted exact-head CI is pending. Review the hosted result and timings, resolve any in-scope failure, and keep v0.5 open until the PR is merged and its delivery receipt is recorded. The [product roadmap](references/PRODUCT-ROADMAP.md) retains future product scope; no follow-on phase is authorized.

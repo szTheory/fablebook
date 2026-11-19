@@ -4,11 +4,11 @@ milestone: v0.5
 milestone_name: Bounded EX-177 Provenance Follow-through
 current_phase: 06
 status: completed
-stopped_at: Phase 06 locally verified; PR delivery pending
-last_updated: "2026-11-19T15:54:07Z"
+stopped_at: PR #93 open; hosted exact-head CI pending
+last_updated: "2026-11-19T16:05:12.848Z"
 last_activity: 2026-11-19
-last_activity_desc: Phase 06 complete
-state_head: 59d07c0c1585353b93b5cdbf6595e1dcfd7dc18e
+last_activity_desc: "Phase 6 shipped as PR #93; hosted exact-head CI pending"
+state_head: b6dabcf4ecc0598bbbadcd406ae459a0fd8a7cce
 progress:
   total_phases: 1
   completed_phases: 1
@@ -29,24 +29,24 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** v0.5 delivery — Phase 6's reviewed PR and hosted CI are pending
+**Current focus:** v0.5 delivery — PR #93 is open; hosted exact-head CI is pending
 
 ## Current Position
 
 Phase: 06
 Plan: Not started
-Status: Local phase verification passed; reviewed PR and hosted CI are pending
-Last activity: 2026-11-19 — Phase 06 verified 5/5 must-haves; preparing reviewed delivery
+Status: Local phase verification passed; PR #93 is open and hosted CI is pending
+Last activity: 2026-11-19 — Phase 6 shipped as PR #93; hosted exact-head CI pending
 
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `gsd/phase-6-bounded-ex-177-provenance-supplement`; no worktree was created. The topic branch preserves the eight pre-existing local-main commits and contains the Phase 6 authorization and task commits. Local `main` remains unchanged.
+- Checkout: `~/projects/fablebook`, branch `gsd/phase-6-bounded-ex-177-provenance-supplement`; no worktree was created. The PR carries the eight pre-existing local-main commits plus Phase 6 authorization, implementation, verification, and delivery-tracking commits. Local `main` remains unchanged.
 - Delivered locally: Phase 6 Plan 06-01 produced the exact four-key supplement and standard-library checker. The `--check` and `--self-test` commands pass; validation has zero gaps, security has zero open threats, and the goal verifier passed 5/5 must-haves. The source-review hook skipped because no source files remained after the project's `.planning/` exclusions. Archived Phase 4/5 inputs remain unchanged.
-- Remaining: Run feasible local CI with `act`, then push this reviewed candidate and open/update its PR for hosted exact-head CI under the standing authorization. Keep v0.5 open until the PR is merged and its delivery receipt is recorded.
+- Remaining: PR #93 is open. `act` 0.2.87 could not load `.github/workflows/ci.yml` because its schema rejects the existing `concurrency.queue` mapping. Monitor hosted exact-head CI, review timings and any failures, and fix attributable issues. Keep v0.5 open until the PR is merged and its delivery receipt is recorded.
 - Scope remains limited to the four EX-177 source/caller keys and exact 9,712-row complement. Do not reread source bodies, consume R9, search for more callers, invoke audited runtime paths, or make product changes. One observed `run/1` call per lane is not exhaustive caller closure.
 - Stops remain unchanged: candidate fit unresolved and candidate null; implementation unauthorized; aggregate gate open; R9 denied and unconsumed; actual library collision unknown; Macro caller-AST and explanation unresolved; SEC-01 Pending; Walking Skeleton blocked; legacy digest unresolved; automatic follow-up disabled.
-- **Next actor: Assistant.** Continue with local CI and the reviewed PR; no owner action is needed before the green hosted CI result. The owner acts at the merge decision. Do not start a new phase or milestone automatically.
+- **Next actor: Assistant.** Monitor hosted checks on PR #93 and resolve any in-scope failures. The owner acts at the merge decision after green checks. Do not start a new phase or milestone automatically.
 
 ## Performance Metrics
 
@@ -159,8 +159,8 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-19T15:54:07Z
-**Stopped at:** Phase 06 verified locally; reviewed PR and hosted exact-head CI pending
+**Last session:** 2026-11-19T16:06:24Z
+**Stopped at:** Phase 06 verified locally; PR #93 open and hosted exact-head CI pending
 **Resume file:** .planning/phases/06-bounded-ex-177-provenance-supplement/06-VERIFICATION.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5 is also complete and verified for the bounded EX-177 slice: four source/caller rows remain open because current source identity/span metadata is absent; the other 9,712 rows remain unchanged. R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was read or emitted. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
@@ -191,4 +191,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- The [active handoff](#active-handoff) owns Phase 6's local CI and reviewed PR delivery. Historical v0.4 disposition and delivery details remain in the [closeout receipt](milestones/v0.4-CLOSEOUT.md).
+- The [active handoff](#active-handoff) owns hosted CI follow-through for Phase 6 PR #93. Historical v0.4 disposition and delivery details remain in the [closeout receipt](milestones/v0.4-CLOSEOUT.md).
