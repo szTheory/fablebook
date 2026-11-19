@@ -4,18 +4,18 @@ milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
 current_phase: 04
 current_phase_name: Evidence-only source and gap provenance closure
-current_plan: 2
-status: "Phase 3 locally verified and complete; PR #90 delivery remains open; Phase 04 is next but not started."
-last_updated: "2026-11-19T01:32:27Z"
+current_plan: 3
+status: "Phase 04 passed goal verification and is ready for delivery; semantic source, caller, and digest gaps remain open by design."
+last_updated: "2026-11-19T02:54:30Z"
 last_activity: 2026-11-19
-last_activity_desc: Phase 3 goal verification passed 21/21; Phase 04 is next and has not started
-state_head: 7317bd0ea112dbe9c2a60e15322ec6bfccc4681d
+last_activity_desc: PR #90 merged after exact-head CI passed; Phase 3 delivery receipt recorded
+state_head: 488387b1d446f5c03bdf11bb20e7f0c1e7087b88
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 8
-  completed_plans: 6
-  percent: 50
+  completed_plans: 8
+  percent: 100
 resumed_at: 2026-11-17 under owner direction INT-20261117-11
 ---
 
@@ -29,26 +29,26 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Finish hosted delivery for verified Phase 3; Phase 04 remains unstarted.
+**Current focus:** Phase 04 evidence handoff is verified; prepare its reviewed PR without reopening closed source access.
 
 ## Current Position
 
 Phase: 04 — Evidence-only source and gap provenance closure
-Current Plan: 2
-Status: Phase 3 verification passed 21/21 and Phase 3 is marked complete. The next phase is ready but has not started; the current operational gate is final-head hosted CI for PR #90 and the owner's merge decision.
-Last activity: 2026-11-19 — automated Phase 3 verification and both UAT checks passed; safety stops remain open.
+Current Plan: 3
+Status: Phase 3 is delivered as merged PR #90. Phase 04 plans 04-01 through 04-03 and its goal verification are complete; delivery PR is pending. The package is record-valid with open semantic gaps.
+Last activity: 2026-11-19 — Phase 04 stable consumer path repaired; validator, exact review, package check, and 4/4 goal verification passed.
 
 ## Active Handoff
 
-- Checkout: `/Users/jon/projects/fablebook`, branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; primary checkout preserved and no additional worktree used. The local candidate reconciles with existing PR #90; final delivery remains on that PR.
-- Current local evidence is recorded in [03-RECOVERY-READINESS.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECOVERY-READINESS.md) and [03-05-SUMMARY.md](phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-SUMMARY.md). Core CI passed 459 tests with 10 excluded; the full floor suite passed 467 with 2 excluded; both focused selections passed 9 each. Phase 4 `--all` and Phase 3 `--consumer` pass with source access closed and open evidence gaps preserved.
+- Checkout: `~/projects/fablebook`, branch `gsd/phase-04-evidence-only-closeout`, HEAD `488387b1d446f5c03bdf11bb20e7f0c1e7087b88`; the stale local main ref was preserved as `archive/main-before-pr90-squash-20261119`, and no worktree was created.
+- Phase 04 verification passed 4/4. The current [validation](phases/04-evidence-only-source-and-gap-provenance-closure/04-VALIDATION.json) reports `pass_with_open_gaps`; the stable typed-gap file matches ENV06 byte-for-byte, and the old generation remains preserved separately. The exact review and final `--all` package check pass.
 - Phase 3 verification reports 21/21 must-haves passed, both automated UAT checks pass, and the security record has no open threats. No human UAT is useful for this evidence-only result.
 - R8 was consumed once for the exact reviewed helper span. No source body was reread and no request was replayed. The raw R8 body is not archived for rereading; the final review records this limitation. R7 remains consumed delivery-unverified and excluded from claims. No further source request is authorized by this recovery.
-- PR #90 remains the delivery vehicle and is unmerged. Its hosted final-head checks are the delivery gate; their live status is recorded on the PR. The owner merges only after all required checks pass. No merge/main CI or delivery receipt is claimed for the current candidate.
+- PR #90 reviewed head `def07c39af01f95952070ed5156f0d605c399a7a` squash-merged as `488387b1d446f5c03bdf11bb20e7f0c1e7087b88`; exact-head [hosted CI run 44438380336](https://github.com/szTheory/fablebook/actions/runs/44438380336) passed core, floor, Dialyzer, security, and `ci-gate`. The merged delivery is recorded in [PHASE-DELIVERIES.json](references/PHASE-DELIVERIES.json). Post-merge main CI has not run yet.
 - Safety stops unchanged: static-only boundary; actual library collision unknown; Macro caller-AST and explanation wording unresolved; candidate null; implementation unauthorized; aggregate gate open; Walking Skeleton blocked; SEC-01 pending. Do not invoke audited OTP/runtime paths.
-- Next actor: Codex completes the authorized PR #90 hosted-check path; after required checks are green, the owner decides whether to merge. Phase 04 execution has not started. No new source request, runtime target execution, guard increment, or implementation starts automatically. Existing source/caller, collision, Macro, candidate, implementation, aggregate, Walking Skeleton and SEC-01 stops remain unchanged.
+- Next actor: Codex prepares one reviewed Phase 04 PR, runs the relevant cheap local checks, obtains hosted CI, and squash-merges when required checks are green. The owner need not review routinely. No new source request or product implementation is authorized.
 - Budget policy: INT-20261117-11 removes the cumulative assistant-output ceiling and reserve stop. Counters are informational; exact-source count, review, preflight, provenance and security gates remain active.
-- Delivery boundary: Phase 3 is complete by goal verification, while hosted delivery remains a separate gate. Use existing PR #90 for exact-head hosted checks; record the delivery receipt only after merge. Phase 04 is next but is not automatically executed.
+- Delivery boundary: Phase 3 is delivered with its actual merge receipt recorded. Phase 04's bounded evidence handoff is verified but its PR is not yet merged. Source access remains closed; no implementation, runtime tests, or new source request follows automatically.
 
 ## Performance Metrics
 
@@ -158,7 +158,7 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-This handoff supersedes the earlier temporary-checkout note. Work remains in the current Phase 3 checkout; no additional worktree was created. Phase 4 remains semantically open: zero source associations, 9,716 typed gaps, unresolved source resolution, incomplete caller closure, unresolved legacy digest, and candidate null. R7 is consumed with delivery unverified and cannot be replayed; INT-20261118-04 authorizes exactly one new R8 request for the same bounded span. The cumulative output stop was removed by INT-20261117-11; all other safety gates remain binding.
+Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. The result remains semantically open: zero resolved source associations, 9,716 typed gaps, unresolved source resolution, incomplete caller closure, unresolved legacy digest, and candidate null. R8 was consumed once; R1/R4 remain incomplete and R7 remains delivery-unverified. No new source request is authorized. The source/security stops remain binding.
 
 ## Decisions
 
@@ -184,9 +184,9 @@ This handoff supersedes the earlier temporary-checkout note. Work remains in the
 
 ## Operator Next Steps
 
-- Phase 3's local goal verification, security record, and automated UAT are complete. Codex handles the authorized PR #90 hosted-check path; the owner decides on merge after required checks pass. Phase 04 is next but unstarted, and any guard increment remains a separate owner decision.
+- Phase 04 verification passed, and its delivery PR is the next action. After exact-head hosted CI passes, squash-merge under the owner's standing authorization and record the actual receipt. Do not start another phase automatically; present the milestone boundary and next command after delivery.
 
 
-## Latest handoff — Phase 3 recovery
+## Latest handoff — Phase 04 delivery
 
-Checkout: `/Users/jon/projects/fablebook`, branch `gsd/phase-03-guard-aggregate-scope-rejoin-and-candidate-sizing`; Phase 3 is locally verified and marked complete, with final PR #90 hosted delivery still open. The one authorized R8 request is consumed; current-tree local suites and Phase 4/Phase 3 consistency checks pass. Phase 04 is next but has not started. Codex handles the hosted-check path; the owner decides on merge after all required checks pass.
+Checkout: `~/projects/fablebook`, branch `gsd/phase-04-evidence-only-closeout`, HEAD `488387b1d446f5c03bdf11bb20e7f0c1e7087b88`. Phase 3 is delivered; Phase 04 has all plans complete and goal verification passed 4/4. Its record package validates with open semantic gaps; the final Phase 04 PR/hosted CI is pending. Next actor: Codex prepares and delivers that PR, then stops at the milestone boundary. Source access remains closed; no further request, runtime target, or implementation is authorized.

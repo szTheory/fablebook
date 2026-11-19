@@ -2,9 +2,10 @@
   "schema_version": "04.evidence-review.1",
   "author": "Codex orchestrator",
   "reviewer": "/root/phase3_security_audit",
-  "created_at_utc": "2026-11-18T23:53:30Z",
-  "source_access": "closed",
+  "created_at_utc": "2026-11-19T02:44:58Z",
+  "reviewed_at_utc": "2026-11-19T02:44:58Z",
   "status": "pass",
+  "source_access": "closed",
   "subject": {
     "generation": "ENV-20261117-06-supported-20261117T204102Z",
     "manifest": {
@@ -32,6 +33,22 @@
         "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SIZING-DIGEST-PROOF.json",
         "sha256": "f745a2c074e006a384c3df5ca3ea0df1d025e2b096877ea413ea09025681370d",
         "bytes": 8001
+      }
+    },
+    "stable_consumer_payloads": {
+      "associations": {
+        "active_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+        "stable_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "generation": "ENV-20261117-06-supported-20261117T204102Z"
+      },
+      "typed_gaps": {
+        "active_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+        "stable_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS.jsonl",
+        "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+        "bytes": 19633625,
+        "generation": "ENV-20261117-06-supported-20261117T204102Z"
       }
     },
     "source_requests": {
@@ -93,15 +110,12 @@
       }
     }
   },
-  "subject_sha256": "00ff2e67e0560f03ad69502b173de89f35af98d5f4b64f84d2f7c525c58547a6",
-  "findings": [],
+  "subject_sha256": "c98f23209f2a6172e3555a9c5a20080a2b02b101ead5b0786e4eaba0926ea23a",
   "review_notes": [
-    "Current manifest binds helper 2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb / 86,693 bytes through the R8 revision receipt; the immutable R8 observation remains distinct.",
-    "Current Phase 3 code review (4813130de1240597ede6dfcc443d0eba1fc87cf028d9dc382b9dabc69638a630) and Phase 4 preservation bridge (cd7d512bc5692cb1f316b31cfb9435cdde3ead196124c4ab90ed0a9604696ae1) bind the final local readiness.",
-    "All three focused-test failure receipts and both core-CI failure receipts remain preserved. R8 span bounds remain those of the scheduled snapshot, not the edited live helper.",
-    "Record accounting remains 0 associations, 9,716 typed gaps and 18 unknown target sets. Source/caller/digest remain unresolved/incomplete/unresolved; candidate null; implementation unauthorized.",
-    "R8 output and sentinels were observed inline once; no raw body is archived or independently rereadable. No semantic closure is claimed.",
-    "Independent metadata-only review passed for this exact subject. The reviewer confirmed all R1–R8 links, the passed bridge binding, preserved limitations and stops, and the explicit R8 raw-body archival limitation."
+    "Independent second and final pass reviewed the exact stable-consumer correction and validator binding for this subject hash.",
+    "Both stable consumer payloads match their active ENV06 payloads byte-for-byte; the prior typed-gap generation remains preserved under its generation-specific path.",
+    "The validator checks the stable aliases, includes their hashes and generation in the review subject, and binds them into generated validation.",
+    "Source access remains closed. This review makes no semantic source, caller, legacy-digest, runtime-safety, candidate-fit, or implementation claim."
   ],
-  "reviewed_at_utc": "2026-11-19T01:07:51Z"
+  "findings": []
 }
