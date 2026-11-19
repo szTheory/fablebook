@@ -1,3 +1,11 @@
+---
+id: INT-20261119-03
+date: 2026-11-19
+source: Owner instruction in the active Codex conversation.
+captured_by: Codex
+context: Owner authorized execution of reviewed Phase 6 within the four-key and 9,712-row evidence boundary.
+---
+
 # INT-20261119-03 — authorize Phase 6 execution
 
 **Date:** 2026-11-19
