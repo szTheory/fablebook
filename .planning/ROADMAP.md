@@ -2,7 +2,7 @@
 
 ## Milestones
 
-- 🚧 **v0.5 Bounded EX-177 Provenance Follow-through** — Phase 6 plan complete; review and verification in progress.
+- 🚧 **v0.5 Bounded EX-177 Provenance Follow-through** — Phase 6 verification passed; reviewed PR and hosted CI delivery pending.
 - ✅ **v0.4 Guard Aggregate Reconciliation** — bounded development milestone archived 2026-11-19; `override_closeout`; wider guard gate remains open. [Roadmap](milestones/v0.4-ROADMAP.md) · [closeout](milestones/v0.4-CLOSEOUT.md)
 - ✅ **v0.3 Bounded ASN.1 RTT Guard Evidence** — shipped locally 2026-11-13; [full roadmap and phase details](milestones/v0.3-ROADMAP.md).
 - ✅ **v0.2 Guard coverage recovery** — shipped locally 2026-11-11; [full roadmap and phase details](milestones/v0.2-ROADMAP.md).
@@ -16,7 +16,7 @@ This increment makes the reviewed static EX-177 discovery usable in later guard 
 
 ## Phases
 
-- [ ] **Phase 6: Bounded EX-177 provenance supplement** - Record reviewed observations for four existing keys and preserve the exact pending complement.
+- [x] **Phase 6: Bounded EX-177 provenance supplement** - Record reviewed observations for four existing keys and preserve the exact pending complement. (completed 2026-11-19)
 
 <details>
 <summary>✅ v0.4 Guard Aggregate Reconciliation (Phases 3–5) — ARCHIVED 2026-11-19</summary>
@@ -64,7 +64,7 @@ See the [archived roadmap](milestones/v0.2-ROADMAP.md) and [closeout](milestones
 3. A local standard-library consistency check confirms the four-key membership, lane identities, recorded source and caller facts, and the exact pending 9,712-row complement binding with SHA-256 `dd95380d2114a10a54ddbb79cc6ec5aab4805a52847dcacb4e2ca3daeda653b5`. The archived evidence and complement retain their original bytes and status.
 4. The supplement leaves candidate fit unresolved, candidate null, the guard aggregate gate open, and R9 denied and unconsumed. Walking Skeleton remains blocked, SEC-01 remains pending, actual library collision stays unknown, and the Macro caller-AST, Macro explanation, and legacy digest questions remain open.
 
-**Plans:** 1/1 plans executed
+**Plans:** 1/1 plans complete
 - [x] 06-01-PLAN.md
 
 Saved lane facts from the reviewed discovery report:
@@ -80,8 +80,8 @@ Saved lane facts from the reviewed discovery report:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 6. Bounded EX-177 provenance supplement | 1/1 | Phase verification in progress | - |
+| 6. Bounded EX-177 provenance supplement | 1/1 | Complete    | 2026-11-19 |
 
 ## Next
 
-Phase 6 has one completed plan and its local checks pass. Run the phase-level review, security and validation gates, then goal verification. After verification, prepare the reviewed PR under the existing standing authorization. The [product roadmap](references/PRODUCT-ROADMAP.md) retains future product scope; no follow-on phase is authorized.
+Phase 6 verification passed 5/5 must-haves; its focused checks pass, security has zero open threats, and the source-review hook skipped because the phase contains no reviewable source files after `.planning/` exclusions. Run feasible local CI, then prepare the reviewed PR and hosted exact-head CI under the existing standing authorization. Keep v0.5 open until the PR is merged and its delivery receipt is recorded. The [product roadmap](references/PRODUCT-ROADMAP.md) retains future product scope; no follow-on phase is authorized.

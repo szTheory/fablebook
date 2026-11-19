@@ -27,7 +27,7 @@ v0.4 closed locally on 2026-11-19 as a bounded evidence milestone delivered thro
 - Keep the four selected rows and 9,712-row complement explicit; one observed caller does not prove complete caller closure.
 - Add a small standard-library consistency check for the supplementary record, with no new dependency, product code, source reread, runtime call, or CI lane.
 
-This is a planning-only scope. Phase execution, another source request, broader caller search, implementation, candidate promotion, aggregate closure, and automatic follow-up are not authorized here.
+Phase 6 execution was separately authorized in [INT-20261119-03](intent/sources/2026-11-19-03-authorize-phase6-execution.md) under the bounded plan. Its local verification passed; the reviewed PR, hosted exact-head CI, and merged delivery receipt remain pending. This stays a static-evidence scope: another source request, broader caller search, product implementation, candidate promotion, aggregate closure, and automatic follow-up are not authorized.
 
 ## Current State
 
@@ -62,7 +62,7 @@ unauthorized, and the aggregate gate stays open. See [INT-20261119-02](intent/so
 
 ## Current Milestone Scope
 
-The owner authorized this bounded planning continuation in [INT-20261119-02](intent/sources/2026-11-19-02-v04-closeout-and-continuation.md). Use the [discovery report](research/2026-11-19-ex177-source-discovery.md) and archived Phase 5 receipts as the source of recorded facts; do not repeat source reads or consume R9. Candidate fit, complete caller closure, and the aggregate gate remain open.
+The owner authorized this bounded planning continuation in [INT-20261119-02](intent/sources/2026-11-19-02-v04-closeout-and-continuation.md) and separately authorized Phase 6 execution in [INT-20261119-03](intent/sources/2026-11-19-03-authorize-phase6-execution.md). The locally verified artifacts are on the Phase 6 branch; prepare the reviewed PR and hosted CI, and keep the milestone open until its merged delivery receipt is recorded. Use the [discovery report](research/2026-11-19-ex177-source-discovery.md) and archived Phase 5 receipts as the source of recorded facts; do not repeat source reads or consume R9. Candidate fit, complete caller closure, and the aggregate gate remain open.
 
 Use the archived [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md) for its acceptance history. The wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md).
 
@@ -72,7 +72,7 @@ The lists below summarize the wider v1 product vision; they are not a live progr
 
 ### Current milestone acceptance
 
-- [ ] **GSR-07**: A supplementary record binds exactly the four selected EX-177 source/caller rows to the two pinned lane identities, file hash and byte count, target definition span, and observed direct-caller span. It preserves the 9,712-row complement and explicitly leaves exhaustive caller closure, candidate fit, and the aggregate gate open. (INT-20261119-01, INT-20261119-02, ADR 0021)
+GSR-07 is verified locally in Phase 6. Its reviewed PR and merged delivery receipt remain pending before this milestone can close.
 
 ### Validated
 
@@ -82,6 +82,7 @@ The lists below summarize the wider v1 product vision; they are not a live progr
 - ✓ **GRC-04** Revalidated the complete EX-107 lane sets, selected three functions, exact complement, and lane source identities — v0.3 (INT-20261111-13, INT-20261111-01, ADR 0021).
 - ✓ **GRC-05** Recorded source spans, direct callers, individual controls, and the byte-only table check while keeping runtime behavior unproven — v0.3 (INT-20261111-13, INT-20261110-01, ADR 0004, ADR 0021).
 - ✓ **GRC-06** Delivered the selected slice through review, exact-head CI, merged PR, and main CI while preserving all wider stops — v0.3 (INT-20261111-13, INT-20261112-03, ADR 0021).
+- ✓ **GSR-07** Bound exactly four reviewed EX-177 rows, both lane identities and spans, the 9,712-row complement, and the preserved open stops — Phase 6 verification passed 5/5; reviewed PR and delivery receipt pending (INT-20261119-01, INT-20261119-02, ADR 0021).
 
 - ✓ **SEC-02** In prod the router macro raises a `CompileError`, with no override in 1.0. Stories and canon never compile in prod. The CI prod build asserts there are no Fablebook routes and no story beams. — Phase 01.1 (ADR 0006)
 - ✓ **REL-01** release-please publishes to Hex via the bootstrap skill. Phase 1 publishes 0.1.0 to reserve the name. Includes a post-publish smoke test, a recovery workflow and an SBOM. — Phase 01.1 (ADR 0017, INT-20261028-01)
@@ -386,6 +387,7 @@ Every item below is a v1.0 commitment.
 | Decision | Rationale | Outcome |
 |---|---|---|
 | Keep the v0.4 evidence milestone bounded and carry unresolved records explicitly (INT-20261119-02) | Preserve the historical Phase 3 pass and archived v0.1 evidence while allowing a useful new planning boundary | v0.4 is locally archived under `override_closeout`; the stale Phase 3 and Phase 4 reports remain unchanged, the old deferred source hash is preserved, and the guard aggregate remains open. The authorized EX-177 continuation can be planned only if typed gates pass. |
+| Keep Phase 6 additive and value-only (INT-20261119-01, INT-20261119-03) | Reuse reviewed facts without reopening Phoenix source or claiming exhaustive caller closure | The supplement covers exactly four keys and the exact 9,712-row complement; recorded Phoenix paths remain values, one observed `run/1` caller per lane remains non-exhaustive, and all earlier stops remain open. Phase verification passed; PR delivery is pending. |
 | Retain the selected tracing-front matcher (v0.2 / Phase 1, INT-20261111-11) | Independent exact-lane source review distinguishes caller callbacks and the fixed native boundary from evaluator or atom-creation behavior | PR #85 delivers static dispositions and individual both-lane witnesses with green candidate/main CI. Only EX-010 advances; runtime safety and aggregate/product gates remain open. |
 | Close only the verified ASN.1 RTT slice (v0.3 / Phase 2, INT-20261111-13) | Exact lane membership, source/caller evidence and individual controls can be independently checked against final delivery receipts | v0.3 is archived under `override_closeout`; GRC-04–06 passed after reviewed PR #88 and green final-head/main CI. The full EX-107 remainder, runtime limits, collision owner stop and wider gates stay open; no next scope is selected. |
 | Validate lane-selection policy before expensive suites (v0.2 / Phase 1) | Broad tests exposed two wrong-lane tests and an unsupported custom exclusion | Symmetric core/floor tags, wrong-lane and unrelated-tag negatives, cheap CI-shape/lint first and a final focused review preserve coverage while avoiding repeated broad failures. |
@@ -501,4 +503,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-19 at the start of v0.5 Bounded EX-177 Provenance Follow-through; the guard gate remains open pending complete aggregate proof.*
+*Last updated: 2026-11-19 after Phase 6 verification; the reviewed PR and merged delivery receipt are pending, and the wider guard gate remains open.*

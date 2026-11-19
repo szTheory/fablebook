@@ -3,26 +3,25 @@ gsd_state_version: "1.0"
 milestone: v0.5
 milestone_name: Bounded EX-177 Provenance Follow-through
 current_phase: 06
-current_phase_name: Bounded EX-177 provenance supplement
-status: verifying
-stopped_at: Phase 6 plan complete; phase gates and goal verification in progress
-last_updated: "2026-11-19T15:39:21.738Z"
+status: completed
+stopped_at: Phase 06 locally verified; PR delivery pending
+last_updated: "2026-11-19T15:54:07Z"
 last_activity: 2026-11-19
-last_activity_desc: Phase 06 plan 06-01 complete; local checks passed and phase gates are active
-state_head: d170877a241696fd0b15c20dcc6f39fedf5c87ae
+last_activity_desc: Phase 06 complete
+state_head: 59d07c0c1585353b93b5cdbf6595e1dcfd7dc18e
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 1
   completed_plans: 1
-  percent: 0
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
+See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 [v0.4 closeout](milestones/v0.4-CLOSEOUT.md),
 [v0.4 audit](milestones/v0.4-MILESTONE-AUDIT.md),
 [v0.3 closeout](milestones/v0.3-CLOSEOUT.md), the
@@ -30,24 +29,24 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 06 — Bounded EX-177 provenance supplement
+**Current focus:** v0.5 delivery — Phase 6's reviewed PR and hosted CI are pending
 
 ## Current Position
 
-Phase: 06 (Bounded EX-177 provenance supplement) — VERIFYING
-Plan: 1 of 1
-Status: Plan complete — phase-level verification is in progress
-Last activity: 2026-11-19 — Phase 06 plan 06-01 complete; phase gates are underway
+Phase: 06
+Plan: Not started
+Status: Local phase verification passed; reviewed PR and hosted CI are pending
+Last activity: 2026-11-19 — Phase 06 verified 5/5 must-haves; preparing reviewed delivery
 
 
 ## Active Handoff
 
 - Checkout: `~/projects/fablebook`, branch `gsd/phase-6-bounded-ex-177-provenance-supplement`; no worktree was created. The topic branch preserves the eight pre-existing local-main commits and contains the Phase 6 authorization and task commits. Local `main` remains unchanged.
-- Delivered: Phase 6 Plan 06-01 produced the exact four-key supplement and standard-library checker. The record check and ten negative controls pass; the archived Phase 4/5 inputs remain unchanged.
-- Remaining: Run the active code-review, validation, and security hooks, then verify the phase goal. After those pass, prepare the reviewed PR under the existing standing authorization.
+- Delivered locally: Phase 6 Plan 06-01 produced the exact four-key supplement and standard-library checker. The `--check` and `--self-test` commands pass; validation has zero gaps, security has zero open threats, and the goal verifier passed 5/5 must-haves. The source-review hook skipped because no source files remained after the project's `.planning/` exclusions. Archived Phase 4/5 inputs remain unchanged.
+- Remaining: Run feasible local CI with `act`, then push this reviewed candidate and open/update its PR for hosted exact-head CI under the standing authorization. Keep v0.5 open until the PR is merged and its delivery receipt is recorded.
 - Scope remains limited to the four EX-177 source/caller keys and exact 9,712-row complement. Do not reread source bodies, consume R9, search for more callers, invoke audited runtime paths, or make product changes. One observed `run/1` call per lane is not exhaustive caller closure.
 - Stops remain unchanged: candidate fit unresolved and candidate null; implementation unauthorized; aggregate gate open; R9 denied and unconsumed; actual library collision unknown; Macro caller-AST and explanation unresolved; SEC-01 Pending; Walking Skeleton blocked; legacy digest unresolved; automatic follow-up disabled.
-- **Next actor: Assistant.** Continue the phase-level gates and goal verification in this session. No further owner input is needed unless a real gate or scope boundary blocks progress.
+- **Next actor: Assistant.** Continue with local CI and the reviewed PR; no owner action is needed before the green hosted CI result. The owner acts at the merge decision. Do not start a new phase or milestone automatically.
 
 ## Performance Metrics
 
@@ -160,9 +159,9 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-19T15:39:21.724Z
-**Stopped at:** Phase 6 plan complete; phase gates and goal verification in progress
-**Resume file:** .planning/phases/06-bounded-ex-177-provenance-supplement/06-01-SUMMARY.md
+**Last session:** 2026-11-19T15:54:07Z
+**Stopped at:** Phase 06 verified locally; reviewed PR and hosted exact-head CI pending
+**Resume file:** .planning/phases/06-bounded-ex-177-provenance-supplement/06-VERIFICATION.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5 is also complete and verified for the bounded EX-177 slice: four source/caller rows remain open because current source identity/span metadata is absent; the other 9,712 rows remain unchanged. R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was read or emitted. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
@@ -192,4 +191,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- The [active handoff](#active-handoff) owns Phase 6's remaining review and verification route. Historical v0.4 disposition and delivery details remain in the [closeout receipt](milestones/v0.4-CLOSEOUT.md).
+- The [active handoff](#active-handoff) owns Phase 6's local CI and reviewed PR delivery. Historical v0.4 disposition and delivery details remain in the [closeout receipt](milestones/v0.4-CLOSEOUT.md).
