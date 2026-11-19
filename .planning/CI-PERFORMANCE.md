@@ -112,3 +112,11 @@ Exact compatibility PR head `2165c89843837705670a5b54756705ab3eee4e0a` passed [C
 Compared with PR #92, core improved by 35s and floor by 5s; one run is not enough to infer a recurring improvement. Core and floor already overlap, and their test steps dominate setup. All required checks passed with full coverage, so no safe workflow change is indicated. The two earlier PR #94 attempts found a provenance-helper identity change and an unsupported ExUnit cleanup macro; the final candidate preserves the historical helper bytes and uses `on_exit` cleanup.
 
 PR #94 was squash-merged as `6ca51ac` after the exact-head checks passed. No additional main run was needed because the required PR checks covered the merged tree.
+
+## Hosted PR #93 final-head CI — 2026-11-19
+
+The first reconciled Phase 6 head `31cd185` failed [run 44586751740](https://github.com/szTheory/fablebook/actions/runs/44586751740) in about 9m58s. Core took 8m33s and floor 9m52s concurrently; both failed the same historical trace-path assertion. Security and Dialyzer passed. The failure was caused by a test using the Phase 4 archive's storage path as a saved provenance value; the historical helper correctly expects the pre-archive path. A focused local regression selection passed after the test separated those values.
+
+Corrected PR #93 head `3970a381945cfcf63eb69c456a5b2a7465d8352d` passed [run 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030) in 11m33s. Core took 8m46s and floor 11m25s while running concurrently; floor was the critical path. Security and Dialyzer took 35s each, and `ci-gate` took 3s. `ci-health` and `nightly` were skipped as configured. The run started promptly. PR #93 was squash-merged as `b8852ac22aac1cb2b8151d85b189889ca0774aa8`; the reviewed head and merged tree are identical.
+
+Compared with PR #94, the corrected PR #93 run was slower, while the initial run failed before completion. The two full-lane samples do not establish a recurring regression. Core and floor already overlap, the test steps dominate, and all required checks passed on the final head. No safe cache, concurrency, dependency, trigger, or coverage change is justified.

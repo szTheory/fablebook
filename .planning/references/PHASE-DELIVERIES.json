@@ -50,6 +50,16 @@
       "reviewed_head": "fef3fda20633fb66bd2e968870146d54bd7b2cbd",
       "merge_commit": "df9bba9fbf5fa6efd665e7d5bfea7e827d3035c0",
       "ci_run": "https://github.com/szTheory/fablebook/actions/runs/44475714163"
+    },
+    {
+      "milestone": "v0.5",
+      "milestone_key": "guard-recovery",
+      "phase": "6",
+      "status": "merged",
+      "pr": 93,
+      "reviewed_head": "3970a381945cfcf63eb69c456a5b2a7465d8352d",
+      "merge_commit": "b8852ac22aac1cb2b8151d85b189889ca0774aa8",
+      "ci_run": "https://github.com/szTheory/fablebook/actions/runs/44589600030"
     }
   ]
 }
