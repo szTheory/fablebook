@@ -36,7 +36,7 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 
 Phase: Between milestones
 Plan: —
-Status: Between milestones; v0.5 archive created and closeout PR delivery remains
+Status: Between milestones; v0.5 archive submitted as closeout PR #95
 Last activity: 2026-11-19 — v0.5 audit passed and milestone artifacts were archived
 
 ## Active Handoff
@@ -44,10 +44,10 @@ Last activity: 2026-11-19 — v0.5 audit passed and milestone artifacts were arc
 - Checkout: `~/projects/fablebook`, branch `gsd/v0.5-milestone-closeout`, based on reconciled local `main`. Local `main` retains its eight pre-existing commits and a reconciliation merge; its tree matched `origin/main` at Phase 6 merge `b8852ac22aac1cb2b8151d85b189889ca0774aa8`. No preserved checkout was reset, stashed, cleaned, or removed.
 - Delivered: Phase 6 Plan 06-01 produced the exact four-key supplement and standard-library checker. Its 5/5 verification and focused checks pass; archived Phase 4/5 evidence remains unchanged. PR #93 reviewed head `3970a381945cfcf63eb69c456a5b2a7465d8352d` passed exact-head hosted [CI 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030) and squash-merged as `b8852ac22aac1cb2b8151d85b189889ca0774aa8`; the delivery receipt is appended. The audit found the artifact flow wired and GSR-07 satisfied.
 - Also delivered: PR #94 separately repaired the test helper's archived-evidence path expectation and merged as `6ca51ac` after green [hosted CI 44582183055](https://github.com/szTheory/fablebook/actions/runs/44582183055). This leaves historical phase evidence bytes unchanged.
-- Remaining: validate the v0.5 archive and closeout records, commit them, push a separate closeout PR, and squash-merge only after its exact reviewed head has green hosted CI. Local `act` 0.2.87 cannot load the existing `concurrency.queue` syntax; hosted CI is the delivery receipt.
+- Remaining: PR [#95](https://github.com/szTheory/fablebook/pull/95) carries the v0.5 archive. Confirm its exact-head hosted CI, resolve any scoped finding, and squash-merge only when all required checks are green. Local `act` 0.2.87 cannot load the existing `concurrency.queue` syntax; hosted CI is the delivery receipt.
 - Scope remains limited to the four EX-177 source/caller keys and exact 9,712-row complement. Do not reread source bodies, consume R9, search for more callers, invoke audited runtime paths, or make product changes. One observed `run/1` call per lane is not exhaustive caller closure.
 - Stops remain unchanged: candidate fit unresolved and candidate null; implementation unauthorized; aggregate gate open; R9 denied and unconsumed; actual library collision unknown; Macro caller-AST and explanation unresolved; SEC-01 Pending; Walking Skeleton blocked; legacy digest unresolved; automatic follow-up disabled.
-- **Next actor: Assistant.** Finish and validate the v0.5 closeout records, deliver them through a separate PR, and squash-merge after exact-head hosted CI is green under [INT-20261119-04](intent/sources/2026-11-19-04-authorize-squash-merge-and-milestone-completion.md). Preserve the four-key and 9,712-row limits, the three inherited deferred items, and every existing safety stop. Do not start another milestone; after closeout, the owner chooses any next scope.
+- **Next actor: Assistant.** Complete PR #95 after exact-head hosted CI is green under [INT-20261119-04](intent/sources/2026-11-19-04-authorize-squash-merge-and-milestone-completion.md). Preserve the four-key and 9,712-row limits, the three inherited deferred items, and every existing safety stop. Do not start another milestone; after closeout, the owner chooses any next scope.
 
 ## Performance Metrics
 
@@ -161,7 +161,7 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 ## Session Continuity
 
 **Last session:** 2026-11-19
-**Stopped at:** v0.5 archive created after a 1/1 requirement audit; preparing the separate closeout PR with inherited debt and safety stops preserved
+**Stopped at:** v0.5 archive PR #95 is open; awaiting exact-head hosted CI with inherited debt and safety stops preserved
 **Resume file:** .planning/milestones/v0.5-CLOSEOUT.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5's four selected EX-177 rows now have the reviewed source/caller facts recorded by discovery and Phase 6; the other 9,712 rows remain unchanged. Package-wide caller closure remains unproven, R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was reread for Phase 6. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
@@ -192,4 +192,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- Complete the v0.5 archive PR under the existing green-CI squash-merge authorization. After that delivery, no next milestone is selected; the owner chooses the next bounded scope. The [v0.5 closeout receipt](milestones/v0.5-CLOSEOUT.md) records the scoped outcome and inherited deferrals. Historical v0.4 details remain in [its closeout receipt](milestones/v0.4-CLOSEOUT.md).
+- Merge v0.5 archive PR #95 only after required exact-head CI is green under the existing authorization. After that delivery, no next milestone is selected; the owner chooses the next bounded scope. The [v0.5 closeout receipt](milestones/v0.5-CLOSEOUT.md) records the scoped outcome and inherited deferrals. Historical v0.4 details remain in [its closeout receipt](milestones/v0.4-CLOSEOUT.md).
