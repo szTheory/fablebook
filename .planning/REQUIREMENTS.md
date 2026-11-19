@@ -31,6 +31,8 @@
 |-------------|-------|--------|
 | GSR-07 | Phase 6 | Pending |
 
+The [Phase 6 roadmap](ROADMAP.md#phase-6-bounded-ex-177-provenance-supplement) owns delivery of GSR-07.
+
 **Coverage:**
 - v1 requirements: 1 total
 - Mapped to phases: 1

@@ -2,11 +2,14 @@
 gsd_state_version: "1.0"
 milestone: v0.5
 milestone_name: Bounded EX-177 Provenance Follow-through
+current_phase: 6
+current_phase_name: Bounded EX-177 provenance supplement
 status: planning
-last_updated: "2026-11-19T14:16:19.711Z"
+last_updated: "2026-11-19T14:20:32Z"
 last_activity: 2026-11-19
+last_activity_desc: Phase 6 roadmap recorded for the approved planning scope
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -25,14 +28,14 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** v0.5 is defining one bounded EX-177 evidence supplement from already reviewed discovery; the wider guard aggregate gate remains open.
+**Current focus:** Plan the Phase 6 supplement for the four reviewed EX-177 source and caller keys. The wider guard aggregate gate remains open.
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 6 (Bounded EX-177 provenance supplement)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-11-19 — Milestone v0.5 started
+Status: Ready for Phase 6 discussion and planning
+Last activity: 2026-11-19 — Mapped GSR-07 to Phase 6 in the v0.5 roadmap
 
 
 ## Active Handoff
@@ -41,7 +44,7 @@ Last activity: 2026-11-19 — Milestone v0.5 started
 - The owner approved the v0.4 closeout override and chose to carry the audit items as debt. Phase 3's historical 21/21 pass remains unchanged despite its stale fingerprint. Phase 4's historical `gaps_found` report remains acknowledged with the original verdict; current payload equality and validation evidence are recorded in the closeout. The same three v0.1 deferrals remain unchanged under the prior immutable-source exception.
 - v0.5 is authorized for planning only under INT-20261119-02. Its scope is the four selected EX-177 source/caller keys and the unchanged 9,712-row complement. Use the reviewed [discovery report](research/2026-11-19-ex177-source-discovery.md) and archived Phase 5 receipts; do not reread source bodies or consume R9. One observed `run/1` call per lane is not exhaustive caller closure.
 - Stops remain: candidate null; implementation unauthorized; aggregate gate open; actual library collision unknown; Macro caller-AST and explanation wording unresolved; SEC-01 pending; Walking Skeleton blocked; legacy digest unresolved. Do not invoke audited OTP/runtime paths.
-- **Next actor: Codex.** Finish the v0.5 requirements and one-phase roadmap, run the phase-6 discussion preflight, and stop before execution. If a gate requires new source authority or broader caller search, record the exact blocker and hand that decision to the owner.
+- **Next actor: Codex.** Refresh the generated planning snapshot and run `bin/planning_health --stage discuss --phase 6` before discussing and planning the saved-evidence supplement. If a required fact is missing or the saved records disagree, record the exact blocker for the owner. Execution is outside the current authorization and requires the owner's separate decision.
 
 ## Performance Metrics
 
@@ -179,9 +182,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- Codex is authorized to plan the bounded EX-177 continuation after closeout. First make the canonical state recognize the completed v0.4 archive, then pass `bin/planning_health --stage milestone-start` and satisfy the typed owner gates before activating any milestone or integer phase.
-
-
-## Latest handoff — v0.4 archived; bounded EX-177 planning authorized
-
-Checkout: `~/projects/fablebook`, branch `main`, HEAD `df9bba9fbf5fa6efd665e7d5bfea7e827d3035c0`. v0.4 is archived locally under `override_closeout`; its audit reports 6/6 requirements satisfied and the aggregate gate remains open. Phase 3's stale historical fingerprint is preserved; Phase 4's stale historical gap report is acknowledged without changing its verdict; the three v0.1 deferred items remain byte-for-byte unchanged. The bounded EX-177 discovery is recorded, but package-wide caller closure remains open and R9 remains unconsumed. Candidate null, implementation unauthorized, collision unknown, Macro checkpoints unresolved, SEC-01 pending, Walking Skeleton blocked, legacy digest unresolved. **Next actor: Codex** to pass the typed milestone-start gate and plan only the authorized bounded continuation; no new scope, implementation, runtime call, aggregate closure, or automatic follow-on is authorized.
+- The [active handoff](#active-handoff) owns the Phase 6 planning route. Historical v0.4 disposition and delivery details remain in the [closeout receipt](milestones/v0.4-CLOSEOUT.md).
