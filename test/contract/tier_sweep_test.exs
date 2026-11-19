@@ -5089,12 +5089,12 @@ defmodule Fablebook.Contract.TierSweepTest do
   setup_all do
     graph = build_graph()
     phase_evidence_aliases = GuardAggregateEvidencePaths.install_legacy_read_aliases!()
-    {:ok, graph: graph, phase_evidence_aliases: phase_evidence_aliases}
-  end
 
-  teardown_all context do
-    GuardAggregateEvidencePaths.remove_legacy_read_aliases!(context.phase_evidence_aliases)
-    :ok
+    on_exit(fn ->
+      GuardAggregateEvidencePaths.remove_legacy_read_aliases!(phase_evidence_aliases)
+    end)
+
+    {:ok, graph: graph}
   end
 
   @exclusions @exclusions ++ [@escript_debug_exclusion]
