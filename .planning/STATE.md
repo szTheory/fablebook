@@ -5,9 +5,11 @@ milestone_name: Bounded EX-177 Provenance Follow-through
 current_phase: 6
 current_phase_name: Bounded EX-177 provenance supplement
 status: planning
-last_updated: "2026-11-19T14:20:32Z"
+stopped_at: Phase 6 context gathered
+last_updated: "2026-11-19T14:30:52.249Z"
 last_activity: 2026-11-19
 last_activity_desc: Phase 6 roadmap recorded for the approved planning scope
+state_head: 746b378570be477b2bd14806107e692673200aab
 progress:
   total_phases: 1
   completed_phases: 0
@@ -155,6 +157,10 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 | deferred_items | Phase 02 / deferred-items.md: local act concurrency.queue limitation | deferred; acknowledged at close | 2026-11-13 | v0.3 |
 
 ## Session Continuity
+
+**Last session:** 2026-11-19T14:30:52.225Z
+**Stopped at:** Phase 6 context gathered
+**Resume file:** .planning/phases/06-bounded-ex-177-provenance-supplement/06-CONTEXT.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5 is also complete and verified for the bounded EX-177 slice: four source/caller rows remain open because current source identity/span metadata is absent; the other 9,712 rows remain unchanged. R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was read or emitted. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
