@@ -38,17 +38,12 @@ SELECTED_KEYS = (
 MFA = ["Elixir.Mix.Tasks.Phx.Gen.Context", "prompt_for_code_injection", 1]
 COMPLEMENT_COUNT = 9712
 COMPLEMENT_SHA256 = "dd95380d2114a10a54ddbb79cc6ec5aab4805a52847dcacb4e2ca3daeda653b5"
-SOURCE_PATH_VALUES = {
-    "core": "_build/lanes/core/deps/phoenix/lib/mix/tasks/phx.gen.context.ex",
-    "floor": "_build/lanes/floor/deps/phoenix/lib/mix/tasks/phx.gen.context.ex",
-}
 SOURCE_SHA256 = "c7c6dc0e75b25769db626143ad37d43b9c45234190e13a6352b0a6629e05b73e"
 EXPECTED_LANES = {
     "core": {
         "runtime": {"elixir": "1.20.4", "otp": "29.1.2"},
         "phoenix": {"version": "1.8.16", "lock_file": "mix.lock"},
         "source": {
-            "recorded_value": SOURCE_PATH_VALUES["core"],
             "bytes": 14760,
             "sha256": SOURCE_SHA256,
         },
@@ -71,7 +66,6 @@ EXPECTED_LANES = {
         "runtime": {"elixir": "1.18.5", "otp": "27.3.4.9"},
         "phoenix": {"version": "1.8.9", "lock_file": "mix.floor.lock"},
         "source": {
-            "recorded_value": SOURCE_PATH_VALUES["floor"],
             "bytes": 14760,
             "sha256": SOURCE_SHA256,
         },
@@ -206,6 +200,39 @@ def expect(field, observed, expected):
         raise ValueError(field + " mismatch: expected " + repr(expected) + "; observed " + repr(observed))
 
 
+def expected_source_path(lane):
+    return "_build/lanes/" + lane + "/deps/phoenix/lib/mix/tasks/phx.gen.context.ex"
+
+
+def source_paths_from_discovery(discovery):
+    paths = {}
+    for line in discovery.splitlines():
+        if not (line.startswith("| Core |") or line.startswith("| Floor |")):
+            continue
+        cells = [cell.strip().strip(chr(96)) for cell in line.strip().strip("|").split("|")]
+        if len(cells) != 6:
+            raise ValueError("reviewed discovery lane row has an unexpected column count")
+        lane = cells[0].lower()
+        if lane in paths:
+            raise ValueError("reviewed discovery has duplicate lane row: " + lane)
+        paths[lane] = cells[3]
+    expect("reviewed discovery source-path lanes", set(paths), set(EXPECTED_LANES))
+    for lane, path_value in paths.items():
+        expect(
+            "reviewed discovery " + lane + " source path value",
+            path_value,
+            expected_source_path(lane),
+        )
+    return paths
+
+
+def expected_lane_records(source_paths):
+    lanes = copy.deepcopy(EXPECTED_LANES)
+    for lane, path_value in source_paths.items():
+        lanes[lane]["source"]["recorded_value"] = path_value
+    return lanes
+
+
 def expected_observation(key):
     lane, _identity, module, function, arity, domain = key.split("|")
     return {
@@ -223,10 +250,10 @@ def expected_observation(key):
 
 
 def load_evidence():
-    if set(SOURCE_PATH_VALUES.values()) & INPUT_PATHS:
-        raise ValueError("recorded Phoenix source path entered the evidence allowlist")
-
     discovery = read_input(DISCOVERY).decode("utf-8")
+    source_paths = source_paths_from_discovery(discovery)
+    if set(source_paths.values()) & INPUT_PATHS:
+        raise ValueError("recorded Phoenix source path entered the evidence allowlist")
     phase5_scope = read_input(PHASE5_SCOPE).decode("utf-8")
     phase5_result = parse_json(read_input(PHASE5_RESULT), PHASE5_RESULT)
     gap_bytes = read_input(PHASE4_GAPS)
@@ -285,11 +312,9 @@ def load_evidence():
         "Elixir 1.20.4 / OTP 29.1.2",
         "Phoenix 1.8.16 from",
         "mix.lock",
-        SOURCE_PATH_VALUES["core"],
         "Elixir 1.18.5 / OTP 27.3.4.9",
         "Phoenix 1.8.9 from",
         "mix.floor.lock",
-        SOURCE_PATH_VALUES["floor"],
         "14,760",
         SOURCE_SHA256,
         "lines 445–451",
@@ -364,6 +389,7 @@ def load_evidence():
 
     return {
         "discovery": discovery,
+        "source_paths": source_paths,
         "phase5_scope": phase5_scope,
         "phase5_result": phase5_result,
         "selected_rows": selected,
@@ -388,7 +414,7 @@ def validate_record(record, evidence):
     expect("source_boundary", record.get("source_boundary"), EXPECTED_SOURCE_BOUNDARY)
     expect("provenance", record.get("provenance"), EXPECTED_PROVENANCE)
     expect("selected_keys", record.get("selected_keys"), list(SELECTED_KEYS))
-    expect("lanes", record.get("lanes"), EXPECTED_LANES)
+    expect("lanes", record.get("lanes"), expected_lane_records(evidence["source_paths"]))
 
     observations = record.get("observations")
     if not isinstance(observations, list):
@@ -456,9 +482,13 @@ def self_test():
         lambda record: record["preserved_stops"].update({"aggregate_gate": "closed"}),
     )
 
-    if set(SOURCE_PATH_VALUES.values()) & INPUT_PATHS:
+    source_path_values = {
+        lane: lane_record["source"]["recorded_value"]
+        for lane, lane_record in baseline["lanes"].items()
+    }
+    if set(source_path_values.values()) & INPUT_PATHS:
         raise AssertionError("recorded Phoenix source path appears in the read allowlist")
-    for source_path in SOURCE_PATH_VALUES.values():
+    for source_path in source_path_values.values():
         try:
             read_input(source_path)
         except ValueError as error:
