@@ -6,20 +6,6 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
   @collector "guard-aggregate-tracer/1"
   @phase4_dir ".planning/phases/04-evidence-only-source-and-gap-provenance-closure"
   @phase3_recovery_dir ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing"
-  @phase4_archive_dir ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure"
-  @phase3_recovery_archive_dir ".planning/milestones/v0.4-phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing"
-  @phase3_required_files ~w(
-    03-CORE-AGGREGATE-EVIDENCE.json
-    03-FLOOR-AGGREGATE-EVIDENCE.json
-    03-SIZING.json
-    03-04-METADATA-GAP-RECEIPT.json
-    03-04-METADATA-GAP-VALIDATION.json
-    03-04-METADATA-GAPS.jsonl
-    03-05-T2-POST-R8-HELPER-REVISION.json
-    03-05-CORE-FOCUSED-R8-FAILURE.json
-    03-05-CORE-FOCUSED-R8-RETEST-FAILURE.json
-    03-05-CORE-FOCUSED-R8-RETEST-FAILURE-02.json
-  )
   @phase4_artifacts %{
     "manifest_sha256" => "04-PROVENANCE-MANIFEST.json",
     "validation_sha256" => "04-VALIDATION.json",
@@ -27,11 +13,6 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
     "trace_sha256" => "04-COVERAGE-CALLER-TRACE.json",
     "digest_proof_sha256" => "04-SIZING-DIGEST-PROOF.json"
   }
-  @phase4_required_files Map.values(@phase4_artifacts) ++
-                           [
-                             "04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
-                             "04-TYPED-GAPS-ENV06.jsonl"
-                           ]
   @lane_record_paths %{
     "core" =>
       ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json",
@@ -46,30 +27,6 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
     "walking_skeleton" => "blocked",
     "sec_01" => "Pending"
   }
-
-  def phase3_evidence_dir! do
-    existing_evidence_dir!(
-      "Phase 3",
-      @phase3_recovery_archive_dir,
-      @phase3_recovery_dir,
-      @phase3_required_files
-    )
-  end
-
-  def phase4_evidence_dir! do
-    existing_evidence_dir!("Phase 4", @phase4_archive_dir, @phase4_dir, @phase4_required_files)
-  end
-
-  def phase3_writable_evidence_dir! do
-    legacy = Path.expand(@phase3_recovery_dir, File.cwd!())
-    archived = Path.expand(@phase3_recovery_archive_dir, File.cwd!())
-
-    if phase3_evidence_dir!() == legacy do
-      legacy
-    else
-      raise ArgumentError, "Phase 3 evidence is archived and read-only: #{archived}"
-    end
-  end
 
   def build_lane!(inputs) when is_map(inputs) do
     lane = required!(inputs, :lane)
@@ -2059,14 +2016,16 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
   end
 
   defp phase4_json!(filename) do
-    Path.join(@phase4_dir, filename)
+    @phase4_dir
+    |> Path.join(filename)
     |> phase4_root_path!()
     |> File.read!()
     |> Jason.decode!()
   end
 
   defp phase3_json!(filename) do
-    Path.join(@phase3_recovery_dir, filename)
+    @phase3_recovery_dir
+    |> Path.join(filename)
     |> phase4_root_path!()
     |> File.read!()
     |> Jason.decode!()
@@ -2099,38 +2058,7 @@ defmodule Fablebook.Test.GuardAggregateReconciliationEvidence do
     true = is_binary(relative_path) and Path.type(relative_path) == :relative
     path = Path.expand(relative_path, File.cwd!())
     true = String.starts_with?(path, File.cwd!() <> "/")
-
     path
-    |> resolve_legacy_evidence_path(@phase3_recovery_dir, &phase3_evidence_dir!/0)
-    |> resolve_legacy_evidence_path(@phase4_dir, &phase4_evidence_dir!/0)
-  end
-
-  defp existing_evidence_dir!(label, archived, legacy, required_files) do
-    archived_path = Path.expand(archived, File.cwd!())
-    legacy_path = Path.expand(legacy, File.cwd!())
-
-    cond do
-      complete_evidence_dir?(archived_path, required_files) -> archived_path
-      complete_evidence_dir?(legacy_path, required_files) -> legacy_path
-      true -> raise ArgumentError, "Missing complete #{label} evidence under either path"
-    end
-  end
-
-  defp complete_evidence_dir?(directory, required_files) do
-    File.dir?(directory) and
-      Enum.all?(required_files, &File.regular?(Path.join(directory, &1)))
-  end
-
-  defp resolve_legacy_evidence_path(path, legacy, resolver) do
-    legacy_root = Path.expand(legacy, File.cwd!())
-    prefix = legacy_root <> "/"
-
-    if String.starts_with?(path, prefix) do
-      suffix = Path.relative_to(path, legacy_root)
-      Path.join(resolver.(), suffix)
-    else
-      path
-    end
   end
 
   defp sha256_bytes(bytes) do

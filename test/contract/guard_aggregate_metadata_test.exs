@@ -1,13 +1,13 @@
 defmodule Fablebook.Contract.GuardAggregateMetadataTest do
   use ExUnit.Case, async: true
 
-  alias Fablebook.Test.GuardAggregateReconciliationEvidence
+  alias Fablebook.Test.GuardAggregateEvidencePaths
 
   @tag :guard_aggregate_reconciliation
   @tag :guard_aggregate_reconciliation_bundle
   @tag :guard_aggregate_reconciliation_metadata
   test "lane membership binds to the exact metadata-only source and caller gaps" do
-    directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
+    directory = GuardAggregateEvidencePaths.phase3_evidence_dir!()
 
     read_json = fn name ->
       path = Path.join(directory, name)
@@ -133,7 +133,7 @@ defmodule Fablebook.Contract.GuardAggregateMetadataTest do
   @tag :guard_aggregate_reconciliation
   @tag :guard_aggregate_reconciliation_metadata
   test "archived Phase 3 evidence is read-only" do
-    directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
+    directory = GuardAggregateEvidencePaths.phase3_evidence_dir!()
 
     legacy_directory =
       Path.expand(
@@ -142,10 +142,10 @@ defmodule Fablebook.Contract.GuardAggregateMetadataTest do
       )
 
     if directory == legacy_directory do
-      assert GuardAggregateReconciliationEvidence.phase3_writable_evidence_dir!() == directory
+      assert GuardAggregateEvidencePaths.phase3_writable_evidence_dir!() == directory
     else
       assert_raise ArgumentError, ~r/Phase 3 evidence is archived and read-only/, fn ->
-        GuardAggregateReconciliationEvidence.phase3_writable_evidence_dir!()
+        GuardAggregateEvidencePaths.phase3_writable_evidence_dir!()
       end
     end
   end

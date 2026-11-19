@@ -1388,6 +1388,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   alias Fablebook.Test.DebuggerSettings
   alias Fablebook.Test.ExternalTransformEvidence
   alias Fablebook.Test.GeneratorDispatchIntegrationEvidence
+  alias Fablebook.Test.GuardAggregateEvidencePaths
   alias Fablebook.Test.GuardAggregateReconciliationEvidence
   alias Fablebook.Test.InetsTraceCoreEvidence
   alias Fablebook.Test.InetsTraceFloorEvidence
@@ -5087,7 +5088,13 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   setup_all do
     graph = build_graph()
-    {:ok, graph: graph}
+    phase_evidence_aliases = GuardAggregateEvidencePaths.install_legacy_read_aliases!()
+    {:ok, graph: graph, phase_evidence_aliases: phase_evidence_aliases}
+  end
+
+  teardown_all context do
+    GuardAggregateEvidencePaths.remove_legacy_read_aliases!(context.phase_evidence_aliases)
+    :ok
   end
 
   @exclusions @exclusions ++ [@escript_debug_exclusion]
@@ -5325,7 +5332,7 @@ defmodule Fablebook.Contract.TierSweepTest do
           else: "03-FLOOR-AGGREGATE-EVIDENCE.json"
 
       path =
-        GuardAggregateReconciliationEvidence.phase3_writable_evidence_dir!()
+        GuardAggregateEvidencePaths.phase3_writable_evidence_dir!()
         |> Path.join(name)
 
       temporary = path <> ".tmp"
@@ -5617,7 +5624,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   @tag :guard_aggregate_reconciliation
   @tag :guard_aggregate_reconciliation_bundle
   test "two lane records reproduce the complete original-identity crosswalk" do
-    directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
+    directory = GuardAggregateEvidencePaths.phase3_evidence_dir!()
 
     core =
       directory |> Path.join("03-CORE-AGGREGATE-EVIDENCE.json") |> File.read!() |> Jason.decode!()
@@ -5628,7 +5635,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> File.read!()
       |> Jason.decode!()
 
-    phase4_directory = GuardAggregateReconciliationEvidence.phase4_evidence_dir!()
+    phase4_directory = GuardAggregateEvidencePaths.phase4_evidence_dir!()
 
     phase4_manifest_path = Path.join(phase4_directory, "04-PROVENANCE-MANIFEST.json")
     phase4_validation_path = Path.join(phase4_directory, "04-VALIDATION.json")
@@ -6027,7 +6034,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     lane = to_string(evidence.lane.name)
 
-    directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
+    directory = GuardAggregateEvidencePaths.phase3_evidence_dir!()
 
     path = Path.join(directory, "03-#{String.upcase(lane)}-AGGREGATE-EVIDENCE.json")
     original = path |> File.read!() |> Jason.decode!()
@@ -6119,7 +6126,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
 
     if System.get_env("FABLEBOOK_GUARD_AGGREGATE_WRITE") == "1" do
-      write_directory = GuardAggregateReconciliationEvidence.phase3_writable_evidence_dir!()
+      write_directory = GuardAggregateEvidencePaths.phase3_writable_evidence_dir!()
       write_path = Path.join(write_directory, Path.basename(path))
       temporary = write_path <> ".tmp"
       File.write!(temporary, Jason.encode_to_iodata!(enriched, pretty: true))
@@ -6263,7 +6270,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
       lane = to_string(evidence.lane.name)
 
-      directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
+      directory = GuardAggregateEvidencePaths.phase3_evidence_dir!()
 
       record_path = Path.join(directory, "03-#{String.upcase(lane)}-AGGREGATE-EVIDENCE.json")
       original = record_path |> File.read!() |> Jason.decode!()
