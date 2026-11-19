@@ -129,4 +129,24 @@ defmodule Fablebook.Contract.GuardAggregateMetadataTest do
     assert validation["result"]["implementation_authorized"] == false
     assert validation["result"]["aggregate_gate"] == "open"
   end
+
+  @tag :guard_aggregate_reconciliation
+  @tag :guard_aggregate_reconciliation_metadata
+  test "archived Phase 3 evidence is read-only" do
+    directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
+
+    legacy_directory =
+      Path.expand(
+        "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
+        __DIR__
+      )
+
+    if directory == legacy_directory do
+      assert GuardAggregateReconciliationEvidence.phase3_writable_evidence_dir!() == directory
+    else
+      assert_raise ArgumentError, ~r/Phase 3 evidence is archived and read-only/, fn ->
+        GuardAggregateReconciliationEvidence.phase3_writable_evidence_dir!()
+      end
+    end
+  end
 end
