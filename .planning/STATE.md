@@ -1,19 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.5
-milestone_name: Bounded EX-177 Provenance Follow-through
-status: complete
-last_updated: "2026-11-19T19:47:38Z"
+milestone: v0.6
+milestone_name: Guard Scope Reconciliation
+status: planning
+last_updated: "2026-11-19T23:10:08.365Z"
 last_activity: 2026-11-19
-last_activity_desc: Milestone v0.5 completed and archived
-state_head: d5a8dc0b856e5c8223524c4fd3f849bd27c4c859
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
-  percent: 100
-current_phase: null
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -34,10 +31,11 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: Between milestones
+Phase: Not started (defining requirements)
 Plan: —
-Status: v0.5 completed and archived; PR #95 merged with green hosted CI
-Last activity: 2026-11-19 — archive closeout merged; no next milestone selected
+Status: Defining requirements
+Last activity: 2026-11-19 — Milestone v0.6 started
+
 
 ## Active Handoff
 
