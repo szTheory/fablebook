@@ -2,20 +2,19 @@
 gsd_state_version: "1.0"
 milestone: v0.4
 milestone_name: Guard Aggregate Reconciliation — Fablebook
-current_phase: 04
-current_phase_name: Evidence-only source and gap provenance closure
-current_plan: 3
-status: Phase 04 passed goal verification; PR #91 is open for exact-head hosted CI; semantic gaps remain open by design.
-last_updated: "2026-11-19T03:21:05.454Z"
+current_phase: 5
+current_plan: Not started
+status: completed
+last_updated: "2026-11-19T05:54:18.646Z"
 last_activity: 2026-11-19
-last_activity_desc: "Phase 4 shipping as PR #91; exact-head hosted CI running"
-state_head: aa90dea93ea58437f0c5171414304273289a8702
+last_activity_desc: Phase 5 complete
+state_head: b1cd9b410b556608c87047bd871fa38bf954e32e
 progress:
-  total_phases: 2
+  total_phases: 3
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 8
-  percent: 100
+  total_plans: 9
+  completed_plans: 9
+  percent: 67
 resumed_at: 2026-11-17 under owner direction INT-20261117-11
 ---
 
@@ -29,26 +28,28 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Track PR #91's exact-head hosted CI and merge when required checks pass, with source access still closed.
+**Current focus:** Phase 5 — Bounded two-lane source provenance slice
 
 ## Current Position
 
-Phase: 04 — Evidence-only source and gap provenance closure
-Current Plan: 3
-Status: Phase 3 is delivered as merged PR #90. Phase 04 plans 04-01 through 04-03 and its goal verification are complete; PR #91 is open with exact-head hosted CI running. The package is record-valid with open semantic gaps.
-Last activity: 2026-11-19 -- PR #91 opened; exact-head hosted CI running
+Phase: 5
+Current Plan: Not started
+Status: All phases complete
+Last activity: 2026-11-19 — Phase 5 complete
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `gsd/phase-04-evidence-only-closeout`, HEAD `aa90dea93ea58437f0c5171414304273289a8702`; PR #91 targets `main`, and exact-head hosted CI is running. No additional worktree was created.
+- Checkout: `~/projects/fablebook`, branch `gsd/phase-05-bounded-two-lane-source-provenance-slice`, HEAD `b1cd9b410b556608c87047bd871fa38bf954e32e`; Phase 4 delivery bookkeeping and Phase 5 planning artifacts are local for this phase PR. No additional worktree was created.
 - Phase 04 verification passed 4/4. The current [validation](phases/04-evidence-only-source-and-gap-provenance-closure/04-VALIDATION.json) reports `pass_with_open_gaps`; the stable typed-gap file matches ENV06 byte-for-byte, and the old generation remains preserved separately. The exact review and final `--all` package check pass.
 - Phase 3 verification reports 21/21 must-haves passed, both automated UAT checks pass, and the security record has no open threats. No human UAT is useful for this evidence-only result.
-- R8 was consumed once for the exact reviewed helper span. No source body was reread and no request was replayed. The raw R8 body is not archived for rereading; the final review records this limitation. R7 remains consumed delivery-unverified and excluded from claims. No further source request is authorized by this recovery.
-- PR #90 reviewed head `def07c39af01f95952070ed5156f0d605c399a7a` squash-merged as `488387b1d446f5c03bdf11bb20e7f0c1e7087b88`; exact-head [hosted CI run 44438380336](https://github.com/szTheory/fablebook/actions/runs/44438380336) passed core, floor, Dialyzer, security, and `ci-gate`. The merged delivery is recorded in [PHASE-DELIVERIES.json](references/PHASE-DELIVERIES.json). Post-merge main CI has not run yet.
+- R1–R8 remain consumed with their recorded delivery statuses; R7 is delivery-unverified and excluded from claims. The owner authorized one bounded Phase 5 scope in [INT-20261118-05](intent/sources/2026-11-18-05-authorize-one-bounded-evidence-scope.md). The exact EX-177 request remains closed until the independent schedule/security reviews, fresh preflight, direct count, and one-use gate all pass; at most one unique R9 request may be consumed.
+- PR #90 reviewed head `def07c39af01f95952070ed5156f0d605c399a7a` squash-merged as `488387b1d446f5c03bdf11bb20e7f0c1e7087b88`; exact-head [hosted CI run 44438380336](https://github.com/szTheory/fablebook/actions/runs/44438380336) passed core, floor, Dialyzer, security, and `ci-gate`. Its merge-commit main CI passed in run 44441004623.
+- PR #91 reviewed head `3d72641d978c5a0cbce62219590227a7d0efbea7` squash-merged as `b1cd9b410b556608c87047bd871fa38bf954e32e`; exact-head [hosted CI run 44451045250](https://github.com/szTheory/fablebook/actions/runs/44451045250) passed core, floor, Dialyzer, security, and `ci-gate`. The squash commit inherited the ship-note `[ci skip]`, so GitHub did not start a second main push run; its tree matches the checked PR head. The delivery receipt is in [PHASE-DELIVERIES.json](references/PHASE-DELIVERIES.json) and will be carried on the next substantive push.
 - Safety stops unchanged: static-only boundary; actual library collision unknown; Macro caller-AST and explanation wording unresolved; candidate null; implementation unauthorized; aggregate gate open; Walking Skeleton blocked; SEC-01 pending. Do not invoke audited OTP/runtime paths.
-- Next actor: Codex tracks exact-head CI for PR #91 and squash-merges when required checks pass. The owner need not review routinely. No new source request or product implementation is authorized.
+- Phase 5 plan review passed with no findings. Its exact slice is EX-177 on both lanes: four selected source/caller rows, with the other 9,712 rows retained as the full pending complement. The legacy digest remains unresolved.
+- Next actor: Codex executes Phase 5 Plan 01 under the reviewed gates. Source output remains not-run until every per-request review, count, execute-preflight, security, and one-use check passes. A failed gate ends this one bounded scope; no retry, family swap, or automatic follow-on occurs.
 - Budget policy: INT-20261117-11 removes the cumulative assistant-output ceiling and reserve stop. Counters are informational; exact-source count, review, preflight, provenance and security gates remain active.
-- Delivery boundary: Phase 3 is delivered with its actual merge receipt recorded. Phase 04's bounded evidence handoff is verified and PR #91 is awaiting CI/merge. Source access remains closed; no implementation, runtime tests, or new source request follows automatically.
+- Delivery boundary: Phases 3 and 04 are delivered. The bounded Phase 04 handoff does not close the wider v0.4 gate. Phase 5 is authorized only for the one selected EX-177 evidence slice; implementation and runtime target execution remain unauthorized.
 
 ## Performance Metrics
 
@@ -94,6 +95,7 @@ The pre-plan membership/source-identity, connected-source, context-sizing, and e
 ### Roadmap Evolution
 
 - Phase 4: Evidence-only source and gap provenance closure remains separate from Phase 3 delivery. INT-20261117-01 rebases only their bounded recovery budget; Phase 4 still adds evidence only and does not close Phase 3.
+- Phase 5: INT-20261118-05 authorized one bounded evidence scope. Verification passed for four keyed EX-177 gaps across core/floor and the unchanged 9,712-row complement. Current source identity/span metadata is absent, so R9 remains unconsumed and the aggregate stays open.
 
 ## Delivered work and archive
 
@@ -158,7 +160,7 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. The result remains semantically open: zero resolved source associations, 9,716 typed gaps, unresolved source resolution, incomplete caller closure, unresolved legacy digest, and candidate null. R8 was consumed once; R1/R4 remain incomplete and R7 remains delivery-unverified. No new source request is authorized. The source/security stops remain binding.
+Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5 is also complete and verified for the bounded EX-177 slice: four source/caller rows remain open because current source identity/span metadata is absent; the other 9,712 rows remain unchanged. R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was read or emitted. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
 ## Decisions
 
@@ -184,9 +186,9 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- PR #91 contains the verified Phase 04 evidence handoff and is awaiting exact-head hosted CI. Squash-merge under the owner's standing authorization when required checks pass, then record the actual delivery receipt. Do not start another phase automatically; present the milestone boundary and next command after delivery.
+- Phase 5 verification passed and the plan is complete. Ship the reviewed change from this checkout with `$gsd-ship 5`; run `bin/planning_health --stage ship --phase 5` first. The owner authorized autonomous CI and squash merge when the exact-head required checks are green. No additional owner action is needed for this delivery.
 
 
-## Latest handoff — Phase 04 delivery
+## Latest handoff — Phase 5 verified; shipping
 
-Checkout: `~/projects/fablebook`, branch `gsd/phase-04-evidence-only-closeout`, HEAD `aa90dea93ea58437f0c5171414304273289a8702`; PR #91 is open and exact-head hosted CI is running. Phase 3 is delivered; Phase 04 has all plans complete and goal verification passed 4/4. Its record package validates with open semantic gaps. Next actor: Codex merges when required checks pass, records the receipt, then stops at the milestone boundary. Source access remains closed; no further request, runtime target, or implementation is authorized.
+Checkout: `~/projects/fablebook`, branch `gsd/phase-05-bounded-two-lane-source-provenance-slice`, based on main at `b1cd9b410b556608c87047bd871fa38bf954e32e`. PR #91 is merged with exact-head CI passed. Phase 3 and Phase 4 are delivered; Phase 5's one plan is complete, code-reviewed, security-checked, validation-checked, and goal-verified. Its four EX-177 source/caller rows remain precise open gaps because no current source path/hash/span index is retained; the 9,712-row complement is unchanged. R9 was not consumed, and no source body was read or emitted. Candidate remains null, implementation unauthorized, aggregate open, actual collision unknown, Macro checkpoints unresolved, SEC-01 Pending, Walking Skeleton blocked, and legacy digest unresolved. No automatic next phase is authorized. Next actor: Codex runs `bin/planning_health --stage ship --phase 5`, then `$gsd-ship 5`, uses local `act` where feasible, pushes the reviewed candidate, obtains hosted exact-head CI, and squash-merges if required checks are green. The owner need not review or approve that green PR again.

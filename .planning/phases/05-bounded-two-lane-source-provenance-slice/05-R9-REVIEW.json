@@ -1,0 +1,683 @@
+{
+  "complement": {
+    "count": 9712,
+    "sha256": "dd95380d2114a10a54ddbb79cc6ec5aab4805a52847dcacb4e2ca3daeda653b5"
+  },
+  "created_at_utc": "2026-11-19T05:13:58.407590Z",
+  "delivery_receipts": [
+    {
+      "ci_run": "https://github.com/szTheory/fablebook/actions/runs/44438380336",
+      "merge_commit": "488387b1d446f5c03bdf11bb20e7f0c1e7087b88",
+      "milestone": "v0.4",
+      "milestone_key": "guard-recovery",
+      "phase": "3",
+      "pr": 90,
+      "reviewed_head": "def07c39af01f95952070ed5156f0d605c399a7a",
+      "status": "merged"
+    },
+    {
+      "ci_run": "https://github.com/szTheory/fablebook/actions/runs/44451045250",
+      "merge_commit": "b1cd9b410b556608c87047bd871fa38bf954e32e",
+      "milestone": "v0.4",
+      "milestone_key": "guard-recovery",
+      "phase": "4",
+      "pr": 91,
+      "reviewed_head": "3d72641d978c5a0cbce62219590227a7d0efbea7",
+      "status": "merged"
+    }
+  ],
+  "input_hashes": {
+    ".planning/forensics/phase4-budget-reset-20261117.md": {
+      "bytes": 4576,
+      "sha256": "6e3af6b72b7be24c98d5ca7d0729486efe9ae865b4b9422ad38c997ebc314e09"
+    },
+    ".planning/migrations/2026-11-11-milestone-reset/ARCHIVE-MANIFEST.json": {
+      "bytes": 118610,
+      "sha256": "866c6393fa83def7e7c858de7837ca81924816dfa9422d2fffecf5203f04d8c8"
+    },
+    ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json": {
+      "bytes": 739744,
+      "sha256": "c25de2e909b972d308a4c28820e99ae7731b78edfdbdcb941c2eb1b77c506aa0"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-ACTIVE-SCHEDULE-REVIEW.md": {
+      "bytes": 884,
+      "sha256": "1cbd44b9bcb72f6a42f0aee686fe49872bd4adacb25025246919fbf26370cbcd"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-BOUNDED-TRACE-STOP.md": {
+      "bytes": 5607,
+      "sha256": "3ca0f5b5312c45e5efca8ff2a22fd3e7913a4a7d004948b4500e714d09db0167"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-BUDGET-REVIEW.md": {
+      "bytes": 1966,
+      "sha256": "e373d62732a62317284cad1a209c50f1a5e66fd598fa53eaa0ee71f4b1def66e"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-COMPACT-DIRECT-COUNT-RECEIPT.md": {
+      "bytes": 4529,
+      "sha256": "6f536ce2c552b470d3497164f641e19f354d034ad858f8b556a1b2ede1405442"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-COMPACT-SCHEDULE-REVIEW-RECEIPT.md": {
+      "bytes": 1242,
+      "sha256": "53e06a047e2d5bc4e4e5e7964f6f69c67a3e4ac75dee98bf91d28dfa25f98307"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-INCIDENT.md": {
+      "bytes": 2194,
+      "sha256": "0c5c79523a1a589db79aad64a09ed2a67f2cf049a15531b8485eb83a1ddfca6e"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-ACTIVE.md": {
+      "bytes": 15687,
+      "sha256": "9e09560dd50b71d95f5f1e3b397cce48441cbc1fd6c42d0c110471f107d25a9a"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md": {
+      "bytes": 10193,
+      "sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-RECOUNT.md": {
+      "bytes": 7247,
+      "sha256": "5b8c075aa2774dc4332f3011b99ae6afdaed5c0d8141e269988065f9bbd71cef"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE.md": {
+      "bytes": 143142,
+      "sha256": "757445a0ed8e74fbc0d69740bb19ee784df74552900577a9c463d7309ca6abe5"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-PLAN-REVIEW-RECEIPT.md": {
+      "bytes": 3345,
+      "sha256": "77e3ffb14f7ce1baeba2951f62763bf9d1f1905341138b158a443c8413540253"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-RECEIPT.json": {
+      "bytes": 14895,
+      "sha256": "05ead38c3ad0e5c8ed38ae79c919fbdf410a934438131454c54c824413374b5b"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-VALIDATION.json": {
+      "bytes": 7894,
+      "sha256": "0d6a050d4e2254bd05e346bbafbe4e1c8e4edbd6f031ea2abb85fa47e29f17d2"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAPS.jsonl": {
+      "bytes": 3281081,
+      "sha256": "297aa1633f7fe24d679e5e660bb3d15382cac8cce3bda8ac4e7d841435243f77"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-PLAN.md": {
+      "bytes": 23407,
+      "sha256": "b284a03591d78e50a43b2cc401f8dea55bd7c3ca2f9ee087377972002fbf2c70"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-RECOUNT-SCHEDULE-REVIEW-RECEIPT.md": {
+      "bytes": 1211,
+      "sha256": "22fab5e644d2f00ef69030cf12f4e1d4b1aef8e15d6ede32f81bcb7fcb61541e"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-REPLAN.md": {
+      "bytes": 60316,
+      "sha256": "59ababf0f6a913b168249c65a4a07a59ded421b4f3f1c138fbc416960f1ee37e"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-GATE-STOP.md": {
+      "bytes": 5862,
+      "sha256": "a346d6edd4610b91cbd09033f980eaee4512f8e065bc864a91429f71cc4eda7a"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-INVALID-RED.log": {
+      "bytes": 2209,
+      "sha256": "b19bf4a186e6785f6cfea90d3809731ac66907def6536b27fb02ccef7c1e74c9"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-RED.json": {
+      "bytes": 15103,
+      "sha256": "ee9ed7fd31bab020062b98455c6a71a7e943173c7f853d01a4b97769a72c1fd7"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-RED.tap": {
+      "bytes": 14139,
+      "sha256": "057cc0b9208e7900bc338bd30f4c52d80303604f999369bdc534bd503cfec7ee"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md": {
+      "bytes": 52172,
+      "sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json": {
+      "bytes": 1418156,
+      "sha256": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json": {
+      "bytes": 1390810,
+      "sha256": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md": {
+      "bytes": 6326,
+      "sha256": "c11648cbc449a6319c9bc0541198f80bc4c07c2deab48b84b60533d4a2d90250"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECONCILIATION.md": {
+      "bytes": 13115491,
+      "sha256": "3ee538cdce64372ffe9a6641894ba309f976572118bae3f3c73d90fdfd488c61"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-REVIEW.md": {
+      "bytes": 54645,
+      "sha256": "800f366aa2c5628e7634f4648e4084c86e50710ad64efbb53c97a0f4e7467ff9"
+    },
+    ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-SIZING.json": {
+      "bytes": 38400,
+      "sha256": "2ad9d75a45800786bba116166eb64ca304781c101ae0bdfe851a32cc172430bb"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-01-PLAN.md": {
+      "bytes": 25857,
+      "sha256": "e0225186b6da35fa07cc7ffc61cc15d92c63776e7a0b1e1ff85358c5bd5d1eee"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-CONTEXT.md": {
+      "bytes": 9614,
+      "sha256": "bdb47a4447b515f89aa720a2019bdb1c1a20bb3ef274a0c8519f6eb233870319"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-COVERAGE-CALLER-TRACE.json": {
+      "bytes": 22951,
+      "sha256": "1341aef104a635bb00511413185e3e946b53a8992052ad42432b88ba3a8cf5fa"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-EVIDENCE-REVIEW.json": {
+      "bytes": 7305,
+      "sha256": "9130a1cecc82fc999963a265d333637cd8da50145b8f540af3517aede3cc21ee"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PATTERNS.md": {
+      "bytes": 13129,
+      "sha256": "dfefb7cbe621c2821a42a85d6ed862652746239b055709575387e0722f004ec6"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json": {
+      "bytes": 60908,
+      "sha256": "24bd4c93c6fbfaa599de664365acbae266720f95d86dd18c4cb36bb009ae8c23"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R1-REQUEST-GATE.json": {
+      "bytes": 7422,
+      "sha256": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-REQUEST-GATE.json": {
+      "bytes": 8271,
+      "sha256": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-REQUEST-GATE.json": {
+      "bytes": 8092,
+      "sha256": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R4-REQUEST-GATE.json": {
+      "bytes": 8382,
+      "sha256": "d4b3b1d6fa9995543b969b01f6d9227a50eb3b7fc78ca1285630cef2c2645cde"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-REQUEST-GATE.json": {
+      "bytes": 10946,
+      "sha256": "12ba9d4efb78c955a4f8c1267866285bb3e92f465ce03d7c84b11b72854dba6e"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-REQUEST-GATE.json": {
+      "bytes": 8407,
+      "sha256": "5e30216d14d1ce465f49bd846f4dcda4cc914cd610de1a7feebda4c259570d08"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R7-REQUEST-GATE.json": {
+      "bytes": 5635,
+      "sha256": "43296e1d0058c231c8d16b5e83e31c7b6cf0bc61ddde9dd86937333db39027eb"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R8-REQUEST-GATE.json": {
+      "bytes": 10681,
+      "sha256": "153fe652987402f80585e3976cb3192392485b987753d044528508acd697d4d0"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SIZING-DIGEST-PROOF.json": {
+      "bytes": 8001,
+      "sha256": "f745a2c074e006a384c3df5ca3ea0df1d025e2b096877ea413ea09025681370d"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS.jsonl": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl": {
+      "bytes": 19633625,
+      "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011"
+    },
+    ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS.jsonl": {
+      "bytes": 19633625,
+      "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011"
+    },
+    ".planning/references/PHASE-DELIVERIES.json": {
+      "bytes": 1493,
+      "sha256": "a85b8625d1ee7ff96b4dd126b671ef64af466d16a83eb7ab2ff0b728338b84fd"
+    },
+    "test/contract/tier_sweep_test.exs": {
+      "bytes": 780065,
+      "sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439"
+    },
+    "test/support/guard_aggregate_reconciliation_evidence.ex": {
+      "bytes": 86693,
+      "sha256": "2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb"
+    }
+  },
+  "lane_membership": {
+    "core": {
+      "complete_span": null,
+      "current_source_path": null,
+      "current_source_sha256": null,
+      "generation": "09f46024e419d4fe81c273befabe0019ab953e5a6f8c4dd1c01c114df184709b",
+      "historical_locator_only": "phoenix/lib/mix/tasks/phx.gen.context.ex:445",
+      "identity_count": 226,
+      "identity_ids_sha256": "174563c02c08fe7b6343032668dfafc624ff47c2a6e4b6e171fd2cf1b95dafbe",
+      "lock_sha256": "4638a2d1c25b5be2bfaf6b6a3309e9147612f343aa694d64b2af99cc46f33a85",
+      "mfa": [
+        "Elixir.Mix.Tasks.Phx.Gen.Context",
+        "prompt_for_code_injection",
+        1
+      ]
+    },
+    "floor": {
+      "complete_span": null,
+      "current_source_path": null,
+      "current_source_sha256": null,
+      "generation": "09f46024e419d4fe81c273befabe0019ab953e5a6f8c4dd1c01c114df184709b",
+      "historical_locator_only": "phoenix/lib/mix/tasks/phx.gen.context.ex:445",
+      "identity_count": 226,
+      "identity_ids_sha256": "174563c02c08fe7b6343032668dfafc624ff47c2a6e4b6e171fd2cf1b95dafbe",
+      "lock_sha256": "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847",
+      "mfa": [
+        "Elixir.Mix.Tasks.Phx.Gen.Context",
+        "prompt_for_code_injection",
+        1
+      ]
+    }
+  },
+  "phase3_stops": {
+    "actual_library_collision": "unknown",
+    "aggregate_gate": "open",
+    "candidate": null,
+    "implementation_authorized": false,
+    "sec_01": "Pending",
+    "static_only": true,
+    "walking_skeleton": "blocked"
+  },
+  "phase4_safety_stops": {
+    "actual_library_collision": "unknown",
+    "aggregate_gate": "open",
+    "candidate": null,
+    "implementation_authorized": false,
+    "sec_01": "Pending",
+    "static_only": true,
+    "walking_skeleton": "blocked"
+  },
+  "phase4_validation": {
+    "bindings": {
+      "association_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "caller_trace_sha256": "1341aef104a635bb00511413185e3e946b53a8992052ad42432b88ba3a8cf5fa",
+      "digest_proof_sha256": "f745a2c074e006a384c3df5ca3ea0df1d025e2b096877ea413ea09025681370d",
+      "evidence_review_sha256": "9130a1cecc82fc999963a265d333637cd8da50145b8f540af3517aede3cc21ee",
+      "manifest_sha256": "24bd4c93c6fbfaa599de664365acbae266720f95d86dd18c4cb36bb009ae8c23",
+      "request_gate_sha256s": {
+        "R1": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15",
+        "R2": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930",
+        "R3": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482",
+        "R4": "d4b3b1d6fa9995543b969b01f6d9227a50eb3b7fc78ca1285630cef2c2645cde",
+        "R5": "12ba9d4efb78c955a4f8c1267866285bb3e92f465ce03d7c84b11b72854dba6e",
+        "R6": "5e30216d14d1ce465f49bd846f4dcda4cc914cd610de1a7feebda4c259570d08",
+        "R7": "43296e1d0058c231c8d16b5e83e31c7b6cf0bc61ddde9dd86937333db39027eb",
+        "R8": "153fe652987402f80585e3976cb3192392485b987753d044528508acd697d4d0"
+      },
+      "stable_consumer_payloads": {
+        "associations": {
+          "active_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+          "bytes": 0,
+          "generation": "ENV-20261117-06-supported-20261117T204102Z",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stable_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS.jsonl"
+        },
+        "typed_gaps": {
+          "active_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+          "bytes": 19633625,
+          "generation": "ENV-20261117-06-supported-20261117T204102Z",
+          "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011",
+          "stable_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS.jsonl"
+        }
+      },
+      "typed_gaps_sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011"
+    },
+    "freshness": "passed",
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "hashing_mode": "streaming SHA-256 only; no source bytes decoded or emitted",
+    "input_count": 36,
+    "input_hashes": {
+      ".planning/forensics/phase4-budget-reset-20261117.md": {
+        "bytes": 4576,
+        "sha256": "6e3af6b72b7be24c98d5ca7d0729486efe9ae865b4b9422ad38c997ebc314e09"
+      },
+      ".planning/migrations/2026-11-11-milestone-reset/ARCHIVE-MANIFEST.json": {
+        "bytes": 118610,
+        "sha256": "866c6393fa83def7e7c858de7837ca81924816dfa9422d2fffecf5203f04d8c8"
+      },
+      ".planning/milestones/v0.1-phases/01.1.1.1-finish-the-ban-list-atom-creators-every-installed-otp-app-an/01.1.1.1-AUDIT-BUDGET.json": {
+        "bytes": 739744,
+        "sha256": "c25de2e909b972d308a4c28820e99ae7731b78edfdbdcb941c2eb1b77c506aa0"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-ACTIVE-SCHEDULE-REVIEW.md": {
+        "bytes": 884,
+        "sha256": "1cbd44b9bcb72f6a42f0aee686fe49872bd4adacb25025246919fbf26370cbcd"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-BOUNDED-TRACE-STOP.md": {
+        "bytes": 5607,
+        "sha256": "3ca0f5b5312c45e5efca8ff2a22fd3e7913a4a7d004948b4500e714d09db0167"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-BUDGET-REVIEW.md": {
+        "bytes": 1966,
+        "sha256": "e373d62732a62317284cad1a209c50f1a5e66fd598fa53eaa0ee71f4b1def66e"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-COMPACT-DIRECT-COUNT-RECEIPT.md": {
+        "bytes": 4529,
+        "sha256": "6f536ce2c552b470d3497164f641e19f354d034ad858f8b556a1b2ede1405442"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-COMPACT-SCHEDULE-REVIEW-RECEIPT.md": {
+        "bytes": 1242,
+        "sha256": "53e06a047e2d5bc4e4e5e7964f6f69c67a3e4ac75dee98bf91d28dfa25f98307"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-INCIDENT.md": {
+        "bytes": 2194,
+        "sha256": "0c5c79523a1a589db79aad64a09ed2a67f2cf049a15531b8485eb83a1ddfca6e"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-ACTIVE.md": {
+        "bytes": 15687,
+        "sha256": "9e09560dd50b71d95f5f1e3b397cce48441cbc1fd6c42d0c110471f107d25a9a"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-COMPACT.md": {
+        "bytes": 10193,
+        "sha256": "1a32f9fed92b395894c65f17f15a77506f6c90541966565525ebbf2b12637e24"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE-RECOUNT.md": {
+        "bytes": 7247,
+        "sha256": "5b8c075aa2774dc4332f3011b99ae6afdaed5c0d8141e269988065f9bbd71cef"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-EXECUTION-SOURCE-SCHEDULE.md": {
+        "bytes": 143142,
+        "sha256": "757445a0ed8e74fbc0d69740bb19ee784df74552900577a9c463d7309ca6abe5"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-PLAN-REVIEW-RECEIPT.md": {
+        "bytes": 3345,
+        "sha256": "77e3ffb14f7ce1baeba2951f62763bf9d1f1905341138b158a443c8413540253"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-RECEIPT.json": {
+        "bytes": 14895,
+        "sha256": "05ead38c3ad0e5c8ed38ae79c919fbdf410a934438131454c54c824413374b5b"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAP-VALIDATION.json": {
+        "bytes": 7894,
+        "sha256": "0d6a050d4e2254bd05e346bbafbe4e1c8e4edbd6f031ea2abb85fa47e29f17d2"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-METADATA-GAPS.jsonl": {
+        "bytes": 3281081,
+        "sha256": "297aa1633f7fe24d679e5e660bb3d15382cac8cce3bda8ac4e7d841435243f77"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-PLAN.md": {
+        "bytes": 23407,
+        "sha256": "b284a03591d78e50a43b2cc401f8dea55bd7c3ca2f9ee087377972002fbf2c70"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-RECOUNT-SCHEDULE-REVIEW-RECEIPT.md": {
+        "bytes": 1211,
+        "sha256": "22fab5e644d2f00ef69030cf12f4e1d4b1aef8e15d6ede32f81bcb7fcb61541e"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-REPLAN.md": {
+        "bytes": 60316,
+        "sha256": "59ababf0f6a913b168249c65a4a07a59ded421b4f3f1c138fbc416960f1ee37e"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-GATE-STOP.md": {
+        "bytes": 5862,
+        "sha256": "a346d6edd4610b91cbd09033f980eaee4512f8e065bc864a91429f71cc4eda7a"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-INVALID-RED.log": {
+        "bytes": 2209,
+        "sha256": "b19bf4a186e6785f6cfea90d3809731ac66907def6536b27fb02ccef7c1e74c9"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-RED.json": {
+        "bytes": 15103,
+        "sha256": "ee9ed7fd31bab020062b98455c6a71a7e943173c7f853d01a4b97769a72c1fd7"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-04-TASK2-RED.tap": {
+        "bytes": 14139,
+        "sha256": "057cc0b9208e7900bc338bd30f4c52d80303604f999369bdc534bd503cfec7ee"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-05-PLAN.md": {
+        "bytes": 52172,
+        "sha256": "3d7a6a219389abefaf80c1e2813eae9ac7e5102dc751143f2c7943dbd3b046d5"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json": {
+        "bytes": 1418156,
+        "sha256": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json": {
+        "bytes": 1390810,
+        "sha256": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-READINESS.md": {
+        "bytes": 6326,
+        "sha256": "c11648cbc449a6319c9bc0541198f80bc4c07c2deab48b84b60533d4a2d90250"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-RECONCILIATION.md": {
+        "bytes": 13115491,
+        "sha256": "3ee538cdce64372ffe9a6641894ba309f976572118bae3f3c73d90fdfd488c61"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-REVIEW.md": {
+        "bytes": 54645,
+        "sha256": "800f366aa2c5628e7634f4648e4084c86e50710ad64efbb53c97a0f4e7467ff9"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-SIZING.json": {
+        "bytes": 38400,
+        "sha256": "2ad9d75a45800786bba116166eb64ca304781c101ae0bdfe851a32cc172430bb"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-01-PLAN.md": {
+        "bytes": 25857,
+        "sha256": "e0225186b6da35fa07cc7ffc61cc15d92c63776e7a0b1e1ff85358c5bd5d1eee"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-CONTEXT.md": {
+        "bytes": 9614,
+        "sha256": "bdb47a4447b515f89aa720a2019bdb1c1a20bb3ef274a0c8519f6eb233870319"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-COVERAGE-CALLER-TRACE.json": {
+        "bytes": 22951,
+        "sha256": "1341aef104a635bb00511413185e3e946b53a8992052ad42432b88ba3a8cf5fa"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-EVIDENCE-REVIEW.json": {
+        "bytes": 7305,
+        "sha256": "9130a1cecc82fc999963a265d333637cd8da50145b8f540af3517aede3cc21ee"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PATTERNS.md": {
+        "bytes": 13129,
+        "sha256": "dfefb7cbe621c2821a42a85d6ed862652746239b055709575387e0722f004ec6"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json": {
+        "bytes": 60908,
+        "sha256": "24bd4c93c6fbfaa599de664365acbae266720f95d86dd18c4cb36bb009ae8c23"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R1-REQUEST-GATE.json": {
+        "bytes": 7422,
+        "sha256": "ac41d07b9ca7eedbafb4b73a8e825843e0adcfb88e0890fe8e6d64c84a82be15"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R2-REQUEST-GATE.json": {
+        "bytes": 8271,
+        "sha256": "61d97b155443a3579e9802be070a53aea0f0192014a6cb167d10ebec5789f930"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R3-REQUEST-GATE.json": {
+        "bytes": 8092,
+        "sha256": "8243c9e42fea4835eb29a68cc737e3f91d3b054447486df416d37351669ae482"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R4-REQUEST-GATE.json": {
+        "bytes": 8382,
+        "sha256": "d4b3b1d6fa9995543b969b01f6d9227a50eb3b7fc78ca1285630cef2c2645cde"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R5-REQUEST-GATE.json": {
+        "bytes": 10946,
+        "sha256": "12ba9d4efb78c955a4f8c1267866285bb3e92f465ce03d7c84b11b72854dba6e"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R6-REQUEST-GATE.json": {
+        "bytes": 8407,
+        "sha256": "5e30216d14d1ce465f49bd846f4dcda4cc914cd610de1a7feebda4c259570d08"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R7-REQUEST-GATE.json": {
+        "bytes": 5635,
+        "sha256": "43296e1d0058c231c8d16b5e83e31c7b6cf0bc61ddde9dd86937333db39027eb"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-R8-REQUEST-GATE.json": {
+        "bytes": 10681,
+        "sha256": "153fe652987402f80585e3976cb3192392485b987753d044528508acd697d4d0"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-SIZING-DIGEST-PROOF.json": {
+        "bytes": 8001,
+        "sha256": "f745a2c074e006a384c3df5ca3ea0df1d025e2b096877ea413ea09025681370d"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS.jsonl": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl": {
+        "bytes": 19633625,
+        "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011"
+      },
+      ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS.jsonl": {
+        "bytes": 19633625,
+        "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011"
+      },
+      ".planning/references/PHASE-DELIVERIES.json": {
+        "bytes": 1493,
+        "sha256": "a85b8625d1ee7ff96b4dd126b671ef64af466d16a83eb7ab2ff0b728338b84fd"
+      },
+      "test/contract/tier_sweep_test.exs": {
+        "bytes": 780065,
+        "sha256": "f66d5c7f8467b1665d4eb593808788ee151a6fccf3301de14bb170a6b9bdc439"
+      },
+      "test/support/guard_aggregate_reconciliation_evidence.ex": {
+        "bytes": 86693,
+        "sha256": "2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb"
+      }
+    },
+    "manifest": {
+      "bytes": 60908,
+      "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-PROVENANCE-MANIFEST.json",
+      "sha256": "24bd4c93c6fbfaa599de664365acbae266720f95d86dd18c4cb36bb009ae8c23"
+    },
+    "path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-VALIDATION.json",
+    "request_ledger": {
+      "allocation_status": "unique_candidate_after_history_check",
+      "candidate_request_id": "R9",
+      "consumed_request_ids": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6",
+        "R7",
+        "R8"
+      ],
+      "consumption_status": "not_emitted",
+      "phase3_phase4_request_id_matches": [],
+      "phase4_source_request_count": 8
+    },
+    "result": "pass_with_open_gaps",
+    "review_path": ".planning/phases/04-evidence-only-source-and-gap-provenance-closure/04-EVIDENCE-REVIEW.json",
+    "sha256": "ffb6b7f22f46b4acff20776941dbcac6162a6b23e21e888fa132abb938a846b0"
+  },
+  "request_id": "R9",
+  "schedule": {
+    "candidate_files": [],
+    "historical_locator_is_identity": false,
+    "lane_sources": {
+      "core": {
+        "complete_span": null,
+        "historical_locator": "phoenix/lib/mix/tasks/phx.gen.context.ex:445",
+        "lock_sha256": "4638a2d1c25b5be2bfaf6b6a3309e9147612f343aa694d64b2af99cc46f33a85",
+        "mfa": [
+          "Elixir.Mix.Tasks.Phx.Gen.Context",
+          "prompt_for_code_injection",
+          1
+        ],
+        "pinned_generation": "09f46024e419d4fe81c273befabe0019ab953e5a6f8c4dd1c01c114df184709b",
+        "source_path": null,
+        "source_sha256": null,
+        "status": "identity_and_span_unproven"
+      },
+      "floor": {
+        "complete_span": null,
+        "historical_locator": "phoenix/lib/mix/tasks/phx.gen.context.ex:445",
+        "lock_sha256": "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847",
+        "mfa": [
+          "Elixir.Mix.Tasks.Phx.Gen.Context",
+          "prompt_for_code_injection",
+          1
+        ],
+        "pinned_generation": "09f46024e419d4fe81c273befabe0019ab953e5a6f8c4dd1c01c114df184709b",
+        "source_path": null,
+        "source_sha256": null,
+        "status": "identity_and_span_unproven"
+      }
+    },
+    "reason": [
+      "The exact EX-177 current source path, source hash, package/archive revision, and complete span are null in both pinned Phase 4 lane gap records.",
+      "Phase 3 retains only the historical locator phoenix/lib/mix/tasks/phx.gen.context.ex:445; it is not current lane identity/span proof.",
+      "No retained Phase 3/4 symbol or span index is bound to EX-177, so a metadata-only schedule cannot be produced without opening source bodies to discover it."
+    ],
+    "source_body_reads": 0,
+    "source_discovery": "metadata_only",
+    "source_emission": "not_run",
+    "status": "not_created"
+  },
+  "schedule_review": {
+    "reason": "No exact lane schedule exists to review",
+    "reviewer": null,
+    "status": "not_run"
+  },
+  "schema_version": "05.r9.review.1",
+  "scope_payload": {
+    "complement_count": 9712,
+    "complement_sha256": "dd95380d2114a10a54ddbb79cc6ec5aab4805a52847dcacb4e2ca3daeda653b5",
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "phase3_input_hashes": {
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-CORE-AGGREGATE-EVIDENCE.json": {
+        "bytes": 1418156,
+        "sha256": "70930cb58c7f1d396fd589e8d7bb797a804dac417d18e15fc067e9e128c771fd"
+      },
+      ".planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/03-FLOOR-AGGREGATE-EVIDENCE.json": {
+        "bytes": 1390810,
+        "sha256": "955191252b9f3ef48ca5050fc4919725ac317a69980fda6e20d9ad7537f2df9d"
+      }
+    },
+    "phase4_gap_hash": {
+      "bytes": 19633625,
+      "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011"
+    },
+    "selected_keys": [
+      "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+      "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller",
+      "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+      "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller"
+    ],
+    "selected_mfa_per_lane": {
+      "core": [
+        "Elixir.Mix.Tasks.Phx.Gen.Context",
+        "prompt_for_code_injection",
+        1
+      ],
+      "floor": [
+        "Elixir.Mix.Tasks.Phx.Gen.Context",
+        "prompt_for_code_injection",
+        1
+      ]
+    }
+  },
+  "scope_payload_sha256": "e5c2c9555c120858fa1f07d6505cd3e5c3ba8b2d30f3a317fdc882b689950ddd",
+  "scope_status": "passed",
+  "security_review": {
+    "reason": "No exact lane schedule exists to review",
+    "reviewer": null,
+    "status": "not_run"
+  },
+  "selected": [
+    "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+    "core|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller",
+    "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|source",
+    "floor|EX-177|Elixir.Mix.Tasks.Phx.Gen.Context|prompt_for_code_injection|1|caller"
+  ],
+  "source_access": "closed",
+  "source_body_reads": 0,
+  "source_discovery": "not_run",
+  "source_emission": "not_run",
+  "status": "stopped",
+  "stop_reasons": [
+    "The exact EX-177 current source path, source hash, package/archive revision, and complete span are null in both pinned Phase 4 lane gap records.",
+    "Phase 3 retains only the historical locator phoenix/lib/mix/tasks/phx.gen.context.ex:445; it is not current lane identity/span proof.",
+    "No retained Phase 3/4 symbol or span index is bound to EX-177, so a metadata-only schedule cannot be produced without opening source bodies to discover it."
+  ]
+}

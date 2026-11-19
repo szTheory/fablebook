@@ -1,0 +1,23 @@
+{
+  "context_fit": {
+    "reason": "direct count was not eligible",
+    "status": "not_run"
+  },
+  "direct_count": {
+    "reason": "no exact serialized request exists",
+    "status": "not_run"
+  },
+  "execute_preflight": {
+    "reason": "metadata scheduling stopped before both independent reviews",
+    "status": "not_run"
+  },
+  "request_id": "R9",
+  "schema_version": "05.r9.readiness.1",
+  "source_emission": "not_run",
+  "status": "not_run_after_metadata_stop",
+  "stop_reasons": [
+    "The exact EX-177 current source path, source hash, package/archive revision, and complete span are null in both pinned Phase 4 lane gap records.",
+    "Phase 3 retains only the historical locator phoenix/lib/mix/tasks/phx.gen.context.ex:445; it is not current lane identity/span proof.",
+    "No retained Phase 3/4 symbol or span index is bound to EX-177, so a metadata-only schedule cannot be produced without opening source bodies to discover it."
+  ]
+}
