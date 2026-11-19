@@ -1,15 +1,13 @@
 defmodule Fablebook.Contract.GuardAggregateMetadataTest do
   use ExUnit.Case, async: true
 
+  alias Fablebook.Test.GuardAggregateReconciliationEvidence
+
   @tag :guard_aggregate_reconciliation
   @tag :guard_aggregate_reconciliation_bundle
   @tag :guard_aggregate_reconciliation_metadata
   test "lane membership binds to the exact metadata-only source and caller gaps" do
-    directory =
-      Path.expand(
-        "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
-        __DIR__
-      )
+    directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
 
     read_json = fn name ->
       path = Path.join(directory, name)

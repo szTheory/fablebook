@@ -5325,10 +5325,8 @@ defmodule Fablebook.Contract.TierSweepTest do
           else: "03-FLOOR-AGGREGATE-EVIDENCE.json"
 
       path =
-        Path.expand(
-          "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing/#{name}",
-          __DIR__
-        )
+        GuardAggregateReconciliationEvidence.phase3_writable_evidence_dir!()
+        |> Path.join(name)
 
       temporary = path <> ".tmp"
       File.write!(temporary, Jason.encode_to_iodata!(record, pretty: true) ++ [10])
@@ -5619,11 +5617,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   @tag :guard_aggregate_reconciliation
   @tag :guard_aggregate_reconciliation_bundle
   test "two lane records reproduce the complete original-identity crosswalk" do
-    directory =
-      Path.expand(
-        "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
-        __DIR__
-      )
+    directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
 
     core =
       directory |> Path.join("03-CORE-AGGREGATE-EVIDENCE.json") |> File.read!() |> Jason.decode!()
@@ -5634,11 +5628,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       |> File.read!()
       |> Jason.decode!()
 
-    phase4_directory =
-      Path.expand(
-        "../../phases/04-evidence-only-source-and-gap-provenance-closure",
-        directory
-      )
+    phase4_directory = GuardAggregateReconciliationEvidence.phase4_evidence_dir!()
 
     phase4_manifest_path = Path.join(phase4_directory, "04-PROVENANCE-MANIFEST.json")
     phase4_validation_path = Path.join(phase4_directory, "04-VALIDATION.json")
@@ -6037,11 +6027,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
     lane = to_string(evidence.lane.name)
 
-    directory =
-      Path.expand(
-        "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
-        __DIR__
-      )
+    directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
 
     path = Path.join(directory, "03-#{String.upcase(lane)}-AGGREGATE-EVIDENCE.json")
     original = path |> File.read!() |> Jason.decode!()
@@ -6133,18 +6119,20 @@ defmodule Fablebook.Contract.TierSweepTest do
     end
 
     if System.get_env("FABLEBOOK_GUARD_AGGREGATE_WRITE") == "1" do
-      temporary = path <> ".tmp"
+      write_directory = GuardAggregateReconciliationEvidence.phase3_writable_evidence_dir!()
+      write_path = Path.join(write_directory, Path.basename(path))
+      temporary = write_path <> ".tmp"
       File.write!(temporary, Jason.encode_to_iodata!(enriched, pretty: true))
-      File.rename!(temporary, path)
+      File.rename!(temporary, write_path)
 
       core =
-        directory
+        write_directory
         |> Path.join("03-CORE-AGGREGATE-EVIDENCE.json")
         |> File.read!()
         |> Jason.decode!()
 
       floor =
-        directory
+        write_directory
         |> Path.join("03-FLOOR-AGGREGATE-EVIDENCE.json")
         |> File.read!()
         |> Jason.decode!()
@@ -6160,7 +6148,7 @@ defmodule Fablebook.Contract.TierSweepTest do
             [core, floor]
           )
 
-        report_path = Path.join(directory, "03-RECONCILIATION.md")
+        report_path = Path.join(write_directory, "03-RECONCILIATION.md")
 
         content = [
           "# Phase 03 aggregate reconciliation\n\n",
@@ -6275,11 +6263,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       on_exit(fn -> File.rm_rf!(evidence.archive_root) end)
       lane = to_string(evidence.lane.name)
 
-      directory =
-        Path.expand(
-          "../../.planning/phases/03-guard-aggregate-scope-rejoin-and-candidate-sizing",
-          __DIR__
-        )
+      directory = GuardAggregateReconciliationEvidence.phase3_evidence_dir!()
 
       record_path = Path.join(directory, "03-#{String.upcase(lane)}-AGGREGATE-EVIDENCE.json")
       original = record_path |> File.read!() |> Jason.decode!()
