@@ -14,20 +14,13 @@ If everything else fails, a scenario must still render with production fidelity 
 
 **Design canon milestone / local slot 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
 
-## Last Shipped Milestone: v0.4 Guard Aggregate Reconciliation
+## Last Shipped Milestone: v0.5 Bounded EX-177 Provenance Follow-through
 
-v0.4 closed locally on 2026-11-19 as a bounded evidence milestone delivered through PRs #90–#92 with green exact-head hosted CI. Its six requirements are satisfied; source and caller gaps, legacy digest uncertainty, and the wider guard gate remain open. The override closeout preserves Phase 3's historical pass without rerunning it and carries the Phase 4 stale report and prior v0.1 deferrals. This is not a package release or runtime-safety proof. See the [v0.4 archive](milestones/v0.4-ROADMAP.md), [audit](milestones/v0.4-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.4-phases/), and [closeout receipt](milestones/v0.4-CLOSEOUT.md).
+v0.5 closed locally on 2026-11-19 as a bounded evidence milestone. Phase 6 delivered the four-key EX-177 supplement and preserved the exact 9,712-row complement through PR #93, reviewed head `3970a381945cfcf63eb69c456a5b2a7465d8352d`, green [exact-head hosted CI 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030), and squash merge `b8852ac22aac1cb2b8151d85b189889ca0774aa8`. The compatibility fix was reviewed and merged separately through PR #94 with green hosted CI. Its one requirement is satisfied; caller closure and the wider guard/security obligations remain open. This is not a package release or runtime-safety proof. See the [v0.5 archive](milestones/v0.5-ROADMAP.md), [requirements](milestones/v0.5-REQUIREMENTS.md), [audit](milestones/v0.5-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.5-phases/), and [closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
-## Current Milestone: v0.5 Bounded EX-177 Provenance Follow-through
+## Next Milestone
 
-**Goal:** Make the already reviewed EX-177 source and observed-caller facts machine-readable for exactly four existing rows while preserving the 9,712-row complement and every unresolved safety stop.
-
-**Target features:**
-- Bind the two lane-specific package identities, target file hashes and spans, and the observed direct `run/1` caller from the saved discovery report.
-- Keep the four selected rows and 9,712-row complement explicit; one observed caller does not prove complete caller closure.
-- Add a small standard-library consistency check for the supplementary record, with no new dependency, product code, source reread, runtime call, or CI lane.
-
-Phase 6 execution was separately authorized in [INT-20261119-03](intent/sources/2026-11-19-03-authorize-phase6-execution.md) under the bounded plan. Local verification passed and [PR #93](https://github.com/szTheory/fablebook/pull/93) is open. Its last exact-head CI run failed because unchanged guard tests still read Phase 3 evidence from its former active-phase path; a focused local intent-source check now passes after correcting the required metadata. A separate test-compatibility change needs an owner decision before proceeding. This stays a static-evidence scope: another source request, broader caller search, product implementation, candidate promotion, aggregate closure, and automatic follow-up are not authorized.
+No next milestone is selected. The owner must choose the next bounded scope after its typed prerequisites pass. The wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md); no follow-on phase or implementation is authorized by v0.5 closeout.
 
 ## Current State
 
@@ -60,19 +53,26 @@ Phase 3 fingerprint override and chose to carry the stale Phase 4 gap report and
 three existing v0.1 deferrals. Candidate remains null, implementation remains
 unauthorized, and the aggregate gate stays open. See [INT-20261119-02](intent/sources/2026-11-19-02-v04-closeout-and-continuation.md).
 
+v0.5 is archived as a bounded static-evidence milestone. Phase 6 made exactly
+four reviewed EX-177 source/caller observations machine-readable and retained
+the exact 9,712-row complement. PR #93 passed exact-head hosted CI and merged;
+the separate compatibility PR #94 also passed and merged. The scoped audit
+satisfied GSR-07 with no critical gaps. Three inherited v0.1 deferred records
+remain unresolved, and all wider stops remain unchanged. No next milestone is
+selected; see the [v0.5 closeout receipt](milestones/v0.5-CLOSEOUT.md).
+
 ## Current Milestone Scope
 
-The owner authorized this bounded planning continuation in [INT-20261119-02](intent/sources/2026-11-19-02-v04-closeout-and-continuation.md) and separately authorized Phase 6 execution in [INT-20261119-03](intent/sources/2026-11-19-03-authorize-phase6-execution.md). [PR #93](https://github.com/szTheory/fablebook/pull/93) contains the locally verified artifacts; its last exact-head CI run failed on old Phase 3 evidence paths in existing guard tests. A separate test-compatibility change needs an owner decision. Keep the milestone open until the final-head checks pass, the PR is merged, and its delivery receipt is recorded. Use the [discovery report](research/2026-11-19-ex177-source-discovery.md) and archived Phase 5 receipts as the source of recorded facts; do not repeat source reads or consume R9. Candidate fit, complete caller closure, and the aggregate gate remain open.
-
-Use the archived [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md) for its acceptance history. The wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md).
+There is no active milestone scope. The owner authorized autonomous completion
+of v0.5 and green-PR squash merges in [INT-20261119-04](intent/sources/2026-11-19-04-authorize-squash-merge-and-milestone-completion.md).
+Use the archived [v0.5 requirements](milestones/v0.5-REQUIREMENTS.md) and
+[closeout receipt](milestones/v0.5-CLOSEOUT.md) for its acceptance history.
+Any future work requires owner-selected scope and its typed prerequisites. The
+wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md).
 
 ## Requirements
 
-The lists below summarize the wider v1 product vision; they are not a live progress ledger. Use the archived [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md), [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md), and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
-
-### Current milestone acceptance
-
-GSR-07 is verified locally in Phase 6 and is in PR #93. The latest hosted run failed on guard tests that still point to Phase 3's pre-archive paths; final-head CI and the merged delivery receipt remain necessary before this milestone can close.
+The lists below summarize the wider v1 product vision; they are not a live progress ledger. Use the archived [v0.5 requirements](milestones/v0.5-REQUIREMENTS.md), [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md), [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md), and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
 
 ### Validated
 
@@ -82,7 +82,7 @@ GSR-07 is verified locally in Phase 6 and is in PR #93. The latest hosted run fa
 - ✓ **GRC-04** Revalidated the complete EX-107 lane sets, selected three functions, exact complement, and lane source identities — v0.3 (INT-20261111-13, INT-20261111-01, ADR 0021).
 - ✓ **GRC-05** Recorded source spans, direct callers, individual controls, and the byte-only table check while keeping runtime behavior unproven — v0.3 (INT-20261111-13, INT-20261110-01, ADR 0004, ADR 0021).
 - ✓ **GRC-06** Delivered the selected slice through review, exact-head CI, merged PR, and main CI while preserving all wider stops — v0.3 (INT-20261111-13, INT-20261112-03, ADR 0021).
-- ✓ **GSR-07** Bound exactly four reviewed EX-177 rows, both lane identities and spans, the 9,712-row complement, and the preserved open stops — Phase 6 verification passed 5/5; PR #93 is open, local intent-source validation passes, and hosted CI remains blocked by archived-evidence path expectations (INT-20261119-01, INT-20261119-02, ADR 0021).
+- ✓ **GSR-07** Bound exactly four reviewed EX-177 rows, both lane identities and spans, the 9,712-row complement, and the preserved open stops — v0.5; Phase 6 verification passed 5/5 and PR #93 merged after green exact-head hosted CI (INT-20261119-01, INT-20261119-02, ADR 0021).
 
 - ✓ **SEC-02** In prod the router macro raises a `CompileError`, with no override in 1.0. Stories and canon never compile in prod. The CI prod build asserts there are no Fablebook routes and no story beams. — Phase 01.1 (ADR 0006)
 - ✓ **REL-01** release-please publishes to Hex via the bootstrap skill. Phase 1 publishes 0.1.0 to reserve the name. Includes a post-publish smoke test, a recovery workflow and an SBOM. — Phase 01.1 (ADR 0017, INT-20261028-01)
@@ -319,7 +319,8 @@ Every item below is a v1.0 commitment.
 - **Delivered v0.2:** Contract/static evidence only; no production code, workflow or dependency changes. Independent exact-lane findings and symmetric selection feed the existing Elixir/Phoenix core/floor test lanes. Full delivery and diff measurements are in milestones/v0.2-CLOSEOUT.md.
 - **Delivered v0.3:** Five test/support files add 816 lines of source-backed static evidence and controls; no runtime library code changed. The existing Elixir/Phoenix core/floor lanes and their hosted delivery gates remain in use.
 - **Delivered v0.4:** Planning and evidence artifacts only; no application source, dependencies, or runtime behavior changed. Three phases, nine plans and 14 tasks delivered through PRs #90–#92. The aggregate gate, candidate-null decision, actual-library collision stop, Macro checkpoints, SEC-01 owner and Walking Skeleton block remain unchanged.
-- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.4's closeout and carried audit debt are recorded in its receipt. The next authorized action is planning-only and remains subject to typed gates; no extra scope is inferred.
+- **Delivered v0.5:** Planning and test-support evidence only; no application source, dependencies, or runtime behavior changed. Phase 6 delivered the exact four-key supplement and checker through PR #93; PR #94 separately fixed the archived-evidence test path. The 9,712-row complement and every prior safety stop remain unchanged.
+- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.5's scoped audit, three inherited deferred records and closeout are recorded in the archive. No next milestone is selected; owner scope choice and typed prerequisites are required before further planning.
 
 - **Ecosystem (verified 2026-10-28):**
   - Phoenix 1.8.16 and LiveView 1.2.13 are current; there is no Phoenix 1.9.
@@ -386,8 +387,9 @@ Every item below is a v1.0 commitment.
 
 | Decision | Rationale | Outcome |
 |---|---|---|
+| Close v0.5 against its scoped evidence and carry older records forward (INT-20261119-04) | Complete the authorized milestone while preserving immutable evidence and all existing safety limits | v0.5 is archived under `override_closeout`; GSR-07 and the evidence flow pass, three inherited v0.1 deferred records remain unresolved, and no next milestone is selected. |
 | Keep the v0.4 evidence milestone bounded and carry unresolved records explicitly (INT-20261119-02) | Preserve the historical Phase 3 pass and archived v0.1 evidence while allowing a useful new planning boundary | v0.4 is locally archived under `override_closeout`; the stale Phase 3 and Phase 4 reports remain unchanged, the old deferred source hash is preserved, and the guard aggregate remains open. The authorized EX-177 continuation can be planned only if typed gates pass. |
-| Keep Phase 6 additive and value-only (INT-20261119-01, INT-20261119-03) | Reuse reviewed facts without reopening Phoenix source or claiming exhaustive caller closure | The supplement covers exactly four keys and the exact 9,712-row complement; recorded Phoenix paths remain values, one observed `run/1` caller per lane remains non-exhaustive, and all earlier stops remain open. Phase verification passed; PR #93 is open, with archived-evidence test compatibility requiring a separate owner decision. |
+| Keep Phase 6 additive and value-only (INT-20261119-01, INT-20261119-03) | Reuse reviewed facts without reopening Phoenix source or claiming exhaustive caller closure | The supplement covers exactly four keys and the exact 9,712-row complement; recorded Phoenix paths remain values, one observed `run/1` caller per lane remains non-exhaustive, and all earlier stops remain open. Phase verification passed and PR #93 merged after green exact-head hosted CI; PR #94 separately delivered the archived-path test support. |
 | Retain the selected tracing-front matcher (v0.2 / Phase 1, INT-20261111-11) | Independent exact-lane source review distinguishes caller callbacks and the fixed native boundary from evaluator or atom-creation behavior | PR #85 delivers static dispositions and individual both-lane witnesses with green candidate/main CI. Only EX-010 advances; runtime safety and aggregate/product gates remain open. |
 | Close only the verified ASN.1 RTT slice (v0.3 / Phase 2, INT-20261111-13) | Exact lane membership, source/caller evidence and individual controls can be independently checked against final delivery receipts | v0.3 is archived under `override_closeout`; GRC-04–06 passed after reviewed PR #88 and green final-head/main CI. The full EX-107 remainder, runtime limits, collision owner stop and wider gates stay open; no next scope is selected. |
 | Validate lane-selection policy before expensive suites (v0.2 / Phase 1) | Broad tests exposed two wrong-lane tests and an unsupported custom exclusion | Symmetric core/floor tags, wrong-lane and unrelated-tag negatives, cheap CI-shape/lint first and a final focused review preserve coverage while avoiding repeated broad failures. |
@@ -503,4 +505,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-19 after the first Phase 6 hosted CI run; PR #93 remains open with archived-evidence test compatibility unresolved, and the wider guard gate remains open.*
+*Last updated: 2026-11-19 after the v0.5 milestone; GSR-07 is delivered, the three inherited v0.1 deferrals and wider guard/security stops remain open, and no next milestone is selected.*

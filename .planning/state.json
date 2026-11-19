@@ -1,18 +1,12 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.5 — Bounded EX-177 Provenance Follow-through",
-  "phases": [
-    {
-      "number": "6",
-      "name": "Bounded EX-177 provenance supplement",
-      "status": "complete"
-    }
-  ],
+  "milestone": "v0.5",
+  "phases": [],
   "next": {
-    "command": "$gsd-new-milestone",
-    "label": "Start a new milestone",
-    "reason": "All phases complete — start a new milestone"
+    "command": "$gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-11-19T18:36:00.921Z"
+  "updated_at": "2026-11-19T19:21:52.862Z"
 }

@@ -128,6 +128,47 @@
 
 Recorded implementation intervals total 219 minutes; source summaries use diff-size token proxies, not measured context or billed cost. Owner waits, independent audit and archive work are not separately instrumented. Actual main CI took 676 seconds; floor was the critical job at 668 seconds, mainly tests. No extra hosted run was started to manufacture a receipt.
 
+## Milestone: v0.5 — Bounded EX-177 Provenance Follow-through
+
+**Shipped:** 2026-11-19 (bounded development milestone)
+**Phases:** 1 | **Plans:** 1 | **Implementation tasks:** 1
+
+### What Was Built
+
+- A machine-readable supplement records exactly four reviewed EX-177 source/caller observations across the core and floor lanes and binds the unchanged 9,712-row complement.
+- A standard-library checker validates the saved evidence, exact key set, complement digest, and preserved stop states without reading the recorded Phoenix source paths.
+- Phase 6 shipped through PR #93 with green exact-head CI. A separate compatibility PR #94 repaired the archived-evidence path expectation in existing tests and also passed hosted CI.
+
+### What Worked
+
+- Keeping the four-row scope and the complement digest explicit made the acceptance check small and independently reviewable.
+- The saved discovery and archived Phase 5 records supplied the facts without repeating source reads or consuming R9.
+- Separating the compatibility repair from the phase delivery made the test-support change visible and independently reviewable.
+- The audit reused the phase verification, Nyquist validation, integration check, delivery receipt, and hosted CI instead of rerunning them at closeout.
+
+### What Was Inefficient
+
+- The first exact-head CI run found existing tests that expected a Phase 4 evidence helper at its old active-phase path. The compatibility support needed a separate PR, and Phase 6 needed a small test adjustment to keep the recorded provenance path separate from the archived storage path.
+- Local `act` could not parse the repository's existing `concurrency.queue` syntax, so hosted exact-head CI remained the authoritative delivery evidence.
+
+### Patterns Established
+
+- Keep a recorded provenance path distinct from the physical archive path used to read the saved file.
+- Keep test compatibility changes separately reviewable when they support a bounded evidence delivery.
+- Close a bounded evidence milestone against its own requirement while carrying wider gates and inherited deferred records forward.
+
+### Key Lessons
+
+1. Preserve historical provenance values even when files move; add an explicit storage-path mapping in test support instead of rewriting historical evidence.
+2. Run focused static consistency checks before broader tests, then rely on the exact reviewed hosted CI receipt for delivery.
+3. A passed scoped audit does not authorize the next milestone or close caller, runtime, security, or aggregate gates.
+
+### Cost Observations
+
+- The phase contains one plan and one implementation task. Model usage and billed cost were not recorded.
+- Exact-head CI 44589600030 took about 11 minutes 25 seconds at its longest required lane; one run is insufficient evidence for a CI optimization.
+- The phase added no dependency, product code, runtime invocation, or recurring CI lane.
+
 ## Cross-Milestone Trends
 
 | Cycle | Outcome | Process change |
@@ -136,5 +177,6 @@ Recorded implementation intervals total 219 minutes; source summaries use diff-s
 | v0.2 | Selected increment delivered and archived | Sequential bounded milestone; explicit carry-forward gates and immutable delivery facts |
 | v0.3 | Selected increment delivered and archived; scoped audit records nonblocking debt | Per-lane source evidence and integration partitions; explicit between-milestone state validation |
 | v0.4 | Aggregate rejoin and three bounded evidence phases delivered; wider gate remains open | Measure the true bottleneck, run exact consistency checks before long suites, preserve stale reports, and transition explicitly to between-milestone state |
+| v0.5 | Four-key EX-177 supplement delivered and archived; caller closure and wider guard gate remain open | Keep observed provenance machine-readable, separate test compatibility from phase evidence, and close the bounded milestone without advancing scope |
 
-The shared lesson is to keep scope, delivery evidence and unresolved gates explicit. Three bounded milestones have completed under this format; that sample does not support a statistically meaningful performance trend.
+The shared lesson is to keep scope, delivery evidence and unresolved gates explicit. Four bounded milestones have completed under this format; that sample does not support a statistically meaningful performance trend.
