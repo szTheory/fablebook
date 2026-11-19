@@ -2,19 +2,19 @@
 gsd_state_version: "1.0"
 milestone: v0.5
 milestone_name: Bounded EX-177 Provenance Follow-through
-current_phase: 6
+current_phase: 06
 current_phase_name: Bounded EX-177 provenance supplement
-status: planning
-stopped_at: Phase 6 plan reviewed; execution not authorized
-last_updated: "2026-11-19T15:00:20.093Z"
+status: verifying
+stopped_at: Phase 6 plan complete; phase gates and goal verification in progress
+last_updated: "2026-11-19T15:39:21.738Z"
 last_activity: 2026-11-19
-last_activity_desc: Phase 6 roadmap recorded for the approved planning scope
-state_head: bd8be73173026e0cace4fbcdc2525d0fe05806cf
+last_activity_desc: Phase 06 plan 06-01 complete; local checks passed and phase gates are active
+state_head: d170877a241696fd0b15c20dcc6f39fedf5c87ae
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 1
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -30,24 +30,24 @@ See [PROJECT.md](PROJECT.md), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 6's bounded EX-177 supplement plan is reviewed and ready. Execution awaits the owner's separate authorization; the wider guard aggregate gate remains open.
+**Current focus:** Phase 06 — Bounded EX-177 provenance supplement
 
 ## Current Position
 
-Phase: 6 (Bounded EX-177 provenance supplement) — READY TO EXECUTE
-Plan: 06-01-PLAN.md (one plan; independent review passed)
-Status: Ready to execute; waiting for separate owner authorization
-Last activity: 2026-11-19 — Phase 6 plan passed coverage and plan-review gates
+Phase: 06 (Bounded EX-177 provenance supplement) — VERIFYING
+Plan: 1 of 1
+Status: Plan complete — phase-level verification is in progress
+Last activity: 2026-11-19 — Phase 06 plan 06-01 complete; phase gates are underway
 
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `main`; no worktree was created. v0.4 is archived and tagged locally at `2887a082a9ec1861eafff4b2bf80d97adc34f788`; the tag was not pushed. Phase 3's historical pass, Phase 4's acknowledged `gaps_found` report, and the carried v0.1 audit debt remain unchanged.
-- Delivered: v0.4 closeout and the single reviewed Phase 6 plan. Phase 6 implementation and GSR-07 acceptance remain unfinished; no application code changed and no Phase 6 test or suite ran.
-- Phase 6 scope is limited to the four selected EX-177 source/caller keys and unchanged 9,712-row complement. Use the reviewed [discovery report](research/2026-11-19-ex177-source-discovery.md) and archived Phase 5 receipts. Do not reread source bodies, consume R9, search for more callers, or invoke audited runtime paths. One observed `run/1` call per lane is not exhaustive caller closure.
-- Stops remain: candidate null; implementation unauthorized; aggregate gate open; actual library collision unknown; Macro caller-AST and explanation wording unresolved; SEC-01 pending; Walking Skeleton blocked; legacy digest unresolved.
-- **Next actor: Owner.** Phase 6 execution is outside INT-20261119-02's planning-only authorization and needs a separate decision. After authorization, run `$gsd-execute-phase 6` to execute the one bounded plan and its local checks. No additional discussion or planning is needed.
-- The generated `.planning/state.json` still recommends planning because its generic smart-entry route reads the milestone status. The live roadmap analysis reports Phase 6 as `planned`, and `init.execute-phase 6` finds one runnable plan. Do not replan from that cached recommendation; the only remaining boundary is the owner's execution authorization.
+- Checkout: `~/projects/fablebook`, branch `gsd/phase-6-bounded-ex-177-provenance-supplement`; no worktree was created. The topic branch preserves the eight pre-existing local-main commits and contains the Phase 6 authorization and task commits. Local `main` remains unchanged.
+- Delivered: Phase 6 Plan 06-01 produced the exact four-key supplement and standard-library checker. The record check and ten negative controls pass; the archived Phase 4/5 inputs remain unchanged.
+- Remaining: Run the active code-review, validation, and security hooks, then verify the phase goal. After those pass, prepare the reviewed PR under the existing standing authorization.
+- Scope remains limited to the four EX-177 source/caller keys and exact 9,712-row complement. Do not reread source bodies, consume R9, search for more callers, invoke audited runtime paths, or make product changes. One observed `run/1` call per lane is not exhaustive caller closure.
+- Stops remain unchanged: candidate fit unresolved and candidate null; implementation unauthorized; aggregate gate open; R9 denied and unconsumed; actual library collision unknown; Macro caller-AST and explanation unresolved; SEC-01 Pending; Walking Skeleton blocked; legacy digest unresolved; automatic follow-up disabled.
+- **Next actor: Assistant.** Continue the phase-level gates and goal verification in this session. No further owner input is needed unless a real gate or scope boundary blocks progress.
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Last activity: 2026-11-19 — Phase 6 plan passed coverage and plan-review gates
 | Phase 02 P05 | 90min | 2 tasks | 5 files |
 | Phase 03 P02 | not reconstructed across resumed sessions | 2 tasks | 6 files |
 | Phase 03 P03 | not captured | 2 tasks | 8 files |
+| Phase 06 P01 | 17 min | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -159,9 +160,9 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-19T15:00:20.077Z
-**Stopped at:** Phase 6 plan reviewed; execution not authorized
-**Resume file:** .planning/phases/06-bounded-ex-177-provenance-supplement/06-01-PLAN.md
+**Last session:** 2026-11-19T15:39:21.724Z
+**Stopped at:** Phase 6 plan complete; phase gates and goal verification in progress
+**Resume file:** .planning/phases/06-bounded-ex-177-provenance-supplement/06-01-SUMMARY.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5 is also complete and verified for the bounded EX-177 slice: four source/caller rows remain open because current source identity/span metadata is absent; the other 9,712 rows remain unchanged. R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was read or emitted. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
@@ -182,6 +183,8 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 - [Phase 03]: Keep candidate null and recommendation disabled while any required source, graph, callback, or delegate gap remains.
 - [Phase 03]: Keep candidate null because both evidence lanes remain incomplete and candidate-specific effort is unknown against the three-working-day limit.
 - [Phase 03]: Bind all scope counts and pending-complement digests to the immutable lane records and compact keyed projection.
+- [Phase 06]: Phoenix source paths remain recorded values and are excluded from the checker read allowlist. — The checker must not inspect the recorded Phoenix source targets; it reads only the approved saved evidence files.
+- [Phase 06]: One observed direct run/1 call per lane is not exhaustive caller closure. — The reviewed discovery establishes only one observed direct call per lane; dynamic, delegated, callback, and external callers remain open.
 
 ### Blockers
 
@@ -189,4 +192,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- The [active handoff](#active-handoff) owns the Phase 6 planning route. Historical v0.4 disposition and delivery details remain in the [closeout receipt](milestones/v0.4-CLOSEOUT.md).
+- The [active handoff](#active-handoff) owns Phase 6's remaining review and verification route. Historical v0.4 disposition and delivery details remain in the [closeout receipt](milestones/v0.4-CLOSEOUT.md).

@@ -6,13 +6,13 @@
     {
       "number": "6",
       "name": "Bounded EX-177 provenance supplement",
-      "status": "in_progress"
+      "status": "pending"
     }
   ],
   "next": {
     "command": "$gsd-progress --next",
-    "label": "Advance to the next step (plan phase 6)",
-    "reason": "Phase 1 of 1 — needs a plan"
+    "label": "Advance to the next step (verify)",
+    "reason": "Phase 1 of 1 · 0% · ready to verify"
   },
-  "updated_at": "2026-11-19T15:04:09.120Z"
+  "updated_at": "2026-11-19T15:39:21.920Z"
 }
