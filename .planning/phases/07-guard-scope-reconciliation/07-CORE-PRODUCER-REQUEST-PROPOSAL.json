@@ -1,0 +1,43 @@
+{
+  "schema_version": "07.core-producer-request.1",
+  "status": "proposed_for_independent_review",
+  "request_id": "R10",
+  "purpose": "Determine whether the current evidence producer can create a metadata-only, current-core membership generation bound to the current lock and runtime, and identify its exact command, inputs, outputs, and side effects.",
+  "transport": "Internal read-only subagent analysis after the Phase 7 review and execute-preflight gates; no external API submission.",
+  "source": {
+    "path": "test/support/guard_aggregate_reconciliation_evidence.ex",
+    "bytes": 86693,
+    "lines": 2357,
+    "sha256": "2b6eb2b1033ad429edc6f751ed2f55298a272610123085027c87ece59b379fdb",
+    "span": "complete_file",
+    "encoding": "UTF-8",
+    "truncation_allowed": false
+  },
+  "context": {
+    "core_lock_sha256": "31c244c80a750309f4cc82c8840fdf78bba642ba78a00df31b3acfe208b94112",
+    "core_runtime": {
+      "elixir": "1.20.4",
+      "otp": "29.1.2"
+    },
+    "accepted_generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "baseline_scope": ".planning/phases/07-guard-scope-reconciliation/07-CORE-BASELINE-REFRESH-SCOPE.md"
+  },
+  "output_contract": [
+    "Report only the producer's relevant behavior: exact reproducible metadata-generation entrypoint, pinned inputs, output schema, and whether it reads target bodies, calls audited runtime APIs, or performs direct counting.",
+    "State whether a fresh current-core membership generation can be produced without target-library source bodies or broader package search.",
+    "Do not execute the producer, generate evidence, infer missing source membership, or change any safety stop."
+  ],
+  "excluded_inputs_and_actions": [
+    "Do not use or replay R9; this is a new unique request ID.",
+    "Do not include or read OTP/library target source bodies.",
+    "Do not execute Mix tasks, tests, builds, compiles, or audited runtime APIs.",
+    "Do not modify ENV06 or any accepted baseline, validator, candidate, or gate."
+  ],
+  "gates": {
+    "owner_scope_authorization": "satisfied by the 2026-11-20 selection of a fresh v0.6 core baseline",
+    "independent_schedule_review": "not_run",
+    "planning_health_execute_phase_7": "not_run",
+    "exact_input_token_count": "not_run",
+    "request_submission": "not_sent"
+  }
+}

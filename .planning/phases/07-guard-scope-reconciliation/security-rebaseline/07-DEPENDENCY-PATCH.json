@@ -1,0 +1,19 @@
+{
+  "schema": "fablebook.phase7.dependency_patch/1",
+  "package": "phoenix_live_view",
+  "prior_version": "1.2.13",
+  "prior_package_checksum": "850284c529f013e82d9596325bd92cb5859c0872176616b6e2ec4294e2ef616e",
+  "prior_repo_checksum": "a5cd2a3df10552bce6b7e68e5d376ff3b46cca3ca62d6c43bd4398d80c197fbe",
+  "current_version": "1.2.14",
+  "current_package_checksum": "80a248539e566eea8598079b12bfb1a9c1f3180d4db3ecd215d28798dcebc44b",
+  "current_repo_checksum": "1ca75ed52d3916f93299de990f152f3f49202d12849e526bf5f9b89b4ccf25f2",
+  "prior_lock_sha256": "31c244c80a750309f4cc82c8840fdf78bba642ba78a00df31b3acfe208b94112",
+  "current_lock_sha256": "3c55e9ec28da1fe2f8ded5a8b5e6504542c3536df25c704933cd7ace85224207",
+  "lock_entry_changes": ["phoenix_live_view"],
+  "mix_exs_sha256_unchanged": "0d8aae670b99fd5d3d519c0ec16bd44455397bc98f1a8f8b33864255f3e61ac9",
+  "floor_lock_sha256_unchanged": "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847",
+  "hex_audit": "pass",
+  "official_advisory_index": "https://github.com/phoenixframework/phoenix_live_view/security/advisories",
+  "official_package_advisories": "https://hex.pm/packages/phoenix_live_view/1.2.14/advisories",
+  "official_release": "https://github.com/phoenixframework/phoenix_live_view/releases/tag/v1.2.14"
+}

@@ -1,0 +1,129 @@
+{
+  "derived_outputs_regenerated_after_redaction": [
+    "07-RECONCILIATION.json",
+    "07-RECONCILIATION.md"
+  ],
+  "files": [
+    {
+      "original_sha256": "9783c4b5bb637d17f0fab014a8a3066c5199caa86ff6dd3d449019f1e559f327",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-01-PLAN.md",
+      "redacted_sha256": "b3c91510dbf5ced8c0a3c3e398e2da0a517927e904a80da9a1850840b5a6138a",
+      "replacement_count": 2
+    },
+    {
+      "original_sha256": "32cd97095bd39b566ebdf8170872172537698c49f0c06717c46b0ed459e170a4",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-02-PLAN.md",
+      "redacted_sha256": "ddde3c4709ee6bed9180fb31d40e29b940e9bf4b76c16addb9c9953ddf0cc8b3",
+      "replacement_count": 2
+    },
+    {
+      "original_sha256": "56acb29d3e9e2a26709c81e7dcba3a667cbf1f87c6ebbc2ae802a84e1b1018ce",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-03-PLAN.md",
+      "redacted_sha256": "f3ed3adac35874e93d44161080f7ac73bff227b98890086627fa7a1cabddd45f",
+      "replacement_count": 2
+    },
+    {
+      "original_sha256": "11f710f2c338a0d0ff477b1dbfb67c94a4299e6664c837b5c3cbf8756eeb3927",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-04-PLAN.md",
+      "redacted_sha256": "944e682d11ca8227d918a7096717a8412894061fe142af6575c7549e4f820258",
+      "replacement_count": 2
+    },
+    {
+      "original_sha256": "c109d4be4c9684abb10059217b4ff0a43175658e5933aa71d712fec45a637ceb",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-05-PLAN.md",
+      "redacted_sha256": "4bb007f75cab1f0f26de8c68e2e364c742b82cb69cc74c2be4fa0a7b0332eff8",
+      "replacement_count": 2
+    },
+    {
+      "original_sha256": "e894acb9807befa8f9a31eaf34fe47ce979dd7eceb205ae03a1f9dd6b4dc2763",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-OBSERVATIONS-01.jsonl",
+      "redacted_sha256": "78a6b729a4908cf5e1afa231dd161a41fd2984c62aee30494477fee8f7c65b0b",
+      "replacement_count": 5
+    },
+    {
+      "original_sha256": "2f1ee97f5b8c4f54b4a4e66bb436ce0742ffed6dd414f84b63d173c5d4b84f83",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-OBSERVATIONS-02.jsonl",
+      "redacted_sha256": "ba1dfc902f363302062a2e22622d89c2e9e434eaec8aa862364466c6ed912ce4",
+      "replacement_count": 5
+    },
+    {
+      "original_sha256": "810a5f74c46afe81426e5e25cb7e29447ae0401028e799f1fb3cae396fb7fe4a",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/core-source-01.json",
+      "redacted_sha256": "1cd17f76a2504697ed3eb42b11e2c6a5fff5adca6f936e07750d3cbb953579a8",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "36f8039b02f9c0feac2ed7eba8728f9874d64dcf3f2517076e8206c05f2a12c4",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/core-source-02.json",
+      "redacted_sha256": "d0c41d08991839fb484c331260de4415cce18721c02a39a884fb489823a7dcc5",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "52a70e1f5f91c69dd549da161301abc88dac466bbb281bdf49c2f37d7f3b571b",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/core-source-03.json",
+      "redacted_sha256": "4b7a6e1c7d90c036bffa892f0b7e646e8e2e418efb54efe4cb6f0f521dd52021",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "e98d4d4f5eaca5032a58d08aab6ae4cb425d6e59a6a953e2ccaab7c246972289",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/core-source-04.json",
+      "redacted_sha256": "35d58092078b4956e893dd5f1fe787a1e43bb3ce717ddba1ce7d6f8f18e76040",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "524ec99682843507b87dbde637468f0435b84ffd84cf1e23ebd598c0323fbd6c",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/core-source-05.json",
+      "redacted_sha256": "3994fc3459e6e573c4d65f243b99f7173fa760c070fc981ae11736d3f3045dbd",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "c48d4a31dc793d22507fb8ac0bf61439e8751bb4fbac78c1f1ba4229ede81fef",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/floor-source-01.json",
+      "redacted_sha256": "89ab77ae7c2722ed76e90f87ef003c4954a7c2879f71b5723a4b175777a662a4",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "be82ef8bda8e3ebfbadf7c9499582606099327f40a38918f1fd68a8f9e8dc96a",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/floor-source-02.json",
+      "redacted_sha256": "0a6cccec4c5b492a2262879b975d21030480668f00b3cd9f5154194aff3c8447",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "a342717c65ebda6cef119f350f1bdd89e2a5c63fb1d20a36c0e502ddcb7cfd77",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/floor-source-03.json",
+      "redacted_sha256": "a4c792dfe9d975069b837086ba61bc46ec1d9fcfa6a1b1e93ad7491e4fe451f7",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "b13ecd0fd5e2e766d00e93f128da254699e84efa735e3c7d5d50d75490165711",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/floor-source-04.json",
+      "redacted_sha256": "cfc4d9e89b8b53571673f84925fb45679dcd0c769783bd4e8c4eeaa8d40eae6e",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "034765c8a893935fedfe710a1fc94903e15e9c9ee6ef6f850f8ad09414e60c5e",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-READ-CONSUMPTION/floor-source-05.json",
+      "redacted_sha256": "be3e06a866490422ad0ec93bdd7023ab46cf28d829fad618158041786c3f7886",
+      "replacement_count": 1
+    },
+    {
+      "original_sha256": "afd1298d630669c4e367857c48205b14039c67c0b644ae2b31c0159a193fc738",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-SCHEDULE-REVIEW.md",
+      "redacted_sha256": "643931a4bc1b19eeeee927595a220308403916d5d320b90065a9f50e578c4c23",
+      "replacement_count": 10
+    },
+    {
+      "original_sha256": "e8fe99a560ee3edc63fe2ffa9bbfd5bf5978f9b8f036abef2aa1c1a35a9c8e8c",
+      "path": ".planning/phases/07-guard-scope-reconciliation/07-SOURCE-SCHEDULE.json",
+      "redacted_sha256": "34ac655df3883f145821e7a59c2f494dc8641f0b4b48e1e4cc82da07d1328c6b",
+      "replacement_count": 20
+    }
+  ],
+  "read_time_bindings": {
+    "schedule_review_sha256": "afd1298d630669c4e367857c48205b14039c67c0b644ae2b31c0159a193fc738",
+    "schedule_sha256": "e8fe99a560ee3edc63fe2ffa9bbfd5bf5978f9b8f036abef2aa1c1a35a9c8e8c",
+    "validator_sha256": "4b625cb79d01acf28f0a9055198ee5434db3a72a803a67e8c65dd6e235cbb4b3"
+  },
+  "rule": "Shorten exact home-directory path prefixes in Phase 7 inputs to ~/; the final reconciliation and human summary are regenerated from the shortened inputs.",
+  "schema": "fablebook.phase7.path_redaction/1"
+}

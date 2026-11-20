@@ -5,6 +5,7 @@
 2. `GLOSSARY.md`, the only source of vocabulary. Never call a scenario a "variant" or "variation".
 3. `docs/adr/README.md` (locked decisions)
 4. `.planning/VERIFICATION.md` when discussing, planning, executing, reviewing, verifying or resuming work; automate acceptance checks and reuse recorded evidence before handing work to the owner.
+5. `.planning/references/MILESTONE-START-RESEARCH.md` whenever starting or recommending a milestone; it defines the evidence-first fan-out, rolling roadmap, and product-progress vocabulary.
 
 GSD researchers, synthesizers and the roadmapper also read `FABLEBOOK-SEED.md`, `docs/adr/*` and `docs/research/*` before writing anything. Every REQ keeps its INT/ADR citations.
 
@@ -13,6 +14,8 @@ Verbatim intent (`.planning/intent/sources/`) > ADR > REQUIREMENTS > PROJECT. Wh
 
 ## Recording intent
 When the owner gives direction, add a verbatim entry to `.planning/intent/sources/` (`id: INT-YYYYMMDD-NN`, `date`, `source`, `captured_by`, `context`). Entries are add-only. Corrections use `supersedes:`.
+
+At every new-milestone start, reconcile delivery receipts and gates, fan out bounded research across relevant lenses with an adversarial pass, prefer primary sources, synthesize one immediate recommendation, and refresh the directional rolling roadmap before executable GSD work. Keep future work directional until separately activated and its typed prerequisites pass. Distinguish sourcebooks, applied canon, Fablebook Books/scenarios, runnable demos, and adopter dogfood in progress reports.
 
 ## Non-negotiables
 - Never lower a quality gate to finish a phase. Split the phase instead.
@@ -40,5 +43,7 @@ When the owner gives direction, add a verbatim entry to `.planning/intent/source
 - Put cheap, scope-relevant consistency checks before long verification. For shipping, if a note commit changes a PR head after CI starts, treat the earlier checks as stale and require one green run on the final head. Avoid `[ci skip]` plus empty-commit recovery when branch protection requires checks; use a single normal note commit and track that final head.
 - Record exact-head hosted CI durations and compare repeated runs before changing the pipeline. Preserve coverage; only change caching or job structure when measurements show a safe reduction in the critical path.
 - Once a phase is approved, complete its required local validation and bookkeeping without asking about routine steps. Ask only for a real scope change or an external action not covered by standing authorization. End with one exact next command and its purpose.
+- For a single read-only inspection of a local repository file needed by an already authorized task, do not ask for separate per-file approval. Keep the read within the task boundary; this does not authorize executing code, writing evidence, accessing target source bodies, or crossing a recorded gate.
+- Within an already owner-authorized phase, treat routine bounded dependency-security evidence refreshes, local validation, and bookkeeping as authorized; do not ask for repeat confirmation at each step. This does not lift a recorded source/request cap, reopen a denied request, authorize target-body/API access, weaken a gate, or cross a real phase boundary. Complete the authorized scoping first and bring one concrete decision only when an explicit stop would otherwise be crossed.
 - For serial GSD work, stay in the current checkout; `--ws` is a logical workstream selector, not filesystem isolation. Use another worktree only for actual parallel work or a concrete isolation need. Do not impose an additional assistant-side cumulative token ceiling on approved project work; keep it separate from the project's explicit source, effort, reserve and safety limits. If a project limit needs to change, measure all remaining authorized work once and propose one complete bounded option.
 - Preserve recovery worktrees and investigation artifacts unless their disposition is explicitly changed. Delegate only when the workflow and runtime allow it and authorization is present.

@@ -16,11 +16,22 @@ If everything else fails, a scenario must still render with production fidelity 
 
 ## Last Shipped Milestone: v0.5 Bounded EX-177 Provenance Follow-through
 
-v0.5 closed locally on 2026-11-19 as a bounded evidence milestone. Phase 6 delivered the four-key EX-177 supplement and preserved the exact 9,712-row complement through PR #93, reviewed head `3970a381945cfcf63eb69c456a5b2a7465d8352d`, green [exact-head hosted CI 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030), and squash merge `b8852ac22aac1cb2b8151d85b189889ca0774aa8`. The compatibility fix was reviewed and merged separately through PR #94 with green hosted CI. Its one requirement is satisfied; caller closure and the wider guard/security obligations remain open. This is not a package release or runtime-safety proof. See the [v0.5 archive](milestones/v0.5-ROADMAP.md), [requirements](milestones/v0.5-REQUIREMENTS.md), [audit](milestones/v0.5-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.5-phases/), and [closeout receipt](milestones/v0.5-CLOSEOUT.md).
+v0.5 closed locally on 2026-11-19 as a bounded evidence milestone. Phase 6 delivered the four-key EX-177 supplement and preserved the exact 9,712-row complement through PR #93, reviewed head `3970a381945cfcf63eb69c456a5b2a7465d8352d`, green [exact-head hosted CI 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030), and squash merge `b8852ac22aac1cb2b8151d85b189889ca0774aa8`. The compatibility fix was reviewed and merged separately through PR #94 with green hosted CI. The archive closeout was squash-merged through [PR #95](https://github.com/szTheory/fablebook/pull/95) as `d5a8dc0b856e5c8223524c4fd3f849bd27c4c859` after green [exact-head hosted CI 44599528602](https://github.com/szTheory/fablebook/actions/runs/44599528602); the `v0.5` tag remains local. Its one requirement is satisfied; caller closure and the wider guard/security obligations remain open. This is not a package release or runtime-safety proof. See the [v0.5 archive](milestones/v0.5-ROADMAP.md), [requirements](milestones/v0.5-REQUIREMENTS.md), [audit](milestones/v0.5-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.5-phases/), and [closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
 ## Next Milestone
 
-No next milestone is selected. The owner must choose the next bounded scope after its typed prerequisites pass. The wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md); no follow-on phase or implementation is authorized by v0.5 closeout.
+v0.6 **Guard Scope Reconciliation** is selected for one bounded, read-only evidence phase. The wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md); no follow-on guard increment or product implementation is implied by this selection.
+
+## Current Milestone: v0.6 Guard Scope Reconciliation
+
+**Goal:** Reconcile current lane memberships and source identities, define one exact proposed guard family and its complete complement with bounded caller/delegate evidence, refresh sizing, and stop for the owner's next-scope decision.
+
+**Target features:**
+- Rejoin full relevant row/function membership and pinned source identity on both lanes.
+- Record a proposed family, its complete complement, bounded caller/delegate evidence, gaps and refreshed effort sizing.
+- Preserve the read-only boundary and all inherited safety stops; do not build a demo or promote a candidate.
+
+This scope is selected by [INT-20261119-05](intent/sources/2026-11-19-05-select-v06-guard-reconciliation.md); milestone-start research and rolling-roadmap posture is [INT-20261119-06](intent/sources/2026-11-19-06-research-first-rolling-roadmap.md).
 
 ## Current State
 
@@ -63,12 +74,12 @@ selected; see the [v0.5 closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
 ## Current Milestone Scope
 
-There is no active milestone scope. The owner authorized autonomous completion
-of v0.5 and green-PR squash merges in [INT-20261119-04](intent/sources/2026-11-19-04-authorize-squash-merge-and-milestone-completion.md).
-Use the archived [v0.5 requirements](milestones/v0.5-REQUIREMENTS.md) and
-[closeout receipt](milestones/v0.5-CLOSEOUT.md) for its acceptance history.
-Any future work requires owner-selected scope and its typed prerequisites. The
-wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md).
+The active scope is v0.6 Phase 7, a read-only reconciliation only. It does not
+authorize runtime probes, R9 consumption, exhaustive caller searches, candidate
+promotion, guard implementation, aggregate closure, Walking Skeleton work, or
+product UI/brand integration. Phase exit requires a clear owner decision before
+any additional guard increment. See [INT-20261119-05](intent/sources/2026-11-19-05-select-v06-guard-reconciliation.md)
+and [the research synthesis](research/2026-11-19-v0.6-guard-scope-reconciliation.md).
 
 ## Requirements
 

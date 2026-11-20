@@ -1,0 +1,1 @@
+{"batch":"01","consumed_requests":["core-source-01"],"error":"ObserverError: unbalanced delimiter","output_exists":false,"schedule_sha256":"e8fe99a560ee3edc63fe2ffa9bbfd5bf5978f9b8f036abef2aa1c1a35a9c8e8c","schema":"fablebook.phase7.source_read_stop/1"}

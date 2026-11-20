@@ -12,14 +12,24 @@ defmodule Fablebook.Test.SweepEvidenceLockTest do
 
     assert identity == %{
              archive_sha256: @core_archive_lock_sha,
-             runtime_sha256: "31c244c80a750309f4cc82c8840fdf78bba642ba78a00df31b3acfe208b94112",
-             overlay: "plug-1.20.3-to-1.20.4"
+             runtime_sha256: "3c55e9ec28da1fe2f8ded5a8b5e6504542c3536df25c704933cd7ace85224207",
+             overlay: "plug-1.20.3-to-1.20.4+phoenix_live_view-1.2.13-to-1.2.14"
            }
   end
 
   test "rejects a different Plug patch version" do
     bytes = File.read!("mix.lock")
     changed = String.replace(bytes, "\"1.20.4\"", "\"1.20.5\"")
+    refute changed == bytes
+
+    assert_raise SweepEvidence.Error, ~r/source evidence lock_(identity|patch_identity)/, fn ->
+      SweepEvidence.verify_lock_identity!("core", changed, @core_archive_lock_sha)
+    end
+  end
+
+  test "rejects a different LiveView patch version" do
+    bytes = File.read!("mix.lock")
+    changed = String.replace(bytes, "\"1.2.14\"", "\"1.2.15\"")
     refute changed == bytes
 
     assert_raise SweepEvidence.Error, ~r/source evidence lock_(identity|patch_identity)/, fn ->

@@ -1,0 +1,25 @@
+{
+  "purpose": "Preserve exact reader, launcher, bootstrap, and parser bytes that the approved one-use source reads used. No target source was reopened to create this snapshot.",
+  "schema": "fablebook.phase7.read_time_code_snapshot/1",
+  "snapshot_files": [
+    {
+      "path": "07-READ-TIME-CODE/phase7_read_sources.py",
+      "sha256": "2bacf07e689b9d1fcf469c73fcbd1bf60161f3b515c4b2ff6370589e377676e9"
+    },
+    {
+      "path": "07-READ-TIME-CODE/phase7_source_launcher.py",
+      "sha256": "92a6af9ba11f727653dd645d23867c8224e90daebc071d503932f748330be6fd"
+    },
+    {
+      "path": "07-READ-TIME-CODE/phase7_source_bootstrap.py",
+      "sha256": "4978f25cc40fdc2a4784cce4dcc2b4a634aaf6eabde8a6f4305469fbc85b98c3"
+    },
+    {
+      "path": "07-READ-TIME-CODE/phase7_source_observer.py",
+      "sha256": "6a4d44911a4f9e7e12140d348d5f1ebe2b80aba1a863376dc00bb896d4e6e387"
+    }
+  ],
+  "source_read_validator_sha256": "4b625cb79d01acf28f0a9055198ee5434db3a72a803a67e8c65dd6e235cbb4b3",
+  "source_reader_review": "07-SOURCE-READER-REVIEW-CONTINUATION.md",
+  "source_reader_review_sha256": "232b4a5fbc20b1784cc343c1e096b27f28a53f8b3a23991417fbb3eacdaa42d2"
+}

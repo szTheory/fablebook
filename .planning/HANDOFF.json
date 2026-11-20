@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-11-20T20:15:26.314Z",
+  "phase": "7",
+  "phase_name": "Guard Scope Reconciliation",
+  "phase_dir": ".planning/phases/07-guard-scope-reconciliation",
+  "plan": null,
+  "task": null,
+  "total_tasks": null,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": 1, "name": "Reconcile current lane membership, family, complement, and sizing", "status": "done", "commit": "6516cbe"},
+    {"id": 2, "name": "Capture bounded source and caller observations with preserved no-retry gaps", "status": "done", "commit": "6516cbe"},
+    {"id": 3, "name": "Verify Phase 7 and prepare reviewed delivery", "status": "done", "commit": "6516cbe"}
+  ],
+  "remaining_tasks": [
+    {"id": 4, "name": "Resolve hosted security gate and deliver v0.6", "status": "blocked_pending_owner_scope_decision"}
+  ],
+  "blockers": [
+    {"description": "Hosted security audit rejects phoenix_live_view 1.2.13 due CVE-2026-126334; the patch version changes lock-bound Phase 7 evidence and the verified phase cannot be re-entered under the current planning preflight.", "type": "human_action", "workaround": "Owner chooses whether to revise Phase 7 for a 1.2.14 core rebaseline with a new reviewed schedule, or defer the dependency change to a separate scope. Do not bypass the gate."}
+  ],
+  "async_jobs": [],
+  "human_actions_pending": [
+    {"action": "Choose the scope path for the LiveView security patch", "context": "PR #96's required hosted security check fails. A lock update requires a new current-core inventory and independently reviewed source schedule; previous consumed requests remain closed.", "blocking": true}
+  ],
+  "decisions": [
+    {"decision": "Do not merge PR #96 while its required security check fails; preserve all existing no-retry requests and safety stops.", "rationale": "The current evidence is bound to the pinned lock and must not be presented as current after a dependency update.", "phase": "7"},
+    {"decision": "Recommend an explicitly authorized narrow Phase 7 rebaseline to LiveView 1.2.14 if the owner wants this milestone delivered now.", "rationale": "This resolves the new advisory without suppressing security CI, while retaining the evidence boundary and no-retry history.", "phase": "7"}
+  ],
+  "uncommitted_files": [
+    " M .planning/ROADMAP.md",
+    " M .planning/STATE.md",
+    "?? .planning/HANDOFF.json",
+    "?? .planning/phases/07-guard-scope-reconciliation/.continue-here.md",
+    "?? .planning/phases/07-guard-scope-reconciliation/07-SHIP-STATUS.md"
+  ],
+  "next_action": "Owner selects whether to revise Phase 7 and refresh lock-bound evidence or defer the security dependency change.",
+  "context_notes": "Branch gsd/v0.6-phase-7-guard-scope-reconciliation was clean at base head 6516cbed9b529b7126fb40bf6a40516d257710e1 and tracks origin; measured uncommitted_files contain only the handoff/state records. PR #96 is open. The local suite and phase verification passed; hosted core, floor, dialyzer passed; security and ci-gate failed on the new LiveView advisory. Planning health verify and ship pass, but plan re-entry returns completed_phase_reentry. Do not reset, stash, clean, bypass, reopen consumed request IDs, change candidate/gate/SEC-01/R9 status, start another milestone, or claim product UI/demo delivery."
+}
