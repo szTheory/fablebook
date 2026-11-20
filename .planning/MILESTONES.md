@@ -1,5 +1,26 @@
 # Milestone history
 
+## v0.6 Guard Scope Reconciliation (Shipped: 2026-11-20)
+
+**Phases completed:** Phase 7 (1 phase, 5 plans, 12 tasks)
+
+**Closeout:** `override_closeout`; scoped audit status is `tech_debt` with 4/4 requirements, 1/1 phase, 1/1 integration, and 1/1 evidence flow satisfied; no scoped blockers.
+
+Known verification overrides: 3 inherited v0.1 deferred items newly acknowledged for carry-forward; 4 acknowledgement records carried forward from earlier closes. All three v0.1 items remain unresolved. The 01.1-01 legacy table row was represented as a bullet with its item, evidence URL, and rationale intact so the canonical writer could record the acknowledgement.
+
+**Key accomplishments:**
+- Reconciled all 226 saved identity rows on both lanes, recorded the proposed CN-002–CN-006 family and complete complements, and preserved the limits of the unavailable historic whole-library inventory.
+- Reviewed and approved the ten-entry source schedule; recorded bounded source/caller/delegate observations, explicit no-retry gaps, refreshed sizing, and the owner-decision boundary.
+- Applied only the owner-authorized `phoenix_live_view` 1.2.13-to-1.2.14 lock update, with no new package; refreshed and reviewed core evidence while retaining the accepted floor evidence unchanged.
+- Delivered Phase 7 through PR #96 after green exact-head hosted CI; post-merge main CI also passed. Candidate remains null, implementation unauthorized, and the aggregate gate remains open.
+- Preserved all wider safety stops and recorded that no Fablebook catalog, applied brand canon, Books, Logistify scenarios, or runnable demos were built.
+
+**Archive closeout:** The archive delivery is tracked by [PR #97](https://github.com/szTheory/fablebook/pull/97); exact-head checks and merge history are visible there. The annotated local `v0.6` tag points to its merge and remains unpushed. See [v0.6 closeout](milestones/v0.6-CLOSEOUT.md) and [archive](milestones/v0.6-ROADMAP.md).
+
+**What's next:** No next milestone is selected. The owner chooses a future bounded scope after its typed prerequisites pass; the [rolling product roadmap](references/PRODUCT-ROADMAP.md) is directional, not approved executable scope.
+
+---
+
 ## v0.5 Bounded EX-177 Provenance Follow-through (Shipped: 2026-11-19)
 
 **Delivered:** Exactly four reviewed EX-177 source/caller observations and their saved provenance are machine-readable; the exact 9,712-row complement and all existing safety stops remain preserved.

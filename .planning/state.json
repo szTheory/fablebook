@@ -1,18 +1,12 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.6 — Guard Scope Reconciliation",
-  "phases": [
-    {
-      "number": "7",
-      "name": "Guard Scope Reconciliation",
-      "status": "pending"
-    }
-  ],
+  "milestone": "v0.6",
+  "phases": [],
   "next": {
-    "command": "$gsd-progress --next",
-    "label": "Advance to the next step",
-    "reason": "Phase 1 of 1 · 100% · executing"
+    "command": "$gsd-progress",
+    "label": "Show progress",
+    "reason": "Unsure of state — showing progress"
   },
-  "updated_at": "2026-11-20T22:16:12.582Z"
+  "updated_at": "2026-11-20T23:33:07.618Z"
 }

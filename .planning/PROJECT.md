@@ -14,24 +14,17 @@ If everything else fails, a scenario must still render with production fidelity 
 
 **Design canon milestone / local slot 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
 
-## Last Shipped Milestone: v0.5 Bounded EX-177 Provenance Follow-through
+## Last Completed Milestone: v0.6 Guard Scope Reconciliation
+
+v0.6 closed as a bounded evidence milestone on 2026-11-20. Phase 7 reconciled current core membership against retained floor evidence, defined one proposed family and its complete complement, recorded bounded observations and gaps, refreshed sizing, and ended at an owner decision. PR #96 exact-head CI [44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) passed before merge as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) also passed. The planning archive closeout is tracked in [PR #97](https://github.com/szTheory/fablebook/pull/97). The aggregate remains open; candidate null, implementation unauthorized, and all wider stops remain in force. Three inherited v0.1 deferrals remain unresolved and documented. See the [v0.6 archive](milestones/v0.6-ROADMAP.md), [requirements](milestones/v0.6-REQUIREMENTS.md), [audit](milestones/v0.6-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.6-phases/), and [closeout receipt](milestones/v0.6-CLOSEOUT.md).
+
+## Previous Milestone: v0.5 Bounded EX-177 Provenance Follow-through
 
 v0.5 closed locally on 2026-11-19 as a bounded evidence milestone. Phase 6 delivered the four-key EX-177 supplement and preserved the exact 9,712-row complement through PR #93, reviewed head `3970a381945cfcf63eb69c456a5b2a7465d8352d`, green [exact-head hosted CI 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030), and squash merge `b8852ac22aac1cb2b8151d85b189889ca0774aa8`. The compatibility fix was reviewed and merged separately through PR #94 with green hosted CI. The archive closeout was squash-merged through [PR #95](https://github.com/szTheory/fablebook/pull/95) as `d5a8dc0b856e5c8223524c4fd3f849bd27c4c859` after green [exact-head hosted CI 44599528602](https://github.com/szTheory/fablebook/actions/runs/44599528602); the `v0.5` tag remains local. Its one requirement is satisfied; caller closure and the wider guard/security obligations remain open. This is not a package release or runtime-safety proof. See the [v0.5 archive](milestones/v0.5-ROADMAP.md), [requirements](milestones/v0.5-REQUIREMENTS.md), [audit](milestones/v0.5-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.5-phases/), and [closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
 ## Next Milestone
 
-v0.6 **Guard Scope Reconciliation** is selected for one bounded, read-only evidence phase. The wider product direction remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md); no follow-on guard increment or product implementation is implied by this selection.
-
-## Current Milestone: v0.6 Guard Scope Reconciliation
-
-**Goal:** Reconcile current lane memberships and source identities, define one exact proposed guard family and its complete complement with bounded caller/delegate evidence, refresh sizing, and stop for the owner's next-scope decision.
-
-**Target features:**
-- Rejoin full relevant row/function membership and pinned source identity on both lanes.
-- Record a proposed family, its complete complement, bounded caller/delegate evidence, gaps and refreshed effort sizing.
-- Preserve the read-only boundary and all inherited safety stops; do not build a demo or promote a candidate.
-
-This scope is selected by [INT-20261119-05](intent/sources/2026-11-19-05-select-v06-guard-reconciliation.md); milestone-start research and rolling-roadmap posture is [INT-20261119-06](intent/sources/2026-11-19-06-research-first-rolling-roadmap.md).
+No next milestone is selected. The directional product sequence remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md); its horizons are not approved executable scope. The owner chooses a bounded next scope after its typed prerequisites pass.
 
 ## Current State
 
@@ -72,13 +65,13 @@ satisfied GSR-07 with no critical gaps. Three inherited v0.1 deferred records
 remain unresolved, and all wider stops remain unchanged. No next milestone is
 selected; see the [v0.5 closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
-## Current Milestone Scope
+## Most Recent Milestone Scope: v0.6 Phase 7
 
-The active scope is v0.6 Phase 7, a read-only reconciliation only. It does not
-authorize runtime probes, R9 consumption, exhaustive caller searches, candidate
-promotion, guard implementation, aggregate closure, Walking Skeleton work, or
-product UI/brand integration. Phase exit requires a clear owner decision before
-any additional guard increment. See [INT-20261119-05](intent/sources/2026-11-19-05-select-v06-guard-reconciliation.md)
+The completed scope was a read-only reconciliation. It did not authorize runtime
+probes, R9 consumption, exhaustive caller searches, candidate promotion, guard
+implementation, aggregate closure, Walking Skeleton work, or product UI/brand
+integration. It ended at an owner decision; any additional guard increment needs
+separate bounded justification and authorization. See [INT-20261119-05](intent/sources/2026-11-19-05-select-v06-guard-reconciliation.md)
 and [the research synthesis](research/2026-11-19-v0.6-guard-scope-reconciliation.md).
 
 ## Requirements
@@ -330,8 +323,9 @@ Every item below is a v1.0 commitment.
 - **Delivered v0.2:** Contract/static evidence only; no production code, workflow or dependency changes. Independent exact-lane findings and symmetric selection feed the existing Elixir/Phoenix core/floor test lanes. Full delivery and diff measurements are in milestones/v0.2-CLOSEOUT.md.
 - **Delivered v0.3:** Five test/support files add 816 lines of source-backed static evidence and controls; no runtime library code changed. The existing Elixir/Phoenix core/floor lanes and their hosted delivery gates remain in use.
 - **Delivered v0.4:** Planning and evidence artifacts only; no application source, dependencies, or runtime behavior changed. Three phases, nine plans and 14 tasks delivered through PRs #90–#92. The aggregate gate, candidate-null decision, actual-library collision stop, Macro checkpoints, SEC-01 owner and Walking Skeleton block remain unchanged.
+- **Delivered v0.6:** Evidence and one existing dependency lock patch only; no application behavior, product UI, Book, or runnable demo was added. Phase 7 passed 4/4 goal verification, Nyquist validation, and its declared security review. PR #96 and post-merge main CI passed; the exact receipts and all bounded limits are in the v0.6 archive. Three inherited deferred records remain unresolved and acknowledged for carry-forward.
 - **Delivered v0.5:** Planning and test-support evidence only; no application source, dependencies, or runtime behavior changed. Phase 6 delivered the exact four-key supplement and checker through PR #93; PR #94 separately fixed the archived-evidence test path. The 9,712-row complement and every prior safety stop remain unchanged.
-- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.5's scoped audit, three inherited deferred records and closeout are recorded in the archive. No next milestone is selected; owner scope choice and typed prerequisites are required before further planning.
+- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.6 closeout and the three inherited deferred records are recorded in its archive. No next milestone is selected; owner scope choice and typed prerequisites are required before further planning.
 
 - **Ecosystem (verified 2026-10-28):**
   - Phoenix 1.8.16 and LiveView 1.2.13 are current; there is no Phoenix 1.9.
@@ -398,6 +392,8 @@ Every item below is a v1.0 commitment.
 
 | Decision | Rationale | Outcome |
 |---|---|---|
+| Close v0.6 at the bounded evidence and owner-decision boundary (INT-20261119-05, INT-20261119-06) | Preserve the aggregate gate, evidence limits, and downstream scope while delivering a current reviewable reconciliation | Phase 7 is delivered; candidate remains null, implementation unauthorized, and no next milestone is selected. |
+| Apply only the owner-approved LiveView security rebaseline (INT-20261120-07) | Remove the hosted advisory failure without expanding package scope or rescanning the retained floor | Only the existing core LiveView lock tuple changed; Hex audit and required hosted CI passed. |
 | Close v0.5 against its scoped evidence and carry older records forward (INT-20261119-04) | Complete the authorized milestone while preserving immutable evidence and all existing safety limits | v0.5 is archived under `override_closeout`; GSR-07 and the evidence flow pass, three inherited v0.1 deferred records remain unresolved, and no next milestone is selected. |
 | Keep the v0.4 evidence milestone bounded and carry unresolved records explicitly (INT-20261119-02) | Preserve the historical Phase 3 pass and archived v0.1 evidence while allowing a useful new planning boundary | v0.4 is locally archived under `override_closeout`; the stale Phase 3 and Phase 4 reports remain unchanged, the old deferred source hash is preserved, and the guard aggregate remains open. The authorized EX-177 continuation can be planned only if typed gates pass. |
 | Keep Phase 6 additive and value-only (INT-20261119-01, INT-20261119-03) | Reuse reviewed facts without reopening Phoenix source or claiming exhaustive caller closure | The supplement covers exactly four keys and the exact 9,712-row complement; recorded Phoenix paths remain values, one observed `run/1` caller per lane remains non-exhaustive, and all earlier stops remain open. Phase verification passed and PR #93 merged after green exact-head hosted CI; PR #94 separately delivered the archived-path test support. |
@@ -516,4 +512,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-19 after the v0.5 milestone; GSR-07 is delivered, the three inherited v0.1 deferrals and wider guard/security stops remain open, and no next milestone is selected.*
+*Last updated: 2026-11-20 after the v0.6 milestone; RSC-01–04 are delivered, three inherited v0.1 deferrals and wider guard/security stops remain open, and no next milestone is selected.*

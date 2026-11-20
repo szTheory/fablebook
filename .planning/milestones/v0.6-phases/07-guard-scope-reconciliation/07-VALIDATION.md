@@ -1,4 +1,77 @@
-# Phase 7 Validation Map
+---
+phase: "07"
+slug: "guard-scope-reconciliation"
+status: validated
+nyquist_compliant: true
+wave_0_complete: true
+created: "2026-11-20"
+---
+
+# Phase 7 — Validation Strategy
+
+> Retrospective Nyquist audit: all 12 plan tasks have automated acceptance checks; the phase-local validators and required core/floor CI passed. No additional test or dependency was needed.
+
+## Test Infrastructure
+
+| Property | Value |
+|---|---|
+| Framework | Python standard-library evidence validators and the existing Mix/ExUnit core and floor lanes |
+| Configuration | No new test framework or recurring CI job |
+| Quick focused check | `python3 .planning/phases/07-guard-scope-reconciliation/07-validate-reconciliation.py --check` and `--self-test` |
+| Full phase check | Phase task validators, core `mix ci`, `mix hex.audit`, and required hosted core/floor/security/Dialyzer checks |
+| Dependency change | None added; the authorized LiveView patch updates one existing lock entry |
+
+## Sampling Strategy
+
+- Run each plan task's targeted validator after producing its evidence.
+- Run cheap hash, schema, identity, and partition checks before the full core suite.
+- Re-run the final reconciliation checks and full core suite after the authorized LiveView rebaseline.
+- Final local core suite: 461 passed, 10 lane-excluded; hosted candidate and post-merge checks also passed.
+
+## Per-Task Verification Map
+
+| Task | Requirement | Automated coverage | Result |
+|---|---|---|---|
+| 07-01 Task 1 | RSC-01, RSC-02 | Retained-inputs; reader and validator self-tests; metadata-only manifest generation | COVERED |
+| 07-01 Task 2 | RSC-01 | Reviewed-manifest scan and current-generation reconciliation | COVERED |
+| 07-01 Task 3 | RSC-01, RSC-02 | Partition, malformed-MFA, identity, and negative-control self-tests | COVERED |
+| 07-02 Task 1 | RSC-03 | Independent schedule-review digest and shape validation | COVERED |
+| 07-02 Task 2 | RSC-03 | One-use source approval and complete path-to-batch validation | COVERED |
+| 07-03 Task 1 | RSC-03 | Batch 01 read-time identity, size, and provenance validation | COVERED |
+| 07-03 Task 2 | RSC-03 | Batch 02 read-time identity, size, and provenance validation | COVERED |
+| 07-04 Task 1 | RSC-03, RSC-04 | Final record validator and adversarial self-tests | COVERED |
+| 07-04 Task 2 | RSC-04 | Generated summary and recommendation consistency check | COVERED |
+| 07-05 Task 1 | RSC-01, RSC-02, RSC-03, RSC-04 | Exact dependency-patch checker, unchanged floor and declaration checks, setup, and Hex audit | COVERED |
+| 07-05 Task 2 | RSC-01 | Current export producer self-test and JSON schema parse | COVERED |
+| 07-05 Task 3 | RSC-01, RSC-02, RSC-03, RSC-04 | Rebaseline validator, Hex audit, full core CI, and whitespace check | COVERED |
+
+The exact commands and failure conditions remain in each plan's `<verify>` blocks. Their combined results are recorded in the plan summaries and [phase verification](07-VERIFICATION.md). The summaries use `requirements` frontmatter; their union, the requirement tables in `07-VERIFICATION.md`, and `.planning/REQUIREMENTS.md` cover RSC-01 through RSC-04.
+
+## Manual-Only
+
+No missing automated acceptance checks. Human review remains limited to interpreting the bounded static observations and deciding whether to authorize any later scope; those are deliberate phase boundaries, not unverified code behavior.
+
+## Validation Sign-Off
+
+- [x] All 12 plan tasks have automated checks.
+- [x] Requirement coverage matches the phase verification and summaries.
+- [x] Cheap validators precede the long core suite.
+- [x] No new dependency or recurring CI work was introduced.
+- [x] `nyquist_compliant: true` is set.
+
+**Approval:** Automated coverage validated 2026-11-20 from the completed task receipts and green hosted runs.
+
+## Validation Audit 2026-11-20
+
+| Metric | Count |
+|---|---:|
+| Gaps found | 0 |
+| Resolved | 0 |
+| Escalated | 0 |
+
+---
+
+# Detailed Validation Map
 
 This document defines the one-off local acceptance checks for Guard Scope Reconciliation. It adds no dependency or recurring CI job and does not authorize target source reads.
 
