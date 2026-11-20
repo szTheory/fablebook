@@ -1,3 +1,11 @@
+---
+id: INT-20261120-05
+date: 2026-11-20
+source: Direct owner message in the Fablebook planning conversation
+captured_by: Codex
+context: Directs autonomous completion of the active Phase 7 and removes repeated approval for routine local reads while preserving all phase safety gates.
+---
+
 # Owner direction: autonomous Phase 7 continuation and routine file reads
 
 **Date:** 2026-11-20

@@ -1,7 +1,7 @@
 # Fresh core baseline refresh scope
 
 **Date:** 2026-11-20  
-**Status:** R11 complete; no safe current-core generation path under the reviewed limits
+**Status:** In progress under the owner-authorized compiled-export route. R10 and R11 remain completed and spent; this route does not reuse them.
 
 ## Purpose
 
@@ -39,10 +39,20 @@ The R11 request and revised five-plan reviews passed, the execute preflight pass
 
 ## Decision and exit
 
-The owner selected this refresh scope, so routine bounded work did not need repeated confirmation. The Phase 4 closure remains immutable for R1–R8. R10 was incomplete and is spent. R11 then captured the complete same helper file under its own PASS review and preflight. The complete analysis found no command or current-core input maps. The separately selected metadata sufficiency check then confirmed that the exact existing Phase 3/4/6 inputs do not provide those maps. No safe generation path is established under either reviewed boundary. Both producer request IDs are spent; neither may be reused.
+The earlier R11 and metadata-sufficiency findings remain accurate for those reviewed routes: the historic writer did not provide a safe reproducible path, and R10/R11 are spent. They are not reused. The owner later authorized completion of this milestone using a new, read-only compiled-export comparison with independent code and manifest reviews. This is a distinct operation and evidence generation.
 
-Successful exit requires an immutable current-core generation with exact lane identity and complete relevant membership, independently validated floor identity, full provenance, and a passing membership validator. The reviewed producer path and selected metadata inputs did not establish that generation, so Plans 07-02–07-05 remain blocked. The next action is an owner decision whether to scope a separately reviewed exact input/operation boundary or retain the stop and redirect product focus. No new guard scope follows automatically. R9, all candidate/implementation/gate stops, SEC-01 Pending, and Walking Skeleton blocked remain unchanged.
+Successful exit requires a fresh core export list bound to the current lock/runtime and a separate map of all 226 saved core rows. Floor is reused only from accepted ENV06 evidence after the exact floor lock and runtime are checked. The validator must bind every saved core live MFA to one current compiled module/package identity, keep floor provenance separate, preserve unresolved source gaps and the empty source-association set, and stop before family/schedule creation on any mismatch. The original whole-library membership list remains unavailable, so no exact historical whole-universe diff is possible. No target source body has been authorized by the inventory step; the later family and source schedule retain their own review and one-use gates. R9, candidate/implementation/gate stops, SEC-01 Pending, and Walking Skeleton blocked remain unchanged.
 
 ## Product-progress boundary
 
 This scope repairs the evidence prerequisite only. It produces no applied brand canon, Fablebook Book, Logistify scenario, or runnable demo. Those remain downstream product work in the rolling roadmap.
+
+## Later metadata-only route assessment (2026-11-20)
+
+After the owner authorized autonomous completion of this milestone, independent reviewers identified a bounded route that did not exist in the earlier reviewed inputs: compare the 226 saved guard rows against the current compiled BEAM export lists. This does not reuse R10/R11, regenerate archived evidence, or read target source bodies. The historical whole-library record still has no old member list, so only exact guard-row differences can be reported.
+
+The lane identity accepted by this phase is the exact package/release identity: full lock digest, pinned OTP/Elixir release and application versions, required runtime dependency closure, exact reviewed compiled-file manifest, and a digest of each file's canonical exported MFA list. The reviewed manifest records normalized asdf root locators, a hash of each resolved path, and root device/inode without exposing a developer's home directory. It does not hash the complete BEAM file. Source-file hashes and spans remain limited to a separately reviewed source schedule.
+
+The revised plan now requires two distinct passes. First, produce a path-and-stat manifest without opening BEAM contents; a separate reviewer approves its exact digest and roots. Only then may the approved string-only parser read `Atom`/`AtU8` and `ExpT` from those listed files. It does not call `beam_lib`, create atoms from file contents, or read other chunk data. Dependency metadata names are validated before path use, every required Hex dependency must be accounted for, and metadata reads are bounded and checked for file changes. Debug information, abstract code, module loading, target-function calls, and target-source reads remain prohibited during inventory. The plan must pass independent review and the normal execute preflight before this route runs.
+
+Supporting review: [current-lane comparison plan](07-SOURCE-BASELINE-UNBLOCKING-PROPOSAL.md). Primary references: [OTP 29 beam_lib documentation](https://www.erlang.org/doc/apps/stdlib/beam_lib.html), [OTP 29 compiler source](https://github.com/erlang/otp/blob/OTP-29.1.2/lib/compiler/src/beam_asm.erl), and [OTP 29 compiler release notes](https://www.erlang.org/doc/apps/compiler/notes.html).

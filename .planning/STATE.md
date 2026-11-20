@@ -5,7 +5,7 @@ milestone_name: Guard Scope Reconciliation
 current_phase: 7
 current_phase_name: Guard Scope Reconciliation
 status: planning
-last_updated: "2026-11-20T03:51:49Z"
+last_updated: "2026-11-20T15:08:42Z"
 last_activity: 2026-11-20
 progress:
   total_phases: 1
@@ -34,21 +34,21 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 ## Current Position
 
 Phase: 7 of 7 (Guard Scope Reconciliation)
-Plan 07-01 Task 1 completed with an explicit no-go: R10 was incomplete, and R11 found no permitted current-core generation path. The selected Phase 3/4/6 metadata also lacked complete current-core maps. A later read-only inspection of the legacy test writer found that its base writer reads installed OTP source files and its caller writer can write to archived Phase 3 evidence. The independent GSD plan review confirmed Plan 07-01 Task 2's precondition is unmet and downstream plans cannot proceed. See the [R11 analysis](phases/07-guard-scope-reconciliation/07-CORE-PRODUCER-ANALYSIS-R11.md), [metadata input sufficiency report](phases/07-guard-scope-reconciliation/07-CORE-METADATA-INPUT-SUFFICIENCY.md), and [test-writer inspection](phases/07-guard-scope-reconciliation/07-CORE-PRODUCER-TEST-WRITER-INSPECTION.md).
-Status: Blocked at the producer-input boundary. Product/demo work remains the preferred direction, but the typed guard prerequisite blocks its activation. No source-body access, archived writes, gate change, or safe current-core producer has been authorized or established. Verification preflight reports the phase summary incomplete and summaries missing for Plans 07-02–07-05, so phase verification and milestone lifecycle cannot run.
-Last activity: 2026-11-20 — completed the owner-directed GSD autonomous feasibility pass; no downstream Phase 7 task met its preconditions
+All five plans are complete and the independent phase verification passed 4/4 criteria. The current core compiled-export inventory and all 226 saved rows reconcile in each lane. The proposed family is CN-002 through CN-006, with its complete core and floor complements. The reviewed source schedule and bounded observations preserve three no-retry gaps; the owner decision boundary is explicit.
+Status: Verified; preparing reviewed PR delivery and hosted CI. The local `act` run could not reach compilation because its ARM container failed to install the pinned Erlang runtime. No product UI, Book, Logistify scenario, or runnable demo was built. The aggregate remains open and all prior safety stops remain in force.
+Last activity: 2026-11-20 — completed Phase 7 verification and independent integration review
 
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, canonical branch `main` at `789efe9` (clean before this handoff update), 19 local commits ahead of refreshed `origin/main` `d5a8dc0`. The preserved `gsd/phase-07-guard-scope-reconciliation` branch points at the same handoff commit. No remote ref changed; the handoff is now reconciled into canonical `main`.
+- Checkout: `~/projects/fablebook`, branch `main`, HEAD `141b861`, 20 commits ahead of `origin/main`, with dirty planning and Phase 7 work preserved. `git fetch origin main` confirmed the fetched main has no commits missing from this checkout; the remote-tracking ref was not changed. Do not reset, stash, clean, or replace the checkout.
 - Delivered: v0.5 Phase 6 and its closeout. Phase 6 merged as PR #93 with green exact-head hosted CI; PRs #94 and #95 separately delivered compatibility and closeout work. No preserved recovery checkout was reset, stashed, cleaned, or removed.
-- Current: v0.6 Guard Scope Reconciliation, global Phase 7. The owner selected a fresh core baseline, then selected a read-only metadata input sufficiency check. The current core lock differs from ENV06 by the Plug 1.20.4 security update; see [baseline refresh scope](phases/07-guard-scope-reconciliation/07-CORE-BASELINE-REFRESH-SCOPE.md). R10 was incomplete; R11 captured the full helper but found no safe generation path. The selected Phase 3/4/6 metadata also lacks complete current-core maps.
-- Remaining: the owner selected Fablebook/Logistify product work as the preferred direction, but the open `guard-aggregate` gate blocks Walking Skeleton, Story Model, and Design canon/Books. No product milestone is eligible to activate under the typed map. The legacy test writer is not a safe producer under the current boundary; Plans 07-01 Tasks 2–3 and Plans 07-02–07-05 remain blocked pending a safe provenance-bound current-core map path.
-- Limits: the latest inspection read only five project files and did not open target OTP source bodies, execute tests/builds/compiles/helpers/runtime APIs, generate evidence, write archived data, use R9, search broadly, implement guards, promote a candidate, or change the gate. R10 and R11 remain spent; their records are immutable.
+- Current: v0.6 Guard Scope Reconciliation, global Phase 7. The current core lock differs from ENV06 by the Plug 1.20.4 update; the new reader binds to the full current core lock. The floor lock and accepted ENV06 generation remain separate and unchanged. R10 and R11 remain spent, and their records are immutable. Phase verification is passed; PR delivery is not yet complete.
+- Remaining: complete an independent code review, pass ship preflight and focused checks, open/update the phase PR, obtain exact-head hosted CI, squash-merge under existing authorization, append the delivery receipt, then perform milestone audit and closeout. No next milestone is started.
+- Limits: source observations remain limited to the exact reviewed schedule. Three consumed requests lack durable hashes/spans and were not reopened; caller evidence is not exhaustive; the full historic member universe cannot be reconstructed. The floor is retained evidence, not a fresh scan. No target source was reopened during verification. No dependency was added, R9 was not used, and no guard, candidate, or gate changed. All inherited stops remain active.
 - Stops remain active: actual-library-collision owner stop; candidate null and implementation unauthorized; Macro caller-AST and explanation gaps; SEC-01 Pending; legacy digest unresolved; aggregate gate open; Walking Skeleton blocked.
-- Next action: keep the stop. Resume Phase 7 only when a provenance-bound current-core map package is supplied or a separately reviewed metadata-only producer scope proves an exact path that avoids source/debug-info bodies and archived writes. Do not start a product milestone or run milestone audit/closeout while RSC-01–03 are unmet.
-- **Next actor: Owner.** No action is needed to preserve the stop. To resume, provide the producer-bound current-core inputs or select a new exact producer scope for planning and review.
+- Next action: independent code review, then `bin/planning_health --stage ship --phase 7` and the required local checks before PR creation.
+- **Next actor: Codex.** The owner already authorized the bounded phase through delivery and closeout; no user action is needed for routine review, checks, or PR/merge steps. The owner's next scope decision happens only after this milestone closes.
 
 ## Performance Metrics
 
@@ -193,4 +193,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- No action is needed until the owner selects another bounded scope. The [v0.5 closeout receipt](milestones/v0.5-CLOSEOUT.md) records the scoped outcome and inherited deferrals. Historical v0.4 details remain in [its closeout receipt](milestones/v0.4-CLOSEOUT.md).
+- Codex continues v0.6 Phase 7 through its existing review and safety gates. The phase stops for an owner decision only after presenting the completed reconciliation; it does not start another milestone or build the downstream demos.

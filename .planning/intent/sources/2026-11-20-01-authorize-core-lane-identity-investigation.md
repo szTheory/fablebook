@@ -1,3 +1,11 @@
+---
+id: INT-20261120-01
+date: 2026-11-20
+source: Owner reply in the v0.6 Phase 7 continuation
+captured_by: Codex
+context: Bounded authorization for read-only investigation of current core lane lock/runtime identity and saved provenance; target source bodies, R9, runtime calls, implementation, and gate changes remain excluded.
+---
+
 # Owner authorization: core lane identity investigation
 
 **Date:** 2026-11-20  

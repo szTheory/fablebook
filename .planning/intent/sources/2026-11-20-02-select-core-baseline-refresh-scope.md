@@ -1,3 +1,11 @@
+---
+id: INT-20261120-02
+date: 2026-11-20
+source: Owner replies in the v0.6 Phase 7 continuation
+captured_by: Codex
+context: Selects a fresh current-core baseline for Phase 7 while preserving accepted ENV06, full-lock identity, denied R9, and inherited source/request limits.
+---
+
 # Owner selection: fresh core baseline scope
 
 **Date:** 2026-11-20  

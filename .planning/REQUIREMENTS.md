@@ -8,10 +8,10 @@
 
 ### Guard-scope reconciliation
 
-- [ ] **RSC-01**: The reconciliation records the complete relevant surviving guard row/function membership and exact source identities independently for both pinned lanes, identifies differences from prior saved inventories, and stops for rescoping if source or membership inputs do not match. (INT-20261119-05, INT-20261111-13, ADR 0021)
-- [ ] **RSC-02**: The reconciliation names one exact proposed scope family and records its complete, disjoint complement against the current per-lane membership, with reproducible counts/digests and explicit distinction between a proposed scope and a selected/promoted code candidate. (INT-20261119-05, INT-20261119-01, ADR 0021)
-- [ ] **RSC-03**: For the proposed family, the evidence records bounded source, caller, and delegate observations with lane identity, provenance, known gaps, and limits; it does not claim exhaustive or package-wide caller closure from bounded/static observations. (INT-20261119-05, INT-20261119-01, ADR 0004, ADR 0021)
-- [ ] **RSC-04**: The phase refreshes source/context/effort sizing under inherited per-task and per-phase limits, confirms that the evidence is bounded or identifies the reason to stop, preserves every inherited safety stop, and ends with a recommendation plus an explicit owner decision before any further increment. (INT-20261119-05, INT-20261119-06, ADR 0021)
+- [x] **RSC-01**: The reconciliation records the complete relevant surviving guard row/function membership and exact source identities independently for both pinned lanes, identifies differences from prior saved inventories, and stops for rescoping if source or membership inputs do not match. (INT-20261119-05, INT-20261111-13, ADR 0021)
+- [x] **RSC-02**: The reconciliation names one exact proposed scope family and records its complete, disjoint complement against the current per-lane membership, with reproducible counts/digests and explicit distinction between a proposed scope and a selected/promoted code candidate. (INT-20261119-05, INT-20261119-01, ADR 0021)
+- [x] **RSC-03**: For the proposed family, the evidence records bounded source, caller, and delegate observations with lane identity, provenance, known gaps, and limits; it does not claim exhaustive or package-wide caller closure from bounded/static observations. (INT-20261119-05, INT-20261119-01, ADR 0004, ADR 0021)
+- [x] **RSC-04**: The phase refreshes source/context/effort sizing under inherited per-task and per-phase limits, confirms that the evidence is bounded or identifies the reason to stop, preserves every inherited safety stop, and ends with a recommendation plus an explicit owner decision before any further increment. (INT-20261119-05, INT-20261119-06, ADR 0021)
 
 ## Future Requirements
 
@@ -34,10 +34,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RSC-01 | Phase 7 | Pending |
-| RSC-02 | Phase 7 | Pending |
-| RSC-03 | Phase 7 | Pending |
-| RSC-04 | Phase 7 | Pending |
+| RSC-01 | Phase 7 | Complete |
+| RSC-02 | Phase 7 | Complete |
+| RSC-03 | Phase 7 | Complete |
+| RSC-04 | Phase 7 | Complete |
 
 **Coverage:**
 - v1 requirements: 4 total
@@ -46,4 +46,4 @@
 
 ---
 *Requirements defined: 2026-11-19*
-*Last updated: 2026-11-19 after v0.6 Phase 7 roadmap creation*
+*Last updated: 2026-11-20 after Phase 7 verification; hosted delivery remains pending.*
