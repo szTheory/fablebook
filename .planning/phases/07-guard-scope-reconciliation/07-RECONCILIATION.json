@@ -1,0 +1,95 @@
+{
+  "schema": "fablebook.guard-scope-reconciliation/1",
+  "phase": "07",
+  "status": "stopped_identity_mismatch",
+  "accepted_evidence": {
+    "receipt_path": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-VERIFICATION.md",
+    "receipt_status": "passed",
+    "generation": "ENV-20261117-06-supported-20261117T204102Z",
+    "typed_gaps": {
+      "path": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-TYPED-GAPS-ENV06.jsonl",
+      "rows": 9716,
+      "bytes": 19633625,
+      "sha256": "128032ab929f831bb516186bbe9844b6bd36e0b55327a9cc998f16c65b0d4011"
+    },
+    "target_source_associations": {
+      "path": ".planning/milestones/v0.4-phases/04-evidence-only-source-and-gap-provenance-closure/04-TARGET-SOURCE-ASSOCIATIONS-ENV06.jsonl",
+      "rows": 0,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "per_lane_rows": {
+      "core": 4944,
+      "floor": 4772
+    }
+  },
+  "lane_pins": {
+    "core": {
+      "lock_file": "mix.lock",
+      "expected_lock_sha256": "4638a2d1c25b5be2bfaf6b6a3309e9147612f343aa694d64b2af99cc46f33a85",
+      "observed_lock_sha256": "31c244c80a750309f4cc82c8840fdf78bba642ba78a00df31b3acfe208b94112",
+      "expected_phoenix_version": "1.8.16",
+      "observed_phoenix_version": "1.8.16",
+      "env06_recorded_runtime": {
+        "elixir": "1.20.4",
+        "otp": "29"
+      },
+      "phase6_recorded_runtime": {
+        "elixir": "1.20.4",
+        "otp": "29.1.2"
+      },
+      "observed_current_runtime": null,
+      "status": "stop_digest_mismatch"
+    },
+    "floor": {
+      "lock_file": "mix.floor.lock",
+      "expected_lock_sha256": "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847",
+      "observed_lock_sha256": "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847",
+      "expected_phoenix_version": "1.8.9",
+      "observed_phoenix_version": "1.8.9",
+      "env06_recorded_runtime": {
+        "elixir": "1.18.5",
+        "otp": "27"
+      },
+      "phase6_recorded_runtime": {
+        "elixir": "1.18.5",
+        "otp": "27.3.4.9"
+      },
+      "observed_current_runtime": null,
+      "status": "matches_recorded_pin"
+    }
+  },
+  "membership": {
+    "status": "not_reconciled_after_identity_stop",
+    "accepted_env06_row_counts": {
+      "core": 4944,
+      "floor": 4772
+    },
+    "reason": "The root core lock digest differs from the accepted per-lane identity. Exact membership comparison is not authorized until that identity discrepancy is resolved."
+  },
+  "proposed_family": null,
+  "source_schedule": null,
+  "source_read_boundary": {
+    "target_source_bodies_read": false,
+    "recorded_source_paths_are_values_only": true
+  },
+  "preserved_stops": {
+    "candidate": null,
+    "candidate_fit": "unresolved",
+    "actual_library_collision": "unknown",
+    "implementation_authorized": false,
+    "aggregate_gate": "open",
+    "r9_consumption": "not_consumed",
+    "sec_01": "Pending",
+    "macro_caller_ast": "unresolved",
+    "macro_explanation": "unresolved",
+    "legacy_digest": "unresolved",
+    "walking_skeleton": "blocked",
+    "automatic_followup": false
+  },
+  "owner_decision": {
+    "required": true,
+    "question": "Should the core lane pin/evidence provenance be re-scoped and freshly reconciled before Plan01 resumes?",
+    "recommendation": "Keep this stop. Do not edit the saved baseline or combine generations. Reconcile the intended core lock digest at the rescoping boundary, then rerun Plan01's identity and membership checks before defining any family or source schedule."
+  }
+}
