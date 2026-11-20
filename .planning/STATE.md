@@ -35,20 +35,20 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 
 Phase: 7 of 7 (Guard Scope Reconciliation)
 All five plans are complete and the independent phase verification passed 4/4 criteria. The current core compiled-export inventory and all 226 saved rows reconcile in each lane. The proposed family is CN-002 through CN-006, with its complete core and floor complements. The reviewed source schedule and bounded observations preserve three no-retry gaps; the owner decision boundary is explicit.
-Status: Verified; preparing reviewed PR delivery and hosted CI. The local `act` run could not reach compilation because its ARM container failed to install the pinned Erlang runtime. No product UI, Book, Logistify scenario, or runnable demo was built. The aggregate remains open and all prior safety stops remain in force.
-Last activity: 2026-11-20 — completed Phase 7 verification and independent integration review
+Status: Phase verification passed; PR #96 delivery is blocked by the required security check. Hosted core, floor, and Dialyzer checks passed. `mix hex.audit` failed on the pinned `phoenix_live_view` 1.2.13 advisory; no merge occurred. The local `act` runner limitation remains recorded below. No product UI, Book, Logistify scenario, or runnable demo was built. The aggregate remains open and all prior safety stops remain in force.
+Last activity: 2026-11-20 — hosted CI identified a new LiveView security advisory; preserved the phase stop for an owner scope decision
 
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `main`, HEAD `141b861`, 20 commits ahead of `origin/main`, with dirty planning and Phase 7 work preserved. `git fetch origin main` confirmed the fetched main has no commits missing from this checkout; the remote-tracking ref was not changed. Do not reset, stash, clean, or replace the checkout.
+- Checkout: `~/projects/fablebook`, branch `gsd/v0.6-phase-7-guard-scope-reconciliation`, HEAD `6516cbe`, clean and tracking its pushed origin branch. PR [#96](https://github.com/szTheory/fablebook/pull/96) is open against `main`; exact head is `6516cbed9b529b7126fb40bf6a40516d257710e1`. Do not reset, stash, clean, or replace this checkout.
 - Delivered: v0.5 Phase 6 and its closeout. Phase 6 merged as PR #93 with green exact-head hosted CI; PRs #94 and #95 separately delivered compatibility and closeout work. No preserved recovery checkout was reset, stashed, cleaned, or removed.
-- Current: v0.6 Guard Scope Reconciliation, global Phase 7. The current core lock differs from ENV06 by the Plug 1.20.4 update; the new reader binds to the full current core lock. The floor lock and accepted ENV06 generation remain separate and unchanged. R10 and R11 remain spent, and their records are immutable. Phase verification is passed; PR delivery is not yet complete.
-- Remaining: complete an independent code review, pass ship preflight and focused checks, open/update the phase PR, obtain exact-head hosted CI, squash-merge under existing authorization, append the delivery receipt, then perform milestone audit and closeout. No next milestone is started.
+- Current: v0.6 Guard Scope Reconciliation, global Phase 7. The core lock SHA is `31c244c80a750309f4cc82c8840fdf78bba642ba78a00df31b3acfe208b94112`, with `phoenix_live_view` 1.2.13. The current core manifest, source schedule, and observations bind to it; floor lock and accepted ENV06 generation are separate and unchanged. R10 and R11 remain spent and immutable. Phase verification is passed; hosted security gate blocks delivery.
+- Remaining: owner decides whether to reopen/amend this completed phase for a narrow 1.2.14 security update and a newly reviewed current-core evidence generation, or defer that change. `bin/planning_health --stage plan --phase 7` currently fails closed with `completed_phase_reentry`; do not bypass it. All already-consumed request IDs remain closed. After the decision and any required new review/evidence, obtain green exact-head hosted CI, then merge, append the delivery receipt, audit and close v0.6. No next milestone is started.
 - Limits: source observations remain limited to the exact reviewed schedule. Three consumed requests lack durable hashes/spans and were not reopened; caller evidence is not exhaustive; the full historic member universe cannot be reconstructed. The floor is retained evidence, not a fresh scan. No target source was reopened during verification. No dependency was added, R9 was not used, and no guard, candidate, or gate changed. All inherited stops remain active.
 - Stops remain active: actual-library-collision owner stop; candidate null and implementation unauthorized; Macro caller-AST and explanation gaps; SEC-01 Pending; legacy digest unresolved; aggregate gate open; Walking Skeleton blocked.
-- Next action: independent code review, then `bin/planning_health --stage ship --phase 7` and the required local checks before PR creation.
-- **Next actor: Codex.** The owner already authorized the bounded phase through delivery and closeout; no user action is needed for routine review, checks, or PR/merge steps. The owner's next scope decision happens only after this milestone closes.
+- Next action: decide whether Phase 7 may be amended to move the pinned LiveView dependency to its patched release and refresh lock-bound evidence, while preserving spent requests and inherited limits.
+- **Next actor: Owner.** PR #96 remains open and unmerged until this scope decision and the required security check pass.
 
 ## Performance Metrics
 

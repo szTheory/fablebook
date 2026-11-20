@@ -37,14 +37,14 @@ This was one bounded, read-only evidence phase. It did not implement guards, inv
 - [x] 07-03-PLAN.md
 - [x] 07-04-PLAN.md
 - [x] 07-05-PLAN.md
-**Current status**: Phase verification passed all four criteria. The current core lane has a reviewed compiled-export inventory; 226 saved rows reconcile in each lane; CN-002 through CN-006 form the proposed family with its complete per-lane complements; and the bounded source record retains three no-retry gaps. No code candidate was promoted and the aggregate gate remains open. Delivery through reviewed PR and hosted CI is pending.
+**Current status**: Phase verification passed all four criteria. The current core lane has a reviewed compiled-export inventory; 226 saved rows reconcile in each lane; CN-002 through CN-006 form the proposed family with its complete per-lane complements; and the bounded source record retains three no-retry gaps. No code candidate was promoted and the aggregate gate remains open. PR #96 is open, but its required hosted security check fails because the pinned `phoenix_live_view` 1.2.13 is affected by a newly published advisory. The evidence is bound to the current lockfile; changing that dependency requires a fresh current-core inventory and a newly reviewed source schedule. The completed-phase planning gate rejects re-entry. No merge or milestone closeout has occurred; the owner decision and exact check result are recorded in [the ship receipt](phases/07-guard-scope-reconciliation/07-SHIP-STATUS.md).
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Guard Scope Reconciliation | 5/5 | Verification passed; PR delivery pending | 2026-11-20 |
+| 7. Guard Scope Reconciliation | 5/5 | Verification passed; PR #96 blocked on security check | 2026-11-20 |
 
 ## Next
 
-The next action is reviewed delivery of Phase 7, followed by milestone audit and archive closeout. After that, the owner decides whether to authorize any separately scoped guard increment. The open aggregate gate still blocks Walking Skeleton and downstream product work, including the Fablebook and Logistify Books and runnable demos. The authored Fablebook Brand Book is viewable, but it is not an implemented Fablebook catalog or demo. No guard implementation, candidate promotion, gate change, automatic follow-on, or next milestone is authorized by Phase 7. R10 and R11 remain spent; do not resume either request.
+The next action is the owner's decision on the new security blocker: amend the verified Phase 7 scope to refresh current-core evidence after moving LiveView to its patched release, or leave PR #96 blocked and defer that change to a separately scoped task. Do not bypass the completed-phase re-entry gate or reopen any consumed request. After the chosen path passes exact-head hosted CI, finish reviewed delivery, milestone audit, and archive closeout. The aggregate remains open and still blocks Walking Skeleton, the Fablebook/Logistify Books, and runnable demos. The authored Fablebook Brand Book is viewable, but it is not an implemented catalog or demo. No guard implementation, candidate promotion, gate change, automatic follow-on, or next milestone is authorized by Phase 7. R10 and R11 remain spent; do not resume either request.
