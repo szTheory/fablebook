@@ -111,7 +111,7 @@ decision_coverage:
 |---|---|---:|---:|---|---|---|
 | `test/contract/sweep_evidence_lock_test.exs` | RSC-01 / current lock identity | 5 | 0 | No | Value-level identity and negative lock-change assertions | PASS |
 
-No new UI, server route, or interactive runtime behavior is in this phase; visual and human UAT checks do not apply. The explicit owner decision about any later increment is recorded as a stop, not a verification blocker. Hosted exact-head CI and merge are still required before phase delivery and milestone closeout.
+No new UI, server route, or interactive runtime behavior is in this phase; visual and human UAT checks do not apply. The explicit owner decision about any later increment is recorded as a stop, not a verification blocker. At this verification timestamp, hosted delivery was still pending; the delivery outcome is recorded below without changing the 4/4 goal-verification result.
 
 Independent code review found and the implementation corrected two validation weaknesses before final verification: exact LiveView tuple version/checksum validation and derived inventory summary measurements. The final review passed.
 
@@ -148,3 +148,7 @@ No phase-goal gaps were found in the bounded approved scope. The open source evi
 
 _Verified: 2026-11-20T22:11:13Z_
 _Verifier: gsd-verifier_
+
+## Delivery update — 2026-11-20
+
+The exact reviewed PR #96 head `d74b21a07a67d4b526576fc09833ffafe99cded1` passed all required hosted checks in [run 44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883). PR #96 was squash-merged as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) passed on the merge commit. See [07-SHIP-STATUS.md](07-SHIP-STATUS.md) and the [delivery registry](../../../references/PHASE-DELIVERIES.json).

@@ -2,11 +2,11 @@
 gsd_state_version: "1.0"
 milestone: v0.6
 milestone_name: Guard Scope Reconciliation
-current_phase: 7
-current_phase_name: Guard Scope Reconciliation
-status: executing
-last_updated: "2026-11-20T22:00:32Z"
-last_activity: 2026-11-20 — committed the verified Phase 7 security rebaseline; preparing hosted delivery
+status: complete
+stopped_at: v0.6 archive closeout delivered; no next milestone selected.
+last_updated: "2026-11-20"
+last_activity: 2026-11-20
+last_activity_desc: Closed the v0.6 milestone and preserved its bounded evidence and safety stops
 progress:
   total_phases: 1
   completed_phases: 1
@@ -19,7 +19,10 @@ progress:
 
 ## Project Reference
 
-See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
+See [PROJECT.md](PROJECT.md) (updated 2026-11-20), [ROADMAP.md](ROADMAP.md), the
+[v0.6 closeout](milestones/v0.6-CLOSEOUT.md),
+[v0.6 archive roadmap](milestones/v0.6-ROADMAP.md),
+[v0.6 audit](milestones/v0.6-MILESTONE-AUDIT.md),
 [v0.5 closeout](milestones/v0.5-CLOSEOUT.md),
 [v0.5 audit](milestones/v0.5-MILESTONE-AUDIT.md),
 [v0.4 closeout](milestones/v0.4-CLOSEOUT.md),
@@ -29,26 +32,24 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** v0.6 Phase 7 — Guard Scope Reconciliation
+**Current focus:** No active milestone. v0.6 is closed; future scope is owner-selected.
 
 ## Current Position
 
-Phase: 7 of 7 (Guard Scope Reconciliation)
-Plans: 5 of 5 complete; independent phase verification passed 4/4 criteria. The security-patched core inventory reconciles all 226 saved rows and 1,763 MFAs. The proposed family is CN-002 through CN-006, with the complete 1,756-MFA core complement; accepted ENV06 floor evidence remains unchanged. One Plug observation carries forward and four source gaps remain; all five consumed requests stay closed.
-Status: Phase verification and code review passed. Local core CI and Hex audit pass on LiveView 1.2.14. The reviewed rebaseline is committed locally; PR #96 still points to the previous vulnerable head until this branch is pushed, after which required exact-head hosted CI must run. No merge or milestone closeout has occurred. No product UI, Book, Logistify scenario, or runnable demo was built. The aggregate remains open and all prior safety stops remain in force.
-Last activity: 2026-11-20 — committed the narrow LiveView security rebaseline after local verification; preparing exact-head hosted CI
-
+Phase: —
+Plan: —
+Status: Complete; no active milestone
+Last activity: 2026-11-20 — Milestone v0.6 completed and archived
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `gsd/v0.6-phase-7-guard-scope-reconciliation`, with reviewed rebaseline commit `8760cbc` locally one commit ahead of `origin`. PR [#96](https://github.com/szTheory/fablebook/pull/96) remains open against `main` at the pre-rebaseline head `afa9030640ab60b05d6f4d1fefb9ecea32a6b3d4`. Do not reset, stash, clean, or replace this checkout.
-- Delivered: v0.5 Phase 6 and its closeout. Phase 6 merged as PR #93 with green exact-head hosted CI; PRs #94 and #95 separately delivered compatibility and closeout work. No preserved recovery checkout was reset, stashed, cleaned, or removed.
-- Current: v0.6 Guard Scope Reconciliation, global Phase 7. The core lock SHA is `3c55e9ec28da1fe2f8ded5a8b5e6504542c3536df25c704933cd7ace85224207`, with `phoenix_live_view` 1.2.14. The rebaselined current-core inventory, source schedule, reconciliation, focused tests, Hex audit, full core CI, independent code review, and goal verification pass. The floor lock and accepted ENV06 generation are unchanged. R10 and R11 remain spent and immutable.
-- Remaining: push the reviewed local commit to PR #96; require green hosted security, core, floor, Dialyzer, and aggregate gate checks on that exact head; then squash-merge under the standing authorization, append the delivery receipt, run the milestone audit, and close v0.6. No next milestone or deployment is authorized.
-- Limits: one Plug observation carries forward; four core source entries remain gaps; all five consumed requests remain closed and no source body was read for the current generation. Caller evidence is not exhaustive; the full historic member universe cannot be reconstructed. The floor is retained evidence, not a fresh scan. No dependency was added; R9 was not used; no guard, candidate, or gate changed. Actual-library collision remains unknown, SEC-01 Pending, Macro and legacy-digest gaps remain unresolved, aggregate stays open, and Walking Skeleton remains blocked.
-- Stops remain active: actual-library-collision owner stop; candidate null and implementation unauthorized; Macro caller-AST and explanation gaps; SEC-01 Pending; legacy digest unresolved; aggregate gate open; Walking Skeleton blocked.
-- Next action: push the verified local commit, then monitor hosted CI on the exact PR head.
-- **Next actor: Codex.** User authorization for this security rebaseline, PR delivery, green-check squash merge, and v0.6 closeout is already recorded.
+- Checkout: `~/projects/fablebook`, branch `gsd/v0.6-milestone-closeout`, based on delivered main commit `0ea95d4`. The completed archive is delivered through the v0.6 closeout PR. Preserve the separate dirty/divergent local `main`; do not reset, stash, clean, or replace it.
+- Delivered: v0.6 Phase 7, 5 plans, 12 tasks. Exact-head hosted CI [run 44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) passed; PR #96 merged as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) passed.
+- Current: no active milestone. The v0.6 archive and its scoped audit are complete; see the [closeout receipt](milestones/v0.6-CLOSEOUT.md).
+- Limits: one Plug observation carries forward; four core source entries remain gaps; all five consumed requests remain closed. Caller evidence is not exhaustive; the full historic member universe cannot be reconstructed. The floor is retained evidence, not a fresh scan. Candidate remains null; implementation unauthorized; aggregate gate open; actual-library collision unknown; R9 denied and unconsumed; SEC-01 Pending; Macro caller-AST and explanation gaps and the legacy digest remain unresolved; Walking Skeleton blocked. R10 and R11 remain spent and immutable.
+- Inherited deferrals: IN-02, SEC-02, and 01.1-01 remain unresolved. They were acknowledged as carry-forwards for this closeout; 01.1-01's legacy table row was represented as a bullet with its item/evidence/rationale intact so the canonical acknowledgement writer could record the disposition.
+- Next action: none. No next milestone or deployment is authorized. When the owner chooses to resume, start with the recommendation-first research and rolling-roadmap process recorded in [INT-20261119-06](intent/sources/2026-11-19-06-research-first-rolling-roadmap.md), then activate only the selected bounded scope after typed prerequisites pass.
+- **Next actor: owner, only when choosing future scope.** No action is needed now.
 
 ## Performance Metrics
 
@@ -156,14 +157,17 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: IN-02 smoke route positive control | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: SEC-02 fixture-only story-beam exclusion | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
 | deferred_items | archived v0.1 / 01.1 / deferred-items.md: scheduled security registry failure | unresolved; acknowledged in closeout | 2026-11-11 | v0.2 |
+| deferred_items | archived v0.1 / 01.1 / deferred-items.md: IN-02 smoke route positive control | unresolved; re-acknowledged at closeout | 2026-11-20 | v0.6 |
+| deferred_items | archived v0.1 / 01.1 / deferred-items.md: SEC-02 fixture-only story-beam exclusion | unresolved; re-acknowledged at closeout | 2026-11-20 | v0.6 |
+| deferred_items | archived v0.1 / 01.1 / deferred-items.md: 01.1-01 transient security registry fetch failure | unresolved; re-acknowledged at closeout | 2026-11-20 | v0.6 |
 | seeds | SEED-261112-sln | dormant; acknowledged at close | 2026-11-13 | v0.3 |
 | deferred_items | Phase 02 / deferred-items.md: local act concurrency.queue limitation | deferred; acknowledged at close | 2026-11-13 | v0.3 |
 
 ## Session Continuity
 
-**Last session:** 2026-11-20T22:00:32Z
-**Stopped at:** v0.6 Phase 7 rebaseline verified and committed locally; push to PR #96 and exact-head hosted CI pending
-**Resume file:** .planning/phases/07-guard-scope-reconciliation/07-SHIP-STATUS.md
+**Last session:** 2026-11-20 — v0.6 archive closeout completed.
+**Stopped at:** v0.6 closed on `gsd/v0.6-milestone-closeout`; no active phase or next milestone.
+**Resume file:** .planning/milestones/v0.6-CLOSEOUT.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5's four selected EX-177 rows now have the reviewed source/caller facts recorded by discovery and Phase 6; the other 9,712 rows remain unchanged. Package-wide caller closure remains unproven, R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was reread for Phase 6. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
@@ -193,4 +197,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-- Codex commits and pushes the verified Phase 7 candidate to PR #96, waits for green exact-head hosted CI, then completes the authorized merge and v0.6 audit/closeout. No next milestone or deployment starts automatically.
+No action is needed now. When the owner chooses to start a future milestone, first reconcile the live checkout and receipts, research and synthesize the immediate recommendation, and refresh the directional rolling roadmap. Do not pre-create executable future requirements, phase IDs, or plans; keep the new milestone behind its typed prerequisites and owner selection.

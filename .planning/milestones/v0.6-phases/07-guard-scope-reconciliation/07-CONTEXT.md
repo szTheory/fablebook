@@ -102,7 +102,7 @@ Keep the exact selected-family definition and every row of its complement reprod
 
 ## Owner-approved security rebaseline (2026-11-20)
 
-Source: [INT-20261120-07](../../intent/sources/2026-11-20-07-authorize-phase7-security-rebaseline.md). This additive decision reopens Phase 7 only to resolve the required hosted security failure before delivery. The prior context, plans, observations, and verification remain preserved as evidence for the original LiveView 1.2.13 lock; they are not silently relabeled as current after a lock change.
+Source: [INT-20261120-07](../../../intent/sources/2026-11-20-07-authorize-phase7-security-rebaseline.md). This additive decision reopens Phase 7 only to resolve the required hosted security failure before delivery. The prior context, plans, observations, and verification remain preserved as evidence for the original LiveView 1.2.13 lock; they are not silently relabeled as current after a lock change.
 
 ### Included
 

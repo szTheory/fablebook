@@ -8,7 +8,7 @@ requirements: [RSC-01, RSC-02, RSC-03, RSC-04]
 
 # Plan 07-05: Security-patched core rebaseline
 
-The authorized LiveView security update is recorded in [INT-20261120-07](../../intent/sources/2026-11-20-07-authorize-phase7-security-rebaseline.md). The core lock now pins `phoenix_live_view` 1.2.14, with no other package tuple changed. `mix.exs` and the floor lock are unchanged. The local Hex audit passed.
+The authorized LiveView security update is recorded in [INT-20261120-07](../../../intent/sources/2026-11-20-07-authorize-phase7-security-rebaseline.md). The core lock now pins `phoenix_live_view` 1.2.14, with no other package tuple changed. `mix.exs` and the floor lock are unchanged. The local Hex audit passed.
 
 The versioned inventory binds the full current lock and the reviewed BEAM manifest. It contains 2,061 BEAM files and 54,763 exports. All 226 saved core rows and 1,763 saved MFAs are present; no non-LiveView identity changed. All seven proposed family MFAs remain, with a 1,756-MFA complement. The independently reviewed core source schedule preserves all five consumed request IDs and issues or reuses none. It carries forward the prior Plug observation only; four source gaps remain, including the LiveView no-retry gap under the patched package identity. No target source body was read for this generation.
 

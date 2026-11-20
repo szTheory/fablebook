@@ -9,7 +9,7 @@ This phase reconciles one proposed evidence family and its full complement acros
 - Core: 7 family memberships; 1756 complement memberships out of 1763; membership digest `be2e44b8f59c2121ba7b8c8c358baed7cd355de6cceba419c40034e34c140327`.
 - Floor: 7 family memberships; 1711 complement memberships out of 1718; membership digest `7777eccd50d42a1d38acaba73b0ac6cc7e699ff09e4cd5b9c595890cfb8aaef2`.
 - Exact read-time schedule: `e8fe99a560ee3edc63fe2ffa9bbfd5bf5978f9b8f036abef2aa1c1a35a9c8e8c`; schedule review `afd1298d630669c4e367857c48205b14039c67c0b644ae2b31c0159a193fc738`; approval `23bc39bc8637e7757ee07d40fb2ff0c088668e86bbc8a50919c3d9c12458e411`.
-- Local home paths are shortened to `~/` in delivered files. The [path-redaction receipt](07-REDACTION-RECEIPT.json) binds the original read-time schedule to its redacted form (`34ac655df3883f145821e7a59c2f494dc8641f0b4b48e1e4cc82da07d1328c6b`).
+- Local home paths are shortened to `~/` in delivered files. The [path-redaction receipt](../../07-REDACTION-RECEIPT.json) binds the original read-time schedule to its redacted form (`34ac655df3883f145821e7a59c2f494dc8641f0b4b48e1e4cc82da07d1328c6b`).
 - The selected family is CN-002 through CN-006. CN-001 remains in the complement because neither lane has a live MFA for it. The EX-124/125 cross-references remain unresolved context and were not added to the family or source schedule.
 
 ## Bounded source observations

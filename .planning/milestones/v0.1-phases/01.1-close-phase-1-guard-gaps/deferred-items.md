@@ -1,8 +1,7 @@
 # Deferred items, Phase 01.1
 
-| Found during | Item | Evidence | Why deferred |
-|---|---|---|---|
-| 01.1-01 | A scheduled `ci` run on main `2d2bbe0` failed the `security` job. The log line is "Failed to fetch record for mime from registry (using cache instead)", then exit 1. | https://github.com/szTheory/fablebook/actions/runs/40812122621 | It predates this plan, and no file in this plan touches it. The PR run and the post-merge main run both passed `security`. Check whether the nightly audit step should tolerate a transient registry fetch, without lowering the gate. |
+- 01.1-01 — A scheduled `ci` run on main `2d2bbe0` failed the `security` job. The log line is "Failed to fetch record for mime from registry (using cache instead)", then exit 1. — https://github.com/szTheory/fablebook/actions/runs/40812122621 — It predates this plan, and no file in this plan touches it. The PR run and the post-merge main run both passed `security`. Check whether the nightly audit step should tolerate a transient registry fetch, without lowering the gate.
+  status: acknowledged
 
 ## IN-01: The floor-version test passes when it does not run
 
@@ -24,6 +23,7 @@ Closure 2026-11-10: [PR #82](https://github.com/szTheory/fablebook/pull/82) merg
 - **Fix direction:**
   - before the refute, fail with "prod routes empty" unless the prod route list matches `\sGET\s+/\s`.
   - It is a `bin/smoke_consumer` PR that changes no `test/contract/` file (ADR 0021). Owner phase: Phase 2, beside the operator host's prod build.
+  status: acknowledged
 
 ## IN-03: The ci-gate step check is substring-only
 
@@ -44,6 +44,7 @@ Closure 2026-11-10: [PR #81](https://github.com/szTheory/fablebook/pull/81) merg
 - **Fix direction:** either
   - the installer (Phase 10) writes `elixirc_paths` without `storybook/` in prod and the doctor checks it, in a `lib/` PR that does not edit the contract test guarding it; or
   - the operator host's prod build (Phase 2, Q31) asserts no story beams on a generated layout, in its own PR.
+  status: acknowledged
 
 ## WR-05 follow-up: tag code runs before the main-only check fails
 

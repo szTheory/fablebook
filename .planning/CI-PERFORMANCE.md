@@ -124,3 +124,10 @@ Compared with PR #94, the corrected PR #93 run was slower, while the initial run
 ## Local v0.6 Phase 7 final core CI — 2026-11-20
 
 The final `HEX_HOME="$PWD/_build/hex-home" MIX_ENV=test bin/lane core mix ci` run passed 461 tests with 10 excluded by the core lane configuration. ExUnit reported 440.3s; the full command also ran Credo, cycle checks, doc generation, and the guard acceptance tests. The earlier 413s local sample is recorded as total command time, so these values are not directly comparable. This is one final sample, not evidence of a timing trend. No workflow change is justified; the exact evidence and complete lane checks remain in place.
+
+
+## Hosted Phase 7 delivery and post-merge CI — 2026-11-20
+
+The reviewed PR #96 head `d74b21a07a67d4b526576fc09833ffafe99cded1` passed [hosted run 44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) in 9m06s. Required jobs ran concurrently: core 8m58s, floor 8m43s, Dialyzer 2m41s, security 55s, and `ci-gate` 3s. PR #96 merged as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`.
+
+Post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) passed in 10m52s: core 10m44s, floor 9m01s, Dialyzer 3m31s, security 51s, and `ci-gate` 3s. Both runs started promptly; core or floor test work dominated, with no recurring queue or serialization delay. This candidate/main pair is too small to justify a CI change, and no quality or coverage reduction is indicated.
