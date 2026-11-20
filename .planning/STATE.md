@@ -10,7 +10,7 @@ last_activity: 2026-11-19
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
+  total_plans: 4
   completed_plans: 0
   percent: 0
 ---
@@ -34,21 +34,21 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 ## Current Position
 
 Phase: 7 of 7 (Guard Scope Reconciliation)
-Plan: Four plans created and independently checked
-Status: Planning complete; execution not started
-Last activity: 2026-11-19 — v0.6 Phase 7 plans and validation map created; all four plan checks passed
+Plan: 07-01 halted at the core lane identity check; Plans 07-02–07-04 remain unexecuted
+Status: Waiting for the owner’s rescope decision
+Last activity: 2026-11-19 — accepted ENV06 evidence matched floor but not the current core lock digest; no partition or source schedule was created
 
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `main`; this is the canonical planning checkout. The v0.5 closeout and Phase 6 delivery are recorded in the immutable milestone archive and [delivery registry](references/PHASE-DELIVERIES.json).
+- Checkout: `/Users/jon/projects/fablebook`, branch `gsd/phase-07-guard-scope-reconciliation` (local, unpushed). Canonical `main` contains the v0.6 Phase 7 plans; this branch records the execution stop and handoff.
 - Delivered: v0.5 Phase 6 and its closeout. Phase 6 merged as PR #93 with green exact-head hosted CI; PRs #94 and #95 separately delivered compatibility and closeout work. No preserved recovery checkout was reset, stashed, cleaned, or removed.
-- Current: v0.6 Guard Scope Reconciliation, global Phase 7. The owner selected this bounded scope and autonomous completion. The roadmap maps RSC-01–RSC-04 exclusively to Phase 7.
-- Remaining: execute the four checked plans in dependency order: reconcile the accepted ENV06 membership and lane pins, define the proposed family/complement and exact source/MFA schedule, independently review that schedule, perform only digest-approved one-use source reads in tasks of no more than five files, then validate evidence and present the recommendation. If more than ten and no more than twenty-five exact files are scheduled, add and check the bounded overflow plan before any source read; if more than twenty-five are required, stop with a phase-split recommendation.
+- Current: v0.6 Guard Scope Reconciliation, global Phase 7. Plan 07-01 found the current core `mix.lock` digest differs from the accepted ENV06 lane identity. The Phoenix package version still matches, but exact current runtime identity is not available from the authorized evidence inputs. The validator recorded the stop.
+- Remaining: owner decides whether to rescope the core lane pin/evidence provenance and authorize a fresh identity and membership reconciliation. Plans 07-02–07-04 must remain blocked until that decision; no family, complement, source schedule, or caller/delegate observations exist.
 - Limits: no guard implementation, audited runtime API calls, generated-code execution, R9 consumption, package-wide caller search, exhaustive caller-closure claim, candidate promotion, aggregate closure, Walking Skeleton, product UI/Books, or automatic follow-on. Keep each inherited source and budget limit in force.
 - Stops remain active: actual-library-collision owner stop; candidate null and implementation unauthorized; Macro caller-AST and explanation gaps; SEC-01 Pending; legacy digest unresolved; aggregate gate open; Walking Skeleton blocked.
-- Next action: `$gsd-execute-phase 7` — run the four checked plans to build and validate the bounded reconciliation package. Do not read target source bodies before the exact schedule is independently approved and fresh preflight passes. At phase exit, present the evidence and recommendation and stop for the owner's decision.
-- **Next actor: Assistant.** Continue v0.6 autonomously within the approved scope; no owner action is needed before the Phase 7 exit decision boundary.
+- Next action: decide whether to authorize a bounded, read-only rescope of the core lane identity before Plan 07-01 resumes. Recommendation: keep the stop and reconcile why the full core lock digest changed before selecting a family or reading target sources.
+- **Next actor: Owner.** The assistant is waiting for the rescope decision; no phase work will proceed until it is received.
 
 ## Performance Metrics
 

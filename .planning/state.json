@@ -6,7 +6,7 @@
     {
       "number": "7",
       "name": "Guard Scope Reconciliation",
-      "status": "in_progress"
+      "status": "pending"
     }
   ],
   "next": {
@@ -14,5 +14,5 @@
     "label": "Advance to the next step (plan phase 7)",
     "reason": "Phase 1 of 1 — needs a plan"
   },
-  "updated_at": "2026-11-20T00:24:10.572Z"
+  "updated_at": "2026-11-20T00:51:21.904Z"
 }

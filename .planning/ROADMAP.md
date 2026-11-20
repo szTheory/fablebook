@@ -36,13 +36,14 @@ This is one bounded, read-only evidence phase. It does not implement guards, inv
 - [ ] 07-02-PLAN.md
 - [ ] 07-03-PLAN.md
 - [ ] 07-04-PLAN.md
+**Current stop**: Plan 07-01 halted on a core `mix.lock` digest mismatch against the accepted ENV06 lane identity. No family or source schedule was produced. See the [Plan 07-01 stop receipt](phases/07-guard-scope-reconciliation/07-01-SUMMARY.md).
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Guard Scope Reconciliation | 0/4 | Planned | - |
+| 7. Guard Scope Reconciliation | 0/4 | Stopped for owner rescope decision | - |
 
 ## Next
 
-Continue the approved v0.6 workflow with `$gsd-discuss-phase 7`, then plan and execute only within this phase's read-only scope. At Phase 7 exit, stop for the owner's decision; do not start another increment automatically.
+Owner decision: authorize a bounded, read-only rescope of the core lane identity and resume Plan 07-01, or keep Phase 7 stopped. Do not execute Plans 07-02–07-04 or read target source bodies until the lane identity and membership reconcile; do not start another increment automatically.
