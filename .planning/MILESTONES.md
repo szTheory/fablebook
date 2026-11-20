@@ -15,7 +15,7 @@ Known verification overrides: 3 inherited v0.1 deferred items newly acknowledged
 - Delivered Phase 7 through PR #96 after green exact-head hosted CI; post-merge main CI also passed. Candidate remains null, implementation unauthorized, and the aggregate gate remains open.
 - Preserved all wider safety stops and recorded that no Fablebook catalog, applied brand canon, Books, Logistify scenarios, or runnable demos were built.
 
-**Archive closeout:** See [v0.6 closeout](milestones/v0.6-CLOSEOUT.md) and [archive](milestones/v0.6-ROADMAP.md). The closeout PR and local tag receipt are recorded there.
+**Archive closeout:** The archive delivery is tracked by [PR #97](https://github.com/szTheory/fablebook/pull/97); exact-head checks and merge history are visible there. The annotated local `v0.6` tag points to its merge and remains unpushed. See [v0.6 closeout](milestones/v0.6-CLOSEOUT.md) and [archive](milestones/v0.6-ROADMAP.md).
 
 **What's next:** No next milestone is selected. The owner chooses a future bounded scope after its typed prerequisites pass; the [rolling product roadmap](references/PRODUCT-ROADMAP.md) is directional, not approved executable scope.
 
