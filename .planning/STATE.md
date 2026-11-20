@@ -6,7 +6,7 @@ current_phase: 7
 current_phase_name: Guard Scope Reconciliation
 status: executing
 last_updated: "2026-11-20T22:00:32Z"
-last_activity: 2026-11-20 — verified the patched Phase 7 reconciliation; preparing hosted delivery
+last_activity: 2026-11-20 — committed the verified Phase 7 security rebaseline; preparing hosted delivery
 progress:
   total_phases: 1
   completed_phases: 1
@@ -35,19 +35,19 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 
 Phase: 7 of 7 (Guard Scope Reconciliation)
 Plans: 5 of 5 complete; independent phase verification passed 4/4 criteria. The security-patched core inventory reconciles all 226 saved rows and 1,763 MFAs. The proposed family is CN-002 through CN-006, with the complete 1,756-MFA core complement; accepted ENV06 floor evidence remains unchanged. One Plug observation carries forward and four source gaps remain; all five consumed requests stay closed.
-Status: Phase verification and code review passed. Local core CI and Hex audit pass on LiveView 1.2.14. PR #96 still points to the previous vulnerable head; the reviewed local candidate is ready for commit and push so required exact-head hosted CI can run. No merge or milestone closeout has occurred. No product UI, Book, Logistify scenario, or runnable demo was built. The aggregate remains open and all prior safety stops remain in force.
-Last activity: 2026-11-20 — completed the narrow LiveView security rebaseline and local verification; preparing exact-head hosted CI
+Status: Phase verification and code review passed. Local core CI and Hex audit pass on LiveView 1.2.14. The reviewed rebaseline is committed locally; PR #96 still points to the previous vulnerable head until this branch is pushed, after which required exact-head hosted CI must run. No merge or milestone closeout has occurred. No product UI, Book, Logistify scenario, or runnable demo was built. The aggregate remains open and all prior safety stops remain in force.
+Last activity: 2026-11-20 — committed the narrow LiveView security rebaseline after local verification; preparing exact-head hosted CI
 
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `gsd/v0.6-phase-7-guard-scope-reconciliation`, base HEAD `6516cbe`; the reviewed security-rebaseline candidate is locally modified and not yet committed. PR [#96](https://github.com/szTheory/fablebook/pull/96) remains open against `main` at the older vulnerable head `6516cbed9b529b7126fb40bf6a40516d257710e1`. Do not reset, stash, clean, or replace this checkout.
+- Checkout: `~/projects/fablebook`, branch `gsd/v0.6-phase-7-guard-scope-reconciliation`, with reviewed rebaseline commit `8760cbc` locally one commit ahead of `origin`. PR [#96](https://github.com/szTheory/fablebook/pull/96) remains open against `main` at the pre-rebaseline head `afa9030640ab60b05d6f4d1fefb9ecea32a6b3d4`. Do not reset, stash, clean, or replace this checkout.
 - Delivered: v0.5 Phase 6 and its closeout. Phase 6 merged as PR #93 with green exact-head hosted CI; PRs #94 and #95 separately delivered compatibility and closeout work. No preserved recovery checkout was reset, stashed, cleaned, or removed.
 - Current: v0.6 Guard Scope Reconciliation, global Phase 7. The core lock SHA is `3c55e9ec28da1fe2f8ded5a8b5e6504542c3536df25c704933cd7ace85224207`, with `phoenix_live_view` 1.2.14. The rebaselined current-core inventory, source schedule, reconciliation, focused tests, Hex audit, full core CI, independent code review, and goal verification pass. The floor lock and accepted ENV06 generation are unchanged. R10 and R11 remain spent and immutable.
-- Remaining: commit and push the reviewed candidate to PR #96; require green hosted security, core, floor, Dialyzer, and aggregate gate checks on that exact head; then squash-merge under the standing authorization, append the delivery receipt, run the milestone audit, and close v0.6. No next milestone or deployment is authorized.
+- Remaining: push the reviewed local commit to PR #96; require green hosted security, core, floor, Dialyzer, and aggregate gate checks on that exact head; then squash-merge under the standing authorization, append the delivery receipt, run the milestone audit, and close v0.6. No next milestone or deployment is authorized.
 - Limits: one Plug observation carries forward; four core source entries remain gaps; all five consumed requests remain closed and no source body was read for the current generation. Caller evidence is not exhaustive; the full historic member universe cannot be reconstructed. The floor is retained evidence, not a fresh scan. No dependency was added; R9 was not used; no guard, candidate, or gate changed. Actual-library collision remains unknown, SEC-01 Pending, Macro and legacy-digest gaps remain unresolved, aggregate stays open, and Walking Skeleton remains blocked.
 - Stops remain active: actual-library-collision owner stop; candidate null and implementation unauthorized; Macro caller-AST and explanation gaps; SEC-01 Pending; legacy digest unresolved; aggregate gate open; Walking Skeleton blocked.
-- Next action: commit and push the verified local candidate, then monitor hosted CI on the exact PR head.
+- Next action: push the verified local commit, then monitor hosted CI on the exact PR head.
 - **Next actor: Codex.** User authorization for this security rebaseline, PR delivery, green-check squash merge, and v0.6 closeout is already recorded.
 
 ## Performance Metrics
@@ -162,7 +162,7 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 ## Session Continuity
 
 **Last session:** 2026-11-20T22:00:32Z
-**Stopped at:** v0.6 Phase 7 rebaseline verified locally; reviewed candidate is ready for commit/push to PR #96 and exact-head hosted CI
+**Stopped at:** v0.6 Phase 7 rebaseline verified and committed locally; push to PR #96 and exact-head hosted CI pending
 **Resume file:** .planning/phases/07-guard-scope-reconciliation/07-SHIP-STATUS.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5's four selected EX-177 rows now have the reviewed source/caller facts recorded by discovery and Phase 6; the other 9,712 rows remain unchanged. Package-wide caller closure remains unproven, R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was reread for Phase 6. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.

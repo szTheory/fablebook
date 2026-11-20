@@ -1,6 +1,6 @@
 # Phase 7 Ship Status
 
-**Updated:** 2026-11-20T22:00:32Z
+**Updated:** 2026-11-20
 
 **Branch:** `gsd/v0.6-phase-7-guard-scope-reconciliation`
 
@@ -8,7 +8,7 @@
 
 **PR:** [#96](https://github.com/szTheory/fablebook/pull/96)
 
-**Status:** rebaseline verified locally; commit/push and exact-head hosted CI pending
+**Status:** rebaseline verified and committed locally; push and exact-head hosted CI pending
 
 ## Previous hosted result
 
@@ -30,6 +30,6 @@ Final local checks:
 
 ## Delivery gate
 
-The reviewed local candidate is ready to commit and push to PR #96. After the push, require green `security`, `core`, `floor`, `dialyzer`, and aggregate `ci-gate` checks on the exact PR head. Squash-merge only that green head under the standing authorization, append the phase delivery receipt, then audit and close v0.6. No deployment or next milestone is included.
+The reviewed rebaseline is committed locally as `8760cbc`; push it to PR #96. The current PR head is still the pre-rebaseline `afa9030640ab60b05d6f4d1fefb9ecea32a6b3d4`. After the push, require green `security`, `core`, `floor`, `dialyzer`, and aggregate `ci-gate` checks on the exact new PR head. Squash-merge only that green head under the standing authorization, append the phase delivery receipt, then audit and close v0.6. No deployment or next milestone is included.
 
 All safety stops remain active: candidate null, guard implementation unauthorized, aggregate open, actual-library collision unknown, R9 denied and unconsumed, SEC-01 Pending, Macro caller-AST and explanation gaps, legacy digest unresolved, and Walking Skeleton blocked. No further guard increment is automatic or preapproved.
