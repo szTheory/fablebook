@@ -31,13 +31,17 @@ This is one bounded, read-only evidence phase. It does not implement guards, inv
   2. The owner can review one exact proposed family and its complete, disjoint complement for each current lane, with reproducible counts and digests and a clear distinction from a selected or promoted code candidate. (RSC-02)
   3. The owner can review lane-pinned, provenance-linked source, caller, and delegate observations for the proposed family, along with explicit gaps and limits that do not imply exhaustive or package-wide caller closure. (RSC-03)
   4. The owner can review refreshed source, context, and effort sizing within inherited limits, all preserved safety stops, and a recommendation that ends at an explicit owner decision before any further increment. (RSC-04)
-**Plans**: TBD
+**Plans**: 0/4 plans executed
+- [ ] 07-01-PLAN.md
+- [ ] 07-02-PLAN.md
+- [ ] 07-03-PLAN.md
+- [ ] 07-04-PLAN.md
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Guard Scope Reconciliation | 0/TBD | Ready to discuss | - |
+| 7. Guard Scope Reconciliation | 0/4 | Planned | - |
 
 ## Next
 
