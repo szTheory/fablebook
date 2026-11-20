@@ -1,15 +1,24 @@
 ---
 phase: 07-guard-scope-reconciliation
-reviewed: 2026-11-20T19:50:36Z
-depth: deep
-files_reviewed: 6
+reviewed: 2026-11-20T21:47:00Z
+depth: standard
+files_reviewed: 15
 files_reviewed_list:
-  - .planning/phases/07-guard-scope-reconciliation/phase7_read_sources.py
-  - .planning/phases/07-guard-scope-reconciliation/phase7_source_launcher.py
-  - .planning/phases/07-guard-scope-reconciliation/phase7_source_bootstrap.py
-  - .planning/phases/07-guard-scope-reconciliation/phase7_source_observer.py
-  - .planning/phases/07-guard-scope-reconciliation/phase7_source_hardening_selftest.py
-  - .planning/phases/07-guard-scope-reconciliation/07-validate-reconciliation.py
+  - mix.lock
+  - test/support/sweep_evidence.ex
+  - test/contract/sweep_evidence_lock_test.exs
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-CHECK-DEPENDENCY-PATCH.py
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-CORE-EXPORT-INVENTORY.py
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-VALIDATE-RECONCILIATION.py
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-DEPENDENCY-PATCH.json
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-CORE-CURRENT.json
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-CORE-EXPORT-REVIEW.md
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-CURRENT-SOURCE-SCHEDULE.json
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-CURRENT-SOURCE-SCHEDULE-REVIEW.md
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-CURRENT-SOURCE-APPROVAL.json
+  - .planning/phases/07-guard-scope-reconciliation/security-rebaseline/07-RECONCILIATION.json
+  - .planning/phases/07-guard-scope-reconciliation/07-RECONCILIATION.md
+  - .planning/phases/07-guard-scope-reconciliation/07-05-PLAN.md
 findings:
   critical: 0
   warning: 0
@@ -21,14 +30,14 @@ status: clean
 
 # Phase 7: Code Review Report
 
-**Reviewed:** 2026-11-20T19:50:36Z
-**Depth:** deep
-**Files Reviewed:** 6
+**Reviewed:** 2026-11-20T21:47:00Z
+**Depth:** standard
+**Files Reviewed:** 15
 **Status:** clean
 
 ## Summary
 
-Re-reviewed the six Phase 7 helper files after the directory-fsync change. `write_new` now fsyncs the output or STOP file and its containing directory, closing the remaining durability issue. The prior FIFO, interrupt, interpolation, and unrecorded-request findings are also resolved in the current code. No remaining blocker or warning was found in this scope.
+The LiveView lock checker now parses the exact package version and both checksums. The reconciliation validator verifies the reviewed producer identity and approval before executing its exact hashed bytes, then derives the current export summary from the approved manifest and selected BEAM tables. The current-facing reconciliation matches the checked evidence and preserves all documented gaps and stops. No blockers or warnings remain in the reviewed scope.
 
 ## Narrative Findings (AI reviewer)
 
@@ -36,6 +45,6 @@ All reviewed files meet quality and safety requirements. No issues found.
 
 ---
 
-_Reviewed: 2026-11-20T19:50:36Z_
+_Reviewed: 2026-11-20T21:47:00Z_
 _Reviewer: the agent (gsd-code-reviewer)_
-_Depth: deep_
+_Depth: standard_

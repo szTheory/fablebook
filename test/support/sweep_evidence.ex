@@ -14,12 +14,17 @@ defmodule Fablebook.Test.SweepEvidence do
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
   @archive_sha "7d4bd66fe72224cf49f849148b5e737443588ca66c12873938bfa30fa3d0ea58"
   @core_archive_lock_sha "4638a2d1c25b5be2bfaf6b6a3309e9147612f343aa694d64b2af99cc46f33a85"
-  @core_plug_lock_patch [
+  @core_lock_patch [
     {"1.20.4", "1.20.3"},
     {"8fca521b31eb586dbb91968dd9fa95be6b60fb40f9ca77b005361e06836aed75",
      "56c480c633ec2ce10140e236e15233bf576e1d323887d7c96711bd02ab5160db"},
     {"96ee42c0b8b35bcb14e3e65afb85abe9bb7745a8576e8c602802bbb01e5acf72",
-     "be266aee1b8536ef6409d58cf39a3121319f0ec47cfa1b24024485aa0e76ad76"}
+     "be266aee1b8536ef6409d58cf39a3121319f0ec47cfa1b24024485aa0e76ad76"},
+    {"1.2.14", "1.2.13"},
+    {"80a248539e566eea8598079b12bfb1a9c1f3180d4db3ecd215d28798dcebc44b",
+     "850284c529f013e82d9596325bd92cb5859c0872176616b6e2ec4294e2ef616e"},
+    {"1ca75ed52d3916f93299de990f152f3f49202d12849e526bf5f9b89b4ccf25f2",
+     "a5cd2a3df10552bce6b7e68e5d376ff3b46cca3ca62d6c43bd4398d80c197fbe"}
   ]
   @refs %{
     "core" => %{
@@ -344,7 +349,7 @@ defmodule Fablebook.Test.SweepEvidence do
 
       lane == "core" and expected_sha == @core_archive_lock_sha ->
         normalized =
-          Enum.reduce(@core_plug_lock_patch, bytes, fn {runtime, archived}, acc ->
+          Enum.reduce(@core_lock_patch, bytes, fn {runtime, archived}, acc ->
             replace_once!(acc, runtime, archived)
           end)
 
@@ -354,7 +359,7 @@ defmodule Fablebook.Test.SweepEvidence do
         %{
           archive_sha256: expected_sha,
           runtime_sha256: runtime_sha,
-          overlay: "plug-1.20.3-to-1.20.4"
+          overlay: "plug-1.20.3-to-1.20.4+phoenix_live_view-1.2.13-to-1.2.14"
         }
 
       true ->

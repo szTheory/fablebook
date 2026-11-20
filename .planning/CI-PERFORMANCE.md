@@ -120,3 +120,7 @@ The first reconciled Phase 6 head `31cd185` failed [run 44586751740](https://git
 Corrected PR #93 head `3970a381945cfcf63eb69c456a5b2a7465d8352d` passed [run 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030) in 11m33s. Core took 8m46s and floor 11m25s while running concurrently; floor was the critical path. Security and Dialyzer took 35s each, and `ci-gate` took 3s. `ci-health` and `nightly` were skipped as configured. The run started promptly. PR #93 was squash-merged as `b8852ac22aac1cb2b8151d85b189889ca0774aa8`; the reviewed head and merged tree are identical.
 
 Compared with PR #94, the corrected PR #93 run was slower, while the initial run failed before completion. The two full-lane samples do not establish a recurring regression. Core and floor already overlap, the test steps dominate, and all required checks passed on the final head. No safe cache, concurrency, dependency, trigger, or coverage change is justified.
+
+## Local v0.6 Phase 7 final core CI — 2026-11-20
+
+The final `HEX_HOME="$PWD/_build/hex-home" MIX_ENV=test bin/lane core mix ci` run passed 461 tests with 10 excluded by the core lane configuration. ExUnit reported 440.3s; the full command also ran Credo, cycle checks, doc generation, and the guard acceptance tests. The earlier 413s local sample is recorded as total command time, so these values are not directly comparable. This is one final sample, not evidence of a timing trend. No workflow change is justified; the exact evidence and complete lane checks remain in place.

@@ -99,3 +99,19 @@ Keep the exact selected-family definition and every row of its complement reprod
 
 *Phase: 07-guard-scope-reconciliation*  
 *Context gathered: 2026-11-19*
+
+## Owner-approved security rebaseline (2026-11-20)
+
+Source: [INT-20261120-07](../../intent/sources/2026-11-20-07-authorize-phase7-security-rebaseline.md). This additive decision reopens Phase 7 only to resolve the required hosted security failure before delivery. The prior context, plans, observations, and verification remain preserved as evidence for the original LiveView 1.2.13 lock; they are not silently relabeled as current after a lock change.
+
+### Included
+
+- Update only the existing core `phoenix_live_view` package from 1.2.13 to patched 1.2.14. The declared `mix.exs` constraint already admits 1.2.14; do not widen constraints or update unrelated dependencies.
+- Produce a separate, versioned current-core compiled-export inventory bound to the resulting full `mix.lock` digest and unchanged pinned OTP/Elixir runtime. Compare every saved core row, preserve the 226-row family/complement contract, and stop for owner rescoping if the family or membership changes.
+- Independently review the regenerated exact core source schedule before any new target source body is opened. Use fresh request identifiers only; all existing core/floor request IDs and markers stay immutable, and every prior no-retry gap stays closed. Keep the existing per-task file cap and one-use controls.
+- Keep the accepted floor lane, `mix.floor.lock`, ENV06 generation, saved floor membership and floor source observations byte-for-byte unchanged. Treat them only as the historical comparison lane; do not refresh or claim the floor is current production security evidence.
+- Preserve all existing inherited limits and stops: no runtime/API evaluation, no R9, no package-wide caller search, no candidate fit/promotion, no guard implementation, no aggregate closure, no Walking Skeleton, no product UI/Book/demo, and no automatic next increment.
+
+### Required exit
+
+The patched core lock passes the required audit; the new compiled-export inventory and reviewed current-core schedule bind to it; unchanged saved membership and the proposed family/complements validate, or a concrete mismatch stops for rescoping; the bounded observations and gaps remain explicit; independent code/evidence review and fresh phase verification pass; and exact-head hosted CI is green before PR #96 is merged and v0.6 is closed. Preserve the prior verification and failed hosted receipt as history. Keep five plans maximum for this phase by revising the existing final plan slot; do not add a sixth plan.

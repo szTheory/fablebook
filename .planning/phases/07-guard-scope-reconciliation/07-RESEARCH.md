@@ -349,3 +349,14 @@ No new external documentation lookup was needed; upstream synthesis already cite
 
 **Research date:** 2026-11-19  
 **Valid until:** Until Phase 7 execution begins or relevant saved evidence/phase context changes; recheck inputs and identities at execution time.
+## Security rebaseline research addendum (2026-11-20)
+
+The upstream Phoenix LiveView advisory [GHSA-v4p7-3pm2-wq6c](https://github.com/phoenixframework/phoenix_live_view/security/advisories/GHSA-v4p7-3pm2-wq6c) lists versions `>=1.2.0-rc.0,<1.2.14` as affected and 1.2.14 as patched. It describes a crafted WebSocket join without a `url` skipping connected-mount `live_session` `on_mount` hooks; the 1.2.14 release notes identify the fix. This is the exact deterministic cause of the current required hosted `hex.audit` failure.
+
+The root dependency constraint already accepts 1.2.14, so update the single locked package and avoid a `mix.exs` change or broad dependency refresh. The current evidence producer and validator pin the old full lock digest and 1.2.13 package version; preserve them and the original output as historical evidence. Generate a separate current-core evidence generation. The floor lane uses its own accepted historical lock/runtime, so it remains unchanged and must not be represented as a current production lock.
+
+The exact pinned Mix 1.20.4 docs explain the failed broad update: `mix deps.update phoenix_live_view` also unlocks and updates its child dependencies. To update only this package, Mix documents `mix deps.unlock phoenix_live_view` followed by `mix deps.get`; LiveView 1.2.14's Hex metadata retains the `~> 1.8.0` Phoenix requirement, which the current Phoenix 1.8.16 lock satisfies. Run the fetch with project-local `HEX_HOME` so the sandbox does not need to write the global Hex cache. [Mix 1.20.4 dependency update docs](https://mix.hexdocs.pm/1.20.4/Mix.Tasks.Deps.Update.html)
+
+The patch changes the full lock identity even though the toolchain and other package versions remain pinned. Recompute core compiled exports and compare all saved core rows before rebuilding any family or complement. The source schedule must be independently reviewed against the new core lock before source reads; do not reopen or reuse any spent ID. If membership/family selection changes or the bounded source schedule cannot be established without crossing an existing limit, stop for rescoping.
+
+**Primary sources:** [upstream advisory](https://github.com/phoenixframework/phoenix_live_view/security/advisories/GHSA-v4p7-3pm2-wq6c) and [LiveView 1.2.14 release](https://github.com/phoenixframework/phoenix_live_view/releases/tag/v1.2.14).
