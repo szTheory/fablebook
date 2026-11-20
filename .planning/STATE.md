@@ -5,12 +5,12 @@ milestone_name: Guard Scope Reconciliation
 current_phase: 7
 current_phase_name: Guard Scope Reconciliation
 status: planning
-last_updated: "2026-11-20T00:23:34Z"
-last_activity: 2026-11-19
+last_updated: "2026-11-20T03:51:49Z"
+last_activity: 2026-11-20
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 4
+  total_plans: 5
   completed_plans: 0
   percent: 0
 ---
@@ -34,21 +34,21 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-19), [ROADMAP.md](ROADMAP.md), the
 ## Current Position
 
 Phase: 7 of 7 (Guard Scope Reconciliation)
-Plan: 07-01 halted at the core lane identity check; Plans 07-02–07-04 remain unexecuted
-Status: Waiting for the owner’s rescope decision
-Last activity: 2026-11-19 — accepted ENV06 evidence matched floor but not the current core lock digest; no partition or source schedule was created
+Plan 07-01 Task 1 completed with an explicit no-go: R10 was incomplete, and the full R11 inspection found no permitted current-core generation path. The owner-selected lock/toolchain and Phase 3/4/6 metadata sufficiency check also found no complete current-core maps. Tasks 2–3 were not entered; no baseline or partition was produced. See the [R11 analysis](phases/07-guard-scope-reconciliation/07-CORE-PRODUCER-ANALYSIS-R11.md) and [metadata input sufficiency report](phases/07-guard-scope-reconciliation/07-CORE-METADATA-INPUT-SUFFICIENCY.md).
+Status: Stopped at the evidence-input boundary. The owner selected product/demo work as the preferred direction, but the typed guard prerequisite blocks its activation; no gate change is authorized.
+Last activity: 2026-11-20 — completed the selected metadata check and reconciled the selected product direction against the typed gate map
 
 
 ## Active Handoff
 
-- Checkout: `/Users/jon/projects/fablebook`, branch `gsd/phase-07-guard-scope-reconciliation` (local, unpushed). Canonical `main` contains the v0.6 Phase 7 plans; this branch records the execution stop and handoff.
+- Checkout: `~/projects/fablebook`, branch `gsd/phase-07-guard-scope-reconciliation` at `5766bc6` (dirty, local, unpushed). Refreshed `origin/main` is `d5a8dc0`; local `main` is `abdf3c7`, 16 commits ahead of `origin/main`; this branch is 2 commits ahead of local `main` before its dirty changes. The active stop/handoff remains on this branch; no branch was switched and no preserved worktree was changed. Reconcile this handoff into canonical `main` before any future milestone planning.
 - Delivered: v0.5 Phase 6 and its closeout. Phase 6 merged as PR #93 with green exact-head hosted CI; PRs #94 and #95 separately delivered compatibility and closeout work. No preserved recovery checkout was reset, stashed, cleaned, or removed.
-- Current: v0.6 Guard Scope Reconciliation, global Phase 7. Plan 07-01 found the current core `mix.lock` digest differs from the accepted ENV06 lane identity. The Phoenix package version still matches, but exact current runtime identity is not available from the authorized evidence inputs. The validator recorded the stop.
-- Remaining: owner decides whether to rescope the core lane pin/evidence provenance and authorize a fresh identity and membership reconciliation. Plans 07-02–07-04 must remain blocked until that decision; no family, complement, source schedule, or caller/delegate observations exist.
-- Limits: no guard implementation, audited runtime API calls, generated-code execution, R9 consumption, package-wide caller search, exhaustive caller-closure claim, candidate promotion, aggregate closure, Walking Skeleton, product UI/Books, or automatic follow-on. Keep each inherited source and budget limit in force.
+- Current: v0.6 Guard Scope Reconciliation, global Phase 7. The owner selected a fresh core baseline, then selected a read-only metadata input sufficiency check. The current core lock differs from ENV06 by the Plug 1.20.4 security update; see [baseline refresh scope](phases/07-guard-scope-reconciliation/07-CORE-BASELINE-REFRESH-SCOPE.md). R10 was incomplete; R11 captured the full helper but found no safe generation path. The selected Phase 3/4/6 metadata also lacks complete current-core maps.
+- Remaining: the owner selected Fablebook/Logistify product work as the preferred direction, but the open `guard-aggregate` gate blocks Walking Skeleton, Story Model, and Design canon/Books. No product milestone is eligible to activate under the typed map. A separately reviewed exact input/operation scope is required to seek current-core maps; no gate change or source expansion is authorized. Plans 07-02–07-05 remain blocked.
+- Limits: no generator, runtime API, build, compile, or target-library body was used; no R9, broad caller search, guard implementation, candidate promotion or gate change. R10 and R11 are spent; their records are immutable inputs.
 - Stops remain active: actual-library-collision owner stop; candidate null and implementation unauthorized; Macro caller-AST and explanation gaps; SEC-01 Pending; legacy digest unresolved; aggregate gate open; Walking Skeleton blocked.
-- Next action: decide whether to authorize a bounded, read-only rescope of the core lane identity before Plan 07-01 resumes. Recommendation: keep the stop and reconcile why the full core lock digest changed before selecting a family or reading target sources.
-- **Next actor: Owner.** The assistant is waiting for the rescope decision; no phase work will proceed until it is received.
+- Next action: retain the guard stop and keep Fablebook/Logistify as the preferred future product outcome. Before any product milestone can start, resolve the mapped guard prerequisite through a separately reviewed exact evidence path; any change to the gate requires a separate owner-signed decision. No new milestone, requirements, or phase plan has been started.
+- **Next actor: Owner.** No action is needed to preserve the stop. To advance the current gate, the owner must authorize a materially broader exact input/operation scope or provide an owner-signed gate decision; no source access or runtime operation proceeds without that boundary.
 
 ## Performance Metrics
 

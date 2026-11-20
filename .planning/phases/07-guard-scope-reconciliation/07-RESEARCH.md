@@ -298,15 +298,17 @@ V4/V5/V6 applicability is a phase-specific assessment `[ASSUMED]`, not a new sec
 
 ## Open Questions
 
-1. **What exact family should be proposed after the two current lane inventories reconcile?**
+These facts remain deliberately unknown until their scoped evidence is collected. Their resolution paths are fixed in reviewed plans; this is not an invitation to infer results or widen source access.
+
+1. **(RESOLVED BY PLAN ASSIGNMENT; evidence result pending)** What exact family should be proposed after the two current lane inventories reconcile? Plan 07-01 Task 3 selects it only after current membership passes.
    - What we know: Phase 7 requires one exact evidence-scope family, with a complete per-lane complement.
    - What is unclear: current membership and exact per-member evidence cost have not been recomputed in this research pass.
    - Recommendation: resolve only in the reviewed execution plan/task under approved source bounds; do not copy Phase 5/6 EX-177 selection as current.
-2. **Do current source identity or membership differ from preserved inventories?**
+2. **(RESOLVED BY PLAN ASSIGNMENT; evidence result pending)** Do current source identity or membership differ from preserved inventories? Plan 07-01 Tasks 1–3 bind identity and compare complete membership before any partition.
    - What we know: saved artifacts provide the comparison pattern, not a current freshness guarantee.
    - What is unclear: execution-time identity and complete membership.
    - Recommendation: perform identity first, exact membership second, and stop at first unexplained mismatch for owner rescoping.
-3. **Which bounded caller/delegate observations are supportable within the source allowlist?**
+3. **(RESOLVED BY PLAN ASSIGNMENT; evidence result pending)** Which bounded caller/delegate observations are supportable within the source allowlist? Plans 02–05 review and read only the exact approved schedule.
    - What we know: dynamic, external, callback and unresolved paths must remain explicit gaps.
    - What is unclear: exact observations for the proposed current family.
    - Recommendation: record only evidence supported by authorized source inspection; do not perform package-wide caller search or claim exhaustive closure.

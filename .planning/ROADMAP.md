@@ -31,19 +31,20 @@ This is one bounded, read-only evidence phase. It does not implement guards, inv
   2. The owner can review one exact proposed family and its complete, disjoint complement for each current lane, with reproducible counts and digests and a clear distinction from a selected or promoted code candidate. (RSC-02)
   3. The owner can review lane-pinned, provenance-linked source, caller, and delegate observations for the proposed family, along with explicit gaps and limits that do not imply exhaustive or package-wide caller closure. (RSC-03)
   4. The owner can review refreshed source, context, and effort sizing within inherited limits, all preserved safety stops, and a recommendation that ends at an explicit owner decision before any further increment. (RSC-04)
-**Plans**: 0/4 plans executed
-- [ ] 07-01-PLAN.md
+**Plans**: 0/5 plans executed
+- [ ] 07-01-PLAN.md (R11 and selected metadata check complete; generation no-go; Tasks 2–3 not entered)
 - [ ] 07-02-PLAN.md
 - [ ] 07-03-PLAN.md
 - [ ] 07-04-PLAN.md
-**Current stop**: Plan 07-01 halted on a core `mix.lock` digest mismatch against the accepted ENV06 lane identity. No family or source schedule was produced. See the [Plan 07-01 stop receipt](phases/07-guard-scope-reconciliation/07-01-SUMMARY.md).
+- [ ] 07-05-PLAN.md
+**Current stop**: R10 was incomplete; R11 fully captured and analyzed the same file, but found no command or supplied current-core maps. The owner-selected Phase 3/4/6 metadata sufficiency check also found no complete map bound to the current core lock/runtime. Both producer request IDs are spent. No baseline or partition was produced; Plans 07-02–07-05 remain blocked. See the [R11 analysis](phases/07-guard-scope-reconciliation/07-CORE-PRODUCER-ANALYSIS-R11.md) and [metadata sufficiency report](phases/07-guard-scope-reconciliation/07-CORE-METADATA-INPUT-SUFFICIENCY.md).
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Guard Scope Reconciliation | 0/4 | Stopped for owner rescope decision | - |
+| 7. Guard Scope Reconciliation | 0/5 | Stopped; selected metadata is insufficient | - |
 
 ## Next
 
-Owner decision: authorize a bounded, read-only rescope of the core lane identity and resume Plan 07-01, or keep Phase 7 stopped. Do not execute Plans 07-02–07-04 or read target source bodies until the lane identity and membership reconcile; do not start another increment automatically.
+The owner selected the product/demo direction as the preferred next outcome. It cannot activate under the current typed map: the open guard-aggregate gate blocks Walking Skeleton, then Story Model and Design canon/Books. No product requirements or plans were created, and no gate change is authorized. Preserve the Phase 7 stop and rolling product direction. The next executable work requires a separately reviewed path to exact current-core maps under the existing gate; do not infer a producer or weaken prerequisites. R10 and R11 are spent.
