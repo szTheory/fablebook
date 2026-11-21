@@ -30,3 +30,4 @@ ADRs rank above REQUIREMENTS and below verbatim intent (`.planning/intent/README
 | [0024](0024-strict-by-default-with-waivers.md) | Strict by default; Waivers are the only escape hatch |
 | [0025](0025-motion-lane.md) | Motion is a first-class lane |
 | [0026](0026-validation-only-security-evidence.md) | Stage validation evidence without weakening security gates |
+| [0027](0027-operator-host-development-adapter.md) | Keep the operator host's HTTP adapter development-only |
