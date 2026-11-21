@@ -31,7 +31,7 @@ v0.5 closed locally on 2026-11-19 as a bounded evidence milestone. Phase 6 deliv
 - Cited, fixed illustrative data and clearly illustrative records/actions, with no logistics backend or external writes.
 - A literal module alias/reference contract for the public mount macro and passing development/test-only production exclusion checks before Book implementation.
 
-**Approved boundary:** This is one fixed, developer-authored compiled Book in development/test only; the exception expires at v0.7 closeout. The guard aggregate remains open and the original `walking-skeleton` key remains blocked. No Controls, user-provided values or code, audited-API use, persistence, publication, release, or follow-on milestone is included (INT-20261120-08–14; ADR 0021). See the [approved scope](research/2026-11-20-next-milestone-scope-review.md), [owner approval](intent/sources/2026-11-20-14-approve-first-book-gate-exception.md), and [rolling roadmap](references/PRODUCT-ROADMAP.md).
+**Approved boundary:** This is one fixed, developer-authored compiled Book in development/test only; the exception expires at v0.7 closeout. The guard aggregate remains open and the original `walking-skeleton` key remains blocked. No Controls, user-provided values or code, audited-API use, persistence, publication, release, or follow-on milestone is included (INT-20261120-08, INT-20261120-09, INT-20261120-10, INT-20261120-11, INT-20261120-12, INT-20261120-13, INT-20261120-14; ADR 0021). See the [approved scope](research/2026-11-20-next-milestone-scope-review.md), [owner approval](intent/sources/2026-11-20-14-approve-first-book-gate-exception.md), and [rolling roadmap](references/PRODUCT-ROADMAP.md).
 
 ## Current State
 
