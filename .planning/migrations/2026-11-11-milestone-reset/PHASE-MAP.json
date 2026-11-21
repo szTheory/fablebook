@@ -3,11 +3,12 @@
   "future_phases": [
     {
       "legacy_phase": "2",
-      "milestone_key": "walking-skeleton",
-      "milestone_name": "Walking skeleton",
-      "phase": 1,
-      "name": "Walking skeleton and runner spike",
-      "status": "future-pending",
+      "milestone_key": "first-inspectable-book",
+      "milestone_name": "First inspectable Book",
+      "phase": 8,
+      "name": "First inspectable Book and local host path",
+      "status": "active",
+      "gate_exception": "first-inspectable-book-v0.7",
       "depends_on": [
         "legacy:01.1.1.1",
         "legacy:01.1.1.13"
@@ -21,7 +22,7 @@
       "name": "Story model and catalog",
       "status": "future-pending",
       "depends_on": [
-        "walking-skeleton:1"
+        "first-inspectable-book:8"
       ]
     },
     {
@@ -228,7 +229,7 @@
       "name": "Capture and visual baselines",
       "status": "future-pending",
       "depends_on": [
-        "walking-skeleton:1",
+        "first-inspectable-book:8",
         "checks-capture:1"
       ]
     },

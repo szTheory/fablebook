@@ -45,20 +45,20 @@ This milestone is the narrowly approved first-Book exception in [INT-20261120-14
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SRC-01 | Pending roadmap | Pending |
-| MOUNT-01 | Pending roadmap | Pending |
-| HOST-01 | Pending roadmap | Pending |
-| HOST-02 | Pending roadmap | Pending |
-| CAT-01 | Pending roadmap | Pending |
-| CAT-02 | Pending roadmap | Pending |
-| CANVAS-01 | Pending roadmap | Pending |
-| BOOK-01 | Pending roadmap | Pending |
+| SRC-01 | Phase 8 | Pending |
+| MOUNT-01 | Phase 8 | Pending |
+| HOST-01 | Phase 8 | Pending |
+| HOST-02 | Phase 8 | Pending |
+| CAT-01 | Phase 8 | Pending |
+| CAT-02 | Phase 8 | Pending |
+| CANVAS-01 | Phase 8 | Pending |
+| BOOK-01 | Phase 8 | Pending |
 
 **Coverage:**
 - v1 requirements: 8 total
-- Mapped to phases: 0
-- Unmapped: 8 pending roadmap creation
+- Mapped to phases: 8
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-11-20*
-*Last updated: 2026-11-20 after initial definition*
+*Last updated: 2026-11-20 after Phase 8 mapping*

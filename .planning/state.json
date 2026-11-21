@@ -1,12 +1,18 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.7",
-  "phases": [],
+  "milestone": "v0.7 — First Inspectable Book",
+  "phases": [
+    {
+      "number": "8",
+      "name": "First inspectable Book and local host path",
+      "status": "pending"
+    }
+  ],
   "next": {
-    "command": "$gsd-discuss-phase",
-    "label": "Discuss the first phase",
-    "reason": "Project initialized — plan your first phase"
+    "command": "$gsd-progress --next",
+    "label": "Advance to the next step (plan phase 8)",
+    "reason": "Phase 1 of 1 — needs a plan"
   },
-  "updated_at": "2026-11-21T03:13:56.767Z"
+  "updated_at": "2026-11-21T03:26:58.577Z"
 }
