@@ -3,8 +3,24 @@
 defmodule Fablebook.LogistifySourceVerifier do
   @moduledoc false
 
+  @repo_root Path.expand("..", __DIR__)
+  @manifest Path.join([
+               @repo_root,
+               ".planning",
+               "phases",
+               "08-first-inspectable-book-and-local-host-path",
+               "08-LOGISTIFY-SOURCE.json"
+             ])
+  @brand_lock Path.join(@repo_root, "brand_sources.lock.json")
+  @brand_cache Path.join([@repo_root, ".cache", "brand_sources", "logistify-brand"])
+  @brand_repository "https://github.com/szTheory/logistify-brand"
+  @brand_clone_url @brand_repository <> ".git"
+  @records_path "records/logistify/logistify-records.json"
+  @manifest_format "fablebook-logistify-source/v2"
   @max_source_bytes 2_000_000
   @max_total_source_bytes 4_000_000
+  @max_manifest_bytes 1_000_000
+  @max_excerpt_bytes 32_768
 
   @sources [
     {"BRAND.md", "69b9baf05ebf3461ce1487ec7bb4987a9538c11ed8ab0540199fd021297399e7"},
@@ -15,9 +31,10 @@ defmodule Fablebook.LogistifySourceVerifier do
   def main do
     case System.argv() do
       ["--check-original", directory] -> report(check_original(directory))
+      ["--check-pinned"] -> report(check_pinned())
       ["--self-test"] -> self_test()
       _ ->
-        IO.puts(:stderr, "Usage: bin/verify_logistify_source --check-original DIR | --self-test")
+        IO.puts(:stderr, "Usage: bin/verify_logistify_source --check-original DIR | --check-pinned | --self-test")
         System.halt(2)
     end
   end
@@ -32,42 +49,34 @@ defmodule Fablebook.LogistifySourceVerifier do
     System.halt(1)
   end
 
-  defp check_original(directory, sources \\ @sources) do
-    case File.lstat(directory) do
-      {:ok, %{type: :directory}} ->
-        with {:ok, entries} <- read_sources(directory, sources),
-             :ok <- verify_source_set(entries, sources) do
-          {:ok, "source preflight: approved originals verified (#{length(entries)} files)"}
-        else
-          {:error, reason} -> {:error, "source preflight blocked: #{reason}"}
-          other -> {:error, "source preflight blocked: invalid source set (#{inspect(other)})"}
-        end
-
-      {:ok, _stat} ->
-        {:error, "source preflight blocked: source location is not a directory"}
-
-      {:error, :enoent} ->
-        {:error, "source preflight blocked: source location does not exist"}
-
-      {:error, _reason} ->
-        {:error, "source preflight blocked: source location is unreadable"}
+  defp check_original(directory, expected \\ Map.new(@sources)) do
+    with {:ok, dir_stat} <- File.lstat(directory),
+         :directory <- dir_stat.type,
+         {:ok, checks} <- read_source_files(directory, expected),
+         :ok <- verify_source_set(checks, expected) do
+      {:ok, "source preflight: approved originals verified (#{length(checks)} files)"}
+    else
+      {:error, :enoent} -> {:error, "source preflight blocked: source location does not exist"}
+      {:error, _reason} -> {:error, "source preflight blocked: source location is unreadable"}
+      type when type != :directory -> {:error, "source preflight blocked: source location is not a directory"}
+      other -> {:error, "source preflight blocked: invalid source location (#{inspect(other)})"}
     end
   end
 
-  defp read_sources(directory, sources) do
-    Enum.reduce_while(sources, {:ok, []}, fn {name, _digest}, {:ok, entries} ->
-      case read_source(Path.join(directory, name), name) do
-        {:ok, entry} -> {:cont, {:ok, [entry | entries]}}
+  defp read_source_files(directory, _expected) do
+    Enum.reduce_while(@sources, {:ok, []}, fn {name, _known_digest}, {:ok, acc} ->
+      case read_source_file(Path.join(directory, name), name) do
+        {:ok, entry} -> {:cont, {:ok, [entry | acc]}}
         {:error, reason} -> {:halt, {:error, reason}}
       end
     end)
     |> case do
-      {:ok, entries} -> {:ok, Enum.reverse(entries)}
+      {:ok, checks} -> {:ok, Enum.reverse(checks)}
       error -> error
     end
   end
 
-  defp read_source(path, name) do
+  defp read_source_file(path, name) do
     case File.lstat(path) do
       {:ok, %{type: :regular, size: size}} when size > 0 and size <= @max_source_bytes ->
         case File.read(path) do
@@ -98,24 +107,302 @@ defmodule Fablebook.LogistifySourceVerifier do
     end
   end
 
-  defp verify_source_set(entries, sources) do
-    total = Enum.reduce(entries, 0, &(&1.size + &2))
-    expected = Map.new(sources)
+  defp verify_source_set(checks, expected) do
+    total = Enum.reduce(checks, 0, &(&1.size + &2))
 
     cond do
       total > @max_total_source_bytes ->
         {:error, "approved source set exceeds the #{@max_total_source_bytes}-byte total limit"}
 
-      length(entries) != length(sources) ->
+      length(checks) != length(@sources) ->
         {:error, "approved source set is incomplete"}
 
-      Enum.any?(entries, fn %{name: name, digest: digest} -> Map.get(expected, name) != digest end) ->
+      Enum.any?(checks, fn %{name: name, digest: digest} ->
+        Map.get(expected, name) != digest
+      end) ->
         {:error, "approved source digest mismatch"}
 
       true ->
         :ok
     end
   end
+
+  defp check_pinned do
+    with {:ok, bytes} <- read_manifest_bytes(),
+         {:ok, manifest} <- decode_manifest(bytes),
+         {:ok, book} <- locked_logistify_source(),
+         :ok <- verify_cached_source(book),
+         {:ok, _message} <- check_original(@brand_cache),
+         :ok <- verify_manifest(manifest, book, @brand_cache) do
+      {:ok, "pinned source: public commit, original hashes, and cited excerpts verified"}
+    end
+  end
+
+  defp locked_logistify_source do
+    with {:ok, bytes} <- File.read(@brand_lock),
+         {:ok, lock} <- decode_json(bytes, "brand source lock"),
+         true <- lock["schema"] == "fablebook-brand-sources/v1",
+         books when is_list(books) <- lock["books"],
+         book when is_map(book) <- Enum.find(books, &(&1["name"] == "logistify-brand")),
+         true <- book["clone_url"] == @brand_clone_url,
+         true <- is_binary(book["tag"]) and String.match?(book["tag"], ~r/\Av[0-9]+\.[0-9]+(?:\.[0-9]+)?(?:-[0-9A-Za-z.-]+)?\z/),
+         true <- is_binary(book["commit"]) and String.match?(book["commit"], ~r/\A[0-9a-f]{40}\z/) do
+      {:ok, book}
+    else
+      false -> {:error, "pinned source blocked: Logistify lock entry is invalid"}
+      nil -> {:error, "pinned source blocked: Logistify lock entry is missing"}
+      {:error, _reason} = error -> error
+      _ -> {:error, "pinned source blocked: brand source lock is invalid"}
+    end
+  end
+
+  defp decode_json(bytes, name) do
+    try do
+      {:ok, :json.decode(bytes)}
+    rescue
+      _ -> {:error, "pinned source blocked: #{name} is not valid JSON"}
+    end
+  end
+
+  defp verify_cached_source(book) do
+    with {:ok, origin} <- git_value(["remote", "get-url", "origin"], "source origin"),
+         true <- origin == book["clone_url"],
+         {:ok, commit} <- git_value(["rev-parse", "HEAD"], "source commit"),
+         true <- commit == book["commit"] do
+      :ok
+    else
+      false -> {:error, "pinned source blocked: cached Logistify origin or commit differs from the lock"}
+      {:error, _reason} = error -> error
+    end
+  end
+
+  defp git_value(args, label) do
+    case System.cmd("git", ["-C", @brand_cache | args], stderr_to_stdout: true) do
+      {value, 0} -> {:ok, String.trim(value)}
+      {_output, _status} -> {:error, "pinned source blocked: cached Logistify #{label} is unavailable"}
+    end
+  end
+
+  defp read_manifest_bytes do
+    case File.lstat(@manifest) do
+      {:ok, %{type: :regular, size: size}} when size > 0 and size <= @max_manifest_bytes ->
+        case File.read(@manifest) do
+          {:ok, bytes} when byte_size(bytes) == size -> {:ok, bytes}
+          {:ok, _bytes} -> {:error, "pinned source blocked: excerpt manifest changed while read"}
+          {:error, _reason} -> {:error, "pinned source blocked: excerpt manifest is unreadable"}
+        end
+
+      {:ok, %{type: :regular, size: 0}} ->
+        {:error, "pinned source blocked: excerpt manifest is empty"}
+
+      {:ok, %{type: :regular}} ->
+        {:error, "pinned source blocked: excerpt manifest exceeds the #{@max_manifest_bytes}-byte limit"}
+
+      {:ok, _stat} ->
+        {:error, "pinned source blocked: excerpt manifest is not a regular file"}
+
+      {:error, :enoent} ->
+        {:error, "pinned source blocked: excerpt manifest is missing"}
+
+      {:error, _reason} ->
+        {:error, "pinned source blocked: excerpt manifest is unreadable"}
+    end
+  end
+
+  defp decode_manifest(bytes) do
+    try do
+      {:ok, :json.decode(bytes)}
+    rescue
+      _ -> {:error, "pinned source blocked: excerpt manifest is not valid JSON"}
+    end
+  end
+
+  defp verify_manifest(manifest, book, source_dir, expected_sources \\ manifest_sources()) do
+    with true <- manifest["format"] == @manifest_format,
+         true <- manifest["repository"] == @brand_repository,
+         true <- manifest["tag"] == book["tag"],
+         true <- manifest["commit"] == book["commit"],
+         :ok <- verify_disclosures(manifest["disclosures"]),
+         sources when is_list(sources) <- manifest["sources"],
+         true <- Enum.map(sources, & &1["path"]) == Enum.map(expected_sources, &elem(&1, 0)),
+         :ok <- verify_manifest_sources(sources, expected_sources, source_dir) do
+      :ok
+    else
+      false -> {:error, "pinned source blocked: manifest provenance or source order does not match the lock"}
+      nil -> {:error, "pinned source blocked: manifest source list is missing"}
+      {:error, _reason} = error -> error
+      _ -> {:error, "pinned source blocked: manifest schema is invalid"}
+    end
+  end
+
+  defp manifest_sources do
+    Enum.map(@sources, fn {name, digest} -> {name, digest} end) ++ [{@records_path, :manifest}]
+  end
+
+  defp verify_disclosures(disclosures) when is_map(disclosures) do
+    required = ["brand", "data", "assets", "records_scope"]
+
+    if Enum.all?(required, fn key ->
+         value = disclosures[key]
+         is_binary(value) and String.trim(value) != ""
+       end) and String.contains?(disclosures["brand"], "not cleared") and
+         String.contains?(disclosures["data"], "illustrative") and
+         String.contains?(disclosures["assets"], "not included") do
+      :ok
+    else
+      {:error, "pinned source blocked: demo, name, asset, or record limits are not documented"}
+    end
+  end
+
+  defp verify_disclosures(_), do: {:error, "pinned source blocked: disclosures are missing"}
+
+  defp verify_manifest_sources([], [], _source_dir), do: :ok
+
+  defp verify_manifest_sources([source | rest], [{name, expected_digest} | expected_rest], source_dir)
+       when is_map(source) do
+    with true <- source["path"] == name,
+         {:ok, source_bytes} <- read_source_bytes(source_dir, name),
+         actual_digest = sha256(source_bytes),
+         true <- valid_sha256?(source["whole_file_sha256"]),
+         true <- source["whole_file_sha256"] == actual_digest,
+         true <- expected_digest == :manifest or source["whole_file_sha256"] == expected_digest,
+         excerpts when is_list(excerpts) and excerpts != [] <- source["excerpts"],
+         {:ok, source_json} <- source_json(name, source_bytes),
+         :ok <- verify_excerpts(excerpts, name, source_bytes, source_json) do
+      verify_manifest_sources(rest, expected_rest, source_dir)
+    else
+      false -> {:error, "pinned source blocked: whole-file digest or source identity mismatch for #{name}"}
+      nil -> {:error, "pinned source blocked: excerpts are missing for #{name}"}
+      {:error, _reason} = error -> error
+      _ -> {:error, "pinned source blocked: source entry is incomplete for #{name}"}
+    end
+  end
+
+  defp verify_manifest_sources(_, _, _source_dir), do: {:error, "pinned source blocked: source set is incomplete"}
+
+  defp read_source_bytes(source_dir, name) do
+    path = Path.join(source_dir, name)
+
+    case File.lstat(path) do
+      {:ok, %{type: :regular, size: size}} when size > 0 and size <= @max_source_bytes ->
+        case File.read(path) do
+          {:ok, bytes} when byte_size(bytes) == size -> {:ok, bytes}
+          {:ok, _bytes} -> {:error, "pinned source blocked: source changed while read: #{name}"}
+          {:error, _reason} -> {:error, "pinned source blocked: source is unreadable: #{name}"}
+        end
+
+      {:ok, _stat} -> {:error, "pinned source blocked: source is missing, empty, or outside bounds: #{name}"}
+      {:error, _reason} -> {:error, "pinned source blocked: source is missing or unreadable: #{name}"}
+    end
+  end
+
+  defp source_json(name, bytes) do
+    if String.ends_with?(name, ".json") do
+      decode_json(bytes, "source file #{name}")
+    else
+      {:ok, nil}
+    end
+  end
+
+  defp verify_excerpts(excerpts, source_name, source_bytes, source_json) do
+    Enum.reduce_while(excerpts, {:ok, MapSet.new()}, fn excerpt, {:ok, seen} ->
+      case verify_excerpt(excerpt, source_name, seen, source_bytes, source_json) do
+        {:ok, next_seen} -> {:cont, {:ok, next_seen}}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
+    end)
+    |> case do
+      {:ok, _seen} -> :ok
+      error -> error
+    end
+  end
+
+  defp verify_excerpt(excerpt, source_name, seen, source_bytes, source_json) when is_map(excerpt) do
+    citation = excerpt["citation"]
+    claim = excerpt["claim"]
+    offset = excerpt["offset"]
+    length = excerpt["length"]
+    expected_digest = excerpt["sha256"]
+    encoded = excerpt["base64"]
+    identity = {citation, offset, length}
+
+    with true <- valid_citation?(citation),
+         true <- is_binary(claim) and String.trim(claim) != "",
+         true <- is_integer(offset) and offset >= 0 and offset < @max_source_bytes,
+         true <- is_integer(length) and length > 0 and length <= @max_excerpt_bytes,
+         true <- valid_sha256?(expected_digest),
+         true <- is_binary(encoded),
+         false <- MapSet.member?(seen, identity),
+         {:ok, raw_bytes} <- Base.decode64(encoded),
+         true <- byte_size(raw_bytes) == length,
+         true <- offset + length <= @max_source_bytes,
+         true <- offset + length <= byte_size(source_bytes),
+         true <- sha256(raw_bytes) == expected_digest,
+         true <- binary_part(source_bytes, offset, length) == raw_bytes,
+         :ok <- verify_citation(citation, raw_bytes, source_json) do
+      {:ok, MapSet.put(seen, identity)}
+    else
+      _ -> {:error, "pinned source blocked: invalid or duplicate excerpt citation for #{source_name}"}
+    end
+  end
+
+  defp verify_excerpt(_excerpt, source_name, _seen, _source_bytes, _source_json),
+    do: {:error, "pinned source blocked: malformed excerpt for #{source_name}"}
+
+  defp valid_citation?(citation) when is_binary(citation) do
+    String.match?(citation, ~r/\Aheading: .+\z/) or String.match?(citation, ~r/\Apointer: \/.+\z/)
+  end
+
+  defp valid_citation?(_citation), do: false
+
+  defp verify_citation("heading: " <> heading, raw_bytes, nil) do
+    if :binary.match(raw_bytes, heading) == :nomatch,
+      do: {:error, "pinned source blocked: cited heading is absent from its excerpt"},
+      else: :ok
+  end
+
+  defp verify_citation("pointer: " <> pointer, raw_bytes, source_json) when not is_nil(source_json) do
+    with {:ok, pointed_value} <- resolve_json_pointer(source_json, pointer),
+         {:ok, excerpt_value} <- decode_json(raw_bytes, "JSON excerpt"),
+         true <- pointed_value == excerpt_value do
+      :ok
+    else
+      _ -> {:error, "pinned source blocked: JSON pointer does not identify the cited excerpt"}
+    end
+  end
+
+  defp verify_citation(_citation, _raw_bytes, _source_json),
+    do: {:error, "pinned source blocked: citation type does not match its source file"}
+
+  defp resolve_json_pointer(value, "/" <> pointer) do
+    pointer
+    |> String.split("/", trim: false)
+    |> Enum.reduce_while({:ok, value}, fn segment, {:ok, current} ->
+      case pointer_value(current, unescape_pointer_segment(segment)) do
+        {:ok, next} -> {:cont, {:ok, next}}
+        :error -> {:halt, :error}
+      end
+    end)
+  end
+
+  defp resolve_json_pointer(_value, _pointer), do: :error
+
+  defp unescape_pointer_segment(segment) do
+    segment |> String.replace("~1", "/") |> String.replace("~0", "~")
+  end
+
+  defp pointer_value(value, key) when is_map(value), do: Map.fetch(value, key)
+
+  defp pointer_value(value, key) when is_list(value) do
+    case Integer.parse(key) do
+      {index, ""} when index >= 0 -> Enum.fetch(value, index)
+      _ -> :error
+    end
+  end
+
+  defp pointer_value(_value, _key), do: :error
+
+  defp valid_sha256?(digest), do: is_binary(digest) and String.match?(digest, ~r/\A[0-9a-f]{64}\z/)
 
   defp sha256(bytes), do: :crypto.hash(:sha256, bytes) |> Base.encode16(case: :lower)
 
@@ -126,57 +413,61 @@ defmodule Fablebook.LogistifySourceVerifier do
       "tokens.json" => "{\"color\":{}}\n"
     }
 
-    sources = Enum.map(samples, fn {name, bytes} -> {name, sha256(bytes)} end)
+    expected = Map.new(samples, fn {name, bytes} -> {name, sha256(bytes)} end)
     parent = Path.join(System.tmp_dir!(), "fablebook-source-self-test-#{System.unique_integer([:positive])}")
     directory = Path.join(parent, "source")
 
     result =
       try do
+      File.mkdir_p!(directory)
+      write_samples!(directory, samples)
+      assert_case(check_original(directory, expected) == {:ok, "source preflight: approved originals verified (3 files)"}, "exact synthetic bytes")
+
+      File.rm!(Path.join(directory, "tokens.json"))
+      assert_error(check_original(directory, expected), "missing source")
+
+      write_samples!(directory, samples)
+      File.write!(Path.join(directory, "BRAND.md"), "")
+      assert_error(check_original(directory, expected), "empty source")
+
+      write_samples!(directory, samples)
+      File.write!(Path.join(directory, "brand.json"), "{\"version\":\"1.1\"}\n")
+      assert_error(check_original(directory, expected), "one-byte source change")
+
+      write_samples!(directory, samples)
+      File.write!(Path.join(directory, "BRAND.md"), "Operator console\r\n")
+      assert_error(check_original(directory, expected), "line-ending source change")
+
+      write_samples!(directory, samples)
+      File.rm!(Path.join(directory, "tokens.json"))
+      File.mkdir!(Path.join(directory, "tokens.json"))
+      assert_error(check_original(directory, expected), "non-regular source entry")
+
+      File.rm_rf!(directory)
+      File.mkdir_p!(directory)
+      write_samples!(directory, samples)
+      File.write!(Path.join(directory, "tokens.json"), :binary.copy("x", @max_source_bytes + 1))
+      assert_error(check_original(directory, expected), "out-of-bound source entry")
+
+      if System.get_env("UID") not in [nil, "0"] do
+        File.rm_rf!(directory)
         File.mkdir_p!(directory)
         write_samples!(directory, samples)
-        assert_case(check_original(directory, sources) == {:ok, "source preflight: approved originals verified (3 files)"}, "exact bytes")
+        File.chmod!(directory, 0o000)
 
-        File.rm!(Path.join(directory, "tokens.json"))
-        assert_error(check_original(directory, sources), "missing file")
+        unreadable_result =
+          try do
+            check_original(directory, expected)
+          after
+            File.chmod!(directory, 0o700)
+          end
 
-        write_samples!(directory, samples)
-        File.write!(Path.join(directory, "tokens.json"), "")
-        assert_error(check_original(directory, sources), "empty file")
+        assert_error(unreadable_result, "unreadable source location")
+      end
 
-        write_samples!(directory, samples)
-        File.write!(Path.join(directory, "brand.json"), "{\"version\":\"1.1\"}\n")
-        assert_error(check_original(directory, sources), "changed bytes")
+      manifest_self_test!(Path.join(parent, "manifest"))
 
-        write_samples!(directory, samples)
-        File.write!(Path.join(directory, "BRAND.md"), "Operator console\r\n")
-        assert_error(check_original(directory, sources), "changed line endings")
-
-        write_samples!(directory, samples)
-        File.rm!(Path.join(directory, "tokens.json"))
-        File.mkdir!(Path.join(directory, "tokens.json"))
-        assert_error(check_original(directory, sources), "non-regular file")
-
-        File.rm_rf!(Path.join(directory, "tokens.json"))
-        write_samples!(directory, samples)
-        File.write!(Path.join(directory, "tokens.json"), :binary.copy("x", @max_source_bytes + 1))
-        assert_error(check_original(directory, sources), "oversized file")
-
-        if System.get_env("UID") not in [nil, "0"] do
-          write_samples!(directory, samples)
-          path = Path.join(directory, "tokens.json")
-          File.chmod!(path, 0o000)
-
-          unreadable_result =
-            try do
-              check_original(directory, sources)
-            after
-              File.chmod!(path, 0o600)
-            end
-
-          assert_error(unreadable_result, "unreadable file")
-        end
-
-        {:ok, "source verifier self-test: exact, missing, empty, changed-byte, line-ending, non-regular, bounds, and unreadable cases passed"}
+      {:ok, "source verifier self-test: original hashes, commit provenance, JSON pointers, exact excerpt bytes and tamper cases passed"}
       rescue
         error -> {:error, "source verifier self-test failed: #{Exception.message(error)}"}
       after
@@ -190,11 +481,66 @@ defmodule Fablebook.LogistifySourceVerifier do
     Enum.each(samples, fn {name, bytes} -> File.write!(Path.join(directory, name), bytes) end)
   end
 
-  defp assert_case(true, _label), do: :ok
-  defp assert_case(false, label), do: raise("#{label} was rejected")
+  defp assert_case(true, _name), do: :ok
+  defp assert_case(false, name), do: raise("#{name} was rejected")
 
-  defp assert_error({:error, _reason}, _label), do: :ok
-  defp assert_error(_result, label), do: raise("#{label} was accepted")
+  defp assert_error({:error, _reason}, _name), do: :ok
+  defp assert_error(_result, name), do: raise("#{name} was accepted")
+
+  defp manifest_self_test!(directory) do
+    File.mkdir_p!(directory)
+    source_bytes = ~s({"jobs":[{"id":"job-01","text":"Plan the day."}]}\n)
+    File.write!(Path.join(directory, "records.json"), source_bytes)
+    excerpt_bytes = ~s({"id":"job-01","text":"Plan the day."})
+    {offset, _length} = :binary.match(source_bytes, excerpt_bytes)
+
+    excerpt = %{
+      "citation" => "pointer: /jobs/0",
+      "claim" => "The source defines the dispatcher job.",
+      "offset" => offset,
+      "length" => byte_size(excerpt_bytes),
+      "sha256" => sha256(excerpt_bytes),
+      "base64" => Base.encode64(excerpt_bytes)
+    }
+
+    source = %{
+      "path" => "records.json",
+      "whole_file_sha256" => sha256(source_bytes),
+      "excerpts" => [excerpt]
+    }
+
+    book = %{"clone_url" => @brand_clone_url, "tag" => "v1.0", "commit" => String.duplicate("a", 40)}
+
+    manifest = %{
+      "format" => @manifest_format,
+      "repository" => @brand_repository,
+      "tag" => book["tag"],
+      "commit" => book["commit"],
+      "disclosures" => %{
+        "brand" => "Fictional demonstration; name not cleared for real-world use.",
+        "data" => "Records and actions are illustrative.",
+        "assets" => "Brand assets are not included.",
+        "records_scope" => "No values are inferred."
+      },
+      "sources" => [source]
+    }
+
+    expected_sources = [{"records.json", :manifest}]
+    assert_case(verify_manifest(manifest, book, directory, expected_sources) == :ok, "pinned synthetic manifest")
+
+    altered_excerpt = Map.put(excerpt, "offset", offset + 1)
+    altered_source = Map.put(source, "excerpts", [altered_excerpt])
+    assert_error(verify_manifest(%{manifest | "sources" => [altered_source]}, book, directory, expected_sources), "changed excerpt offset")
+
+    omitted_source = Map.put(source, "excerpts", [])
+    assert_error(verify_manifest(%{manifest | "sources" => [omitted_source]}, book, directory, expected_sources), "omitted excerpt")
+
+    altered_provenance = Map.put(manifest, "commit", String.duplicate("b", 40))
+    assert_error(verify_manifest(altered_provenance, book, directory, expected_sources), "changed commit provenance")
+
+    File.write!(Path.join(directory, "records.json"), source_bytes <> " ")
+    assert_error(verify_manifest(manifest, book, directory, expected_sources), "changed source bytes")
+  end
 end
 
 Fablebook.LogistifySourceVerifier.main()

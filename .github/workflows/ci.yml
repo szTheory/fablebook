@@ -40,6 +40,7 @@ jobs:
       - run: bin/verify_logistify_source --self-test
       - run: bin/fetch_brand_sources
       - run: bin/verify_logistify_source --check-original .cache/brand_sources/logistify-brand
+      - run: bin/verify_logistify_source --check-pinned
       - run: mix ci
 
   floor:
@@ -63,6 +64,7 @@ jobs:
           key: brand-sources-${{ hashFiles('brand_sources.lock.json') }}
       - run: bin/fetch_brand_sources
       - run: bin/verify_logistify_source --check-original .cache/brand_sources/logistify-brand
+      - run: bin/verify_logistify_source --check-pinned
       - run: mix compile --warnings-as-errors
       - run: mix compile --no-optional-deps --warnings-as-errors --force
       - run: mix test --warnings-as-errors --include prod_guard
