@@ -17045,7 +17045,7 @@ defmodule Fablebook.Contract.TierSweepTest do
       project_lib_callers: project_callers,
       applicability: :each_exact_installed_lane,
       limitations: [
-        "Phoenix.Router.build_pipes/2 passes caller-authored route pipeline entries; core accepts explicit plug/options pairs while floor supplies empty options for each plug atom.",
+        "Phoenix.Router.build_pipes/2 preserves explicit {plug, opts} route entries and supplies empty options for bare plug atoms.",
         "Phoenix.plug_init_mode/0 reads :phoenix, :plug_init_mode with :compile default; the source trace does not run that configuration lookup.",
         "Compile-mode plug.init/1 and emitted function calls are dynamic caller-selected callbacks; their callback bodies are not resolved or invoked here.",
         "The separate project-authored Macro caller-AST and broader expansion owner remains assigned to Phase 01.1.4; this row replacement makes no claim about that owner's scope.",
@@ -17181,24 +17181,14 @@ defmodule Fablebook.Contract.TierSweepTest do
     ] ++ cn004_router_citations!(lane)
   end
 
-  defp cn004_caller_citations!(lane) do
-    router_citations =
-      if lane == "core" do
-        [
-          "phoenix/lib/phoenix/router.ex:818",
-          "phoenix/lib/phoenix/router.ex:823",
-          "phoenix/lib/phoenix/router.ex:824",
-          "phoenix/lib/phoenix/router.ex:827",
-          "phoenix/lib/phoenix/router.ex:828"
-        ]
-      else
-        [
-          "phoenix/lib/phoenix/router.ex:818",
-          "phoenix/lib/phoenix/router.ex:819",
-          "phoenix/lib/phoenix/router.ex:820",
-          "phoenix/lib/phoenix/router.ex:821"
-        ]
-      end
+  defp cn004_caller_citations!(_lane) do
+    router_citations = [
+      "phoenix/lib/phoenix/router.ex:816",
+      "phoenix/lib/phoenix/router.ex:821",
+      "phoenix/lib/phoenix/router.ex:822",
+      "phoenix/lib/phoenix/router.ex:825",
+      "phoenix/lib/phoenix/router.ex:826"
+    ]
 
     %{
       "Elixir.Plug.Builder:MACRO-__before_compile__/2" => [
@@ -17222,30 +17212,30 @@ defmodule Fablebook.Contract.TierSweepTest do
 
   defp cn004_router_citations!("core") do
     [
-      {"phoenix/lib/phoenix/router.ex:818", "defp build_pipes(name, pipe_through) do"},
-      {"phoenix/lib/phoenix/router.ex:823", "{plug, opts} -> {plug, opts, true}"},
-      {"phoenix/lib/phoenix/router.ex:824", "plug -> {plug, [], true}"},
-      {"phoenix/lib/phoenix/router.ex:827",
+      {"phoenix/lib/phoenix/router.ex:816", "defp build_pipes(name, pipe_through) do"},
+      {"phoenix/lib/phoenix/router.ex:821", "{plug, opts} -> {plug, opts, true}"},
+      {"phoenix/lib/phoenix/router.ex:822", "plug -> {plug, [], true}"},
+      {"phoenix/lib/phoenix/router.ex:825",
        "opts = [init_mode: Phoenix.plug_init_mode(), log_on_halt: :debug]"},
-      {"phoenix/lib/phoenix/router.ex:828",
+      {"phoenix/lib/phoenix/router.ex:826",
        "{conn, body} = Plug.Builder.compile(__ENV__, plugs, opts)"},
-      {"phoenix/lib/phoenix/router.ex:945", "defmacro pipeline(plug, do: block) do"},
-      {"phoenix/lib/phoenix/router.ex:966",
+      {"phoenix/lib/phoenix/router.ex:943", "defmacro pipeline(plug, do: block) do"},
+      {"phoenix/lib/phoenix/router.ex:964",
        "Plug.Builder.compile(__ENV__, @phoenix_pipeline, init_mode: Phoenix.plug_init_mode())"}
     ]
   end
 
   defp cn004_router_citations!("floor") do
     [
-      {"phoenix/lib/phoenix/router.ex:818", "defp build_pipes(name, pipe_through) do"},
-      {"phoenix/lib/phoenix/router.ex:819",
-       "plugs = pipe_through |> Enum.reverse() |> Enum.map(&{&1, [], true})"},
-      {"phoenix/lib/phoenix/router.ex:820",
+      {"phoenix/lib/phoenix/router.ex:816", "defp build_pipes(name, pipe_through) do"},
+      {"phoenix/lib/phoenix/router.ex:821", "{plug, opts} -> {plug, opts, true}"},
+      {"phoenix/lib/phoenix/router.ex:822", "plug -> {plug, [], true}"},
+      {"phoenix/lib/phoenix/router.ex:825",
        "opts = [init_mode: Phoenix.plug_init_mode(), log_on_halt: :debug]"},
-      {"phoenix/lib/phoenix/router.ex:821",
+      {"phoenix/lib/phoenix/router.ex:826",
        "{conn, body} = Plug.Builder.compile(__ENV__, plugs, opts)"},
-      {"phoenix/lib/phoenix/router.ex:938", "defmacro pipeline(plug, do: block) do"},
-      {"phoenix/lib/phoenix/router.ex:959",
+      {"phoenix/lib/phoenix/router.ex:943", "defmacro pipeline(plug, do: block) do"},
+      {"phoenix/lib/phoenix/router.ex:964",
        "Plug.Builder.compile(__ENV__, @phoenix_pipeline, init_mode: Phoenix.plug_init_mode())"}
     ]
   end
@@ -17272,7 +17262,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     [
       %{
         caller: "Elixir.Phoenix.Router:pipeline/2",
-        citation: "phoenix/lib/phoenix/router.ex:966",
+        citation: "phoenix/lib/phoenix/router.ex:964",
         target: "Elixir.Plug.Builder:compile/3"
       }
     ]
@@ -17282,7 +17272,7 @@ defmodule Fablebook.Contract.TierSweepTest do
     [
       %{
         caller: "Elixir.Phoenix.Router:pipeline/2",
-        citation: "phoenix/lib/phoenix/router.ex:959",
+        citation: "phoenix/lib/phoenix/router.ex:964",
         target: "Elixir.Plug.Builder:compile/3"
       }
     ]
@@ -17293,7 +17283,7 @@ defmodule Fablebook.Contract.TierSweepTest do
   end
 
   defp cn004_caller_input_trace!("floor") do
-    "The three direct graph callers are Plug.Builder.__before_compile__/1, Phoenix.Controller.Pipeline.__before_compile__/1, and Phoenix.Router.build_pipes/2. Builder attributes carry each plug/options/guard tuple plus builder_opts; the controller prepends its action plug and uses Phoenix.plug_init_mode/0. Router route pipe_through entries are reversed and every plug atom is paired with empty options, then __ENV__, init_mode from Phoenix.plug_init_mode/0, and log_on_halt: :debug are passed to Plug.Builder.compile/3. Phoenix.Router.pipeline/2 also quotes a separate Plug.Builder.compile/3 call, which source inspection records despite its absence as a direct compiled graph edge. Phoenix.plug_init_mode/0 reads :phoenix/:plug_init_mode with :compile default."
+    "The three direct graph callers are Plug.Builder.__before_compile__/1, Phoenix.Controller.Pipeline.__before_compile__/1, and Phoenix.Router.build_pipes/2. Builder attributes carry each plug/options/guard tuple plus builder_opts; the controller prepends its action plug and uses Phoenix.plug_init_mode/0. Router route pipe_through entries are reversed, explicit {plug, opts} pairs are preserved, and bare plug atoms receive empty options before __ENV__, init_mode from Phoenix.plug_init_mode/0, and log_on_halt: :debug are passed to Plug.Builder.compile/3. Phoenix.Router.pipeline/2 also quotes a separate Plug.Builder.compile/3 call, which source inspection records despite its absence as a direct compiled graph edge. Phoenix.plug_init_mode/0 reads :phoenix/:plug_init_mode with :compile default."
   end
 
   defp cn004_carrier_ref! do
