@@ -89,10 +89,11 @@ defmodule Fablebook.Contract.MountLiteralASTTest do
 
   defp mounted_book(book_ast) do
     expansion = expand_mount(book_ast)
-    args = find_router_get_args(expansion)
 
-    assert ["/fablebook", _placeholder, book, [as: :fablebook]] = args
-    book
+    case find_router_get_args(expansion) do
+      ["/fablebook", _placeholder, book, [as: :fablebook]] -> book
+      nil -> find_live_session_book(expansion)
+    end
   end
 
   defp expand_mount(book_ast) do
@@ -113,10 +114,24 @@ defmodule Fablebook.Contract.MountLiteralASTTest do
   end
 
   defp find_router_get_args({:__block__, _, expressions}) do
-    Enum.find_value(expressions, &find_router_get_args/1) ||
-      flunk("expected Fablebook.Router to emit a Phoenix.Router.get call")
+    Enum.find_value(expressions, &find_router_get_args/1)
   end
 
   defp find_router_get_args({{:., _, [_router, :get]}, _, args}), do: args
   defp find_router_get_args(_other), do: nil
+
+  defp find_live_session_book(ast) do
+    {_ast, book} =
+      Macro.prewalk(ast, nil, fn
+        {{:., _, [_router, :live_session]}, _, [_, [session: {:%{}, _, [{"book", book}]}], _]} =
+            node,
+        nil ->
+          {node, book}
+
+        node, found ->
+          {node, found}
+      end)
+
+    book || flunk("expected Fablebook.Router to put the compiled Book in the LiveView session")
+  end
 end
