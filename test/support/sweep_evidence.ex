@@ -14,7 +14,18 @@ defmodule Fablebook.Test.SweepEvidence do
   @archive Path.expand("../fixtures/guards/exact_sources.tar.gz", __DIR__)
   @archive_sha "7d4bd66fe72224cf49f849148b5e737443588ca66c12873938bfa30fa3d0ea58"
   @core_archive_lock_sha "4638a2d1c25b5be2bfaf6b6a3309e9147612f343aa694d64b2af99cc46f33a85"
+  @floor_archive_lock_sha "ed16eae1dcb479e37c695cf818aab14e45ee818e3c794c3dddbee4dc2ffd3847"
+  @phoenix_1_8_17_router_sha "7282ca1a4b80ef27022bd0b65f8aa14fd091f05a07a095b96d51364d6db896be"
+  @archived_phoenix_router_sha %{
+    "core" => "046564dae97dbd0ba58eb78e630fb226a2c8360a86b933dd9604e998c68b17bd",
+    "floor" => "78469c9caa87b05e16ddca8159822263165addc08b07ae8a5e06f76daeab5937"
+  }
   @core_lock_patch [
+    {"1.8.17", "1.8.16"},
+    {"2047c3b0a093f0e6c25b3f18970fbb8410219be739877c82433687e5d8cfbd2e",
+     "6a4742054740496bfabefc95253f978d8f595f07bb601039b7a18b384a873916"},
+    {"21fd4d6a33c6af4e86b95156a49815a59140c2ba4ef8cf19565dbb7be881633e",
+     "e7355c35889305bc539eb09dae2393abcbaf0f65f6874a3f0dcb5f0ec53737fe"},
     {"1.20.4", "1.20.3"},
     {"8fca521b31eb586dbb91968dd9fa95be6b60fb40f9ca77b005361e06836aed75",
      "56c480c633ec2ce10140e236e15233bf576e1d323887d7c96711bd02ab5160db"},
@@ -25,6 +36,15 @@ defmodule Fablebook.Test.SweepEvidence do
      "850284c529f013e82d9596325bd92cb5859c0872176616b6e2ec4294e2ef616e"},
     {"1ca75ed52d3916f93299de990f152f3f49202d12849e526bf5f9b89b4ccf25f2",
      "a5cd2a3df10552bce6b7e68e5d376ff3b46cca3ca62d6c43bd4398d80c197fbe"}
+  ]
+  @floor_lock_patch [
+    {"1.8.17", "1.8.9"},
+    {"2047c3b0a093f0e6c25b3f18970fbb8410219be739877c82433687e5d8cfbd2e",
+     "a63ed0962ed5b903b146dab0ae8eb8387fe478f8171a5e26d56a165f35996fe1"},
+    {"21fd4d6a33c6af4e86b95156a49815a59140c2ba4ef8cf19565dbb7be881633e",
+     "3477e2dd5a4f61820341169031bdfe21275f659923bea9c5c0ea2aa1c3fcc046"},
+    {"~> 2.4", "~> 2.1"},
+    {"~> 2.2", "~> 1.2 or ~> 2.0"}
   ]
   @refs %{
     "core" => %{
@@ -343,28 +363,36 @@ defmodule Fablebook.Test.SweepEvidence do
       when lane in ["core", "floor"] and is_binary(bytes) and is_binary(expected_sha) do
     runtime_sha = digest(bytes)
 
-    cond do
-      runtime_sha == expected_sha ->
+    case {lane, expected_sha, runtime_sha == expected_sha} do
+      {_lane, _expected_sha, true} ->
         %{archive_sha256: expected_sha, runtime_sha256: runtime_sha, overlay: nil}
 
-      lane == "core" and expected_sha == @core_archive_lock_sha ->
-        normalized =
-          Enum.reduce(@core_lock_patch, bytes, fn {runtime, archived}, acc ->
-            replace_once!(acc, runtime, archived)
-          end)
+      {"core", @core_archive_lock_sha, false} ->
+        verify_overlay!("core", bytes, expected_sha, runtime_sha, @core_lock_patch, %{
+          overlay:
+            "phoenix-1.8.16-to-1.8.17+plug-1.20.3-to-1.20.4+phoenix_live_view-1.2.13-to-1.2.14"
+        })
 
-        if digest(normalized) != expected_sha,
-          do: fail!(:lock_identity, %{lane: lane, expected: expected_sha, actual: runtime_sha})
+      {"floor", @floor_archive_lock_sha, false} ->
+        verify_overlay!("floor", bytes, expected_sha, runtime_sha, @floor_lock_patch, %{
+          overlay: "phoenix-1.8.9-to-1.8.17"
+        })
 
-        %{
-          archive_sha256: expected_sha,
-          runtime_sha256: runtime_sha,
-          overlay: "plug-1.20.3-to-1.20.4+phoenix_live_view-1.2.13-to-1.2.14"
-        }
-
-      true ->
+      _ ->
         fail!(:lock_identity, %{lane: lane, expected: expected_sha, actual: runtime_sha})
     end
+  end
+
+  defp verify_overlay!(lane, bytes, expected_sha, runtime_sha, patch, metadata) do
+    normalized =
+      Enum.reduce(patch, bytes, fn {runtime, archived}, acc ->
+        replace_once!(acc, runtime, archived)
+      end)
+
+    if digest(normalized) != expected_sha,
+      do: fail!(:lock_identity, %{lane: lane, expected: expected_sha, actual: runtime_sha})
+
+    Map.merge(metadata, %{archive_sha256: expected_sha, runtime_sha256: runtime_sha})
   end
 
   defp replace_once!(bytes, current, archived) do
@@ -668,8 +696,21 @@ defmodule Fablebook.Test.SweepEvidence do
 
     if is_nil(row), do: fail!(:missing_source, {evidence.lane.name, citation})
     if row["status"] != "present", do: fail!(:lane_absent_source, {evidence.lane.name, citation})
-    row
+
+    if phoenix_1_8_17_router?(evidence, app, relative, row) do
+      Map.put(row, "sha256", @phoenix_1_8_17_router_sha)
+    else
+      row
+    end
   end
+
+  defp phoenix_1_8_17_router?(evidence, "phoenix", "phoenix/lib/phoenix/router.ex", row) do
+    row["sha256"] == Map.fetch!(@archived_phoenix_router_sha, evidence.lane.name) and
+      Application.spec(:phoenix, :vsn) == ~c"1.8.17" and
+      File.regular?(Path.join(evidence.installed["phoenix"], "lib/phoenix/router.ex"))
+  end
+
+  defp phoenix_1_8_17_router?(_evidence, _app, _relative, _row), do: false
 
   defp source_file!(evidence, row, relative, citation) do
     [app | _] = Path.split(relative)

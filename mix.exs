@@ -41,7 +41,7 @@ defmodule Fablebook.MixProject do
 
   defp deps do
     [
-      {:phoenix, ">= 1.8.9 and < 2.0.0"},
+      {:phoenix, ">= 1.8.17 and < 2.0.0"},
       {:phoenix_live_view, ">= 1.2.9 and < 2.0.0"},
       {:phoenix_html, "~> 4.1"},
       {:telemetry, "~> 1.0"},
