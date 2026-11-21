@@ -1,0 +1,318 @@
+{
+  "format": "fablebook-logistify-source/v2",
+  "repository": "https://github.com/szTheory/logistify-brand",
+  "tag": "v1.0",
+  "commit": "6189eb2f013496644ece948f287d69a6695c1156",
+  "disclosures": {
+    "brand": "Logistify is a fictional demo brand; its name is not cleared for real-world use.",
+    "data": "Records and actions are fixed and illustrative; the demo has no logistics backend, persistence, or external writes.",
+    "assets": "Logos, imagery, sound, and font files from the source are not included.",
+    "records_scope": "The source declares 12 selected and reassigned, but lists only two shipment IDs in the bulk case and one in the completed case. The board case does not identify its two selected rows. Do not invent other IDs or replacement-driver details."
+  },
+  "sources": [
+    {
+      "path": "BRAND.md",
+      "whole_file_sha256": "69b9baf05ebf3461ce1487ec7bb4987a9538c11ed8ab0540199fd021297399e7",
+      "excerpts": [
+        {
+          "citation": "heading: ## Operator console",
+          "claim": "Operator audience, dark-capable theme, compact board columns, row density and status words; recommendations, not proof of a working product.",
+          "offset": 6180,
+          "length": 989,
+          "sha256": "efa1333f96d4d461d72f46aced8cc4a9d14a95d8528096a50aa91e263224e29c",
+          "base64": "IyMgT3BlcmF0b3IgY29uc29sZQoKKipEaXNwYXRjaCBib2FyZCwgc2hpcG1lbnRzLCBzZXR0aW5ncyoqCgpEaXNwYXRjaGVycyBhbmQgYWRtaW5zLCBhbGwgZGF5LCBvZnRlbiBpbiBhIGRpbSByb29tLgoKKipXaGF0IHNob3dzLioqIFRoZSB0eXBlbWFyayBpbiB0aGUgdG9wIGJhciwgdGhlIHN0YXR1cyB3b3JkcyBhbmQgdGhlaXIgY29sb3JzLCB0aGUgdHlwZSwgYW5kIGRhcmsgb3IgbGlnaHQgYnkgY2hvaWNlLiBUaGUgZGVuc2VzdCBvZiB0aGUgdGhyZWUuCgojIyMgU2hpcHBlciBwb3J0YWwKCioqVHJhY2tpbmcsIHNoaXBtZW50IGhpc3RvcnksIG1lbWJlcnNoaXAqKgoKQ3VzdG9tZXJzIGNoZWNraW5nIG9uIGEgc2hpcG1lbnQsIG5vdyBhbmQgdGhlbi4KCioqV2hhdCBzaG93cy4qKiBUaGUgdHlwZW1hcmssIGxpZ2h0IGJ5IGRlZmF1bHQsIHBsYWluIHN0YXR1cyB3b3JkcyBhbmQgdGhlIGRlbGl2ZXJ5IHdpbmRvdy4gQ2FsbWVyIGFuZCByb29taWVyIHRoYW4gdGhlIGNvbnNvbGUuCgojIyMgRHJpdmVyIGFwcAoKKipBIHBob25lIGFwcDogc3RvcHMsIGhhbmQtb3ZlciwgY29tcGxldGlvbioqCgpEcml2ZXJzLCBvbmUgaGFuZCwgZGF5bGlnaHQgYW5kIGdsb3Zlcy4KCioqV2hhdCBzaG93cy4qKiBUaGUgc2xhYiBzeW1ib2wgYXMgdGhlIGFwcCBpY29uLCBoaWdoIGNvbnRyYXN0LCBsYXJnZSB0YXJnZXRzLCBsaWdodCBieSBkZWZhdWx0LiBPbmUgc3RvcCBvbiBzY3JlZW4gYXQgYSB0aW1lLgoKT24gcHJpbnRlZCBmcmVpZ2h0IGRvY3VtZW50cyAobGFiZWxzIGFuZCBkZWxpdmVyeSBub3RlcykgdGhlIHR5cGVtYXJrIGFwcGVhcnMgb25jZSwgc21hbGwsIGFuZCB0aGUgZG9jdW1lbnTigJlzIG93biBjb2RlcyBjYXJyeSB0aGUgaW5mb3JtYXRpb24uIFdoZXJlIGFuIG9yZ2FuaXphdGlvbiB3aGl0ZS1sYWJlbHMgYSBwcm9kdWN0LCBpdHMgb3duIG5hbWUgcmVwbGFjZXMgdGhlIHR5cGVtYXJrOyB0aGUgcHJvZHVjdCBydWxlcyBzdGF5Lgo="
+        },
+        {
+          "citation": "heading: ## Operator console: every state",
+          "claim": "The failed-shipment message and in-place Reassign/Try again actions are source copy for an illustrative state.",
+          "offset": 34959,
+          "length": 1380,
+          "sha256": "74a78d2127cb12c45438e27d3848a3cc44755a75672ddecae1561cd56c6744e7",
+          "base64": "IyMgT3BlcmF0b3IgY29uc29sZTogZXZlcnkgc3RhdGUKCioqRW1wdHkuKiogU2F5IHdoYXQgaXMgbWlzc2luZyBhbmQgd2hhdCB0byBkbzog4oCcTm8gc2hpcG1lbnRzIG1hdGNoIHRoZXNlIGZpbHRlcnMuIENsZWFyIGEgZmlsdGVyIG9yIHdpZGVuIHRoZSBkYXRlcy7igJ0gT25lIGFjdGlvbi4KCioqTG9hZGluZy4qKiBLZWVwIHRoZSBsYXlvdXQ6IHNrZWxldG9uIHJvd3MgaW4gSGFpcmxpbmUsIG5vIHNwaW5uZXIgZm9yIHVuZGVyIGEgc2Vjb25kLCBubyBwdWxzaW5nLiBUaGUgY291bnQgc2F5cyDigJxMb2FkaW5n4oCdLgoKKipFcnJvci4qKiBOYW1lIHdoYXQgZmFpbGVkIGFuZCB0aGUgbmV4dCBzdGVwOiDigJxDb3VsZCBub3QgbG9hZCBzaGlwbWVudHMuIFRyeSBhZ2Fpbi7igJ0gVGhlIEZhaWxlZCBjaGlwIGlzIGZvciBzaGlwbWVudHMsIG5vdCBmb3Igc2NyZWVucy4KCioqTG9uZyBHZXJtYW4gbGFiZWwuKiogU2V0IGl0IGF0IDg4IHBlcmNlbnQgd2lkdGgsIG5ldmVyIHNocmluayB0aGUgc2l6ZS4g4oCcWnVzdGVsbGZlbnN0ZXIgw7xiZXJzY2hyaXR0ZW7igJ0gbXVzdCBmaXQgaXRzIGNvbHVtbjsgaWYgaXQgY2Fubm90LCBpdCB3cmFwcyB0byB0d28gbGluZXMuCgoqKk1hbnkuKiogUm93cyBzdGF5IDMyIHB4IGluIHRoZSBjb25zb2xlLiBQYWdpbmF0aW9uIHNob3dzIOKAnDEgdG8gNTAgb2YgMSwyODTigJ0gd2l0aCBQcmV2aW91cyBhbmQgTmV4dC4KCioqQm91bmRhcnkuKiogVGhlIGZpcnN0IGFuZCBsYXN0IHBhZ2UgZGlzYWJsZSB0aGVpciBidXR0b24gYW5kIGtlZXAgaXQgdmlzaWJsZS4gQSBjb2x1bW4gb2YgNTAwIHNlbGVjdGVkIHJvd3Mgc2F5cyDigJw1MDAgc2VsZWN0ZWQsIHRoZSBtb3N0IGF0IG9uY2XigJ0uCgoqKkJ1bGsuKiogVGhlIGJhciBuYW1lcyB0aGUgY291bnQgYW5kIHRoZSBhY3Rpb246IOKAnDEyIHNlbGVjdGVkLiBSZWFzc2lnbiwgUmV0cnksIEV4cG9ydOKAnS4gRG9uZTog4oCcMTIgc2hpcG1lbnRzIHJlYXNzaWduZWQu4oCdCgoqKkZhaWxlZCBzaGlwbWVudC4qKiBUaGUgcm93IG5hbWVzIHdoYXQgaGFwcGVuZWQgYW5kIG9mZmVycyB0aGUgdHdvIG5leHQgc3RlcHMgaW4gcGxhY2U6IOKAnFJlYXNzaWdu4oCdIGFuZCDigJxUcnkgYWdhaW7igJ0uIFRoZSBjaGlwIGlzIHRoZSB3b3JkIEZhaWxlZCBpbiByZWQ7IG9yYW5nZSBpcyBub3QgdXNlZC4KCkFuIGlsbHVzdHJhdGlvbiBvZiB0aGUgbGF5b3V0IHRoaXMgYm9vayByZWNvbW1lbmRzLCB1c2luZyBpbnZlbnRlZCBkYXRhOyBpdCBpcyBub3QgYSBzY3JlZW5zaG90IG9mIGEgd29ya2luZyBwcm9kdWN0LiBFdmVyeSBzdGF0ZSBrZWVwcyB0aGUgbGF5b3V0IG9mIHRoZSBib2FyZDogbm90aGluZyBqdW1wcyB3aGVuIGRhdGEgYXJyaXZlcy4K"
+        }
+      ]
+    },
+    {
+      "path": "brand.json",
+      "whole_file_sha256": "f072b9b7612b51e249905498d01fb01b098dbc1df87703eaf7fdfd845abb52ea",
+      "excerpts": [
+        {
+          "citation": "pointer: /version",
+          "claim": "The structured brand source identifies version 1.0.",
+          "offset": 210,
+          "length": 5,
+          "sha256": "a51162aeeb057ca4e3df627977231de20b581f0d0d418ca3a111bc0e408ac6cc",
+          "base64": "IjEuMCI="
+        },
+        {
+          "citation": "pointer: /voice/summary",
+          "claim": "The source describes a calm, plain dispatcher voice.",
+          "offset": 22857,
+          "length": 117,
+          "sha256": "9a392f3e6bbb5bc039a4db3f55741bcfc51dca710e4a63d5ef8fff2fcddafa18",
+          "base64": "IkEgY2FsbSBkaXNwYXRjaGVyIHdobyBoYXMgc2VlbiBldmVyeSBraW5kIG9mIGJhZCBkYXk6IGV4YWN0LCBwbGFpbiwgbmV2ZXIgZXhjaXRlZCwgYWx3YXlzIHJlYWR5IHdpdGggdGhlIG5leHQgc3RlcC4i"
+        },
+        {
+          "citation": "pointer: /voice/terms/0",
+          "claim": "The source definition and preferred name for a shipment.",
+          "offset": 26512,
+          "length": 194,
+          "sha256": "5d39150b44db036980eefd87533e8c90b3b68a5aa7bb88445b8421a6c8246881",
+          "base64": "ewogICAgICAgICJ0ZXJtIjogIlNoaXBtZW50IiwKICAgICAgICAibWVhbmluZyI6ICJPbmUgY29uc2lnbm1lbnQgbW92aW5nIGZyb20gYW4gb3JpZ2luIHRvIGEgZGVzdGluYXRpb24sIHdpdGggaXRzIG93biBpZCBzdWNoIGFzIGBMR1gtMDQxNy1ERWAuIiwKICAgICAgICAiYXZvaWQiOiAib3JkZXIsIHBhY2thZ2UsIGxvYWQiCiAgICAgIH0="
+        },
+        {
+          "citation": "pointer: /voice/terms/6",
+          "claim": "The source definition and preferred name for a failed delivery.",
+          "offset": 27515,
+          "length": 165,
+          "sha256": "b24d3cd5bed5555d4456cc6c54d046b2ed4a8fd2f3fdc8de95e419dae109346a",
+          "base64": "ewogICAgICAgICJ0ZXJtIjogIkZhaWxlZCIsCiAgICAgICAgIm1lYW5pbmciOiAiQSBkZWxpdmVyeSB3YXMgdHJpZWQgYW5kIGRpZCBub3QgY29tcGxldGUuIEl0IG5lZWRzIGEgZGVjaXNpb24uIiwKICAgICAgICAiYXZvaWQiOiAiZXhjZXB0aW9uLCB1bmRlbGl2ZXJhYmxlIgogICAgICB9"
+        },
+        {
+          "citation": "pointer: /color/status/2",
+          "claim": "The source names Failed as a status and specifies its dark and light status colors.",
+          "offset": 12980,
+          "length": 288,
+          "sha256": "8bbdc24c3135117d797a792c40bda5f851893ac9cb96ebb2d33583676099e179",
+          "base64": "ewogICAgICAgICJ3b3JkIjogIkZhaWxlZCIsCiAgICAgICAgInRleHRMaWdodCI6ICIjQTgyMzFDIiwKICAgICAgICAiY2hpcExpZ2h0IjogIiNGOERFREMiLAogICAgICAgICJ0ZXh0RGFyayI6ICIjRkY4QTgyIiwKICAgICAgICAiY2hpcERhcmsiOiAiIzNFMUIxOSIsCiAgICAgICAgIm1lYW5pbmciOiAiQSBkZWxpdmVyeSB3YXMgdHJpZWQgYW5kIGRpZCBub3QgY29tcGxldGUuIFNvbWVvbmUgbXVzdCBkZWNpZGUgd2hhdCBoYXBwZW5zIG5leHQuIiwKICAgICAgICAiY2xhc3MiOiAiYmFkIgogICAgICB9"
+        },
+        {
+          "citation": "pointer: /products/console",
+          "claim": "The source describes the operator console theme, density, table and navigation recommendations.",
+          "offset": 47355,
+          "length": 823,
+          "sha256": "568fb3b06ca64bb9d1f9d9475542d5ac174b97a87d8704cea2febf4fa053eac3",
+          "base64": "ewogICAgICAibmFtZSI6ICJPcGVyYXRvciBjb25zb2xlIiwKICAgICAgInNob3J0IjogImNvbnNvbGUiLAogICAgICAid2hvIjogIkRpc3BhdGNoZXJzIGFuZCBhZG1pbnMiLAogICAgICAidGhlbWUiOiAiRGFyay1jYXBhYmxlOyBsaWdodCBieSBkZWZhdWx0LCBkYXJrIGJ5IGNob2ljZSBhbmQgc3lzdGVtIHNldHRpbmcuIiwKICAgICAgImRlbnNpdHkiOiAiQ29tcGFjdDogMzIgcHggcm93cywgMTMgcHggZGVuc2UgdGV4dCwgdGlnaHQgNCBweCBjb3JuZXJzLiIsCiAgICAgICJsYXlvdXQiOiBbCiAgICAgICAgIkEgMTItY29sdW1uIGdyaWQsIGEgZml4ZWQgbGVmdCByYWlsIG9mIDIyMCBweCwgYSA0OCBweCB0b3AgYmFyIHdpdGggdGhlIHR5cGVtYXJrIGFuZCB0aGUgc2VhcmNoLiIsCiAgICAgICAgIlRoZSBkaXNwYXRjaCBib2FyZCBpcyBvbmUgdGFibGU6IFN0YXR1cywgU2hpcG1lbnQsIFJvdXRlLCBEcml2ZXIsIFdpbmRvdywgV2VpZ2h0LiBOdW1iZXJzIHJpZ2h0LWFsaWduZWQgaW4gdGFidWxhciBmaWd1cmVzOyBpZHMgaW4gUmVkIEhhdCBNb25vLiIsCiAgICAgICAgIlNlbGVjdGluZyByb3dzIHJhaXNlcyBvbmUgYnVsay1hY3Rpb24gYmFyIGF0IHRoZSBib3R0b206IHRoZSBjb3VudCwgdGhlbiBSZWFzc2lnbiwgUmV0cnkgYW5kIEV4cG9ydC4gSXQgZG9lcyBub3QgY292ZXIgdGhlIHJvd3MuIiwKICAgICAgICAiS2V5Ym9hcmQ6IEogYW5kIEsgbW92ZSBiZXR3ZWVuIHJvd3MsIFggc2VsZWN0cywgRW50ZXIgb3BlbnMsIFNoaWZ0IGFuZCBjbGljayBzZWxlY3QgYSByYW5nZSwgLyBvcGVucyB0aGUgc2VhcmNoLiIKICAgICAgXQogICAgfQ=="
+        },
+        {
+          "citation": "pointer: /logo/useByOthers/0",
+          "claim": "The brand book states this is a fictional demonstration brand.",
+          "offset": 9130,
+          "length": 156,
+          "sha256": "42ffcd80d6427afe8641fdc27969e72c472a553a4f3ebf0429a17d03276ea80a",
+          "base64": "IkxvZ2lzdGlmeSBpcyBhIGZpY3Rpb25hbCBicmFuZCBtYWRlIGFzIGEgZGVtb25zdHJhdGlvbi4gSXQgaGFzIG5vIHJlYWwgYnVzaW5lc3MgYmVoaW5kIGl0IGFuZCBubyBvbmUgZWxzZSBzaG91bGQgdXNlIGl0cyBtYXJrcyB0byByZWZlciB0byBhIHJlYWwgY29tcGFueS4i"
+        },
+        {
+          "citation": "pointer: /logo/useByOthers/1",
+          "claim": "The brand book states that the name is not cleared for real-world use.",
+          "offset": 9294,
+          "length": 61,
+          "sha256": "7f9ae9ef44df57fef0f044144288db12e2233fcb2d9eb7841f3e6a623383d4d0",
+          "base64": "IlRoZSBuYW1lIHdhcyBub3QgY2xlYXJlZCBmb3IgcmVhbC13b3JsZCB1c2U7IHNlZSBUbyByZXZpZXcuIg=="
+        }
+      ]
+    },
+    {
+      "path": "tokens.json",
+      "whole_file_sha256": "dd923fffd0ed104d664f3178d4beed106131c697d3c2601b54a7efdfa8b8a563",
+      "excerpts": [
+        {
+          "citation": "pointer: /color/dark/night",
+          "claim": "Dark console background token.",
+          "offset": 2049,
+          "length": 333,
+          "sha256": "2585f767e027f7e85a482de87e9535b661fe2f3f12244ce1bcb8f9ca7af1eca7",
+          "base64": "ewogICAgICAgICIkdHlwZSI6ICJjb2xvciIsCiAgICAgICAgIiR2YWx1ZSI6IHsKICAgICAgICAgICJjb2xvclNwYWNlIjogInNyZ2IiLAogICAgICAgICAgImNvbXBvbmVudHMiOiBbCiAgICAgICAgICAgIDAuMDU0OSwKICAgICAgICAgICAgMC4wNzA2LAogICAgICAgICAgICAwLjA5MDIKICAgICAgICAgIF0sCiAgICAgICAgICAiaGV4IjogIiMwRTEyMTciCiAgICAgICAgfSwKICAgICAgICAiJGRlc2NyaXB0aW9uIjogIlRoZSBkYXJrIGJhY2tncm91bmQ6IHRoZSBjb25zb2xlIGluIGEgZGltIGNvbnRyb2wgcm9vbS4gQWJvdXQgNjAlIG9mIGEgZGFyayBzY3JlZW4uIgogICAgICB9"
+        },
+        {
+          "citation": "pointer: /color/dark/panel",
+          "claim": "Dark panel token.",
+          "offset": 2399,
+          "length": 310,
+          "sha256": "456e1b516d504576e0de10b8ed0aee81a22a8f3dbc4e65fa3e64292639496afc",
+          "base64": "ewogICAgICAgICIkdHlwZSI6ICJjb2xvciIsCiAgICAgICAgIiR2YWx1ZSI6IHsKICAgICAgICAgICJjb2xvclNwYWNlIjogInNyZ2IiLAogICAgICAgICAgImNvbXBvbmVudHMiOiBbCiAgICAgICAgICAgIDAuMDkwMiwKICAgICAgICAgICAgMC4xMTM3LAogICAgICAgICAgICAwLjE0NTEKICAgICAgICAgIF0sCiAgICAgICAgICAiaGV4IjogIiMxNzFEMjUiCiAgICAgICAgfSwKICAgICAgICAiJGRlc2NyaXB0aW9uIjogIlJvd3MsIGNhcmRzIGFuZCBwYW5lbHMgb24gTmlnaHQuIEFib3V0IDI0JSBvZiBhIGRhcmsgc2NyZWVuLiIKICAgICAgfQ=="
+        },
+        {
+          "citation": "pointer: /color/dark/fog",
+          "claim": "Dark foreground text token.",
+          "offset": 2724,
+          "length": 312,
+          "sha256": "2430045d57f784a46ef5afdcd9b3a63bf8911ece7bbb7f2a7be4e8d5a757ac28",
+          "base64": "ewogICAgICAgICIkdHlwZSI6ICJjb2xvciIsCiAgICAgICAgIiR2YWx1ZSI6IHsKICAgICAgICAgICJjb2xvclNwYWNlIjogInNyZ2IiLAogICAgICAgICAgImNvbXBvbmVudHMiOiBbCiAgICAgICAgICAgIDAuODM1MywKICAgICAgICAgICAgMC44NTg4LAogICAgICAgICAgICAwLjg5MDIKICAgICAgICAgIF0sCiAgICAgICAgICAiaGV4IjogIiNENURCRTMiCiAgICAgICAgfSwKICAgICAgICAiJGRlc2NyaXB0aW9uIjogIlRleHQgb24gZGFyaywgYW5kIHRoZSBsb2dvIG9uIGRhcmsuIEFib3V0IDglIG9mIGEgZGFyayBzY3JlZW4uIgogICAgICB9"
+        },
+        {
+          "citation": "pointer: /color/dark/steel-light",
+          "claim": "Dark link and focus token.",
+          "offset": 3059,
+          "length": 335,
+          "sha256": "1fff56d9ead52df8e3c17a578f6ee77c6ccab50ea9f5e173d66c97d6290b049a",
+          "base64": "ewogICAgICAgICIkdHlwZSI6ICJjb2xvciIsCiAgICAgICAgIiR2YWx1ZSI6IHsKICAgICAgICAgICJjb2xvclNwYWNlIjogInNyZ2IiLAogICAgICAgICAgImNvbXBvbmVudHMiOiBbCiAgICAgICAgICAgIDAuNTYwOCwKICAgICAgICAgICAgMC43MDU5LAogICAgICAgICAgICAwLjkwOTgKICAgICAgICAgIF0sCiAgICAgICAgICAiaGV4IjogIiM4RkI0RTgiCiAgICAgICAgfSwKICAgICAgICAiJGRlc2NyaXB0aW9uIjogIkxpbmtzLCBmb2N1cyByaW5ncywgc2VsZWN0aW9uIGFuZCB0aGUgbWFpbiBidXR0b24gb24gZGFyay4gQWJvdXQgNCUgb2YgYSBkYXJrIHNjcmVlbi4iCiAgICAgIH0="
+        },
+        {
+          "citation": "pointer: /font/sans",
+          "claim": "Source sans-family stack; no font files are included.",
+          "offset": 24533,
+          "length": 357,
+          "sha256": "ecb0f47dd3bda6b87cb362bc0b9fd28eba12c0e8c6dd31ff4536a62975b77371",
+          "base64": "ewogICAgICAiJHR5cGUiOiAiZm9udEZhbWlseSIsCiAgICAgICIkdmFsdWUiOiBbCiAgICAgICAgIkFyY2hpdm8iLAogICAgICAgICItYXBwbGUtc3lzdGVtIiwKICAgICAgICAiU2Vnb2UgVUkiLAogICAgICAgICJzeXN0ZW0tdWkiLAogICAgICAgICJzYW5zLXNlcmlmIgogICAgICBdLAogICAgICAiJGRlc2NyaXB0aW9uIjogIlJlZ3VsYXIgKDQwMCksIE1lZGl1bSAoNTAwKSBhbmQgU2VtaUJvbGQgKDYwMCkuIENvbmRlbnNlZCB0byA4OCBwZXJjZW50IHdpZHRoIGZvciBkZW5zZSB0YWJsZXMuIERpc3BsYXk6IEJvbGQgKDcwMCkgYXQgbm9ybWFsIHdpZHRoIGZvciB0aGUgdHlwZW1hcmsgYW5kIGhlYWRsaW5lcy4iCiAgICB9"
+        },
+        {
+          "citation": "pointer: /font/mono",
+          "claim": "Source monospace stack for IDs; no font files are included.",
+          "offset": 24904,
+          "length": 226,
+          "sha256": "7e047de1bf180eaf3a8fce6b72ad12da3fa646458cf86cfdb2e817e112000c93",
+          "base64": "ewogICAgICAiJHR5cGUiOiAiZm9udEZhbWlseSIsCiAgICAgICIkdmFsdWUiOiBbCiAgICAgICAgIlJlZCBIYXQgTW9ubyIsCiAgICAgICAgInVpLW1vbm9zcGFjZSIsCiAgICAgICAgIlNGIE1vbm8iLAogICAgICAgICJDb25zb2xhcyIsCiAgICAgICAgIm1vbm9zcGFjZSIKICAgICAgXSwKICAgICAgIiRkZXNjcmlwdGlvbiI6ICJSZWd1bGFyICg0MDApIGFuZCBNZWRpdW0gKDUwMCkuIgogICAgfQ=="
+        },
+        {
+          "citation": "pointer: /typography/dense-text",
+          "claim": "Dense console text token.",
+          "offset": 26541,
+          "length": 379,
+          "sha256": "a19060fdbabaf0615f4a977b2475eb35eff7093d299b3a1ba77c07e22bc001fc",
+          "base64": "ewogICAgICAiJHR5cGUiOiAidHlwb2dyYXBoeSIsCiAgICAgICIkdmFsdWUiOiB7CiAgICAgICAgImZvbnRGYW1pbHkiOiBbCiAgICAgICAgICAiQXJjaGl2byIsCiAgICAgICAgICAic3lzdGVtLXVpIiwKICAgICAgICAgICJzYW5zLXNlcmlmIgogICAgICAgIF0sCiAgICAgICAgImZvbnRTaXplIjogewogICAgICAgICAgInZhbHVlIjogMTMsCiAgICAgICAgICAidW5pdCI6ICJweCIKICAgICAgICB9LAogICAgICAgICJmb250V2VpZ2h0IjogNDAwLAogICAgICAgICJsZXR0ZXJTcGFjaW5nIjogewogICAgICAgICAgInZhbHVlIjogMCwKICAgICAgICAgICJ1bml0IjogImVtIgogICAgICAgIH0sCiAgICAgICAgImxpbmVIZWlnaHQiOiAxLjQKICAgICAgfQogICAgfQ=="
+        },
+        {
+          "citation": "pointer: /typography/ids-and-codes",
+          "claim": "Shipment ID typography token.",
+          "offset": 27340,
+          "length": 386,
+          "sha256": "041a74bc87e5b95367a356fdac2aa1c19c4b4f67aebe11403444dd981acd620e",
+          "base64": "ewogICAgICAiJHR5cGUiOiAidHlwb2dyYXBoeSIsCiAgICAgICIkdmFsdWUiOiB7CiAgICAgICAgImZvbnRGYW1pbHkiOiBbCiAgICAgICAgICAiUmVkIEhhdCBNb25vIiwKICAgICAgICAgICJ1aS1tb25vc3BhY2UiLAogICAgICAgICAgIm1vbm9zcGFjZSIKICAgICAgICBdLAogICAgICAgICJmb250U2l6ZSI6IHsKICAgICAgICAgICJ2YWx1ZSI6IDEzLAogICAgICAgICAgInVuaXQiOiAicHgiCiAgICAgICAgfSwKICAgICAgICAiZm9udFdlaWdodCI6IDQwMCwKICAgICAgICAibGV0dGVyU3BhY2luZyI6IHsKICAgICAgICAgICJ2YWx1ZSI6IDAsCiAgICAgICAgICAidW5pdCI6ICJlbSIKICAgICAgICB9LAogICAgICAgICJsaW5lSGVpZ2h0IjogMS41CiAgICAgIH0KICAgIH0="
+        }
+      ]
+    },
+    {
+      "path": "records/logistify/logistify-records.json",
+      "whole_file_sha256": "645116e0c4881d6b552085febc593224dc31d1abfa17bbdc04eade3357840707",
+      "excerpts": [
+        {
+          "citation": "pointer: /jobs/0",
+          "claim": "The source dispatcher job statement.",
+          "offset": 9610,
+          "length": 96,
+          "sha256": "c4e65e99921b8413be10e13cba9ad82ce31aa608d91a18ec7bcf64442fca9877",
+          "base64": "eyJpZCI6ImpvYi1kaXNwYXRjaGVyIiwidGV4dCI6IlBsYW4gdGhlIGRheSwgc2VlIGV2ZXJ5IHNoaXBtZW50IGFuZCBmaXggd2hhdCB3ZW50IHdyb25nLCBmYXN0LiJ9"
+        },
+        {
+          "citation": "pointer: /personas/0",
+          "claim": "The source dispatcher persona.",
+          "offset": 9325,
+          "length": 90,
+          "sha256": "fd616c4b7b12db03e6057f714b5b7901a10f8f42fe4ca281771580532f34661b",
+          "base64": "eyJpZCI6InBlcnNvbmEtZGlzcGF0Y2hlciIsIndobyI6IkRpc3BhdGNoZXJzIiwidXNlcklkIjoidXNyLTAxIiwiam9iSWQiOiJqb2ItZGlzcGF0Y2hlciJ9"
+        },
+        {
+          "citation": "pointer: /cases/0",
+          "claim": "The populated operator board case; it names five source shipment IDs, but does not identify the two selected rows.",
+          "offset": 16698,
+          "length": 760,
+          "sha256": "a770f68cd284ce7edd5ffdc271a0512d57a7bb51f97209e7af761bd6dc1d8b65",
+          "base64": "eyJpZCI6ImNhc2UtY29uc29sZS1ib2FyZCIsInN1cmZhY2UiOiJjb25zb2xlIiwidGl0bGUiOiJUaGUgZGlzcGF0Y2ggYm9hcmQiLCJkZXNjcmlwdGlvbiI6IkZpdmUgc2hpcG1lbnRzIG9uIG9uZSBhbGlnbmVkIGJvYXJkIGluIGxpZ2h0LCB0d28gcm93cyBzZWxlY3RlZCBhbmQgdGhlIGJ1bGsgYmFyIHJhaXNlZC4iLCJhY3RvciI6eyJraW5kIjoidXNlciIsImlkIjoidXNyLTAxIn0sInBlcnNvbmFJZCI6InBlcnNvbmEtZGlzcGF0Y2hlciIsInJlY29yZHMiOnsic2hpcG1lbnRJZHMiOlsiTEdYLTA0MTctREUiLCJMR1gtMDQyMS1ERSIsIkxHWC0wMzk4LUZSIiwiTEdYLTAzNzctREUiLCJMR1gtMDQzMC1GUiJdLCJzdG9wSWRzIjpbXSwicGFsbGV0SWRzIjpbXX0sImxhbmd1YWdlIjoiZW4iLCJkaXJlY3Rpb24iOiJsdHIiLCJzY2hlbWUiOiJsaWdodCIsInZpZXdwb3J0Ijp7Im5hbWUiOiJkZXNrdG9wIiwid2lkdGgiOjE0NDAsImhlaWdodCI6OTAwLCJ0ZXh0Wm9vbSI6MX0sInNpbXVsYXRpb24iOnsibmV0d29yayI6Im9ubGluZSIsImxvYWRpbmciOmZhbHNlLCJyZWR1Y2VkTW90aW9uIjpmYWxzZSwia2V5Ym9hcmQiOmZhbHNlLCJub3ciOiIyMDI2LTExLTEwVDE0OjIwOjAwKzAxOjAwIiwiem9uZSI6IkV1cm9wZS9CZXJsaW4ifSwiY2hhbmdpbmciOnsibGlzdFN0YXRlIjoibG9hZGVkIn0sImNvcHkiOltdLCJpbGx1c3RyYXRpb24iOnsicGFnZSI6ImNvbnNvbGUiLCJsYWJlbCI6IlRoZSBkaXNwYXRjaCBib2FyZCBpbiBsaWdodCJ9fQ=="
+        },
+        {
+          "citation": "pointer: /cases/9",
+          "claim": "The failed-shipment operator case and its cited source copy keys.",
+          "offset": 23199,
+          "length": 760,
+          "sha256": "4529b33e8a7956c6296bd780c17b26c14cf60ac54b85ad9d674f40ca69ce8cd9",
+          "base64": "eyJpZCI6ImNhc2UtY29uc29sZS1mYWlsZWQtc2hpcG1lbnQiLCJzdXJmYWNlIjoiY29uc29sZSIsInRpdGxlIjoiQSBmYWlsZWQgc2hpcG1lbnQiLCJkZXNjcmlwdGlvbiI6IlRoZSByb3cgbmFtZXMgd2hhdCBoYXBwZW5lZCBhbmQgb2ZmZXJzIFJlYXNzaWduIGFuZCBUcnkgYWdhaW4gaW4gcGxhY2UuIiwiYWN0b3IiOnsia2luZCI6InVzZXIiLCJpZCI6InVzci0wMSJ9LCJwZXJzb25hSWQiOiJwZXJzb25hLWRpc3BhdGNoZXIiLCJyZWNvcmRzIjp7InNoaXBtZW50SWRzIjpbIkxHWC0wNDE3LURFIl0sInN0b3BJZHMiOltdLCJwYWxsZXRJZHMiOltdfSwibGFuZ3VhZ2UiOiJlbiIsImRpcmVjdGlvbiI6Imx0ciIsInNjaGVtZSI6ImRhcmsiLCJ2aWV3cG9ydCI6eyJuYW1lIjoiZGVza3RvcCIsIndpZHRoIjoxNDQwLCJoZWlnaHQiOjkwMCwidGV4dFpvb20iOjF9LCJzaW11bGF0aW9uIjp7Im5ldHdvcmsiOiJvbmxpbmUiLCJsb2FkaW5nIjpmYWxzZSwicmVkdWNlZE1vdGlvbiI6ZmFsc2UsImtleWJvYXJkIjpmYWxzZSwibm93IjoiMjAyNi0xMS0xMFQxNDoyMDowMCswMTowMCIsInpvbmUiOiJFdXJvcGUvQmVybGluIn0sImNoYW5naW5nIjp7Imxpc3RTdGF0ZSI6ImxvYWRlZCJ9LCJjb3B5IjpbImNvbnNvbGUtZmFpbGVkLW5vdGUiLCJjb25zb2xlLWZhaWxlZC1yZWFzc2lnbiIsImNvbnNvbGUtZmFpbGVkLXJldHJ5Il0sImlsbHVzdHJhdGlvbiI6eyJwYWdlIjoiY29uc29sZS1zdGF0ZXMiLCJsYWJlbCI6IkZhaWxlZCBzaGlwbWVudCJ9fQ=="
+        },
+        {
+          "citation": "pointer: /cases/7",
+          "claim": "The bulk-action case; it lists two shipment IDs while its copy and flow state say 12 are selected.",
+          "offset": 21698,
+          "length": 763,
+          "sha256": "0f3b80facffd2b60ccce074bbc2c2ee36d55fa41ba232b28bd0385688a39a215",
+          "base64": "eyJpZCI6ImNhc2UtY29uc29sZS1idWxrIiwic3VyZmFjZSI6ImNvbnNvbGUiLCJ0aXRsZSI6IlR3ZWx2ZSBzZWxlY3RlZCIsImRlc2NyaXB0aW9uIjoiVGhlIGJ1bGsgYmFyIG5hbWVzIHRoZSBjb3VudCBhbmQgb2ZmZXJzIFJlYXNzaWduLCBSZXRyeSBhbmQgRXhwb3J0LiIsImFjdG9yIjp7ImtpbmQiOiJ1c2VyIiwiaWQiOiJ1c3ItMDEifSwicGVyc29uYUlkIjoicGVyc29uYS1kaXNwYXRjaGVyIiwicmVjb3JkcyI6eyJzaGlwbWVudElkcyI6WyJMR1gtMDQxNy1ERSIsIkxHWC0wMzk4LUZSIl0sInN0b3BJZHMiOltdLCJwYWxsZXRJZHMiOltdfSwibGFuZ3VhZ2UiOiJlbiIsImRpcmVjdGlvbiI6Imx0ciIsInNjaGVtZSI6ImRhcmsiLCJ2aWV3cG9ydCI6eyJuYW1lIjoiZGVza3RvcCIsIndpZHRoIjoxNDQwLCJoZWlnaHQiOjkwMCwidGV4dFpvb20iOjF9LCJzaW11bGF0aW9uIjp7Im5ldHdvcmsiOiJvbmxpbmUiLCJsb2FkaW5nIjpmYWxzZSwicmVkdWNlZE1vdGlvbiI6ZmFsc2UsImtleWJvYXJkIjpmYWxzZSwibm93IjoiMjAyNi0xMS0xMFQxNDoyMDowMCswMTowMCIsInpvbmUiOiJFdXJvcGUvQmVybGluIn0sImNoYW5naW5nIjp7Imxpc3RTdGF0ZSI6ImxvYWRlZCJ9LCJjb3B5IjpbImNvbnNvbGUtYnVsay1jb3VudCIsImNvbnNvbGUtYnVsay1yZWFzc2lnbiIsImNvbnNvbGUtYnVsay1yZXRyeSIsImNvbnNvbGUtYnVsay1leHBvcnQiXSwiaWxsdXN0cmF0aW9uIjp7InBhZ2UiOiJjb25zb2xlLXN0YXRlcyIsImxhYmVsIjoiQnVsayJ9fQ=="
+        },
+        {
+          "citation": "pointer: /cases/8",
+          "claim": "The completion case; it lists the focal shipment ID but does not name the replacement driver.",
+          "offset": 22467,
+          "length": 726,
+          "sha256": "39e23bbbefc36b7353882539aeb73f9d8b28212a6fdb8c1b634b3698148b5b47",
+          "base64": "eyJpZCI6ImNhc2UtY29uc29sZS1idWxrLWRvbmUiLCJzdXJmYWNlIjoiY29uc29sZSIsInRpdGxlIjoiVHdlbHZlIHJlYXNzaWduZWQiLCJkZXNjcmlwdGlvbiI6IkFmdGVyIFJlYXNzaWduIHRoZSBiYXIgcmVwb3J0cyB0aGUgcmVzdWx0OiDigJwxMiBzaGlwbWVudHMgcmVhc3NpZ25lZC7igJ0iLCJhY3RvciI6eyJraW5kIjoidXNlciIsImlkIjoidXNyLTAxIn0sInBlcnNvbmFJZCI6InBlcnNvbmEtZGlzcGF0Y2hlciIsInJlY29yZHMiOnsic2hpcG1lbnRJZHMiOlsiTEdYLTA0MTctREUiXSwic3RvcElkcyI6W10sInBhbGxldElkcyI6W119LCJsYW5ndWFnZSI6ImVuIiwiZGlyZWN0aW9uIjoibHRyIiwic2NoZW1lIjoiZGFyayIsInZpZXdwb3J0Ijp7Im5hbWUiOiJkZXNrdG9wIiwid2lkdGgiOjE0NDAsImhlaWdodCI6OTAwLCJ0ZXh0Wm9vbSI6MX0sInNpbXVsYXRpb24iOnsibmV0d29yayI6Im9ubGluZSIsImxvYWRpbmciOmZhbHNlLCJyZWR1Y2VkTW90aW9uIjpmYWxzZSwia2V5Ym9hcmQiOmZhbHNlLCJub3ciOiIyMDI2LTExLTEwVDE0OjIwOjAwKzAxOjAwIiwiem9uZSI6IkV1cm9wZS9CZXJsaW4ifSwiY2hhbmdpbmciOnsibGlzdFN0YXRlIjoibG9hZGVkIn0sImNvcHkiOltdLCJpbGx1c3RyYXRpb24iOm51bGwsIm5vdERyYXduIjoiVGhlIGJvb2sgZ2l2ZXMgdGhlIHNlbnRlbmNlIGluIGl0cyBzdGF0ZSBydWxlIGJ1dCBkcmF3cyBubyBwaWN0dXJlIG9mIGl0LiJ9"
+        },
+        {
+          "citation": "pointer: /flows/1",
+          "claim": "The source journey from a failed driver stop through the dispatcher failure, bulk selection, and reassignment outcome; the Book uses only the dispatcher states.",
+          "offset": 44121,
+          "length": 3263,
+          "sha256": "44d8e2b41eb87d094ba4b99df0238e71f899bb116fae92e119f279f89e3240cf",
+          "base64": "ewogICAgICAiaWQiOiAiZmxvdy1kcml2ZXItcmVwb3J0cy1mYWlsZWQtc3RvcCIsCiAgICAgICJ0aXRsZSI6ICJBIGRyaXZlciByZXBvcnRzIGEgc3RvcCB0aGF0IGZhaWxlZCwgYW5kIHRoZSBkaXNwYXRjaGVyIHJlY292ZXJzIGl0IiwKICAgICAgInBlcnNvbmFJZCI6ICJwZXJzb25hLWRyaXZlciIsCiAgICAgICJzdW1tYXJ5IjogIkF0IDE0OjIwIG5vYm9keSBpcyBhdCB0aGUgZG9jay4gVGhlIGRyaXZlciByZXBvcnRzIGl0OyB0aGUgZGlzcGF0Y2hlciBzZWVzIEZhaWxlZCBhbmQgcmVhc3NpZ25zIHRoZSBmYWlsZWQgc2hpcG1lbnRzIGluIGJ1bGsuIFRoZSBzYW1wbGUgZGF0YSBvZiB0aGUgYm9vayAoTEdYLTA0MTctREUgRmFpbGVkKSBpcyB0aGUgc3RhdGUgYWZ0ZXIgc3RlcCAyLiIsCiAgICAgICJzaGlwbWVudElkIjogIkxHWC0wNDE3LURFIiwKICAgICAgInN0YXJ0c0Zyb20iOiAic3RwLTAxMDcgYXJyaXZlZCBhdCAxNDowMiwgc3RhdHVzIEluIHRyYW5zaXQiLAogICAgICAic3RhcnRPdmVycmlkZSI6IHsKICAgICAgICAic2hpcG1lbnRJZCI6ICJMR1gtMDQxNy1ERSIsCiAgICAgICAgInN0YXR1cyI6ICJJbiB0cmFuc2l0IiwKICAgICAgICAic3RhdHVzU2luY2UiOiAiMjAyNi0xMS0xMFQwODoxMjowMCswMTowMCIsCiAgICAgICAgImlnbm9yZUV2ZW50cyI6IFsiZXZ0LTAwMDMiXSwKICAgICAgICAibm90ZSI6ICJUaGUgYmFzZSByZWNvcmRzIGhvbGQgdGhlIGZhaWxlZCBvdXRjb21lIG9mIHRoaXMgc3RvcCAoTEdYLTA0MTctREUgaXMgRmFpbGVkIHNpbmNlIDE0OjIwLCBldmVudCBldnQtMDAwMykuIFRoaXMgZmxvdyBzdGFydHMgYmVmb3JlIGl0OiB0aGUgc2hpcG1lbnQgaXMgSW4gdHJhbnNpdCBzaW5jZSBpdCBsZWZ0IHRoZSBkZXBvdCBhdCAwODoxMiAoZXZ0LTAwMDEpLCB0aGUgZHJpdmVyIGFycml2ZWQgYXQgMTQ6MDIgKGV2dC0wMDAyKSBhbmQgdGhlIGZhaWxlZCBldmVudCBoYXMgbm90IGhhcHBlbmVkIHlldC4iCiAgICAgIH0sCiAgICAgICJmaW5hbFN0YXR1cyI6ICJBc3NpZ25lZCIsCiAgICAgICJzdGVwcyI6IFsKICAgICAgICB7CiAgICAgICAgICAib3JkZXIiOiAxLAogICAgICAgICAgImNhc2VJZCI6ICJjYXNlLWRyaXZlci1uZXh0LXN0b3AiLAogICAgICAgICAgImFjdGlvbiI6IHsKICAgICAgICAgICAgImtpbmQiOiAicHJlc3MiLAogICAgICAgICAgICAibGFiZWwiOiAiUmVwb3J0IGEgcHJvYmxlbSIKICAgICAgICAgIH0sCiAgICAgICAgICAiZXhwZWN0ZWQiOiAiVGhlIHNjcmVlbiBhc2tzIHdoYXQgaGFwcGVuZWQgYW5kIG9mZmVycyBmb3VyIG9uZS10YXAgcmVhc29ucy4iLAogICAgICAgICAgImNoYW5naW5nIjogewogICAgICAgICAgICAic2hpcG1lbnRTdGF0dXMiOiAiSW4gdHJhbnNpdCIsCiAgICAgICAgICAgICJzdG9wU2VxIjogNwogICAgICAgICAgfSwKICAgICAgICAgICJvdXRjb21lIjoge30KICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJvcmRlciI6IDIsCiAgICAgICAgICAiY2FzZUlkIjogImNhc2UtZHJpdmVyLWZhaWxlZC1zdG9wIiwKICAgICAgICAgICJhY3Rpb24iOiB7CiAgICAgICAgICAgICJraW5kIjogInByZXNzIiwKICAgICAgICAgICAgImxhYmVsIjogIk5vYm9keSB3YXMgdGhlcmUiCiAgICAgICAgICB9LAogICAgICAgICAgImV4cGVjdGVkIjogIlRoZSBkaXNwYXRjaGVyIGlzIHRvbGQ7IExHWC0wNDE3LURFIGJlY29tZXMgRmFpbGVkIGF0IDE0OjIwLiIsCiAgICAgICAgICAiY2hhbmdpbmciOiB7CiAgICAgICAgICAgICJzaGlwbWVudFN0YXR1cyI6ICJGYWlsZWQiLAogICAgICAgICAgICAic3RvcFNlcSI6IDcsCiAgICAgICAgICAgICJmYWlsdXJlUmVhc29uIjogIm5vYm9keS13YXMtdGhlcmUiCiAgICAgICAgICB9LAogICAgICAgICAgIm91dGNvbWUiOiB7InNoaXBtZW50U3RhdHVzIjogIkZhaWxlZCIsICJzdG9wU2VxIjogN30KICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJvcmRlciI6IDMsCiAgICAgICAgICAiY2FzZUlkIjogImNhc2UtY29uc29sZS1mYWlsZWQtc2hpcG1lbnQiLAogICAgICAgICAgImFjdGlvbiI6IHsKICAgICAgICAgICAgImtpbmQiOiAicHJlc3MiLAogICAgICAgICAgICAibGFiZWwiOiAiUmVhc3NpZ24iCiAgICAgICAgICB9LAogICAgICAgICAgImV4cGVjdGVkIjogIlRoZSBkaXNwYXRjaGVyIGNob29zZXMgUmVhc3NpZ24gb24gdGhlIGZhaWxlZCByb3c7IHdpdGggb3RoZXIgZmFpbGVkIHJvd3Mgc2VsZWN0ZWQgdGhlIGJ1bGsgYmFyIHJpc2VzLiIsCiAgICAgICAgICAiY2hhbmdpbmciOiB7CiAgICAgICAgICAgICJzaGlwbWVudFN0YXR1cyI6ICJGYWlsZWQiCiAgICAgICAgICB9LAogICAgICAgICAgIm91dGNvbWUiOiB7InNlbGVjdGVkQ291bnQiOiAxMn0KICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJvcmRlciI6IDQsCiAgICAgICAgICAiY2FzZUlkIjogImNhc2UtY29uc29sZS1idWxrIiwKICAgICAgICAgICJhY3Rpb24iOiB7CiAgICAgICAgICAgICJraW5kIjogInByZXNzIiwKICAgICAgICAgICAgImxhYmVsIjogIlJlYXNzaWduIgogICAgICAgICAgfSwKICAgICAgICAgICJleHBlY3RlZCI6ICJUaGUgYmFyIG9mZmVycyB0aGUgYWN0aW9uIGZvciBhbGwgMTIgc2VsZWN0ZWQgc2hpcG1lbnRzIGFuZCByZXBvcnRzIHRoZSByZXN1bHQuIiwKICAgICAgICAgICJjaGFuZ2luZyI6IHsKICAgICAgICAgICAgInNoaXBtZW50U3RhdHVzIjogIkZhaWxlZCIsCiAgICAgICAgICAgICJzZWxlY3RlZENvdW50IjogMTIKICAgICAgICAgIH0sCiAgICAgICAgICAib3V0Y29tZSI6IHsic2hpcG1lbnRTdGF0dXMiOiAiQXNzaWduZWQiLCAicmVhc3NpZ25lZENvdW50IjogMTJ9CiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAib3JkZXIiOiA1LAogICAgICAgICAgImNhc2VJZCI6ICJjYXNlLWNvbnNvbGUtYnVsay1kb25lIiwKICAgICAgICAgICJhY3Rpb24iOiB7CiAgICAgICAgICAgICJraW5kIjogInJlYWQiCiAgICAgICAgICB9LAogICAgICAgICAgImV4cGVjdGVkIjogIlRoZSBiYXIgcmVhZHMg4oCcMTIgc2hpcG1lbnRzIHJlYXNzaWduZWQu4oCdIGFuZCBMR1gtMDQxNy1ERSBoYXMgYSBuZXcgZHJpdmVyLiIsCiAgICAgICAgICAiY2hhbmdpbmciOiB7CiAgICAgICAgICAgICJzaGlwbWVudFN0YXR1cyI6ICJBc3NpZ25lZCIsCiAgICAgICAgICAgICJyZWFzc2lnbmVkQ291bnQiOiAxMgogICAgICAgICAgfSwKICAgICAgICAgICJvdXRjb21lIjoge30KICAgICAgICB9CiAgICAgIF0KICAgIH0="
+        },
+        {
+          "citation": "pointer: /shipments/0",
+          "claim": "The focal failed shipment record used by the operator states.",
+          "offset": 3653,
+          "length": 415,
+          "sha256": "caf951bbdf46e8dc25b71340010c1dc9c1952917130ae2302fda6609a989d79e",
+          "base64": "eyJpZCI6IkxHWC0wNDE3LURFIiwic2hpcHBlcklkIjoic2hwLTAxIiwicm91dGVUZXh0IjoiSGFtYnVyZyB0byBMeW9uIiwiZnJvbURlcG90SWQiOiJkZXAtaGFtYnVyZyIsInRvQ2l0eSI6Ikx5b24iLCJkcml2ZXJJZCI6ImRydi0wMSIsIndpbmRvdyI6eyJzdGFydCI6IjIwMjYtMTEtMTBUMTQ6MDA6MDArMDE6MDAiLCJlbmQiOiIyMDI2LTExLTEwVDE2OjAwOjAwKzAxOjAwIn0sImRlbGl2ZXJ5V2luZG93Ijp7InN0YXJ0IjoiMjAyNi0xMS0xMFQxNDowMDowMCswMTowMCIsImVuZCI6IjIwMjYtMTEtMTBUMTY6MDA6MDArMDE6MDAifSwid2VpZ2h0S2ciOjQxMiwicGFsbGV0cyI6Niwic3RhdHVzIjoiRmFpbGVkIiwic3RhdHVzU2luY2UiOiIyMDI2LTExLTEwVDE0OjIwOjAwKzAxOjAwIiwicmVjaXBpZW50SWQiOiJyY3AtMDEifQ=="
+        },
+        {
+          "citation": "pointer: /shipments/1",
+          "claim": "A separate in-transit shipment record for an ordinary board example.",
+          "offset": 4074,
+          "length": 399,
+          "sha256": "cd66099b1e6092d7d52941507bab726ba28c73a91ef075e4fafc73c36090aa45",
+          "base64": "eyJpZCI6IkxHWC0wNDIxLURFIiwic2hpcHBlcklkIjoic2hwLTAxIiwicm91dGVUZXh0IjoiSGFtYnVyZyB0byBEaWpvbiIsImZyb21EZXBvdElkIjoiZGVwLWhhbWJ1cmciLCJ0b0NpdHkiOiJEaWpvbiIsImRyaXZlcklkIjoiZHJ2LTAyIiwid2luZG93Ijp7InN0YXJ0IjoiMjAyNi0xMS0xMFQxNTowMDowMCswMTowMCIsImVuZCI6IjIwMjYtMTEtMTBUMTc6MDA6MDArMDE6MDAifSwiZGVsaXZlcnlXaW5kb3ciOnsic3RhcnQiOiIyMDI2LTExLTEyVDE0OjAwOjAwKzAxOjAwIiwiZW5kIjoiMjAyNi0xMS0xMlQxNjowMDowMCswMTowMCJ9LCJ3ZWlnaHRLZyI6MTI4MCwicGFsbGV0cyI6NCwic3RhdHVzIjoiSW4gdHJhbnNpdCIsInN0YXR1c1NpbmNlIjoiMjAyNi0xMS0xMFQxNDowNTowMCswMTowMCJ9"
+        },
+        {
+          "citation": "pointer: /events/2",
+          "claim": "The failed delivery event and source reason for the focal shipment.",
+          "offset": 8594,
+          "length": 141,
+          "sha256": "55498a014bfdc10bf82966dc8cf1788c461581ac214cb03a1b42cecceeefaa5a",
+          "base64": "eyJpZCI6ImV2dC0wMDAzIiwic2hpcG1lbnRJZCI6IkxHWC0wNDE3LURFIiwiYXQiOiIyMDI2LTExLTEwVDE0OjIwOjAwKzAxOjAwIiwia2luZCI6ImZhaWxlZCIsInN0b3BJZCI6InN0cC0wMTA3IiwicmVhc29uIjoibm9ib2R5LXdhcy10aGVyZSJ9"
+        },
+        {
+          "citation": "pointer: /drivers/0",
+          "claim": "The source driver identity for the focal shipment's pre-reassignment state.",
+          "offset": 2746,
+          "length": 61,
+          "sha256": "5fa88696628c18cbaf7c6de535ff46eb99bd3480e526862431fc0f29966e4223",
+          "base64": "eyJpZCI6ImRydi0wMSIsIm5hbWUiOiJNLiBLZWxsZXIiLCJwZXJzb25hIjoicGVyc29uYS1kcml2ZXIifQ=="
+        },
+        {
+          "citation": "pointer: /drivers/1",
+          "claim": "The source driver identity for the in-transit board example.",
+          "offset": 2813,
+          "length": 61,
+          "sha256": "daf1b33063bbfe5dae1e805c0a08c5f9b5d7e104c8441b8d7d5b099b94d64454",
+          "base64": "eyJpZCI6ImRydi0wMiIsIm5hbWUiOiJTLiBCcmFuZHQiLCJwZXJzb25hIjoicGVyc29uYS1kcml2ZXIifQ=="
+        },
+        {
+          "citation": "pointer: /copy/console-failed-note",
+          "claim": "The source failed-shipment explanation.",
+          "offset": 11666,
+          "length": 70,
+          "sha256": "1bba076a4c06ad9d4bbf20c8520219b404712123ca9d2baf59636247986394ce",
+          "base64": "eyJwYWdlIjoiY29uc29sZS1zdGF0ZXMiLCJsYW5nIjoiZW4iLCJ0ZXh0IjoiTm9ib2R5IHdhcyBhdCB0aGUgZG9jay4ifQ=="
+        },
+        {
+          "citation": "pointer: /copy/console-failed-reassign",
+          "claim": "The source failed-shipment reassignment action label.",
+          "offset": 11769,
+          "length": 55,
+          "sha256": "ac1005c428b55399145a8eb42eeb8f74d59e0e4534ed56efd667f9ffee1635b0",
+          "base64": "eyJwYWdlIjoiY29uc29sZS1zdGF0ZXMiLCJsYW5nIjoiZW4iLCJ0ZXh0IjoiUmVhc3NpZ24ifQ=="
+        },
+        {
+          "citation": "pointer: /copy/console-bulk-count",
+          "claim": "The source bulk-selection count.",
+          "offset": 11331,
+          "length": 58,
+          "sha256": "a323de44ebac9af18e7afccc5ea188765f825e226a42269fa2fa0a797c19514f",
+          "base64": "eyJwYWdlIjoiY29uc29sZS1zdGF0ZXMiLCJsYW5nIjoiZW4iLCJ0ZXh0IjoiMTIgc2VsZWN0ZWQifQ=="
+        },
+        {
+          "citation": "pointer: /copy/console-bulk-reassign",
+          "claim": "The source bulk reassignment action label.",
+          "offset": 11420,
+          "length": 55,
+          "sha256": "ac1005c428b55399145a8eb42eeb8f74d59e0e4534ed56efd667f9ffee1635b0",
+          "base64": "eyJwYWdlIjoiY29uc29sZS1zdGF0ZXMiLCJsYW5nIjoiZW4iLCJ0ZXh0IjoiUmVhc3NpZ24ifQ=="
+        },
+        {
+          "citation": "pointer: /copy/console-failed-retry",
+          "claim": "The source failed-shipment retry action label.",
+          "offset": 10556,
+          "length": 56,
+          "sha256": "f9ab174280de550d85f6e59cb08501342af11b6b59f01da8f32f046046738e7e",
+          "base64": "eyJwYWdlIjoiY29uc29sZS1zdGF0ZXMiLCJsYW5nIjoiZW4iLCJ0ZXh0IjoiVHJ5IGFnYWluIn0="
+        }
+      ]
+    }
+  ]
+}
