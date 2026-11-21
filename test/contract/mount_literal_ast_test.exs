@@ -40,7 +40,7 @@ defmodule Fablebook.Contract.MountLiteralASTTest do
     dynamic_alias =
       {:__aliases__, [line: @caller_line], [{:component, [line: @caller_line], nil}, :Book]}
 
-    computed = quote(do: Module.concat(BookAlias, :Child))
+    computed = quote(do: Enum.at([BookAlias], 0))
     local_macro = quote(do: local_probe_book())
     remote_macro = quote(do: Probe.remote_probe_book())
 
