@@ -1,6 +1,6 @@
 # CI and release efficiency
 
-Owner direction: INT-20261029-08, INT-20261029-09, and INT-20261118-01. This is the standing home for CI/CD timing reviews, measured opportunities, and resolved performance decisions. Review it after each completed CI or release/CD run; use measured history, preserve quality, and do not trigger a run just to produce a receipt.
+Owner direction: INT-20261029-08, INT-20261029-09, INT-20261118-01, and [INT-20261120-13](intent/sources/2026-11-20-13-automated-verification-and-resource-hygiene.md). This is the standing home for CI/CD timing reviews, measured opportunities, and resolved performance decisions. Review it after each completed CI or release/CD run; use measured history, preserve quality, and do not trigger a run just to produce a receipt.
 
 ## Operating policy
 

@@ -12,6 +12,8 @@ Before proposing a milestone, reconcile:
 - applicable seeds, brand intakes, source custody, and unresolved name/asset rights limits;
 - the rolling product roadmap and what has actually shipped.
 
+Use the last owner-reviewed roadmap and preserved high-signal research as the starting point. Record relevant findings as **still valid**, **changed**, **superseded**, or **new**; update only the horizons affected by the evidence. Do not restart the full product-purpose debate unless the owner asks for it or new evidence materially breaks its assumptions. See [INT-20261120-11](../intent/sources/2026-11-20-11-delta-curated-rolling-roadmap.md) and [INT-20261120-12](../intent/sources/2026-11-20-12-upstream-milestone-scope.md).
+
 For this repository, use `~/projects/fablebook` on `main`; do not disturb preserved dirty recovery checkouts.
 
 ## Explore and synthesize
@@ -26,6 +28,8 @@ Synthesize a concrete recommendation with:
 4. a rolling near/mid/later roadmap with dependency order and major product outcomes;
 5. product reality: distinguish source material, applied canon, Fablebook Books/scenarios, runnable UI, and adopter dogfood;
 6. efficient checks: cheap consistency checks before long suites, no new dependency without an explicit need, and no recurring automation without lasting value.
+
+For each phase discussion, apply the same focused, domain-specific evidence review; use parallel specialist research only where it adds independent signal. For each verification step, apply `.planning/VERIFICATION.md`: automate useful objective checks, start with cheap feedback, and reserve owner handoff for an actual authority boundary or irreducible judgment. See [INT-20261120-13](../intent/sources/2026-11-20-13-automated-verification-and-resource-hygiene.md).
 
 The research/roadmap is directional. Only activate the selected milestone; future milestones do not get executable requirements or plans until their own start and prerequisite checks.
 

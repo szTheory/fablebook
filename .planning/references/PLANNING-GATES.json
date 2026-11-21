@@ -12,6 +12,30 @@
       "evidence": ".planning/migrations/2026-11-11-milestone-reset/CARRY-FORWARD.md"
     }
   ],
+  "approved_exceptions": [
+    {
+      "id": "first-inspectable-book-v0.7",
+      "milestone_key": "first-inspectable-book",
+      "version": "v0.7",
+      "gate_id": "guard-aggregate",
+      "status": "approved",
+      "owner_intent": "INT-20261120-14",
+      "scope": "One fixed, developer-authored, compiled Book in development and test only.",
+      "preconditions": [
+        "Constrain and contract-test the public mount macro to literal module alias/reference AST forms; keep its contract test and implementation in separate PRs per ADR 0021.",
+        "Before Book implementation, pass positive production route/story-beam exclusion checks and a negative control that rejects any reachable production mount."
+      ],
+      "excludes": [
+        "Controls or user-provided values/code",
+        "Audited-API use",
+        "Persistence or external writes",
+        "Publication or release",
+        "Any follow-on milestone without a fresh scope and prerequisite review"
+      ],
+      "expires": "v0.7 closeout",
+      "aggregate_remains_open": true
+    }
+  ],
   "known_increment_milestones": [
     "guard-recovery"
   ],

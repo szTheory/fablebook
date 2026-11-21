@@ -1,6 +1,6 @@
 # Verification policy
 
-Owner direction: INT-20261029-08. Applies to every GSD discussion, plan, execution, review, verification and resume. The target is zero human UAT wherever the behavior can be checked automatically.
+Owner direction: INT-20261029-08 and [INT-20261120-13](intent/sources/2026-11-20-13-automated-verification-and-resource-hygiene.md). Applies to every GSD discussion, plan, execution, review, verification and resume. The target is zero human UAT wherever the behavior can be checked automatically.
 
 1. Map each acceptance criterion to existing executable evidence before adding work. Use the cheapest boundary that proves observable behavior: unit/property, integration, seam, consumer smoke, then browser E2E (ADR 0014).
 2. Run checks autonomously inside the requested step. Replace reproducible manual instructions with durable tests. Test the real script or application at its boundary, including negative controls and failure paths; mock external writes so verification cannot publish or message by accident.
@@ -30,6 +30,12 @@ Use the cheapest useful evidence first: diff and schema checks, hashes and prove
 For serial work, stay in the current checkout. The --ws flag selects a logical GSD workstream, not a filesystem checkout. Use another worktree only for real parallel work or a concrete isolation/preservation need; preserve dirty recovery checkouts and follow their recorded transfer instructions.
 
 This policy applies to verification, review, CI, and release/CD. After each completed CI or release run, use the measured critical path and comparable history to look for safe reductions in queue time, repeated setup/work, serialization, retries, or output volume. Make recurring changes only when they improve feedback time without reducing coverage, security, or release confidence; record when the evidence supports no change. See CI-PERFORMANCE.md.
+
+## Local action runs and Docker resources — INT-20261120-13
+
+- Use `act` for relevant GitHub Actions when the current local runner can execute the workflow faithfully. It supplements hosted receipts and does not replace required hosted CI. Reuse a known local failure assessment; do not repeat a blocked `act` attempt unless its cause or environment has changed. Fablebook's last recorded `act` attempt could not run tests because of an ARM64/amd64 setup-beam mismatch; hosted CI remains the useful evidence unless that setup changes (see CI-PERFORMANCE.md).
+- Use Docker only when it provides a concrete test or environment benefit. Give task-created containers, images, networks, and volumes an identifiable `fablebook-<milestone-or-task>-<purpose>` name/label. Record ownership and clean up only resources created for that task. Do not run broad prune commands or delete ambiguously owned resources.
+- Evaluate useful local throwaway checks without automatically promoting them to CI. Add recurring CI only when it protects repeated behavior; preserve all existing delivery, security, compatibility, and visual-baseline gates.
 
 ## CI efficiency review
 
