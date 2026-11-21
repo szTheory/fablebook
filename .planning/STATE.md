@@ -1,18 +1,16 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.6
-milestone_name: Guard Scope Reconciliation
-status: complete
-stopped_at: v0.6 archive closeout delivered; no next milestone selected.
-last_updated: "2026-11-20"
+milestone: v0.7
+milestone_name: First Inspectable Book
+status: planning
+last_updated: "2026-11-21T03:12:45.364Z"
 last_activity: 2026-11-20
-last_activity_desc: Closed the v0.6 milestone and preserved its bounded evidence and safety stops
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -32,24 +30,26 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-20), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** No active milestone. v0.6 is closed; future scope is owner-selected.
+**Current focus:** No active milestone. v0.6 is closed; v0.7 “First inspectable Book” is selected but not activated.
 
 ## Current Position
 
-Phase: —
+Phase: Not started (defining requirements)
 Plan: —
-Status: Complete; no active milestone
-Last activity: 2026-11-20 — Milestone v0.6 completed and archived
+Status: Defining requirements
+Last activity: 2026-11-20 — Milestone v0.7 started
+
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook`, branch `gsd/v0.6-milestone-closeout`, based on delivered main commit `0ea95d4`. The completed archive is delivered through [v0.6 closeout PR #97](https://github.com/szTheory/fablebook/pull/97); its checks and merge history own the hosted delivery receipt. Preserve the separate dirty/divergent local `main`; do not reset, stash, clean, or replace it.
-- Delivered: v0.6 Phase 7, 5 plans, 12 tasks. Exact-head hosted CI [run 44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) passed; PR #96 merged as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) passed.
-- Current: no active milestone. The v0.6 archive and its scoped audit are complete; see the [closeout receipt](milestones/v0.6-CLOSEOUT.md).
-- Limits: one Plug observation carries forward; four core source entries remain gaps; all five consumed requests remain closed. Caller evidence is not exhaustive; the full historic member universe cannot be reconstructed. The floor is retained evidence, not a fresh scan. Candidate remains null; implementation unauthorized; aggregate gate open; actual-library collision unknown; R9 denied and unconsumed; SEC-01 Pending; Macro caller-AST and explanation gaps and the legacy digest remain unresolved; Walking Skeleton blocked. R10 and R11 remain spent and immutable.
-- Inherited deferrals: IN-02, SEC-02, and 01.1-01 remain unresolved. They were acknowledged as carry-forwards for this closeout; 01.1-01's legacy table row was represented as a bullet with its item/evidence/rationale intact so the canonical acknowledgement writer could record the disposition.
-- Next action: none. No next milestone or deployment is authorized. When the owner chooses to resume, start with the recommendation-first research and rolling-roadmap process recorded in [INT-20261119-06](intent/sources/2026-11-19-06-research-first-rolling-roadmap.md), then activate only the selected bounded scope after typed prerequisites pass.
-- **Next actor: owner, only when choosing future scope.** No action is needed now.
+- Checkout: `~/projects/fablebook` on `main` at fetched `origin/main` (`5662d6c`), reconciled after PR #97. The former local `main` had 20 unique commits and a different 131-file tree; its history is preserved as `archive/main-stale-pre-v0.7-20261120`. The v0.6 closeout branch's committed tree matched `origin/main`. All uncommitted owner planning work for intents 08–14, research, rolling roadmap, planning gates, verification and lifecycle guidance remains present and is being carried into this milestone. Separate dirty historical worktrees remain preserved.
+- Delivered: v0.6 Phase 7, 5 plans, 12 tasks. Exact-head hosted CI [run 44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) passed; PR #96 merged as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) passed. Planning archive closeout PR #97 is merged on current main.
+- Current: v0.7 “First Inspectable Book” is active; requirements and the phase roadmap are being created from the saved scope and provenance. Phase 8 follows delivered Phase 7. The user has authorized autonomous discussion, planning, implementation, verification, review, delivery and closeout for every v0.7 phase.
+- Limits: the guard candidate remains null; guard implementation remains unauthorized; aggregate gate open; actual-library collision unknown; R9 denied and unconsumed; SEC-01 Pending; broader Macro caller-AST and explanation gaps and the legacy digest remain unresolved; the original `walking-skeleton` key stays blocked. R10 and R11 remain spent and immutable. The v0.7 exception allows one fixed, developer-authored compiled Book in development/test only and expires at v0.7 closeout. The literal mount-macro contract must be tested separately from its implementation; positive production route/story exclusion checks and a negative reachable-mount control must pass before Book implementation. No Controls, user-provided values or code, audited-API use, persistence, publication, release or follow-on milestone work is included. The unrelated Logistify brand-canon seed stays dormant.
+- Inherited deferrals: IN-02, SEC-02, and 01.1-01 remain unresolved and were acknowledged as carry-forwards at v0.6 closeout.
+- Product outcome: one inspectable Logistify operator Book across 2–3 addressable screens with fixed cited illustrative data, minimal navigation and the real compiled Story/Scenario and host Canvas path. Records and actions are illustrative; no logistics backend or external writes are included. The broader three-Book showcase remains future scope.
+- Next action: finish the active requirements and phase roadmap, then run `$gsd-autonomous` across every phase without a range limit. No further scope, version or gate decision is needed.
+- **Next actor: Codex, continuing the authorized v0.7 workflow.** No owner action is needed unless a genuinely new material risk or an unavoidable visual judgment remains after other work is complete.
 
 ## Performance Metrics
 
@@ -87,7 +87,7 @@ Last activity: 2026-11-20 — Milestone v0.6 completed and archived
 
 ### Pending Todos
 
-No additional work is promoted into v0.3. Wider product work remains in the separate [rolling roadmap](references/PRODUCT-ROADMAP.md).
+No additional work is promoted into v0.6. Wider product work remains in the separate [rolling roadmap](references/PRODUCT-ROADMAP.md). At each new milestone start, treat the last owner-reviewed roadmap and original research as the baseline, reconcile meaningful deltas, and refresh only affected horizons before recommending the immediate bounded scope; do not restart settled product debates without evidence. Automate useful, objective verification by default and preserve the recorded `act` environment stop unless its cause changes. See PRODUCT-ROADMAP.md, [INT-20261120-11](intent/sources/2026-11-20-11-delta-curated-rolling-roadmap.md), [INT-20261120-12](intent/sources/2026-11-20-12-upstream-milestone-scope.md), and [INT-20261120-13](intent/sources/2026-11-20-13-automated-verification-and-resource-hygiene.md).
 
 ### Blockers and concerns
 
@@ -197,4 +197,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-No action is needed now. When the owner chooses to start a future milestone, first reconcile the live checkout and receipts, research and synthesize the immediate recommendation, and refresh the directional rolling roadmap. Do not pre-create executable future requirements, phase IDs, or plans; keep the new milestone behind its typed prerequisites and owner selection.
+The owner selected v0.7 “First inspectable Book” and approved its one-milestone exception. After context reset, run `$gsd-new-milestone First Inspectable Book` from the reconciled canonical checkout, then `$gsd-autonomous` after the active requirements and roadmap exist. Do not create downstream phase plans in this upstream review; preserve the approved exception's limits and all remaining gates.

@@ -22,9 +22,16 @@ v0.6 closed as a bounded evidence milestone on 2026-11-20. Phase 7 reconciled cu
 
 v0.5 closed locally on 2026-11-19 as a bounded evidence milestone. Phase 6 delivered the four-key EX-177 supplement and preserved the exact 9,712-row complement through PR #93, reviewed head `3970a381945cfcf63eb69c456a5b2a7465d8352d`, green [exact-head hosted CI 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030), and squash merge `b8852ac22aac1cb2b8151d85b189889ca0774aa8`. The compatibility fix was reviewed and merged separately through PR #94 with green hosted CI. The archive closeout was squash-merged through [PR #95](https://github.com/szTheory/fablebook/pull/95) as `d5a8dc0b856e5c8223524c4fd3f849bd27c4c859` after green [exact-head hosted CI 44599528602](https://github.com/szTheory/fablebook/actions/runs/44599528602); the `v0.5` tag remains local. Its one requirement is satisfied; caller closure and the wider guard/security obligations remain open. This is not a package release or runtime-safety proof. See the [v0.5 archive](milestones/v0.5-ROADMAP.md), [requirements](milestones/v0.5-REQUIREMENTS.md), [audit](milestones/v0.5-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.5-phases/), and [closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
-## Next Milestone
+## Current Milestone: v0.7 First Inspectable Book
 
-No next milestone is selected. The directional product sequence remains in [PRODUCT-ROADMAP.md](references/PRODUCT-ROADMAP.md); its horizons are not approved executable scope. The owner chooses a bounded next scope after its typed prerequisites pass.
+**Goal:** A Phoenix developer can open a real Fablebook UI catalog locally and inspect one source-grounded Logistify operator Book across two or three addressable screens through the compiled Story/Scenario and host Canvas path.
+
+**Target features:**
+- A minimal, locally openable catalog with navigation to the fixed operator Book and its screens.
+- Cited, fixed illustrative data and clearly illustrative records/actions, with no logistics backend or external writes.
+- A literal module alias/reference contract for the public mount macro and passing development/test-only production exclusion checks before Book implementation.
+
+**Approved boundary:** This is one fixed, developer-authored compiled Book in development/test only; the exception expires at v0.7 closeout. The guard aggregate remains open and the original `walking-skeleton` key remains blocked. No Controls, user-provided values or code, audited-API use, persistence, publication, release, or follow-on milestone is included (INT-20261120-08–14; ADR 0021). See the [approved scope](research/2026-11-20-next-milestone-scope-review.md), [owner approval](intent/sources/2026-11-20-14-approve-first-book-gate-exception.md), and [rolling roadmap](references/PRODUCT-ROADMAP.md).
 
 ## Current State
 
@@ -325,7 +332,7 @@ Every item below is a v1.0 commitment.
 - **Delivered v0.4:** Planning and evidence artifacts only; no application source, dependencies, or runtime behavior changed. Three phases, nine plans and 14 tasks delivered through PRs #90–#92. The aggregate gate, candidate-null decision, actual-library collision stop, Macro checkpoints, SEC-01 owner and Walking Skeleton block remain unchanged.
 - **Delivered v0.6:** Evidence and one existing dependency lock patch only; no application behavior, product UI, Book, or runnable demo was added. Phase 7 passed 4/4 goal verification, Nyquist validation, and its declared security review. PR #96 and post-merge main CI passed; the exact receipts and all bounded limits are in the v0.6 archive. Three inherited deferred records remain unresolved and acknowledged for carry-forward.
 - **Delivered v0.5:** Planning and test-support evidence only; no application source, dependencies, or runtime behavior changed. Phase 6 delivered the exact four-key supplement and checker through PR #93; PR #94 separately fixed the archived-evidence test path. The 9,712-row complement and every prior safety stop remain unchanged.
-- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.6 closeout and the three inherited deferred records are recorded in its archive. No next milestone is selected; owner scope choice and typed prerequisites are required before further planning.
+- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.6 closeout and the three inherited deferred records are recorded in its archive. v0.7 is active under the narrow, expiring exception above; this does not close the guard aggregate or unblock the original `walking-skeleton` key.
 
 - **Ecosystem (verified 2026-10-28):**
   - Phoenix 1.8.16 and LiveView 1.2.13 are current; there is no Phoenix 1.9.
@@ -512,4 +519,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-20 after the v0.6 milestone; RSC-01–04 are delivered, three inherited v0.1 deferrals and wider guard/security stops remain open, and no next milestone is selected.*
+*Last updated: 2026-11-20 at the start of v0.7; RSC-01–04 are delivered, three inherited v0.1 deferrals and wider guard/security stops remain open, and the first-Book exception expires at v0.7 closeout.*
