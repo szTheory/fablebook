@@ -352,7 +352,7 @@ defmodule Fablebook.BrandSourceFetcher do
       git!(source, ["add", "README.md"])
       git!(source, ["-c", "user.name=Fablebook", "-c", "user.email=fablebook-test", "commit", "--quiet", "-m", "second"])
       second_commit = git!(source, ["rev-parse", "HEAD"])
-      git!(source, ["tag", "-a", "v1.1", "-m", "second"])
+      git!(source, ["-c", "user.name=Fablebook", "-c", "user.email=fablebook-test", "tag", "-a", "v1.1", "-m", "second"])
       git!(source, ["push", "--quiet", "origin", "refs/tags/v1.1"])
       assert_equal(resolve_tag!(remote, "v1.1"), second_commit, "annotated tag resolution")
 
