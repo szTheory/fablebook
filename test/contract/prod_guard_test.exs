@@ -9,12 +9,24 @@ defmodule Fablebook.Contract.ProdGuardTest do
   @fixture Path.expand("../fixtures/prod_guard_host", __DIR__)
   @build Path.expand("../../_build/guard_host", __DIR__)
   @canonical "Fablebook cannot be mounted in a prod build"
+  @sentinel_source Path.join(["storybook", "sentinel_story.ex"])
 
   test "a false dev_routes mount leaves no trace in prod and an unguarded mount fails the build" do
-    clean!("dev")
-    assert_ok(mix("dev", ~w(compile --warnings-as-errors)))
-    assert mix!("dev", ~w(phx.routes GuardHostWeb.Router)) =~ "/dev/fablebook"
-    assert Enum.any?(beam_sources("dev"), &(&1 =~ "/storybook/"))
+    for env <- ~w(dev test) do
+      clean!(env)
+      assert_ok(mix(env, ~w(compile --warnings-as-errors)))
+      assert mix!(env, ~w(phx.routes GuardHostWeb.Router)) =~ "/dev/fablebook"
+      assert Enum.any?(beam_sources(env), &String.ends_with?(&1, @sentinel_source))
+
+      sentinel =
+        mix!(env, [
+          "run",
+          "-e",
+          "IO.write(Atom.to_string(GuardHostWeb.SentinelStory.witness()))"
+        ])
+
+      assert String.ends_with?(String.trim(sentinel), "compiled"), inspect(sentinel)
+    end
 
     clean!("prod")
     assert_ok(mix("prod", ~w(compile --warnings-as-errors)))
