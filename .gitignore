@@ -20,6 +20,7 @@ node_modules/
 
 # Private / agent / local state — never commit
 /.claude/
+/.cache/brand_sources/
 /prompts/
 .cursor/
 .gsd/

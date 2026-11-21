@@ -32,6 +32,14 @@ jobs:
           filter: blob:none
           persist-credentials: false
       - uses: ./.github/actions/setup
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .cache/brand_sources
+          key: brand-sources-${{ hashFiles('brand_sources.lock.json') }}
+      - run: bin/fetch_brand_sources --self-test
+      - run: bin/verify_logistify_source --self-test
+      - run: bin/fetch_brand_sources
+      - run: bin/verify_logistify_source --check-original .cache/brand_sources/logistify-brand
       - run: mix ci
 
   floor:
@@ -49,6 +57,12 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           lane: floor
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .cache/brand_sources
+          key: brand-sources-${{ hashFiles('brand_sources.lock.json') }}
+      - run: bin/fetch_brand_sources
+      - run: bin/verify_logistify_source --check-original .cache/brand_sources/logistify-brand
       - run: mix compile --warnings-as-errors
       - run: mix compile --no-optional-deps --warnings-as-errors --force
       - run: mix test --warnings-as-errors --include prod_guard

@@ -1,0 +1,12 @@
+{
+  "schema": "fablebook-brand-sources/v1",
+  "books": [
+    { "name": "fablebook-brand", "clone_url": "https://github.com/szTheory/fablebook-brand.git", "tag": "v2.1", "commit": "b2e3441218f9d62f857ab9ff7b4b62fdc320078c" },
+    { "name": "logistify-brand", "clone_url": "https://github.com/szTheory/logistify-brand.git", "tag": "v1.0", "commit": "6189eb2f013496644ece948f287d69a6695c1156" },
+    { "name": "chatly-brand", "clone_url": "https://github.com/szTheory/chatly-brand.git", "tag": "v0.3", "commit": "111b063698fe7dfeb4dc73c46b78e06527bba9a4" },
+    { "name": "clinicly-brand", "clone_url": "https://github.com/szTheory/clinicly-brand.git", "tag": "v0.3", "commit": "61aac2bb40f723c74bbdc4d0e7407d6bab14ac1b" },
+    { "name": "shopadelic-brand", "clone_url": "https://github.com/szTheory/shopadelic-brand.git", "tag": "v0.3", "commit": "8f9d70e7e778463566c4978069941a2a2393ffa5" },
+    { "name": "finanza-brand", "clone_url": "https://github.com/szTheory/finanza-brand.git", "tag": "v0.2", "commit": "9748d49dfa12613ca0c8a5ca563bdd89d78b82cc" },
+    { "name": "classwell-brand", "clone_url": "https://github.com/szTheory/classwell-brand.git", "tag": "v0.2", "commit": "7b2c84308a644f92dd23003cfa6654c06b372bda" }
+  ]
+}

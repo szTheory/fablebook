@@ -4,8 +4,7 @@
 
 ## Provenance
 
-- Source repository: https://github.com/szTheory/fablebook-brand
-- Observed upstream main commit: b2e3441218f9d62f857ab9ff7b4b62fdc320078c (2026-11-11)
+- Source repository: https://github.com/szTheory/fablebook-brand, pinned at tag `v2.1` and commit `b2e3441218f9d62f857ab9ff7b4b62fdc320078c` in `brand_sources.lock.json`.
 - Source-reported version: **2.1** in BRAND.md, brand.json, and assets/README.md.
 - The initial snapshot at 5a13d2f32db0783bd7eebaa416d53b0701288a67 reported 2.0. After the owner requested another upstream check, main advanced and a fresh clean clone reported 2.1. Preserve that history; the version discrepancy is resolved.
 - SHA-256:
