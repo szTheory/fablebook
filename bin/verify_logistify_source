@@ -1,0 +1,200 @@
+#!/usr/bin/env elixir
+
+defmodule Fablebook.LogistifySourceVerifier do
+  @moduledoc false
+
+  @max_source_bytes 2_000_000
+  @max_total_source_bytes 4_000_000
+
+  @sources [
+    {"BRAND.md", "69b9baf05ebf3461ce1487ec7bb4987a9538c11ed8ab0540199fd021297399e7"},
+    {"brand.json", "f072b9b7612b51e249905498d01fb01b098dbc1df87703eaf7fdfd845abb52ea"},
+    {"tokens.json", "dd923fffd0ed104d664f3178d4beed106131c697d3c2601b54a7efdfa8b8a563"}
+  ]
+
+  def main do
+    case System.argv() do
+      ["--check-original", directory] -> report(check_original(directory))
+      ["--self-test"] -> self_test()
+      _ ->
+        IO.puts(:stderr, "Usage: bin/verify_logistify_source --check-original DIR | --self-test")
+        System.halt(2)
+    end
+  end
+
+  defp report({:ok, message}) do
+    IO.puts(message)
+    System.halt(0)
+  end
+
+  defp report({:error, message}) do
+    IO.puts(:stderr, message)
+    System.halt(1)
+  end
+
+  defp check_original(directory, sources \\ @sources) do
+    case File.lstat(directory) do
+      {:ok, %{type: :directory}} ->
+        with {:ok, entries} <- read_sources(directory, sources),
+             :ok <- verify_source_set(entries, sources) do
+          {:ok, "source preflight: approved originals verified (#{length(entries)} files)"}
+        else
+          {:error, reason} -> {:error, "source preflight blocked: #{reason}"}
+          other -> {:error, "source preflight blocked: invalid source set (#{inspect(other)})"}
+        end
+
+      {:ok, _stat} ->
+        {:error, "source preflight blocked: source location is not a directory"}
+
+      {:error, :enoent} ->
+        {:error, "source preflight blocked: source location does not exist"}
+
+      {:error, _reason} ->
+        {:error, "source preflight blocked: source location is unreadable"}
+    end
+  end
+
+  defp read_sources(directory, sources) do
+    Enum.reduce_while(sources, {:ok, []}, fn {name, _digest}, {:ok, entries} ->
+      case read_source(Path.join(directory, name), name) do
+        {:ok, entry} -> {:cont, {:ok, [entry | entries]}}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
+    end)
+    |> case do
+      {:ok, entries} -> {:ok, Enum.reverse(entries)}
+      error -> error
+    end
+  end
+
+  defp read_source(path, name) do
+    case File.lstat(path) do
+      {:ok, %{type: :regular, size: size}} when size > 0 and size <= @max_source_bytes ->
+        case File.read(path) do
+          {:ok, bytes} when byte_size(bytes) == size ->
+            {:ok, %{name: name, size: size, digest: sha256(bytes)}}
+
+          {:ok, _bytes} ->
+            {:error, "source file changed while it was being read: #{name}"}
+
+          {:error, _reason} ->
+            {:error, "source file is unreadable: #{name}"}
+        end
+
+      {:ok, %{type: :regular, size: 0}} ->
+        {:error, "source file is empty: #{name}"}
+
+      {:ok, %{type: :regular}} ->
+        {:error, "source file exceeds the #{@max_source_bytes}-byte limit: #{name}"}
+
+      {:ok, _stat} ->
+        {:error, "source entry is not a regular file: #{name}"}
+
+      {:error, :enoent} ->
+        {:error, "required source file is missing: #{name}"}
+
+      {:error, _reason} ->
+        {:error, "source file is unreadable: #{name}"}
+    end
+  end
+
+  defp verify_source_set(entries, sources) do
+    total = Enum.reduce(entries, 0, &(&1.size + &2))
+    expected = Map.new(sources)
+
+    cond do
+      total > @max_total_source_bytes ->
+        {:error, "approved source set exceeds the #{@max_total_source_bytes}-byte total limit"}
+
+      length(entries) != length(sources) ->
+        {:error, "approved source set is incomplete"}
+
+      Enum.any?(entries, fn %{name: name, digest: digest} -> Map.get(expected, name) != digest end) ->
+        {:error, "approved source digest mismatch"}
+
+      true ->
+        :ok
+    end
+  end
+
+  defp sha256(bytes), do: :crypto.hash(:sha256, bytes) |> Base.encode16(case: :lower)
+
+  defp self_test do
+    samples = %{
+      "BRAND.md" => "Operator console\n",
+      "brand.json" => "{\"version\":\"1.0\"}\n",
+      "tokens.json" => "{\"color\":{}}\n"
+    }
+
+    sources = Enum.map(samples, fn {name, bytes} -> {name, sha256(bytes)} end)
+    parent = Path.join(System.tmp_dir!(), "fablebook-source-self-test-#{System.unique_integer([:positive])}")
+    directory = Path.join(parent, "source")
+
+    result =
+      try do
+        File.mkdir_p!(directory)
+        write_samples!(directory, samples)
+        assert_case(check_original(directory, sources) == {:ok, "source preflight: approved originals verified (3 files)"}, "exact bytes")
+
+        File.rm!(Path.join(directory, "tokens.json"))
+        assert_error(check_original(directory, sources), "missing file")
+
+        write_samples!(directory, samples)
+        File.write!(Path.join(directory, "tokens.json"), "")
+        assert_error(check_original(directory, sources), "empty file")
+
+        write_samples!(directory, samples)
+        File.write!(Path.join(directory, "brand.json"), "{\"version\":\"1.1\"}\n")
+        assert_error(check_original(directory, sources), "changed bytes")
+
+        write_samples!(directory, samples)
+        File.write!(Path.join(directory, "BRAND.md"), "Operator console\r\n")
+        assert_error(check_original(directory, sources), "changed line endings")
+
+        write_samples!(directory, samples)
+        File.rm!(Path.join(directory, "tokens.json"))
+        File.mkdir!(Path.join(directory, "tokens.json"))
+        assert_error(check_original(directory, sources), "non-regular file")
+
+        File.rm_rf!(Path.join(directory, "tokens.json"))
+        write_samples!(directory, samples)
+        File.write!(Path.join(directory, "tokens.json"), :binary.copy("x", @max_source_bytes + 1))
+        assert_error(check_original(directory, sources), "oversized file")
+
+        if System.get_env("UID") not in [nil, "0"] do
+          write_samples!(directory, samples)
+          path = Path.join(directory, "tokens.json")
+          File.chmod!(path, 0o000)
+
+          unreadable_result =
+            try do
+              check_original(directory, sources)
+            after
+              File.chmod!(path, 0o600)
+            end
+
+          assert_error(unreadable_result, "unreadable file")
+        end
+
+        {:ok, "source verifier self-test: exact, missing, empty, changed-byte, line-ending, non-regular, bounds, and unreadable cases passed"}
+      rescue
+        error -> {:error, "source verifier self-test failed: #{Exception.message(error)}"}
+      after
+        File.rm_rf(parent)
+      end
+
+    report(result)
+  end
+
+  defp write_samples!(directory, samples) do
+    Enum.each(samples, fn {name, bytes} -> File.write!(Path.join(directory, name), bytes) end)
+  end
+
+  defp assert_case(true, _label), do: :ok
+  defp assert_case(false, label), do: raise("#{label} was rejected")
+
+  defp assert_error({:error, _reason}, _label), do: :ok
+  defp assert_error(_result, label), do: raise("#{label} was accepted")
+end
+
+Fablebook.LogistifySourceVerifier.main()

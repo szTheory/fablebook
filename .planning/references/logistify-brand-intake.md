@@ -4,22 +4,22 @@ This is a compact, source-grounded reference for Design canon and adopter Books 
 
 ## Capture status
 
-- The owner says the finished Logistify book is for the Phase 17 brand canon and three Books: operator console, shipper portal, and driver app. Nothing has been applied. The owner says the source has not been published to Pages.
-- `docs/brand/logistify/` was new and uncommitted in the primary checkout at capture time. This capture adds only the planning reference and its pointers; the source files were not copied, moved, changed, or applied.
+- At the 2026-11-10 intake, the owner described the finished book as input for the Phase 17 brand canon and three future Books: operator console, shipper portal, and driver app; no canon had been applied. The original intake noted a then-local `docs/brand/logistify/` copy and that the source had not been published to Pages.
+- **Updated 2026-11-21:** the owner directs Fablebook to the public [logistify-brand repository](https://github.com/szTheory/logistify-brand) pinned at tag `v1.0`, commit `6189eb2f013496644ece948f287d69a6695c1156`. The old `docs/brand/logistify/` paths are historical aliases only; current reads come from `.cache/brand_sources/logistify-brand/` after the lock-based fetch. Do not depend on or copy the old folder.
 - The brand is a fictional freight-logistics Twin. The owner reports that a real courier product and a trademark record share the name; the name has not been cleared. Do not present the fictional name as cleared for real use.
 - The v1.0 sign-off followed a light scan because the brand is fictional. The owner describes it as a strong first draft, not taste-tested. The layout examples are recommendations, not product screenshots.
 
 ## Provenance
 
-SHA-256 hashes below were computed from the source files on 2026-11-10. Recheck them before Phase 17 consumes the source, since the files are currently uncommitted.
+SHA-256 hashes below were computed from the original files on 2026-11-10 and remain a second integrity check alongside the Git commit pin. The source repository and commit are recorded in `brand_sources.lock.json`; files listed below are relative to that repository's root.
 
 | Source path (relative to repo root) | SHA-256 | Read locations |
 | --- | --- | --- |
-| `docs/brand/logistify/BRAND.md` | `69b9baf05ebf3461ce1487ec7bb4987a9538c11ed8ab0540199fd021297399e7` | Brand at a glance; Positioning and values; Messaging; The idea; Where the brand shows; Logo; Color; Type; Voice; Key terms; Imagery; Themes; Logo motion; Product motion; Sonic identity; Operator console; Shipper portal; Driver app; Print; Brand assets; To review |
-| `docs/brand/logistify/brand.json` | `f072b9b7612b51e249905498d01fb01b098dbc1df87703eaf7fdfd845abb52ea` | `/version`, `/positioning`, `/idea`, `/logo`, `/color/defaultTheme`, `/color/light`, `/color/dark`, `/color/status`, `/color/contrastPairs`, `/type`, `/voice`, `/stateWords`, `/states`, `/motion/product`, `/sound/sounds`, `/sound/rules`, `/products`, `/imagery/photographs`, `/toReview`, `/notChecked`, `/files` |
-| `docs/brand/logistify/tokens.json` | `dd923fffd0ed104d664f3178d4beed106131c697d3c2601b54a7efdfa8b8a563` | `/$description`, `/color/light`, `/color/dark`, `/color/signal`, `/color/status`, `/color/contrast-pairs/{body,descriptor,caption,application-copy,hero,link,focus,artwork}`, `/font`, `/typography`, `/dimension`, `/motion` |
+| `BRAND.md` | `69b9baf05ebf3461ce1487ec7bb4987a9538c11ed8ab0540199fd021297399e7` | Brand at a glance; Positioning and values; Messaging; The idea; Where the brand shows; Logo; Color; Type; Voice; Key terms; Imagery; Themes; Logo motion; Product motion; Sonic identity; Operator console; Shipper portal; Driver app; Print; Brand assets; To review |
+| `brand.json` | `f072b9b7612b51e249905498d01fb01b098dbc1df87703eaf7fdfd845abb52ea` | `/version`, `/positioning`, `/idea`, `/logo`, `/color/defaultTheme`, `/color/light`, `/color/dark`, `/color/status`, `/color/contrastPairs`, `/type`, `/voice`, `/stateWords`, `/states`, `/motion/product`, `/sound/sounds`, `/sound/rules`, `/products`, `/imagery/photographs`, `/toReview`, `/notChecked`, `/files` |
+| `tokens.json` | `dd923fffd0ed104d664f3178d4beed106131c697d3c2601b54a7efdfa8b8a563` | `/$description`, `/color/light`, `/color/dark`, `/color/signal`, `/color/status`, `/color/contrast-pairs/{body,descriptor,caption,application-copy,hero,link,focus,artwork}`, `/font`, `/typography`, `/dimension`, `/motion` |
 
-The local HTML text was inspected without opening a browser or executing scripts: `docs/brand/logistify/logistify-brand-book.html`, `docs/brand/logistify/logistify-one-page.html`, and `docs/brand/logistify/assets/index.html`. Their visible text agrees with the book summary and shows an asset catalog. Asset inventory and rights notes were read from `assets/README.md`, `assets/imagery/README.md`, and `assets/sound/README.md`; the two font license texts were checked. No assets were rendered or auditioned.
+The original intake read the local HTML text without opening a browser or executing scripts: `logistify-brand-book.html`, `logistify-one-page.html`, and `assets/index.html` from the old folder layout. The current public repository preserves the same root-level book, records, mapping guide, and assets layout. When using a path that an older `FABLEBOOK-MAPPING-GUIDE.md` expresses as `docs/brand/logistify/<path>`, resolve `<path>` at the root of the pinned `logistify-brand` repository. Full repositories remain in the ignored cache; no assets are imported into the v0.7 Book.
 
 ## Brand canon digest
 
