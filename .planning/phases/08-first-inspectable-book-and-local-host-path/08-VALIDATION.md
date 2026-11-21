@@ -1,7 +1,7 @@
 ---
 phase: "8"
 slug: "first-inspectable-book-and-local-host-path"
-status: draft
+status: ready
 nyquist_compliant: false
 wave_0_complete: false
 created: "2026-11-20"
@@ -23,7 +23,9 @@ created: "2026-11-20"
 | **Full suite command** | `HEX_HOME="$PWD/_build/hex-home" MIX_ENV=test bin/lane core mix ci` |
 | **Estimated runtime** | About 8 minutes locally; v0.6's final core lane took 440.3 seconds in one sample. Measure each Phase 8 head; this sample does not establish a trend. |
 
-The focused command above is the existing production-guard contract. Add focused source, macro, catalog, and Story/Scenario commands to their requirement rows once the implementation chooses file paths. Do not run the full core lane for every task. Each reviewed PR still needs its own hosted required CI receipt on the exact head.
+The focused command above exercises the existing production-guard contract. The source, macro, catalog and Story/Scenario commands below bind the additional checks to their tasks. Run the full core lane at the implementation-only PR, test-only PR and final Book PR gates. Each reviewed PR needs its own required hosted CI receipt on the exact head.
+
+After every completed CI run for the early macro PRs, record queue wait, critical path, job/step durations and repeated setup or work in [the CI performance ledger](../../CI-PERFORMANCE.md). Include a measured improvement or why a safe change is unsupported. Keep these receipts out of both early PR diffs and batch them with the next authorized substantive push.
 
 ---
 
@@ -38,38 +40,72 @@ The focused command above is the existing production-guard contract. Add focused
 
 ## Per-Task Verification Map
 
-Plan and task IDs are assigned by the Phase 8 planner. Replace `TBD` with the concrete IDs and focused command when the plan is finalized; keep this map aligned with every task's `<automated>` verification.
+Task IDs follow each plan's task order. The red baseline entry runs the named test and asserts its expected diagnostic rather than treating an arbitrary test failure as success.
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | TBD | SRC-01 | — | No source claim or fixture value before source hash and citation checks pass | Unit/manifest | Command set when the minimal source subset and manifest are chosen | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | MOUNT-01 | See plan threat model | Reject computed AST before expansion; test only the public macro | Compile-time contract | Focused macro contract command set when its file is chosen | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | HOST-01 | See plan threat model | No production route or compiled Story/Book modules | Compile/fixture | `mix test test/contract/prod_guard_test.exs --include prod_guard` | ✅ existing fixture; operator host pending | ⬜ pending |
-| TBD | TBD | TBD | HOST-02 | See plan threat model | Reachable prod mount raises canonical `CompileError` | Compile/fixture | `mix test test/contract/prod_guard_test.exs --include prod_guard` | ✅ existing fixture; operator host pending | ⬜ pending |
-| TBD | TBD | TBD | CAT-01 | See plan threat model | Stable string URLs map only to the fixed Book; unknown selections are unavailable | Host integration | Focused catalog/navigation command set when the host test file is chosen | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | CAT-02 | See plan threat model | The same compiled Story/Scenario IDs resolve in dev/test; no dynamic loading | Compile/catalog | Focused dev/test catalog command set when the host test file is chosen | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | CANVAS-01 | See plan threat model | Same-origin Canvas uses the host pipeline, root layout, assets, and CSP | Browser integration | Real-host browser pass plus retained headers/network evidence | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | BOOK-01 | See plan threat model | Deterministic cited records/actions stay illustrative; no writes or persistence | Unit/render | Source/citation and Story/Scenario determinism commands set after source recovery | ❌ W0 | ⬜ pending |
+| 08-01-01 | 08-01 | 1 | SRC-01 | T-08-01 | Original files are allowed and exact, or source-dependent work stops | Byte controls | `bin/verify_logistify_source --self-test` | Task creates verifier | ⬜ pending |
+| 08-01-02 | 08-01 | 1 | SRC-01 | T-08-01, T-08-02 | Required exact excerpt hashes and citations validate | Byte/manifest | `bin/verify_logistify_source --check-pinned` | Task creates local manifest | ⬜ pending |
+| 08-02-01 | 08-02 | 1 | MOUNT-01 | T-08-03, T-08-04 | Current public macro reaches harmless expansion probe | Baseline red | `bash -c 'out=$(mix test test/contract/mount_literal_ast_test.exs --only mount_rejection_probe 2>&1); result=$?; printf "%s\n" "$out"; [[ "$result" -ne 0 && "$out" == *"disallowed Book macro expanded"* ]]'` | Task creates contract in isolation | ⬜ pending |
+| 08-02-02 | 08-02 | 1 | MOUNT-01 | T-08-03, T-08-04 | Proposed router rejects before expansion and retains production diagnostic | Focused and PR gate | `mix test test/contract/mount_literal_ast_test.exs test/contract/prod_guard_message_test.exs`; `HEX_HOME="$PWD/_build/hex-home" MIX_ENV=test bin/lane core mix ci` | Authored and existing tests | ⬜ pending |
+| 08-03-01 | 08-03 | 2 | MOUNT-01 | T-08-05 | Exact test-only PR on hardened main | Focused and PR gate | `mix test test/contract/mount_literal_ast_test.exs test/contract/prod_guard_message_test.exs`; separately run the full core gate once | Authored and existing tests | ⬜ pending |
+| 08-03-02 | 08-03 | 2 | HOST-01, HOST-02 | T-08-06 | Dev/test sentinel inclusion, clean positive prod and real reachable negative, indexed host-adapter ADR | Compile/fixture | `mix test test/contract/prod_guard_test.exs --include prod_guard`; `(cd test/fixtures/prod_guard_host && MIX_ENV=test mix run -e 'true = Enum.any?(Phoenix.Router.routes(GuardHostWeb.Router), &(&1.path == "/dev/fablebook")); :compiled = GuardHostWeb.SentinelStory.witness()')`; `(cd test/fixtures/prod_guard_host && MIX_ENV=dev mix run -e 'true = GuardHostWeb.SentinelStory.witness() == :compiled')`; ADR presence/index command in plan | Existing fixture plus sentinel and ADR | ⬜ pending |
+| 08-04-01 | 08-04 | 3 | HOST-01, CANVAS-01 | T-08-08, T-08-09, T-08-SC | Actual host root route runs through Phoenix. Bandit is audited and pinned only in the operator development host. Test runs without serving or the adapter. | Endpoint and dependency boundary | `(cd hosts/operator && MIX_ENV=test mix run -e 'conn = OperatorHost.Endpoint.call(Plug.Test.conn(:get, "/"), []); 200 = conn.status; true = conn.resp_body =~ "Operator host"; true = conn.resp_body =~ "data-operator-root"')`; host lock audit and test adapter exclusion commands in plan | Task creates host and development lock | ⬜ pending |
+| 08-04-02 | 08-04 | 3 | SRC-01, CAT-01, CAT-02, CANVAS-01, BOOK-01 | T-08-07, T-08-08 | Compiled ordinary Scenario opens through actual catalog and Canvas | Host integration | `(cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors)` | Task creates test | ⬜ pending |
+| 08-04-03 | 08-04 | 3 | CAT-01, CAT-02, CANVAS-01 | T-08-07, T-08-08, T-08-09 | Exact compiled IDs, inherited root layout, same-origin asset path and catalog reachable at the development loopback URL | Host integration | `(cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors)`; `(cd hosts/operator && MIX_ENV=dev mix compile --warnings-as-errors)`; loopback catalog command in plan | 08-04-02 test and host | ⬜ pending |
+| 08-05-01 | 08-05 | 4 | SRC-01, CAT-01, CAT-02, CANVAS-01, BOOK-01 | T-08-07, T-08-11 | Complete fixed Story renders deterministically with provenance and precise UI states | Source/host integration | `bin/verify_logistify_source --check-pinned`; `(cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors)` | Existing check files extended by task | ⬜ pending |
+| 08-05-02 | 08-05 | 4 | HOST-01, HOST-02, CAT-02 | T-08-09, T-08-10 | Actual host excludes the feature and adapter in production and fails the reachable control. Library dependencies remain unchanged. | Compile/host | `bin/verify_operator_host_prod`; `mix test test/contract/prod_guard_test.exs --include prod_guard`; `git diff --exit-code origin/main...HEAD -- mix.exs mix.lock mix.floor.lock` | Task creates actual-host checker | ⬜ pending |
+| 08-05-03 | 08-05 | 4 | CANVAS-01, CAT-01, BOOK-01 | T-08-12, T-08-13 | Exact candidate review, real-host evidence and separately authorized delivery | Browser and PR gate | `git diff --check origin/main...HEAD`; `HEX_HOME="$PWD/_build/hex-home" MIX_ENV=test bin/lane core mix ci`; collect actual browser evidence per 08-05-03 | Existing Git/Mix and optional existing browser | ⬜ pending |
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] Add a reproducible, SHA-256-checked minimal source subset and citation manifest before authoring Book fixture content; the approved raw source bundle still must be located.
+- [ ] Locate the approved raw bundle and add the reproducible SHA-256-checked subset and citation manifest before authoring Book fixture content. The source prerequisite does not hold the independent macro and fixture lane.
 - [ ] Add the public mount macro contract and run its rejection assertion against the current router to capture the intended failure before implementation.
 - [ ] Add focused catalog, Story/Scenario, render, URL, unknown-selection, and dev/test identifier checks.
 - [ ] Extend the production fixture to retain positive route/Story exclusion and the negative reachable-mount compile control, then repeat both controls on the completed operator host.
 - [ ] Provide the real-host browser pass and deterministic artifact without auto-accepting a new or changed visual baseline.
-- [ ] Use the existing Phoenix and Elixir setup; no required Node installation or new runtime dependency.
+- [ ] Use the existing Phoenix and Elixir setup with the audited Bandit listener pinned separately for the operator host in `:dev` only. Verify the Fablebook library and production dependency sets stay unchanged and no Node setup is needed.
 
 ---
 
-## Manual-Only Verifications
+## Browser and owner verifications
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Host Canvas fidelity, keyboard/focus behavior, labels, status text, narrow/desktop layout | CANVAS-01, CAT-01 | Browser behavior, inherited assets/CSP, and keyboard focus must be observed in the real host | Start the local host; inspect each screen at 320px and 1280px, test keyboard navigation and visible focus, verify labels/status and host CSS/JS/fonts/CSP, and capture the deterministic artifact. Do not accept a new or changed baseline automatically. |
+| Host Canvas fidelity, keyboard/focus behavior, labels, status text, narrow/desktop layout | CANVAS-01, CAT-01 | Browser behavior, inherited assets/CSP, and keyboard focus must be observed in the real host | Run the local host in the background. Use an existing browser at 320, 375, 768 and 1280px and 200% text zoom. Record actual Canvas assets, CSP, keyboard and preview output, and save one deterministic artifact showing representative narrow and desktop views. |
 | Any owner-only judgment on a new or changed visual baseline | CANVAS-01 | Baseline acceptance is a visual owner decision | Finish all objective work first; present the captured artifact and one concise decision request only if approval is actually required. |
+| Final delivery of the local/internal source-derived candidate | SRC-01, BOOK-01 | The configured remote is public and the phase limits source and Book use to local/internal | Finish local tests and browser evidence. At delivery, use an authorized private route or obtain authorization covering the exact material proposed for public exposure. |
+
+---
+
+## Source coverage audit
+
+| Source | Required outcome or constraint | Plan | Status |
+|--------|------------------------------|------|--------|
+| ROADMAP goal and delivery sequence | Local compiled dispatcher flow, independent source check and ordered contract/implementation-only PR/test-only PR/fixture gates, then Book and completed-host proof | 08-01 through 08-05 | Covered |
+| REQUIREMENTS | SRC-01 source custody, exact bytes and citations | 08-01, 08-04, 08-05 | Covered |
+| REQUIREMENTS | MOUNT-01 literal caller AST and separately delivered contract | 08-02, 08-03 | Covered |
+| REQUIREMENTS | HOST-01 and HOST-02 dev/test inclusion and positive/negative prod boundary | 08-03, 08-04, 08-05 | Covered |
+| REQUIREMENTS | CAT-01 and CAT-02 fixed compiled catalog, same IDs and stable navigation with safe unknowns | 08-04, 08-05 | Covered |
+| REQUIREMENTS | CANVAS-01 actual same-origin Phoenix inherited Canvas and real browser | 08-04, 08-05 | Covered |
+| REQUIREMENTS | BOOK-01 one deterministic sourced dispatcher job and meaningful ordinary/edge situations | 08-01, 08-04, 08-05 | Covered |
+| RESEARCH | Current raw files missing, preserve exact source identities and no inferred claims | 08-01 and 08-04 dependency | Covered |
+| RESEARCH | Public macro validation before resolution, canonical prod error and separate delivery | 08-02, 08-03 | Covered |
+| RESEARCH | Existing fixture, actual endpoint, compile-path limits, plain functions, no runtime load or eval | 08-03, 08-04, 08-05 | Covered |
+| RESEARCH | Minimal real host, audited host-only dev listener, optional browser and real layout/asset/CSP fidelity | 08-03, 08-04, 08-05 | Covered |
+| CONTEXT | Minimal exact sourced subset, claim/fixture citations, open rights and approved vocabulary | 08-01, 08-04, 08-05 | Covered |
+| CONTEXT | Literal AST, separate hosted CI, canonical compile timing and both production controls | 08-02, 08-03, 08-05 | Covered |
+| CONTEXT | Neutral shell, preview-only sourced tokens, minimal navigation and safe selection | 08-04, 08-05 | Covered |
+| CONTEXT | Cheap checks first, one actual browser pass and owner-only baseline acceptance | 08-01, 08-03, 08-04, 08-05 | Covered |
+| UI-SPEC | 20 explicit states and one overflow backstop, with two non-blocking checker flags | 08-05 | Covered |
+
+API coverage and schema review found no external or audited API integration, new schema, or database. The catalog addresses only this fixed Book. Exact source custody remains a content gate. The listener is supplied by the isolated development host lock. Final outbound visibility remains an explicit decision under the local/internal scope. The two-stage per-requirement recall kept 15 scope, safety and transparency prohibitions. All 15 are present as descriptor-less, flagged-unverified entries across the five plans. Routine layout and correctness cases are represented in the focused checks. Standard injection and cross-origin threats are owned by the phase threat models.
+
+## Execution estimate
+
+The revised projection is **69,500 calibrated tokens** from 139,000 raw using the measured 0.5 factor across 19 samples. The source and macro plans read only their relevant research and inputs, and the host plans use named sections instead of reloading the full research, pattern map, verification map and historical CI ledger. The development adapter and its audit are included in the revised estimate. Each execution record needs the command, result and evidence locator, with full logs read only when diagnosing a failure. The five plans still cover independent source custody, the two distinct macro PR gates, the first real host path and final browser/production delivery.
 
 ---
 

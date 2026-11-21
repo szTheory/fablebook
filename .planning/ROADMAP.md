@@ -6,7 +6,7 @@
 
 A Phoenix developer can start a local host and inspect one fixed, compiled Logistify operator Book through the Fablebook UI catalog. The Book covers one dispatcher job across two or three addressable screens with cited illustrative data and renders in the host Canvas.
 
-The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-gate-exception.md) covers this Book in development and test and expires at v0.7 closeout. The guard aggregate stays open and `walking-skeleton` stays blocked. Scope excludes a logistics backend, external writes, Controls, user-provided values or code, audited-API use, persistence, publication, release, other Books, and follow-on milestone work. The existing dependency budget and optional-only Node policy apply.
+The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-gate-exception.md) covers this Book in development and test and expires at v0.7 closeout. The guard aggregate stays open and `walking-skeleton` stays blocked. Scope excludes a logistics backend, external writes, Controls, user-provided values or code, audited-API use, persistence, publication, release, other Books, and follow-on milestone work. The operator host needs a development-only loopback server adapter. The Fablebook library and production dependency sets stay unchanged, and the optional-only Node policy applies.
 
 ## Phases
 
@@ -32,14 +32,26 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 4. A developer can start the host locally, open the UI catalog, select the one operator Book, navigate its two or three screens, and return directly to each screen at its stable URL. Development and test resolve the same compiled Story/Scenario identifiers. Unknown selections resolve to a safe unavailable state. The catalog uses neutral chrome and the approved UI terms. (CAT-01, CAT-02)
 5. Each screen renders in a same-origin iframe through the real host Canvas pipeline and root layout, with the host's CSS, JavaScript, hooks, fonts and CSP. A real-host browser check exercises the flow at representative narrow and desktop widths and verifies keyboard navigation, visible focus, labels and text status. (CANVAS-01, CAT-01, BOOK-01)
 
-**Plans**: TBD (at most five)
+**Plans**: 5 plans
+**Wave 1**
+- [ ] 08-01-PLAN.md — Recover and pin the exact Logistify source subset.
+- [ ] 08-02-PLAN.md — Author the public macro rejection contract and land the hardened implementation separately.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 08-03-PLAN.md — Activate the test-only PR and prove the production fixture controls before Book code.
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 08-04-PLAN.md — Render the first compiled Scenario through the local Phoenix catalog and Canvas.
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 08-05-PLAN.md — Complete the dispatcher flow, prove the actual host boundary and verify the final candidate.
 
 **UI hint**: yes
 
 #### Delivery sequence
 
-1. Prepare the reproducible source subset and citations. Author the executable mount contract separately from implementation and run it against the current router. Record that the rejection assertion fails for the intended reason because the current router reaches `Macro.expand/2`. Use the same tests against the proposed fix in local verification and review. Use a fixed, harmless local fixture for the disallowed expression.
-2. Land the implementation first in a PR that contains no mount contract test change and passes the existing required CI. Rebase and land the active contract test in a separate test-only PR against hardened `main`, with its own green required CI. Preserve the canonical production error and compile timing. Run the positive and negative production controls on the merged result. Only then begin Book implementation. The phase's final Book delivery has its own reviewed, green merged PR.
+1. Prepare the reproducible source subset and citations as a hard prerequisite for Book content. Independently author the executable mount contract and run it against the current router before changing the implementation. Record that the rejection assertion fails for the intended reason because the current router reaches `Macro.expand/2`. Use the same tests against the proposed fix in local verification and review. Use a fixed, harmless local fixture for the disallowed expression.
+2. Land the implementation first in a PR that contains no mount contract test change and passes the existing required CI. Rebase and land the active contract test in a separate test-only PR against hardened `main`, with its own green required CI. Review run timing and repeated setup after each completed CI run. Preserve the canonical production error and compile timing. Run the positive and negative production controls on the merged result. Only then begin Book implementation. The phase's final Book delivery has its own reviewed, green merged PR.
 3. Deliver the smallest real Story/Scenario, stable catalog navigation and host Canvas path needed by the approved flow. Use the [source intake](references/logistify-brand-intake.md) and approved textual/token subset. Apply Logistify styling in the preview and keep the demonstration local and internal.
 4. Start verification with source/digest and fixture checks, compile and focused automated tests. Repeat production exclusion and reachable-mount rejection on the real operator host. Run one real-host browser pass and capture the representative visual evidence under the existing baseline policy. Owner approval is required for a new or changed baseline. Use the existing hosted CI gates and preserve the recorded local `act` stop until its cause changes. See the [scope review](research/2026-11-20-next-milestone-scope-review.md) and [verification policy](VERIFICATION.md).
 
@@ -47,7 +59,7 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 8. First inspectable Book and local host path | 0/TBD | Not started | - |
+| 8. First inspectable Book and local host path | 0/5 | Not started | - |
 
 ## Completed milestones
 

@@ -23,7 +23,7 @@
 #### Catalog and navigation
 - Keep the Fablebook catalog chrome neutral and apply the approved Logistify text/token styling only in the preview.
 - Provide only enough navigation to select the one Book, move between its two or three screens, and open each screen at a stable URL. Unknown screen selection resolves safely. Do not add broad workbench controls, an Inspector, a command palette, a grid, or a general Journey editor.
-- Use the existing Elixir/Phoenix stack and no new runtime dependency or required Node setup. Keep the host free of Ecto/business services, persistence, and external writes.
+- Use the existing Elixir/Phoenix stack and no new Fablebook library or production/runtime dependency or required Node setup. The local host may add an isolated development/test adapter when necessary to serve the real Canvas. Keep the host free of Ecto/business services, persistence, and external writes.
 
 #### Verification and visual evidence
 - Start with source, citation, digest, fixture, vocabulary, and compile checks; then run focused catalog/render/navigation tests and production controls.
@@ -100,7 +100,17 @@ The current tree contains only `Fablebook.Router`, a placeholder Plug, and a pro
 | Existing Fablebook compiled Story/Scenario + Canvas | Direct static host route or screenshot mock | Faster isolated render, but it does not prove the catalog, compiled module, or accepted Canvas path required by the roadmap. [VERIFIED: `.planning/ROADMAP.md:27-33`; `.planning/research/2026-11-20-ui-roadmap-primary-sources.md`] |
 | Minimal fixed Phoenix navigation | General workbench with controls/grid/command palette | Broader features add input/state surface excluded from this milestone. [VERIFIED: `08-CONTEXT.md`, `08-UI-SPEC.md`] |
 
-**Installation:** No package installation is required by this phase. Use current project dependencies and avoid editing runtime dependency declarations. [VERIFIED: `mix.exs:40-51`; `.planning/REQUIREMENTS.md` Out of Scope]
+**Installation:** Install the listener only in the separate operator host's development environment. Keep the Fablebook dependency declarations and both root locks intact. Existing Phoenix endpoint tests can run without a listener. [Bandit Phoenix adapter documentation](https://bandit.hexdocs.pm/1.12.4/Bandit.PhoenixAdapter.html)
+
+## Package Legitimacy Audit
+
+Verified publisher records, released versions, build requirements and dependency metadata in the official Hex registry. These releases are compatible with the project's Elixir floor and shared Plug, Telemetry and WebSock pins. The returned release metadata listed no advisories or retirements at plan review. Refresh that evidence and audit the resolved host lock at installation time.
+
+| Package | Version and scope | Status | Evidence |
+|---------|-------------------|--------|----------|
+| `bandit` | `1.15.0`; one direct dependency, `hosts/operator` only, `only: :dev` | VERIFIED | [Hex release](https://hex.pm/packages/bandit/1.15.0), [requirements](https://hex.pm/packages/bandit/1.15.0/dependencies) |
+| `hpax` | `1.1.0`; required by Bandit, host development lock only | VERIFIED | [Hex release](https://hex.pm/packages/hpax/1.1.0) |
+| `thousand_island` | `1.6.0`; required by Bandit, host development lock only | VERIFIED | [Hex release](https://hex.pm/packages/thousand_island/1.6.0) |
 
 ## Architecture Patterns
 
@@ -244,6 +254,7 @@ Source: `test/fixtures/prod_guard_host/mix.exs:24-28`. Keep this test fixture's 
 |------------|-------------|-----------|---------|----------|
 | Elixir/Mix | Compile, host, ExUnit | ✓ | Elixir 1.20.4 / OTP 29 observed locally | None needed |
 | Phoenix/LiveView deps | Host router, LiveView and Canvas | Declared in project; operator-host dependency/build not present | Project declarations `phoenix >=1.8.9,<2`; `phoenix_live_view >=1.2.9,<2` | Use the repo lock/approved host lock; no alternate stack |
+| Phoenix server adapter | Start a browser-reachable loopback endpoint | Neither Bandit nor Plug.Cowboy is installed by the reviewed root locks | Bandit 1.15.0 is scoped to the operator host's development lock | Install with Mix in that host; endpoint assertions and production controls run without HTTP serving |
 | Browser runner | Real-host iframe/CSP/layout and visual artifact | Optional tooling only; no browser setup verified in this research | — | Existing manual real-browser pass if optional runner unavailable; do not add required Node setup |
 | `act` | Local workflow attempt before hosted CI when feasible | Installed, but saved evidence records an architecture mismatch (ARM64 OTP inside requested amd64 container) | Prior recorded `act` 0.2.87 | Preserve known stop; hosted required CI remains authoritative unless cause changes |
 
@@ -330,26 +341,15 @@ Source: `test/fixtures/prod_guard_host/mix.exs:24-28`. Keep this test fixture's 
 
 | # | Claim | Section | Risk if Wrong |
 |---|-------|---------|---------------|
-| A1 | The smallest compatible implementation can use the current Phoenix/LiveView dependency declarations without adding a runtime package. | Standard Stack | A missing host capability might force replanning; adding a package would require a separate approved decision. |
+| A1 | The smallest compatible implementation keeps Fablebook's production/runtime dependency set unchanged. A separate host-only development/test listener may be used when technically necessary. | Standard Stack | A browser cannot reach a Phoenix endpoint with no listener. The identified gap requires Bandit as `:dev` only in `hosts/operator`; its test and production lanes stay adapter-free. |
 | A2 | The saved source intake's recorded file paths still identify the approved original source bundle, which can be retrieved from its preserved read-only source location. | Common Pitfalls | If the source cannot be recovered, exact source subset and Book content cannot be verified; do not proceed using summary claims alone. |
 | A3 | The optional browser tool can run against the new host in this environment or be made available through the already approved optional test tooling. | Environment Availability | If unavailable, CANVAS-01's actual browser fidelity claims cannot be established. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Where is the approved raw Logistify v1.0 source bundle now?**
-   - What we know: the checked-in intake records SHA-256 values and section maps for `docs/brand/logistify/BRAND.md`, `brand.json`, and `tokens.json`; those source files are absent from this reviewed checkout and the known brand-intake worktree. The intake says the sources were uncommitted at capture time. [VERIFIED: `.planning/references/logistify-brand-intake.md:12-22`; repository inventory]
-   - What's unclear: which preserved read-only location contains the exact approved bundle and whether its current bytes match the recorded hashes.
-   - Recommendation: make source location/reproducibility and fresh digest verification the first content task; if unavailable, stop content authoring and resolve source custody rather than substituting the intake summary.
-
-2. **Which exact dispatcher job and edge state does the source support?**
-   - What we know: source intake supports dispatcher terms/voice and flags failed shipments in wider twin research, but candidate states are not approved product behavior by themselves. [VERIFIED: `.planning/references/logistify-brand-intake.md:28,36-40`; `docs/research/TWINS.md:10,25`]
-   - What's unclear: the actual source text and evidence for the concrete normal/error path.
-   - Recommendation: decide after pinning and inspecting only the approved v1.0 subset; map every visible claim and fixture field to filename/section.
-
-3. **What is the smallest host consistent with ADR 0020?**
-   - What we know: ADR 0020 describes `hosts/operator` as an adversarial host with broader custom tokens, fonts, hooks and strict nonce CSP; the current tree has no `hosts/`, and the approved context says build only the smallest actual Canvas host.
-   - What's unclear: which host root-layout/CSP/assets are needed to exercise the phase's actual acceptance claim.
-   - Recommendation: make the smallest host with a real router, root layout, asset pipeline, CSP and fixed Book; do not import the deferred full ADR 0020 checklist unless a listed CANVAS-01 criterion needs it.
+1. **Raw Logistify v1.0 source recovery — RESOLVED as a read-only checkpoint.** The exact bundle location and its current bytes remain unknown. The reviewed checkout and known brand-intake worktree lack the originals, and the intake records three approved path and SHA-256 pairs. Plan 08-01 checks only an identified read-only location against all three hashes. If it cannot recover the bundle, stop Book content and request the exact owner-supplied path or read access. Plans 08-02 and 08-03 proceed independently. [Source intake](../../references/logistify-brand-intake.md)
+2. **Dispatcher job and edge — RESOLVED as a source-dependent selection.** The exact supported job and meaningful edge or error situation remain unknown. Plan 08-01 selects both only after fresh whole-file SHA-256 verification and review of the exact approved sections. Map each claim and fixture field to the pinned filename/section. If the approved bytes support no complete flow, stop Book content and identify the evidence needed. Candidate states in the wider twin research do not establish a Logistify claim.
+3. **Operator host scope — RESOLVED.** Use a single loopback Phoenix endpoint/router with its actual browser pipeline, root layout, local CSS/JavaScript, system fonts, LiveSocket hook, nonce CSP and one fixed compiled Book. The missing listener is a concrete need for a locally openable URL. Use the host-only Bandit development dependency recorded above and a dedicated host lock. Leave the wider ADR 0020 checklist outside this phase.
 
 ## Sources
 
@@ -372,7 +372,7 @@ Source: `test/fixtures/prod_guard_host/mix.exs:24-28`. Keep this test fixture's 
 **Confidence breakdown:**
 - Standard stack: HIGH — read current `mix.exs`, existing lock/ADR decisions.
 - Architecture: HIGH — current macro/fixture and accepted ADRs inspected; no host/Book implementation exists yet.
-- Pitfalls: HIGH for macro/production constraints; MEDIUM for source/content and minimal-host choices awaiting source and host implementation.
+- Pitfalls: HIGH for macro/production constraints and the host listener requirement; MEDIUM for exact source content pending read-only verification.
 
 **Research date:** 2026-11-20
 **Valid until:** 2026-12-20 for stable project contracts; recheck raw source hashes immediately before use.

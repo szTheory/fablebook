@@ -2,15 +2,18 @@
 gsd_state_version: "1.0"
 milestone: v0.7
 milestone_name: First Inspectable Book
-status: planning
-current_phase: "8"
+current_phase: 8
 current_phase_name: First inspectable Book and local host path
-last_updated: "2026-11-21T03:12:45.364Z"
-last_activity: 2026-11-20
+status: executing
+stopped_at: Phase 8 UI-SPEC approved
+last_updated: "2026-11-21T05:15:55.093Z"
+last_activity: 2026-11-21
+last_activity_desc: Phase 8 planning complete — 5 plans ready
+state_head: 5fa8a27a9562f4e9745fdc9cf57ebff81751590f
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
+  total_plans: 5
   completed_plans: 0
   percent: 0
 ---
@@ -36,21 +39,23 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-20), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 8 (First inspectable Book and local host path)
-Plan: —
-Status: Ready to discuss
-Last activity: 2026-11-20 — Activated the v0.7 roadmap and mapped all eight requirements to Phase 8.
+Phase: 8 (First inspectable Book and local host path) — READY TO EXECUTE
+Plan: 1 of 5 in current phase
+Total Plans in Phase: 5
+Status: Ready to execute
+Last Activity: 2026-11-21 — Phase 8 planning complete
+Last Activity Description: Phase 8 planning complete — 5 plans ready
 
 
 ## Active Handoff
 
 - Checkout: `~/projects/fablebook` on `main`, reconciled with `origin/main` after PR #97, with local v0.7 planning changes. The former local `main` had 20 unique commits and a different 131-file tree; its history is preserved as `archive/main-stale-pre-v0.7-20261120`. The v0.6 closeout branch's committed tree matched `origin/main`. Owner planning work for intents 08–14, research, rolling roadmap, planning gates, verification and lifecycle guidance remains present and is being carried into this milestone. Separate dirty historical worktrees remain preserved.
 - Delivered: v0.6 Phase 7, 5 plans, 12 tasks. Exact-head hosted CI [run 44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) passed; PR #96 merged as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) passed. Planning archive closeout PR #97 is merged on current main.
-- Current: v0.7 “First Inspectable Book” is active with Phase 8 ready for discussion. All eight requirements map to Phase 8. The owner authorized autonomous discussion, planning, implementation, verification, review, delivery and closeout within the recorded scope.
+- Current: v0.7 “First Inspectable Book” is active with Phase 8 planned and ready to execute across five reviewed plans. All eight requirements map to Phase 8. The owner authorized autonomous discussion, planning, implementation, verification, review, delivery and closeout within the recorded scope.
 - Limits: the guard candidate remains null; guard implementation remains unauthorized; aggregate gate open; actual-library collision unknown; R9 denied and unconsumed; SEC-01 Pending; broader Macro caller-AST and explanation gaps and the legacy digest remain unresolved; the original `walking-skeleton` key stays blocked. R10 and R11 remain spent and immutable. The v0.7 exception allows one fixed, developer-authored compiled Book in development/test only and expires at v0.7 closeout. The literal mount-macro contract must be tested separately from its implementation; positive production route/story exclusion checks and a negative reachable-mount control must pass before Book implementation. No Controls, user-provided values or code, audited-API use, persistence, publication, release or follow-on milestone work is included. The unrelated Logistify brand-canon seed stays dormant.
 - Inherited deferrals: IN-02, SEC-02, and 01.1-01 remain unresolved and were acknowledged as carry-forwards at v0.6 closeout.
 - Product outcome: one inspectable Logistify operator Book across 2–3 addressable screens with fixed cited illustrative data, minimal navigation and the real compiled Story/Scenario and host Canvas path. Records and actions are illustrative; no logistics backend or external writes are included. The broader three-Book showcase remains future scope.
-- Next action: run `$gsd-autonomous` without a range limit to discuss and plan Phase 8. Author and run the mount contract first, land the reviewed macro implementation and the active contract test in separate green PRs, and pass the production controls before beginning the Book. Pin the cited source before applying it.
+- Next action: execute Phase 8 in dependency order. The macro implementation and separate active contract-test PRs must merge green, and positive production exclusion plus reachable-mount rejection controls must pass before Book implementation. Pin and verify the cited source subset before writing Book content; keep the source gate closed while completing independent macro and fixture work.
 - **Next actor: Codex, continuing the authorized v0.7 workflow.** No owner action is needed unless a genuinely new material risk or an unavoidable visual judgment remains after other work is complete.
 
 ## Performance Metrics
@@ -167,9 +172,9 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-20 — v0.7 roadmap activated.
-**Stopped at:** Phase 8 ready for discussion on the canonical `main` checkout.
-**Resume file:** .planning/ROADMAP.md
+**Last session:** 2026-11-21T03:46:18.032Z
+**Stopped at:** Phase 8 UI-SPEC approved
+**Resume file:** .planning/phases/08-first-inspectable-book-and-local-host-path/08-UI-SPEC.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5's four selected EX-177 rows now have the reviewed source/caller facts recorded by discovery and Phase 6; the other 9,712 rows remain unchanged. Package-wide caller closure remains unproven, R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was reread for Phase 6. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
