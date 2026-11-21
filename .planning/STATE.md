@@ -6,10 +6,10 @@ current_phase: 8
 current_phase_name: First inspectable Book and local host path
 status: executing
 stopped_at: Phase 8 UI-SPEC approved
-last_updated: "2026-11-21T05:15:55.093Z"
+last_updated: "2026-11-21T05:21:18.484Z"
 last_activity: 2026-11-21
-last_activity_desc: Phase 8 planning complete — 5 plans ready
-state_head: 5fa8a27a9562f4e9745fdc9cf57ebff81751590f
+last_activity_desc: Phase 8 execution started
+state_head: 732198d55f53e45e04d4b4f1311c8280b354b029
 progress:
   total_phases: 1
   completed_phases: 0
@@ -35,27 +35,27 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-20), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** Phase 8 of v0.7, the first inspectable Book and its local host path.
+**Current focus:** Phase 8 — First inspectable Book and local host path
 
 ## Current Position
 
-Phase: 8 (First inspectable Book and local host path) — READY TO EXECUTE
-Plan: 1 of 5 in current phase
+Phase: 8 (First inspectable Book and local host path) — EXECUTING
+Plan: 1 of 5
 Total Plans in Phase: 5
-Status: Ready to execute
-Last Activity: 2026-11-21 — Phase 8 planning complete
-Last Activity Description: Phase 8 planning complete — 5 plans ready
+Status: Executing Phase 8
+Last activity: 2026-11-21 — Phase 8 execution started
+Last Activity Description: Phase 8 execution started
 
 
 ## Active Handoff
 
 - Checkout: `~/projects/fablebook` on `main`, reconciled with `origin/main` after PR #97, with local v0.7 planning changes. The former local `main` had 20 unique commits and a different 131-file tree; its history is preserved as `archive/main-stale-pre-v0.7-20261120`. The v0.6 closeout branch's committed tree matched `origin/main`. Owner planning work for intents 08–14, research, rolling roadmap, planning gates, verification and lifecycle guidance remains present and is being carried into this milestone. Separate dirty historical worktrees remain preserved.
 - Delivered: v0.6 Phase 7, 5 plans, 12 tasks. Exact-head hosted CI [run 44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) passed; PR #96 merged as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) passed. Planning archive closeout PR #97 is merged on current main.
-- Current: v0.7 “First Inspectable Book” is active with Phase 8 planned and ready to execute across five reviewed plans. All eight requirements map to Phase 8. The owner authorized autonomous discussion, planning, implementation, verification, review, delivery and closeout within the recorded scope.
+- Current: v0.7 “First Inspectable Book” is active. Phase 8 has five reviewed plans and execution has started. All eight requirements map to Phase 8. The owner authorized autonomous discussion, planning, implementation, verification, review, delivery and closeout within the recorded scope.
 - Limits: the guard candidate remains null; guard implementation remains unauthorized; aggregate gate open; actual-library collision unknown; R9 denied and unconsumed; SEC-01 Pending; broader Macro caller-AST and explanation gaps and the legacy digest remain unresolved; the original `walking-skeleton` key stays blocked. R10 and R11 remain spent and immutable. The v0.7 exception allows one fixed, developer-authored compiled Book in development/test only and expires at v0.7 closeout. The literal mount-macro contract must be tested separately from its implementation; positive production route/story exclusion checks and a negative reachable-mount control must pass before Book implementation. No Controls, user-provided values or code, audited-API use, persistence, publication, release or follow-on milestone work is included. The unrelated Logistify brand-canon seed stays dormant.
 - Inherited deferrals: IN-02, SEC-02, and 01.1-01 remain unresolved and were acknowledged as carry-forwards at v0.6 closeout.
 - Product outcome: one inspectable Logistify operator Book across 2–3 addressable screens with fixed cited illustrative data, minimal navigation and the real compiled Story/Scenario and host Canvas path. Records and actions are illustrative; no logistics backend or external writes are included. The broader three-Book showcase remains future scope.
-- Next action: execute Phase 8 in dependency order. The macro implementation and separate active contract-test PRs must merge green, and positive production exclusion plus reachable-mount rejection controls must pass before Book implementation. Pin and verify the cited source subset before writing Book content; keep the source gate closed while completing independent macro and fixture work.
+- Next action: complete the Wave 1 source-custody verifier and macro baseline, then deliver the hardened macro and active contract test in separate green PRs. Run both positive production exclusion and reachable-mount rejection controls before any Book implementation. Pin and verify the cited source subset before writing Book content; keep that gate closed while completing independent macro and fixture work.
 - **Next actor: Codex, continuing the authorized v0.7 workflow.** No owner action is needed unless a genuinely new material risk or an unavoidable visual judgment remains after other work is complete.
 
 ## Performance Metrics
