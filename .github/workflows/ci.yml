@@ -41,9 +41,11 @@ jobs:
       - run: bin/fetch_brand_sources
       - run: bin/verify_logistify_source --check-pinned
       - name: Install and audit the isolated operator host lock
-        run: (cd hosts/operator && MIX_ENV=dev mix deps.get --check-locked && MIX_ENV=dev mix hex.audit)
+        working-directory: hosts/operator
+        run: env MIX_ENV=dev mix deps.get --check-locked && env MIX_ENV=dev mix hex.audit
       - name: Check the operator host routes and Canvas
-        run: (cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors)
+        working-directory: hosts/operator
+        run: env MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors
       - name: Check the operator host production boundary
         run: bin/verify_operator_host_prod
       - run: mix ci
@@ -69,10 +71,15 @@ jobs:
           key: brand-sources-${{ hashFiles('brand_sources.lock.json') }}
       - run: bin/fetch_brand_sources
       - run: bin/verify_logistify_source --check-pinned
+      - name: Install the operator host development dependencies
+        working-directory: hosts/operator
+        run: env -u FABLEBOOK_FLOOR MIX_ENV=dev mix deps.get --check-locked
       - name: Install the operator host against floor pins
-        run: (cd hosts/operator && MIX_ENV=test mix deps.get --check-locked)
+        working-directory: hosts/operator
+        run: env MIX_ENV=test mix deps.get --check-locked
       - name: Check the operator host against floor pins
-        run: (cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors)
+        working-directory: hosts/operator
+        run: env MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors
       - name: Check the operator host production boundary
         run: bin/verify_operator_host_prod
       - run: mix compile --warnings-as-errors

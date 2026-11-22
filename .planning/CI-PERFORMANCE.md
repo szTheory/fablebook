@@ -191,3 +191,18 @@ or a recurring regression. Hosted Phase 8 checks will provide the comparable
 candidate measurement. Core and floor already overlap in hosted CI, and setup
 has not been shown to dominate. No safe coverage-preserving pipeline change is
 supported by this sample; keep the required lanes and the known `act` stop.
+
+## Hosted Phase 8 initial PR-head CI — 2026-11-22
+
+Initial candidate head `149531c4b2f95ffe67542faf1cdf94fefe5d5e34` failed
+[run 45081902359](https://github.com/szTheory/fablebook/actions/runs/45081902359)
+after 11m48s. Jobs began about 29 seconds after run creation. Core took 11m15s,
+with `mix ci` taking 10m08s and passing; floor stopped after 28s because the
+production-boundary check lacked the `dev` dependency set its verifier
+compiles, and security stopped after 33s because Actionlint surfaced
+ShellCheck SC2209 on the new parenthesized directory changes. Dialyzer passed
+in 24s. The required gate failed on the two job failures. Core tests dominated
+elapsed time while core and floor remained parallel; this single sample does
+not support a timing optimization. The targeted workflow fixes preserve all
+checks and lanes; compare the next exact-head run before drawing any timing
+conclusion.
