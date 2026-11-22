@@ -11,9 +11,10 @@ requirements-completed: []
 
 The fixed, source-cited operator Book now loads through the local Phoenix
 Canvas path, and the readiness retry is verified in Chrome. Local tests and
-production-boundary checks pass after that fix. The candidate has not yet been
-pushed or opened as a PR. Required hosted CI and owner approval of the current
-visual baseline are still outstanding, so this is not phase completion.
+production-boundary checks pass after that fix. Draft PR [#106](https://github.com/szTheory/fablebook/pull/106)
+is open for the isolated candidate. Its first hosted CI run is in progress;
+the PR Checks page shows the current exact-head result. Owner approval of the
+current visual baseline is still outstanding, so this is not phase completion.
 
 ## Delivered in the candidate
 
@@ -77,9 +78,8 @@ baseline; owner approval is required and has not been inferred.
 
 - Rerun `git diff --check` after the final documentation edits and review the
   exact outbound diff.
-- Push the isolated candidate and open its Phase 8 PR under the existing
-  authorization. Obtain green required hosted checks on the exact reviewed
-  head; merge only that head and follow branch protection.
+- Obtain green required hosted checks on the exact reviewed head of PR #106;
+  merge only that head and follow branch protection.
 - Present the current captures for the required owner visual-baseline decision
   before claiming visual acceptance or closing the phase.
 - Record the actual PR, reviewed head, merge commit and hosted CI URL in the
