@@ -10,9 +10,10 @@
 ### Locked Decisions
 
 #### Source grounding and content
-- Use only the exact Logistify v1.0 text/token subset needed for this operator Book; make that subset reproducible in the reviewed repository and verify its recorded SHA-256 values before use.
-- Tie each user-visible source claim and fixed fixture to its exact source file and section. Preserve the source's open name and asset-rights status; keep the fictional name and demo internal/local and do not import unreviewed artwork, sound, or fonts.
-- Choose one source-supported dispatcher job, with one ordinary state and one meaningful source-supported edge or error state. Keep all data deterministic and fixed, use the approved Fablebook vocabulary and product-copy corrections, and do not invent logistics policy.
+- Fetch the owner-supplied public brand repositories by full commit pins into ignored `.cache/brand_sources/`; never ask for a source path or depend on `docs/brand/` copies.
+- Keep full repositories, PDFs, and assets out of the tracked tree. A reviewed public PR may include only the minimal cited Logistify excerpt manifest and source-derived Book content under INT-20261121-01; no deployment, release, or marketing claim is authorized.
+- Keep the original three whole-file hashes as a second check, bind each excerpt to repository/tag/commit/path and exact bytes, and use fixed illustrative values without inventing logistics policy.
+- The source records define the dispatcher job and a failed-shipment-to-reassignment slice. The bulk source says 12 selected/reassigned but lists two shipment IDs in the bulk case and one in the completion case; do not invent the remaining IDs or a replacement driver. Do not import logos, imagery, sound, or font files.
 
 #### Mount and production boundary
 - Accept only literal module alias/reference AST forms in the public mount macro; reject macro calls, variables, and other computed expressions before expansion.
@@ -46,7 +47,7 @@
 
 | ID | Description | Research Support |
 |----|-------------|------------------|
-| SRC-01 | Before the Book uses Logistify source content, the exact text/token subset is reproducible in the repository, version-pinned and SHA-256 checked; every cited content claim and fixture maps to its source file and section. | Source intake records source identities, hashes and section maps; current checkout lacks the underlying `docs/brand/logistify/` sources, so pin/copy only the required subset before authoring fixture/content. |
+| SRC-01 | Before the Book uses Logistify source content, the exact text/token subset is reproducible in the repository, version-pinned and SHA-256 checked; every cited content claim and fixture maps to its source file and section. | The public repository is locked to a full commit in `brand_sources.lock.json`; the ignored cache and verifier bind the existing whole-file hashes and exact manifest excerpts. |
 | MOUNT-01 | The public mount macro accepts only literal module alias/reference AST forms and rejects other expressions before expanding them; its contract tests and implementation land in separate PRs. | Current `fablebook/2` calls `Macro.expand/2`; roadmap requires the test-first rejection failure, implementation-only PR, then test-only PR with separate green hosted CI. |
 | HOST-01 | A production build has no Fablebook route and no compiled Story or Book modules, while development and test can compile the fixed Book. | Extend existing fixture exclusion contract, then repeat against the actual operator host; current fixture already separates `storybook/` from prod `elixirc_paths`. |
 | HOST-02 | A reachable production mount fails compilation with the canonical Fablebook production-mount error; a negative production control proves the rejection. | Preserve existing canonical message and negative unguarded fixture control, then repeat on operator host. |
@@ -213,8 +214,8 @@ The existing test's canonical first line is exactly `"Fablebook cannot be mounte
 ### Pitfall 3: Fixture content outruns source evidence
 
 **What goes wrong:** A dispatcher flow presents invented statuses, actions, timestamps, or business rules as Logistify behavior.
-**Why it happens:** The checked-in intake is a summary and explicitly says source layouts are recommendations; the raw source was not present in the reviewed tree. Existing intake hashes date from 2026-11-10 and must be rechecked before consumption. [VERIFIED: `.planning/references/logistify-brand-intake.md:12-22,36-43`; `.planning/research/2026-11-20-next-milestone-scope-review.md`]
-**How to avoid:** Retrieve the approved source through the authorized read-only path, copy only the approved text/token subset into the reviewed repository, verify recorded hashes, then cite each Book claim/fixture field to source filename and section. Make no new logistics policy inference. [VERIFIED: `08-CONTEXT.md`; `.planning/ROADMAP.md:31,39-43`]
+**Why it happens:** The brand-book screen examples are recommendations, not implemented product behavior; the source flow's aggregate count exceeds the IDs listed in two case fixtures. [VERIFIED: pinned `records/logistify/logistify-records.json`, `FABLEBOOK-MAPPING-GUIDE.md`, and `BRAND.md`]
+**How to avoid:** Use only the cited source files and exact manifest excerpts. Keep the aggregate count as source copy, show only supplied fixture IDs, and do not claim values for the unlisted shipments or replacement driver. Keep every record/action explicitly illustrative. [VERIFIED: `08-LOGISTIFY-SOURCE.json`; INT-20261121-01]
 **Warning signs:** Citing only the summary intake, relying on a stale hash without recalculation, or using candidate state names from broad twin research as a source claim.
 
 ### Pitfall 4: Canvas is same-origin in markup but not using host layout/assets
@@ -342,13 +343,13 @@ Source: `test/fixtures/prod_guard_host/mix.exs:24-28`. Keep this test fixture's 
 | # | Claim | Section | Risk if Wrong |
 |---|-------|---------|---------------|
 | A1 | The smallest compatible implementation keeps Fablebook's production/runtime dependency set unchanged. A separate host-only development/test listener may be used when technically necessary. | Standard Stack | A browser cannot reach a Phoenix endpoint with no listener. The identified gap requires Bandit as `:dev` only in `hosts/operator`; its test and production lanes stay adapter-free. |
-| A2 | The saved source intake's recorded file paths still identify the approved original source bundle, which can be retrieved from its preserved read-only source location. | Common Pitfalls | If the source cannot be recovered, exact source subset and Book content cannot be verified; do not proceed using summary claims alone. |
+| A2 | The owner-supplied public commit pins match the Logistify source and the three original SHA-256 digests. | Source grounding | A mismatch blocks excerpts and Book content; no path substitution or floating-tag update is allowed. |
 | A3 | The optional browser tool can run against the new host in this environment or be made available through the already approved optional test tooling. | Environment Availability | If unavailable, CANVAS-01's actual browser fidelity claims cannot be established. |
 
 ## Open Questions (RESOLVED)
 
-1. **Raw Logistify v1.0 source recovery — RESOLVED as a read-only checkpoint.** The exact bundle location and its current bytes remain unknown. The reviewed checkout and known brand-intake worktree lack the originals, and the intake records three approved path and SHA-256 pairs. Plan 08-01 checks only an identified read-only location against all three hashes. If it cannot recover the bundle, stop Book content and request the exact owner-supplied path or read access. Plans 08-02 and 08-03 proceed independently. [Source intake](../../references/logistify-brand-intake.md)
-2. **Dispatcher job and edge — RESOLVED as a source-dependent selection.** The exact supported job and meaningful edge or error situation remain unknown. Plan 08-01 selects both only after fresh whole-file SHA-256 verification and review of the exact approved sections. Map each claim and fixture field to the pinned filename/section. If the approved bytes support no complete flow, stop Book content and identify the evidence needed. Candidate states in the wider twin research do not establish a Logistify claim.
+1. **Raw Logistify v1.0 source recovery — RESOLVED.** INT-20261121-01 replaces folder custody with the public repository pin. All seven locked repositories are fetched into the ignored cache; Logistify's three original files pass their preserved whole-file SHA-256 checks. No source path is needed. [Lock](../../../brand_sources.lock.json) · [intake](../../references/logistify-brand-intake.md)
+2. **Dispatcher job and edge — RESOLVED by source review.** The records define `job-dispatcher`, the ordinary console-board case, a failed-shipment case, and a flow whose dispatcher steps cover failure, bulk selection, and reassignment. The Book may show only provided IDs; the source does not identify all 12 selected/reassigned shipments or the replacement driver's details. [Manifest](08-LOGISTIFY-SOURCE.json)
 3. **Operator host scope — RESOLVED.** Use a single loopback Phoenix endpoint/router with its actual browser pipeline, root layout, local CSS/JavaScript, system fonts, LiveSocket hook, nonce CSP and one fixed compiled Book. The missing listener is a concrete need for a locally openable URL. Use the host-only Bandit development dependency recorded above and a dedicated host lock. Leave the wider ADR 0020 checklist outside this phase.
 
 ## Sources
@@ -359,7 +360,8 @@ Source: `test/fixtures/prod_guard_host/mix.exs:24-28`. Keep this test fixture's 
 - `.planning/phases/08-first-inspectable-book-and-local-host-path/08-CONTEXT.md` and `08-UI-SPEC.md` — locked scope and interaction/visual contract.
 - `lib/fablebook/router.ex`, `lib/fablebook/placeholder.ex`, `test/contract/prod_guard_test.exs`, `test/fixtures/prod_guard_host/**`, `test/support/mix_cmd.ex` — current mount, placeholder and compile controls.
 - `docs/adr/0001`, `0002`, `0003`, `0004`, `0006`, `0008`, `0011`, `0018`, `0020`, `0021` — accepted architecture, dependency and delivery constraints.
-- `.planning/references/logistify-brand-intake.md` — approved source file/hash/section inventory and source limitations; raw source bundle not found in current reviewed tree.
+- `.planning/references/logistify-brand-intake.md` — approved source file/hash/section inventory and source limitations; updated to the public pinned repository.
+- `.planning/intent/sources/2026-11-21-01-public-pinned-brand-sources.md` and `brand_sources.lock.json` — public source policy, tags, and full commit pins.
 
 ### Secondary (MEDIUM confidence)
 

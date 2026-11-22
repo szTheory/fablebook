@@ -10,7 +10,7 @@ This milestone is the narrowly approved first-Book exception in [INT-20261120-14
 
 ### Source grounding
 
-- [ ] **SRC-01**: Before the Book uses Logistify source content, the exact text/token subset is reproducible in the repository, version-pinned and SHA-256 checked; every cited content claim and fixture maps to its source file and section. (INT-20261120-08, INT-20261111-06, INT-20261120-14)
+- [ ] **SRC-01**: Before the Book uses Logistify source content, the exact text/token subset is reproducible from public commit-pinned sources and SHA-256 checked; every cited content claim and fixture maps to its repository, tag, commit, file, and section. (INT-20261120-08, INT-20261111-06, INT-20261120-14, INT-20261121-01)
 
 ### Mount and production boundary
 
@@ -36,7 +36,7 @@ This milestone is the narrowly approved first-Book exception in [INT-20261120-14
 | Feature | Reason |
 |---------|--------|
 | Full logistics application, backend, database, authentication or shipment persistence | This milestone demonstrates an inspectable Book; its records and actions are fixed and illustrative. (INT-20261120-08, INT-20261120-14) |
-| Other Books, full Logistify sourcebook application, applied brand canon, unreviewed artwork, sound or fonts, public brand claims or publication | The selected scope is one internal/local operator Book; name and asset rights remain open. (INT-20261120-08, INT-20261120-14) |
+| Other Books, full Logistify sourcebook application, applied brand canon, unreviewed artwork, sound or fonts, marketing/clearance claims, product publication, deployment or release | Public citations and the minimal cited source-derived content in a reviewed PR are permitted; the demo remains one fixed dev/test Book and is not deployed. The name is not cleared, and unreviewed asset rights remain open. (INT-20261120-08, INT-20261120-14, INT-20261121-01) |
 | Controls, user-provided values or code, arbitrary runtime story loading, audited-API use, or input-selected modules/atoms/topics | The exception is limited to one fixed developer-authored compiled Book in development/test. (INT-20261120-09, INT-20261120-14, ADR 0004) |
 | Persistence, external writes, release, or follow-on milestone work | Explicitly excluded by the one-milestone exception, which expires at v0.7 closeout. (INT-20261120-14) |
 | New runtime dependency or required Node setup | Existing Elixir/Phoenix and optional tooling are sufficient for this bounded result. (INT-20261120-13, ADR 0018) |

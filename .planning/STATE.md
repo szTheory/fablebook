@@ -5,24 +5,24 @@ milestone_name: First Inspectable Book
 current_phase: 8
 current_phase_name: First inspectable Book and local host path
 status: executing
-stopped_at: Phase 8 UI-SPEC approved
-last_updated: "2026-11-21T05:21:18.484Z"
-last_activity: 2026-11-21
-last_activity_desc: Phase 8 execution started
-state_head: 732198d55f53e45e04d4b4f1311c8280b354b029
+stopped_at: null
+last_updated: "2026-11-22T23:02:58.000Z"
+last_activity: 2026-11-22
+last_activity_desc: Verified Canvas ready and failure recovery in Chrome, captured current mobile and desktop evidence, reviewed the readiness retry, and passed the post-fix full core lane and operator host checks
+state_head: ae32bda80f5fc1c040459329956bea6b42a635ee
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 5
-  completed_plans: 0
-  percent: 0
+  completed_plans: 3
+  percent: 60
 ---
 
 # Project State
 
 ## Project Reference
 
-See [PROJECT.md](PROJECT.md) (updated 2026-11-20), [ROADMAP.md](ROADMAP.md), the
+See [PROJECT.md](PROJECT.md) (updated 2026-11-21), [ROADMAP.md](ROADMAP.md), the
 [v0.6 closeout](milestones/v0.6-CLOSEOUT.md),
 [v0.6 archive roadmap](milestones/v0.6-ROADMAP.md),
 [v0.6 audit](milestones/v0.6-MILESTONE-AUDIT.md),
@@ -40,23 +40,24 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-20), [ROADMAP.md](ROADMAP.md), the
 ## Current Position
 
 Phase: 8 (First inspectable Book and local host path) — EXECUTING
-Plan: 1 of 5
+Plan: 5 of 5 locally verified; delivery incomplete
 Total Plans in Phase: 5
-Status: Executing Phase 8
-Last activity: 2026-11-21 — Phase 8 execution started
-Last Activity Description: Phase 8 execution started
+Status: Authorized work continues; delivery incomplete
+Last activity: 2026-11-22 — completed the post-fix full core lane and real-host browser evidence in the isolated candidate
+Last Activity Description: Chrome confirmed both valid Scenarios reach ready, the invalid Canvas reaches the expected failure copy, and current 320 px/1280 px screenshots are captured. Source checks, focused core/floor host suites, production controls and the final core lane pass. Final diff review, hosted CI, owner baseline review and delivery remain.
 
 
 ## Active Handoff
 
-- Checkout: `~/projects/fablebook` on `main`, reconciled with `origin/main` after PR #97, with local v0.7 planning changes. The former local `main` had 20 unique commits and a different 131-file tree; its history is preserved as `archive/main-stale-pre-v0.7-20261120`. The v0.6 closeout branch's committed tree matched `origin/main`. Owner planning work for intents 08–14, research, rolling roadmap, planning gates, verification and lifecycle guidance remains present and is being carried into this milestone. Separate dirty historical worktrees remain preserved.
-- Delivered: v0.6 Phase 7, 5 plans, 12 tasks. Exact-head hosted CI [run 44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) passed; PR #96 merged as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) passed. Planning archive closeout PR #97 is merged on current main.
-- Current: v0.7 “First Inspectable Book” is active. Phase 8 has five reviewed plans and execution has started. All eight requirements map to Phase 8. The owner authorized autonomous discussion, planning, implementation, verification, review, delivery and closeout within the recorded scope.
-- Limits: the guard candidate remains null; guard implementation remains unauthorized; aggregate gate open; actual-library collision unknown; R9 denied and unconsumed; SEC-01 Pending; broader Macro caller-AST and explanation gaps and the legacy digest remain unresolved; the original `walking-skeleton` key stays blocked. R10 and R11 remain spent and immutable. The v0.7 exception allows one fixed, developer-authored compiled Book in development/test only and expires at v0.7 closeout. The literal mount-macro contract must be tested separately from its implementation; positive production route/story exclusion checks and a negative reachable-mount control must pass before Book implementation. No Controls, user-provided values or code, audited-API use, persistence, publication, release or follow-on milestone work is included. The unrelated Logistify brand-canon seed stays dormant.
+- Checkout: `~/projects/fablebook` on `main` at `f23da6e341997999a084049436037bd6bd55c0af`; after fetching, `origin/main` is `0e406e648d52b93da52f4d641116cfa28cf9bb6c`. The histories diverge at `5b08774`: 26 local commits and uncommitted planning/source/code work remain here, while four newer commits are on `origin/main`. Preserve this checkout and do not push its full local branch. The dirty historical worktree and dormant brand-intake checkout remain untouched.
+- Active delivery worktree: `/private/tmp/fablebook-v07-phase8-resume-20261122` on `gsd/phase-8-first-inspectable-book`, based on `origin/main` at `0e406e6`. It holds the Phase 8 candidate and current implementation edits; the canonical planning checkout above remains on `main`.
+- Delivered: v0.6 Phase 7, 5 plans, 12 tasks. Exact-head hosted CI [run 44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) passed; PR #96 merged as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) passed. Planning archive closeout PR #97 is merged. The v0.7 planning-only PR #98 is merged with passing exact-head CI [run 44872457695](https://github.com/szTheory/fablebook/actions/runs/44872457695); it is not an implementation delivery.
+- Current: v0.7 “First Inspectable Book” remains active under the existing authorization. Plan 08-01 and prerequisite PRs #99–#105 are delivered; the latest four prerequisite PRs have green exact-head CI. The isolated delivery worktree is based on `origin/main` at `0e406e648d52b93da52f4d641116cfa28cf9bb6c`; the dirty canonical `main` checkout remains untouched and must not be pushed. The candidate implements the fixed, dev/test-only Book and the approved Book → Journey → Scenario navigation. The post-fix full core lane passed 467 tests with 10 exclusions; the preceding full floor lane passed 477 with 6 exclusions. After the readiness retry fix, both focused 12-test host suites, both source-tool self-tests, pinned-source checks and both operator production-boundary checks passed. The deep review's two warnings were fixed; the later readiness retry received a follow-up review. Chrome confirmed both stable Scenarios reach `Screen ready`, an invalid Canvas route reaches the approved parent failure copy, and recovery returns to ready. Current mobile/desktop captures are in [08-BROWSER.md](phases/08-first-inspectable-book-and-local-host-path/08-BROWSER.md); browser behavior is verified, while visual-baseline acceptance remains with the owner. The full resumption evidence is in [08-05-RESUMPTION-2026-11-22.md](phases/08-first-inspectable-book-and-local-host-path/08-05-RESUMPTION-2026-11-22.md); the 2026-11-21 halted report remains preserved byte-for-byte in [08-05-HALTED-SUMMARY-2026-11-21.md](phases/08-first-inspectable-book-and-local-host-path/08-05-HALTED-SUMMARY-2026-11-21.md). No Phase 8 PR has been opened. Final diff review, hosted CI, phase verification, exact-head merge and v0.7 closeout remain.
+- Limits: the guard candidate remains null; guard implementation remains unauthorized; aggregate gate open; actual-library collision unknown; R9 denied and unconsumed; SEC-01 Pending; broader Macro caller-AST and explanation gaps and the legacy digest remain unresolved; the original `walking-skeleton` key stays blocked. R10 and R11 remain spent and immutable. The v0.7 exception allows one fixed, developer-authored compiled Book in development/test only and expires at v0.7 closeout. Its macro contract and implementation PRs remain separate, and both production controls passed before Book work. No Controls, user-provided values or code, audited-API use, persistence, product publication/deployment, release or follow-on milestone work is included. INT-20261121-01 permits only minimal public cited Logistify source-derived content in reviewed PRs; full repos and unrelated assets stay in the ignored cache. The unrelated Logistify brand-canon seed stays dormant.
 - Inherited deferrals: IN-02, SEC-02, and 01.1-01 remain unresolved and were acknowledged as carry-forwards at v0.6 closeout.
 - Product outcome: one inspectable Logistify operator Book across 2–3 addressable screens with fixed cited illustrative data, minimal navigation and the real compiled Story/Scenario and host Canvas path. Records and actions are illustrative; no logistics backend or external writes are included. The broader three-Book showcase remains future scope.
-- Next action: complete the Wave 1 source-custody verifier and macro baseline, then deliver the hardened macro and active contract test in separate green PRs. Run both positive production exclusion and reachable-mount rejection controls before any Book implementation. Pin and verify the cited source subset before writing Book content; keep that gate closed while completing independent macro and fixture work.
-- **Next actor: Codex, continuing the authorized v0.7 workflow.** No owner action is needed unless a genuinely new material risk or an unavoidable visual judgment remains after other work is complete.
+- Next action: rerun `git diff --check` after the final documentation edits and review the complete outbound candidate. Then push the isolated branch and open the authorized Phase 8 PR; obtain green hosted CI on its exact reviewed head. Complete phase verification after the owner decides on the attached visual baseline; merge only the exact green required-check head, record the delivery receipt and close v0.7. Do not deploy or start another milestone.
+- **Next actor: Codex continues the already-authorized Phase 8 delivery in the isolated candidate.** Owner action is required only when the attached captures are presented for visual-baseline acceptance. The owner does not need to rerun status commands or repeat existing authorization. The guard aggregate remains open, `walking-skeleton` blocked, R9 denied and unconsumed, SEC-01 Pending, and the one-Book exception expires at v0.7 closeout.
 
 ## Performance Metrics
 
@@ -76,6 +77,7 @@ Last Activity Description: Phase 8 execution started
 | Phase 03 P02 | not reconstructed across resumed sessions | 2 tasks | 6 files |
 | Phase 03 P03 | not captured | 2 tasks | 8 files |
 | Phase 06 P01 | 17 min | 1 tasks | 2 files |
+| Phase 8 P01 | 12 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -172,9 +174,9 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-21T03:46:18.032Z
-**Stopped at:** Phase 8 UI-SPEC approved
-**Resume file:** .planning/phases/08-first-inspectable-book-and-local-host-path/08-UI-SPEC.md
+**Last session:** 2026-11-22T23:02:58Z
+**Stopped at:** Real-browser checks and captures are complete; source, focused host, production-boundary and post-fix full core checks pass. The host is stopped. Codex is preparing the reviewed Phase 8 PR in `/private/tmp/fablebook-v07-phase8-resume-20261122` on `gsd/phase-8-first-inspectable-book`; owner visual-baseline acceptance remains required before phase verification and closeout. Canonical `~/projects/fablebook` remains dirty and untouched.
+**Resume file:** .planning/phases/08-first-inspectable-book-and-local-host-path/08-05-RESUMPTION-2026-11-22.md
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5's four selected EX-177 rows now have the reviewed source/caller facts recorded by discovery and Phase 6; the other 9,712 rows remain unchanged. Package-wide caller closure remains unproven, R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was reread for Phase 6. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
@@ -204,4 +206,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-Codex runs `$gsd-autonomous` from the canonical checkout for v0.7. The next phase operation is `$gsd-discuss-phase 8` after the repository preflight. Preserve the approved exception's limits and the existing visual-baseline approval policy. The exception expires at v0.7 closeout.
+Codex continues the approved Phase 8 delivery in `/private/tmp/fablebook-v07-phase8-resume-20261122` on `gsd/phase-8-first-inspectable-book`, based on current `origin/main`. Real-host ready/failure behavior is verified and the current 320 px/1280 px captures are available in `08-BROWSER.md`; the owner still needs to accept or reject the visual baseline before phase verification and closeout. Post-fix source, host and production checks pass, including the full core lane. Next, complete the diff review and open the authorized PR; retain the exact-head CI and merge gates. Preserve the dirty canonical `main`; do not push its divergent 26-commit branch. Keep the Book fixed and dev/test-only, retain pinned public-source provenance and exact source gaps, and do not change the guard aggregate or `walking-skeleton` statuses. Do not retry `act`; no deployment or release is authorized. The one-Book exception expires at v0.7 closeout.

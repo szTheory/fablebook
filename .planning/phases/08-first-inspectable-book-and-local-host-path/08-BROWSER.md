@@ -1,0 +1,91 @@
+# Phase 8 real-host browser record
+
+**Status: browser behavior verified; visual baseline awaits owner review.** The
+readiness retry now works in Chrome on the actual local Phoenix host. Fresh
+narrow and desktop captures are attached below. Codex inspected the captures
+for legibility and hierarchy; they are evidence for review, not an accepted
+visual baseline.
+
+## Tested surface
+
+- Checkout: isolated `gsd/phase-8-first-inspectable-book` candidate at
+  `/private/tmp/fablebook-v07-phase8-resume-20261122`, based on
+  `origin/main` `0e406e648d52b93da52f4d641116cfa28cf9bb6c`.
+- Host: `http://127.0.0.1:4003/admin/dev/fablebook`, started with the operator
+  host's development configuration. The temporary server was stopped after
+  browser checks; the route returned no HTTP response after shutdown.
+- Book route: `/admin/dev/fablebook/book/operator`.
+- Stable Scenarios: `?scenario=failed_shipment` and
+  `?scenario=bulk_reassignment`.
+- Both Scenarios loaded in Chrome and announced `Screen ready` automatically.
+  The Canvas showed the cited illustrative data and actions. The Book → Journey
+  → Scenario sidebar, linked Book and Journey breadcrumbs, and sibling
+  Scenario navigation were present. The bulk Scenario showed the 12
+  reassignment count and explicit source gaps.
+- An unknown Scenario URL showed `Screen unavailable` and the approved
+  unavailable copy while retaining the Book navigation path.
+- The real host and same-origin Canvas LiveViews connected. The initial Book
+  and Canvas requests returned HTTP 200; the server used its nonce-based
+  same-origin CSP and `X-Frame-Options: SAMEORIGIN`.
+
+## Canvas readiness and failure paths
+
+The earlier browser run left the parent status on Loading although the Canvas
+document and both LiveViews were connected. The cause was a one-shot status
+request sent before the child hook had attached its listener. The host script
+now retries the same-origin status request every 250 ms while the Canvas is
+incomplete, and stops on ready, failure, or the existing eight-second timeout.
+
+After a fresh Book load in Chrome, the valid failed-shipment Canvas announced
+`Screen ready: Logistify operator console — A failed shipment.` without a
+synthetic message or manual retry. I then changed only the iframe URL in
+DevTools to an unknown Canvas route. The child displayed `Screen unavailable`,
+and the parent reached the expected failure copy: `The screen could not load.
+Check that the local Phoenix host is running, then reload.` The valid Book URL
+was restored and returned to `Screen ready`.
+
+## Responsive, zoom and keyboard checks
+
+At each CSS viewport, the page and body scroll widths matched the viewport.
+Canvas document width matched its own scroll width. These measurements were
+taken before the JavaScript-only readiness fix; the responsive CSS is unchanged.
+
+| Viewport | Page/body scroll width | Canvas document width/scroll width |
+|---:|---:|---:|
+| 320 px | 320 px | 254 / 254 px |
+| 375 px | 375 px | 309 / 309 px |
+| 768 px | 768 px | 408 / 408 px |
+| 1280 px | 1280 px | 886 / 886 px |
+
+After the readiness fix, Chrome's zoom control was set to exactly 200%. The
+sidebar, selected Scenario, Canvas status, screen content, actions and citations
+remained available in the rendered/accessibility tree; the browser was returned
+to 100% afterward. Keyboard traversal and a visible focus indicator were
+observed in the earlier real-host check. CSS and navigation markup have not
+changed since that check.
+
+## Current captures
+
+All captures show the current Book hierarchy and the automatically ready
+failed-shipment screen. Chrome captured at device scale factor 2.
+
+| Artifact | CSS viewport | Pixel size | Purpose |
+|---|---:|---:|---|
+| [08-05-mobile-320-ready.png](artifacts/08-05-mobile-320-ready.png) | 320 px | 640 × 1418 | Narrow viewport |
+| [08-05-mobile-320-ready-full.png](artifacts/08-05-mobile-320-ready-full.png) | 320 px | 640 × 2944 | Full page, including Canvas content |
+| [08-05-desktop-1280-ready-full.png](artifacts/08-05-desktop-1280-ready-full.png) | 1280 px | 2560 × 2674 | Full desktop hierarchy and Canvas |
+
+The Canvas is intentionally a fixed-height preview area; the full-page images
+show its status and visible screen content. Earlier PNGs in this directory
+remain historical and are not used as current evidence.
+
+## Remaining human judgment and safety stops
+
+Owner approval remains required before treating these captures as a new visual
+baseline. No baseline was auto-accepted. Browser mechanics, readiness, failure
+copy and responsive behavior have automated or directly observed evidence.
+
+The known local `act` ARM64/amd64 setup failure is unchanged and was not retried.
+The guard aggregate remains open, `walking-skeleton` remains blocked, R9 remains
+denied and unconsumed, and SEC-01 remains Pending. No release, deployment,
+publication or follow-on phase is included.

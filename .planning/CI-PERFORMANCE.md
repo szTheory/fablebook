@@ -135,3 +135,59 @@ Post-merge main CI [run 44828949627](https://github.com/szTheory/fablebook/actio
 ## Hosted PR #98 initial planning-head CI — 2026-11-21
 
 Planning-only head `27262d8018baffc0893790270d675490d40f223a` failed [run 44870620607](https://github.com/szTheory/fablebook/actions/runs/44870620607) in about 9m18s. Core and floor ran concurrently: core took 8m43s total (`mix ci` 8m25s), and floor took 9m11s total (floor test step 8m44s). Dialyzer took 27s, security 36s, and the gate 5s; the jobs started together without a material queue. Both test lanes completed their full suites and exposed the same project-citation failure: a shorthand intent range and a plan reference to a not-yet-created ADR. The floor lane found both citation issues. This is a planning-document defect, not a product or runtime failure; the focused intent contract passes after correcting those references. The existing core and floor suites dominate elapsed time and already overlap. One failed run gives no measured basis for a safe CI change, so retain the full checks and record no optimization.
+
+## Hosted PR #98 successful planning delivery and main CI — 2026-11-21
+
+Corrected planning head `9511cf6738c0bbccd3b080641b5a5d305a50d892` passed [exact-head CI run 44872457695](https://github.com/szTheory/fablebook/actions/runs/44872457695) in 10m56s. The jobs started about 2 seconds after the run: core took 10m48s (`mix ci` 10m30s), floor took 9m24s (prod-guard test 8m59s), Dialyzer 29s, security 35s, and `ci-gate` 3s. Core was the critical path; core and floor overlapped.
+
+After PR #98 merged as `a0db257f90f293dfd97a7a2653d1bda7ec00de95`, [main CI run 44873452900](https://github.com/szTheory/fablebook/actions/runs/44873452900) passed in 11m44s. The jobs started about 2 seconds after creation: floor took 11m36s (test step 11m11s), core 11m15s (`mix ci` 10m52s), Dialyzer 28s, security 34s, and `ci-gate` 4s. Floor was the critical path. The separate release-please workflow completed in 37s with publication skipped; no release or deploy occurred.
+
+These planning-only runs expose test execution as the dominant time. The required lanes already overlap, setup stayed at 9–13 seconds, and queue time was negligible. This pair does not justify changing caching, workflow structure, or coverage.
+
+## Hosted PR #99 router implementation and merge — 2026-11-21
+
+Router-only PR #99 head `1c786ffdb7b10c681390e9fe4238c2d7d2184019` passed [required CI run 44874757036](https://github.com/szTheory/fablebook/actions/runs/44874757036) and was squash-merged as `a60d21b8cf513f400fee3363c3f6b6aa23031857`. Queue time was about 3 seconds. Core took 8m38s (`mix ci` 8m19s); floor took 8m55s (prod-guard test 8m23s); Dialyzer took 29s, security 36s, and `ci-gate` 3s. The gate finished 9m03s after run creation, with floor as the critical path. Core and floor ran concurrently; setup was 7–11 seconds.
+
+The post-merge `release-please` workflow [run 44875504890](https://github.com/szTheory/fablebook/actions/runs/44875504890) completed in 30 seconds; its publish job was skipped. No separate main CI workflow ran on this merge, and no package release or deployment occurred. The exact PR-head checks cover the merged router tree.
+
+The local full core lane passed before publication: 464 passed, 10 configured exclusions, with 397.9 seconds in ExUnit. The local `act` environment stop remains in effect and was not retried.
+
+Across the completed PR #98 and #99 samples, setup and queue time are small relative to test steps. Core and floor already overlap. Timing varies between runs and does not support a safe CI change; retain all lanes and coverage.
+
+## Local Plan 08-03 core lane — 2026-11-21
+
+The test-only macro branch passed `HEX_HOME="$PWD/_build/hex-home" MIX_ENV=test bin/lane core mix ci`: 464 passed, 10 configured exclusions. ExUnit took 1,164.3s (109.4s async and 1,054.9s sync). This is slower than the earlier local Phase 8 core result of 397.9s and the hosted core job for PR #99 (8m38s). The available output shows test execution dominates, but it does not identify a repeatable per-test regression; local and hosted runtimes also differ. The run streamed over 59 MB of inventory output into the tool capture, consistent with the already recorded large-evidence behavior.
+
+This is one slower local sample, not evidence for changing the workflow or reducing checks. Keep the complete core and floor lanes; revisit only if comparable exact-lane measurements show the overrun is recurring and a focused profile identifies safe redundant work.
+
+## Hosted Phase 8 contract and fixture gates — 2026-11-21
+
+The separate macro contract PR #100 head `06b7cb4422241585356efc96ae757ab4aff73b46` passed [exact-head CI run 44879867181](https://github.com/szTheory/fablebook/actions/runs/44879867181). Core took 10m56s (`mix ci` 10m40s); floor took 9m28s (the prod_guard test step 9m06s); Dialyzer took 27s, security 29s, and `ci-gate` 4s. Core and floor ran concurrently; core was the candidate critical path. The test-only PR merged as `2b05a2ee302c0eacd8d53e03c5694678d01a55cc`. Post-merge main CI [run 44880742370](https://github.com/szTheory/fablebook/actions/runs/44880742370) passed: core took 8m32s (`mix ci` 8m13s), floor 10m39s (prod_guard test 10m13s), Dialyzer 22s, security 27s, and the gate 3s. Floor was the main critical path. The paired release-please run [44880742446](https://github.com/szTheory/fablebook/actions/runs/44880742446) completed in about 33s; publication was skipped.
+
+Fixture-control PR #101 head `1380a45ec188151ad755c05862f719198d2cce7e` passed [exact-head CI run 44882143058](https://github.com/szTheory/fablebook/actions/runs/44882143058). Core took 8m38s (`mix ci` 8m18s); floor took 8m47s (the prod_guard test step 8m19s); Dialyzer took 24s, security 35s, and `ci-gate` 5s. The jobs started promptly and overlapped. The PR merged as `5b08774fa915c53d54fcbdcb34c0844ec969f5eb`. Post-merge [main CI run 44884141633](https://github.com/szTheory/fablebook/actions/runs/44884141633) passed: core took 8m20s (`mix ci` 7m56s), floor 11m12s (prod_guard test 10m47s), Dialyzer 26s, security 23s, and gate 2s. Core/floor overlapped, with floor setting the 11m17s critical path. The paired release-please run [44884141744](https://github.com/szTheory/fablebook/actions/runs/44884141744) completed in 39s; publication was skipped.
+
+Across these two candidate/main pairs, core and floor already run concurrently, queues and setup are small, and full-lane tests dominate. The main floor duration varied from 10m13s to 10m47s; two samples are not enough to establish a recurring regression or justify changing workflow structure, adding caches, or reducing coverage. Keep all required checks. The known `act` setup limitation is unchanged and was not retried.
+
+## Local Phase 8 full-lane verification — 2026-11-21
+
+The full core command `HEX_HOME="$PWD/_build/hex-home" MIX_ENV=test bin/lane core mix ci` took 7m35.62s and ran 464 tests: 463 passed, 1 failed, and 10 configured tests were excluded. The full floor prod-guard-inclusive command took 7m29.15s and ran 474 tests: 473 passed, 1 failed, and 6 configured tests were excluded. In each lane the only failure was ADR 0021's assertion against the current combined contract-test and implementation diff. ExUnit took 444.5s in core and 447.3s in floor. The full test phases dominate local elapsed time; this one pair does not establish a recurring regression.
+
+The host-only tests completed in 0.1s with 11 passes per lane, and the core/floor production-boundary scripts passed. Current core and floor Hex audits now fail on newly published Phoenix security advisories; floor also reports MEDIUM LiveView and Plug advisories. The workflow keeps both test lanes and all security checks. Required root lockfiles remain unchanged by the active plan, so no safe pipeline optimization or quality reduction was made. The known `act` setup limitation did not change and was not retried.
+
+## Local Phase 8 final core lane — 2026-11-22
+
+After the Canvas readiness retry fix, `MIX_ENV=test bin/lane core mix ci`
+passed 467 tests with 10 configured exclusions. ExUnit took 550.0 seconds
+(116.0 seconds async and 433.9 seconds sync). The exact pinned core lane was
+initialized first with `bin/lane core setup` on Elixir 1.20.4 / OTP 29.1.2.
+The inventory test streamed a very large report; the tool omitted 59.4 MB from
+its captured output. There is no queue time in this local run, and test
+execution is the critical path.
+
+The prior Phase 8 local core sample took 444.5 seconds in ExUnit and had one
+planning-separation failure. This passing run is about 106 seconds slower, but
+one local pair is not enough to distinguish added coverage, machine variance,
+or a recurring regression. Hosted Phase 8 checks will provide the comparable
+candidate measurement. Core and floor already overlap in hosted CI, and setup
+has not been shown to dominate. No safe coverage-preserving pipeline change is
+supported by this sample; keep the required lanes and the known `act` stop.

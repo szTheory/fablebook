@@ -1,7 +1,7 @@
 # Phase 8: First inspectable Book and local host path - Context
 
-**Gathered:** 2026-11-20  
-**Status:** Ready for planning
+**Gathered:** 2026-11-20; source policy updated 2026-11-21
+**Status:** Ready for execution after the pinned source gate passed
 
 <domain>
 ## Phase Boundary
@@ -14,9 +14,11 @@ Deliver v0.7's one fixed, developer-authored Logistify operator Book in developm
 ## Implementation Decisions
 
 ### Source grounding and content
-- Use only the exact Logistify v1.0 text/token subset needed for this operator Book; make that subset reproducible in the reviewed repository and verify its recorded SHA-256 values before use.
-- Tie each user-visible source claim and fixed fixture to its exact source file and section. Preserve the source's open name and asset-rights status; keep the fictional name and demo internal/local and do not import unreviewed artwork, sound, or fonts.
-- Choose one source-supported dispatcher job, with one ordinary state and one meaningful source-supported edge or error state. Keep all data deterministic and fixed, use the approved Fablebook vocabulary and product-copy corrections, and do not invent logistics policy.
+- Use the owner-supplied public brand repositories from `brand_sources.lock.json`; fetch exact commits into the ignored `.cache/brand_sources/` cache. Do not request a folder path or rely on `docs/brand/` copies.
+- Keep full repositories, PDFs, and assets in the ignored cache. The reviewed public PR may carry only the minimal Logistify source excerpt manifest and the cited Book content needed for this demo. Public citations are authorized by INT-20261121-01; this does not authorize deployment, release, or marketing claims.
+- Keep the three original whole-file SHA-256 pins in `bin/verify_logistify_source`, run them against `.cache/brand_sources/logistify-brand`, and bind each manifest excerpt to the locked repository, tag, commit, repo-relative path, and exact source bytes.
+- The pinned records support the dispatcher job and a dispatcher recovery slice after a failed driver stop. They state 12 selected/reassigned but provide only two shipment IDs in the bulk case and one focal ID in the completion case; do not invent other IDs or replacement-driver details. Use the supplied records and label all values/actions illustrative.
+- Preserve the source's demo-only and uncleared name status. Do not import Logistify logos, imagery, sound, or font files. Use the approved Fablebook vocabulary and product-copy corrections, and do not invent logistics policy.
 
 ### Mount and production boundary
 - Accept only literal module alias/reference AST forms in the public mount macro; reject macro calls, variables, and other computed expressions before expansion.
@@ -25,8 +27,9 @@ Deliver v0.7's one fixed, developer-authored Logistify operator Book in developm
 - Keep the canonical production mount error, current no-eval/no-input-atom rules, and existing CI gates intact. Do not add client-controlled module, code, atom, or topic selection.
 
 ### Catalog and navigation
-- Keep the Fablebook catalog chrome neutral and apply the approved Logistify text/token styling only in the preview.
-- Provide only enough navigation to select the one Book, move between its two or three screens, and open each screen at a stable URL. Unknown screen selection resolves safely. Do not add broad workbench controls, an Inspector, a command palette, a grid, or a general Journey editor.
+- Use the owner-settled language: Fablebook is a UI catalog; one Book is one adopter-defined catalog; “Books” names the collection. Keep the persistent Book → group title → Scenario tree in a familiar left sidebar and show the selected screen in the main Canvas. The fixed dispatcher flow is a Journey; don't expose its implementation `Story` as a “user story.” At the root URL, open the first Scenario directly rather than requiring a one-card index step. See [INT-20261121-02](../../intent/sources/2026-11-21-02-ui-catalog-hierarchy-and-feedback-loop.md), [INT-20261122-01](../../intent/sources/2026-11-22-01-navigation-language-and-multiscale-coverage.md) and [the feedback ledger](../../references/OWNER-UX-FEEDBACK.md).
+- Follow the pinned Fablebook brand in the UI catalog: official unchanged wordmark, Schibsted Grotesk, neutral Paper/Card/Ink/Hairline palette, and a full-outline Paper tint for the current Scenario. Keep approved Logistify treatment inside the Canvas only. Do not add broad controls, an Inspector, a command palette, a grid, or a general Journey editor.
+- Keep only enough navigation to open the one Book, select its two or three screens, and revisit each at a stable URL. Unknown screen selection resolves safely. At narrow widths, stack the sidebar above the Canvas; at desktop widths, keep it persistent beside the Canvas.
 - Use the existing Elixir/Phoenix stack and no new runtime dependency or required Node setup. Keep the host free of Ecto/business services, persistence, and external writes.
 
 ### Verification and visual evidence
@@ -57,7 +60,7 @@ Deliver v0.7's one fixed, developer-authored Logistify operator Book in developm
 ### Integration Points
 - Replace the placeholder route output through `lib/fablebook/router.ex`, `lib/fablebook/placeholder.ex`, and the appropriate new compiled modules.
 - Extend the existing production-guard fixture/checks without weakening its existing positive and negative assertions.
-- Obtain the source subset from a preserved, read-only source location if needed; do not alter preserved historical worktrees or the dormant brand-canon seed.
+- Use only the ignored public pin cache for source reads; do not alter preserved historical worktrees or activate the dormant brand-canon seed.
 
 </code_context>
 
@@ -67,6 +70,7 @@ Deliver v0.7's one fixed, developer-authored Logistify operator Book in developm
 - Keep the product surface visibly real: a local catalog, an authored compiled Book, addressable screens, and the host's Canvas—not a screenshot mock or a direct route that bypasses Fablebook.
 - Prefer a source-supported short dispatcher flow; decide its exact screen content only after inspecting and hashing the reproducible source subset.
 - Follow `.planning/research/2026-11-20-next-milestone-scope-review.md`, `.planning/references/logistify-brand-intake.md`, `GLOSSARY.md`, and the approved exception in INT-20261120-14.
+- The owner has authorized a separate Phoenix security-pin prerequisite in [INT-20261121-03](../../intent/sources/2026-11-21-03-authorize-phoenix-security-pin-update.md). Update Phoenix to at least 1.8.17 in both dependency lanes, review only required lockfile changes, and deliver that security-only PR before remaining Phase 8 PRs. Do not broaden to unrelated dependencies.
 
 </specifics>
 

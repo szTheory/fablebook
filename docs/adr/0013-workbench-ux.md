@@ -1,4 +1,4 @@
-# 0013. Workbench UX
+# 0013. UI catalog UX
 
 **Status:** Accepted · **Cites:** INT-20261028-01, INT-20261028-04 · **Detail:** `docs/research/UX-DESIGN.md`
 
@@ -25,3 +25,7 @@ An addon marketplace, white-labelling, an MDX format, saving playground edits to
 - **Device frames:** none, phone, tablet, laptop or desktop. Generic outlines. Phone and tablet show safe areas and standalone (PWA) display. **Export image** writes framed PNGs. (INT-20261028-14)
 - **Motion panel** (ADR 0025); **Isolate** mode (`F`); **Mobile layout** below 768 px.
 - Sidebar order: To review · Foundations · Primitives · Patterns · Areas · Screens · Journeys · Pages · Unstoried.
+
+## Product-language amendment (2026-11-21)
+
+[INT-20261111-06](../../.planning/intent/sources/2026-11-11-06-fablebook-brand-intake.md) settled “UI catalog” as the product and interface name and says never to call it “workbench.” [INT-20261121-02](../../.planning/intent/sources/2026-11-21-02-ui-catalog-hierarchy-and-feedback-loop.md) reaffirms that choice and clarifies that a Book is one adopter-defined catalog while “Books” labels the collection in the UI. Use those terms in user-facing copy. This amendment changes labels and hierarchy language only; the broader layout and interaction decisions above remain the long-term product direction. Phase 8 still implements only its approved minimal subset.
