@@ -28,6 +28,6 @@ No review finding was suppressed. The initial review remains an immutable point-
 
 The current code-review report and its resolution are separate from the original
 implementation review. The [2026-11-22 resumption record](08-05-RESUMPTION-2026-11-22.md)
-and [browser record](08-BROWSER.md) own the current delivery status. Browser
-acceptance, current screenshots, exact-head hosted CI, merge, and closeout remain
-open.
+and [browser record](08-BROWSER.md) own the current delivery status. The live
+visual-baseline decision, refreshed exact-head hosted CI, merge, and closeout
+remain open.

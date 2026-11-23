@@ -15,9 +15,10 @@ production-boundary checks pass after that fix. Draft PR [#106](https://github.c
 is open for the isolated candidate. Its first required hosted run completed
 with core and Dialyzer passing; security and floor failed on the two workflow
 setup issues described in the resumption record. The targeted fixes pass local
-Actionlint and floor production-boundary checks; a fresh exact-head run remains.
-Owner approval of the current visual baseline is still outstanding, so this is
-not phase completion.
+Actionlint and floor production-boundary checks; exact-head hosted CI passed in
+[run 45083323345](https://github.com/szTheory/fablebook/actions/runs/45083323345).
+The owner deferred visual feedback until the end of v0.7 without making a final visual decision; phase verification and merge remain gated on that
+decision (INT-20261122-02). This is not phase completion.
 
 ## Delivered in the candidate
 
@@ -68,25 +69,24 @@ available. Responsive measurements at 320, 375, 768 and 1280 CSS pixels showed
 no page-level horizontal overflow; keyboard traversal and visible focus were
 observed. Details and exact measurements are in [08-BROWSER.md](08-BROWSER.md).
 
-Current captures:
+## Live owner visual review
 
-- [320 px viewport](artifacts/08-05-mobile-320-ready.png)
-- [320 px full page](artifacts/08-05-mobile-320-ready-full.png)
-- [1280 px full page](artifacts/08-05-desktop-1280-ready-full.png)
-
-Codex inspected the captures for clarity and hierarchy. They remain a proposed
-baseline; owner approval is required and has not been inferred.
+The owner requested a live browser review instead of public screenshots. The
+local Book is open in Chrome at
+`http://127.0.0.1:4003/admin/dev/fablebook/book/operator?scenario=failed_shipment`.
+After refresh, the Canvas reported `Screen ready` and showed the cited
+illustrative data and actions. The owner deferred visual feedback until the
+end of v0.7; this live review does not accept or reject the baseline.
 
 ## Delivery still open
 
-- Review and push the targeted Actionlint and floor dependency-install
-  fixes. Local Actionlint and the floor production verifier pass; exact-head
-  hosted CI must confirm them.
+- Push the screenshot-free update and obtain fresh exact-head hosted CI. The
+  previous head passed after the Actionlint and floor dependency-install fixes.
 - Review the exact outbound diff and obtain green required hosted checks on
   the exact reviewed head of PR #106; merge only that head and follow branch
   protection.
-- Present the current captures for the required owner visual-baseline decision
-  before claiming visual acceptance or closing the phase.
+- At the end-of-milestone review, use the live local Book for the required
+  owner visual-baseline decision before phase verification or merge.
 - Record the actual PR, reviewed head, merge commit and hosted CI URL in the
   append-only delivery registry, then close v0.7 against its scoped
   requirements.

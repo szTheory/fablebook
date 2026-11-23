@@ -1,10 +1,10 @@
 # Phase 8 real-host browser record
 
-**Status: browser behavior verified; visual baseline awaits owner review.** The
-readiness retry now works in Chrome on the actual local Phoenix host. Fresh
-narrow and desktop captures are attached below. Codex inspected the captures
-for legibility and hierarchy; they are evidence for review, not an accepted
-visual baseline.
+**Status: browser behavior verified; owner visual review will use the live
+local Book.** The readiness retry now works in Chrome on the actual local
+Phoenix host. At the owner's request, no screenshot files are included in the
+candidate or public PR. The owner will inspect the live interface at the end
+of v0.7; no visual baseline has been accepted or rejected.
 
 ## Tested surface
 
@@ -12,8 +12,8 @@ visual baseline.
   `/private/tmp/fablebook-v07-phase8-resume-20261122`, based on
   `origin/main` `0e406e648d52b93da52f4d641116cfa28cf9bb6c`.
 - Host: `http://127.0.0.1:4003/admin/dev/fablebook`, started with the operator
-  host's development configuration. The temporary server was stopped after
-  browser checks; the route returned no HTTP response after shutdown.
+  host's development configuration. It is currently running for the owner's
+  local visual review.
 - Book route: `/admin/dev/fablebook/book/operator`.
 - Stable Scenarios: `?scenario=failed_shipment` and
   `?scenario=bulk_reassignment`.
@@ -64,24 +64,17 @@ to 100% afterward. Keyboard traversal and a visible focus indicator were
 observed in the earlier real-host check. CSS and navigation markup have not
 changed since that check.
 
-## Current captures
+## Live owner visual review
 
-All captures show the current Book hierarchy and the automatically ready
-failed-shipment screen. Chrome captured at device scale factor 2.
-
-| Artifact | CSS viewport | Pixel size | Purpose |
-|---|---:|---:|---|
-| [08-05-mobile-320-ready.png](artifacts/08-05-mobile-320-ready.png) | 320 px | 640 × 1418 | Narrow viewport |
-| [08-05-mobile-320-ready-full.png](artifacts/08-05-mobile-320-ready-full.png) | 320 px | 640 × 2944 | Full page, including Canvas content |
-| [08-05-desktop-1280-ready-full.png](artifacts/08-05-desktop-1280-ready-full.png) | 1280 px | 2560 × 2674 | Full desktop hierarchy and Canvas |
-
-The Canvas is intentionally a fixed-height preview area; the full-page images
-show its status and visible screen content. Earlier PNGs in this directory
-remain historical and are not used as current evidence.
+Chrome is open to the local Book at
+`http://127.0.0.1:4003/admin/dev/fablebook/book/operator?scenario=failed_shipment`.
+The latest refresh reported `Screen ready` and showed the Book hierarchy,
+failed-shipment content, illustrative actions, and source citations. Keep the
+local host available for the owner's end-of-milestone visual review.
 
 ## Remaining human judgment and safety stops
 
-Owner approval remains required before treating these captures as a new visual
+Owner feedback remains required before accepting or rejecting the visual
 baseline. No baseline was auto-accepted. Browser mechanics, readiness, failure
 copy and responsive behavior have automated or directly observed evidence.
 

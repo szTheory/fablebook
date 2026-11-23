@@ -32,7 +32,7 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 4. A developer can start the host locally and immediately inspect the first screen. A familiar sidebar shows Books → Logistify operator console → Dispatcher recovery → its two Scenarios; selecting either screen updates the stable URL and main Canvas. Development and test resolve the same compiled Story/Scenario identifiers. Unknown selections resolve safely. The UI uses the neutral Fablebook brand rules and the approved product terms. (CAT-01, CAT-02)
 5. Each screen renders in a same-origin iframe through the real host Canvas pipeline and root layout, with the host's CSS, JavaScript, hooks, fonts and CSP. A real-host browser check exercises the flow at representative narrow and desktop widths and verifies keyboard navigation, visible focus, labels and text status. (CANVAS-01, CAT-01, BOOK-01)
 
-**Plans**: 3/5 delivered; 08-04/08-05 implementation and local verification are complete in the isolated candidate. Draft PR #106 is open; targeted hosted-CI fixes and the visual-baseline decision remain.
+**Plans**: 3/5 delivered; 08-04/08-05 implementation and local verification are complete in the isolated candidate. Draft PR #106 is being updated to remove public screenshots; fresh exact-head CI and the owner's live visual decision remain.
 **Wave 1**
 - [x] 08-01-PLAN.md — Pin all seven public source repositories and verify the minimal cited Logistify subset (SRC-01 complete; see the preserved historical halt and resumed summary).
 - [x] 08-02-PLAN.md — Harden the public mount macro in PR #99 and deliver its separate contract test in PR #100; both are merged with green required CI.
@@ -43,7 +43,7 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 **Wave 3** *(local implementation complete; delivery uses the Wave 4 acceptance)*
 - [ ] 08-04-PLAN.md — Render the first compiled Scenario through the local Phoenix catalog and Canvas.
 
-**Wave 4** *(local checks complete; prerequisite PR splits and Phoenix security pins are delivered; PR #106 is open and its first required CI run exposed two setup issues now being corrected; owner baseline decision and Phase 8 delivery remain)*
+**Wave 4** *(local checks complete; prerequisite PR splits and Phoenix security pins are delivered; PR #106 is being updated to remove screenshots and needs fresh exact-head CI; the owner baseline decision and Phase 8 delivery remain)*
 - [ ] 08-05-PLAN.md — Complete the dispatcher flow, prove the actual host boundary and verify the final candidate.
 
 **UI hint**: yes
@@ -53,13 +53,13 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 1. Fetch the seven public repositories at the full commit pins in `brand_sources.lock.json`; keep their contents in the ignored cache. Prepare the minimal Logistify excerpt manifest with public repository/tag/commit/path citations and verify preserved whole-file and excerpt hashes before Book content. Independently author the executable mount contract and run it against the current router before changing the implementation. Record that the rejection assertion fails for the intended reason because the current router reaches `Macro.expand/2`. Use the same tests against the proposed fix in local verification and review. Use a fixed, harmless local fixture for the disallowed expression.
 2. Land the implementation first in a PR that contains no mount contract test change and passes the existing required CI. Rebase and land the active contract test in a separate test-only PR against hardened `main`, with its own green required CI. Review run timing and repeated setup after each completed CI run. Preserve the canonical production error and compile timing. Run the positive and negative production controls on the merged result. Only then begin Book implementation. The phase's final Book delivery has its own reviewed, green merged PR.
 3. Deliver the smallest real Story/Scenario, stable sidebar navigation and host Canvas path needed by the approved flow. Use the [source intake](references/logistify-brand-intake.md) and approved textual/token subset. Apply Logistify styling only in the Canvas; keep all values/actions illustrative and do not deploy or release the demonstration. Follow the Fablebook UI hierarchy and feedback ledger in [INT-20261121-02](intent/sources/2026-11-21-02-ui-catalog-hierarchy-and-feedback-loop.md).
-4. Start verification with source/digest and fixture checks, compile and focused automated tests. Repeat production exclusion and reachable-mount rejection on the real operator host. Run one real-host browser pass and capture the representative visual evidence under the existing baseline policy. Owner approval is required for a new or changed baseline. Use the existing hosted CI gates and preserve the recorded local `act` stop until its cause changes. See the [scope review](research/2026-11-20-next-milestone-scope-review.md) and [verification policy](VERIFICATION.md).
+4. Start verification with source/digest and fixture checks, compile and focused automated tests. Repeat production exclusion and reachable-mount rejection on the real operator host. Run one real-host browser pass and keep the local Book available for the owner's live visual review; do not publish screenshot artifacts. Owner approval is required for a new or changed baseline. Use the existing hosted CI gates and preserve the recorded local `act` stop until its cause changes. See the [scope review](research/2026-11-20-next-milestone-scope-review.md) and [verification policy](VERIFICATION.md).
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 8. First inspectable Book and local host path | 3/5 delivered | Draft PR #106 open; targeted CI fixes and owner baseline decision remain; see [08-05-SUMMARY.md](phases/08-first-inspectable-book-and-local-host-path/08-05-SUMMARY.md) | - |
+| 8. First inspectable Book and local host path | 3/5 delivered | Draft PR #106 is being updated to remove screenshots; fresh exact-head CI and the owner's live baseline decision remain; see [08-05-SUMMARY.md](phases/08-first-inspectable-book-and-local-host-path/08-05-SUMMARY.md) | - |
 
 ## Completed milestones
 

@@ -206,3 +206,16 @@ elapsed time while core and floor remained parallel; this single sample does
 not support a timing optimization. The targeted workflow fixes preserve all
 checks and lanes; compare the next exact-head run before drawing any timing
 conclusion.
+
+## Hosted Phase 8 CI after workflow fixes — 2026-11-22
+
+PR #106 head `8b7e555d4bffde848dfd7cba02efb6f3790519a4` passed all required
+checks in [run 45083323345](https://github.com/szTheory/fablebook/actions/runs/45083323345)
+in 12m23s. Jobs began 2 seconds after run creation and ran concurrently. Core
+took 12m14s (`mix ci` 11m04s); floor took 12m08s (floor test step 11m00s), so
+core was the critical path by about 6 seconds. Security took 30s, Dialyzer
+25s, and `ci-gate` 4s. Test execution dominated, with negligible queue and
+setup time. Compared with the failed initial run, this run completed both
+full test lanes and the gate; one pair is not enough to infer a timing trend.
+No safe coverage-preserving CI optimization is supported; retain the added
+host checks and both existing lanes.
