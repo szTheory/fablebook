@@ -58,9 +58,10 @@ pointers in authored Scenario data and the pinned manifest while asserting
 that the Canvas omits the raw paths and pointers.
 
 The full core lane was repeated against this correction: 467 passed, 10
-configured exclusions, ExUnit 597.6 s (99.3 s async, 498.3 s sync). The local
-checkout has not yet been pushed; a fresh exact-head hosted run is required
-after updating draft PR #106.
+configured exclusions, ExUnit 597.6 s (99.3 s async, 498.3 s sync). The change
+was pushed as head `44eff333b6156382949c04e0d178f6313a565d41`, and the exact
+hosted run [45096943180](https://github.com/szTheory/fablebook/actions/runs/45096943180)
+passed core, floor, security, Dialyzer, and the final gate.
 
 The prior full floor lane passed 477 tests with 6 configured exclusions. The
 readiness fix only changed host JavaScript; the post-fix floor host suite and
@@ -96,10 +97,9 @@ reject the baseline.
 
 ## Delivery still open
 
-- The previous screenshot-free head passed exact-head hosted CI. Push this
-  locally verified navigation/Canvas correction and obtain green required
-  hosted checks on that exact PR head. Keep the PR draft until the owner's
-  end-of-milestone live visual decision.
+- Screenshot-free PR #106 head `44eff333b6156382949c04e0d178f6313a565d41`
+  passed exact-head hosted CI in run 45096943180. Keep the PR draft until the
+  owner's end-of-milestone live visual decision.
 - Merge only the exact reviewed green head and follow branch protection.
 - At the end-of-milestone review, use the live local Book for the required
   owner visual-baseline decision before phase verification or merge.

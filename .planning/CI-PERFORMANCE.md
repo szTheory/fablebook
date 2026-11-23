@@ -242,3 +242,15 @@ The host-specific 12-test suite and pinned-source checks also passed after the
 correction. The inventory-heavy test emitted a very large evidence block, so
 this single local sample does not support a timing optimization. Keep the
 existing tests and both CI lanes unchanged.
+
+## Hosted Phase 8 navigation and Canvas correction — 2026-11-23
+
+PR #106 head `44eff333b6156382949c04e0d178f6313a565d41` passed [required run
+45096943180](https://github.com/szTheory/fablebook/actions/runs/45096943180)
+in 10m24s. Core took 9m54s, including 8m50s for `mix ci`; floor took 10m13s,
+including 9m06s for its production-guard test step. Floor was the critical path
+by about 19 seconds. Security took 31s, Dialyzer 24s, and `ci-gate` 5s. The
+jobs began 3 seconds after run creation; core and floor ran concurrently. Their
+setup and host checks took about 59–66 seconds before their long test commands.
+There were no failed jobs or retries. One run gives no basis for reducing
+coverage or restructuring the jobs; keep both lanes and all host checks.
