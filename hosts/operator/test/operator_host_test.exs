@@ -119,9 +119,9 @@ defmodule OperatorHost.OperatorBookTest do
     assert body =~ "Hamburg to Lyon"
     assert body =~ "Nobody was at the dock."
     assert body =~ "Illustrative records and actions. No live dispatch or external changes."
-    assert body =~ "records/logistify/logistify-records.json"
-    assert body =~ "JSON Pointer /cases/9"
-    assert body =~ "https://github.com/szTheory/logistify-brand/blob/#{@commit}/"
+    refute body =~ "records/logistify/logistify-records.json"
+    refute body =~ "JSON Pointer"
+    refute body =~ "https://github.com/szTheory/logistify-brand/blob/#{@commit}/"
     assert body =~ "data-operator-root"
     assert get_resp_header(conn, "x-frame-options") == ["SAMEORIGIN"]
     assert get_resp_header(conn, "content-security-policy") != []
@@ -174,8 +174,11 @@ defmodule OperatorHost.OperatorBookTest do
       |> IO.iodata_to_binary()
 
     assert html =~ "No source-backed details are available for this screen."
-    assert html =~ "records/logistify/logistify-records.json"
-    assert html =~ "Empty source fixture"
+    refute html =~ "records/logistify/logistify-records.json"
+    refute html =~ "JSON Pointer"
+    assert [citation] = scenario.citations
+    assert citation.path == "records/logistify/logistify-records.json"
+    assert citation.section == "Empty source fixture"
     refute html =~ "aria-label=\"Illustrative actions\""
   end
 
@@ -187,6 +190,7 @@ defmodule OperatorHost.OperatorBookTest do
     assert body =~ "Logistify operator console"
     assert body =~ "Journey"
     assert body =~ "Dispatcher recovery"
+    assert body =~ "class=\"tree-kind\">Scenarios</span>"
     assert body =~ "href=\"#{@root}/book/operator?scenario=failed_shipment\""
     assert body =~ "src=\"#{@scenario}\""
     assert body =~ "title=\"Logistify operator console — A failed shipment\""
@@ -255,7 +259,7 @@ defmodule OperatorHost.OperatorBookTest do
     assert body =~ "Not provided in source"
   end
 
-  test "every displayed Scenario fact and action has an exact citation in the pinned manifest" do
+  test "displayed Scenario facts stay pinned without exposing raw source pointers" do
     manifest = @source_manifest |> File.read!() |> Jason.decode!()
     records = @source_records |> File.read!() |> Jason.decode!()
 
@@ -290,6 +294,8 @@ defmodule OperatorHost.OperatorBookTest do
       assert body =~ expected.title
       assert body =~ expected.status
       assert body =~ expected.summary
+      refute body =~ "records/logistify/logistify-records.json"
+      refute body =~ "JSON Pointer"
       assert book_body =~ expected.title
       assert book_body =~ expected.description
 
@@ -312,7 +318,6 @@ defmodule OperatorHost.OperatorBookTest do
         excerpt_value = excerpt |> Map.fetch!("base64") |> Base.decode64!() |> Jason.decode!()
         assert excerpt_value == source_value
 
-        assert body =~ "JSON Pointer #{pointer}"
         assert is_binary(excerpt["claim"]) and excerpt["claim"] != ""
       end
 

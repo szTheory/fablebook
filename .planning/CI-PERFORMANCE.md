@@ -219,3 +219,26 @@ setup time. Compared with the failed initial run, this run completed both
 full test lanes and the gate; one pair is not enough to infer a timing trend.
 No safe coverage-preserving CI optimization is supported; retain the added
 host checks and both existing lanes.
+
+## Hosted Phase 8 screenshot-free head — 2026-11-23
+
+Screenshot-free PR #106 head `6987359b8c91f055b0ef731855197e9d0ec72a6d`
+passed all required checks in [run 45087426149](https://github.com/szTheory/fablebook/actions/runs/45087426149)
+in 11m59s. Jobs began 2–3 seconds after run creation. Core took 11m50s,
+including 10m39s for `mix ci`; floor took 10m11s, including 8m59s for the
+floor test step. Core was the critical path by about 99 seconds. Security took
+29s, Dialyzer 24s, and `ci-gate` 4s. Tests dominated runtime; queue was
+negligible and the core/floor host setup took about 68 seconds. Compared with
+the previous passing head, this run was 24 seconds shorter overall, with no
+coverage changes. Two samples do not support a timing optimization. Keep the
+required host checks and both lanes.
+
+## Local Phase 8 navigation and Canvas correction — 2026-11-22
+
+After adding the explicit “Scenarios” sidebar label and removing the raw
+source-path/JSON-Pointer footer, the full core lane passed again: 467 passed,
+10 configured exclusions, with ExUnit at 597.6s (99.3s async, 498.3s sync).
+The host-specific 12-test suite and pinned-source checks also passed after the
+correction. The inventory-heavy test emitted a very large evidence block, so
+this single local sample does not support a timing optimization. Keep the
+existing tests and both CI lanes unchanged.

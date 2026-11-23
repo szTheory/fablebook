@@ -387,8 +387,7 @@ h2 {
 
 .preview-header,
 .record-facts,
-.illustrative-actions,
-.source-citations {
+.illustrative-actions {
   margin-bottom: 24px;
 }
 
@@ -468,29 +467,6 @@ h2 {
   border-radius: 4px;
   background: var(--preview-panel);
   font-weight: 600;
-}
-
-.source-citations {
-  margin-bottom: 0;
-  padding-top: 16px;
-}
-
-.source-citations ul {
-  display: grid;
-  gap: 8px;
-  margin: 0;
-  padding-left: 20px;
-}
-
-.source-citations a {
-  color: var(--preview-link);
-  overflow-wrap: anywhere;
-}
-
-.source-citations code {
-  color: inherit;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 13px;
 }
 
 @media (max-width: 720px) {

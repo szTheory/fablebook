@@ -18,7 +18,9 @@ setup issues described in the resumption record. The targeted fixes pass local
 Actionlint and floor production-boundary checks; exact-head hosted CI passed in
 [run 45083323345](https://github.com/szTheory/fablebook/actions/runs/45083323345).
 The owner deferred visual feedback until the end of v0.7 without making a final visual decision; phase verification and merge remain gated on that
-decision (INT-20261122-02). This is not phase completion.
+decision (INT-20261122-02). This is not phase completion. The screenshot-free
+head 6987359 passed required hosted CI in
+[run 45087426149](https://github.com/szTheory/fablebook/actions/runs/45087426149).
 
 ## Delivered in the candidate
 
@@ -26,10 +28,12 @@ decision (INT-20261122-02). This is not phase completion.
   source-backed Scenarios: failed shipment and bulk reassignment. Missing
   values remain explicitly absent; all records and actions are illustrative.
 - Familiar Book → Journey → Scenario navigation, linked parent breadcrumbs,
-  sibling Scenario links, and the real same-origin host Canvas.
+  sibling Scenario links, and the real same-origin host Canvas. After owner
+  feedback, the sidebar explicitly labels the child list “Scenarios.”
 - Pinned public source manifest and verification tooling, source-pointer
   assertions, production exclusion controls, and isolated reachable-mount
-  negative control.
+  negative control. Exact citations stay in Scenario data and source checks;
+  raw source paths and JSON Pointers are not rendered in the Canvas.
 - A Canvas status handshake that retries every 250 ms while incomplete and
   stops on ready, failure, or the existing eight-second timeout.
 
@@ -45,7 +49,18 @@ decision (INT-20261122-02). This is not phase completion.
 | Operator host tests, floor dependency lane | 12 passed |
 | `bin/verify_operator_host_prod` | Passed |
 | `FABLEBOOK_FLOOR=1 bin/verify_operator_host_prod` | Passed |
-| `MIX_ENV=test bin/lane core mix ci` | 467 passed, 10 configured exclusions; ExUnit 550.0 s |
+| `MIX_ENV=test bin/lane core mix ci` before sidebar/source-display correction | 467 passed, 10 configured exclusions; ExUnit 550.0 s |
+
+After the sidebar/source-display correction, the focused operator-host suite
+passed again (12 tests), the pinned source checker passed, and the host compiled
+with warnings treated as errors. The test continues to verify the exact source
+pointers in authored Scenario data and the pinned manifest while asserting
+that the Canvas omits the raw paths and pointers.
+
+The full core lane was repeated against this correction: 467 passed, 10
+configured exclusions, ExUnit 597.6 s (99.3 s async, 498.3 s sync). The local
+checkout has not yet been pushed; a fresh exact-head hosted run is required
+after updating draft PR #106.
 
 The prior full floor lane passed 477 tests with 6 configured exclusions. The
 readiness fix only changed host JavaScript; the post-fix floor host suite and
@@ -73,18 +88,19 @@ observed. Details and exact measurements are in [08-BROWSER.md](08-BROWSER.md).
 
 The owner requested a live browser review instead of public screenshots. The
 local Book is open in Chrome at
-`http://127.0.0.1:4003/admin/dev/fablebook/book/operator?scenario=failed_shipment`.
-After refresh, the Canvas reported `Screen ready` and showed the cited
-illustrative data and actions. The owner deferred visual feedback until the
-end of v0.7; this live review does not accept or reject the baseline.
+`http://127.0.0.1:4003/admin/dev/fablebook/book/operator?scenario=bulk_reassignment`.
+The active checkout reported `Screen ready`, displayed the explicit “Scenarios”
+sidebar label, and omitted the raw source-pointer footer. The owner deferred
+visual feedback until the end of v0.7; this live review does not accept or
+reject the baseline.
 
 ## Delivery still open
 
-- Push the screenshot-free update and obtain fresh exact-head hosted CI. The
-  previous head passed after the Actionlint and floor dependency-install fixes.
-- Review the exact outbound diff and obtain green required hosted checks on
-  the exact reviewed head of PR #106; merge only that head and follow branch
-  protection.
+- The previous screenshot-free head passed exact-head hosted CI. Push this
+  locally verified navigation/Canvas correction and obtain green required
+  hosted checks on that exact PR head. Keep the PR draft until the owner's
+  end-of-milestone live visual decision.
+- Merge only the exact reviewed green head and follow branch protection.
 - At the end-of-milestone review, use the live local Book for the required
   owner visual-baseline decision before phase verification or merge.
 - Record the actual PR, reviewed head, merge commit and hosted CI URL in the

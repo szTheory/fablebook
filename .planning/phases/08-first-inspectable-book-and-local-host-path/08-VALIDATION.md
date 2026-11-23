@@ -75,8 +75,8 @@ Task IDs follow each plan's task order. The red baseline entry runs the named te
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Host Canvas fidelity, keyboard/focus behavior, labels, status text, narrow/desktop layout | CANVAS-01, CAT-01 | Browser behavior, inherited assets/CSP, and keyboard focus must be observed in the real host | Run the local host in the background. Use an existing browser at 320, 375, 768 and 1280px and 200% text zoom. Record actual Canvas assets, CSP, keyboard and preview output, and save one deterministic artifact showing representative narrow and desktop views. |
-| Any owner-only judgment on a new or changed visual baseline | CANVAS-01 | Baseline acceptance is a visual owner decision | Finish all objective work first; present the captured artifact and one concise decision request only if approval is actually required. |
+| Host Canvas fidelity, keyboard/focus behavior, labels, status text, narrow/desktop layout | CANVAS-01, CAT-01 | Browser behavior, inherited assets/CSP, and keyboard focus must be observed in the real host | Run the local host in the background and open it in the owner's browser. Check 320, 375, 768 and 1280px and 200% text zoom. Record actual Canvas assets, CSP, keyboard and preview output in `08-BROWSER.md`; do not publish screenshot artifacts. |
+| Any owner-only judgment on a new or changed visual baseline | CANVAS-01 | Baseline acceptance is a visual owner decision | Finish objective work first, then use the live local Book at the end-of-milestone review. The owner decides whether to accept or reject the baseline; do not treat opening the Book as acceptance. |
 | Final delivery of the cited source-derived candidate | SRC-01, BOOK-01 | Public citations and the minimal approved excerpt/Book content may appear in a reviewed public PR under INT-20261121-01; complete repos/assets stay in the ignored cache | Review the complete outbound diff and keep it within the approved subset. No private route or extra source-visibility decision is needed; deployment, release, and marketing claims remain excluded. |
 
 ---

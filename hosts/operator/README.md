@@ -59,14 +59,17 @@ curl --fail --silent --show-error "http://127.0.0.1:$port/admin/dev/fablebook"
 ```
 
 Open the UI catalog at `http://127.0.0.1:$port/admin/dev/fablebook`. It opens
-the first Scenario in the main Canvas, with Books → Book → Journey → Scenario
-navigation in the sidebar. Its breadcrumb links back to the Book and the
+the first Scenario in the main Canvas, with Books → Book → Dispatcher recovery
+(Journey) → Scenarios → Scenario links in the sidebar. Its breadcrumb links back to the Book and the
 Journey's first Scenario, and the Scenario links below it switch between the
 two screens. The Home route is `/`; the Book's default URL is
 `/admin/dev/fablebook/book/operator`. The two stable Scenario URLs are:
 
 - `/admin/dev/fablebook/book/operator?scenario=failed_shipment`
 - `/admin/dev/fablebook/book/operator?scenario=bulk_reassignment`
+
+The authored Scenario data and pinned manifest retain exact source citations;
+the Canvas omits the raw source path and JSON Pointer list.
 
 The pinned Logistify source is cached at
 `../../.cache/brand_sources/logistify-brand`. Its manifest names the repository,

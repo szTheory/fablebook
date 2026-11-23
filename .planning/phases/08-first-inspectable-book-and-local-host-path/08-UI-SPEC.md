@@ -22,7 +22,7 @@ reviewed_at: "2026-11-21T03:43:31Z"
 | Preset | not applicable |
 | Component library | none detected |
 | Icon library | none; use text labels and simple CSS geometry only where needed |
-| Font | Schibsted Grotesk from the pinned Fablebook brand source; system monospace for IDs, codes, and source paths |
+| Font | Schibsted Grotesk from the pinned Fablebook brand source; system monospace for IDs and codes |
 
 Fablebook is the UI catalog; a Book is one adopter-defined catalog, and “Books” labels the collection in the sidebar. Use the unchanged Fablebook wordmark and Schibsted Grotesk from the exact commit in `brand_sources.lock.json`. Keep the Fablebook chrome neutral and the Logistify styling inside the same-origin Canvas. Gilt appears only in the official logo. Mark the selected Scenario with a Paper tint and complete outline, not a decorative one-sided bar. Do not use Logistify logos, imagery, sound, or font files. Label fixture records and all depicted actions as illustrative; no action may imply a real dispatch or external write.
 
@@ -31,6 +31,8 @@ The local operator host uses Phoenix LiveView and one authored CSS file. Keep th
 ### Owner clarification — 2026-11-22
 
 This fixed two-screen dispatcher recovery flow is a **Journey**, not a “user story.” In Fablebook, a Story is the catalog entry for one component; a Journey is an ordered job across Scenarios. The current compiled `Fablebook.Story` module and `story` URL key are implementation details and remain unchanged. Storybook likewise uses “story” for a rendered component state ([Browse Stories](https://storybook.js.org/docs/9/get-started/browse-stories)); its sidebar/Canvas pattern is reused without borrowing a misleading label. Show the group title “Dispatcher recovery” and its Scenario children, but omit the bare “Story” label from this flow's user-facing navigation.
+
+The sidebar explicitly labels the nested Scenario list “Scenarios,” between the Journey title and its Scenario links, so the child type is visible at a glance. Preserve the exact source citations in authored Scenario data and source-verification checks, but omit raw source paths and JSON Pointers from the user-facing Canvas.
 
 Show the complete Book → Journey → Scenario path in the main-panel breadcrumb, with linked parent items and the selected Scenario last. Keep the sidebar tree, and provide a compact sibling-Scenario navigation row below the breadcrumb so the same fixed screens are reachable from the main panel. This is navigation among authored Scenarios, not an editable Control or URL override. Do not add a Canvas color-scheme picker in Phase 8; the requested System/Light/Dark Global belongs to future scope and is distinct from the UI catalog's Appearance and the Book's Theme.
 
@@ -67,7 +69,7 @@ Use four sizes and two weights throughout the catalog. The embedded operator UI 
 | Emphasized labels | 16px | 600 | 1.4 |
 | Screen title | 22px | 600 | 1.2 |
 
-Use sentence case, tabular numerals for quantities, and no negative letter spacing. IDs and paths use the system monospace stack. Long names and citations wrap; do not truncate content required to understand a record or its source.
+Use sentence case, tabular numerals for quantities, and no negative letter spacing. IDs and codes use the system monospace stack. Long names and facts wrap; do not truncate content required to understand a record.
 
 ---
 
@@ -118,7 +120,7 @@ The Canvas must carry a persistent, readable notice: “Illustrative records and
 - All navigation is usable with Tab, Shift+Tab, Enter, and Space where appropriate. Do not add single-key shortcuts. Keep focus visible with a 2px outline and 4px offset; focus must not be covered by sticky UI.
 - Use semantic `header`, labeled `nav`, `main`, and `footer` landmarks, one clear page `h1`, and ordered headings. Tables have captions and scoped column headers; status is text and never color alone. Announce screen changes and unavailable/error status through a polite live region without moving focus unexpectedly.
 - At 320px and 375px, stack the sidebar above the Canvas, keep scenario links available and let long labels wrap. At 768px and 1280px, keep the persistent sidebar beside the selected Canvas. No horizontal page overflow. At 200% text zoom, all copy and controls remain available. Respect `prefers-reduced-motion`; screen navigation is instant.
-- Capture one deterministic visual artifact at representative narrow and desktop widths. Do not auto-accept a new or changed baseline; owner approval is required only if the artifact is proposed as a baseline or changes an accepted baseline.
+- Review the live local Book at representative narrow and desktop widths. Do not publish screenshot artifacts in public PRs or auto-accept a changed visual baseline; the owner decides at the end-of-milestone review.
 
 ---
 
@@ -132,10 +134,10 @@ Applicable checks resolved: 20 explicit, 1 backstop, 0 unresolved (21 checks acr
 | loading | Catalog list; screen navigation; Canvas Story content | ✅ resolved | Keep the neutral host shell stable and politely announce loading. When Canvas content is ready, announce the rendered screen name without moving focus. |
 | error | Catalog list; screen navigation; Canvas Story content | ✅ resolved | Unknown Book or screen URLs show the defined unavailable message and a working catalog/Book return link. A Canvas failure says, “The screen could not load. Check that the local Phoenix host is running, then reload.” Keep the local failure message inside the host shell. |
 | populated | Book sidebar; selected Canvas screen | ✅ resolved | Show one compiled operator Book in the sidebar and open the first source-grounded screen in the main Canvas. Its screens contain fixed, source-cited ordinary and edge/error cases with a persistent illustrative notice. Do not add sample records outside the approved fixture. |
-| partial | Catalog list; Canvas Story content | ✅ resolved | Never infer missing source-backed values. Show “Not provided in source” for an absent optional fixture value and retain the available citation. |
-| overflow | Catalog list; screen navigation; Canvas Story content; citations | 🧪 backstop | At the real host, verify 320px and 1280px widths and 200% text zoom. Confirm there is no page-level horizontal overflow, clipped navigation, hidden citation, or covered focus indicator. Long values wrap and dense records stack. |
+| partial | Catalog list; Canvas Story content | ✅ resolved | Never infer missing source-backed values. Show “Not provided in source” for an absent optional fixture value; retain its exact citation in authored Scenario data. |
+| overflow | Catalog list; screen navigation; Canvas Scenario content | 🧪 backstop | At the real host, verify 320px and 1280px widths and 200% text zoom. Confirm there is no page-level horizontal overflow, clipped navigation, or covered focus indicator. Long values wrap and dense records stack. Raw citation pointers are not rendered in the Canvas. |
 | zero-one-many | Books sidebar; source-grounded Story collections | ✅ resolved | With no Book, show the defined empty copy; with one Book, render the sidebar and first screen directly. Keep the same simple Scenario list at zero, one, or many source-grounded rows, with correct singular/plural text. Keep fixture contents fixed and do not add multi-Book management affordances. |
-| long-text | Screen navigation; Book labels, IDs, paths, and citations | ✅ resolved | Wrap long names and citations; break long IDs and paths at safe boundaries. Preserve all text required to understand a record or source; do not truncate it with ellipses. |
+| long-text | Screen navigation; Book labels, IDs, and Scenario facts | ✅ resolved | Wrap long names and facts; break long IDs at safe boundaries. Preserve all content needed to understand the record; do not truncate it with ellipses. Raw citation paths are not shown in the Canvas. |
 
 ---
 

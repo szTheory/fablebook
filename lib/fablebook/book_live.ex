@@ -60,6 +60,7 @@ defmodule Fablebook.BookLive do
                   <.link patch={journey_path(@book_info, story)} class="journey-link">
                     {story.title}
                   </.link>
+                  <span class="tree-kind">Scenarios</span>
                   <ul class="scenario-list">
                     <li :for={entry <- story.scenarios}>
                       <.link
@@ -382,15 +383,6 @@ defmodule Fablebook.BookLive do
       </section>
 
       <p class="illustrative-notice">Illustrative records and actions. No live dispatch or external changes.</p>
-
-      <footer class="source-citations">
-        <h2>Sources</h2>
-        <ul>
-          <li :for={citation <- @scenario.citations}>
-            <a href={citation.url} target="_blank" rel="noreferrer"><code>{citation.path}</code> — {citation.section}</a>
-          </li>
-        </ul>
-      </footer>
     </article>
     """
   end
