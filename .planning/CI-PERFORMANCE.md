@@ -274,3 +274,18 @@ show a repeatable gain. Core and floor already overlap, setup is small, and
 the failures were a source-format issue rather than workflow waste. No safe
 coverage-preserving CI change is supported; keep both required lanes and all
 host checks.
+
+## Hosted Phase 8 quiet Canvas status — 2026-11-25
+
+Screenshot-free PR #106 head `df078bd45fd9433d98e229d34bea9f5583d40354`
+passed [required run 45691480908](https://github.com/szTheory/fablebook/actions/runs/45691480908)
+in 12m27s. Jobs began 2 seconds after run creation and overlapped. Core took
+12m18s, including 11m04s for `mix ci`; floor took 9m50s, including 8m47s for
+the production-guard test step. Core set the critical path by 2m28s. Security
+took 42s, Dialyzer 23s, and `ci-gate` 4s. There were no failures or retries.
+
+Compared with the immediately preceding green head, total duration increased
+by 2m47s and the core test step by 3m09s; floor increased by 17s. Both test
+lanes already overlap, and the long core test command dominates this run. One
+slower sample does not establish a trend or justify a pipeline change. Keep
+both lanes and all checks unchanged.

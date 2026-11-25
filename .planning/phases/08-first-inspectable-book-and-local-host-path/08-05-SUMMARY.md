@@ -147,18 +147,26 @@ failed-shipment frame complete, the ready status in the accessibility tree,
 and no visible Canvas heading; actual failure guidance remains visible. The
 local preview is open at
 `http://127.0.0.1:4003/admin/dev/fablebook/book/operator?scenario=failed_shipment`.
-No screenshot was added to PR #106. Exact-head hosted CI for the updated
-candidate is still pending; the end-of-milestone visual-baseline decision and
-phase verification/merge gate remain unchanged.
+No screenshot was added to PR #106. The correction is at screenshot-free head
+`df078bd45fd9433d98e229d34bea9f5583d40354`; all required jobs passed exact-head
+hosted CI in [run 45691480908](https://github.com/szTheory/fablebook/actions/runs/45691480908).
+The PR body now describes the quiet status behavior, 14 host tests and current
+CI receipt. It remains draft. The end-of-milestone visual-baseline decision
+and phase verification/merge gate remain unchanged.
+
+The completed CI run took 12m27s: core 12m18s (`mix ci` 11m04s), floor 9m50s
+(floor test 8m47s), security 42s, Dialyzer 23s, and gate 4s. Core and floor
+overlapped. This sample is slower than the prior green head, mainly in the core
+test step, but does not establish a recurring regression or justify changing
+the required lanes. Measurements are recorded in
+[CI-PERFORMANCE.md](../../CI-PERFORMANCE.md).
 
 ## Delivery still open
 
-- Screenshot-free PR #106 head `4c9b2ad82ffe71b8325d2e546364076efab38982`
-  passed exact-head hosted CI in [run 45683630403](https://github.com/szTheory/fablebook/actions/runs/45683630403).
-  The preceding head failed both test lanes because the newly added dated
-  owner-intent record lacked required frontmatter. The records now have their
-  required metadata and the exact final head is green. Keep the PR draft until
-  the owner's end-of-milestone live visual decision.
+- Screenshot-free PR #106 head `df078bd45fd9433d98e229d34bea9f5583d40354`
+  passed required exact-head CI in [run 45691480908](https://github.com/szTheory/fablebook/actions/runs/45691480908).
+  The PR body is updated with the quiet-status correction and current receipt.
+  Keep the PR draft until the owner's end-of-milestone live visual decision.
 - Merge only the exact reviewed green head and follow branch protection.
 - At the end-of-milestone review, use the live local Book for the required
   owner visual-baseline decision before phase verification or merge.
