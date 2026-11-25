@@ -25,18 +25,20 @@ coverage:
   - id: HOST-01/HOST-02
     description: "The actual host uses the dev/test mount and excludes its Book, routes and adapter from production; a reachable negative compile emits one canonical error."
     verification:
-      - kind: local
+      - kind: other
         ref: "bin/verify_operator_host_prod"
         status: pass
-      - kind: local
+      - kind: other
         ref: "FABLEBOOK_FLOOR=1 bin/verify_operator_host_prod"
         status: pass
+    human_judgment: false
   - id: CAT-01/CAT-02/CANVAS-01/BOOK-01
     description: "The fixed compiled catalog serves two cited scenarios through the same-origin host Canvas in development and test."
     verification:
-      - kind: local
+      - kind: integration
         ref: "hosts/operator/test/operator_host_test.exs: 11 tests in core and floor"
         status: pass
+    human_judgment: false
 duration: "multi-session; active time not tracked"
 completed: 2026-11-21
 status: locally_verified

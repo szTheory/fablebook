@@ -5,6 +5,29 @@ subsystem: book-flow-and-delivery-verification
 completed: 2026-11-22
 status: executing
 requirements-completed: []
+coverage:
+  - id: BOOK-01
+    description: "The selected source-cited Book and Scenario render through the development host with the approved navigation, accessible readiness state, visible failure guidance, and illustrative actions."
+    requirement: BOOK-01
+    verification:
+      - kind: integration
+        ref: "hosts/operator/test/operator_host_test.exs: 15 focused tests passed locally after the Journey/Scenario collision fix"
+        status: pass
+      - kind: automated_ui
+        ref: "08-BROWSER.md: current live Chrome ready/failure DOM checks and same-origin Canvas evidence"
+        status: pass
+      - kind: other
+        ref: "https://github.com/szTheory/fablebook/actions/runs/45691480908 on the previous PR code head df078bd45fd9433d98e229d34bea9f5583d40354; fresh CI is required for the route fix"
+        status: unknown
+    human_judgment: false
+  - id: VISUAL-BASELINE
+    description: "The owner accepts the live failed-shipment Book shown as the Phase 8 visual baseline."
+    verification:
+      - kind: manual_procedural
+        ref: "INT-20261125-04: direct owner acceptance during the live review at /admin/dev/fablebook/book/operator?scenario=failed_shipment"
+        status: pass
+    human_judgment: true
+    rationale: "Visual baseline acceptance requires owner judgment; the owner's explicit acceptance is recorded in INT-20261125-04."
 ---
 
 # Phase 8 Plan 08-05 — Current execution summary
@@ -17,8 +40,9 @@ with core and Dialyzer passing; security and floor failed on the two workflow
 setup issues described in the resumption record. The targeted fixes pass local
 Actionlint and floor production-boundary checks; exact-head hosted CI passed in
 [run 45083323345](https://github.com/szTheory/fablebook/actions/runs/45083323345).
-The owner deferred visual feedback until the end of v0.7 without making a final visual decision; phase verification and merge remain gated on that
-decision (INT-20261122-02). This is not phase completion. The screenshot-free
+The owner explicitly accepted the live failed-shipment visual baseline on
+2026-11-25 (INT-20261125-04), clearing that gate. Phase verification, exact-head
+delivery and merge remain; this is not phase completion. The screenshot-free
 head 6987359 passed required hosted CI in
 [run 45087426149](https://github.com/szTheory/fablebook/actions/runs/45087426149).
 
@@ -92,9 +116,9 @@ The owner requested a live browser review instead of public screenshots. The
 local Book is open in Chrome at
 `http://127.0.0.1:4003/admin/dev/fablebook/book/operator?scenario=bulk_reassignment`.
 The active checkout reported `Screen ready`, displayed the explicit “Scenarios”
-sidebar label, and omitted the raw source-pointer footer. The owner deferred
-visual feedback until the end of v0.7; this live review does not accept or
-reject the baseline.
+sidebar label, and omitted the raw source-pointer footer. On 2026-11-25 the
+owner explicitly accepted the live failed-shipment baseline; see
+[INT-20261125-04](../../intent/sources/2026-11-25-04-accept-phase8-visual-baseline.md).
 
 ## Owner correction and regression repair — 2026-11-25
 
@@ -150,9 +174,10 @@ local preview is open at
 No screenshot was added to PR #106. The correction is at screenshot-free head
 `df078bd45fd9433d98e229d34bea9f5583d40354`; all required jobs passed exact-head
 hosted CI in [run 45691480908](https://github.com/szTheory/fablebook/actions/runs/45691480908).
-The PR body now describes the quiet status behavior, 14 host tests and current
-CI receipt. It remains draft. The end-of-milestone visual-baseline decision
-and phase verification/merge gate remain unchanged.
+The PR body describes the quiet status behavior and the prior CI receipt. The
+owner later accepted the visual baseline. Phase verification and merge remain
+open while the reviewed Journey/Scenario collision fix receives fresh review
+and exact-head CI.
 
 The completed CI run took 12m27s: core 12m18s (`mix ci` 11m04s), floor 9m50s
 (floor test 8m47s), security 42s, Dialyzer 23s, and gate 4s. Core and floor
@@ -163,13 +188,15 @@ the required lanes. Measurements are recorded in
 
 ## Delivery still open
 
-- Screenshot-free PR #106 head `df078bd45fd9433d98e229d34bea9f5583d40354`
-  passed required exact-head CI in [run 45691480908](https://github.com/szTheory/fablebook/actions/runs/45691480908).
-  The PR body is updated with the quiet-status correction and current receipt.
-  Keep the PR draft until the owner's end-of-milestone live visual decision.
-- Merge only the exact reviewed green head and follow branch protection.
-- At the end-of-milestone review, use the live local Book for the required
-  owner visual-baseline decision before phase verification or merge.
+- Screenshot-free PR #106 remains draft at public head
+  `df078bd45fd9433d98e229d34bea9f5583d40354`, green in [run
+  45691480908](https://github.com/szTheory/fablebook/actions/runs/45691480908)
+  before the Journey-scoped route fix. The local candidate commit
+  `a339f67f5c2e8afb6cec68e216639b785cac694c` includes the fix; its final code
+  review is clean and the full core lane passed locally. The current candidate
+  still needs final planning evidence, push, exact-head hosted CI, phase
+  verification and ship review.
+- Follow branch protection when merging the exact reviewed green head.
 - Record the actual PR, reviewed head, merge commit and hosted CI URL in the
   append-only delivery registry, then close v0.7 against its scoped
   requirements.
@@ -179,3 +206,18 @@ aggregate remains open, `walking-skeleton` blocked, R9 denied and unconsumed,
 SEC-01 Pending, and the one-Book exception expires at v0.7 closeout. The
 2026-11-21 halted summary remains immutable at
 [08-05-HALTED-SUMMARY-2026-11-21.md](08-05-HALTED-SUMMARY-2026-11-21.md).
+
+## Journey/Scenario route collision fix — 2026-11-25
+
+The Phase 8 source review found that two valid Journeys could both contain a
+Scenario named `default`, while Book selection used that Scenario name alone.
+Scenario links now include their Journey path; selection and sidebar state use
+the Journey/Scenario pair, and ambiguous legacy query-only URLs fail safely.
+The focused operator-host suite passes 15 tests, including a two-Journey
+duplicate-name fixture. The accepted visual layout is unchanged. The final
+standard-depth source review is clean. Strict Credo and the full core lane pass
+on the corrected source; the lane reports 467 passed, 10 configured exclusions
+and 652.3s in ExUnit. Its first attempt stopped at Credo's nesting limit before
+tests; extracting `assign_journey_selection/5` fixed that issue. The corrected
+candidate remains local after the previously green PR head, so exact-head
+hosted CI, phase verification and merge remain outstanding.

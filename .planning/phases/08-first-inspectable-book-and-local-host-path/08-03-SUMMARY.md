@@ -27,16 +27,17 @@ coverage:
       - kind: unit
         ref: "test/contract/mount_literal_ast_test.exs"
         status: pass
-      - kind: hosted-ci
+      - kind: other
         ref: "https://github.com/szTheory/fablebook/actions/runs/44879867181"
         status: pass
+    human_judgment: false
   - id: HOST-01/HOST-02 fixture controls
     description: "The fixture includes the sentinel in dev and test, excludes it from normal prod, and fails a reachable prod mount with the canonical error."
     verification:
-      - kind: local
+      - kind: integration
         ref: "core and floor focused prod_guard_test runs; one test passed in each lane"
         status: pass
-      - kind: hosted-ci
+      - kind: other
         ref: "https://github.com/szTheory/fablebook/actions/runs/44882143058"
         status: pass
     human_judgment: false

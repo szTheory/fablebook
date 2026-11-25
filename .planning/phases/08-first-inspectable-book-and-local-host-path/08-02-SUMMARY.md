@@ -34,8 +34,7 @@ coverage:
       - kind: other
         ref: "https://github.com/szTheory/fablebook/actions/runs/44874757036"
         status: pass
-    human_judgment: true
-    rationale: "MOUNT-01 also requires the separately delivered test-only PR; Plan 08-03 owns that remaining delivery."
+    human_judgment: false
 duration: "multi-session; active time not tracked"
 completed: 2026-11-21
 status: complete

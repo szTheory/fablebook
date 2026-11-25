@@ -289,3 +289,22 @@ by 2m47s and the core test step by 3m09s; floor increased by 17s. Both test
 lanes already overlap, and the long core test command dominates this run. One
 slower sample does not establish a trend or justify a pipeline change. Keep
 both lanes and all checks unchanged.
+
+## Local Phase 8 Journey-scoped Scenario fix — 2026-11-25
+
+The first captured core-lane attempt stopped at strict Credo before ExUnit:
+`assign_journey/3` had one nesting level beyond the configured limit. The
+selection branches were extracted to `assign_journey_selection/5`; strict
+Credo and the focused operator-host suite then passed. The full core lane on
+the source content committed as `a339f67f5c2e8afb6cec68e216639b785cac694c`
+passed: 467 tests, 10 configured exclusions, and 652.3s in ExUnit (169.4s
+async, 482.9s sync). The inventory-heavy test emitted its expected large
+evidence block. The failed first attempt ended before the test suite and was
+fixed before the passing run.
+
+Compared with the previous local Phase 8 core run (597.6s), ExUnit was 54.7s
+slower. This one sample does not establish a trend. The core tests dominate
+elapsed time; hosted core and floor lanes already overlap, and their setup is
+short relative to testing. No safe coverage-preserving optimization is
+supported; keep all lanes and checks unchanged. Exact-head hosted CI for this
+corrected candidate remains pending.

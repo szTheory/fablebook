@@ -1,14 +1,13 @@
 # Phase 8 real-host browser record
 
-**Status: browser behavior verified; owner visual review will use the live
-local Book.** The readiness retry works in Chrome on the actual local Phoenix
+**Status: browser behavior verified; owner accepted the live visual baseline
+on 2026-11-25 (INT-20261125-04).** The readiness retry works in Chrome on the actual local Phoenix
 host. After the owner reported a missing Scenario taxonomy label and noisy raw
 source pointers, the active candidate now labels the sidebar's child list
 “Scenarios” and keeps raw paths and JSON Pointers out of the Canvas. Exact
 citations remain in the authored data and pinned manifest. No screenshot files
-are included in the candidate or public PR. The owner will make the visual
-baseline decision at the end of v0.7; no baseline has been accepted or
-rejected.
+are included in the candidate or public PR. The owner accepted the live
+failed-shipment baseline on 2026-11-25; see INT-20261125-04.
 
 ## Tested surface
 
@@ -18,8 +17,8 @@ rejected.
   host's development configuration. It is currently running for the owner's
   local visual review.
 - Book route: `/admin/dev/fablebook/book/operator`.
-- Stable Scenarios: `?scenario=failed_shipment` and
-  `?scenario=bulk_reassignment`.
+- Stable Scenario routes: `/book/operator/journey/dispatcher_recovery?scenario=failed_shipment`
+  and `/book/operator/journey/dispatcher_recovery?scenario=bulk_reassignment`.
 - Both Scenarios loaded in Chrome and announced `Screen ready` automatically.
   The sidebar now reads Book → Journey → journey title → Scenarios → Scenario
   links. The Book breadcrumb is plain text, the Journey breadcrumb opens its overview,
@@ -75,8 +74,9 @@ Chrome is open to the local Book at
 The active checkout's host reported `Screen ready`; the rendered sidebar shows
 “Scenarios” above the two Scenario links, and the Canvas shows the bulk result,
 source gaps and illustrative action without the raw pointer list. Keep the
-local host available for the owner's end-of-milestone review. This browser
-inspection does not accept or reject the baseline.
+local host available for any further phase inspection. The owner accepted the
+live failed-shipment baseline on 2026-11-25; see
+[INT-20261125-04](../../intent/sources/2026-11-25-04-accept-phase8-visual-baseline.md).
 
 ## Owner correction live check — 2026-11-25
 
@@ -95,14 +95,27 @@ and both the main panel and Canvas document computed to white.
 
 The changed interactions and style are covered by the operator-host route and
 stylesheet regression checks. This is live local review evidence; no screenshot
-was kept in the checkout or added to the public PR. The owner has not accepted
-or rejected the visual baseline.
+was kept in the checkout or added to the public PR. The owner accepted the
+live failed-shipment baseline on 2026-11-25; no baseline was auto-accepted.
+
+## Journey-scoped Scenario route regression — 2026-11-25
+
+Code review found that the catalog permits the same Scenario function name in
+different Journeys, while a query-only Scenario URL selected by name alone.
+Scenario links now include the Journey in their route, selection and sidebar
+highlighting compare the Story/Scenario pair, and an ambiguous legacy query-only
+URL safely shows the unavailable state. The focused operator-host suite passes
+15 tests, including a compiled two-Journey fixture where both Journeys define
+`default`. The accepted Book presentation is unchanged; no screenshot was kept
+or added to the public PR. The corrected route is
+`/admin/dev/fablebook/book/operator/journey/dispatcher_recovery?scenario=failed_shipment`.
 
 ## Remaining human judgment and safety stops
 
-Owner feedback remains required before accepting or rejecting the visual
-baseline. No baseline was auto-accepted. Browser mechanics, readiness, failure
-copy and responsive behavior have automated or directly observed evidence.
+The required owner visual judgment is complete: the current failed-shipment
+baseline was explicitly accepted, not auto-accepted. Browser mechanics,
+readiness, failure copy and responsive behavior have automated or directly
+observed evidence.
 
 The known local `act` ARM64/amd64 setup failure is unchanged and was not retried.
 The guard aggregate remains open, `walking-skeleton` remains blocked, R9 remains
