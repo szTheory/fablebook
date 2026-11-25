@@ -186,6 +186,26 @@ h2 {
   font-weight: 500;
 }
 
+.journey-link[aria-current="page"],
+.scenario-link[aria-current="page"] {
+  position: relative;
+  border-color: #d9d6ce;
+  background: #f6f4ef;
+  font-weight: 600;
+}
+
+.journey-link[aria-current="page"]::before,
+.scenario-link[aria-current="page"]::before {
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: -7px;
+  width: 4px;
+  background: #17181c;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  content: "";
+}
+
 .journey-list .tree-kind {
   margin-top: 8px;
 }
@@ -199,12 +219,6 @@ h2 {
   color: #17181c;
 }
 
-.scenario-link[aria-current="page"] {
-  border-color: #d9d6ce;
-  background: #f6f4ef;
-  font-weight: 500;
-}
-
 .tree-empty {
   padding: 8px;
   color: #5c5f66;
@@ -213,11 +227,55 @@ h2 {
 .catalog-main {
   min-width: 0;
   padding: 32px clamp(20px, 4vw, 48px) 48px;
+  background: #fff;
 }
 
+.journey-view,
 .screen-view {
   width: min(100%, 1280px);
   margin: 0 auto;
+}
+
+.journey-scenarios {
+  max-width: 960px;
+}
+
+.journey-scenario-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journey-scenario-card {
+  display: block;
+  min-height: 100%;
+  padding: 16px;
+  border: 1px solid #d9d6ce;
+  border-radius: 4px;
+  background: #fff;
+  text-decoration: none;
+  transition: background-color 120ms ease-out;
+}
+
+.journey-scenario-card:hover {
+  background: #f6f4ef;
+}
+
+.journey-scenario-title {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.journey-scenario-description {
+  max-width: 65ch;
+  margin: 0;
+  color: #5c5f66;
 }
 
 .screen-heading {
@@ -353,7 +411,7 @@ h2 {
 .canvas-document {
   min-height: 100vh;
   padding: 16px;
-  background: #f6f4ef;
+  background: #fff;
 }
 
 .operator-preview {

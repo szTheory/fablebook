@@ -147,6 +147,7 @@ defmodule OperatorHost.Router do
       live_session :operator_book, session: %{"book" => OperatorHost.Book} do
         live "/book", Fablebook.BookLive, :unavailable
         live "/book/:book_id", Fablebook.BookLive, :book
+        live "/book/:book_id/journey/:story_id", Fablebook.BookLive, :journey
         live "/book/*rest", Fablebook.BookLive, :unavailable
         live "/canvas", Fablebook.BookLive, :unavailable
         live "/canvas/:book_id/:story_id/:scenario_id", Fablebook.BookLive, :canvas

@@ -24,7 +24,7 @@ reviewed_at: "2026-11-21T03:43:31Z"
 | Icon library | none; use text labels and simple CSS geometry only where needed |
 | Font | Schibsted Grotesk from the pinned Fablebook brand source; system monospace for IDs and codes |
 
-Fablebook is the UI catalog; a Book is one adopter-defined catalog, and “Books” labels the collection in the sidebar. Use the unchanged Fablebook wordmark and Schibsted Grotesk from the exact commit in `brand_sources.lock.json`. Keep the Fablebook chrome neutral and the Logistify styling inside the same-origin Canvas. Gilt appears only in the official logo. Mark the selected Scenario with a Paper tint and complete outline, not a decorative one-sided bar. Do not use Logistify logos, imagery, sound, or font files. Label fixture records and all depicted actions as illustrative; no action may imply a real dispatch or external write.
+Fablebook is the UI catalog; a Book is one adopter-defined catalog, and “Books” labels the collection in the sidebar. Use the unchanged Fablebook wordmark and Schibsted Grotesk from the exact commit in `brand_sources.lock.json`. Keep the Fablebook chrome neutral and the Logistify styling inside the same-origin Canvas. Gilt appears only in the official logo. Keep the main panel and Canvas document white. Mark the selected Journey or Scenario in the sidebar with a Paper tint, complete outline, and bookmark-shaped marker. Do not use Logistify logos, imagery, sound, or font files. Label fixture records and all depicted actions as illustrative; no action may imply a real dispatch or external write.
 
 The local operator host uses Phoenix LiveView and one authored CSS file. Keep this UI slice dependency-free and server-rendered. The pinned Fablebook brand example at `preview/apps-workbench.jpg` establishes the useful hierarchy: logo and tree at left, selected screen in the Canvas at right. Phase 8 intentionally omits the broader toolbar, Inspector, palette, and settings shown in long-term product decisions.
 
@@ -34,7 +34,11 @@ This fixed two-screen dispatcher recovery flow is a **Journey**, not a “user s
 
 The sidebar explicitly labels the nested Scenario list “Scenarios,” between the Journey title and its Scenario links, so the child type is visible at a glance. Preserve the exact source citations in authored Scenario data and source-verification checks, but omit raw source paths and JSON Pointers from the user-facing Canvas.
 
-Show the complete Book → Journey → Scenario path in the main-panel breadcrumb, with linked parent items and the selected Scenario last. Keep the sidebar tree, and provide a compact sibling-Scenario navigation row below the breadcrumb so the same fixed screens are reachable from the main panel. This is navigation among authored Scenarios, not an editable Control or URL override. Do not add a Canvas color-scheme picker in Phase 8; the requested System/Light/Dark Global belongs to future scope and is distinct from the UI catalog's Appearance and the Book's Theme.
+### Owner correction — 2026-11-25
+
+Selecting “Dispatcher recovery” opens a Journey overview in the main panel with links for each Scenario. The Book title in the main-panel breadcrumb is plain text; the Journey breadcrumb on a Scenario page opens that overview. The selected sidebar Journey or Scenario keeps the bookmark marker. The UI catalog main panel and the Canvas document use white backgrounds; Paper remains the selected and hovered item tint.
+
+Show the complete Book → Journey → Scenario path in the main-panel breadcrumb, with the Book as plain text, the Journey linked to its overview, and the selected Scenario last. On the Journey overview, show all of its Scenario links in the main panel. Keep the sidebar tree and provide a compact sibling-Scenario navigation row below the breadcrumb on Scenario pages. This is navigation among authored Scenarios, not an editable Control or URL override. Do not add a Canvas color-scheme picker in Phase 8; the requested System/Light/Dark Global belongs to future scope and is distinct from the UI catalog's Appearance and the Book's Theme.
 
 The v0.7 Book remains a screen-level proof, not coverage of the whole UI. Primitive, Pattern, Area, Screen and their applicable state classes remain a broader product requirement already preserved in the North Star and rolling roadmap.
 
@@ -79,13 +83,13 @@ Catalog chrome uses a light, cool-neutral surface. The embedded Logistify previe
 
 | Role | Value | Usage |
 |------|-------|-------|
-| Paper | `#F6F4EF` | UI catalog background and Canvas surround |
-| Card | `#FFFFFF` | Sidebar and Canvas frame |
+| Paper | `#F6F4EF` | Selected and hovered navigation item tint |
+| Card | `#FFFFFF` | Sidebar, main panel, Canvas frame and Canvas document |
 | Ink | `#17181C` | Text, selected Scenario emphasis and focus |
 | Hairline | `#D9D6CE` | Dividers and Canvas boundary |
 | Destructive | `#B42318` | Reserved for an actual destructive control; none exists in this phase |
 
-There is no general accent color, shadow, or decorative texture in the UI catalog. The official logo is used unchanged. A full outline and Paper tint mark the active Scenario in the sidebar and top navigation. Meet WCAG AA contrast for text and at least 3:1 for focus and non-text boundaries. Pair every preview status color with a visible status word. Logistify Signal `#F0501E`, if present in the cited Canvas styling, is decorative only and never status text, an action affordance, or Fablebook chrome.
+There is no general accent color, shadow, or decorative texture in the UI catalog. The official logo is used unchanged. A full outline, Paper tint, and bookmark-shaped marker identify the active sidebar Journey or Scenario; the top navigation uses a full outline and Paper tint. The main panel and Canvas document are white. Meet WCAG AA contrast for text and at least 3:1 for focus and non-text boundaries. Pair every preview status color with a visible status word. Logistify Signal `#F0501E`, if present in the cited Canvas styling, is decorative only and never status text, an action affordance, or Fablebook chrome.
 
 ---
 
@@ -111,8 +115,8 @@ The Canvas must carry a persistent, readable notice: “Illustrative records and
 ## Interaction Contract
 
 - The UI catalog uses a persistent left sidebar with the hierarchy Books → Logistify operator console → Dispatcher recovery → its Scenarios. This group is the fixed Journey; do not expose the implementation's bare “Story” label or call it a “user story.” Do not call the Books collection “catalog.” Do not put the only Book in a dead-end card index.
-- Opening `/admin/dev/fablebook` selects the first source-grounded Scenario and shows its real Canvas immediately. The Book link returns to the same default; selecting a Scenario updates its stable URL and the main Canvas. The sidebar is the screen switcher; do not duplicate it with Previous/Next links.
-- The main panel breadcrumb includes the Book, group title and selected Scenario. Book and group breadcrumbs are links to their default Scenario; the group link opens its first Scenario. The current Scenario is the final non-link breadcrumb item.
+- Opening `/admin/dev/fablebook` selects the first source-grounded Scenario and shows its real Canvas immediately. Selecting a Journey opens its overview in the main panel, where every Scenario has a stable link; selecting a Scenario opens its real Canvas. Keep the sidebar screen switcher and compact sibling links.
+- The main panel breadcrumb includes the Book, Journey title and selected Scenario. Render the Book title as plain text. The Journey breadcrumb opens its overview; the current Scenario is the final non-link item. On the Journey overview, the Journey title is the current non-link item.
 - A compact navigation row near the breadcrumb links among the fixed Journey's sibling Scenarios and marks the current Scenario. Keep the same URLs and current-state semantics as the sidebar.
 - The Book contains the smallest number of addressable screens that explains the cited dispatcher job: two by default, three only if the source-grounded edge case needs a distinct screen. Do not add a toolbar, Inspector, command palette, search, grid, editable controls, a Canvas color-scheme picker, or a general Journey editor.
 - Each screen has a stable direct URL. Current screen is identified in text and with `aria-current="page"`. Unknown Book or screen URLs render the safe unavailable state and a working return link; never infer a module or screen from arbitrary input.

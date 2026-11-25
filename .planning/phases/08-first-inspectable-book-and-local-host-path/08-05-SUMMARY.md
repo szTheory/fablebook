@@ -27,9 +27,10 @@ head 6987359 passed required hosted CI in
 - One compiled, development/test-only Logistify operator Book with two stable
   source-backed Scenarios: failed shipment and bulk reassignment. Missing
   values remain explicitly absent; all records and actions are illustrative.
-- Familiar Book → Journey → Scenario navigation, linked parent breadcrumbs,
-  sibling Scenario links, and the real same-origin host Canvas. After owner
-  feedback, the sidebar explicitly labels the child list “Scenarios.”
+- Book → Journey → Scenario navigation, a Journey overview with Scenario
+  links, plain-text Book breadcrumb, clickable Journey breadcrumb, sibling
+  Scenario links, and the real same-origin host Canvas. The active sidebar
+  item uses its bookmark marker.
 - Pinned public source manifest and verification tooling, source-pointer
   assertions, production exclusion controls, and isolated reachable-mount
   negative control. Exact citations stay in Scenario data and source checks;
@@ -94,6 +95,33 @@ The active checkout reported `Screen ready`, displayed the explicit “Scenarios
 sidebar label, and omitted the raw source-pointer footer. The owner deferred
 visual feedback until the end of v0.7; this live review does not accept or
 reject the baseline.
+
+## Owner correction and regression repair — 2026-11-25
+
+The live Phase 8 UI had drifted from the owner-reviewed behavior. The active
+branch sent a Journey click to its first Scenario, omitted the selected
+bookmark marker, used Paper for the main panel and Canvas document, and kept an
+ineffective Book breadcrumb link. Port 4003 was serving the intended Phase 8
+checkout; this was a source/spec regression, not a stale server or wrong port.
+
+Restored the Journey overview with links to both Scenarios, a plain Book
+breadcrumb, a Journey breadcrumb that opens the overview, the bookmark marker
+for the active sidebar item, and white main/Canvas surfaces. Added a focused
+regression test for those behaviors and recorded the correction in the dated
+intent source, UI-SPEC, and owner feedback ledger. The canonical dirty primary
+checkout was left untouched.
+
+The operator-host suite now passes 13 tests. The local browser rendered the
+Journey route with two Scenario cards, white main panel, visible bookmark and a
+non-link Book crumb. The bulk Scenario announced `Screen ready`; both the main
+panel and same-origin Canvas document computed to white. Port 4003's listener
+cwd was confirmed as this isolated Phase 8 checkout. No screenshot artifact
+was added to the public PR.
+
+The owner feedback ledger now requires resumed UI work to reconcile current
+source, plan, UI-SPEC and last reviewed live behavior before edits, and to
+verify the browser against a persistent server whose listener matches the
+intended checkout.
 
 ## Delivery still open
 

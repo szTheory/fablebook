@@ -51,22 +51,29 @@ host_pid=$!
 printf '%s\n' "$host_pid" > "$pid_file"
 ```
 
-Confirm that the recorded process owns the selected loopback listener:
+Confirm that the recorded process owns the selected loopback listener and
+runs from this operator host checkout:
 
 ```sh
-lsof -nP -iTCP:"$port" -sTCP:LISTEN
+listener_pid=$(lsof -nP -iTCP:"$port" -sTCP:LISTEN -t)
+lsof -a -p "$listener_pid" -d cwd
 curl --fail --silent --show-error "http://127.0.0.1:$port/admin/dev/fablebook"
 ```
 
 Open the UI catalog at `http://127.0.0.1:$port/admin/dev/fablebook`. It opens
 the first Scenario in the main Canvas, with Books → Book → Dispatcher recovery
-(Journey) → Scenarios → Scenario links in the sidebar. Its breadcrumb links back to the Book and the
-Journey's first Scenario, and the Scenario links below it switch between the
-two screens. The Home route is `/`; the Book's default URL is
-`/admin/dev/fablebook/book/operator`. The two stable Scenario URLs are:
+(Journey) → Scenarios → Scenario links in the sidebar. Selecting the Journey
+opens its main-panel Scenario overview. The Book breadcrumb is plain text; the
+Journey breadcrumb opens that overview. The selected sidebar item has a
+bookmark marker, and the main panel and Canvas document are white. The Home
+route is `/`; the Book's default URL is
+`/admin/dev/fablebook/book/operator`. The stable Scenario URLs are:
 
 - `/admin/dev/fablebook/book/operator?scenario=failed_shipment`
 - `/admin/dev/fablebook/book/operator?scenario=bulk_reassignment`
+
+The Journey overview URL is
+`/admin/dev/fablebook/book/operator/journey/dispatcher_recovery`.
 
 The authored Scenario data and pinned manifest retain exact source citations;
 the Canvas omits the raw source path and JSON Pointer list.

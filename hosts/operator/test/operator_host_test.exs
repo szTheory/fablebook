@@ -7,6 +7,7 @@ defmodule OperatorHost.OperatorBookTest do
   @root "/admin/dev/fablebook"
   @commit "6189eb2f013496644ece948f287d69a6695c1156"
   @scenario "/admin/dev/fablebook/canvas/operator/dispatcher_recovery/failed_shipment"
+  @app_css Path.expand("../priv/static/assets/app.css", __DIR__)
   @source_manifest Path.expand(
                      "../../../.planning/phases/08-first-inspectable-book-and-local-host-path/08-LOGISTIFY-SOURCE.json",
                      __DIR__
@@ -182,32 +183,52 @@ defmodule OperatorHost.OperatorBookTest do
     refute html =~ "aria-label=\"Illustrative actions\""
   end
 
-  test "the Book sidebar nests stable Scenario links under its Journey" do
-    conn = get(build_conn(), "#{@root}/book/operator")
-    body = html_response(conn, 200)
+  test "the Journey opens its Scenarios in the main panel" do
+    body =
+      get(build_conn(), "#{@root}/book/operator/journey/dispatcher_recovery")
+      |> html_response(200)
 
-    assert body =~ "aria-label=\"Books\""
-    assert body =~ "Logistify operator console"
-    assert body =~ "Journey"
-    assert body =~ "Dispatcher recovery"
-    assert body =~ "class=\"tree-kind\">Scenarios</span>"
+    assert body =~ "class=\"journey-view\""
+    assert body =~ "<h1>Dispatcher recovery</h1>"
+    assert body =~ "<h2 id=\"journey-scenarios-heading\">Scenarios</h2>"
+    assert body =~ "class=\"journey-scenario-card\""
     assert body =~ "href=\"#{@root}/book/operator?scenario=failed_shipment\""
-    assert body =~ "src=\"#{@scenario}\""
-    assert body =~ "title=\"Logistify operator console — A failed shipment\""
     assert body =~ "href=\"#{@root}/book/operator?scenario=bulk_reassignment\""
-    assert body =~ "data-canvas-status=\"loading\""
+    assert body =~ "A failed driver stop reaches the dispatcher"
+    assert body =~ "aria-current=\"page\">Dispatcher recovery</span>"
+    refute body =~ "data-canvas-frame"
   end
 
-  test "Book and Journey breadcrumbs and sibling Scenario links navigate" do
+  test "main surfaces stay white and selected sidebar items keep the bookmark marker" do
+    css = File.read!(@app_css)
+
+    assert css =~ ~r/\.catalog-main\s*\{[^}]*background:\s*#fff;/s
+    assert css =~ ~r/\.canvas-document\s*\{[^}]*background:\s*#fff;/s
+    assert css =~ ~r{\.journey-link\[aria-current="page"\]::before}
+    assert css =~ ~r{\.scenario-link\[aria-current="page"\]::before}
+    assert css =~ ~r{clip-path:\s*polygon\(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%\)}
+  end
+
+  test "the Scenario breadcrumb keeps the Book static and Journey useful" do
     body =
       get(build_conn(), "#{@root}/book/operator?scenario=bulk_reassignment")
       |> html_response(200)
 
-    assert body =~ "aria-label=\"Breadcrumb\""
-    assert body =~ "href=\"#{@root}/book/operator\""
-    assert body =~ "href=\"#{@root}/book/operator?scenario=failed_shipment\""
-    assert body =~ "aria-current=\"page\">Twelve shipments reassigned</span>"
+    [breadcrumbs] =
+      Regex.run(~r{<nav[^>]*aria-label="Breadcrumb"[^>]*>(.*?)</nav>}s, body,
+        capture: :all_but_first
+      )
+
+    refute Regex.match?(
+             ~r{<a[^>]*>\s*Logistify operator console\s*</a>},
+             breadcrumbs
+           )
+
+    assert breadcrumbs =~ "<span>Logistify operator console</span>"
+    assert breadcrumbs =~ "aria-current=\"page\">Twelve shipments reassigned</span>"
+    assert body =~ "href=\"#{@root}/book/operator/journey/dispatcher_recovery\""
     assert body =~ "aria-label=\"Scenarios in Dispatcher recovery\""
+    assert body =~ "href=\"#{@root}/book/operator?scenario=failed_shipment\""
     assert body =~ "href=\"#{@root}/book/operator?scenario=bulk_reassignment\""
     refute body =~ ">Story</span>"
 
@@ -215,23 +236,15 @@ defmodule OperatorHost.OperatorBookTest do
       get(build_conn(), "#{@root}/book/operator")
       |> html_response(200)
 
-    journey_body =
-      get(build_conn(), "#{@root}/book/operator?scenario=failed_shipment")
-      |> html_response(200)
-
-    sibling_body =
-      get(build_conn(), "#{@root}/book/operator?scenario=bulk_reassignment")
-      |> html_response(200)
-
     assert book_body =~ "src=\"#{@scenario}\""
-    assert journey_body =~ "src=\"#{@scenario}\""
-    assert sibling_body =~ "data-screen=\"bulk_reassignment\""
   end
 
   test "unknown and missing selections show the safe unavailable path" do
     for path <- [
           "#{@root}/book",
           "#{@root}/book/Operator",
+          "#{@root}/book/operator/journey/unknown",
+          "#{@root}/book/operator/journey/%64ispatcher_recovery",
           "#{@root}/book/operator?scenario=%66ailed_shipment",
           "#{@root}/canvas/operator/dispatcher_recovery/unknown",
           "#{@root}/canvas/operator/dispatcher_recovery/%66ailed_shipment",

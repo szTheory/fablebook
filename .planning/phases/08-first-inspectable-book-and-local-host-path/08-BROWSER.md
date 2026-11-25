@@ -22,8 +22,8 @@ rejected.
   `?scenario=bulk_reassignment`.
 - Both Scenarios loaded in Chrome and announced `Screen ready` automatically.
   The sidebar now reads Book → Journey → journey title → Scenarios → Scenario
-  links. Linked Book and Journey breadcrumbs and sibling Scenario navigation
-  remain present. The bulk Scenario shows the 12 reassignment count and source
+  links. The Book breadcrumb is plain text, the Journey breadcrumb opens its overview,
+  and sibling Scenario navigation remains present. The bulk Scenario shows the 12 reassignment count and source
   gaps, without printing raw paths or JSON Pointers in the Canvas.
 - An unknown Scenario URL showed `Screen unavailable` and the approved
   unavailable copy while retaining the Book navigation path.
@@ -77,6 +77,26 @@ The active checkout's host reported `Screen ready`; the rendered sidebar shows
 source gaps and illustrative action without the raw pointer list. Keep the
 local host available for the owner's end-of-milestone review. This browser
 inspection does not accept or reject the baseline.
+
+## Owner correction live check — 2026-11-25
+
+The listener at `127.0.0.1:4003` was verified against the active isolated
+checkout at `/private/tmp/fablebook-v07-phase8-screenshot-free/hosts/operator`.
+The persistent server runs the source after the correction, not an older build.
+
+The Journey URL
+`/admin/dev/fablebook/book/operator/journey/dispatcher_recovery` rendered two
+Scenario cards in the main panel. Browser inspection confirmed the main panel
+background is white, the selected Journey has the dark bookmark-shaped marker,
+and the Book breadcrumb is not a link. The Scenario URL
+`/admin/dev/fablebook/book/operator?scenario=bulk_reassignment` announced
+`Screen ready`; its selected sidebar Scenario retained the bookmark marker,
+and both the main panel and Canvas document computed to white.
+
+The changed interactions and style are covered by the operator-host route and
+stylesheet regression checks. This is live local review evidence; no screenshot
+was kept in the checkout or added to the public PR. The owner has not accepted
+or rejected the visual baseline.
 
 ## Remaining human judgment and safety stops
 

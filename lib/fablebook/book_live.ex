@@ -20,6 +20,9 @@ defmodule Fablebook.BookLive do
       :book ->
         {:noreply, assign_book(params, uri, socket)}
 
+      :journey ->
+        {:noreply, assign_journey(params, uri, socket)}
+
       :canvas ->
         {:noreply, assign_canvas(params, uri, socket)}
 
@@ -32,7 +35,7 @@ defmodule Fablebook.BookLive do
   def render(assigns) do
     ~H"""
     <main
-      :if={@live_action in [:catalog, :book]}
+      :if={@live_action in [:catalog, :book, :journey]}
       class="ui-catalog"
       data-fablebook-root
       data-book={@book_info && @book_info.id}
@@ -57,7 +60,14 @@ defmodule Fablebook.BookLive do
               <ul class="journey-list">
                 <li :for={story <- @stories}>
                   <span class="tree-kind">Journey</span>
-                  <.link patch={journey_path(@book_info, story)} class="journey-link">
+                  <.link
+                    patch={journey_path(@book_info, story)}
+                    class="journey-link"
+                    aria-current={
+                      if @journey_overview && @selected_story && @selected_story.id === story.id,
+                        do: "page"
+                    }
+                  >
                     {story.title}
                   </.link>
                   <span class="tree-kind">Scenarios</span>
@@ -83,12 +93,39 @@ defmodule Fablebook.BookLive do
       <section class="catalog-main" aria-label="Selected screen">
         <.unavailable_state :if={@unavailable} book_info={@book_info} />
 
+        <section :if={@journey_overview && @selected_story} class="journey-view">
+          <header class="screen-heading">
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+              <ol>
+                <li>
+                  <span>{@book_info.title}</span>
+                  <span aria-hidden="true">/</span>
+                </li>
+                <li><span aria-current="page">{@selected_story.title}</span></li>
+              </ol>
+            </nav>
+            <h1>{@selected_story.title}</h1>
+          </header>
+
+          <section class="journey-scenarios" aria-labelledby="journey-scenarios-heading">
+            <h2 id="journey-scenarios-heading">Scenarios</h2>
+            <ul class="journey-scenario-list">
+              <li :for={entry <- @selected_story.scenarios}>
+                <.link patch={book_path(@book_info, entry)} class="journey-scenario-card">
+                  <span class="journey-scenario-title">{entry.title}</span>
+                  <p class="journey-scenario-description">{entry.description}</p>
+                </.link>
+              </li>
+            </ul>
+          </section>
+        </section>
+
         <section :if={@selected_entry && @selected_story} class="screen-view">
           <header class="screen-heading">
             <nav class="breadcrumbs" aria-label="Breadcrumb">
               <ol>
                 <li>
-                  <.link patch={book_path(@book_info)}>{@book_info.title}</.link>
+                  <span>{@book_info.title}</span>
                   <span aria-hidden="true">/</span>
                 </li>
                 <li>
@@ -176,6 +213,7 @@ defmodule Fablebook.BookLive do
       scenarios: [],
       selected_entry: nil,
       selected_story: nil,
+      journey_overview: false,
       scenario_result: nil,
       scenario_id: nil,
       unavailable: false,
@@ -216,6 +254,19 @@ defmodule Fablebook.BookLive do
 
   defp assign_book(_params, _uri, socket), do: unavailable_socket(socket)
 
+  defp assign_journey(%{"book_id" => book_id, "story_id" => story_id}, uri, socket) do
+    with {:ok, catalog} <- Fablebook.Catalog.build(socket.assigns.book_module),
+         {:ok, info} <- Fablebook.Catalog.resolve_book(catalog, book_id),
+         story when not is_nil(story) <- Enum.find(catalog.stories, &(&1.id === story_id)),
+         true <- canonical_journey_uri?(uri, info, story) do
+      assign_journey_overview(socket, catalog, info, story)
+    else
+      _ -> unavailable_socket(socket)
+    end
+  end
+
+  defp assign_journey(_params, _uri, socket), do: unavailable_socket(socket)
+
   defp assign_canvas(
          %{"book_id" => book_id, "story_id" => story_id, "scenario_id" => scenario_id},
          uri,
@@ -252,6 +303,7 @@ defmodule Fablebook.BookLive do
           scenarios: scenario_entries(catalog),
           selected_entry: nil,
           selected_story: nil,
+          journey_overview: false,
           scenario_result: nil,
           scenario_id: nil,
           unavailable: true,
@@ -266,12 +318,27 @@ defmodule Fablebook.BookLive do
           scenarios: [],
           selected_entry: nil,
           selected_story: nil,
+          journey_overview: false,
           scenario_result: nil,
           scenario_id: nil,
           unavailable: true,
           page_title: "Screen unavailable — Fablebook"
         )
     end
+  end
+
+  defp assign_journey_overview(socket, catalog, info, story) do
+    assign(socket,
+      catalog: catalog,
+      book_info: info,
+      stories: catalog.stories,
+      scenarios: scenario_entries(catalog),
+      selected_entry: nil,
+      selected_story: story,
+      journey_overview: true,
+      unavailable: false,
+      page_title: "#{story.title} — #{info.title}"
+    )
   end
 
   defp assign_workbench(socket, catalog, info, selected_entry) do
@@ -284,6 +351,7 @@ defmodule Fablebook.BookLive do
       scenarios: scenario_entries(catalog),
       selected_entry: selected_entry,
       selected_story: selected_story,
+      journey_overview: false,
       unavailable: false,
       page_title: "#{selected_entry.title} — #{info.title}"
     )
@@ -314,10 +382,7 @@ defmodule Fablebook.BookLive do
   end
 
   defp journey_path(info, story) do
-    case List.first(story.scenarios) do
-      nil -> book_path(info)
-      first_scenario -> book_path(info, first_scenario)
-    end
+    "#{book_path(info)}/journey/#{URI.encode_www_form(story.id)}"
   end
 
   defp canvas_path(info, entry) do
@@ -331,6 +396,11 @@ defmodule Fablebook.BookLive do
       if scenario_query?, do: "scenario=#{URI.encode_www_form(entry.id)}", else: nil
 
     parsed.path === book_path(info) and parsed.query === expected_query
+  end
+
+  defp canonical_journey_uri?(uri, info, story) do
+    parsed = URI.parse(uri)
+    parsed.path === journey_path(info, story) and is_nil(parsed.query)
   end
 
   defp canonical_canvas_uri?(uri, info, entry) do
