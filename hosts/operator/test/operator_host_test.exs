@@ -113,6 +113,26 @@ defmodule OperatorHost.OperatorBookTest do
     assert get_resp_header(conn, "content-security-policy") != []
   end
 
+  test "the Books navigation explains when no Book is compiled" do
+    {:ok, socket} = Fablebook.BookLive.mount(%{}, %{}, %Phoenix.LiveView.Socket{})
+    socket = Phoenix.Component.assign(socket, :live_action, :catalog)
+
+    {:noreply, socket} =
+      Fablebook.BookLive.handle_params(%{}, "http://localhost/admin/dev/fablebook", socket)
+
+    html =
+      socket.assigns
+      |> Fablebook.BookLive.render()
+      |> Phoenix.HTML.Safe.to_iodata()
+      |> IO.iodata_to_binary()
+
+    assert html =~ "aria-label=\"Books\""
+    assert html =~ "No Book is available"
+    assert html =~ "This development host has no compiled Book to display."
+    assert html =~ "No compiled Book is available."
+    refute html =~ "data-canvas-frame"
+  end
+
   test "the fixed Scenario resolves through the actual host Canvas" do
     conn = get(build_conn(), @scenario)
     body = html_response(conn, 200)
@@ -207,6 +227,61 @@ defmodule OperatorHost.OperatorBookTest do
     assert citation.path == "records/logistify/logistify-records.json"
     assert citation.section == "Empty source fixture"
     refute html =~ "aria-label=\"Illustrative actions\""
+  end
+
+  test "scenario fact collections preserve zero, one, and many long rows" do
+    long_label = String.duplicate("Shipment identity ", 16)
+    long_id = "LGX" <> String.duplicate("X", 160)
+
+    collections = [
+      [],
+      [%{label: long_label, value: long_id}],
+      [
+        %{label: "Route", value: "Hamburg to Lyon"},
+        %{label: "Status", value: "Reassigned"},
+        %{label: "Shipment", value: long_id}
+      ]
+    ]
+
+    rendered =
+      for facts <- collections do
+        html =
+          Fablebook.BookLive.render(%{
+            live_action: :canvas,
+            scenario_result: %{
+              id: "row-counts",
+              title: "A source-grounded screen",
+              status: "Illustrative",
+              summary: nil,
+              facts: facts,
+              action: []
+            },
+            scenario_id: "row-counts",
+            unavailable: false
+          })
+          |> Phoenix.HTML.Safe.to_iodata()
+          |> IO.iodata_to_binary()
+
+        assert html =~ "<dl class=\"record-facts\">"
+        assert length(Regex.scan(~r/<dt>/, html)) == length(facts)
+        assert length(Regex.scan(~r/<dd>/, html)) == length(facts)
+
+        if facts == [] do
+          assert html =~ "No source-backed details are available for this screen."
+        else
+          refute html =~ "No source-backed details are available for this screen."
+        end
+
+        html
+      end
+
+    assert Enum.at(rendered, 1) =~ long_label
+    assert Enum.at(rendered, 1) =~ long_id
+    assert Enum.at(rendered, 2) =~ long_id
+
+    css = File.read!(@app_css)
+    assert css =~ ~r/\.operator-preview\s*\{[^}]*overflow-wrap:\s*anywhere/s
+    assert css =~ ~r/\.record-facts dd\s*\{[^}]*overflow-wrap:\s*anywhere/s
   end
 
   test "the Journey opens its Scenarios in the main panel" do
