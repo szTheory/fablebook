@@ -35,6 +35,7 @@
 
     const setStatus = (state, message) => {
       status.dataset.canvasStatus = state;
+      status.classList.toggle("visually-hidden", state !== "failed");
       status.textContent = message;
     };
 

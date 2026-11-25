@@ -160,9 +160,14 @@ defmodule Fablebook.BookLive do
             <p class="screen-description">{@selected_entry.description}</p>
           </header>
 
-          <section class="canvas-shell" aria-labelledby="canvas-heading">
-            <h2 id="canvas-heading">Canvas</h2>
-            <p id="canvas-status" role="status" aria-live="polite" data-canvas-status="loading">
+          <section class="canvas-shell" aria-label="Scenario screen">
+            <p
+              id="canvas-status"
+              class="visually-hidden"
+              role="status"
+              aria-live="polite"
+              data-canvas-status="loading"
+            >
               Loading screen: {@selected_entry.title}…
             </p>
             <iframe

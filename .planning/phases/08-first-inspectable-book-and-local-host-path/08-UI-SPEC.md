@@ -42,6 +42,10 @@ Show the complete Book → Journey → Scenario path in the main-panel breadcrum
 
 The v0.7 Book remains a screen-level proof, not coverage of the whole UI. Primitive, Pattern, Area, Screen and their applicable state classes remain a broader product requirement already preserved in the North Star and rolling roadmap.
 
+### Owner correction — 2026-11-25, live Scenario review
+
+The embedded Scenario makes the Canvas context self-evident, so omit a visible “Canvas” heading. Keep loading/readiness announcements in a polite status live region for assistive technology, but visually hide those transient status lines so they do not compete with or duplicate the rendered screen. Make an actual Canvas failure message visible with its recovery guidance. Give the Canvas section the accessible name “Scenario screen.”
+
 ---
 
 ## Spacing Scale
@@ -122,7 +126,7 @@ The Canvas must carry a persistent, readable notice: “Illustrative records and
 - Each screen has a stable direct URL. Current screen is identified in text and with `aria-current="page"`. Unknown Book or screen URLs render the safe unavailable state and a working return link; never infer a module or screen from arbitrary input.
 - The host shell and the Canvas document remain distinct. Render each screen through the real same-origin host Canvas and inherited host layout/assets/CSP. Give the embedded document a descriptive `title` that names the Book screen.
 - All navigation is usable with Tab, Shift+Tab, Enter, and Space where appropriate. Do not add single-key shortcuts. Keep focus visible with a 2px outline and 4px offset; focus must not be covered by sticky UI.
-- Use semantic `header`, labeled `nav`, `main`, and `footer` landmarks, one clear page `h1`, and ordered headings. Tables have captions and scoped column headers; status is text and never color alone. Announce screen changes and unavailable/error status through a polite live region without moving focus unexpectedly.
+- Use semantic `header`, labeled `nav`, `main`, and `footer` landmarks, one clear page `h1`, and ordered headings. Tables have captions and scoped column headers; status is text and never color alone. Announce screen changes through a polite live region without moving focus unexpectedly. Visually hide transient loading/readiness lines; keep actual failure guidance visible.
 - At 320px and 375px, stack the sidebar above the Canvas, keep scenario links available and let long labels wrap. At 768px and 1280px, keep the persistent sidebar beside the selected Canvas. No horizontal page overflow. At 200% text zoom, all copy and controls remain available. Respect `prefers-reduced-motion`; screen navigation is instant.
 - Review the live local Book at representative narrow and desktop widths. Do not publish screenshot artifacts in public PRs or auto-accept a changed visual baseline; the owner decides at the end-of-milestone review.
 
@@ -135,7 +139,7 @@ Applicable checks resolved: 20 explicit, 1 backstop, 0 unresolved (21 checks acr
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
 | empty | Catalog list; Canvas Story content | ✅ resolved | If the local catalog has no compiled Book, show the defined empty heading and body with development/test host guidance. If a source-grounded screen has no records, preserve the screen and its citation while showing a concise empty state; do not invent a record. |
-| loading | Catalog list; screen navigation; Canvas Story content | ✅ resolved | Keep the neutral host shell stable and politely announce loading. When Canvas content is ready, announce the rendered screen name without moving focus. |
+| loading | Catalog list; screen navigation; Canvas Story content | ✅ resolved | Keep the neutral host shell stable and politely announce loading/readiness in a visually hidden live region. Make a genuine Canvas failure visible with its recovery guidance. The screen itself makes the Canvas context clear, so omit a visible “Canvas” heading. |
 | error | Catalog list; screen navigation; Canvas Story content | ✅ resolved | Unknown Book or screen URLs show the defined unavailable message and a working catalog/Book return link. A Canvas failure says, “The screen could not load. Check that the local Phoenix host is running, then reload.” Keep the local failure message inside the host shell. |
 | populated | Book sidebar; selected Canvas screen | ✅ resolved | Show one compiled operator Book in the sidebar and open the first source-grounded screen in the main Canvas. Its screens contain fixed, source-cited ordinary and edge/error cases with a persistent illustrative notice. Do not add sample records outside the approved fixture. |
 | partial | Catalog list; Canvas Story content | ✅ resolved | Never infer missing source-backed values. Show “Not provided in source” for an absent optional fixture value; retain its exact citation in authored Scenario data. |

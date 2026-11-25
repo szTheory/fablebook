@@ -126,6 +126,31 @@ reconciliation before resumed UI implementation. The owner said the restored
 preview looks better and is on the right path; the end-of-milestone visual
 baseline decision remains deferred and has not been treated as acceptance.
 
+## Owner feedback follow-up — 2026-11-25
+
+The owner then flagged the visible “Loading screen: A failed shipment…” line
+above an already painting Scenario and said the “Canvas” heading was
+self-evident. Eight fresh pre-fix browser loads had all reached `Screen ready`
+by the time they were sampled, with the embedded document complete. The image
+therefore showed the transient readiness handshake rather than a stuck Canvas.
+
+Removed the visible Canvas heading. The section now has the accessible name
+“Scenario screen”; transient loading/readiness lines stay in the polite live
+region for assistive technology but use a visually hidden utility. A real
+failure removes that utility and keeps the recovery guidance visible. A focused
+regression test checks the status semantics, state-based visibility and absence
+of a visible Canvas heading. The operator-host suite passes 14 tests, and formatter plus
+`git diff --check` passed. The previous server had the right checkout as its
+working directory but retained old in-memory markup; restarting the recorded
+PID from that checkout loaded the correction. The live Chrome DOM now shows the
+failed-shipment frame complete, the ready status in the accessibility tree,
+and no visible Canvas heading; actual failure guidance remains visible. The
+local preview is open at
+`http://127.0.0.1:4003/admin/dev/fablebook/book/operator?scenario=failed_shipment`.
+No screenshot was added to PR #106. Exact-head hosted CI for the updated
+candidate is still pending; the end-of-milestone visual-baseline decision and
+phase verification/merge gate remain unchanged.
+
 ## Delivery still open
 
 - Screenshot-free PR #106 head `4c9b2ad82ffe71b8325d2e546364076efab38982`

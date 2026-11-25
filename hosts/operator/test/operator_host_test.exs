@@ -131,6 +131,26 @@ defmodule OperatorHost.OperatorBookTest do
     assert body =~ "— Fablebook</title>"
   end
 
+  test "the Canvas status stays accessible without a visible label or loading line" do
+    body =
+      get(build_conn(), "#{@root}/book/operator?scenario=failed_shipment")
+      |> html_response(200)
+
+    refute body =~ ~r/<h2[^>]*>\s*Canvas\s*<\/h2>/
+    assert body =~ "aria-label=\"Scenario screen\""
+
+    assert body =~
+             ~r/<p\b(?=[^>]*\bid=\"canvas-status\")(?=[^>]*\bclass=\"visually-hidden\")(?=[^>]*\brole=\"status\")(?=[^>]*\baria-live=\"polite\")[^>]*>/
+
+    assert body =~ "Loading screen: A failed shipment…"
+
+    css = File.read!(@app_css)
+    assert css =~ ~r/\.visually-hidden\s*\{[^}]*clip:\s*rect\(0,\s*0,\s*0,\s*0\)/s
+
+    app_js = File.read!(Path.expand("../priv/static/assets/app.js", __DIR__))
+    assert app_js =~ "status.classList.toggle(\"visually-hidden\", state !== \"failed\")"
+  end
+
   test "a source-backed Canvas renders the same cited screen on repeat visits" do
     bodies =
       for _visit <- 1..2 do
