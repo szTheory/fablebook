@@ -1,3 +1,11 @@
+---
+id: INT-20261125-01
+date: 2026-11-25
+source: Direct owner feedback during the Phase 8 live review
+captured_by: Codex
+context: Restores the Journey overview, selected bookmark cue, static Book breadcrumb, and white main and Canvas surfaces from the owner-reviewed behavior.
+---
+
 # Owner correction — restore the Journey review UI
 
 Date: 2026-11-25  
