@@ -1,35 +1,59 @@
 ---
 phase: 08-first-inspectable-book-and-local-host-path
-reviewed: 2026-11-21T05:54:59Z
+reviewed: 2026-11-25T21:33:58Z
 depth: standard
-files_reviewed: 1
+files_reviewed: 21
 files_reviewed_list:
+  - .github/workflows/ci.yml
+  - bin/verify_operator_host_prod
+  - hosts/operator/README.md
+  - hosts/operator/config/config.exs
+  - hosts/operator/config/runtime.exs
+  - hosts/operator/config/test.exs
+  - hosts/operator/lib/operator_host.ex
+  - hosts/operator/mix.exs
+  - hosts/operator/priv/static/assets/app.css
+  - hosts/operator/priv/static/assets/app.js
+  - hosts/operator/priv/static/assets/brand/fablebook-lockup-small-light.svg
+  - hosts/operator/priv/static/assets/fonts/OFL-SchibstedGrotesk.txt
+  - hosts/operator/priv/static/assets/fonts/SchibstedGrotesk-Variable.ttf
+  - hosts/operator/storybook/operator_book.ex
+  - hosts/operator/test/operator_host_test.exs
+  - hosts/operator/test/test_helper.exs
+  - hosts/operator/unguarded/reachable_mount.ex
+  - lib/fablebook/book_live.ex
+  - lib/fablebook/catalog.ex
   - lib/fablebook/router.ex
+  - lib/fablebook/story.ex
 findings:
-  critical: 0
+  critical: 1
   warning: 0
   info: 0
-  total: 0
-status: clean
+  total: 1
+status: issues_found
 ---
 
 # Phase 8: Code Review Report
 
-**Reviewed:** 2026-11-21T05:54:59Z
+**Reviewed:** 2026-11-25T21:33:58Z
 **Depth:** standard
-**Files Reviewed:** 1
-**Status:** clean
+**Files Reviewed:** 21
+**Status:** issues_found
 
 ## Summary
 
-Reviewed the uncommitted `lib/fablebook/router.ex` implementation against the committed contract test, Plan 08-02, and ADRs 0004, 0006, and 0021. The Book AST is checked before alias expansion, invalid shapes raise a caller-located `CompileError`, and only the two approved shapes reach `Macro.expand`. The production branch and its canonical message are unchanged. The working diff contains only the router implementation; the contract remains isolated in test commit `4d1241b`, preserving the ADR 0021 split. No actionable defects found.
+Reviewed the Phase 8 source changes against the active plans, UI contract, project instructions, and relevant ADRs. The library accepts multiple Stories, but Scenario selection in the Book UI identifies a Scenario by function name alone even though catalog validation allows that name to repeat in different Stories. A valid multi-Journey Book can therefore send every duplicate-named Scenario link to the first matching screen. Earlier Phase 8 review findings were checked against the current source and are recorded as resolved in the existing resolution artifact. No tests were run, per task scope.
 
-The reviewer's unpinned `mix test` invocation stopped before execution because the default dependency path had a `phoenix_live_view` lock mismatch. The project-pinned core lane was used for verification instead: the focused macro and production-message contracts passed (4 tests), the selected rejection probe passed (1 test), and `HEX_HOME="$PWD/_build/hex-home" MIX_ENV=test bin/lane core mix ci` passed (464 tests, 10 lane exclusions; ExUnit 397.9s). The computed-value test input was changed from `Module.concat/2` to `Enum.at/2` after Credo correctly flagged the former as an atom-creating call; the macro implementation did not change. `git diff --check` passed.
+## Critical Issues
 
-All reviewed files meet the reviewed requirements. No code issues found, and local runtime/compiler verification passed through the pinned lane.
+### CR-01: [BLOCKER] Scenario links collide across Journeys
+
+**File:** `lib/fablebook/catalog.ex:161-169`; `lib/fablebook/book_live.ex:75-80,147-153,365-370,385-387`
+**Issue:** `ensure_unique_ids/1` considers `{story.id, scenario.id}` unique, so two different Stories may both contain a common function name such as `default`. But the Book UI flattens those entries, generates links containing only `?scenario=<id>`, and `select_entry/2` chooses the first entry with that ID. As a result, clicking the second Journey's `default` Scenario changes to the first Journey's screen; the sidebar can also mark both duplicate IDs as current. The catalog accepts this configuration, so the broken navigation is reachable for a valid multi-Story Book.
+**Fix:** Carry both Story and Scenario IDs through Scenario selection and its stable route, and compare the pair when selecting/highlighting; alternatively, reject duplicate Scenario IDs globally before rendering if the query-only URL contract must remain.
 
 ---
 
-_Reviewed: 2026-11-21T05:54:59Z_
-_Reviewer: gsd-code-reviewer_
+_Reviewed: 2026-11-25T21:33:58Z_  
+_Reviewer: the agent (gsd-code-reviewer)_  
 _Depth: standard_
