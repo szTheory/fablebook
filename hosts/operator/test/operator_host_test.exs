@@ -103,7 +103,10 @@ defmodule OperatorHost.OperatorBookTest do
     assert body =~ "aria-label=\"Scenarios in Dispatcher recovery\""
     assert body =~ "Journey"
     refute body =~ ">Story</span>"
-    assert body =~ "href=\"#{@root}/book/operator?scenario=failed_shipment\""
+
+    assert body =~
+             "href=\"#{@root}/book/operator/journey/dispatcher_recovery?scenario=failed_shipment\""
+
     assert body =~ "src=\"#{@scenario}\""
     refute body =~ "Open operator Book"
     assert body =~ "data-operator-root"
@@ -133,7 +136,10 @@ defmodule OperatorHost.OperatorBookTest do
 
   test "the Canvas status stays accessible without a visible label or loading line" do
     body =
-      get(build_conn(), "#{@root}/book/operator?scenario=failed_shipment")
+      get(
+        build_conn(),
+        "#{@root}/book/operator/journey/dispatcher_recovery?scenario=failed_shipment"
+      )
       |> html_response(200)
 
     refute body =~ ~r/<h2[^>]*>\s*Canvas\s*<\/h2>/
@@ -212,8 +218,13 @@ defmodule OperatorHost.OperatorBookTest do
     assert body =~ "<h1>Dispatcher recovery</h1>"
     assert body =~ "<h2 id=\"journey-scenarios-heading\">Scenarios</h2>"
     assert body =~ "class=\"journey-scenario-card\""
-    assert body =~ "href=\"#{@root}/book/operator?scenario=failed_shipment\""
-    assert body =~ "href=\"#{@root}/book/operator?scenario=bulk_reassignment\""
+
+    assert body =~
+             "href=\"#{@root}/book/operator/journey/dispatcher_recovery?scenario=failed_shipment\""
+
+    assert body =~
+             "href=\"#{@root}/book/operator/journey/dispatcher_recovery?scenario=bulk_reassignment\""
+
     assert body =~ "A failed driver stop reaches the dispatcher"
     assert body =~ "aria-current=\"page\">Dispatcher recovery</span>"
     refute body =~ "data-canvas-frame"
@@ -231,7 +242,10 @@ defmodule OperatorHost.OperatorBookTest do
 
   test "the Scenario breadcrumb keeps the Book static and Journey useful" do
     body =
-      get(build_conn(), "#{@root}/book/operator?scenario=bulk_reassignment")
+      get(
+        build_conn(),
+        "#{@root}/book/operator/journey/dispatcher_recovery?scenario=bulk_reassignment"
+      )
       |> html_response(200)
 
     [breadcrumbs] =
@@ -248,8 +262,13 @@ defmodule OperatorHost.OperatorBookTest do
     assert breadcrumbs =~ "aria-current=\"page\">Twelve shipments reassigned</span>"
     assert body =~ "href=\"#{@root}/book/operator/journey/dispatcher_recovery\""
     assert body =~ "aria-label=\"Scenarios in Dispatcher recovery\""
-    assert body =~ "href=\"#{@root}/book/operator?scenario=failed_shipment\""
-    assert body =~ "href=\"#{@root}/book/operator?scenario=bulk_reassignment\""
+
+    assert body =~
+             "href=\"#{@root}/book/operator/journey/dispatcher_recovery?scenario=failed_shipment\""
+
+    assert body =~
+             "href=\"#{@root}/book/operator/journey/dispatcher_recovery?scenario=bulk_reassignment\""
+
     refute body =~ ">Story</span>"
 
     book_body =
@@ -314,7 +333,10 @@ defmodule OperatorHost.OperatorBookTest do
       body = get(build_conn(), scenario_path(scenario_id)) |> html_response(200)
 
       book_body =
-        get(build_conn(), "#{@root}/book/operator?scenario=#{scenario_id}")
+        get(
+          build_conn(),
+          "#{@root}/book/operator/journey/#{scenario_entry.story_id}?scenario=#{scenario_id}"
+        )
         |> html_response(200)
 
       assert scenario_entry.title == expected.title
@@ -402,6 +424,66 @@ defmodule OperatorHost.OperatorBookTest do
              )
 
     assert :error = Fablebook.Catalog.resolve(catalog, "operator", "dispatcher_recovery", "")
+  end
+
+  test "Scenario selection carries the Journey when function names repeat" do
+    {:ok, socket} =
+      Fablebook.BookLive.mount(
+        %{},
+        %{"book" => OperatorHost.Book.MultiJourneyFixture},
+        %Phoenix.LiveView.Socket{}
+      )
+
+    socket = Phoenix.Component.assign(socket, :live_action, :journey)
+
+    scenario_uri =
+      "http://localhost#{@root}/book/multi_journey_fixture/journey/second_journey?scenario=default"
+
+    {:noreply, selected_socket} =
+      Fablebook.BookLive.handle_params(
+        %{
+          "book_id" => "multi_journey_fixture",
+          "story_id" => "second_journey",
+          "scenario" => "default"
+        },
+        scenario_uri,
+        socket
+      )
+
+    assert selected_socket.assigns.selected_story.id == "second_journey"
+    assert selected_socket.assigns.selected_entry.story_id == "second_journey"
+
+    html =
+      selected_socket.assigns
+      |> Fablebook.BookLive.render()
+      |> Phoenix.HTML.Safe.to_iodata()
+      |> IO.iodata_to_binary()
+
+    first_path =
+      "#{@root}/book/multi_journey_fixture/journey/first_journey?scenario=default"
+
+    second_path =
+      "#{@root}/book/multi_journey_fixture/journey/second_journey?scenario=default"
+
+    assert html =~ "href=\"#{first_path}\""
+    assert html =~ "href=\"#{second_path}\""
+
+    scenario_links = Regex.scan(~r/<a\b[^>]*class=\"scenario-link\"[^>]*>/, html)
+    assert length(scenario_links) == 2
+    assert Enum.count(scenario_links, &String.contains?(hd(&1), "aria-current=\"page\"")) == 1
+    assert Enum.any?(scenario_links, &String.contains?(hd(&1), second_path))
+
+    ambiguous_socket = Phoenix.Component.assign(socket, :live_action, :book)
+
+    {:noreply, ambiguous_socket} =
+      Fablebook.BookLive.handle_params(
+        %{"book_id" => "multi_journey_fixture", "scenario" => "default"},
+        "http://localhost#{@root}/book/multi_journey_fixture?scenario=default",
+        ambiguous_socket
+      )
+
+    assert ambiguous_socket.assigns.unavailable
+    assert is_nil(ambiguous_socket.assigns.selected_entry)
   end
 
   test "the host serves same-origin assets used by the root layout" do
@@ -532,4 +614,35 @@ defmodule OperatorHost.OperatorBookTest do
 
   defp scenario_path(scenario_id),
     do: "/admin/dev/fablebook/canvas/operator/dispatcher_recovery/#{scenario_id}"
+end
+
+defmodule OperatorHost.Book.MultiJourneyFixture do
+  @moduledoc false
+
+  def __fablebook_book__ do
+    %{
+      id: "multi_journey_fixture",
+      title: "Multi-journey fixture",
+      description: "A fixed test Book with repeated Scenario function names.",
+      path: "/admin/dev/fablebook",
+      story_modules: [
+        OperatorHost.Book.MultiJourneyFixture.FirstJourney,
+        OperatorHost.Book.MultiJourneyFixture.SecondJourney
+      ]
+    }
+  end
+end
+
+defmodule OperatorHost.Book.MultiJourneyFixture.FirstJourney do
+  use Fablebook.Story
+
+  @scenario title: "First default", desc: "The default Scenario in the first Journey."
+  def default, do: %{id: "first_default", title: "First default"}
+end
+
+defmodule OperatorHost.Book.MultiJourneyFixture.SecondJourney do
+  use Fablebook.Story
+
+  @scenario title: "Second default", desc: "The default Scenario in the second Journey."
+  def default, do: %{id: "second_default", title: "Second default"}
 end

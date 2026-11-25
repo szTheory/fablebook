@@ -69,8 +69,8 @@ bookmark marker, and the main panel and Canvas document are white. The Home
 route is `/`; the Book's default URL is
 `/admin/dev/fablebook/book/operator`. The stable Scenario URLs are:
 
-- `/admin/dev/fablebook/book/operator?scenario=failed_shipment`
-- `/admin/dev/fablebook/book/operator?scenario=bulk_reassignment`
+- `/admin/dev/fablebook/book/operator/journey/dispatcher_recovery?scenario=failed_shipment`
+- `/admin/dev/fablebook/book/operator/journey/dispatcher_recovery?scenario=bulk_reassignment`
 
 The Journey overview URL is
 `/admin/dev/fablebook/book/operator/journey/dispatcher_recovery`.

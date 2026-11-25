@@ -76,7 +76,11 @@ defmodule Fablebook.BookLive do
                       <.link
                         patch={book_path(@book_info, entry)}
                         class="scenario-link"
-                        aria-current={if @selected_entry && @selected_entry.id === entry.id, do: "page"}
+                        aria-current={
+                          if @selected_entry && @selected_entry.story_id === story.id &&
+                               @selected_entry.id === entry.id,
+                            do: "page"
+                        }
                       >
                         {entry.title}
                       </.link>
@@ -259,18 +263,29 @@ defmodule Fablebook.BookLive do
 
   defp assign_book(_params, _uri, socket), do: unavailable_socket(socket)
 
-  defp assign_journey(%{"book_id" => book_id, "story_id" => story_id}, uri, socket) do
+  defp assign_journey(%{"book_id" => book_id, "story_id" => story_id} = params, uri, socket) do
     with {:ok, catalog} <- Fablebook.Catalog.build(socket.assigns.book_module),
          {:ok, info} <- Fablebook.Catalog.resolve_book(catalog, book_id),
          story when not is_nil(story) <- Enum.find(catalog.stories, &(&1.id === story_id)),
-         true <- canonical_journey_uri?(uri, info, story) do
-      assign_journey_overview(socket, catalog, info, story)
+         scenario_id = Map.get(params, "scenario"),
+         true <- canonical_journey_uri?(uri, info, story, scenario_id) do
+      assign_journey_selection(socket, catalog, info, story, scenario_id)
     else
       _ -> unavailable_socket(socket)
     end
   end
 
   defp assign_journey(_params, _uri, socket), do: unavailable_socket(socket)
+
+  defp assign_journey_selection(socket, catalog, info, story, nil),
+    do: assign_journey_overview(socket, catalog, info, story)
+
+  defp assign_journey_selection(socket, catalog, info, story, scenario_id) do
+    case select_entry(story.scenarios, scenario_id) do
+      nil -> unavailable_socket(socket)
+      entry -> assign_workbench(socket, catalog, info, entry)
+    end
+  end
 
   defp assign_canvas(
          %{"book_id" => book_id, "story_id" => story_id, "scenario_id" => scenario_id},
@@ -367,7 +382,10 @@ defmodule Fablebook.BookLive do
   defp select_entry(scenarios, nil), do: List.first(scenarios)
 
   defp select_entry(scenarios, requested_id) when is_binary(requested_id) do
-    Enum.find(scenarios, &(&1.id === requested_id))
+    case Enum.filter(scenarios, &(&1.id === requested_id)) do
+      [entry] -> entry
+      _ -> nil
+    end
   end
 
   defp select_entry(_scenarios, _requested_id), do: nil
@@ -383,7 +401,7 @@ defmodule Fablebook.BookLive do
   defp book_path(info), do: "#{info.path}/book/#{info.id}"
 
   defp book_path(info, entry) do
-    "#{book_path(info)}?scenario=#{URI.encode_www_form(entry.id)}"
+    "#{journey_path(info, %{id: entry.story_id})}?scenario=#{URI.encode_www_form(entry.id)}"
   end
 
   defp journey_path(info, story) do
@@ -403,9 +421,13 @@ defmodule Fablebook.BookLive do
     parsed.path === book_path(info) and parsed.query === expected_query
   end
 
-  defp canonical_journey_uri?(uri, info, story) do
+  defp canonical_journey_uri?(uri, info, story, scenario_id) do
     parsed = URI.parse(uri)
-    parsed.path === journey_path(info, story) and is_nil(parsed.query)
+
+    expected_query =
+      if is_binary(scenario_id), do: "scenario=#{URI.encode_www_form(scenario_id)}", else: nil
+
+    parsed.path === journey_path(info, story) and parsed.query === expected_query
   end
 
   defp canonical_canvas_uri?(uri, info, entry) do
