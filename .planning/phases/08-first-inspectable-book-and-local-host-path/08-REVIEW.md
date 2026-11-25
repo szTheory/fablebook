@@ -1,59 +1,37 @@
 ---
 phase: 08-first-inspectable-book-and-local-host-path
-reviewed: 2026-11-25T21:33:58Z
+reviewed: 2026-11-25T21:52:38Z
 depth: standard
-files_reviewed: 21
+files_reviewed: 2
 files_reviewed_list:
-  - .github/workflows/ci.yml
-  - bin/verify_operator_host_prod
-  - hosts/operator/README.md
-  - hosts/operator/config/config.exs
-  - hosts/operator/config/runtime.exs
-  - hosts/operator/config/test.exs
-  - hosts/operator/lib/operator_host.ex
-  - hosts/operator/mix.exs
-  - hosts/operator/priv/static/assets/app.css
-  - hosts/operator/priv/static/assets/app.js
-  - hosts/operator/priv/static/assets/brand/fablebook-lockup-small-light.svg
-  - hosts/operator/priv/static/assets/fonts/OFL-SchibstedGrotesk.txt
-  - hosts/operator/priv/static/assets/fonts/SchibstedGrotesk-Variable.ttf
-  - hosts/operator/storybook/operator_book.ex
-  - hosts/operator/test/operator_host_test.exs
-  - hosts/operator/test/test_helper.exs
-  - hosts/operator/unguarded/reachable_mount.ex
   - lib/fablebook/book_live.ex
-  - lib/fablebook/catalog.ex
-  - lib/fablebook/router.ex
-  - lib/fablebook/story.ex
+  - hosts/operator/test/operator_host_test.exs
 findings:
-  critical: 1
+  critical: 0
   warning: 0
   info: 0
-  total: 1
-status: issues_found
+  total: 0
+  necessity: 0
+status: clean
 ---
 
 # Phase 8: Code Review Report
 
-**Reviewed:** 2026-11-25T21:33:58Z
+**Reviewed:** 2026-11-25T21:52:38Z
 **Depth:** standard
-**Files Reviewed:** 21
-**Status:** issues_found
+**Files Reviewed:** 2
+**Status:** clean
 
 ## Summary
 
-Reviewed the Phase 8 source changes against the active plans, UI contract, project instructions, and relevant ADRs. The library accepts multiple Stories, but Scenario selection in the Book UI identifies a Scenario by function name alone even though catalog validation allows that name to repeat in different Stories. A valid multi-Journey Book can therefore send every duplicate-named Scenario link to the first matching screen. Earlier Phase 8 review findings were checked against the current source and are recorded as resolved in the existing resolution artifact. No tests were run, per task scope.
+Re-reviewed the Journey/Scenario collision fix in `lib/fablebook/book_live.ex` and its regression fixture in `hosts/operator/test/operator_host_test.exs`. Scenario links now include the Journey route, selection is scoped to that Journey, and sidebar highlighting compares the Journey/Scenario pair. The legacy Book query path rejects a duplicated Scenario name as unavailable instead of choosing the first match. The two-Journey fixture exercises both distinct links, the selected second Journey, a single active sidebar item, and the ambiguous legacy path. CR-01 is resolved; no new issues were found in the scoped files. Tests were not run, as requested.
 
-## Critical Issues
+## Narrative Findings (AI reviewer)
 
-### CR-01: [BLOCKER] Scenario links collide across Journeys
-
-**File:** `lib/fablebook/catalog.ex:161-169`; `lib/fablebook/book_live.ex:75-80,147-153,365-370,385-387`
-**Issue:** `ensure_unique_ids/1` considers `{story.id, scenario.id}` unique, so two different Stories may both contain a common function name such as `default`. But the Book UI flattens those entries, generates links containing only `?scenario=<id>`, and `select_entry/2` chooses the first entry with that ID. As a result, clicking the second Journey's `default` Scenario changes to the first Journey's screen; the sidebar can also mark both duplicate IDs as current. The catalog accepts this configuration, so the broken navigation is reachable for a valid multi-Story Book.
-**Fix:** Carry both Story and Scenario IDs through Scenario selection and its stable route, and compare the pair when selecting/highlighting; alternatively, reject duplicate Scenario IDs globally before rendering if the query-only URL contract must remain.
+No findings.
 
 ---
 
-_Reviewed: 2026-11-25T21:33:58Z_  
+_Reviewed: 2026-11-25T21:52:38Z_  
 _Reviewer: the agent (gsd-code-reviewer)_  
 _Depth: standard_
