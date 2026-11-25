@@ -121,13 +121,19 @@ was added to the public PR.
 The owner feedback ledger now requires resumed UI work to reconcile current
 source, plan, UI-SPEC and last reviewed live behavior before edits, and to
 verify the browser against a persistent server whose listener matches the
-intended checkout.
+intended checkout. The project session instructions now require the same
+reconciliation before resumed UI implementation. The owner said the restored
+preview looks better and is on the right path; the end-of-milestone visual
+baseline decision remains deferred and has not been treated as acceptance.
 
 ## Delivery still open
 
-- Screenshot-free PR #106 head `44eff333b6156382949c04e0d178f6313a565d41`
-  passed exact-head hosted CI in run 45096943180. Keep the PR draft until the
-  owner's end-of-milestone live visual decision.
+- Screenshot-free PR #106 head `4c9b2ad82ffe71b8325d2e546364076efab38982`
+  passed exact-head hosted CI in [run 45683630403](https://github.com/szTheory/fablebook/actions/runs/45683630403).
+  The preceding head failed both test lanes because the newly added dated
+  owner-intent record lacked required frontmatter. The records now have their
+  required metadata and the exact final head is green. Keep the PR draft until
+  the owner's end-of-milestone live visual decision.
 - Merge only the exact reviewed green head and follow branch protection.
 - At the end-of-milestone review, use the live local Book for the required
   owner visual-baseline decision before phase verification or merge.

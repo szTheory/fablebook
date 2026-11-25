@@ -254,3 +254,23 @@ jobs began 3 seconds after run creation; core and floor ran concurrently. Their
 setup and host checks took about 59–66 seconds before their long test commands.
 There were no failed jobs or retries. One run gives no basis for reducing
 coverage or restructuring the jobs; keep both lanes and all host checks.
+
+## Hosted Phase 8 owner-reviewed UI restoration — 2026-11-25
+
+PR #106 head `4c9b2ad82ffe71b8325d2e546364076efab38982` passed [required run
+45683630403](https://github.com/szTheory/fablebook/actions/runs/45683630403)
+in 9m40s. Core took 8m52s, including 7m55s for `mix ci`; floor took 9m33s,
+including 8m31s for its production-guard test step. Security took 34s,
+Dialyzer 24s, and `ci-gate` 2s. Jobs began 2 seconds after run creation and
+core/floor overlapped. Setup and host checks took about 55–60 seconds before
+the full test commands, which dominate the critical path.
+
+The immediately preceding head `a67b6c5` failed both full lanes on the same
+planning-intent metadata assertion: the new dated owner record lacked required
+frontmatter. It completed in 10m37s. The metadata was corrected in the next
+head; no UI or production-boundary check failed. Relative to the prior green
+Phase 8 run, this pass was about 44 seconds shorter, but one sample does not
+show a repeatable gain. Core and floor already overlap, setup is small, and
+the failures were a source-format issue rather than workflow waste. No safe
+coverage-preserving CI change is supported; keep both required lanes and all
+host checks.
