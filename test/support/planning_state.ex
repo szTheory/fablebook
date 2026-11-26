@@ -26,7 +26,10 @@ defmodule Fablebook.Test.PlanningState do
     current = field(state, "current_phase")
     selected = select_phase(requested_phase, current)
     key = capture(roadmap, ~r/^\*\*Milestone key:\*\*\s+([a-z0-9-]+)\s*$/m)
-    nodes = Map.new(mapping["future_phases"], &{node_id(&1), &1["depends_on"] || []})
+    legacy_phases = mapping["future_phases"]
+    additional_phases = Map.get(mapping, "additional_phases", [])
+    phase_entries = legacy_phases ++ additional_phases
+    nodes = Map.new(phase_entries, &{node_id(&1), &1["depends_on"] || []})
 
     common_errors =
       require_true(stage in @stages, "unknown_stage", stage) ++
@@ -34,9 +37,9 @@ defmodule Fablebook.Test.PlanningState do
         registry_errors(gates, deliveries) ++
         configuration_errors(config, gates) ++
         dependency_errors(root, nodes, mapping["legacy_dependencies"] || %{}) ++
-        seed_errors(root, mapping) ++
+        seed_errors(root, phase_entries) ++
         delivery_errors(deliveries) ++
-        future_owner_errors(mapping, gates) ++
+        phase_owner_errors(legacy_phases, additional_phases, phase_entries, gates) ++
         require_true(
           not File.exists?(Path.join(root, ".planning/active-workstream")),
           "workstream_requires_scoped_check",
@@ -90,12 +93,12 @@ defmodule Fablebook.Test.PlanningState do
           ) ++
           snapshot_name_errors(snapshot, titles) ++
           require_true(
-            key in gates["known_increment_milestones"] or known_key?(key, mapping),
+            key in gates["known_increment_milestones"] or known_key?(key, phase_entries),
             "milestone_key",
             key
           ) ++
           phase_sequence_errors(phases, deliveries, field(state, "milestone")) ++
-          active_owner_errors(key, phases, mapping, gates) ++
+          active_owner_errors(key, phases, phase_entries, gates) ++
           active_delivery_errors(deliveries, key, field(state, "milestone")) ++
           directory_errors(root, phases) ++
           requirement_errors(requirements, phases) ++
@@ -294,7 +297,7 @@ defmodule Fablebook.Test.PlanningState do
 
   defp closure_errors(_root, _gate), do: []
 
-  defp seed_errors(root, mapping) do
+  defp seed_errors(root, phase_entries) do
     Path.wildcard(Path.join(root, ".planning/seeds/SEED-*.md"))
     |> Enum.flat_map(fn path ->
       seed = File.read!(path)
@@ -305,7 +308,7 @@ defmodule Fablebook.Test.PlanningState do
         []
       else
         valid =
-          Enum.any?(mapping["future_phases"], &owns?(&1, milestone, phase))
+          Enum.any?(phase_entries, &owns?(&1, milestone, phase))
 
         require_true(valid, "seed_target", Path.basename(path))
       end
@@ -411,10 +414,9 @@ defmodule Fablebook.Test.PlanningState do
   defp owns?(item, key, phase),
     do: item["milestone_key"] == key and same?(to_string(item["phase"]), phase)
 
-  defp future_owner_errors(mapping, gates) do
-    entries = mapping["future_phases"]
-    ids = Enum.map(entries, &node_id/1)
-    original_ids = Enum.map(entries, & &1["legacy_phase"])
+  defp phase_owner_errors(legacy_phases, additional_phases, phase_entries, gates) do
+    ids = Enum.map(phase_entries, &node_id/1)
+    original_ids = Enum.map(legacy_phases, & &1["legacy_phase"])
     nodes = MapSet.new(ids)
 
     require_true(length(ids) == length(Enum.uniq(ids)), "duplicate_future_phase", nil) ++
@@ -423,7 +425,12 @@ defmodule Fablebook.Test.PlanningState do
         "duplicate_legacy_owner",
         nil
       ) ++
-      Enum.flat_map(entries, fn entry ->
+      require_true(
+        Enum.all?(additional_phases, &(not Map.has_key?(&1, "legacy_phase"))),
+        "additional_phase_claims_legacy_owner",
+        nil
+      ) ++
+      Enum.flat_map(phase_entries, fn entry ->
         require_true(integer_id?(to_string(entry["phase"])), "future_phase_id", node_id(entry))
       end) ++
       Enum.flat_map(gates["requirement_owners"], fn {requirement, owner} ->
@@ -431,15 +438,15 @@ defmodule Fablebook.Test.PlanningState do
       end)
   end
 
-  defp active_owner_errors(key, phases, mapping, gates) do
+  defp active_owner_errors(key, phases, phase_entries, gates) do
     if key in gates["known_increment_milestones"] do
       []
     else
       Enum.flat_map(phases, fn phase ->
         require_true(
           Enum.any?(
-            mapping["future_phases"],
-            &(&1["milestone_key"] == key and same?(to_string(&1["phase"]), phase))
+            phase_entries,
+            &owns?(&1, key, phase)
           ),
           "active_phase_owner",
           phase
@@ -605,8 +612,8 @@ defmodule Fablebook.Test.PlanningState do
     snapshot["phases"] |> Enum.map(& &1["number"]) |> normalize()
   end
 
-  defp known_key?(key, mapping),
-    do: Enum.any?(mapping["future_phases"], &(&1["milestone_key"] == key))
+  defp known_key?(key, phase_entries),
+    do: Enum.any?(phase_entries, &(&1["milestone_key"] == key))
 
   defp node_id(item), do: "#{item["milestone_key"]}:#{item["phase"]}"
   defp json!(root, path), do: root |> text!(path) |> JSON.decode!()
