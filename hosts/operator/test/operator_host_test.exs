@@ -142,7 +142,7 @@ defmodule OperatorHost.OperatorBookTest do
     assert body =~ "LGX-0417-DE"
     assert body =~ "Hamburg to Lyon"
     assert body =~ "Nobody was at the dock."
-    assert body =~ "Illustrative records and actions. No live dispatch or external changes."
+    assert body =~ "Illustrative records and actions · no live dispatch or external changes."
     refute body =~ "records/logistify/logistify-records.json"
     refute body =~ "JSON Pointer"
     refute body =~ "https://github.com/szTheory/logistify-brand/blob/#{@commit}/"
@@ -152,6 +152,19 @@ defmodule OperatorHost.OperatorBookTest do
 
     assert body =~ "A failed shipment — Logistify operator console"
     assert body =~ "— Fablebook</title>"
+  end
+
+  test "both fixed Scenarios put the exact illustrative notice in a footer landmark" do
+    for scenario_id <- ["failed_shipment", "bulk_reassignment"] do
+      body =
+        get(
+          build_conn(),
+          "#{@root}/canvas/operator/dispatcher_recovery/#{scenario_id}"
+        )
+        |> html_response(200)
+
+      assert_canvas_notice_footer(body)
+    end
   end
 
   test "the Canvas status stays accessible without a visible label or loading line" do
@@ -185,7 +198,7 @@ defmodule OperatorHost.OperatorBookTest do
 
     [first, second] =
       Enum.map(bodies, fn body ->
-        [article | _] = Regex.run(~r/(<article class="operator-preview".*?<\/article>)/s, body)
+        [article | _] = Regex.run(~r/(<article class="operator-content".*?<\/article>)/s, body)
         article
       end)
 
@@ -685,6 +698,22 @@ defmodule OperatorHost.OperatorBookTest do
       [_, date, time, offset] -> "#{date} #{time} #{offset}"
       _ -> nil
     end
+  end
+
+  defp assert_canvas_notice_footer(body) do
+    footer_pattern =
+      ~r/<footer\b(?=[^>]*\brole="contentinfo")(?=[^>]*\bclass="illustrative-notice")[^>]*>(.*?)<\/footer>/s
+
+    assert length(Regex.scan(footer_pattern, body)) == 1
+    assert [_, footer_content] = Regex.run(footer_pattern, body)
+
+    assert String.trim(Regex.replace(~r/<[^>]+>/, footer_content, "")) ==
+             "Illustrative records and actions · no live dispatch or external changes."
+
+    {main_end, _} = :binary.match(body, "</main>")
+    {footer_start, _} = :binary.match(body, "<footer")
+    assert footer_start > main_end
+    assert body =~ "data-canvas-document"
   end
 
   defp scenario_path(scenario_id),

@@ -191,7 +191,7 @@ defmodule Fablebook.BookLive do
       </section>
     </main>
 
-    <main :if={@live_action == :canvas} class="canvas-document" data-canvas-document>
+    <div :if={@live_action == :canvas} class="canvas-document" data-canvas-document>
       <div
         :if={@scenario_result}
         id="canvas-screen"
@@ -205,7 +205,7 @@ defmodule Fablebook.BookLive do
         <% end %>
       </div>
       <.unavailable_state :if={@unavailable} book_info={@book_info} />
-    </main>
+    </div>
 
     <main :if={@live_action == :unavailable} class="unavailable-page">
       <.unavailable_state book_info={@book_info} />
@@ -454,33 +454,45 @@ defmodule Fablebook.BookLive do
 
   defp scenario_content(assigns) do
     ~H"""
-    <article class="operator-preview" data-screen={@scenario.id}>
-      <header class="preview-header">
-        <p class="preview-brand">Logistify — dispatcher console</p>
-        <h1>{@scenario.title}</h1>
-        <p class="status-word">{@scenario.status}</p>
-      </header>
+    <div class="operator-preview" data-screen={@scenario.id}>
+      <main>
+        <article class="operator-content">
+          <header class="preview-header">
+            <p class="preview-brand">Logistify — dispatcher console</p>
+            <h1>{@scenario.title}</h1>
+            <p class="status-word">{@scenario.status}</p>
+          </header>
 
-      <p :if={@scenario.summary} class="preview-summary">{@scenario.summary}</p>
+          <p :if={@scenario.summary} class="preview-summary">{@scenario.summary}</p>
 
-      <dl class="record-facts">
-        <div :for={fact <- @scenario.facts}>
-          <dt>{fact.label}</dt>
-          <dd>{fact.value}</dd>
-        </div>
-      </dl>
+          <dl class="record-facts">
+            <div :for={fact <- @scenario.facts}>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          </dl>
 
-      <p :if={@scenario.facts == []} class="empty-scenario">
-        No source-backed details are available for this screen.
-      </p>
+          <p :if={@scenario.facts == []} class="empty-scenario">
+            No source-backed details are available for this screen.
+          </p>
 
-      <section :if={@scenario.action != []} class="illustrative-actions" aria-label="Illustrative actions">
-        <h2>Illustrative actions</h2>
-        <span :for={action <- @scenario.action} class="illustrative-action">Illustrative: {action}</span>
-      </section>
+          <section
+            :if={@scenario.action != []}
+            class="illustrative-actions"
+            aria-label="Illustrative actions"
+          >
+            <h2>Illustrative actions</h2>
+            <span :for={action <- @scenario.action} class="illustrative-action">
+              Illustrative: {action}
+            </span>
+          </section>
+        </article>
+      </main>
 
-      <p class="illustrative-notice">Illustrative records and actions. No live dispatch or external changes.</p>
-    </article>
+      <footer class="illustrative-notice" role="contentinfo">
+        Illustrative records and actions · no live dispatch or external changes.
+      </footer>
+    </div>
     """
   end
 end
