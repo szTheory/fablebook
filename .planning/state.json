@@ -12,7 +12,7 @@
   "next": {
     "command": "$gsd-progress --next",
     "label": "Advance to the next step",
-    "reason": "Phase 1 of 1 · 60% · executing"
+    "reason": "Phase 1 of 1 · 0% · executing"
   },
-  "updated_at": "2026-11-25T22:28:21.208Z"
+  "updated_at": "2026-11-26T01:00:52.177Z"
 }

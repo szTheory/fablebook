@@ -16,7 +16,7 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 
 ### Phase 8: First inspectable Book and local host path
 
-**Goal**: A developer can browse the Book → Journey → Scenario tree in the Fablebook UI catalog's sidebar and inspect the selected dispatcher screen in the main host Canvas; production excludes the Book.
+**Goal**: As a developer, I want to browse Journeys and inspect Scenarios in Canvas, so that the Book stays out of production.
 
 **Mode:** mvp
 
@@ -32,7 +32,7 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 4. A developer can start the host locally and immediately inspect the first screen. A familiar sidebar shows Books → Logistify operator console → Dispatcher recovery → its two Scenarios; selecting either screen updates the stable URL and main Canvas. Development and test resolve the same compiled Story/Scenario identifiers. Unknown selections resolve safely. The UI uses the neutral Fablebook brand rules and the approved product terms. (CAT-01, CAT-02)
 5. Each screen renders in a same-origin iframe through the real host Canvas pipeline and root layout, with the host's CSS, JavaScript, hooks, fonts and CSP. A real-host browser check exercises the flow at representative narrow and desktop widths and verifies keyboard navigation, visible focus, labels and text status. (CANVAS-01, CAT-01, BOOK-01)
 
-**Plans**: 3/5 delivered; 08-04/08-05 implementation and local verification are complete in the isolated candidate. Screenshot-free PR #106 head `44eff333` passed required hosted CI in run 45096943180; the owner's end-of-milestone live visual decision remains.
+**Plans**: 3/6 delivered; 08-04/08-05 implementation and local verification are complete in the isolated candidate. Plan 08-06 closes the remaining UI-SPEC implementation gap. Screenshot-free PR #106's earlier hosted receipt predates the current verification evidence and is not a final-head receipt.
 **Wave 1**
 - [x] 08-01-PLAN.md — Pin all seven public source repositories and verify the minimal cited Logistify subset (SRC-01 complete; see the preserved historical halt and resumed summary).
 - [x] 08-02-PLAN.md — Harden the public mount macro in PR #99 and deliver its separate contract test in PR #100; both are merged with green required CI.
@@ -43,8 +43,11 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 **Wave 3** *(local implementation complete; delivery uses the Wave 4 acceptance)*
 - [ ] 08-04-PLAN.md — Render the first compiled Scenario through the local Phoenix catalog and Canvas.
 
-**Wave 4** *(local checks complete; prerequisite PR splits and Phoenix security pins are delivered; screenshot-free PR #106 head `44eff333` passed exact-head CI in run 45096943180; the owner baseline decision and Phase 8 delivery remain)*
+**Wave 4** *(local checks complete; prerequisite PR splits and Phoenix security pins are delivered; the owner accepted the visual baseline; the UI-SPEC closure and Phase 8 delivery remain)*
 - [ ] 08-05-PLAN.md — Complete the dispatcher flow, prove the actual host boundary and verify the final candidate.
+
+**Wave 5** *(after 08-05; closes the remaining approved UI-SPEC deviations)*
+- [ ] 08-06-PLAN.md — Restore the exact Canvas notice footer contract and bring catalog chrome onto the approved accessibility and visual scales.
 
 **UI hint**: yes
 
@@ -59,7 +62,7 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 8. First inspectable Book and local host path | 3/5 delivered | Screenshot-free PR #106 head `44eff333` passed run 45096943180; the owner's end-of-milestone live baseline decision remains; see [08-05-SUMMARY.md](phases/08-first-inspectable-book-and-local-host-path/08-05-SUMMARY.md) | - |
+| 8. First inspectable Book and local host path | 3/6 delivered | Plan 08-06 addresses the remaining UI-SPEC implementation gap; see [08-VERIFICATION.md](phases/08-first-inspectable-book-and-local-host-path/08-VERIFICATION.md) | - |
 
 ## Completed milestones
 
