@@ -9,13 +9,13 @@ created: "2026-11-25"
 
 # Phase 8 — Security
 
-> Static evidence reconciliation of the mitigations declared in all five Phase 8 plans at ASVS L1. This record does not clear the separate product safety stops or authorize runtime use.
+> Static evidence reconciliation of the mitigations declared in all six Phase 8 plans at ASVS L1. This record does not clear the separate product safety stops or authorize runtime use.
 
 ## Scope and trust boundaries
 
 Phase 8 handles pinned public source, a minimal cited excerpt, a literal-only mount macro, fixed compiled Story/Scenario identifiers, an isolated development host, a same-origin Canvas, and public PR evidence. Production builds must exclude the Book and development adapter. No user-provided code or values are evaluated, no persistent or external action is performed, and no source repository or screenshot is published.
 
-All five plans contain threat models. Their summaries contain no threat flags. The configured verification depth is ASVS L1 with `security_block_on: high`. The threat register below preserves repeated plan-level `T-08-SC` registrations; they describe the same bounded package-installation control.
+All six plans contain threat models. Their summaries contain no threat flags. The configured verification depth is ASVS L1 with `security_block_on: high`. The threat register below preserves repeated plan-level `T-08-SC` registrations; they describe the same bounded package-installation control.
 
 ## Threat Register
 
@@ -39,8 +39,10 @@ All five plans contain threat models. Their summaries contain no threat flags. T
 | T-08-12 | 08-05 | Information disclosure | Public remote and evidence visibility | medium | mitigate | The reviewed PR contains only the approved public citations and minimal cited demo content; it contains no source repositories, PDFs, private data, or screenshots, and the demo remains undeployed. | closed |
 | T-08-13 | 08-05 | Tampering | Browser security and capture evidence | medium | mitigate | `08-BROWSER.md` records actual same-origin headers/assets, Canvas states, keyboard/focus, and viewport behavior. The owner accepted the live visual baseline separately in INT-20261125-04; the PR contains no capture artifact. | closed |
 | T-08-SC | 08-05 | Tampering | Package installation | high | mitigate | The final host reuses the audited host-only development lock, while production excludes the listener and the root locks contain no Book-specific dependency changes. Exact-head hosted security CI passed. | closed |
+| T-08-14 | 08-06 | Tampering | Canvas notice markup and copy | medium | mitigate | Focused host assertions check the exact approved copy in `footer[role="contentinfo"]` outside `main` on both fixed Scenario routes; the 19-test operator-host suite passed. | closed |
+| T-08-15 | 08-06 | Denial of service | Catalog navigation and Canvas boundaries | medium | mitigate | The host CSS test computes contrast and verifies targets, focus, type, spacing and wrapping; Playwright confirms first-fact visibility at 320×900 and 375×812 and access at simulated 200% text sizing without horizontal overflow. | closed |
 
-The five `T-08-SC` rows are the same package-installation boundary carried across plans, not five separate dependency changes. The operator host's listener is a reviewed development-only dependency; the root runtime package set remains bounded by the separately delivered Phoenix security prerequisite.
+The six `T-08-SC` rows are the same package-installation boundary carried across plans, not six separate dependency changes. The operator host's listener is a reviewed development-only dependency; the root runtime package set remains bounded by the separately delivered Phoenix security prerequisite.
 
 ## Accepted Risks Log
 
@@ -51,10 +53,11 @@ No accepted security risks. INT-20261125-05 accepts the existing direct Chrome r
 | Audit Date | Threat Registrations | Closed | Open | Run By |
 |---|---:|---:|---:|---|
 | 2026-11-25 | 18 | 18 | 0 | Codex — ASVS L1 plan, source, host-lock, production-boundary, browser, and hosted-CI evidence review |
+| 2026-11-26 | 20 | 20 | 0 | Codex — ASVS L1 threat-model reconciliation with the focused footer/CSS tests and local browser geometry evidence |
 
 ## Sign-Off
 
-- [x] Threat registrations from all five plan threat models are accounted for.
+- [x] Threat registrations from all six plan threat models are accounted for.
 - [x] No summary threat flags were found.
 - [x] The operator host lock matches the reviewed pins and its Hex audit passed.
 - [x] Production exclusion, same-origin browser, and exact-head hosted security evidence passed.
@@ -62,3 +65,11 @@ No accepted security risks. INT-20261125-05 accepts the existing direct Chrome r
 - [x] `status: verified` is set in frontmatter.
 
 **Approval:** Declared mitigations verified at ASVS L1 on 2026-11-25. The clean-plan L1 path applies; no deeper auditor pass was required.
+
+## Security Audit 2026-11-26
+
+| Metric | Count |
+|---|---|
+| Threats found | 20 |
+| Closed | 20 |
+| Open | 0 |
