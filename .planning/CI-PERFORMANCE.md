@@ -1,6 +1,6 @@
 # CI and release efficiency
 
-Owner direction: INT-20261029-08, INT-20261029-09, INT-20261118-01, and [INT-20261120-13](intent/sources/2026-11-20-13-automated-verification-and-resource-hygiene.md). This is the standing home for CI/CD timing reviews, measured opportunities, and resolved performance decisions. Review it after each completed CI or release/CD run; use measured history, preserve quality, and do not trigger a run just to produce a receipt.
+Owner direction: INT-20261029-08, INT-20261029-09, INT-20261118-01, [INT-20261120-13](intent/sources/2026-11-20-13-automated-verification-and-resource-hygiene.md), and [INT-20261125-08](intent/sources/2026-11-25-08-ci-cd-efficiency-and-resource-hygiene.md). This is the standing home for CI/CD timing reviews, measured opportunities, and resolved performance decisions. Review it after each completed CI or release/CD run; use measured history, preserve quality, and do not trigger a run just to produce a receipt.
 
 ## Operating policy
 
@@ -9,6 +9,9 @@ Owner direction: INT-20261029-08, INT-20261029-09, INT-20261118-01, and [INT-202
 3. Prefer removing duplicate work and avoidable waits. Do not add caches, concurrency, dependencies, trigger skips, or weaker checks by default. Demonstrate that the optimization preserves trust boundaries and coverage before keeping it.
 4. Put checks in CI when stable behavior needs protection on recurring changes. Use local or throwaway checks for one-off investigations and historical evidence. A useful check does not automatically belong in CI.
 5. Keep workflow timing and quality budgets visible. The scheduled `ci-health` job is the rolling signal; investigate a repeated regression rather than reacting to one noisy run. Batch receipts with the substantive PR and link the measured run there.
+6. Before long suites or resource-intensive processes, run the cheapest reliable checks for the changed scope: required planning preflight, artifact/schema/citation validators, lane doctors, and focused tests. Before adding a repeated CI preflight, compare its cost on every passing run with the downstream runner time it could avoid. Keep the full lanes and all coverage after any fast-fail check.
+7. Before hosted CI, run as much of the exact affected workflow locally as the environment supports. Prefer the native pinned lane commands; use `act` when architecture, toolchain, services, and required inputs match. Record any part that cannot be reproduced. Local results supplement and never replace required hosted receipts. An existing `act` no-retry stop remains until its cause changes.
+8. Give task-owned Docker resources distinctive names such as `fablebook-<task>-<purpose>`, track what the task creates, and remove only those exact resources afterward. Never use broad prune commands. When resource-intensive work ends, confirm its processes have exited, close task-owned database/network connections, and remove temporary artifacts without disturbing unrelated owner resources.
 
 ## Assessment: phase 01.1.1.3.1.1
 
@@ -327,3 +330,24 @@ safe pipeline change. Keep the required lanes and checks unchanged. The final
 UAT, verification, review follow-up, and source-boundary decisions are included
 in the candidate evidence update; the pushed final head must also receive green
 required CI before merge.
+
+## Hosted Phase 8 final-evidence head with citation failure — 2026-11-26
+
+PR #106 head `54273ca4f9f72ee63fc8bc86b9405ea35d9aece9` completed [run
+45749038160](https://github.com/szTheory/fablebook/actions/runs/45749038160)
+in 13m08s, but required CI failed. Jobs began 2 seconds after run creation and
+core/floor overlapped. Core took 10m54s (`mix ci` 9m53s); floor took 12m59s
+(the prod-guard test step 11m38s), setting the critical path. Security took
+38s, Dialyzer 23s, and `ci-gate` 5s.
+
+Both full test lanes failed the same corpus assertion because two references
+in `08-VERIFICATION.md` used abbreviated `INT-20261125-06` and
+`INT-20261125-04` IDs. The other checks passed. After those report citations
+were corrected, a later focused corpus run found the same shorthand in the
+new timing note; both locations now use canonical IDs. The final focused
+corpus check passed (1 test, 21 excluded, 32.4s locally). This is planning-
+document data, not a source or workflow failure. The full core and floor lanes
+remain required. The focused check belongs before hosted full lanes for
+planning changes; one event does not justify adding it as duplicate work to
+every CI run. Measure that tradeoff if the early gate is proposed. The local
+`act` stop is unchanged and was not retried.
