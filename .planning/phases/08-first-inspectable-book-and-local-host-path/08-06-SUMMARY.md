@@ -110,6 +110,7 @@ None. The 375px browser check showed the sibling links still wrapped after the f
 ## Issues Encountered
 
 - The first 375px measurement placed the initial Shipment value below the 812px viewport. The mobile catalog spacing and compact Scenario link padding were tightened, then both required viewport checks were repeated successfully.
+- The independent code review found that an unavailable Canvas route lacked a `main` landmark. Commit `325b65e` wraps that recovery state in `main` and asserts the landmark on invalid Canvas paths; the operator-host suite passed 19 tests afterward. The second review pass is clean.
 
 ## User Setup Required
 
@@ -117,7 +118,7 @@ None.
 
 ## Next Phase Readiness
 
-Plan 08-06 is complete. Phase verification, review, shipping, exact-head hosted CI, merge, delivery receipt, and v0.7 closeout remain. The guard aggregate, blocked `walking-skeleton`, denied and unconsumed R9, and Pending SEC-01 remain unchanged. No screenshot baseline was changed or accepted.
+Plan 08-06 is complete. The refreshed UI audit scores 22/24 and records two remaining warnings: the Canvas notice extends below the iframe view at 768px, and the Journey breadcrumb target is below 44px. Phase verification, review, shipping, exact-head hosted CI, merge, delivery receipt, and v0.7 closeout remain. The guard aggregate, blocked `walking-skeleton`, denied and unconsumed R9, and Pending SEC-01 remain unchanged. No new screenshot baseline was changed or accepted.
 
 ## Self-Check: PASSED
 
