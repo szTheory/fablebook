@@ -1,5 +1,5 @@
 ---
-status: testing
+status: complete
 phase: first-inspectable-book-and-local-host-path
 source:
   - 08-01-SUMMARY.md
@@ -8,12 +8,12 @@ source:
   - 08-04-SUMMARY.md
   - 08-05-SUMMARY.md
 started: 2026-11-25T21:26:08Z
-updated: 2026-11-25T22:28:31Z
+updated: 2026-11-26T03:06:42Z
 ---
 
 ## Current Test
 
-5. Reviewed hosted delivery checks
+[testing complete]
 
 ## Tests
 
@@ -32,8 +32,8 @@ evidence: `08-02-SUMMARY.md` and `08-03-SUMMARY.md` record the separate test-onl
 ### 3. Book, Journey, Scenario, and Canvas behavior
 expected: The fixed Book opens a stable source-cited Scenario, Journey and Scenario navigation work, Canvas ready state is accessible without a visible status line, actual failure guidance is visible, and actions remain illustrative.
 result: pass
-source: automated
-evidence: The 15-test focused host suite passes locally after the Journey/Scenario collision fix, including two Journeys with a shared `default` Scenario name and an ambiguous legacy URL failure path. `08-BROWSER.md` records live Chrome checks of the ready and failure states, same-origin Canvas, navigation, accessibility tree, and the accepted white main/Canvas surfaces; the route fix does not change the visible layout.
+source: automated and owner-accepted browser evidence
+evidence: The 15-test focused host suite passes locally after the Journey/Scenario collision fix, including two Journeys with a shared `default` Scenario name and an ambiguous legacy URL failure path. `08-BROWSER.md` records live Chrome checks of the ready and failure states, same-origin Canvas, navigation, accessibility tree, and the accepted white main/Canvas surfaces. The owner accepted those recorded ready/failure observations as sufficient manual lifecycle evidence in [INT-20261125-05](../../intent/sources/2026-11-25-05-accept-canvas-lifecycle-browser-evidence.md); the repository has no automated JavaScript transition test.
 
 ### 4. Responsive, zoom, and keyboard behavior
 expected: The browser record demonstrates the planned narrow and desktop widths, 200% zoom, keyboard traversal, and visible focus without page-level horizontal overflow.
@@ -43,9 +43,9 @@ evidence: `08-BROWSER.md` records viewport measurements at 320, 375, 768, and 12
 
 ### 5. Reviewed hosted delivery checks
 expected: The screenshot-free Phase 8 candidate passes the required CI jobs on its exact reviewed code head, with no screenshot or unreviewed source repository in the PR.
-result: pending
+result: pass
 source: automated
-evidence: The corrected source review is clean in `08-REVIEW.md`. The full local core lane passed against source content committed as `a339f67f5c2e8afb6cec68e216639b785cac694c`: 467 passed, 10 configured exclusions, ExUnit 652.3s. Strict Credo and the focused operator-host suite (15 passed) also pass. Previous PR code head `df078bd45fd9433d98e229d34bea9f5583d40354` passed core, floor, Dialyzer, security, and `ci-gate` in [hosted CI run 45691480908](https://github.com/szTheory/fablebook/actions/runs/45691480908), but that receipt predates this fix. Exact-head hosted CI for the corrected candidate is still required after final phase artifacts are committed and pushed.
+evidence: The corrected source review is clean in `08-REVIEW.md`. The full local core lane passed against source content committed as `a339f67f5c2e8afb6cec68e216639b785cac694c`: 467 passed, 10 configured exclusions, ExUnit 652.3s. Strict Credo and the focused operator-host suite (15 passed) also pass. Screenshot-free PR #106 head `2e648f5efa4c440541d0cd25b397370d8637af05` passed core, floor, Dialyzer, security, and `ci-gate` in [exact-head hosted CI run 45713720366](https://github.com/szTheory/fablebook/actions/runs/45713720366). The prior head's green receipt predates the route fix.
 
 ### 6. Owner visual-baseline acceptance
 expected: The owner accepts the live failed-shipment Book shown as the Phase 8 visual baseline.
@@ -56,12 +56,12 @@ evidence: The owner replied “accepted” during the live visual review. The ex
 ## Summary
 
 total: 6
-passed: 5
+passed: 6
 issues: 0
-pending: 1
+pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
 
-Only the required hosted CI check for the corrected candidate remains pending. This UAT does not change the open guard aggregate, blocked `walking-skeleton`, denied and unconsumed R9, or Pending SEC-01 status. The PR still needs phase goal verification, ship review, exact-head merge, and delivery receipt before v0.7 can close.
+No Phase 8 UAT gaps remain. This UAT does not change the open guard aggregate, blocked `walking-skeleton`, denied and unconsumed R9, or Pending SEC-01 status. Phase goal verification passed and ship preflight is clear. Final exact-head hosted CI, merge, delivery receipt, and v0.7 closeout remain.

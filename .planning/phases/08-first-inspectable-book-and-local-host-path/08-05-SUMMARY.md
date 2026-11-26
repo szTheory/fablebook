@@ -2,9 +2,9 @@
 phase: first-inspectable-book-and-local-host-path
 plan: "05"
 subsystem: book-flow-and-delivery-verification
-completed: 2026-11-22
-status: executing
-requirements-completed: []
+completed: 2026-11-26
+status: complete
+requirements-completed: [SRC-01, HOST-01, HOST-02, CAT-01, CAT-02, CANVAS-01, BOOK-01]
 coverage:
   - id: BOOK-01
     description: "The selected source-cited Book and Scenario render through the development host with the approved navigation, accessible readiness state, visible failure guidance, and illustrative actions."
@@ -17,8 +17,8 @@ coverage:
         ref: "08-BROWSER.md: current live Chrome ready/failure DOM checks and same-origin Canvas evidence"
         status: pass
       - kind: other
-        ref: "https://github.com/szTheory/fablebook/actions/runs/45691480908 on the previous PR code head df078bd45fd9433d98e229d34bea9f5583d40354; fresh CI is required for the route fix"
-        status: unknown
+        ref: "https://github.com/szTheory/fablebook/actions/runs/45713720366 on exact PR head 2e648f5efa4c440541d0cd25b397370d8637af05; core, floor, Dialyzer, security, and ci-gate passed"
+        status: pass
     human_judgment: false
   - id: VISUAL-BASELINE
     description: "The owner accepts the live failed-shipment Book shown as the Phase 8 visual baseline."
@@ -62,7 +62,7 @@ head 6987359 passed required hosted CI in
 - A Canvas status handshake that retries every 250 ms while incomplete and
   stops on ready, failure, or the existing eight-second timeout.
 
-## Verification after the readiness fix
+## Validation after the readiness fix
 
 | Check | Result |
 |---|---|
@@ -188,14 +188,13 @@ the required lanes. Measurements are recorded in
 
 ## Delivery still open
 
-- Screenshot-free PR #106 remains draft at public head
-  `df078bd45fd9433d98e229d34bea9f5583d40354`, green in [run
-  45691480908](https://github.com/szTheory/fablebook/actions/runs/45691480908)
-  before the Journey-scoped route fix. The local candidate commit
-  `a339f67f5c2e8afb6cec68e216639b785cac694c` includes the fix; its final code
-  review is clean and the full core lane passed locally. The current candidate
-  still needs final planning evidence, push, exact-head hosted CI, phase
-  verification and ship review.
+- Screenshot-free PR #106 remains draft at head
+  `2e648f5efa4c440541d0cd25b397370d8637af05`. All required jobs passed on that
+  exact head in [run 45713720366](https://github.com/szTheory/fablebook/actions/runs/45713720366).
+  The clean source review, owner acceptance and completed UAT are recorded.
+  Phase goal verification passed at 46/46 and the ship preflight is clear.
+  Any evidence commit that advances the PR head needs its own green required
+  CI before merge.
 - Follow branch protection when merging the exact reviewed green head.
 - Record the actual PR, reviewed head, merge commit and hosted CI URL in the
   append-only delivery registry, then close v0.7 against its scoped
@@ -219,5 +218,9 @@ standard-depth source review is clean. Strict Credo and the full core lane pass
 on the corrected source; the lane reports 467 passed, 10 configured exclusions
 and 652.3s in ExUnit. Its first attempt stopped at Credo's nesting limit before
 tests; extracting `assign_journey_selection/5` fixed that issue. The corrected
-candidate remains local after the previously green PR head, so exact-head
-hosted CI, phase verification and merge remain outstanding.
+candidate passed core, floor, Dialyzer, security and `ci-gate` on exact PR head
+`2e648f5efa4c440541d0cd25b397370d8637af05` in hosted run
+[45713720366](https://github.com/szTheory/fablebook/actions/runs/45713720366).
+Phase goal verification subsequently passed at 46/46, UAT completed 6/6, and
+the ship preflight passed. The final evidence candidate still needs green
+required CI on its exact pushed PR head before merge.

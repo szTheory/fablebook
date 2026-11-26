@@ -4,11 +4,11 @@ milestone: v0.7
 milestone_name: First Inspectable Book
 current_phase: 8
 status: completed
-stopped_at: Phase 8 complete — all phases complete
-last_updated: "2026-11-26T03:00:21.836Z"
+stopped_at: Phase 8 complete; final evidence candidate prepared for PR
+last_updated: "2026-11-26T03:10:06.800Z"
 last_activity: 2026-11-26
-last_activity_desc: Phase 8 complete
-state_head: aa5c69b34dbe1517c4fb8384659e015ec8625ab6
+last_activity_desc: Phase 8 verification passed; preparing the final PR
+state_head: 03ac2c45a63d0c60ea64b37e40c424ac0db83521
 progress:
   total_phases: 1
   completed_phases: 1
@@ -42,7 +42,7 @@ Phase: 8
 Plan: Not started
 Total Plans in Phase: 6
 Status: All phases complete
-Last activity: 2026-11-25 — Phase 8 complete
+Last activity: 2026-11-26 — Phase 8 verified; preparing final PR #106 evidence candidate
 Last Activity Description: Phase 8 complete
 
 
@@ -175,9 +175,9 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-26T01:50:42.916Z
-**Stopped at:** Phase 8 complete — all phases complete
-**Resume file:** None
+**Last session:** 2026-11-26T03:06:42Z
+**Stopped at:** Phase 8 is complete; final evidence is being prepared for PR #106 and exact-head hosted CI.
+**Resume file:** `phases/08-first-inspectable-book-and-local-host-path/08-05-RESUMPTION-2026-11-25.md`
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5's four selected EX-177 rows now have the reviewed source/caller facts recorded by discovery and Phase 6; the other 9,712 rows remain unchanged. Package-wide caller closure remains unproven, R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was reread for Phase 6. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
@@ -208,4 +208,8 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-Plan 08-06 passed independent review. Execute it in the isolated screenshot-free checkout, run the focused host suite and browser geometry checks at 320x900, 375x812 and 200% text zoom, then regenerate Phase 8 verification through the configured gates. After it passes, ship review, final evidence commit, exact-head hosted CI, merge, delivery receipt and v0.7 closeout remain. Preserve the dirty canonical `main` and do not change the guard aggregate, walking-skeleton, R9 or SEC-01 stops. No deployment, release or follow-on milestone is authorized.
+Phase 8 is complete: verification passed at 46/46, UAT passed 6/6, and the final source review is clean. The refreshed UI review scores 22/24 and keeps two non-blocking warnings visible. Ship preflight passes, including the zero-open-threat security gate.
+
+Continue in `/private/tmp/fablebook-v07-phase8-screenshot-free` on `gsd/phase-8-first-inspectable-book`. PR #106 is still draft at the older green head `2e648f5`; the local candidate contains the completed evidence and a small host landmark fix. Commit the remaining evidence, push it, update PR #106, and obtain green required CI on that exact head. Once green, mark the PR ready and squash-merge under the standing authority, then append the actual delivery receipt and close v0.7 against its own requirements.
+
+The local `act` stop remains unchanged because its ARM64 OTP versus amd64 container mismatch has not changed. Preserve the dirty canonical `main`, the existing UI warnings, the open guard aggregate, blocked `walking-skeleton`, denied and unconsumed R9, and Pending SEC-01. Do not deploy, release, publish screenshots, or start another milestone. **Next actor: Codex.**

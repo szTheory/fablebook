@@ -306,5 +306,24 @@ Compared with the previous local Phase 8 core run (597.6s), ExUnit was 54.7s
 slower. This one sample does not establish a trend. The core tests dominate
 elapsed time; hosted core and floor lanes already overlap, and their setup is
 short relative to testing. No safe coverage-preserving optimization is
-supported; keep all lanes and checks unchanged. Exact-head hosted CI for this
-corrected candidate remains pending.
+supported; keep all lanes and checks unchanged. The following exact-head
+hosted run passed on the reviewed candidate.
+
+## Hosted Phase 8 Journey-scoped Scenario fix — 2026-11-25
+
+Screenshot-free PR #106 head `2e648f5efa4c440541d0cd25b397370d8637af05`
+passed all required checks in [run 45713720366](https://github.com/szTheory/fablebook/actions/runs/45713720366)
+in 11m48s. Core took 9m33s, including 8m27s for `mix ci`; floor took 9m34s,
+including 8m32s for its production-guard test step. Floor set the critical
+path by 1 second. Security and Dialyzer each took 31s, and `ci-gate` took 2s.
+Core began 25 seconds after run creation; floor began 1m51s after creation.
+There were no failures or retries.
+
+Compared with the previous green head, overall time was 39 seconds shorter;
+core `mix ci` was 2m37s shorter and the floor test was 15 seconds shorter.
+Both test lanes still dominate runtime, and the floor start delay affects the
+critical path. A single run does not establish a repeatable improvement or a
+safe pipeline change. Keep the required lanes and checks unchanged. The final
+UAT, verification, review follow-up, and source-boundary decisions are included
+in the candidate evidence update; the pushed final head must also receive green
+required CI before merge.

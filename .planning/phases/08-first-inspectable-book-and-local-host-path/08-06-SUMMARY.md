@@ -118,7 +118,7 @@ None.
 
 ## Next Phase Readiness
 
-Plan 08-06 is complete. The refreshed UI audit scores 22/24 and records two remaining warnings: the Canvas notice extends below the iframe view at 768px, and the Journey breadcrumb target is below 44px. Phase verification, review, shipping, exact-head hosted CI, merge, delivery receipt, and v0.7 closeout remain. The guard aggregate, blocked `walking-skeleton`, denied and unconsumed R9, and Pending SEC-01 remain unchanged. No new screenshot baseline was changed or accepted.
+Plan 08-06 is complete. The refreshed UI audit scores 22/24 and records two remaining warnings: the Canvas notice extends below the iframe view at 768px, and the Journey breadcrumb target is below 44px. Phase verification passed at 46/46, UAT is complete at 6/6, the final source review is clean, and ship preflight passed. The final evidence candidate still needs exact-head hosted CI, merge, delivery receipt, and v0.7 closeout. The guard aggregate, blocked `walking-skeleton`, denied and unconsumed R9, and Pending SEC-01 remain unchanged. No new screenshot baseline was changed or accepted.
 
 ## Self-Check: PASSED
 

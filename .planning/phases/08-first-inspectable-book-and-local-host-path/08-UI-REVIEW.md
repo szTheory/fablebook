@@ -1,11 +1,13 @@
 # Phase 8 — UI Review
 
 **Audited:** 2026-11-25
-**Baseline:** Approved `08-UI-SPEC.md`
-**Screenshots:** captured (desktop 1440×900, tablet 768×1024, mobile 375×812; additional 1280×900 and 320×900 captures)
+
+**Baseline:** Approved `08-UI-SPEC.md`; records current UI conformance under the owner-accepted visual baseline (INT-20261125-04).
+
+**Screenshots:** Captured at 1440×900, 768×1024, 375×812, and 320×900 from `http://127.0.0.1:4003/admin/dev/fablebook`; local and ignored under `.planning/ui-reviews/08-20261125/`.
 **Interaction captures:** off (workflow.ui_interaction_capture is false)
 
-Visual captures were made from `http://127.0.0.1:4003/admin/dev/fablebook` and remain local under `.planning/ui-reviews/08-20261125-185251-4003/`. Interaction findings below are code-derived; the optional interaction capture was off.
+Screenshots show the first paint only. Interaction observations below are code-derived; this audit did not repeat the 200% text-size or keyboard-focus checks recorded in `08-06-SUMMARY.md`.
 
 ---
 
@@ -13,69 +15,74 @@ Visual captures were made from `http://127.0.0.1:4003/admin/dev/fablebook` and r
 
 | Pillar | Score | Key Finding |
 |--------|-------|-------------|
-| 1. Copywriting | 3/4 | The persistent illustrative notice differs from the exact contracted copy. |
-| 2. Visuals | 3/4 | Clear Canvas focal point; on narrow screens, the record details begin below the first viewport. |
-| 3. Color | 2/4 | The Canvas boundary is only 1.45:1 against white, below the contract's 3:1 non-text boundary requirement. |
-| 4. Typography | 2/4 | Catalog chrome uses an undeclared 12px size and 500 weight. |
-| 5. Spacing | 2/4 | The stylesheet uses 2px, 6px, and 10px spacing plus fluid `4vw` padding. |
-| 6. Experience Design | 2/4 | The required footer landmark is absent; some navigation targets and focus offset miss the contract. |
+| 1. Copywriting | 4/4 | Contracted labels, unavailable-state copy, illustrative action labels, and Canvas notice are present. |
+| 2. Visuals | 3/4 | Hierarchy and narrow stacking are clear; the 768px capture shows the Canvas notice cut at the iframe’s lower edge. |
+| 3. Color | 4/4 | Neutral catalog surfaces and high-contrast essential boundaries; Logistify colors stay inside the Canvas. |
+| 4. Typography | 4/4 | Catalog uses the four specified sizes and two weights. |
+| 5. Spacing | 4/4 | Visible catalog spacing follows 4px increments and preserves the 44px navigation targets. |
+| 6. Experience Design | 3/4 | States and landmarks are covered; the Journey breadcrumb link is smaller than the 44px target requirement. |
 
-**Overall: 14/24**
+**Overall: 22/24**
 
 ---
 
 ## Top 3 Priority Fixes
 
-1. **Meet the non-text boundary contrast rule** — the shell-to-Canvas frame is difficult to distinguish for low-vision users — darken the Canvas boundary to at least 3:1 and reconcile the `Hairline` role with the contract.
-2. **Complete the navigation accessibility contract** — screen-reader users lack the required footer landmark and smaller navigation targets are harder to operate — add a semantic footer, raise link targets to 44px, and set the focus offset to 4px.
-3. **Bring catalog type and spacing onto the declared scales** — visual rhythm and hierarchy drift across breakpoints — remove the 12px/500 catalog styles and off-scale 2px/6px/10px/14px and fluid spacing values.
+1. **Let the Canvas frame expose its full content at 768px** — the persistent notice wraps below the 680px iframe viewport in the 768×1024 capture — size the host frame for the embedded document or provide a clear, usable scroll treatment.
+2. **Give the Journey breadcrumb link a 44px target** — the interactive link currently receives only its text line height — use a flex target with `min-height: 44px` while retaining wrapping.
+3. **Clarify the boundary token rule in the UI-SPEC** — `Hairline` is listed for the Canvas boundary, but its contrast against white is below the same spec’s 3:1 boundary requirement — document Ink as the accepted essential-boundary color so the current baseline remains unambiguous.
 
 ---
 
 ## Detailed Findings
 
-### Pillar 1: Copywriting (3/4)
+### Pillar 1: Copywriting (4/4)
 
-- **WARNING:** [lib/fablebook/book_live.ex:482](../../../lib/fablebook/book_live.ex:482) renders “Illustrative records and actions. No live dispatch or external changes.” The contract requires “Illustrative records and actions · no live dispatch or external changes.” This persistent safety notice should match the approved copy exactly.
-- Other copy follows the contract: “Books,” “Logistify operator console,” “Dispatcher recovery,” “Scenarios,” and “A failed shipment” are present. The unknown-screen message and “Return to Books” link are specific. The authored actions are static text prefixed with “Illustrative:” rather than operational controls.
+- **PASS:** Catalog labels and navigation use the approved terms “Books,” “Logistify operator console,” “Dispatcher recovery,” and “Scenarios.” The unavailable message and “Return to Books” recovery link are specific and match the contract ([`book_live.ex`](../../../lib/fablebook/book_live.ex:449)).
+- **PASS:** Scenario actions are static text prefixed with “Illustrative:” and the persistent footer uses the exact approved copy, “Illustrative records and actions · no live dispatch or external changes.” ([`book_live.ex`](../../../lib/fablebook/book_live.ex:481), [`book_live.ex`](../../../lib/fablebook/book_live.ex:494)).
+- **PASS:** The 320px and 375px captures show wrapped Scenario names without truncation. The notice remains readable content in the Canvas document, though at 768px its last wrapped line falls below the initial iframe view (visual/experience finding below).
 
 ### Pillar 2: Visuals (3/4)
 
-- **Evidence:** The desktop captures show a clear hierarchy: Fablebook wordmark and tree at left, breadcrumb and Scenario title above the main Canvas, with the dark Scenario document as the focal content. The active Scenario has a Paper tint, full outline, and bookmark marker. The Canvas stays visually bounded by the white host frame.
-- **WARNING:** In the 375×812 capture, the stacked sidebar and page heading push the Canvas record facts below the first viewport; only the Canvas heading and status are visible at the fold. At 320×900, the summary appears but the record facts remain below the fold. Tighten the narrow layout's vertical footprint while preserving the required links. Evidence: `.planning/ui-reviews/08-20261125-185251-4003/mobile.png` and `width320.png`.
-- The 320/375 captures stack the sidebar above the Canvas, while 768/1280/1440 keep the sidebar beside it. No page-level horizontal overflow is visible at these widths.
+- **PASS:** The desktop capture has a clear hierarchy: wordmark and Book tree at left, breadcrumb and screen title above a single Canvas focal point. The selected Scenario uses the Paper tint, full outline, and bookmark marker. The neutral host frame cleanly contains the darker Logistify preview.
+- **PASS:** At 320px and 375px, the sidebar stacks above the Canvas and the first source-backed fact is visible within the initial viewport. At 768px and 1440px, the sidebar remains beside the Canvas. The captured pages show no visible horizontal clipping.
+- **WARNING:** In the 768×1024 capture, the fixed-height iframe ends while the Canvas footer notice is wrapping; the final words are below the initial frame view. The outer host still has room below the frame. See [`tablet.png`](../../ui-reviews/08-20261125/tablet.png) and [`app.css`](../../../hosts/operator/priv/static/assets/app.css:412).
 
-### Pillar 3: Color (2/4)
+### Pillar 3: Color (4/4)
 
-- **WARNING:** [hosts/operator/priv/static/assets/app.css:389](../../../hosts/operator/priv/static/assets/app.css:389) uses `#d9d6ce` for the Canvas boundary on white. Its contrast is approximately 1.45:1, below the same UI-SPEC's minimum 3:1 for non-text boundaries. The value matches the declared `Hairline` token, so the token and boundary rule need reconciliation; use a stronger neutral for this boundary.
-- The shell otherwise uses a restrained neutral palette with no general accent. CSS has 10 unique hard-coded colors: five catalog/shell colors and five preview colors scoped under `.operator-preview` (lines 426–440). The Logistify dark treatment remains inside the Canvas and status is paired with the visible word “Failed.” `#5c5f66` is used for muted chrome labels but is not declared in the UI-SPEC palette.
+- **PASS:** Catalog chrome uses the intended neutral Paper, white, and Ink treatments. Essential shell boundaries use Ink (`#17181c`), which satisfies the contract’s stronger 3:1 non-text boundary requirement; preview colors are scoped inside `.operator-preview` ([`app.css`](../../../hosts/operator/priv/static/assets/app.css:386), [`app.css`](../../../hosts/operator/priv/static/assets/app.css:426)).
+- **LOW:** The UI-SPEC table assigns Hairline (`#d9d6ce`) to the Canvas boundary, while its contrast rule requires at least 3:1 against white. The current Ink boundary resolves that conflict and matches the accepted baseline; clarify the token guidance for future implementation work.
+- CSS contains eight distinct color literals: three neutral catalog colors and five Canvas preview colors. No general accent is used in the catalog.
 
-### Pillar 4: Typography (2/4)
+### Pillar 4: Typography (4/4)
 
-- **WARNING:** Catalog CSS uses five sizes (12px, 13px, 14px, 16px, and 22px) and three weights (400, 500, and 600), beyond the contract's four sizes (13/14/16/22px) and two weights (400/600). The 12px tree labels are at [app.css:182](../../../hosts/operator/priv/static/assets/app.css:182), and the 500-weight Journey link is at [app.css:186](../../../hosts/operator/priv/static/assets/app.css:186). The brand font is correctly declared and loaded from the local Fablebook asset at lines 10–15.
-- Canvas-specific typography is separated in `.operator-preview`; the deviation is in catalog chrome, not the embedded document's source-styled content.
+- **PASS:** Catalog declarations use only 13px, 14px, 16px, and 22px, with 400 and 600 weights ([`app.css`](../../../hosts/operator/priv/static/assets/app.css:60), [`app.css`](../../../hosts/operator/priv/static/assets/app.css:178), [`app.css`](../../../hosts/operator/priv/static/assets/app.css:267), [`app.css`](../../../hosts/operator/priv/static/assets/app.css:328)). The Canvas retains its separate embedded styling.
+- Screenshots show clear distinction between the screen title, navigation labels, metadata, and body copy. Long labels wrap at the narrow captures.
 
-### Pillar 5: Spacing (2/4)
+### Pillar 5: Spacing (4/4)
 
-- **WARNING:** The catalog stylesheet departs from the declared 4px spacing increments: examples include 2px gaps at [app.css:174](../../../hosts/operator/priv/static/assets/app.css:174) and [app.css:214](../../../hosts/operator/priv/static/assets/app.css:214), 2px label margins at [app.css:180](../../../hosts/operator/priv/static/assets/app.css:180), and 6px/10px padding at [app.css:342](../../../hosts/operator/priv/static/assets/app.css:342).
-- The main panel uses `clamp(20px, 4vw, 48px)` at [app.css:229](../../../hosts/operator/priv/static/assets/app.css:229), which produces intermediate gutters outside the fixed spacing scale. Use declared increments for the catalog layout.
+- **PASS:** Catalog padding, gaps, and margins use 4px increments, including the mobile overrides; no catalog `2px`, `6px`, `10px`, or fluid `4vw` spacing remains. The mobile Canvas shell reduces to a 4px inset while retaining readable content ([`app.css`](../../../hosts/operator/priv/static/assets/app.css:133), [`app.css`](../../../hosts/operator/priv/static/assets/app.css:539)).
+- The logo and navigation targets use 44px minimum heights. Internal `.operator-preview` spacing belongs to the separately styled Canvas and was not changed by Plan 08-06.
 
-### Pillar 6: Experience Design (2/4)
+### Pillar 6: Experience Design (3/4)
 
-- **WARNING:** The UI-SPEC requires semantic `header`, labeled `nav`, `main`, and `footer` landmarks. Headers, navigation, and main regions are present, but no `<footer>` appears in `book_live.ex` or the host layout. The persistent Canvas notice at [book_live.ex:482](../../../lib/fablebook/book_live.ex:482) is a paragraph rather than a footer landmark.
-- **WARNING:** Some navigation targets miss the contract's 44px minimum: the linked wordmark is 32px high at [app.css:117](../../../hosts/operator/priv/static/assets/app.css:117), and compact Scenario links are 40px high at [app.css:340](../../../hosts/operator/priv/static/assets/app.css:340). Focus outline offset is 3px, not the required 4px, at [app.css:47](../../../hosts/operator/priv/static/assets/app.css:47).
-- Positive state coverage: the shell includes the defined empty and unavailable states at [book_live.ex:187](../../../lib/fablebook/book_live.ex:187) and [book_live.ex:443](../../../lib/fablebook/book_live.ex:443). The loading/readiness status is visually hidden and polite; the host makes genuine failure guidance visible. [app.js:82](../../../hosts/operator/priv/static/assets/app.js:82) handles frame loading, and lines 113–120 handle ready/failure messages. Static authored actions need no disabled or destructive-confirmation state.
-- Interaction capture was off, so keyboard focus, the live state transitions, and 200% text zoom were not freshly captured in this pass. Navigation uses links and CSS visibly defines focus treatment; the target-size and outline-offset findings are source-derived.
+- **PASS:** The catalog has labeled navigation, one screen heading, a named Canvas section, an accessible frame title, and a semantic footer outside the Scenario main landmark ([`book_live.ex`](../../../lib/fablebook/book_live.ex:127), [`book_live.ex`](../../../lib/fablebook/book_live.ex:167), [`book_live.ex`](../../../lib/fablebook/book_live.ex:494)). The polite Canvas status is visually hidden except when it reports a failure; empty and unavailable states have explanatory copy and a recovery path ([`book_live.ex`](../../../lib/fablebook/book_live.ex:187), [`book_live.ex`](../../../lib/fablebook/book_live.ex:445), [`app.js`](../../../hosts/operator/priv/static/assets/app.js:33)). Focus styling is 2px with a 4px offset ([`app.css`](../../../hosts/operator/priv/static/assets/app.css:47)).
+- **WARNING:** The Journey link inside the Scenario breadcrumb has no target sizing rule, so its target is approximately one 14px text line rather than the specified 44px minimum ([`book_live.ex`](../../../lib/fablebook/book_live.ex:135), [`app.css`](../../../hosts/operator/priv/static/assets/app.css:308)). Sidebar and sibling-Scenario links do have the required height.
+- **WARNING:** `#book-canvas` has a 680px minimum height but no content-based height rule. At 768px, the source-backed record content makes the embedded Canvas taller than that viewport; the notice’s second line is below the frame edge in the static capture ([`app.css`](../../../hosts/operator/priv/static/assets/app.css:412)). This is recoverable through iframe scrolling, but it makes the persistent caveat easy to miss on first view. This is inferred from CSS and the static capture; no interaction state was captured.
+- No destructive controls are present, so confirmation and disabled-action states do not apply.
 
 ---
 
 ## Files Audited
 
+- `.planning/phases/08-first-inspectable-book-and-local-host-path/08-01-PLAN.md` through `08-06-PLAN.md`
+- `.planning/phases/08-first-inspectable-book-and-local-host-path/08-01-SUMMARY.md` through `08-06-SUMMARY.md`
+- `.planning/phases/08-first-inspectable-book-and-local-host-path/08-CONTEXT.md`
 - `.planning/phases/08-first-inspectable-book-and-local-host-path/08-UI-SPEC.md`
-- Phase 8 `08-CONTEXT.md`, Plans `08-01` through `08-05`, and Summaries `08-01`, `08-03`, `08-04`, `08-05`
-- `lib/fablebook/book_live.ex`, `lib/fablebook/catalog.ex`, `lib/fablebook/story.ex`, `lib/fablebook/router.ex`
-- `hosts/operator/lib/operator_host.ex`
-- `hosts/operator/storybook/operator_book.ex`
-- `hosts/operator/priv/static/assets/app.css`, `app.js`, and the local Fablebook logo/font assets
-- `.planning/ui-reviews/.gitignore` and the five local screenshot captures listed above
-
+- Previous `.planning/phases/08-first-inspectable-book-and-local-host-path/08-UI-REVIEW.md`
+- `lib/fablebook/book_live.ex`
+- `hosts/operator/priv/static/assets/app.css`
+- `hosts/operator/priv/static/assets/app.js` (status transition code)
+- `hosts/operator/test/operator_host_test.exs` (assertion coverage reviewed; not executed)
+- `.planning/ui-reviews/.gitignore`
+- Captures: `.planning/ui-reviews/08-20261125/{desktop,tablet,mobile,narrow}.png` (all ignored)
