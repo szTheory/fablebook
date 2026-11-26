@@ -26,9 +26,15 @@ v0.6 closed as a bounded evidence milestone on 2026-11-20. Phase 7 reconciled cu
 
 v0.5 closed locally on 2026-11-19 as a bounded evidence milestone. Phase 6 delivered the four-key EX-177 supplement and preserved the exact 9,712-row complement through PR #93, reviewed head `3970a381945cfcf63eb69c456a5b2a7465d8352d`, green [exact-head hosted CI 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030), and squash merge `b8852ac22aac1cb2b8151d85b189889ca0774aa8`. The compatibility fix was reviewed and merged separately through PR #94 with green hosted CI. The archive closeout was squash-merged through [PR #95](https://github.com/szTheory/fablebook/pull/95) as `d5a8dc0b856e5c8223524c4fd3f849bd27c4c859` after green [exact-head hosted CI 44599528602](https://github.com/szTheory/fablebook/actions/runs/44599528602); the `v0.5` tag remains local. Its one requirement is satisfied; caller closure and the wider guard/security obligations remain open. This is not a package release or runtime-safety proof. See the [v0.5 archive](milestones/v0.5-ROADMAP.md), [requirements](milestones/v0.5-REQUIREMENTS.md), [audit](milestones/v0.5-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.5-phases/), and [closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
-## Current Milestone
+## Current Milestone: v0.8 Fixed Logistify Scenario Bundle
 
-No milestone is active. The v0.7 first-Book exception expired at closeout. The [rolling product roadmap](references/PRODUCT-ROADMAP.md) remains directional; a future bounded scope must be researched and selected before requirements or phase numbers are activated.
+**Goal** Give a developer one deterministic, source-cited no-browser context bundle for “A failed shipment” in the shipped Logistify operator Book.
+
+- Share the Scenario’s presentational renderer between the local Canvas and bundle.
+- Produce `BUNDLE.md` and `bundle.json` with its situation, component Contract, sanitized markup and pinned citations.
+- Verify reproducibility and confine output to the local development/test project. Keep the production exclusion in force.
+
+The owner selected this scope and approved the Phase 9 roadmap in INT-20261126-02 and INT-20261126-03. [Scoped requirements](REQUIREMENTS.md) · [Active roadmap](ROADMAP.md)
 
 ## Current State
 
@@ -111,7 +117,9 @@ The lists below summarize the wider v1 product vision; they are not a live progr
 
 ### Active
 
-Every item below is a v1.0 commitment.
+The active v0.8 requirements are BND-01–05 in [REQUIREMENTS.md](REQUIREMENTS.md). They cover the fixed Scenario, its bundle contents, shared rendering, deterministic output and the local development/test boundary.
+
+The rest of this section records the wider v1.0 commitments.
 
 **CORE: story model and catalog**
 - [ ] **CORE-01** Authors declare stories as compiled `.ex` modules in `storybook/` (dev/test `elixirc_paths` only) with `use Fablebook.Story, subject:, tier:`. The macro injects at most 20 lines. (ADR 0001, INT-20261028-01)
@@ -344,7 +352,7 @@ Every item below is a v1.0 commitment.
 - **Delivered v0.4:** Planning and evidence artifacts only; no application source, dependencies, or runtime behavior changed. Three phases, nine plans and 14 tasks delivered through PRs #90–#92. The aggregate gate, candidate-null decision, actual-library collision stop, Macro checkpoints, SEC-01 owner and Walking Skeleton block remain unchanged.
 - **Delivered v0.6:** Evidence and one existing dependency lock patch only; no application behavior, product UI, Book, or runnable demo was added. Phase 7 passed 4/4 goal verification, Nyquist validation, and its declared security review. PR #96 and post-merge main CI passed; the exact receipts and all bounded limits are in the v0.6 archive. Three inherited deferred records remain unresolved and acknowledged for carry-forward.
 - **Delivered v0.5:** Planning and test-support evidence only; no application source, dependencies, or runtime behavior changed. Phase 6 delivered the exact four-key supplement and checker through PR #93; PR #94 separately fixed the archived-evidence test path. The 9,712-row complement and every prior safety stop remain unchanged.
-- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.7 is archived and the next milestone is unselected. Its dormant CLI/API seed preserves the owner's operator-UI-first sequencing and the distinction between coding-agent and operations-agent jobs. The v0.7 exception did not close the guard aggregate or unblock `walking-skeleton`.
+- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active. v0.7 is archived and v0.8 owns the fixed Scenario bundle. Its dormant CLI/API seed preserves the owner's operator-UI-first sequencing and the distinction between coding-agent and operations-agent jobs. The v0.7 exception did not close the guard aggregate or unblock `walking-skeleton`.
 
 - **Ecosystem (verified 2026-10-28):**
   - Phoenix 1.8.16 and LiveView 1.2.13 are current; there is no Phoenix 1.9.
@@ -411,7 +419,7 @@ Every item below is a v1.0 commitment.
 
 | Decision | Rationale | Outcome |
 |---|---|---|
-| Close v0.7 at the first inspectable Book boundary and preserve the future agent-tooling seed (INT-20261120-14, INT-20261125-07) | Deliver the owner-selected local operator UI first; preserve Jobs to Be Done, personas, domain vocabulary, and provenance as discovery inputs before considering a CLI or authenticated API | All eight v0.7 requirements passed; the audit is `tech_debt`; the CLI/API seed remains dormant. No authentication protocol, write authority, or next milestone is selected. |
+| Close v0.7 at the first inspectable Book boundary and preserve the future agent-tooling seed (INT-20261120-14, INT-20261125-07) | Deliver the owner-selected local operator UI first; preserve Jobs to Be Done, personas, domain vocabulary, and provenance as discovery inputs before considering a CLI or authenticated API | All eight v0.7 requirements passed; the audit is `tech_debt`; the CLI/API seed remains dormant. Authentication and write authority remain unselected. |
 | Review CI timing after every run and optimize only when measurements support a safe change (INT-20261125-08) | Reduce iteration time and waste without weakening correctness, security, or coverage | Exact-head and post-merge Phase 8 lanes overlapped; full test lanes dominate. No safe pipeline change is supported by these measurements. |
 | Close v0.6 at the bounded evidence and owner-decision boundary (INT-20261119-05, INT-20261119-06) | Preserve the aggregate gate, evidence limits, and downstream scope while delivering a current reviewable reconciliation | Phase 7 is delivered; candidate remains null, implementation unauthorized, and no next milestone is selected. |
 | Apply only the owner-approved LiveView security rebaseline (INT-20261120-07) | Remove the hosted advisory failure without expanding package scope or rescanning the retained floor | Only the existing core LiveView lock tuple changed; Hex audit and required hosted CI passed. |
@@ -533,4 +541,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-26 at v0.7 closeout; Phase 8 and all eight scoped requirements are delivered, the first-Book exception expired, and wider guard/security stops remain open.*
+*Last updated: 2026-11-26 after activation of the v0.8 Phase 9 roadmap.*

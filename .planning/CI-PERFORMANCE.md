@@ -402,3 +402,39 @@ seconds into each job and took
 12–14 seconds. These early checks caught two separate archive path assumptions
 without spending time on the full suites. Keep the full checks and lanes
 unchanged.
+
+## Hosted v0.7 closeout final head and post-merge main — 2026-11-26
+
+PR #107 head `d0b49d06d879bf84733aa0c06b60bea4329590d5` passed required CI in
+[run 45763508605](https://github.com/szTheory/fablebook/actions/runs/45763508605)
+in 13m01s. Jobs began about two seconds after run creation and core/floor
+overlapped. Core took 12m03s (`mix ci` 10m54s); floor took 12m54s, setting the
+critical path. Security took 33s, Dialyzer 29s, and `ci-gate` 3s. The two prior
+archive-path failures were caught by early checks before either full suite
+started.
+
+After PR #107 merged as `692501c46a191cbaf79e69dd360168058301e8db`, [main CI
+run 45765100650](https://github.com/szTheory/fablebook/actions/runs/45765100650)
+passed in 12m27s. Core took 12m18s (`mix ci` 11m03s); floor took 9m52s
+(production-guard test step 8m53s). Core set the critical path; security took
+33s, Dialyzer 30s, and `ci-gate` 3s. Jobs again started promptly and the test
+lanes overlapped. The paired [release-please run
+45765100715](https://github.com/szTheory/fablebook/actions/runs/45765100715)
+completed in 38s with publishing skipped.
+
+The full test lanes still dominate runtime and already overlap. Early source
+and host checks caught the two archive path assumptions before the expensive
+suites; removing or delaying those checks would increase iteration cost. These
+measurements support no safe coverage-preserving CI restructuring. Keep both
+lanes and all checks unchanged.
+
+## Hosted planning checker prerequisite — 2026-11-26
+
+PR #108 delivered the typed checker prerequisite for v0.8. [Hosted CI](https://github.com/szTheory/fablebook/actions/runs/45848647777) passed on the reviewed PR head in 14m10s.
+- core took 9m55s (main test step 8m49s).
+- floor took 14m01s (main test step 12m44s).
+- security took 32s.
+- dialyzer took 23s.
+- ci-gate took 4s.
+The required lanes overlapped. The test suites set the critical path, and the run does not identify a safe coverage-preserving reduction.
+Compared with the v0.7 closeout runs, the slow lane varied while setup stayed short. The same checks and both supported lanes remain required.

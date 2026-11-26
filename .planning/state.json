@@ -1,12 +1,18 @@
 {
   "contract": "1.0.0",
   "flavor": "core",
-  "milestone": "v0.7",
-  "phases": [],
+  "milestone": "v0.8",
+  "phases": [
+    {
+      "number": "9",
+      "name": "Generate the fixed Scenario bundle",
+      "status": "pending"
+    }
+  ],
   "next": {
-    "command": "$gsd-progress",
-    "label": "Show progress",
-    "reason": "Unsure of state — showing progress"
+    "command": "$gsd-progress --next",
+    "label": "Advance to the next step (plan phase 9)",
+    "reason": "Phase 1 of 1 — needs a plan"
   },
-  "updated_at": "2026-11-26T05:32:45.783Z"
+  "updated_at": "2026-11-26T15:38:53.953Z"
 }
