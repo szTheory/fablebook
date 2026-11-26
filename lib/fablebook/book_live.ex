@@ -204,7 +204,9 @@ defmodule Fablebook.BookLive do
           <.scenario_content scenario={@scenario_result} />
         <% end %>
       </div>
-      <.unavailable_state :if={@unavailable} book_info={@book_info} />
+      <main :if={@unavailable} class="unavailable-page">
+        <.unavailable_state book_info={@book_info} />
+      </main>
     </div>
 
     <main :if={@live_action == :unavailable} class="unavailable-page">

@@ -498,6 +498,10 @@ defmodule OperatorHost.OperatorBookTest do
 
       assert body =~ "Return to Books"
       assert body =~ "href=\"#{@root}\""
+
+      if String.contains?(path, "/canvas/") do
+        assert body =~ ~r{<main class="unavailable-page">\s*<section class="unavailable-state"}s
+      end
     end
   end
 
