@@ -167,6 +167,120 @@ defmodule OperatorHost.OperatorBookTest do
     end
   end
 
+  test "catalog chrome meets the approved contrast, target, type, and spacing scales" do
+    css = File.read!(@app_css)
+    declared_colors = ["#f6f4ef", "#ffffff", "#17181c", "#d9d6ce", "#b42318"]
+
+    boundaries = [
+      {".catalog-sidebar", "border-right", ".catalog-main", "background"},
+      {".catalog-sidebar", "border-bottom", ".catalog-main", "background"},
+      {".journey-link[aria-current=\"page\"]", "border-color",
+       ".journey-link[aria-current=\"page\"]", "background"},
+      {".scenario-link[aria-current=\"page\"]", "border-color",
+       ".scenario-link[aria-current=\"page\"]", "background"},
+      {".journey-scenario-card", "border", ".catalog-main", "background"},
+      {".scenario-option[aria-current=\"page\"]", "border-color",
+       ".scenario-option[aria-current=\"page\"]", "background"},
+      {".empty-state", "border", ".catalog-main", "background"},
+      {".unavailable-state", "border", ".catalog-main", "background"},
+      {".canvas-shell", "border", ".canvas-shell", "background"}
+    ]
+
+    for {selector, border_property, background_selector, background_property} <- boundaries do
+      border_color = css_declaration(css, selector, border_property) |> css_hex_color()
+
+      background_color =
+        css_declaration(css, background_selector, background_property) |> css_hex_color()
+
+      assert border_color in declared_colors
+      assert contrast_ratio(border_color, background_color) >= 3
+    end
+
+    focus_color = css_declaration(css, "a:focus-visible", "outline") |> css_hex_color()
+    focus_backgrounds = [".catalog-sidebar", ".catalog-main"]
+
+    assert css_declaration(css, "a:focus-visible", "outline-offset") == "4px"
+
+    for selector <- focus_backgrounds do
+      background_color = css_declaration(css, selector, "background") |> css_hex_color()
+      assert contrast_ratio(focus_color, background_color) >= 3
+    end
+
+    assert css_declaration(css, ".catalog-brand", "min-height") == "44px"
+    assert css_declaration(css, ".scenario-option", "min-height") == "44px"
+
+    catalog_css =
+      css
+      |> String.split(".operator-preview {", parts: 2)
+      |> hd()
+      |> then(&Regex.replace(~r/@font-face\s*\{[^}]*\}/s, &1, ""))
+      |> then(&Regex.replace(~r/\.visually-hidden\s*\{[^}]*\}/s, &1, ""))
+
+    sizes =
+      Regex.scan(~r/\bfont-size:\s*([^;]+);/, catalog_css, capture: :all_but_first)
+      |> List.flatten()
+      |> Enum.map(&String.trim/1)
+
+    weights =
+      Regex.scan(~r/\bfont-weight:\s*([^;]+);/, catalog_css, capture: :all_but_first)
+      |> List.flatten()
+      |> Enum.map(&String.trim/1)
+
+    assert Enum.all?(sizes, &(&1 in ["13px", "14px", "16px", "22px"]))
+    assert Enum.all?(weights, &(&1 in ["400", "600"]))
+
+    for selector <- [
+          ".tree-kind",
+          ".tree-empty",
+          ".journey-scenario-description",
+          ".scenario-navigation-label",
+          "#canvas-status"
+        ] do
+      muted_color = css_declaration(css, selector, "color") |> css_hex_color()
+      assert muted_color in declared_colors
+    end
+
+    mobile_css =
+      case Regex.run(~r/@media\s*\(max-width:\s*720px\)\s*\{(.*)\n\}/s, css,
+             capture: :all_but_first
+           ) do
+        [media_css] -> media_css
+        _ -> flunk("mobile catalog rules were not found")
+      end
+
+    spacing_declarations =
+      [catalog_css, mobile_css]
+      |> Enum.flat_map(fn source ->
+        Regex.scan(
+          ~r/(?:^|[;{])\s*(?:gap|row-gap|column-gap|margin(?:-[a-z-]+)?|padding(?:-[a-z-]+)?)\s*:\s*([^;}]+)/m,
+          source
+        )
+        |> Enum.map(fn [_, value] -> String.trim(value) end)
+      end)
+
+    for declaration <- spacing_declarations do
+      refute Regex.match?(~r/\b(?:2|6|10)px\b|\b\d+(?:\.\d+)?vw\b/, declaration)
+
+      for [_, amount, unit] <- Regex.scan(~r/(-?\d+(?:\.\d+)?)(px|vw|vh|rem|em|%)/, declaration) do
+        assert unit == "px"
+        assert rem(String.to_integer(amount), 4) == 0
+      end
+    end
+
+    assert "minmax(0, 1fr)" in css_declarations(css, ".ui-catalog", "grid-template-columns")
+    assert "wrap" in css_declarations(css, ".breadcrumbs ol", "flex-wrap")
+    assert "wrap" in css_declarations(css, ".scenario-navigation ul", "flex-wrap")
+    assert "anywhere" in css_declarations(css, ".scenario-option", "overflow-wrap")
+
+    for selector <- [".catalog-sidebar", ".catalog-main", ".canvas-shell"] do
+      assert "0" in css_declarations(css, selector, "min-width")
+    end
+
+    assert "8px 16px 16px" in css_declarations(css, ".catalog-main", "padding")
+    assert "4px" in css_declarations(css, ".canvas-shell", "padding")
+    assert "4px" in css_declarations(css, ".scenario-option", "padding")
+  end
+
   test "the Canvas status stays accessible without a visible label or loading line" do
     body =
       get(
@@ -714,6 +828,64 @@ defmodule OperatorHost.OperatorBookTest do
     {footer_start, _} = :binary.match(body, "<footer")
     assert footer_start > main_end
     assert body =~ "data-canvas-document"
+  end
+
+  defp css_declarations(css, selector, property) do
+    rule_pattern = Regex.compile!("#{Regex.escape(selector)}[^{}]*\\{([^{}]*)\\}", "s")
+
+    declaration_pattern =
+      Regex.compile!("(?:^|[;\\n])\\s*#{Regex.escape(property)}\\s*:\\s*([^;]+);")
+
+    Regex.scan(rule_pattern, css)
+    |> Enum.flat_map(fn [_, declarations] ->
+      Regex.scan(declaration_pattern, declarations, capture: :all_but_first)
+      |> List.flatten()
+    end)
+    |> Enum.map(&String.trim/1)
+  end
+
+  defp css_declaration(css, selector, property) do
+    css_declarations(css, selector, property) |> List.first()
+  end
+
+  defp css_hex_color(value) do
+    [color] = Regex.run(~r/#(?:[0-9a-f]{6}|[0-9a-f]{3})\b/i, value)
+
+    case String.downcase(color) do
+      <<"#", red::binary-size(1), green::binary-size(1), blue::binary-size(1)>> ->
+        "##{red}#{red}#{green}#{green}#{blue}#{blue}"
+
+      full_color ->
+        full_color
+    end
+  end
+
+  defp contrast_ratio(foreground, background) do
+    foreground_luminance = relative_luminance(foreground)
+    background_luminance = relative_luminance(background)
+    brightest = max(foreground_luminance, background_luminance)
+    darkest = min(foreground_luminance, background_luminance)
+
+    (brightest + 0.05) / (darkest + 0.05)
+  end
+
+  defp relative_luminance(hex) do
+    channels =
+      hex
+      |> String.trim_leading("#")
+      |> String.graphemes()
+      |> Enum.chunk_every(2)
+      |> Enum.map(fn channel -> String.to_integer(Enum.join(channel), 16) / 255 end)
+      |> Enum.map(fn channel ->
+        if channel <= 0.04045 do
+          channel / 12.92
+        else
+          :math.pow((channel + 0.055) / 1.055, 2.4)
+        end
+      end)
+
+    Enum.zip([0.2126, 0.7152, 0.0722], channels)
+    |> Enum.reduce(0.0, fn {weight, channel}, luminance -> luminance + weight * channel end)
   end
 
   defp scenario_path(scenario_id),
