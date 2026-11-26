@@ -4,7 +4,8 @@
 
 ## Provenance
 
-- Source repository: https://github.com/szTheory/fablebook-brand, pinned at tag `v2.1` and commit `b2e3441218f9d62f857ab9ff7b4b62fdc320078c` in `brand_sources.lock.json`.
+- Source repository: https://github.com/szTheory/fablebook-brand
+- Observed upstream main commit: b2e3441218f9d62f857ab9ff7b4b62fdc320078c (2026-11-11)
 - Source-reported version: **2.1** in BRAND.md, brand.json, and assets/README.md.
 - The initial snapshot at 5a13d2f32db0783bd7eebaa416d53b0701288a67 reported 2.0. After the owner requested another upstream check, main advanced and a fresh clean clone reported 2.1. Preserve that history; the version discrepancy is resolved.
 - SHA-256:
@@ -42,7 +43,7 @@ The supplied handoff reports that the owner glanced over the book rather than co
 
 | Topic | Current contract and path | Owner direction or source recommendation | Recommended reconciliation |
 |---|---|---|---|
-| Product label | “Workbench” in [GLOSSARY.md](../../GLOSSARY.md), [ADR 0013](../../docs/adr/0013-workbench-ux.md), and [UX-DESIGN.md](../../docs/research/UX-DESIGN.md) | Owner settles “UI catalog” as the product label and descriptor. | In a future approved brand/UI slice, align the glossary, ADR and UI copy together. Do not change these contracts in this intake. |
+| Product label | Older glossary and ADR wording used “Workbench.” | The owner settled “UI catalog” and “A UI catalog for Phoenix LiveView” in [INT-20261111-06](../intent/sources/2026-11-11-06-fablebook-brand-intake.md), then reaffirmed the hierarchy in [INT-20261121-02](../intent/sources/2026-11-21-02-ui-catalog-hierarchy-and-feedback-loop.md). A Book is one adopter-defined catalog; “Books” names the collection. | Reconciled in GLOSSARY.md and ADR 0013. Keep “UI catalog” in user-facing language and do not call the Books collection “the catalog.” |
 | Story unit | One catalog entry for one component in [GLOSSARY.md](../../GLOSSARY.md); compiled story modules in [ADR 0001](../../docs/adr/0001-stories-are-compiled-modules.md); tiered story model in [ADR 0023](../../docs/adr/0023-vocabulary-scenario-and-tiers.md) | Source recommends “story” for one screen. Owner says a story currently represents one screen and leaves story versus user flow open. | Keep the existing model as historical/current contract. Resolve the product object model through an owner decision before changing docs, schema or code. |
 | Scenario and circumstance | A scenario is a fixed subject state; “Situation” is defined in [GLOSSARY.md](../../GLOSSARY.md), and [ADR 0023](../../docs/adr/0023-vocabulary-scenario-and-tiers.md) defines state vocabulary. | Owner settles “case” as the surrounding circumstance and one scenario as one screen in one case, with happy, empty, many, error and long as the current case set; “situation” and “moment” are not to be used. | Record an explicit vocabulary decision and reconcile glossary, requirements and ADR 0023 together. Preserve the broader existing state-class acceptance set until separately changed. |
 | “Canon” name | Canon is the design-knowledge model in [GLOSSARY.md](../../GLOSSARY.md), [ADR 0012](../../docs/adr/0012-canon-format.md), and [FABLEBOOK-SEED.md](../../FABLEBOOK-SEED.md). | The source recommends “domain language”; owner leaves the canon name open. | Keep “canon” in current contracts until the owner resolves the name. Do not rename the schema from this book alone. |

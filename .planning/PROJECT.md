@@ -12,7 +12,7 @@ Fablebook is a Storybook-style workbench for Phoenix LiveView. It renders every 
 
 If everything else fails, a scenario must still render with production fidelity and export an accurate context bundle. The owner keeps using phoenix_storybook until Fablebook clears `.planning/intent/CLEARANCE.md`. (INT-20261028-04)
 
-**Design canon milestone / local slot 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). It records the uncommitted source and its mapping and review limits.
+**Design canon milestone / local slot 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). Brand sourcebooks are now reproducible from the public repositories and exact commits in `brand_sources.lock.json` (`INT-20261121-01`); this does not apply them as Fablebook canon or resolve reuse rights, font/artwork rights, or name clearance.
 
 ## Last Completed Milestone: v0.6 Guard Scope Reconciliation
 
@@ -31,7 +31,7 @@ v0.5 closed locally on 2026-11-19 as a bounded evidence milestone. Phase 6 deliv
 - Cited, fixed illustrative data and clearly illustrative records/actions, with no logistics backend or external writes.
 - A literal module alias/reference contract for the public mount macro and passing development/test-only production exclusion checks before Book implementation.
 
-**Approved boundary:** This is one fixed, developer-authored compiled Book in development/test only; the exception expires at v0.7 closeout. The guard aggregate remains open and the original `walking-skeleton` key remains blocked. No Controls, user-provided values or code, audited-API use, persistence, publication, release, or follow-on milestone is included (INT-20261120-08, INT-20261120-09, INT-20261120-10, INT-20261120-11, INT-20261120-12, INT-20261120-13, INT-20261120-14; ADR 0021). See the [approved scope](research/2026-11-20-next-milestone-scope-review.md), [owner approval](intent/sources/2026-11-20-14-approve-first-book-gate-exception.md), and [rolling roadmap](references/PRODUCT-ROADMAP.md).
+**Approved boundary:** This is one fixed, developer-authored compiled Book in development/test only; the exception expires at v0.7 closeout. The guard aggregate remains open and the original `walking-skeleton` key remains blocked. No Controls, user-provided values or code, audited-API use, persistence, product publication/deployment, release, or follow-on milestone is included. A reviewed public PR may contain the minimal cited Logistify source-derived subset needed for this Book; full repositories and unrelated assets stay in the ignored cache (INT-20261120-08, INT-20261120-09, INT-20261120-10, INT-20261120-11, INT-20261120-12, INT-20261120-13, INT-20261120-14, INT-20261121-01; ADR 0021). See the [approved scope](research/2026-11-20-next-milestone-scope-review.md), [owner approvals](intent/sources/2026-11-20-14-approve-first-book-gate-exception.md) and [intent](intent/sources/2026-11-21-01-public-pinned-brand-sources.md), and [rolling roadmap](references/PRODUCT-ROADMAP.md).
 
 ## Current State
 

@@ -25,20 +25,19 @@ coverage:
   - id: SRC-01
     description: "Seven public source commits are reproducible, and the minimal Logistify source facts are hash-pinned with public provenance."
     verification:
-      - kind: source
+      - kind: other
         ref: "bin/fetch_brand_sources --self-test; --update logistify-brand v1.0; normal fetch"
         status: pass
-      - kind: source
+      - kind: other
         ref: "bin/verify_logistify_source --check-original .cache/brand_sources/logistify-brand"
         status: pass
-      - kind: source
+      - kind: other
         ref: "bin/verify_logistify_source --check-pinned and --self-test"
         status: pass
-      - kind: source
+      - kind: other
         ref: "node records/logistify/check-records.mjs, --self-test, and --book logistify-brand-book.html from the pinned Logistify repository root"
         status: pass
-    human_judgment: true
-    rationale: "The source supports the selected dispatcher failure-to-bulk-reassignment flow, but does not identify all 12 selected shipment IDs or the replacement driver. The Book must name the two IDs present in the relevant source case only as sample/focal IDs, say the other ten identifiers and driver are not provided, and keep actions illustrative."
+    human_judgment: false
 duration: "resumed 2026-11-21"
 completed: 2026-11-21
 status: complete

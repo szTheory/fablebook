@@ -1,21 +1,26 @@
 # Fablebook
 
-Fablebook is a workbench where every real state of a Phoenix LiveView UI, from a single control up to a whole screen, is shown, checked, and explained to people and to LLMs. It also holds the design-system knowledge (tokens, brand, voice, words, personas, jobs) that the UI is built from.
+Fablebook is a Phoenix library with a browser UI catalog for Phoenix LiveView. Developers use the catalog to inspect real interface states, from controls to whole screens, and the design-system knowledge those interfaces use: tokens, brand, voice, terms, personas, and jobs.
 
 This file is the only source of vocabulary. Phoenix's own words (attr, slot, assigns, LiveView, LiveComponent, HEEx, function component, root layout) keep their Phoenix meaning. For implementation-level details (events, errors, modules), see `docs/domain/DOMAIN-MODEL.md`.
 
-## Workbench
+## UI catalog
 
 **Fablebook**:
-The library and its workbench.
+The Phoenix library and its browser UI catalog.
+_Avoid_: platform
+
+**UI catalog**:
+The Fablebook interface for browsing Books, Stories and Scenarios and inspecting the selected Scenario in the Canvas. The Books collection is navigation inside this UI catalog; it is not a single Book.
+_Avoid_: workbench, manager, dashboard, explorer
+
+**Books**:
+The plural navigation label for the Books available in one Fablebook UI catalog.
+_Avoid_: catalog (for the collection)
 
 **Book**:
-One adopter-defined catalog with its own settings, mounted at one path. An app may have several Books.
+One adopter-defined catalog with its own settings and mount path. An app may mount several Books. In product language, one Book is one catalog; runtime `Fablebook.Catalog` is the resolved contents of that Book.
 _Avoid_: backend, config
-
-**Workbench**:
-The part of the interface Fablebook owns, around the canvas: sidebar, toolbar, inspector, palette.
-_Avoid_: manager, dashboard, explorer
 
 **Canvas**:
 The isolated document in which a scenario renders through the host app's own layout, styles and scripts.
@@ -28,7 +33,7 @@ _Avoid_: twin, demo app, example app
 ## Stories and scenarios
 
 **Story**:
-The catalog entry for exactly one component, its subject. It owns that component's scenarios. Every component has at most one story.
+The Book catalog entry for exactly one component, its subject. It owns that component's scenarios. Every component has at most one story.
 _Avoid_: fable, spec, story meaning a single state
 
 **Subject**:
@@ -36,7 +41,7 @@ The component a story is about. Areas and Screens must have presentational funct
 _Avoid_: target, component (when the story is meant)
 
 **Page**:
-A prose entry in the catalog, written in Markdown or HEEx, with no subject. A page may embed live scenarios.
+A prose entry in a Book's catalog, written in Markdown or HEEx, with no subject. A page may embed live scenarios.
 _Avoid_: docs entry, MDX
 
 **Scenario**:
@@ -80,7 +85,7 @@ A named visual skin a Book can render under, such as a brand theme or a white-la
 _Avoid_: token set, skin
 
 **Direction**:
-A candidate replacement for the canon's look and voice, explored before committing (greenfield or refresh). You can switch to it and compare it across the whole catalog. Choosing it makes it the canon; the alternatives are archived. Unlike a theme, it never ships.
+A candidate replacement for the canon's look and voice, explored before committing (greenfield or refresh). You can switch to it and compare it across the whole Book. Choosing it makes it the canon; the alternatives are archived. Unlike a theme, it never ships.
 _Avoid_: theme, variant, option
 
 **Placement**:
@@ -88,15 +93,15 @@ How a scenario sits inside the canvas: centered, padded, or full-screen.
 _Avoid_: layout
 
 **Appearance**:
-The workbench's own light/dark setting. It never affects the scenario. The scenario's look is set by its theme and color scheme.
+The Fablebook UI catalog's own light/dark setting. It never affects the scenario. The scenario's look is set by its theme and color scheme.
 _Avoid_: theme
 
 **Mobile layout**:
-How the workbench itself arranges when it runs on a phone-sized screen.
+How the Fablebook UI catalog arranges itself on a phone-sized screen.
 _Avoid_: review mode
 
 **Isolate**:
-The workbench view that hides everything except the canvas.
+The Fablebook UI catalog view that hides everything except the Canvas.
 _Avoid_: focus mode, zen mode
 
 **Container**:
@@ -139,14 +144,14 @@ _Avoid_: page (that is prose), view
 
 **Shell**:
 The Area that frames every screen: layout, navigation, header and flash area.
-_Avoid_: chrome (that is the workbench), frame
+_Avoid_: chrome (that is the UI catalog interface), frame
 
 **Section**:
 A navigable part of the product, such as "Deliveries". It names a folder in the sidebar and is not a tier.
 _Avoid_: surface, module
 
 **Foundations**:
-The catalog section that presents the canon: tokens, type, color, spacing, motion, imagery, voice, glossary, personas, jobs and twins. It is not a tier.
+The UI catalog section that presents the canon: tokens, type, color, spacing, motion, imagery, voice, glossary, personas, jobs and twins. It is not a tier.
 _Avoid_: base, theme
 
 ## Journeys and motion
@@ -202,7 +207,7 @@ _Avoid_: cleanup
 ## Canon
 
 **Canon**:
-The adopter's version-controlled design knowledge: tokens, terms, voice, tone, microcopy rules, personas, jobs, twins and imagery rules. The workbench shows it as Foundations.
+The adopter's version-controlled design knowledge: tokens, terms, voice, tone, microcopy rules, personas, jobs, twins and imagery rules. The UI catalog presents it as Foundations.
 _Avoid_: docs, brand assets, design knowledge
 
 **Brand canon**:
@@ -328,32 +333,32 @@ _Avoid_: notifications, inbox, triage
 ## Catalog and context
 
 **Catalog**:
-Everything one Book contains: its stories, scenarios and pages.
+The resolved contents of one Book: its Stories, Scenarios and Pages. Runtime `Fablebook.Catalog` builds this structure. In product language, the Book is that one adopter-defined catalog; “Books” names the collection in the UI catalog.
 _Avoid_: registry, index
 
 **Manifest**:
-The machine-readable description of a catalog and its component contracts.
+The machine-readable description of a Book and its component contracts.
 
 **Contract**:
 What a component declares about itself: its attrs, its slots and their documentation.
 _Avoid_: schema, API
 
 **Bundle**:
-A context package for an LLM that covers a chosen part of the catalog: images, structure, measurements and the canon it cites, all within a token budget.
+A context package for an LLM that covers a chosen part of a Book: images, structure, measurements and the canon it cites, all within a token budget.
 _Avoid_: export, dump
 
 **Budget**:
 The token limit a bundle must fit within. It decides what gets dropped.
 
 **Static export**:
-A server-free copy of a catalog (planned for v1.x).
+A server-free copy of one Book's catalog (planned for v1.x).
 _Avoid_: bundle, build
 
 ## Scope
 Fablebook covers UI that the Elixir/Phoenix app renders. Native mobile screens are out of scope.
 
 ## Relationships
-- A **Book** holds one **Catalog**, which contains **Stories** and **Pages**.
+- One **Book** defines one adopter catalog; runtime `Fablebook.Catalog` resolves its **Stories**, **Scenarios** and **Pages**.
 - A **Story** has exactly one **Subject**, a **Tier**, and one or more **Scenarios**.
 - A **Scenario** depicts one **Situation**, belongs to one or more **State classes**, and **cites** one **Persona**, one or more **Jobs** and at most one **Twin**. Citing a persona and job is required for Areas and Screens and optional for Primitives and Patterns.
 - **Coverage** sets **Stories** against **State classes**. Every **Gap** must be filled by a **Scenario** or a **Waiver**.

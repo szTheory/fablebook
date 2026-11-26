@@ -21,7 +21,7 @@ defmodule Fablebook.Router do
   """
 
   @doc """
-  Mounts the workbench for `book` at `path`.
+  Mounts the compiled catalog LiveView for `book` at `path`.
   """
   defmacro fablebook(path, book) do
     if Mix.env() == :prod do
@@ -37,8 +37,21 @@ defmodule Fablebook.Router do
       book = resolve_book(book, __CALLER__)
 
       quote do
-        require Phoenix.Router
-        Phoenix.Router.get(unquote(path), Fablebook.Placeholder, unquote(book), as: :fablebook)
+        require Phoenix.LiveView.Router
+
+        # Preserve the fully qualified call required by the router macro AST.
+        # credo:disable-for-next-line Credo.Check.Design.AliasUsage
+        Phoenix.LiveView.Router.live_session :fablebook_catalog,
+          session: %{"book" => unquote(book)} do
+          # Preserve the fully qualified call required by the router macro AST.
+          # credo:disable-for-next-line Credo.Check.Design.AliasUsage
+          Phoenix.LiveView.Router.live(
+            unquote(path),
+            Fablebook.BookLive,
+            :catalog,
+            as: :fablebook
+          )
+        end
       end
     end
   end

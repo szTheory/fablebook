@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+fail() {
+  printf 'operator host verification: %s\n' "$*" >&2
+  exit 1
+}
+
+script_dir="$(cd -- "$(dirname -- "$0")" && pwd -P)"
+repo_root="$(cd -- "$script_dir/.." && pwd -P)"
+host_dir="$repo_root/hosts/operator"
+build_lane="core"
+if [[ "${FABLEBOOK_FLOOR:-}" == "1" ]]; then
+  build_lane="floor"
+fi
+
+run_mix() {
+  local mix_env="$1"
+  shift
+  (
+    cd -- "$host_dir"
+    if [[ "$mix_env" == "dev" ]]; then
+      env -u FABLEBOOK_FLOOR -u FABLEBOOK_OPERATOR_SERVER -u FABLEBOOK_OPERATOR_UNGUARDED \
+        MIX_ENV="$mix_env" mix "$@"
+    elif [[ "$mix_env" == "prod" ]]; then
+      env -u FABLEBOOK_OPERATOR_SERVER -u FABLEBOOK_OPERATOR_UNGUARDED \
+        FABLEBOOK_OPERATOR_SECRET_KEY_BASE="$(openssl rand -hex 64)" \
+        MIX_ENV="$mix_env" mix "$@"
+    else
+      env -u FABLEBOOK_OPERATOR_SERVER -u FABLEBOOK_OPERATOR_UNGUARDED \
+        MIX_ENV="$mix_env" mix "$@"
+    fi
+  )
+}
+
+cleanup() {
+  run_mix prod clean >/dev/null 2>&1 || true
+  rm -f "$repo_root/_build/operator_host/$build_lane/build/prod/lib/operator_host/ebin/Elixir.OperatorHost.Unguarded.ReachableMount.beam"
+}
+trap cleanup EXIT
+
+[[ -d "$host_dir" ]] || fail "missing host project at $host_dir"
+
+git -C "$repo_root" diff --exit-code origin/main -- mix.exs mix.lock mix.floor.lock >/dev/null ||
+  fail "root library dependency declarations or locks differ from origin/main"
+
+id_probe='{:ok, catalog} = Fablebook.Catalog.build(OperatorHost.Book); ids = for story <- catalog.stories, scenario <- story.scenarios, do: "#{story.id}/#{scenario.id}"; IO.puts("FABLEBOOK_IDS=#{Enum.join(ids, ",")}")'
+
+for mix_env in dev test; do
+  run_mix "$mix_env" clean >/dev/null
+  run_mix "$mix_env" compile --warnings-as-errors >/dev/null
+done
+
+dev_ids="$(run_mix dev run -e "$id_probe" | sed -n 's/^.*FABLEBOOK_IDS=//p' | tail -n 1)"
+test_ids="$(run_mix test run -e "$id_probe" | sed -n 's/^.*FABLEBOOK_IDS=//p' | tail -n 1)"
+[[ "$dev_ids" == "$test_ids" ]] || fail "compiled Story/Scenario IDs differ between dev and test"
+[[ "$dev_ids" == "dispatcher_recovery/failed_shipment,dispatcher_recovery/bulk_reassignment" ]] ||
+  fail "unexpected compiled Story/Scenario IDs: $dev_ids"
+
+test_boundary='false = OperatorHost.Endpoint.config(:server); false = Code.ensure_loaded?(Bandit.PhoenixAdapter); IO.write("test boundary passed")'
+test_output="$(cd -- "$host_dir" && FABLEBOOK_OPERATOR_SERVER=1 MIX_ENV=test mix run -e "$test_boundary")"
+[[ "$test_output" == *"test boundary passed"* ]] || fail "test environment exposes the listener or Bandit adapter"
+
+production_probe='routes = Phoenix.Router.routes(OperatorHost.Router); true = Enum.any?(routes, &(&1.path == "/" and &1.verb == :get and &1.plug == OperatorHost.Home)); false = Enum.any?(routes, &String.starts_with?(&1.path, "/admin/dev/fablebook")); host_beams = Path.wildcard(Path.join(Mix.Project.compile_path(), "*.beam")); host_modules = Enum.map(host_beams, fn beam -> {:ok, {module, [_ | _]}} = :beam_lib.chunks(String.to_charlist(beam), [:compile_info]); module end); false = Enum.any?(host_modules, fn module -> name = Atom.to_string(module); name == "Elixir.OperatorHost.Book" or String.starts_with?(name, "Elixir.OperatorHost.Book.") end); false = Code.ensure_loaded?(OperatorHost.Book); false = OperatorHost.Endpoint.config(:server); false = Code.ensure_loaded?(Bandit.PhoenixAdapter); false = Code.ensure_loaded?(HPAX); false = Code.ensure_loaded?(ThousandIsland); IO.write("production boundary passed")'
+
+run_mix prod clean >/dev/null
+run_mix prod compile --warnings-as-errors >/dev/null
+production_output="$(cd -- "$host_dir" && FABLEBOOK_OPERATOR_SECRET_KEY_BASE="$(openssl rand -hex 64)" FABLEBOOK_OPERATOR_SERVER=1 MIX_ENV=prod mix run -e "$production_probe")"
+[[ "$production_output" == *"production boundary passed"* ]] ||
+  fail "the host production build retained Book code, routes, or adapter packages"
+
+run_mix prod clean >/dev/null
+set +e
+negative_output="$(cd -- "$host_dir" && FABLEBOOK_OPERATOR_UNGUARDED=1 MIX_ENV=prod mix compile --warnings-as-errors 2>&1)"
+negative_status=$?
+set -e
+
+canonical="Fablebook cannot be mounted in a prod build"
+canonical_count="$(printf '%s\n' "$negative_output" | awk -v marker="$canonical" 'BEGIN { count = 0 } { line = $0; while ((position = index(line, marker)) > 0) { count++; line = substr(line, position + length(marker)) } } END { print count }')"
+[[ "$negative_status" -ne 0 ]] || fail "the reachable production mount unexpectedly compiled"
+[[ "$canonical_count" == "1" ]] || fail "expected one canonical production error, found $canonical_count"
+[[ "$negative_output" == *"Application.compile_env(:operator_host, :dev_routes)"* ]] ||
+  fail "the reachable production mount emitted the wrong diagnostic"
+
+printf 'operator host production verification passed\n'
+printf 'Compiled IDs: %s\n' "$dev_ids"
