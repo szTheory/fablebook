@@ -6,7 +6,7 @@
 
 The v0.7 exception calls for a locally openable Phoenix host so a developer can inspect one fixed compiled Book through the real catalog and Canvas. The reviewed root `mix.lock` and `mix.floor.lock` contain no installed Bandit or Plug.Cowboy package entries; Phoenix lists them only as optional adapter dependencies. A Phoenix endpoint without an adapter cannot serve the local URL required for a browser inspection.
 
-The source-grounded scope and adapter audit are recorded in [Phase 8 research](../../.planning/phases/08-first-inspectable-book-and-local-host-path/08-RESEARCH.md). Hex currently lists Bandit 1.15.0 as an MIT package, with no advisory affecting that version. Its dependency requirements include HPAX and Thousand Island; the selected host pins are kept separate from the library locks.
+The source-grounded scope and adapter audit are recorded in [Phase 8 research](../../.planning/milestones/v0.7-phases/08-first-inspectable-book-and-local-host-path/08-RESEARCH.md). Hex currently lists Bandit 1.15.0 as an MIT package, with no advisory affecting that version. Its dependency requirements include HPAX and Thousand Island; the selected host pins are kept separate from the library locks.
 
 ## Decision
 

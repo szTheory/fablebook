@@ -351,3 +351,54 @@ remain required. The focused check belongs before hosted full lanes for
 planning changes; one event does not justify adding it as duplicate work to
 every CI run. Measure that tradeoff if the early gate is proposed. The local
 `act` stop is unchanged and was not retried.
+
+## Hosted Phase 8 final head and post-merge main — 2026-11-26
+
+PR #106 reviewed head `4f6648234530cff9de65a09fa7aa370aa4151b43` passed all
+required checks in [run 45756117110](https://github.com/szTheory/fablebook/actions/runs/45756117110)
+in 10m22s, then merged as `3cb5a52bf7faf97ba5fb2c38783a58ebe116b413`. The
+merge-triggered [main CI run 45757588558](https://github.com/szTheory/fablebook/actions/runs/45757588558)
+also passed in 10m42s. Core took 9m15s (`mix ci` 8m21s); floor took 10m31s
+(the production-guard test step 9m21s), setting the critical path. Security
+took 34s, Dialyzer 32s, and `ci-gate` 5s. All jobs started about two seconds
+after run creation and core/floor overlapped. The final PR-head run took
+10m22s: core was 9m30s (`mix ci` 8m25s), floor 10m13s (production-guard
+tests 9m04s), security 37s, Dialyzer 24s, and `ci-gate` 4s.
+
+The paired [release-please run 45757588572](https://github.com/szTheory/fablebook/actions/runs/45757588572)
+completed in 49s and skipped its publish job; no release occurred. The core
+and floor suites dominate elapsed time, while checkout/setup and the source,
+host-route, and production-boundary checks before the suites are short. The
+lanes already run concurrently, and this one timing comparison does not show a
+repeatable regression or a safe structural reduction. Keep all required lanes,
+security checks, and early consistency checks unchanged. The local `act`
+no-retry stop remains because the ARM64 OTP versus amd64 container mismatch is
+unresolved; it was not retried.
+
+## Hosted v0.7 closeout initial PR head — 2026-11-26
+
+Closeout PR #107 head `34ba30699dc7ca1f3527f1d0bddd369b7042f035` failed
+[run 45762464609](https://github.com/szTheory/fablebook/actions/runs/45762464609)
+in about 43 seconds. Both core and floor stopped at the early
+`bin/verify_logistify_source --check-pinned` step because the verifier looked
+only in the active phase directory after the v0.7 archive moved its manifest
+under `.planning/milestones/v0.7-phases/`. Security and Dialyzer passed; neither
+test suite started. The standalone self-test passed locally, while the pinned
+check reproduced the missing-path failure before the fix. The verifier now
+resolves the active manifest first and otherwise requires one unambiguous
+archived manifest. The self-test and pinned-source check passed locally before
+the next hosted run. The early check exposed the archive bug before the two
+full test lanes could run; keep all checks and lanes intact.
+
+Follow-up head `b8c568f6127f089408e38a5589534178fa485fff` failed
+[run 45763034221](https://github.com/szTheory/fablebook/actions/runs/45763034221)
+in 43 seconds. The source self-test and pinned check passed, but each lane's
+focused operator-host check found one failing assertion: the host test still
+read the manifest from the old active-phase path. The floor log reported 19
+tests and 1 failure. Security passed; neither full core nor floor suite
+started. The test fixture now reads the archived manifest, and the ADR research
+link now points to its archived location. The host test started about 23–24
+seconds into each job and took
+12–14 seconds. These early checks caught two separate archive path assumptions
+without spending time on the full suites. Keep the full checks and lanes
+unchanged.

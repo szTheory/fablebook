@@ -9,7 +9,7 @@ defmodule OperatorHost.OperatorBookTest do
   @scenario "/admin/dev/fablebook/canvas/operator/dispatcher_recovery/failed_shipment"
   @app_css Path.expand("../priv/static/assets/app.css", __DIR__)
   @source_manifest Path.expand(
-                     "../../../.planning/phases/08-first-inspectable-book-and-local-host-path/08-LOGISTIFY-SOURCE.json",
+                     "../../../.planning/milestones/v0.7-phases/08-first-inspectable-book-and-local-host-path/08-LOGISTIFY-SOURCE.json",
                      __DIR__
                    )
   @source_records Path.expand(

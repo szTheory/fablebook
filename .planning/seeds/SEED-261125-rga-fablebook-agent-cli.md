@@ -5,6 +5,10 @@ planted: 2026-11-25
 planted_during: v0.7 Phase 8 — First Inspectable Book
 trigger_when: When a future milestone is explicitly scoped around LLM-agent access, after the owner has put the local operator UI in a good place.
 scope: Discovery required; a local CLI and a remote authenticated diagnose/fix API may need separate slices.
+audit_acknowledged:
+  milestone: v0.7
+  at: 2026-11-25
+  status: dormant
 ---
 
 # SEED-261125-rga: LLM-oriented Fablebook CLI and authenticated agent workflows

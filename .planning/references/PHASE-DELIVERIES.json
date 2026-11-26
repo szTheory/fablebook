@@ -70,6 +70,16 @@
       "reviewed_head": "d74b21a07a67d4b526576fc09833ffafe99cded1",
       "merge_commit": "0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d",
       "ci_run": "https://github.com/szTheory/fablebook/actions/runs/44827619883"
+    },
+    {
+      "milestone": "v0.7",
+      "milestone_key": "first-inspectable-book",
+      "phase": "8",
+      "status": "merged",
+      "pr": 106,
+      "reviewed_head": "4f6648234530cff9de65a09fa7aa370aa4151b43",
+      "merge_commit": "3cb5a52bf7faf97ba5fb2c38783a58ebe116b413",
+      "ci_run": "https://github.com/szTheory/fablebook/actions/runs/45756117110"
     }
   ]
 }
