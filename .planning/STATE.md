@@ -3,18 +3,18 @@ gsd_state_version: "1.0"
 milestone: v0.7
 milestone_name: First Inspectable Book
 current_phase: 8
-current_phase_name: First inspectable Book and local host path
+current_phase_name: READY FOR VERIFICATION
 status: executing
-stopped_at: null
-last_updated: "2026-11-26T00:58:03.070Z"
-last_activity: 2026-11-25
-last_activity_desc: Phase 8 planning complete — 6 plans ready
-state_head: 12b242c250222002d791d402a3dd03bc784c58b0
+stopped_at: Completed Phase 8 plan 08-06; proceeding through verification and review
+last_updated: "2026-11-26T01:51:59.785Z"
+last_activity: 2026-11-26
+last_activity_desc: "Plan 08-06 completed: footer and catalog CSS coverage passed, with first-fact visibility at both mobile widths and a passing 200% text-size focus/overflow check."
+state_head: f0a0db8c6c321c1df544b70ccb57175a975aa542
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
   percent: 0
 ---
 
@@ -39,12 +39,12 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-21), [ROADMAP.md](ROADMAP.md), the
 
 ## Current Position
 
-Phase: 8 (First inspectable Book and local host path) — READY TO EXECUTE
-Plan: 08-06 ready to execute; 5 of 6 plans complete; delivery incomplete
+Phase: 8 (First inspectable Book and local host path) — READY FOR VERIFICATION
+Plan: 6 of 6
 Total Plans in Phase: 6
 Status: Authorized work continues; delivery incomplete
-Last activity: 2026-11-25 — planned the verified UI-SPEC gap closure and clarified source-check scope
-Last Activity Description: Plan 08-06 passed independent plan review; execute the UI closure before refreshing goal verification
+Last activity: 2026-11-26 — completed plan 08-06 and its focused browser checks
+Last Activity Description: Plan 08-06 completed: footer and catalog CSS coverage passed, with first-fact visibility at both mobile widths and a passing 200% text-size focus/overflow check.
 
 
 ## Active Handoff
@@ -79,6 +79,7 @@ Last Activity Description: Plan 08-06 passed independent plan review; execute th
 | Phase 03 P03 | not captured | 2 tasks | 8 files |
 | Phase 06 P01 | 17 min | 1 tasks | 2 files |
 | Phase 8 P01 | 12 | 1 tasks | 1 files |
+| Phase 8 P06 | 17 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -175,9 +176,9 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-26T00:59:32Z
-**Stopped at:** Phase 8 UAT is complete 6/6. The owner accepted the visual baseline (INT-20261125-04), accepted the existing Chrome ready/failure evidence as manual verification (INT-20261125-05), and clarified that source custody is an authoring/CI gate only (INT-20261125-06). Plan 08-06 passed independent plan review and is ready to execute in `/private/tmp/fablebook-v07-phase8-screenshot-free` on `gsd/phase-8-first-inspectable-book`. Draft PR #106 public head `2e648f5efa4c440541d0cd25b397370d8637af05` passed required CI run 45713720366, but does not include the local gap plan or final evidence. Execute plan 08-06 and its host/browser checks, then refresh verification through the phase gates before ship review. Obtain exact-head hosted CI, merge, record delivery and close v0.7. Preserve the dirty canonical checkout and earlier linked candidate checkout. Existing guard aggregate, walking-skeleton, R9 and SEC-01 stops remain unchanged. No deploy, release or new milestone.
-**Resume file:** .planning/phases/08-first-inspectable-book-and-local-host-path/08-05-RESUMPTION-2026-11-25.md
+**Last session:** 2026-11-26T01:50:42.916Z
+**Stopped at:** Completed Phase 8 plan 08-06; proceeding through verification and review
+**Resume file:** None
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5's four selected EX-177 rows now have the reviewed source/caller facts recorded by discovery and Phase 6; the other 9,712 rows remain unchanged. Package-wide caller closure remains unproven, R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was reread for Phase 6. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
@@ -200,6 +201,7 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 - [Phase 03]: Bind all scope counts and pending-complement digests to the immutable lane records and compact keyed projection.
 - [Phase 06]: Phoenix source paths remain recorded values and are excluded from the checker read allowlist. — The checker must not inspect the recorded Phoenix source targets; it reads only the approved saved evidence files.
 - [Phase 06]: One observed direct run/1 call per lane is not exhaustive caller closure. — The reviewed discovery establishes only one observed direct call per lane; dynamic, delegated, callback, and external callers remain open.
+- [Phase 8]: The Canvas source styling and source-check boundary remain unchanged; meet the narrow layout through catalog-shell spacing while keeping compact Scenario targets at 44px. — This closes the approved UI-SPEC gaps without changing authored Canvas content, source custody, or the fixed navigation contract.
 
 ### Blockers
 

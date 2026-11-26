@@ -41,13 +41,13 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 - [x] 08-03-PLAN.md — Merge the separate contract test (PR #100) and prove dev/test fixture inclusion plus positive/negative production controls (PR #101).
 
 **Wave 3** *(local implementation complete; delivery uses the Wave 4 acceptance)*
-- [ ] 08-04-PLAN.md — Render the first compiled Scenario through the local Phoenix catalog and Canvas.
+- [x] 08-04-PLAN.md — Render the first compiled Scenario through the local Phoenix catalog and Canvas.
 
 **Wave 4** *(local checks complete; prerequisite PR splits and Phoenix security pins are delivered; the owner accepted the visual baseline; the UI-SPEC closure and Phase 8 delivery remain)*
-- [ ] 08-05-PLAN.md — Complete the dispatcher flow, prove the actual host boundary and verify the final candidate.
+- [x] 08-05-PLAN.md — Complete the dispatcher flow, prove the actual host boundary and verify the final candidate.
 
 **Wave 5** *(after 08-05; closes the remaining approved UI-SPEC deviations)*
-- [ ] 08-06-PLAN.md — Restore the exact Canvas notice footer contract and bring catalog chrome onto the approved accessibility and visual scales.
+- [x] 08-06-PLAN.md — Restore the exact Canvas notice footer contract and bring catalog chrome onto the approved accessibility and visual scales.
 
 **UI hint**: yes
 
@@ -62,7 +62,7 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 8. First inspectable Book and local host path | 3/6 delivered | Plan 08-06 addresses the remaining UI-SPEC implementation gap; see [08-VERIFICATION.md](phases/08-first-inspectable-book-and-local-host-path/08-VERIFICATION.md) | - |
+| 8. First inspectable Book and local host path | 6/6 | Plan 08-06 addresses the remaining UI-SPEC implementation gap; see [08-VERIFICATION.md](phases/08-first-inspectable-book-and-local-host-path/08-VERIFICATION.md) | - |
 
 ## Completed milestones
 

@@ -20,9 +20,9 @@ This milestone is the narrowly approved first-Book exception in [INT-20261120-14
 
 ### Catalog and Book
 
-- [ ] **CAT-01**: A developer can start the local host, open the Fablebook UI catalog, select the single operator Book, and move through its two or three addressable screens using minimal navigation. (INT-20261120-08, INT-20261120-09, INT-20261120-14, ADR 0013)
+- [x] **CAT-01**: A developer can start the local host, open the Fablebook UI catalog, select the single operator Book, and move through its two or three addressable screens using minimal navigation. (INT-20261120-08, INT-20261120-09, INT-20261120-14, ADR 0013)
 - [ ] **CAT-02**: The operator Book is developer-authored and compiled from Fablebook Story/Scenario modules, appears in the catalog in development and test, and does not load stories dynamically or evaluate runtime input. (INT-20261120-09, INT-20261120-14, ADR 0001, ADR 0008)
-- [ ] **CANVAS-01**: Each Book screen renders through the real host Canvas path in a same-origin iframe, inheriting the host pipeline and root layout with its CSS, JavaScript, hooks, fonts and CSP. (INT-20261120-08, INT-20261120-14, ADR 0003)
+- [x] **CANVAS-01**: Each Book screen renders through the real host Canvas path in a same-origin iframe, inheriting the host pipeline and root layout with its CSS, JavaScript, hooks, fonts and CSP. (INT-20261120-08, INT-20261120-14, ADR 0003)
 - [ ] **BOOK-01**: The Book presents one source-supported dispatcher job with a normal state and a meaningful source-supported edge or error state, deterministic fixed cited data, and visibly illustrative records and actions; it creates no persistent state or external writes. (INT-20261120-08, INT-20261120-09, INT-20261120-14, ADR 0002)
 
 ## Future Requirements
@@ -49,9 +49,9 @@ This milestone is the narrowly approved first-Book exception in [INT-20261120-14
 | MOUNT-01 | Phase 8 | Pending |
 | HOST-01 | Phase 8 | Pending |
 | HOST-02 | Phase 8 | Pending |
-| CAT-01 | Phase 8 | Pending |
+| CAT-01 | Phase 8 | Complete |
 | CAT-02 | Phase 8 | Pending |
-| CANVAS-01 | Phase 8 | Pending |
+| CANVAS-01 | Phase 8 | Complete |
 | BOOK-01 | Phase 8 | Pending |
 
 **Coverage:**
