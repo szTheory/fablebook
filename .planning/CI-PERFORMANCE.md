@@ -386,6 +386,19 @@ under `.planning/milestones/v0.7-phases/`. Security and Dialyzer passed; neither
 test suite started. The standalone self-test passed locally, while the pinned
 check reproduced the missing-path failure before the fix. The verifier now
 resolves the active manifest first and otherwise requires one unambiguous
-archived manifest. The same cheap pinned check and self-test must pass locally
-before the next hosted run. The early check exposed the archive bug before the
-two full test lanes could run; keep all checks and lanes intact.
+archived manifest. The self-test and pinned-source check passed locally before
+the next hosted run. The early check exposed the archive bug before the two
+full test lanes could run; keep all checks and lanes intact.
+
+Follow-up head `b8c568f6127f089408e38a5589534178fa485fff` failed
+[run 45763034221](https://github.com/szTheory/fablebook/actions/runs/45763034221)
+in 43 seconds. The source self-test and pinned check passed, but each lane's
+focused operator-host check found one failing assertion: the host test still
+read the manifest from the old active-phase path. The floor log reported 19
+tests and 1 failure. Security passed; neither full core nor floor suite
+started. The test fixture now reads the archived manifest, and the ADR research
+link now points to its archived location. The host test started about 23–24
+seconds into each job and took
+12–14 seconds. These early checks caught two separate archive path assumptions
+without spending time on the full suites. Keep the full checks and lanes
+unchanged.
