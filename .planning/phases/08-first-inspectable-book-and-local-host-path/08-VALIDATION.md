@@ -1,7 +1,7 @@
 ---
 phase: "8"
 slug: "first-inspectable-book-and-local-host-path"
-status: partial
+status: validated
 nyquist_compliant: false
 wave_0_complete: true
 created: "2026-11-20"
@@ -57,6 +57,8 @@ Task IDs follow each plan's task order. The red baseline entry runs the named te
 | 08-05-01 | 08-05 | 4 | SRC-01, CAT-01, CAT-02, CANVAS-01, BOOK-01 | T-08-07, T-08-11 | Complete fixed Story renders deterministically with provenance and precise UI states | Source/host integration | `bin/verify_logistify_source --check-pinned`; `(cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors)`; focused additions: `(cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs:116 --warnings-as-errors)` and `(cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs:232 --warnings-as-errors)` | Host tests and source verifier; new cases in `hosts/operator/test/operator_host_test.exs` | ✅ source/host checks passed; new empty-Book and zero/one/many long-row tests each passed. Canvas JS lifecycle remains manual-only by INT-20261125-05. |
 | 08-05-02 | 08-05 | 4 | HOST-01, HOST-02, CAT-02 | T-08-09, T-08-10 | Actual host excludes the feature and adapter in production and fails the reachable control. The Book PR contains no root dependency edits beyond the separately merged security prerequisite. | Compile/host | `bin/verify_operator_host_prod`; `mix test test/contract/prod_guard_test.exs --include prod_guard`; inspect root dependency diff against the security-only merged base | Actual-host checker and fixture controls | ✅ core/floor actual-host controls and exact-head hosted CI passed; see 08-05-SUMMARY.md |
 | 08-05-03 | 08-05 | 4 | CANVAS-01, CAT-01, BOOK-01 | T-08-12, T-08-13 | Exact candidate review, real-host evidence and separately authorized delivery | Browser and PR gate | `git diff --check origin/main...HEAD`; `HEX_HOME="$PWD/_build/hex-home" MIX_ENV=test bin/lane core mix ci`; collect actual browser evidence per 08-05-03 | Existing Git/Mix and actual-browser evidence | ✅ actual-host browser evidence and exact-head required hosted CI passed; see 08-BROWSER.md and 08-05-SUMMARY.md |
+| 08-06-01 | 08-06 | 5 | CANVAS-01 | T-08-14 | Both fixed Scenario responses render the approved persistent notice in a semantic footer outside `main` | Host integration | `(cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors)` | `hosts/operator/test/operator_host_test.exs` | ✅ passed locally; see 08-06-SUMMARY.md |
+| 08-06-02 | 08-06 | 5 | CAT-01, CANVAS-01 | T-08-15 | Catalog contrast, focus, targets, typography and spacing meet the UI-SPEC; the first Scenario fact fits at both mobile widths | CSS contract and browser geometry | `(cd hosts/operator && MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors)`; Playwright at 320×900, 375×812 and simulated 200% text sizing | `hosts/operator/test/operator_host_test.exs`; live host at `/admin/dev/fablebook` | ✅ 19 host tests and browser geometry passed; see 08-06-SUMMARY.md |
 
 ---
 
@@ -77,6 +79,7 @@ Task IDs follow each plan's task order. The red baseline entry runs the named te
 |----------|-------------|------------|-------------------|
 | Host Canvas fidelity, keyboard/focus behavior, labels, status text, narrow/desktop layout | CANVAS-01, CAT-01 | Browser behavior, inherited assets/CSP, and keyboard focus must be observed in the real host | Run the local host in the background and open it in the owner's browser. Check 320, 375, 768 and 1280px and 200% text zoom. Record actual Canvas assets, CSP, keyboard and preview output in `08-BROWSER.md`; do not publish screenshot artifacts. |
 | Canvas ready/failure status transition | CANVAS-01 | Owner-approved manual-only item. The owner accepted existing Chrome/UAT evidence as sufficient and said no new automated JavaScript transition test is requested in [INT-20261125-05](../../intent/sources/2026-11-25-05-accept-canvas-lifecycle-browser-evidence.md). The test suite does not execute these transitions. | Existing ready and injected-failure observations are recorded in [08-BROWSER.md](08-BROWSER.md) and [08-UAT.md](08-UAT.md). Status: SKIP automation by explicit owner decision; no additional test is implied. |
+| Initial Scenario fact at narrow widths and focus at 200% text sizing | CAT-01, CANVAS-01 | The accepted scope is browser geometry, keyboard focus and content availability; measurements are recorded in the 08-06 summary | Playwright at `http://127.0.0.1:4003/admin/dev/fablebook`; 320×900, 375×812, then doubled computed text sizes in host and Canvas DOM | `08-06-SUMMARY.md` records first-fact coordinates, page/Canvas widths, link dimensions and visible focus. Screenshot artifacts are excluded. |
 | Any owner-only judgment on a new or changed visual baseline | CANVAS-01 | Baseline acceptance is a visual owner decision | Finish objective work first, then use the live local Book at the end-of-milestone review. The owner decides whether to accept or reject the baseline; do not treat opening the Book as acceptance. |
 | Final delivery of the cited source-derived candidate | SRC-01, BOOK-01 | Public citations and the minimal approved excerpt/Book content may appear in a reviewed public PR under INT-20261121-01; complete repos/assets stay in the ignored cache | Review the complete outbound diff and keep it within the approved subset. No private route or extra source-visibility decision is needed; deployment, release, and marketing claims remain excluded. |
 
@@ -90,8 +93,8 @@ Task IDs follow each plan's task order. The red baseline entry runs the named te
 | REQUIREMENTS | SRC-01 source custody, exact bytes and citations | 08-01, 08-04, 08-05 | Covered |
 | REQUIREMENTS | MOUNT-01 literal caller AST and separately delivered contract | 08-02, 08-03 | Covered |
 | REQUIREMENTS | HOST-01 and HOST-02 dev/test inclusion and positive/negative prod boundary | 08-03, 08-04, 08-05 | Covered |
-| REQUIREMENTS | CAT-01 and CAT-02 fixed compiled catalog, same IDs and stable navigation with safe unknowns | 08-04, 08-05 | Covered |
-| REQUIREMENTS | CANVAS-01 actual same-origin Phoenix inherited Canvas and real browser | 08-04, 08-05 | Covered |
+| REQUIREMENTS | CAT-01 and CAT-02 fixed compiled catalog, same IDs and stable navigation with safe unknowns | 08-04, 08-05, 08-06 | Covered |
+| REQUIREMENTS | CANVAS-01 actual same-origin Phoenix inherited Canvas and real browser | 08-04, 08-05, 08-06 | Covered |
 | REQUIREMENTS | BOOK-01 one deterministic sourced dispatcher job and meaningful ordinary/edge situations | 08-01, 08-04, 08-05 | Covered |
 | RESEARCH | Exact public source commits, preserved hashes, exact excerpt bytes, and no inferred claims | 08-01 and 08-04 dependency | Covered |
 | RESEARCH | Public macro validation before resolution, canonical prod error and separate delivery | 08-02, 08-03 | Covered |
@@ -101,7 +104,7 @@ Task IDs follow each plan's task order. The red baseline entry runs the named te
 | CONTEXT | Literal AST, separate hosted CI, canonical compile timing and both production controls | 08-02, 08-03, 08-05 | Covered |
 | CONTEXT | Neutral shell, preview-only sourced tokens, minimal navigation and safe selection | 08-04, 08-05 | Covered |
 | CONTEXT | Cheap checks first, one actual browser pass and owner-only baseline acceptance | 08-01, 08-03, 08-04, 08-05 | Covered |
-| UI-SPEC | 20 explicit states and one overflow backstop, with two non-blocking checker flags | 08-05 | Covered by focused tests and browser evidence; lifecycle automation is the explicit manual-only exception in INT-20261125-05 |
+| UI-SPEC | 20 explicit states and one overflow backstop, with two non-blocking checker flags | 08-05, 08-06 | Covered by focused host and CSS checks plus browser geometry; lifecycle automation is the explicit manual-only exception in INT-20261125-05 |
 
 API coverage and schema review found no external or audited API integration, new schema, or database. The catalog addresses only this fixed Book. Source provenance is locked, its three original file hashes and cited excerpts pass locally, and the source-derived limits are recorded in the manifest. The listener is supplied by the isolated development host lock. INT-20261121-01 authorizes the minimal public PR content; the complete repositories and assets stay ignored, and deployment/release remain excluded. The two-stage per-requirement recall kept 15 scope, safety and transparency prohibitions. All 15 are present as descriptor-less, flagged-unverified entries across the five plans. Routine layout and correctness cases are represented in the focused checks. Standard injection and cross-origin threats are owned by the phase threat models.
 
@@ -120,7 +123,7 @@ The revised projection is **69,500 calibrated tokens** from 139,000 raw using th
 - [x] Focused feedback latency measured against the 2-minute target: both new tests completed individually in under one second of ExUnit runtime.
 - [ ] `nyquist_compliant: true` set in frontmatter during validation closeout. It remains `false` because the owner accepted manual-only evidence for the JS lifecycle transition; this is an explicit, bounded exception, not automated coverage.
 
-**Approval:** partial — all objective coverage gaps tested here are green; the ready/failure transition remains manual-only by explicit owner decision.
+**Approval:** validated (partial) — all objective coverage gaps are green; the ready/failure transition remains manual-only by explicit owner decision.
 
 ## Validation Audit 2026-11-25
 
@@ -128,4 +131,12 @@ The revised projection is **69,500 calibrated tokens** from 139,000 raw using th
 |---|---|
 | Gaps found | 3 |
 | Resolved | 2 |
+| Escalated | 0 |
+
+## Validation Audit 2026-11-26
+
+| Metric | Count |
+|---|---|
+| Gaps found | 0 |
+| Resolved | 0 |
 | Escalated | 0 |
