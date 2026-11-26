@@ -10,20 +10,20 @@ This milestone is the narrowly approved first-Book exception in [INT-20261120-14
 
 ### Source grounding
 
-- [ ] **SRC-01**: Before the Book uses Logistify source content, the exact text/token subset is reproducible from public commit-pinned sources and SHA-256 checked; every cited content claim and fixture maps to its repository, tag, commit, file, and section. (INT-20261120-08, INT-20261111-06, INT-20261120-14, INT-20261121-01)
+- [x] **SRC-01**: Before the Book uses Logistify source content, the exact text/token subset is reproducible from public commit-pinned sources and SHA-256 checked; every cited content claim and fixture maps to its repository, tag, commit, file, and section. (INT-20261120-08, INT-20261111-06, INT-20261120-14, INT-20261121-01)
 
 ### Mount and production boundary
 
-- [ ] **MOUNT-01**: The public mount macro accepts only literal module alias/reference AST forms and rejects other expressions before expanding them; its contract tests and implementation land in separate PRs. (INT-20261120-14, ADR 0021)
-- [ ] **HOST-01**: A production build has no Fablebook route and no compiled Story or Book modules, while development and test can compile the fixed Book. (INT-20261120-14, ADR 0001, ADR 0006)
-- [ ] **HOST-02**: A reachable production mount fails compilation with the canonical Fablebook production-mount error; a negative production control proves the rejection. (INT-20261120-14, ADR 0006)
+- [x] **MOUNT-01**: The public mount macro accepts only literal module alias/reference AST forms and rejects other expressions before expanding them; its contract tests and implementation land in separate PRs. (INT-20261120-14, ADR 0021)
+- [x] **HOST-01**: A production build has no Fablebook route and no compiled Story or Book modules, while development and test can compile the fixed Book. (INT-20261120-14, ADR 0001, ADR 0006)
+- [x] **HOST-02**: A reachable production mount fails compilation with the canonical Fablebook production-mount error; a negative production control proves the rejection. (INT-20261120-14, ADR 0006)
 
 ### Catalog and Book
 
 - [x] **CAT-01**: A developer can start the local host, open the Fablebook UI catalog, select the single operator Book, and move through its two or three addressable screens using minimal navigation. (INT-20261120-08, INT-20261120-09, INT-20261120-14, ADR 0013)
-- [ ] **CAT-02**: The operator Book is developer-authored and compiled from Fablebook Story/Scenario modules, appears in the catalog in development and test, and does not load stories dynamically or evaluate runtime input. (INT-20261120-09, INT-20261120-14, ADR 0001, ADR 0008)
+- [x] **CAT-02**: The operator Book is developer-authored and compiled from Fablebook Story/Scenario modules, appears in the catalog in development and test, and does not load stories dynamically or evaluate runtime input. (INT-20261120-09, INT-20261120-14, ADR 0001, ADR 0008)
 - [x] **CANVAS-01**: Each Book screen renders through the real host Canvas path in a same-origin iframe, inheriting the host pipeline and root layout with its CSS, JavaScript, hooks, fonts and CSP. (INT-20261120-08, INT-20261120-14, ADR 0003)
-- [ ] **BOOK-01**: The Book presents one source-supported dispatcher job with a normal state and a meaningful source-supported edge or error state, deterministic fixed cited data, and visibly illustrative records and actions; it creates no persistent state or external writes. (INT-20261120-08, INT-20261120-09, INT-20261120-14, ADR 0002)
+- [x] **BOOK-01**: The Book presents one source-supported dispatcher job with a normal state and a meaningful source-supported edge or error state, deterministic fixed cited data, and visibly illustrative records and actions; it creates no persistent state or external writes. (INT-20261120-08, INT-20261120-09, INT-20261120-14, ADR 0002)
 
 ## Future Requirements
 
@@ -45,14 +45,14 @@ This milestone is the narrowly approved first-Book exception in [INT-20261120-14
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SRC-01 | Phase 8 | Pending |
-| MOUNT-01 | Phase 8 | Pending |
-| HOST-01 | Phase 8 | Pending |
-| HOST-02 | Phase 8 | Pending |
+| SRC-01 | Phase 8 | Complete |
+| MOUNT-01 | Phase 8 | Complete |
+| HOST-01 | Phase 8 | Complete |
+| HOST-02 | Phase 8 | Complete |
 | CAT-01 | Phase 8 | Complete |
-| CAT-02 | Phase 8 | Pending |
+| CAT-02 | Phase 8 | Complete |
 | CANVAS-01 | Phase 8 | Complete |
-| BOOK-01 | Phase 8 | Pending |
+| BOOK-01 | Phase 8 | Complete |
 
 **Coverage:**
 - v1 requirements: 8 total

@@ -10,7 +10,7 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 
 ## Phases
 
-- [ ] **Phase 8: First inspectable Book and local host path** - Open and navigate one source-grounded operator Book through the compiled Story/Scenario path and development/test-only host Canvas.
+- [x] **Phase 8: First inspectable Book and local host path** - Open and navigate one source-grounded operator Book through the compiled Story/Scenario path and development/test-only host Canvas. (completed 2026-11-25)
 
 ## Phase Details
 
@@ -62,7 +62,7 @@ The [owner-approved exception](intent/sources/2026-11-20-14-approve-first-book-g
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 8. First inspectable Book and local host path | 6/6 | Plan 08-06 addresses the remaining UI-SPEC implementation gap; see [08-VERIFICATION.md](phases/08-first-inspectable-book-and-local-host-path/08-VERIFICATION.md) | - |
+| 8. First inspectable Book and local host path | 6/6 | Complete    | 2026-11-25 |
 
 ## Completed milestones
 
