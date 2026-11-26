@@ -406,6 +406,18 @@
       ]
     }
   ],
+  "additional_phases": [
+    {
+      "milestone_key": "fixed-book-bundle",
+      "milestone_name": "Fixed Logistify Scenario Bundle",
+      "phase": 9,
+      "name": "Generate the fixed Scenario bundle",
+      "status": "active",
+      "depends_on": [
+        "first-inspectable-book:8"
+      ]
+    }
+  ],
   "created_for_milestone": "v0.2",
   "legacy_dependencies": {
     "legacy:01.1.1.1": {

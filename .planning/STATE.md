@@ -1,20 +1,20 @@
 ---
 gsd_state_version: "1.0"
-milestone: v0.7
-milestone_name: First Inspectable Book
-current_phase: null
-status: complete
-stopped_at: v0.7 is closed and archived; no next milestone is selected. Await owner selection after the next recommendation-first scope review. Preserve the dirty primary checkout and all wider guard/security stops; do not publish, release, or deploy.
-last_updated: "2026-11-26T05:32:28Z"
+milestone: v0.8
+milestone_name: Fixed Logistify Scenario Bundle
+current_phase: 9
+status: planning
+stopped_at: Phase 9 roadmap ready for discussion.
+state_head: 4b9b8bb3209aaac8bac6886dfd24d688b4722dc3
+last_activity_desc: Owner-approved v0.8 roadmap prepared for Phase 9 discussion
+last_updated: "2026-11-26T15:38:53Z"
 last_activity: 2026-11-26
-last_activity_desc: Milestone v0.7 completed and archived
-state_head: 3cb5a52bf7faf97ba5fb2c38783a58ebe116b413
 progress:
   total_phases: 1
-  completed_phases: 1
-  total_plans: 6
-  completed_plans: 6
-  percent: 100
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -37,24 +37,23 @@ See [PROJECT.md](PROJECT.md) (updated 2026-11-26), [ROADMAP.md](ROADMAP.md), the
 [v0.2 closeout](milestones/v0.2-CLOSEOUT.md).
 
 **Core value:** Every real state of a Phoenix LiveView UI, from primitive to full screen, visible, verified and explainable to humans and LLMs, built to a quality bar that is never lowered.
-**Current focus:** No active milestone; v0.7 is complete and archived.
+**Current focus:** Build one deterministic, cited bundle for “A failed shipment.”
 
 ## Current Position
 
-Milestone: v0.7 — First Inspectable Book (complete)
-Phase: 8 — delivered; no active phase
+Milestone: v0.8 — Fixed Logistify Scenario Bundle
+Phase: 9 — Generate the fixed Scenario bundle
 Plan: —
-Status: Awaiting owner selection of a future bounded scope
-Last activity: 2026-11-26 — v0.7 archive and closeout prepared
+Status: Ready for discussion
+Last activity: 2026-11-26 — owner-approved milestone roadmap
 
 ## Active Handoff
 
-- Canonical primary checkout: `~/projects/fablebook` on `main` at `f23da6e341997999a084049436037bd6bd55c0af`; after fetch, `origin/main` is `3cb5a52bf7faf97ba5fb2c38783a58ebe116b413`. The primary checkout remains dirty, 26 commits ahead and 4 behind, with uncommitted planning/source/code work. Preserve it and do not push its divergent branch; use the recovery procedure in [WORKTREE-RECONCILIATION-2026-11-13.md](references/WORKTREE-RECONCILIATION-2026-11-13.md) before any future work there. The older historical worktree remains untouched.
-- Closeout checkout: `/private/tmp/fablebook-v07-phase8-screenshot-free` on `gsd/v0.7-milestone-closeout`, based on merged main `3cb5a52bf7faf97ba5fb2c38783a58ebe116b413`. The phase archive, v0.7 audit, project evolution review, compact roadmap, and refreshed projection are prepared. `planning_health` and diff checks pass. A focused Mix planning test could not start because this isolated checkout has no Mix dependencies; dependencies were not fetched for this docs-only closeout. The remaining steps are the archive safety commit, standard root requirements removal, and reviewed closeout delivery through hosted CI.
-- Delivered: v0.7 Phase 8 through PR #106, reviewed head `4f6648234530cff9de65a09fa7aa370aa4151b43`, exact-head hosted CI [run 45756117110](https://github.com/szTheory/fablebook/actions/runs/45756117110), merged as `3cb5a52bf7faf97ba5fb2c38783a58ebe116b413`. All eight requirements are complete; the audit records `tech_debt` with no requirement, integration, or flow gaps. Detailed evidence and timing review are in the [v0.7 closeout](milestones/v0.7-CLOSEOUT.md) and [CI performance record](CI-PERFORMANCE.md).
-- Outcome and known debt: the fixed, cited Logistify operator Book is inspectable through the compiled Story/Scenario catalog and same-origin host Canvas. The owner-accepted Chrome evidence covers Canvas ready/failure behavior, which has no automated JavaScript transition test. Nyquist coverage is partial, and the archive records UI warnings and a summary metadata omission. The dormant agent-CLI/API idea is recorded as [SEED-261125-rga](seeds/SEED-261125-rga-fablebook-agent-cli.md), with its source and JTBD/ADR breadcrumbs; no CLI, API, authentication, or write authority was selected.
-- Preserved limits: the guard candidate remains null; guard implementation remains unauthorized; aggregate gate open; actual-library collision unknown; R9 denied and unconsumed; SEC-01 Pending; broader Macro caller-AST and explanation gaps and the legacy digest remain unresolved; `walking-skeleton` stays blocked. The v0.7 exception expired at closeout. No product publication, deployment, release, or follow-on milestone is included. The local `act` stop remains because ARM64 OTP and the amd64 container mismatch is unresolved; do not retry until its cause changes.
-- Next action: finish the v0.7 archive PR and hosted CI, then stop at the between-milestone boundary. No next milestone is selected; future scope begins with the recommendation-first research process and owner selection. **Next actor: Codex** until the closeout delivery is merged, then **Owner** for scope selection.
+- Canonical planning is in `~/projects/fablebook`. Phase 9 activation is reviewed on `gsd/v08-fixed-logistify-scenario-bundle` for delivery to `main`. The prior dirty primary and review handoff remain on local recovery refs. See the [checkout reconciliation](references/WORKTREE-RECONCILIATION-2026-11-26.md).
+- Phase 8 delivered the compiled, source-cited operator Book through PR #106 with [green hosted CI](https://github.com/szTheory/fablebook/actions/runs/45756117110). v0.7 is archived. The [planning checker prerequisite](https://github.com/szTheory/fablebook/pull/108) enables the new typed Phase 9 entry without modifying legacy owners.
+- INT-20261126-02 selects the fixed Scenario bundle and INT-20261126-03 approves its roadmap. BND-01–05 are pending in [REQUIREMENTS.md](REQUIREMENTS.md). The general bundle retains its Story model and Controls dependencies, and the agent CLI/API seed stays dormant.
+- The guard aggregate remains open and Walking Skeleton stays blocked. The guard candidate is null, guard implementation remains unauthorized, R9 is denied and unconsumed, and SEC-01 remains Pending with Controls. The v0.7 exception expired at closeout. Preserve the known local `act` stop. The approved bundle remains local development/test scope.
+- **Next action:** `$gsd-discuss-phase 9` defines the render seam and local artifact boundary before planning and building. **Next actor:** Owner to enter Phase 9 discussion.
 
 ## Performance Metrics
 
@@ -94,7 +93,7 @@ Last activity: 2026-11-26 — v0.7 archive and closeout prepared
 
 ### Pending Todos
 
-No milestone is active. Wider product work remains in the separate [rolling roadmap](references/PRODUCT-ROADMAP.md), which is directional rather than executable scope. At the next milestone boundary, reconcile deliveries and typed prerequisites, refresh relevant research, and let the owner select a bounded scope before activating requirements or phases. Preserve the recorded `act` environment stop unless its cause changes. See [INT-20261120-11](intent/sources/2026-11-20-11-delta-curated-rolling-roadmap.md), [INT-20261120-12](intent/sources/2026-11-20-12-upstream-milestone-scope.md), and [INT-20261120-13](intent/sources/2026-11-20-13-automated-verification-and-resource-hygiene.md).
+Phase 9 is ready for discussion. Future product work is tracked separately in the [rolling roadmap](references/PRODUCT-ROADMAP.md). Its milestones need their own scope review and delivery prerequisites. The local `act` stop remains in effect.
 
 ### Blockers and concerns
 
@@ -173,9 +172,9 @@ immutable-source acknowledgement exception are in [v0.2-CLOSEOUT.md](milestones/
 
 ## Session Continuity
 
-**Last session:** 2026-11-26T05:32:28Z
-**Stopped at:** Phase 8 and v0.7 are archived; the canonical roadmap/state now validate as a between-milestone handoff. The remaining work is the archive safety commit, standard removal of the root requirements file, and reviewed closeout delivery.
-**Resume file:** [v0.7 closeout](milestones/v0.7-CLOSEOUT.md)
+**Last session:** 2026-11-26T15:38:53Z
+**Stopped at:** v0.8 Phase 9 roadmap approved and prepared for discussion. Phase 8 is delivered. The roadmap was prepared in the canonical primary checkout on `gsd/v08-fixed-logistify-scenario-bundle` for merge to `main`. Guard and security stops are recorded in the Active Handoff.
+**Resume file:** [Phase 9 roadmap](ROADMAP.md#phase-9-generate-the-fixed-scenario-bundle)
 
 Phase 04's three plans and goal verification are complete. The stable consumer repair preserves the old typed-gap bytes and validates both the archived stop generation and active ENV06 generation. Phase 5's four selected EX-177 rows now have the reviewed source/caller facts recorded by discovery and Phase 6; the other 9,712 rows remain unchanged. Package-wide caller closure remains unproven, R1–R8 statuses remain unchanged, R9 was not consumed, and no source body was reread for Phase 6. Candidate remains null, implementation unauthorized, aggregate gate open, legacy digest unresolved, and no automatic follow-on is authorized.
 
@@ -206,4 +205,4 @@ Phase 04's three plans and goal verification are complete. The stable consumer r
 
 ## Operator Next Steps
 
-Finish the v0.7 archive closeout PR and hosted checks. Then stop with no active milestone. The owner selects a future bounded scope after recommendation-first research and typed-prerequisite review; do not auto-start the next milestone.
+Use `$gsd-discuss-phase 9` to define the fixed Scenario’s shared render and bundle boundaries. Activation and its prerequisite do not deliver BND-01–05.
