@@ -1,10 +1,11 @@
 ---
 phase: 08-first-inspectable-book-and-local-host-path
-verified: 2026-11-26T02:54:40Z
+verified: 2026-11-26T03:25:27Z
 status: passed
 score: 46/46 must-haves verified
 covered_files:
   - .github/workflows/ci.yml
+  - .planning/CI-PERFORMANCE.md
   - .planning/REQUIREMENTS.md
   - .planning/ROADMAP.md
   - .planning/STATE.md
@@ -22,10 +23,20 @@ covered_files:
   - .planning/phases/08-first-inspectable-book-and-local-host-path/08-04-PLAN.md
   - .planning/phases/08-first-inspectable-book-and-local-host-path/08-04-SUMMARY.md
   - .planning/phases/08-first-inspectable-book-and-local-host-path/08-05-PLAN.md
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-05-RESUMPTION-2026-11-25.md
   - .planning/phases/08-first-inspectable-book-and-local-host-path/08-05-SUMMARY.md
   - .planning/phases/08-first-inspectable-book-and-local-host-path/08-06-PLAN.md
   - .planning/phases/08-first-inspectable-book-and-local-host-path/08-06-SUMMARY.md
-  - GLOSSARY.md
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-BROWSER.md
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-CONTEXT.md
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-LOGISTIFY-SOURCE.json
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-REVIEW.md
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-SECURITY.md
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-UAT.md
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-UI-REVIEW.md
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-UI-SPEC.md
+  - .planning/phases/08-first-inspectable-book-and-local-host-path/08-VALIDATION.md
+  - bin/fetch_brand_sources
   - bin/verify_logistify_source
   - bin/verify_operator_host_prod
   - brand_sources.lock.json
@@ -46,15 +57,13 @@ covered_files:
   - test/fixtures/prod_guard_host/config/config.exs
   - test/fixtures/prod_guard_host/mix.exs
   - test/fixtures/prod_guard_host/storybook/sentinel_story.ex
-covered_digest: "v4:sha256:e689ffd57fca635ac93318d5a7cd76c640e06bcb2c89b8ace70c48733eaec402"
+covered_digest: "v4:sha256:99b9aebaaf54b4195c65ff206d23494f261a4e5aa0466e5ca42c1287b0e7b72e"
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
-  previous_status: gaps_found
-  previous_score: 44/46
-  gaps_closed:
-    - "SRC-01 no longer requires a source-cache check at host startup; INT-20261125-06 preserves the authoring custody preflight and pinned-excerpt CI validation while allowing reviewed local checkouts to browse without the ignored cache."
-    - "The UI uses neutral Fablebook styling and approved terminology; Plan 08-06 closes the prior broad UI-contract gap. Two narrower UI audit warnings remain documented below."
+  previous_status: passed
+  previous_score: 46/46
+  gaps_closed: []
   gaps_remaining: []
   regressions: []
 human_verification: []
@@ -67,9 +76,9 @@ decision_coverage:
 # Phase 8: First Inspectable Book and Local Host Path — Verification Report
 
 **Phase Goal:** As a developer, I want to browse Journeys and inspect Scenarios in Canvas, so that the Book stays out of production.
-**Verified:** 2026-11-26T02:54:40Z
+**Verified:** 2026-11-26T03:25:27Z
 **Status:** passed
-**Re-verification:** Yes — after the prior `gaps_found` report and Plan 08-06.
+**Re-verification:** Yes — refreshing the previously passed report after accepted owner decisions and the final 08-05/08-06 evidence updates.
 
 ## User Flow Coverage
 
@@ -211,5 +220,6 @@ All five roadmap success criteria and all eight Phase 8 requirement IDs are veri
 
 ---
 
-_Verified: 2026-11-26T02:54:40Z_  
+_Verified: 2026-11-26T03:25:27Z_
+
 _Verifier: the agent (gsd-verifier)_

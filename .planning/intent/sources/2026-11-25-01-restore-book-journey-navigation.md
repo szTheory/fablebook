@@ -8,7 +8,8 @@ context: Restores the Journey overview, selected bookmark cue, static Book bread
 
 # Owner correction — restore the Journey review UI
 
-Date: 2026-11-25  
+Date: 2026-11-25
+
 Source: direct owner feedback during the Phase 8 live review.
 
 > “if u clicked on Dispatcher recovery the journey it showed u the scenaris (not just in sidebar but main panel) and the papyrus BG was white, and it had a bookmark for what is selected... and Logistify operator console in the breadcrumb was no longer clickable since it didnt do anything... we cleaned up so much...”

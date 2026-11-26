@@ -18,4 +18,3 @@ context: Records an exploratory product idea and the owner's sequencing preferen
 >   thing. So basically, then an LLM could authenticate, once you authenticate,
 >   Then LLM could automatically diagnose and fix issues. And all of the CLI stuff
 >   would follow our jobs to be done and user personas for this library.
-

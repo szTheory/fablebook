@@ -8,7 +8,8 @@ context: Requires durable safeguards so resumed OpenGSD UI work preserves previo
 
 # Owner direction — prevent reviewed UI regressions
 
-Date: 2026-11-25  
+Date: 2026-11-25
+
 Source: direct owner feedback after the Phase 8 preview correction.
 
 > “yeah this is looking better what happened? this is the second time i've looked at our progress after some opengsd work and noticed it regressed. let's apply lessons learned here so we never run into this issue again. but it's looking like we're on ther ight path again..”
