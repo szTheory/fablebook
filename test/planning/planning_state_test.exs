@@ -222,6 +222,34 @@ defmodule Fablebook.Planning.PlanningStateTest do
     assert_ok(root, "execute")
   end
 
+  test "a new product phase requires the real receipt without changing legacy owners", %{
+    root: root
+  } do
+    deliver(root)
+    activate(root, "v0.3", "fixed-book-bundle", ["2"], "2")
+    plan(root, "2", "2")
+    assert_error(root, "status", "active_phase_owner")
+
+    update_json(root, @mapping, fn mapping ->
+      entry = node(nil, "fixed-book-bundle", 2, ["story-model:1"])
+      Map.put(mapping, "additional_phases", [Map.delete(entry, "legacy_phase")])
+    end)
+
+    assert codes(PlanningState.check(root, "execute")) == ["prerequisite_not_delivered"]
+
+    update_json(root, @deliveries, fn registry ->
+      put_in(registry, ["phases", Access.at(0), "milestone_key"], "story-model")
+    end)
+
+    assert_ok(root, "execute")
+
+    update_json(root, @mapping, fn mapping ->
+      put_in(mapping, ["additional_phases", Access.at(0), "legacy_phase"], "2")
+    end)
+
+    assert_error(root, "status", "additional_phase_claims_legacy_owner")
+  end
+
   test "initial global Phase 1 can start but cannot bypass its aggregate gate", %{root: root} do
     activate(root, "v0.9", "walking-skeleton", ["1"], "1")
     assert_error(root, "discuss", "milestone_prerequisite_open")
