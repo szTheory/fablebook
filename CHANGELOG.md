@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.1.1](https://github.com/szTheory/fablebook/compare/v0.1.0...v0.1.1) (2026-11-26)
+
+
+### Features
+
+* **01.1.1.2:** guard all CommonTest caller-file fronts ([#29](https://github.com/szTheory/fablebook/issues/29)) ([54c6afb](https://github.com/szTheory/fablebook/commit/54c6afbc6b2c2bdd8982ff50f807637d636c05ba))
+* **08-01:** pin public brand sources ([#103](https://github.com/szTheory/fablebook/issues/103)) ([09d26b1](https://github.com/szTheory/fablebook/commit/09d26b10823e22e259383c4b43b82f874872b206))
+* **08-01:** verify cited Logistify excerpts ([#104](https://github.com/szTheory/fablebook/issues/104)) ([63d779f](https://github.com/szTheory/fablebook/commit/63d779f261e72adb58495153240d81858e15bdf0))
+* **ci:** add local dry-run for health report ([#34](https://github.com/szTheory/fablebook/issues/34)) ([5d75d2d](https://github.com/szTheory/fablebook/commit/5d75d2dc018f2b667824904c1f17ca58b2c3314f))
+
+
+### Bug Fixes
+
+* **01-08:** route timing breaches to performance tracking ([a5de2d0](https://github.com/szTheory/fablebook/commit/a5de2d0be26bab99e756720be4b3478bcdbb23a9))
+* guard confirmed call-name fronts ([#43](https://github.com/szTheory/fablebook/issues/43)) ([082a5c8](https://github.com/szTheory/fablebook/commit/082a5c82dbd6e6a711a92791d8609e8040a5945c))
+* **planning:** prevent stale routing and milestone tracking loops ([#84](https://github.com/szTheory/fablebook/issues/84)) ([1fb61fa](https://github.com/szTheory/fablebook/commit/1fb61faf700db5398d3174d94a967a9199b89a85))
+* **planning:** track product phases outside the legacy map ([4b9b8bb](https://github.com/szTheory/fablebook/commit/4b9b8bb3209aaac8bac6886dfd24d688b4722dc3))
+* preserve absolute Elixir module names in the source guard ([#20](https://github.com/szTheory/fablebook/issues/20)) ([a7363fb](https://github.com/szTheory/fablebook/commit/a7363fb8b8d10c1fc5b01771e5e3e981144ee165))
+* raise Phoenix floor to 1.8.17 ([#102](https://github.com/szTheory/fablebook/issues/102)) ([10e20f9](https://github.com/szTheory/fablebook/commit/10e20f90308b950c331fb2761cdb29e5b811e378))
+* **router:** require literal Book module AST ([#99](https://github.com/szTheory/fablebook/issues/99)) ([a60d21b](https://github.com/szTheory/fablebook/commit/a60d21b8cf513f400fee3363c3f6b6aa23031857))
+* **security:** guard debugger inputs and verify audit provenance ([#30](https://github.com/szTheory/fablebook/issues/30)) ([a957ae7](https://github.com/szTheory/fablebook/commit/a957ae73fca8a85cda97b75a08144bd986d3cdda))
+* **security:** upgrade Phoenix.HTML to patched 4.4.0 ([#28](https://github.com/szTheory/fablebook/issues/28)) ([675a783](https://github.com/szTheory/fablebook/commit/675a783d4758258ee013281b8ef50ad579eddeea))
+* verify exact source evidence and detect PathConsult ([#23](https://github.com/szTheory/fablebook/issues/23)) ([39b37d6](https://github.com/szTheory/fablebook/commit/39b37d65429467722897132f51fa784756926e9b))
+
 ## 0.1.0 (2026-10-29)
 
 
