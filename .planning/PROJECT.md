@@ -14,7 +14,11 @@ If everything else fails, a scenario must still render with production fidelity 
 
 **Design canon milestone / local slot 4 input (legacy Phase 17):** Before planning or implementing the Logistify brand canon and its three Books, read `.planning/references/logistify-brand-intake.md` (`INT-20261110-08`). Brand sourcebooks are now reproducible from the public repositories and exact commits in `brand_sources.lock.json` (`INT-20261121-01`); this does not apply them as Fablebook canon or resolve reuse rights, font/artwork rights, or name clearance.
 
-## Last Completed Milestone: v0.6 Guard Scope Reconciliation
+## Last Completed Milestone: v0.7 First Inspectable Book
+
+v0.7 closed on 2026-11-26 after delivering one source-grounded operator Book through the compiled catalog and development/test-only host Canvas. Phase 8 satisfied all eight scoped requirements and passed 46/46 verification must-haves; UAT passed 6/6. PR #106 reviewed head `4f6648234530cff9de65a09fa7aa370aa4151b43` passed exact-head CI [45756117110](https://github.com/szTheory/fablebook/actions/runs/45756117110) and merged as `3cb5a52bf7faf97ba5fb2c38783a58ebe116b413`; post-merge main CI [45757588558](https://github.com/szTheory/fablebook/actions/runs/45757588558) and release workflow [45757588572](https://github.com/szTheory/fablebook/actions/runs/45757588572) succeeded. The scoped audit is `tech_debt`: Nyquist validation is partial, two UI warnings and a low-priority token ambiguity remain, and the owner-accepted Chrome check is the evidence for the Canvas JavaScript ready/failure transition. The dormant LLM-agent CLI/API idea is preserved as [SEED-261125-rga](seeds/SEED-261125-rga-fablebook-agent-cli.md); no API, authentication, or write authority was selected. See the [v0.7 archive](milestones/v0.7-ROADMAP.md), [requirements](milestones/v0.7-REQUIREMENTS.md), [audit](milestones/v0.7-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.7-phases/), and [closeout receipt](milestones/v0.7-CLOSEOUT.md).
+
+## Previous Milestone: v0.6 Guard Scope Reconciliation
 
 v0.6 closed as a bounded evidence milestone on 2026-11-20. Phase 7 reconciled current core membership against retained floor evidence, defined one proposed family and its complete complement, recorded bounded observations and gaps, refreshed sizing, and ended at an owner decision. PR #96 exact-head CI [44827619883](https://github.com/szTheory/fablebook/actions/runs/44827619883) passed before merge as `0ea95d4c8cdf6ce9a1af363c7ea0033d632b0e6d`; post-merge main CI [44828949627](https://github.com/szTheory/fablebook/actions/runs/44828949627) also passed. The planning archive closeout is tracked in [PR #97](https://github.com/szTheory/fablebook/pull/97). The aggregate remains open; candidate null, implementation unauthorized, and all wider stops remain in force. Three inherited v0.1 deferrals remain unresolved and documented. See the [v0.6 archive](milestones/v0.6-ROADMAP.md), [requirements](milestones/v0.6-REQUIREMENTS.md), [audit](milestones/v0.6-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.6-phases/), and [closeout receipt](milestones/v0.6-CLOSEOUT.md).
 
@@ -22,18 +26,13 @@ v0.6 closed as a bounded evidence milestone on 2026-11-20. Phase 7 reconciled cu
 
 v0.5 closed locally on 2026-11-19 as a bounded evidence milestone. Phase 6 delivered the four-key EX-177 supplement and preserved the exact 9,712-row complement through PR #93, reviewed head `3970a381945cfcf63eb69c456a5b2a7465d8352d`, green [exact-head hosted CI 44589600030](https://github.com/szTheory/fablebook/actions/runs/44589600030), and squash merge `b8852ac22aac1cb2b8151d85b189889ca0774aa8`. The compatibility fix was reviewed and merged separately through PR #94 with green hosted CI. The archive closeout was squash-merged through [PR #95](https://github.com/szTheory/fablebook/pull/95) as `d5a8dc0b856e5c8223524c4fd3f849bd27c4c859` after green [exact-head hosted CI 44599528602](https://github.com/szTheory/fablebook/actions/runs/44599528602); the `v0.5` tag remains local. Its one requirement is satisfied; caller closure and the wider guard/security obligations remain open. This is not a package release or runtime-safety proof. See the [v0.5 archive](milestones/v0.5-ROADMAP.md), [requirements](milestones/v0.5-REQUIREMENTS.md), [audit](milestones/v0.5-MILESTONE-AUDIT.md), [phase evidence](milestones/v0.5-phases/), and [closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
-## Current Milestone: v0.7 First Inspectable Book
+## Current Milestone
 
-**Goal:** A Phoenix developer can open a real Fablebook UI catalog locally and inspect one source-grounded Logistify operator Book across two or three addressable screens through the compiled Story/Scenario and host Canvas path.
-
-**Target features:**
-- A minimal, locally openable catalog with navigation to the fixed operator Book and its screens.
-- Cited, fixed illustrative data and clearly illustrative records/actions, with no logistics backend or external writes.
-- A literal module alias/reference contract for the public mount macro and passing development/test-only production exclusion checks before Book implementation.
-
-**Approved boundary:** This is one fixed, developer-authored compiled Book in development/test only; the exception expires at v0.7 closeout. The guard aggregate remains open and the original `walking-skeleton` key remains blocked. No Controls, user-provided values or code, audited-API use, persistence, product publication/deployment, release, or follow-on milestone is included. A reviewed public PR may contain the minimal cited Logistify source-derived subset needed for this Book; full repositories and unrelated assets stay in the ignored cache (INT-20261120-08, INT-20261120-09, INT-20261120-10, INT-20261120-11, INT-20261120-12, INT-20261120-13, INT-20261120-14, INT-20261121-01; ADR 0021). See the [approved scope](research/2026-11-20-next-milestone-scope-review.md), [owner approvals](intent/sources/2026-11-20-14-approve-first-book-gate-exception.md) and [intent](intent/sources/2026-11-21-01-public-pinned-brand-sources.md), and [rolling roadmap](references/PRODUCT-ROADMAP.md).
+No milestone is active. The v0.7 first-Book exception expired at closeout. The [rolling product roadmap](references/PRODUCT-ROADMAP.md) remains directional; a future bounded scope must be researched and selected before requirements or phase numbers are activated.
 
 ## Current State
+
+v0.7 delivered the first inspectable Book: a fixed, source-cited Logistify operator flow in the local catalog and real host Canvas, with illustrative records/actions and no backend or external writes. Its one milestone exception has expired. The audit records 8/8 requirements, 1/1 phase, 1/1 integration and 5/5 end-to-end flows, with non-blocking verification/UI debt. The guard aggregate remains open, `walking-skeleton` remains blocked, R9 remains denied and unconsumed, and SEC-01 remains Pending. See the [v0.7 closeout receipt](milestones/v0.7-CLOSEOUT.md).
 
 v0.2 Guard coverage recovery is complete and archived (2026-11-11 local).
 Its selected EX-010 tracing-front static source coverage passed the scoped
@@ -72,7 +71,11 @@ satisfied GSR-07 with no critical gaps. Three inherited v0.1 deferred records
 remain unresolved, and all wider stops remain unchanged. No next milestone is
 selected; see the [v0.5 closeout receipt](milestones/v0.5-CLOSEOUT.md).
 
-## Most Recent Milestone Scope: v0.6 Phase 7
+## Most Recent Milestone Scope: v0.7 Phase 8
+
+The approved scope delivered the fixed operator Book and its cited source capsule, literal mount contract, development/test production controls, compiled catalog, and host Canvas flow. It did not include other Books, Controls, arbitrary runtime values/code, backend state, external writes, release, deployment, or a follow-on milestone. The exception expired at v0.7 closeout. See the [v0.7 requirements](milestones/v0.7-REQUIREMENTS.md), [phase evidence](milestones/v0.7-phases/), and [owner scope](intent/sources/2026-11-20-14-approve-first-book-gate-exception.md).
+
+## Previous Milestone Scope: v0.6 Phase 7
 
 The completed scope was a read-only reconciliation. It did not authorize runtime
 probes, R9 consumption, exhaustive caller searches, candidate promotion, guard
@@ -83,10 +86,18 @@ and [the research synthesis](research/2026-11-19-v0.6-guard-scope-reconciliation
 
 ## Requirements
 
-The lists below summarize the wider v1 product vision; they are not a live progress ledger. Use the archived [v0.5 requirements](milestones/v0.5-REQUIREMENTS.md), [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md), [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md), and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
+The lists below summarize the wider v1 product vision; they are not a live progress ledger. Use the archived [v0.7 requirements](milestones/v0.7-REQUIREMENTS.md), [v0.6 requirements](milestones/v0.6-REQUIREMENTS.md), [v0.5 requirements](milestones/v0.5-REQUIREMENTS.md), [v0.4 requirements](milestones/v0.4-REQUIREMENTS.md), [v0.3 requirements](milestones/v0.3-REQUIREMENTS.md), and [v0.2 requirements](milestones/v0.2-REQUIREMENTS.md) for bounded milestone acceptance; use references/PRODUCT-REQUIREMENTS.md for carried product status and citations. Historical phase numbers in decision rows refer to milestones/v0.1-phases; PHASE-MAP.json and CARRY-FORWARD.md own their current addresses.
 
 ### Validated
 
+- ✓ **SRC-01** Public source pins and cited Logistify excerpts are reproducible and SHA-256 checked — v0.7 Phase 8; final delivery PR #106 and hosted CI [45756117110](https://github.com/szTheory/fablebook/actions/runs/45756117110).
+- ✓ **MOUNT-01** Public Book mount accepts literal module alias/reference forms and rejects computed expressions before expansion — v0.7 Phase 8; implementation and contract-test PRs remained separate.
+- ✓ **HOST-01** Production excludes Fablebook routes and compiled Book/Story modules while development/test can load the fixed Book — v0.7 Phase 8.
+- ✓ **HOST-02** A reachable production mount raises the canonical compile error, proven by a negative control — v0.7 Phase 8.
+- ✓ **CAT-01** A developer can open the local catalog and navigate the fixed operator Book's addressable screens — v0.7 Phase 8.
+- ✓ **CAT-02** The operator Book is compiled from fixed developer-authored Story/Scenario modules and never loads runtime-selected modules — v0.7 Phase 8.
+- ✓ **CANVAS-01** Each screen renders in the same-origin host Canvas and inherits the host pipeline, root layout, assets, hooks, fonts, and CSP — v0.7 Phase 8; the owner accepted Chrome evidence for ready/failure transitions.
+- ✓ **BOOK-01** The Book uses fixed cited normal/edge-state data and illustrative actions, with no persistence or external writes — v0.7 Phase 8.
 - ✓ **GRC-01** Exact-lane source identities, selected/remainder membership, caller/delegate paths and inherited limits bound the selected increment — v0.2 (INT-20261111-01, INT-20261110-01, ADR 0021).
 - ✓ **GRC-02** Selected static dispositions and non-vacuous positive/negative controls passed on both lanes and delivered through reviewed green PR #85 — v0.2 (INT-20261111-01, INT-20261029-02, ADR 0004, ADR 0021).
 - ✓ **GRC-03** Original exclusion identities, pending complement, prior evidence, owners and wider safety gates remain preserved — v0.2 (INT-20261111-01, INT-20261029-02, ADR 0021).
@@ -327,12 +338,13 @@ Every item below is a v1.0 commitment.
 
 ## Context
 
+- **Delivered v0.7:** The first local Fablebook catalog and compiled Logistify operator Book are delivered through the real Phoenix host Canvas in development/test only. PR #106 and its exact-head receipt are in the delivery registry; post-merge main and release-workflow receipts are in the v0.7 closeout. No backend, persistence, external writes, release, or deployment was included. The audit's accepted debt and preserved limits are in [v0.7-CLOSEOUT.md](milestones/v0.7-CLOSEOUT.md).
 - **Delivered v0.2:** Contract/static evidence only; no production code, workflow or dependency changes. Independent exact-lane findings and symmetric selection feed the existing Elixir/Phoenix core/floor test lanes. Full delivery and diff measurements are in milestones/v0.2-CLOSEOUT.md.
 - **Delivered v0.3:** Five test/support files add 816 lines of source-backed static evidence and controls; no runtime library code changed. The existing Elixir/Phoenix core/floor lanes and their hosted delivery gates remain in use.
 - **Delivered v0.4:** Planning and evidence artifacts only; no application source, dependencies, or runtime behavior changed. Three phases, nine plans and 14 tasks delivered through PRs #90–#92. The aggregate gate, candidate-null decision, actual-library collision stop, Macro checkpoints, SEC-01 owner and Walking Skeleton block remain unchanged.
 - **Delivered v0.6:** Evidence and one existing dependency lock patch only; no application behavior, product UI, Book, or runnable demo was added. Phase 7 passed 4/4 goal verification, Nyquist validation, and its declared security review. PR #96 and post-merge main CI passed; the exact receipts and all bounded limits are in the v0.6 archive. Three inherited deferred records remain unresolved and acknowledged for carry-forward.
 - **Delivered v0.5:** Planning and test-support evidence only; no application source, dependencies, or runtime behavior changed. Phase 6 delivered the exact four-key supplement and checker through PR #93; PR #94 separately fixed the archived-evidence test path. The 9,712-row complement and every prior safety stop remain unchanged.
-- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.6 closeout and the three inherited deferred records are recorded in its archive. v0.7 is active under the narrow, expiring exception above; this does not close the guard aggregate or unblock the original `walking-skeleton` key.
+- **Milestone review:** Product description, Core Value, Out of Scope decisions and constraints remain applicable. No Business Context section exists. Wider v1 commitments remain active; v0.7 is archived and the next milestone is unselected. Its dormant CLI/API seed preserves the owner's operator-UI-first sequencing and the distinction between coding-agent and operations-agent jobs. The v0.7 exception did not close the guard aggregate or unblock `walking-skeleton`.
 
 - **Ecosystem (verified 2026-10-28):**
   - Phoenix 1.8.16 and LiveView 1.2.13 are current; there is no Phoenix 1.9.
@@ -399,6 +411,8 @@ Every item below is a v1.0 commitment.
 
 | Decision | Rationale | Outcome |
 |---|---|---|
+| Close v0.7 at the first inspectable Book boundary and preserve the future agent-tooling seed (INT-20261120-14, INT-20261125-07) | Deliver the owner-selected local operator UI first; preserve Jobs to Be Done, personas, domain vocabulary, and provenance as discovery inputs before considering a CLI or authenticated API | All eight v0.7 requirements passed; the audit is `tech_debt`; the CLI/API seed remains dormant. No authentication protocol, write authority, or next milestone is selected. |
+| Review CI timing after every run and optimize only when measurements support a safe change (INT-20261125-08) | Reduce iteration time and waste without weakening correctness, security, or coverage | Exact-head and post-merge Phase 8 lanes overlapped; full test lanes dominate. No safe pipeline change is supported by these measurements. |
 | Close v0.6 at the bounded evidence and owner-decision boundary (INT-20261119-05, INT-20261119-06) | Preserve the aggregate gate, evidence limits, and downstream scope while delivering a current reviewable reconciliation | Phase 7 is delivered; candidate remains null, implementation unauthorized, and no next milestone is selected. |
 | Apply only the owner-approved LiveView security rebaseline (INT-20261120-07) | Remove the hosted advisory failure without expanding package scope or rescanning the retained floor | Only the existing core LiveView lock tuple changed; Hex audit and required hosted CI passed. |
 | Close v0.5 against its scoped evidence and carry older records forward (INT-20261119-04) | Complete the authorized milestone while preserving immutable evidence and all existing safety limits | v0.5 is archived under `override_closeout`; GSR-07 and the evidence flow pass, three inherited v0.1 deferred records remain unresolved, and no next milestone is selected. |
@@ -519,4 +533,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-20 at the start of v0.7; RSC-01–04 are delivered, three inherited v0.1 deferrals and wider guard/security stops remain open, and the first-Book exception expires at v0.7 closeout.*
+*Last updated: 2026-11-26 at v0.7 closeout; Phase 8 and all eight scoped requirements are delivered, the first-Book exception expired, and wider guard/security stops remain open.*

@@ -1,5 +1,32 @@
 # Milestone history
 
+## v0.7 First Inspectable Book (Shipped: 2026-11-26)
+
+**Phases completed:** Phase 8 (1 phase, 6 plans, 15 tasks)
+
+**Closeout:** `override_closeout`; scoped audit status is `tech_debt` with 8/8 requirements, 1/1 phase, 1/1 integration, and 5/5 end-to-end flows satisfied; no scoped blockers.
+
+Known verification overrides: 1 newly acknowledged, 7 carried forward from prior closes (see STATE.md Deferred Items). The new acknowledgement is the dormant agent CLI/API seed; the seven existing acknowledgements remain unchanged.
+
+**Delivery:** Phase 8 was delivered through PR #106, reviewed head `4f6648234530cff9de65a09fa7aa370aa4151b43`, after green exact-head hosted CI [45756117110](https://github.com/szTheory/fablebook/actions/runs/45756117110), and squash-merged as `3cb5a52bf7faf97ba5fb2c38783a58ebe116b413`. Post-merge main CI [45757588558](https://github.com/szTheory/fablebook/actions/runs/45757588558) passed. The paired release-please run [45757588572](https://github.com/szTheory/fablebook/actions/runs/45757588572) completed successfully with its publish job skipped; no package release or deployment occurred.
+
+**Key accomplishments:**
+- Reproduced seven pinned public source repositories and verified the minimal cited Logistify excerpt capsule before creating Book content.
+- Hardened the literal-only Book mount contract, kept its implementation and contract test in separate PRs, and passed development/test inclusion plus clean and reachable-negative production controls.
+- Delivered the fixed operator Book through the compiled Story/Scenario catalog, stable navigation, and same-origin Phoenix host Canvas.
+- Closed the approved Canvas footer and catalog accessibility/layout gaps while preserving the owner's accepted browser baseline.
+- Recorded the CI/CD speed and resource-hygiene policy in durable project instructions; measured exact-head and post-merge CI and found no safe coverage-preserving workflow change from these runs.
+
+**Known non-blocking debt:** Nyquist validation is partial; the UI audit retains two low-level layout/target warnings and a token ambiguity; the Canvas JavaScript ready/failure transition has owner-accepted Chrome evidence but no automated transition test; a pre-merge summary note and one summary metadata omission remain documented.
+
+**Stats:** The delivery diff from the v0.7 activation base contains 102 files, 7,967 insertions, and 344 deletions; Elixir changes total +2,432/-69 lines. Five days elapsed from activation on 2026-11-21 to merged delivery.
+
+See [v0.7 closeout](milestones/v0.7-CLOSEOUT.md), [archive roadmap](milestones/v0.7-ROADMAP.md), [requirements](milestones/v0.7-REQUIREMENTS.md), [audit](milestones/v0.7-MILESTONE-AUDIT.md), and [phase evidence](milestones/v0.7-phases/).
+
+**What's next:** No next milestone is selected. The v0.7 exception expired at closeout. Future scope begins with recommendation-first research and owner selection after typed prerequisites pass.
+
+---
+
 ## v0.6 Guard Scope Reconciliation (Shipped: 2026-11-20)
 
 **Phases completed:** Phase 7 (1 phase, 5 plans, 12 tasks)

@@ -351,3 +351,26 @@ remain required. The focused check belongs before hosted full lanes for
 planning changes; one event does not justify adding it as duplicate work to
 every CI run. Measure that tradeoff if the early gate is proposed. The local
 `act` stop is unchanged and was not retried.
+
+## Hosted Phase 8 final head and post-merge main — 2026-11-26
+
+PR #106 reviewed head `4f6648234530cff9de65a09fa7aa370aa4151b43` passed all
+required checks in [run 45756117110](https://github.com/szTheory/fablebook/actions/runs/45756117110)
+in 10m22s, then merged as `3cb5a52bf7faf97ba5fb2c38783a58ebe116b413`. The
+merge-triggered [main CI run 45757588558](https://github.com/szTheory/fablebook/actions/runs/45757588558)
+also passed in 10m42s. Core took 9m15s (`mix ci` 8m21s); floor took 10m31s
+(the production-guard test step 9m21s), setting the critical path. Security
+took 34s, Dialyzer 32s, and `ci-gate` 5s. All jobs started about two seconds
+after run creation and core/floor overlapped. The final PR-head run took
+10m22s: core was 9m30s (`mix ci` 8m25s), floor 10m13s (production-guard
+tests 9m04s), security 37s, Dialyzer 24s, and `ci-gate` 4s.
+
+The paired [release-please run 45757588572](https://github.com/szTheory/fablebook/actions/runs/45757588572)
+completed in 49s and skipped its publish job; no release occurred. The core
+and floor suites dominate elapsed time, while checkout/setup and the source,
+host-route, and production-boundary checks before the suites are short. The
+lanes already run concurrently, and this one timing comparison does not show a
+repeatable regression or a safe structural reduction. Keep all required lanes,
+security checks, and early consistency checks unchanged. The local `act`
+no-retry stop remains because the ARM64 OTP versus amd64 container mismatch is
+unresolved; it was not retried.
