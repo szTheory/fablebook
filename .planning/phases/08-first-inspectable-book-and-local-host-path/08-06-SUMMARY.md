@@ -40,6 +40,7 @@ coverage:
     verification:
       - kind: integration
         ref: "hosts/operator/test/operator_host_test.exs — focused host render assertions; 19 tests passed"
+        status: pass
       - kind: other
         ref: "MIX_ENV=test mix test test/operator_host_test.exs --warnings-as-errors"
         status: pass
