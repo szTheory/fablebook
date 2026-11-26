@@ -374,3 +374,18 @@ repeatable regression or a safe structural reduction. Keep all required lanes,
 security checks, and early consistency checks unchanged. The local `act`
 no-retry stop remains because the ARM64 OTP versus amd64 container mismatch is
 unresolved; it was not retried.
+
+## Hosted v0.7 closeout initial PR head — 2026-11-26
+
+Closeout PR #107 head `34ba30699dc7ca1f3527f1d0bddd369b7042f035` failed
+[run 45762464609](https://github.com/szTheory/fablebook/actions/runs/45762464609)
+in about 43 seconds. Both core and floor stopped at the early
+`bin/verify_logistify_source --check-pinned` step because the verifier looked
+only in the active phase directory after the v0.7 archive moved its manifest
+under `.planning/milestones/v0.7-phases/`. Security and Dialyzer passed; neither
+test suite started. The standalone self-test passed locally, while the pinned
+check reproduced the missing-path failure before the fix. The verifier now
+resolves the active manifest first and otherwise requires one unambiguous
+archived manifest. The same cheap pinned check and self-test must pass locally
+before the next hosted run. The early check exposed the archive bug before the
+two full test lanes could run; keep all checks and lanes intact.

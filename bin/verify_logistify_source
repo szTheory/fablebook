@@ -4,13 +4,21 @@ defmodule Fablebook.LogistifySourceVerifier do
   @moduledoc false
 
   @repo_root Path.expand("..", __DIR__)
-  @manifest Path.join([
-               @repo_root,
-               ".planning",
-               "phases",
-               "08-first-inspectable-book-and-local-host-path",
-               "08-LOGISTIFY-SOURCE.json"
-             ])
+  @active_manifest Path.join([
+                      @repo_root,
+                      ".planning",
+                      "phases",
+                      "08-first-inspectable-book-and-local-host-path",
+                      "08-LOGISTIFY-SOURCE.json"
+                    ])
+  @archived_manifest_glob Path.join([
+                            @repo_root,
+                            ".planning",
+                            "milestones",
+                            "*-phases",
+                            "08-first-inspectable-book-and-local-host-path",
+                            "08-LOGISTIFY-SOURCE.json"
+                          ])
   @brand_lock Path.join(@repo_root, "brand_sources.lock.json")
   @brand_cache Path.join([@repo_root, ".cache", "brand_sources", "logistify-brand"])
   @brand_repository "https://github.com/szTheory/logistify-brand"
@@ -184,9 +192,15 @@ defmodule Fablebook.LogistifySourceVerifier do
   end
 
   defp read_manifest_bytes do
-    case File.lstat(@manifest) do
+    with {:ok, manifest_path} <- pinned_manifest_path() do
+      read_manifest_bytes(manifest_path)
+    end
+  end
+
+  defp read_manifest_bytes(manifest_path) do
+    case File.lstat(manifest_path) do
       {:ok, %{type: :regular, size: size}} when size > 0 and size <= @max_manifest_bytes ->
-        case File.read(@manifest) do
+        case File.read(manifest_path) do
           {:ok, bytes} when byte_size(bytes) == size -> {:ok, bytes}
           {:ok, _bytes} -> {:error, "pinned source blocked: excerpt manifest changed while read"}
           {:error, _reason} -> {:error, "pinned source blocked: excerpt manifest is unreadable"}
@@ -206,6 +220,20 @@ defmodule Fablebook.LogistifySourceVerifier do
 
       {:error, _reason} ->
         {:error, "pinned source blocked: excerpt manifest is unreadable"}
+    end
+  end
+
+  defp pinned_manifest_path do
+    case File.lstat(@active_manifest) do
+      {:error, :enoent} ->
+        case Path.wildcard(@archived_manifest_glob) do
+          [manifest_path] -> {:ok, manifest_path}
+          [] -> {:error, "pinned source blocked: excerpt manifest is missing"}
+          _ -> {:error, "pinned source blocked: archived excerpt manifest is ambiguous"}
+        end
+
+      _ ->
+        {:ok, @active_manifest}
     end
   end
 
